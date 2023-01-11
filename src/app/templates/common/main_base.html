@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+		<!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+
+		<title>{{title}}</title>
+		<meta name="description" content="">
+		<meta name="author" content="MAFU Co.,Ltd.">
+
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
+
+		<!-- #CSS Links -->
+		<!-- Basic Styles -->
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/font-awesome.min.css">
+
+		<!-- SmartAdmin Styles : Caution! DO NOT change the order -->
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production-plugins.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-skins.min.css">
+
+		<!-- We recommend you use "your_style.css" to override SmartAdmin
+		     specific styles this will also ensure you retrain your customization with each SmartAdmin update. -->
+		<!-- <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell.css">
+		<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-popup.css"> -->
+		<link rel="stylesheet" type="text/css" href="/static/yawn-admin/_plugin/fakeLoader/fakeLoader.ext.css">
+		<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-s6.css">
+		<!-- <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css"> -->
+		<link rel="stylesheet" type="text/css" href="/static/yawn-admin/css/yawn-datepicker-ext.css">
+
+		<!-- #FAVICONS -->
+		<!-- <link rel="shortcut icon" href="/static/smart-admin/img/favicon/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="/static/smart-admin/img/favicon/favicon.ico" type="image/x-icon"> -->
+		<link rel="shortcut icon" href="/static/nexell/img/nexell.ico" type="image/x-icon">
+		<link rel="icon" href="/static/nexell/img/nexell.ico" type="image/x-icon">
+
+		<!-- #GOOGLE FONT -->
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+
+		<!-- #APP SCREEN / ICONS -->
+		<!-- Specifying a Webpage Icon for Web Clip
+			 Ref: https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html -->
+		<link rel="apple-touch-icon" href="/static/smart-admin/img/splash/sptouch-icon-iphone.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/static/smart-admin/img/splash/touch-icon-ipad.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/static/smart-admin/img/splash/touch-icon-iphone-retina.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/static/smart-admin/img/splash/touch-icon-ipad-retina.png">
+
+		<!-- iOS web-app metas : hides Safari UI Components and Changes Status Bar Appearance -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!-- Startup image for web apps -->
+		<link rel="apple-touch-startup-image" href="/static/smart-admin/img/splash/ipad-landscape.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
+		<link rel="apple-touch-startup-image" href="/static/smart-admin/img/splash/ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+		<link rel="apple-touch-startup-image" href="/static/smart-admin/img/splash/iphone.png" media="screen and (max-device-width: 320px)">
+
+		<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script>
+			if (!window.jQuery) {
+				document.write('<script src="/static/smart-admin/js/libs/jquery-2.1.1.min.js"><\/script>');
+			}
+		</script>
+	</head>
+	<!-- Possible Classes
+
+		* 'smart-style-{SKIN#}'
+		* 'smart-rtl'         - Switch theme mode to RTL
+		* 'menu-on-top'       - Switch to top navigation (no DOM change required)
+		* 'no-menu'			  - Hides the menu completely
+		* 'hidden-menu'       - Hides the main menu but still accessable by hovering over left edge
+		* 'fixed-header'      - Fixes the header
+		* 'fixed-navigation'  - Fixes the main menu
+		* 'fixed-ribbon'      - Fixes breadcrumb
+		* 'fixed-page-footer' - Fixes footer
+		* 'container'         - boxed layout mode (non-responsive: will not work with fixed-navigation & fixed-ribbon)
+	-->
+<!--	<body class="smart-style-6 menu-on-top fixed-header fixed-navigation fixed-ribbon" style="min-width:1280px;">-->
+	<body class="smart-style-6 menu-on-top fixed-header fixed-navigation fixed-ribbon" style="">
+<!--########################################################################-->
+<!--# header area start                                                    #-->
+<!--########################################################################-->
+		<header id="header">
+			<div id="logo-group">
+				<!-- PLACE YOUR LOGO HERE -->
+				<span id="logo"> <img src="/static/nexell/img/logo.png" alt="NEXELL"></span>
+				<!-- <span id="logo"> <img src="/static/smart-admin/img/logo-blue.png" alt="NEXELL"> 넥셀관리시스템</span> -->
+				<!-- <span style="font-size:18px;font-weight:bold;color:#fff;margin-left:10px;margin-top:12px;">넥셀관리시스템</span> -->
+				<!-- END LOGO PLACEHOLDER -->
+			</div>
+
+			<!-- pulled right: nav area -->
+			<div class="pull-right">
+
+				<!-- logout button -->
+				<div id="logout1" class="btn-header transparent pull-right">
+					<span> <a href="#" style="cursor:pointer!important;" title="로그아웃" id="btnLogout"><i class="fa fa-sign-out"></i></a> </span>
+				</div>
+				<!-- end logout button -->
+
+				<!-- profile menu -->
+				<ul id="mobile-profile-img" class="header-dropdown-list hidden-xs">
+					<li><input type="hidden" id="loginID" value="{{session['member'].member_id}}">
+						<input type="hidden" id="loginAuth" value="{{session['member'].member_auth}}">
+						<input type="hidden" id="loginSN" value="{{session['member'].member_sn}}">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="profile-name">{{session['member'].member_nm}}({{session['member'].member_id}})님</span> <i class="fa fa-angle-down"></i> </a>
+						<ul class="dropdown-menu pull-right">
+							<li>
+								<a class="padding-10 padding-top-0 padding-bottom-0" data-toggle="modal" href="#popPassword"><i class="fa fa-user padding-right-4"></i> 비밀번호 변경</a>
+								<!-- <button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+								<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button> -->
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<!-- end profile menu -->
+
+			</div>
+			<!-- end pulled right: nav area -->
+		</header>
+<!--########################################################################-->
+<!--# header area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# navigation area start                                                #-->
+<!--########################################################################-->
+		<!-- Left panel : Navigation area -->
+		<!-- Note: This width of the aside area can be adjusted through LESS variables -->
+		<aside id="left-panel">
+
+			<nav>
+				<!--
+				NOTE: Notice the gaps after each icon usage <i></i>..
+				Please note that these links work a bit different than
+				traditional href="" links. See documentation for details.
+				-->
+				<ul><!-- 이후부터 -->
+<!--				<?php-->
+<!--					$parent = -1; $level = -1;-->
+<!--					foreach($my_menu as $data)-->
+<!--					{-->
+<!--						$display = $data->use_at != 'Y' ? 'display:none;' : '';-->
+
+<!--						if ($data->menu_level == 1) {-->
+<!--							if ($parent != -1 && $data->parnts_menu_sn != $parent && $data->menu_level != $level) {-->
+<!--								echo '</ul></li>'."\n";-->
+<!--							}-->
+<!--							if ($data->parnts_menu_sn == $parent && $data->menu_level == $level) {-->
+<!--								echo '</li>'."\n";-->
+<!--							}-->
+
+<!--                            $name = $data->menu_nm;-->
+<!--							if ($data->menu_sn == 23 || $data->menu_sn == 24) {-->
+<!--								echo '<li style="'.$display.'"><a href="'.$data->menu_adres.'" target="_blank"><i class="fa fa-lg fa-fw '.$data->menu_icon.'"></i> <span class="menu-item-parent">'.$name.'</span></a>'."\n";-->
+<!--							} else {-->
+<!--								echo '<li style="'.$display.'"><a href="'.$data->menu_adres.'"><i class="fa fa-lg fa-fw '.$data->menu_icon.'"></i> <span class="menu-item-parent">'.$name.'</span></a>'."\n";-->
+<!--							}-->
+<!--						}-->
+
+<!--						if ($data->menu_level == 2) {-->
+<!--							if ($data->parnts_menu_sn != $parent && $data->menu_level != $level) {-->
+<!--								echo '<ul>'."\n";-->
+<!--							}-->
+<!--							echo '<li style="'.$display.'"><a href="'.$data->menu_adres.'">'.$data->menu_nm.'</a></li>'."\n";-->
+<!--						}-->
+<!--						$parent = $data->parnts_menu_sn;-->
+<!--						$level = $data->menu_level;-->
+<!--					}-->
+<!--					echo '</li>'."\n";-->
+<!--				?>-->
+				</ul>
+			</nav>
+
+			<span class="minifyme" data-action="minifyMenu">
+				<i class="fa fa-arrow-circle-left hit"></i>
+			</span>
+
+		</aside>
+<!--########################################################################-->
+<!--# navigation area end                                                  #-->
+<!--########################################################################-->
+
+<!-- header script start ================================================== -->
+<script type="text/javascript">
+logout = function()
+{
+	$.ajax({
+		url: '/api/account/ajax_logout',
+		type: 'POST',
+		data: '',
+		dataType: 'json',
+		success: function(result) {
+			location.href = '/login';
+		},
+		error: function(pJqXHR, pTextStatus, pErrorThrown) {
+			toastrMessage('error', pJqXHR);
+		}
+	});
+}
+$(function() {
+    /**************************************************************************
+     * 로그아웃 버튼을 처리합니다.
+     */
+    $('#btnLogout').on('click', function(pEvent){
+        logout();
+    });
+});
+</script>
+<!-- header script end ==================================================== -->
+
+<!--########################################################################-->
+<!--# main area start                                                      #-->
+<!--########################################################################-->
+		<div id="main" role="main">
+		<!-- <div id="main" role="main" style="background:#fff;"> -->
+          {% block content %}{% endblock %}
+		</div>
+<!--########################################################################-->
+<!--# main area end                                                        #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# common layer start                                                   #-->
+<!--########################################################################-->
+<!-- 비밀번호 변경 레이어 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" id="popPassword">
+	<div class="modal-dialog" style="width:350px!important">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<!-- <header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabPassword"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>비밀번호 변경</span></a>
+						</li>
+					</ul>
+				</header> -->
+				<div role="content">
+					<div class="widget-body no-padding">
+						<form id="frmPassword">
+						<table class="table table-bordered table-form">
+							<tbody>
+								<tr>
+									<th>이전 비밀번호</th>
+									<td class="hasinput"><input class="form-control" type="password" id="old_password" name="old_password"></td>
+								</tr>
+								<tr>
+									<th>변경 비밀번호</th>
+									<td class="hasinput"><input class="form-control" type="password" id="new_password1" name="new_password1"></td>
+								</tr>
+								<tr>
+									<th>확인 비밀번호</th>
+									<td class="hasinput"><input class="form-control" type="password" id="new_password2" name="new_password2"></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td class="hasinput text-right" colspan="2">
+										<button type="button" class="btn btn-primary btn-sm" id="btnPwdSave"><i class="fa fa-save-x"> 확인</i></button>
+										<button type="button" class="btn btn-default btn-sm" aria-hidden="true" data-dismiss="modal"><i class="fa fa-cancel-x"> 취소</i></button>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+						</form>
+					</div>
+				</div>
+			</div><!--jarviswidget-->
+		</div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<!--########################################################################-->
+<!--# common layer end                                                     #-->
+<!--########################################################################-->
+
+<!--########################################################################-->
+<!--# common script start                                                  #-->
+<!--########################################################################-->
+<!-- Your GOOGLE ANALYTICS CODE Below -->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+changePassword = function()
+{
+	$.ajax({
+		url: '/api/account/ajax_change_password',
+		type: 'POST',
+		data: getFormData($('#frmPassword')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var old = $('#old_password').val();
+			if (old == '') {
+				alert('이전 비밀번호를 입력하세요.');
+				$('#old_password').focus();
+				return false;
+			}
+
+			var pwd1 = $('#new_password1').val();
+			if (pwd1 == '') {
+				alert('변경 비밀번호를 입력하세요.');
+				$('#new_password1').focus();
+				return false;
+			}
+
+			var pwd2 = $('#new_password2').val();
+			if (pwd2 == '') {
+				alert('확인 비밀번호를 입력하세요.');
+				$('#new_password2').focus();
+				return false;
+			}
+
+			return true;
+		},
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				alert(pResult.message);
+				logout();
+			} else {
+				alert(pResult.message);
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+	$('#btnPwdSave').on('click', function(pEvent){
+		changePassword();
+	});
+});
+</script>
+
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+		<div class="yawnLoader"></div>
+		<iframe id="_download" name="_download" style="display:none;"></iframe>
+		<iframe id="_print" name="_print" src="/html/printNew.html" style="display:none;width:100%;height:300px;"></iframe>
+	</body>
+</html>

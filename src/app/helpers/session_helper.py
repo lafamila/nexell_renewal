@@ -4,7 +4,7 @@ from flask import request, make_response, current_app, redirect, session
 def session_check(func):
     @wraps(func)
     def wrap(*args, **kwargs):
-        if "mber_sn" in session:
+        if "member" in session:
             return func(*args, **kwargs)
         else:
             return redirect('/login')
