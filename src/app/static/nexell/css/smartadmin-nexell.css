@@ -1,0 +1,143 @@
+/* @media print
+{
+    .no-print, .no-print *
+    {
+        display: none!important;
+    }
+} */
+
+/******************************************************************************
+ * Layout
+ */
+html, body.smart-style-6 {
+    background: #fff;
+}
+
+.menu-on-top #main {
+    margin-left: 0!important;
+    margin-top: 69px!important;
+}
+
+#logo {
+    color: #fff;
+    font-weight: bold;
+}
+
+#logo img {
+    width: 42px;
+}
+
+body.smart-style-6 #logo-group>span#logo:before {
+    content: "넥셀관리시스템";
+    font-size: 20px;
+    font-weight: 400!important;
+    color: #fff;
+    font-weight: 300;
+    margin-top: 1px;
+    display: block;
+    line-height: 20px;
+}
+
+body.smart-style-6 .form-control:not(.ui-autocomplete-loading) {
+    background: #fff;
+}
+
+body.smart-style-6 #ribbon {
+    background: #e6faff!important;
+}
+
+body.smart-style-6 .widget-toolbar.select2 {
+    padding: 0px;
+    line-height: 28px;
+    text-align: unset;
+}
+
+/* .select2-selection {
+    line-height: 24px!important;
+} */
+
+/******************************************************************************
+ * Widget
+ */
+ .widget-toolbar>.btn {
+    padding-top: 3px!important;
+    padding-bottom: 4px!important;
+}
+
+/******************************************************************************
+ * Table
+ */
+table.table thead>tr>th.hasinput {
+    padding: 4px!important;
+}
+
+table.table thead>tr>th.hasinput.icon-addon .glyphicon, 
+table.table thead>tr>th.hasinput.icon-addon.addon-md .glyphicon {
+    top: -4px;
+}
+
+/******************************************************************************
+ * DataTables
+ */
+table.dataTable {
+    margin-top: 0px!important;
+}
+
+table.dataTable thead>tr>th.hasinput {
+    padding: 1px!important;
+}
+
+table.dataTable thead>tr>th.hasinput.icon-addon .glyphicon, 
+table.dataTable thead>tr>th.hasinput.icon-addon.addon-md .glyphicon {
+    top: -4px;
+}
+
+
+
+
+
+
+/******************************************************************************
+ * ETC
+ */
+#mobile-profile-img a.userdropdown img {
+    margin-top: 4px!important;
+}
+
+#mobile-profile-img.header-dropdown-list>li>.dropdown-toggle {
+    margin-top: 15px!important;
+}
+
+/******************************************************************************
+ * UTIL
+ */
+.padding-right-4 {
+    padding-right: 4px!important;
+}
+
+
+
+.bg-title {
+    background: #000;
+    color: #fff;
+}
+
+.bg-green {
+    background: rgb(0, 134, 22);
+    color: #fff;
+}
+
+
+
+body.smart-style-6 .table>tbody>tr>td, 
+body.smart-style-6 .table>tbody>tr>th, 
+body.smart-style-6 .table>tfoot>tr>td, 
+body.smart-style-6 .table>tfoot>tr>th, 
+body.smart-style-6 .table>thead>tr>td, 
+body.smart-style-6 .table>thead>tr>th {
+    padding: 8px 5px!important;
+}
+
+.padding-left-20 {
+    padding-left: 20px!important;
+}

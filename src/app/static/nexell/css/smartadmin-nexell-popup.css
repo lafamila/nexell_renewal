@@ -1,0 +1,125 @@
+/******************************************************************************
+ * 
+ */
+.modal .modal-sm2 {
+     width: 750px!important;
+}
+
+.modal .modal-lg2 {
+     width: 1050px!important;
+}
+
+.modal .modal-mx {
+     width: 1200px!important;
+}
+
+.modal .table {
+    margin-bottom: 0px;
+}
+
+.modal .table>tbody>tr>td, 
+.modal .table>tbody>tr>th, 
+.modal .table>tfoot>tr>td, 
+.modal .table>tfoot>tr>th, 
+.modal .table>thead>tr>td, 
+.modal .table>thead>tr>th {
+    padding: 4px 4px;
+    font-size: 12px;
+}
+
+.modal .hasinput .input-group-addon {
+    padding: 5px 7px;
+    padding-right: 6px;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+.modal .hasinput .input-group-addon:last-child {
+    border-right: 1px solid #ccc;
+}
+
+.modal .hasinput .select2-container .select2-choice, .select2-selection {
+    width: 100%;
+    height: 26px;
+    padding: 0px 6px;
+    line-height: 24px;
+}
+
+.modal .hasinput .select2-container .select2-choice .select2-arrow, .select2-selection__arrow {
+    width: 27px;
+}
+
+.modal .hasinput .select2-container--disabled .select2-selection--single {
+    background: #eee!important;
+}
+
+/******************************************************************************
+ * MODAL
+ */
+ .modal .modal-dialog {
+    margin-top: 124px!important;
+}
+
+.modal .modal-header {
+    padding: 10px!important;
+}
+
+.modal h5.modal-title {
+    font-weight: bold;
+    margin-top: 1px!important;
+    margin-left: 3px!important;
+}
+
+.modal .modal-footer {
+    padding: 8px!important;
+}
+
+.modal .close {
+    font-size: 27px!important;
+}
+
+.modal .jarviswidget {
+    margin: 0px!important;
+}
+.modal .jarviswidget .widget-body {
+    min-height: unset;
+}
+
+.modal table.table th {
+    background: #faf4e2;
+    /* background: #e2f8fa; */
+    /* background: #efefef; */
+    /* background: #e2d9ab; */
+    padding-top: 5px!important;
+    padding-bottom: 5px!important;
+    padding-left: 7px!important;
+    padding-right: 7px!important;
+}
+
+.modal table.table th.hasinput {
+    padding: 1px!important;
+}
+
+.modal table.table td.hasinput {
+    padding: 4px!important;
+}
+
+.modal table.table td.hasinput input.form-control {
+    height: unset;
+    padding: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.modal table.table td.hasinput select.form-control {
+    height: unset;
+    padding: 2px;
+}
+
+.modal textarea.resize-no {
+    resize: none;
+}
+
+.modal table.table .hasinput .btn.btn-cs1 {
+    padding: 3px 6px!important;
+}

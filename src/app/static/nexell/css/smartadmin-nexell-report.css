@@ -1,0 +1,211 @@
+@media only screen and (min-width:320px) and (max-width:800px)  {
+    div.report * {
+        font-size: 8px!important;
+        font-weight: bold!important;
+    }
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */ 
+
+    div.report * {
+        font-size: 13px!important;
+        font-weight: bold!important;
+    }
+
+}
+
+div.report .title {
+    text-align: center!important;
+    margin-bottom: 10px!important;
+}
+
+div.report .title>h2 {
+    display: inline-block!important;
+    margin: 0px!important;
+    padding: 12px 60px!important;
+    border: 3px double #000!important;
+    font-size: 28px!important;
+    text-align: center!important;
+}
+
+div.report .title>h2 span {
+    font-size: 38px!important;
+}
+
+div.report .sub-title {
+    font-size: 17px!important;
+    text-align: left!important;
+    margin: 5px 0px!important;
+}
+
+div.report .sub-title.underline {
+    margin-bottom: 10px!important;
+    border-bottom: 1px dashed #555!important;
+}
+
+div.report table {
+	width: 100%!important;
+	border-spacing: 0!important;
+	border: 3px solid #000!important;
+}
+
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+}
+
+div.report table th,
+div.report table td {
+	border: 1px solid #555!important;
+	padding: 7px!important;
+    text-align: center!important;
+}
+div.report table th.color-contract{
+    background: rgb(255,204,153)!important;
+}
+
+div.report table th {
+	background: rgb(191,191,191)!important;
+}
+
+div.report table .text-left {
+	text-align: left!important;
+}
+div.report table .text-right,
+div.report table .text-number {
+	text-align: right!important;
+}
+div.report table .text-center {
+	text-align: center!important;
+}
+
+div.report table .box-none,
+div.report table .box-none {
+    border: 1px solid #fff!important;
+    background: #fff!important;
+}
+
+.colorG,
+div.report table th.colorG,
+div.report table td.colorG { /* green */
+	background: rgb(204,255,204)!important;
+}
+.colorY,
+div.report table th.colorY,
+div.report table td.colorY { /* yellow */
+	background: rgb(255,255,153)!important;
+}
+.colorR,
+div.report table th.colorR,
+div.report table td.colorR { /* red */
+	background: rgb(255,0,0)!important;
+	color: #fff!important;
+}
+.colorLP,
+div.report table th.colorLP,
+div.report table td.colorLP { /* light pink */
+	background: rgb(255,204,204)!important;
+}
+.colorP,
+div.report table th.colorP,
+div.report table td.colorP { /* pink */
+	background: rgb(255,153,204)!important;
+}
+.colorO,
+div.report table th.colorO,
+div.report table td.colorO { /* orange */
+	background: rgb(255,204,153)!important;
+}
+.colorS,
+div.report table th.colorS,
+div.report table td.colorS { /* sky */
+	background: rgb(0,255,255)!important;
+}
+.colorLS,
+div.report table th.colorLS,
+div.report table td.colorLS { /* light sky */
+	background: rgb(0,32,96)!important;
+    color:white !important;
+}
+.colorV,
+div.report table th.colorV,
+div.report table td.colorV { /* violet */
+	background: rgb(204,153,255)!important;
+}
+.colorLV,
+div.report table th.colorLV,
+div.report table td.colorLV { /* light violet */
+	background: rgb(255,204,255)!important;
+}
+.colorN,
+div.report table th.colorN,
+div.report table td.colorN { /* navy */
+    background: #0070C0!important;
+    color: #fff!important;
+}
+.colorB,
+div.report table th.colorB,
+div.report table td.colorB { /* blue */
+    background: rgb(0,112,192)!important;
+    color: #fff!important;
+}
+.colorLG,
+div.report table th.colorLG,
+div.report table td.colorLG { /* light gray */
+	background: rgb(217,217,217)!important;
+}
+.colorDG,
+div.report table th.colorDG,
+div.report table td.colorDG { /* dark gray */
+	background: rgb(166,166,166)!important;
+}
+.colorW,
+div.report table th.colorW,
+div.report table td.colorW { /* dark gray */
+	background: rgb(255,255,255)!important;
+}
+
+
+/*lafamila-start*/
+.colorZ,
+div.report table th.colorZ,
+div.report table td.colorZ{
+    background: rgb(0,112,192)!important;
+    color:white !important;
+    border: white 1px solid !important;
+}
+
+.colorPJT,
+div.report table th.colorSky,
+div.report table td.colorSky {
+    background: rgb(146, 205, 220)!important;
+}
+
+.colorRY,
+div.report table th.colorY,
+div.report table td.colorY { /* yellow */
+	background: #FDFD96!important;
+}
+
+.colorN3{
+    background:#e6faff!important;
+}
+
+/*lafamila-end*/
+
+.modal-body{
+    padding-top:10px;
+}
+.modal-header{
+    padding-top:7px;
+    padding-bottom:7px;
+}
+.colorButton,
+div.report table th.colorButton,
+div.report table td.colorButton {
+    background: #B3E5FC!important;
+}

@@ -1,0 +1,567 @@
+html, 
+body.smart-style-6 {
+    background: #fff!important;
+}
+
+#main {
+    padding-bottom: 20px;
+}
+
+body.smart-style-6 #logo-group>span#logo:before {
+    content: "넥셀관리시스템"!important;
+    font-size: 20px!important;
+    font-weight: 400!important;
+    color: #fff!important;
+    font-weight: 300!important;
+    margin-top: 1px!important;
+    display: block!important;
+    line-height: 20px!important;
+}
+
+body.smart-style-6 #ribbon {
+    background: #e6faff!important;
+}
+
+body.smart-style-6 table.dataTable {
+    margin-top: 0px!important;
+}
+
+body.smart-style-6 table.dataTable thead>tr>th.hasinput,
+body.smart-style-6 table.dataTable tbody>tr>td.hasinput {
+    padding: 2px!important;
+}
+
+body.smart-style-6 .form-control, 
+body.smart-style-6 .smart-form .icon-append, 
+body.smart-style-6 .smart-form .icon-prepend, 
+body.smart-style-6 .smart-form .select select, 
+body.smart-style-6 .smart-form .select2 select, 
+body.smart-style-6 .smart-form .textarea textarea {
+    padding: 8px!important;
+    background: #fff!important;
+    border: 1px solid #ccc!important;
+    line-height: 32px!important;
+    font-weight: bold!important;
+    font-size: 13px!important;
+}
+
+body.smart-style-6 .form-control:focus, 
+body.smart-style-6 .smart-form .icon-append:focus, 
+body.smart-style-6 .smart-form .icon-prepend:focus, 
+body.smart-style-6 .smart-form .select select:focus, 
+body.smart-style-6 .smart-form .textarea textarea:focus {
+    border: 1px solid #5D98CC!important;
+}
+
+body.smart-style-6 input[type=number].form-control {
+    padding-right: 0px!important;
+}
+
+body.smart-style-6 input:read-only.form-control {
+    background: #FAFAD2!important;
+    /* color: #fff; */
+}
+body.smart-style-6 input:disabled.form-control {
+    background: #ccc!important;
+}
+
+body.smart-style-6 textarea.form-control {
+    line-height: 16px!important;
+}
+
+body.smart-style-6 .table {
+    margin-bottom: 0px!important;
+}
+
+body.smart-style-6 .widget-toolbar  {
+    line-height: 28px!important;
+    /* padding: 0px!important; */
+}
+
+body.smart-style-6 .widget-toolbar>.btn {
+    margin-top: unset!important;
+    padding: 4px 8px!important;
+    padding-top: 3px!important;
+}
+
+body.smart-style-6 .input-group {
+    /* display: inline-block!important; */
+}
+
+body.smart-style-6 .chartjs {
+    padding: 20px!important;
+    /* padding-bottom: 24px!important; */
+}
+
+body.smart-style-6 .chartjs>canvas {
+    width: 100%!important;
+}
+
+
+body.smart-style-6.col-lg-1:last-child,  body.smart-style-6.col-lg-10:last-child, 
+body.smart-style-6.col-lg-11:last-child, body.smart-style-6.col-lg-12:last-child, 
+body.smart-style-6.col-lg-2:last-child,  body.smart-style-6.col-lg-3:last-child, 
+body.smart-style-6.col-lg-4:last-child,  body.smart-style-6.col-lg-5:last-child, 
+body.smart-style-6.col-lg-6:last-child,  body.smart-style-6.col-lg-7:last-child, 
+body.smart-style-6.col-lg-8:last-child,  body.smart-style-6.col-lg-9:last-child, 
+body.smart-style-6.col-md-1:last-child,  body.smart-style-6.col-md-10:last-child, 
+body.smart-style-6.col-md-11:last-child, body.smart-style-6.col-md-12:last-child, 
+body.smart-style-6.col-md-2:last-child,  body.smart-style-6.col-md-3:last-child, 
+body.smart-style-6.col-md-4:last-child,  body.smart-style-6.col-md-5:last-child, 
+body.smart-style-6.col-md-6:last-child,  body.smart-style-6.col-md-7:last-child, 
+body.smart-style-6.col-md-8:last-child,  body.smart-style-6.col-md-9:last-child, 
+body.smart-style-6.col-sm-1:last-child,  body.smart-style-6.col-sm-10:last-child, 
+body.smart-style-6.col-sm-11:last-child, body.smart-style-6.col-sm-12:last-child, 
+body.smart-style-6.col-sm-2:last-child,  body.smart-style-6.col-sm-3:last-child, 
+body.smart-style-6.col-sm-4:last-child,  body.smart-style-6.col-sm-5:last-child, 
+body.smart-style-6.col-sm-6:last-child,  body.smart-style-6.col-sm-7:last-child, 
+body.smart-style-6.col-sm-8:last-child,  body.smart-style-6.col-sm-9:last-child, 
+body.smart-style-6.col-xs-1:last-child,  body.smart-style-6.col-xs-10:last-child, 
+body.smart-style-6.col-xs-11:last-child, body.smart-style-6.col-xs-12:last-child, 
+body.smart-style-6.col-xs-2:last-child,  body.smart-style-6.col-xs-3:last-child, 
+body.smart-style-6.col-xs-4:last-child,  body.smart-style-6.col-xs-5:last-child, 
+body.smart-style-6.col-xs-6:last-child,  body.smart-style-6.col-xs-7:last-child, 
+body.smart-style-6.col-xs-8:last-child,  body.smart-style-6.col-xs-9:last-child {
+    padding-right: 0px!important;
+}
+
+body.smart-style-6 div.scroll {
+    overflow-y: scroll!important;
+    /* border-right: 1px solid #ddd!important;
+    border-bottom: 1px solid #ddd!important; */
+}
+
+body.smart-style-6 th.scroll {
+    padding: 5px!important;
+}
+
+body.smart-style-6 .table>thead>tr>td.search, 
+body.smart-style-6 .table>thead>tr>th.search {
+    padding: 9px!important;
+    text-align: center!important;
+    color: #0000ff!important;
+}
+
+body.smart-style-6 .table.table-skinny>tbody>tr>td, 
+body.smart-style-6 .table.table-skinny>tbody>tr>th, 
+body.smart-style-6 .table.table-skinny>tfoot>tr>td, 
+body.smart-style-6 .table.table-skinny>tfoot>tr>th, 
+body.smart-style-6 .table.table-skinny>thead>tr>td, 
+body.smart-style-6 .table.table-skinny>thead>tr>th {
+    padding: 5px!important;
+    height: 24px!important;
+}
+
+body.smart-style-6 .table.table-skinny>thead>tr>td, 
+body.smart-style-6 .table.table-skinny>thead>tr>th {
+    /* text-align: center!important; */
+}
+
+body.smart-style-6 div.padding-5 {
+    padding: 5px!important;
+}
+
+body.smart-style-6 .selected {
+    background-color: #1565C0!important;
+    color: #fff!important;
+}
+
+body.smart-style-6 .table>tbody>tr>td, 
+body.smart-style-6 .table>tbody>tr>th, 
+body.smart-style-6 .table>tfoot>tr>td, 
+body.smart-style-6 .table>tfoot>tr>th, 
+body.smart-style-6 .table>thead>tr>td, 
+body.smart-style-6 .table>thead>tr>th {
+    padding: 6px 10px;
+}
+
+/******************************************************************************
+ * SELECT2 컴포넌트 기본 스타일
+ */
+/* select.select2 {
+    width: 100% !important;
+}
+
+select.select2 + .select2-container .select2-selection {
+    height: 30px!important;
+    padding-left: 13px!important;
+    padding-left: 13px!important;
+    line-height: 30px!important;
+    font-size: 12px!important;
+}
+
+select.select2 + .select2-container .select2-selection__arrow {
+    background: #eeeeee!important;
+}
+
+select.select2 + .select2-container .select2-container--focus .select2-selection {
+    border: 1px solid #7dbcf1!important;
+}
+
+.select2.block + .select2-container {
+    display: block!important;
+    width: 100%!important;
+}
+
+select.select2.select2-hidden-accessible {
+    display: none!important;
+}
+
+select[readonly].select2 + .select2-container {
+    cursor: default!important;
+    pointer-events: none!important;
+    touch-action: none!important;
+}
+
+select[readonly].select2 + .select2-container .select2-selection,
+select[readonly].select2 + .select2-container .select2-selection__arrow {
+    background: #FAFAD2!important;
+}
+
+select[disabled].select2 + .select2-container {
+    cursor: default!important;
+    pointer-events: none!important;
+    touch-action: none!important;
+}
+
+select[disabled].select2 + .select2-container .select2-selection,
+select[disabled].select2 + .select2-container .select2-selection__arrow {
+    background: #eee!important;
+} */
+
+body.smart-style-6 .select2-display-none, 
+body.smart-style-6 .select2-hidden-accessible {
+    display: none!important;
+}
+
+body.smart-style-6 .select2-selection,
+body.smart-style-6 .select2-container .select2-choice {
+    line-height: 30px!important;
+    font-size: 12px!important;
+    font-weight: bold!important;
+}
+
+body.smart-style-6 .widget-toolbar .select2 {
+    text-align: left!important;
+}
+
+body.smart-style-6 .widget-toolbar .select2-selection, 
+body.smart-style-6 .widget-toolbar .select2-container .select2-choice {
+    height: 26px!important;
+    line-height: 24px!important;
+}
+
+body.smart-style-6 .widget-toolbar .select2-selection__arrow, 
+body.smart-style-6 .widget-toolbar .select2-container .select2-choice .select2-arrow {
+    width: 26px!important;
+}
+
+select[readonly].select2 + .select2-container {
+    cursor: default!important;
+    pointer-events: none!important;
+    touch-action: none!important;
+}
+
+select[readonly].select2 + .select2-container .select2-selection,
+select[readonly].select2 + .select2-container .select2-selection__arrow {
+    background: #FAFAD2!important;
+}
+
+select[disabled].select2 + .select2-container {
+    cursor: default!important;
+    pointer-events: none!important;
+    touch-action: none!important;
+}
+
+select[disabled].select2 + .select2-container .select2-selection,
+select[disabled].select2 + .select2-container .select2-selection__arrow {
+    background: #eee!important;
+}
+
+/******************************************************************************
+ * MODAL
+ */
+
+body.smart-style-6 .modal .modal-w600 {
+    width: 600px!important;
+}
+
+body.smart-style-6 .modal .modal-w750 {
+    width: 750px!important;
+}
+
+body.smart-style-6 .modal .modal-w900 {
+    width: 900px!important;
+}
+
+body.smart-style-6 .modal .modal-w1050 {
+    width: 1050px!important;
+}
+
+body.smart-style-6 .modal .modal-w1200 {
+    width: 1200px!important;
+}
+
+body.smart-style-6 .modal header .nav-tabs {
+    margin-left: 1px!important;
+}
+
+body.smart-style-6 .modal .jarviswidget {
+    margin-bottom: 0px!important;
+}
+
+body.smart-style-6 .modal .table>tbody>tr>td, 
+body.smart-style-6 .modal .table>tfoot>tr>th, 
+body.smart-style-6 .modal .table>tfoot>tr>td, 
+body.smart-style-6 .modal .table>thead>tr>td {
+    padding: 9px!important;
+    vertical-align: middle!important;
+}
+
+body.smart-style-6 .modal .table>tfoot>tr>th, 
+body.smart-style-6 .modal .table>tfoot>tr>td {
+    background: #eee!important;
+}
+
+body.smart-style-6 .modal .table>tbody>tr>td.tab1, 
+body.smart-style-6 .modal .table>tfoot>tr>td.tab1, 
+body.smart-style-6 .modal .table>thead>tr>td.tab1 {
+    padding-left: 25px!important;
+}
+
+body.smart-style-6 .modal .table>tbody>tr>td.hasinput, 
+body.smart-style-6 .modal .table>tbody>tr>th.hasinput, 
+body.smart-style-6 .modal .table>tfoot>tr>td.hasinput, 
+body.smart-style-6 .modal .table>tfoot>tr>th.hasinput, 
+body.smart-style-6 .modal .table>thead>tr>td.hasinput, 
+body.smart-style-6 .modal .table>thead>tr>th.hasinput {
+    padding: 2px!important;
+}
+
+body.smart-style-6 .modal .table>tbody>tr>td, 
+body.smart-style-6 .modal .table>tbody>tr>th, 
+body.smart-style-6 .modal .table>tfoot>tr>td, 
+body.smart-style-6 .modal .table>tfoot>tr>th, 
+body.smart-style-6 .modal .table>thead>tr>td, 
+body.smart-style-6 .modal .table>thead>tr>th {
+    padding: 8px 10px;
+}
+
+
+body.smart-style-6 .modal .table.table-form>tbody>tr>th,
+body.smart-style-6 .modal .table.table-form>thead>tr>th {
+    background: #92CDDC;
+    /* background: #ffedaa; */
+}
+
+body.smart-style-6 .modal .table.table-report>tbody>tr>th,
+body.smart-style-6 .modal .table.table-report>thead>tr>th {
+    background: #eee;
+}
+
+/******************************************************************************
+ * UTILS
+ */
+
+/* body.smart-style-6 .block {
+    display: block;
+    width: 100%;
+}
+body.smart-style-6 .w100p {
+    display: block;
+} */
+
+/* #ffedaa */
+
+/* body.smart-style-6 .tab1 {
+    padding-left: 15px!important;
+} */
+
+
+body.smart-style-6 .date {
+    display: flex!important;
+}
+
+body.smart-style-6 .w100p {
+    width: 100%;
+}
+
+.required {
+    /* color: #f00!important; */
+    color: #000!important;
+}
+
+.btn.btn-table {
+    padding: 5px 7px;
+    margin: 0px;
+}
+
+.btn.btn-table>i.fa {
+    width: 20px;
+    height: 16px;
+    padding: 0px;
+    margin: 0px;
+}
+
+a {
+    cursor: pointer!important;
+}
+
+em {
+    color: #f00;
+}
+
+label.btn.btn-default.active {
+    background: #000;
+    color: #fff;
+}
+
+*.disabled,
+*[disabled] {
+    pointer-events: none;
+}
+
+/* input {
+    font-weight: normal!important;
+} */
+
+.hasinput.title {
+    padding: 9px 10px!important;
+}
+
+ 
+
+.dt-buttons {
+	display: none;
+}
+
+/******************************************************************************
+ * REPORT
+ */
+ .modal table.table.table-report>thead,
+ .modal table.table.table-report>tbody,
+ .modal table.table.table-report>tfoot {
+     border: 2px solid #000!important;
+ }
+ 
+ .modal table.table.table-report th,
+ .modal table.table.table-report td {
+     background: #fff!important;
+     height: 28px!important;
+     border: 1px solid #555!important;
+     text-align: center!important;
+     font-weight: bold!important;
+     vertical-align: middle!important;
+ }
+ 
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>th, 
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>td {
+     background: #fff!important;
+ }
+ 
+ .modal table.table.table-report th.footer,
+ .modal table.table.table-report td.footer {
+     background: #bbb!important;
+ }
+ 
+ .modal table.table.table-report th.title,
+ .modal table.table.table-report th.title {
+     background: rgb(0,51,102)!important;
+     color: #fff!important;
+     font-size: 15px!important;
+ }
+ 
+ .modal table.table.table-report th.text-number,
+ .modal table.table.table-report td.text-number,
+ *.text-number {
+     text-align: right!important;
+     padding-right: 7px!important;
+ }
+ 
+ .modal table.table.table-report th.text-left,
+ .modal table.table.table-report td.text-left {
+     text-align: left!important;
+     padding-left: 7px!important;
+ }
+ 
+ .modal table.table.table-report th.colorG,
+ .modal table.table.table-report td.colorG,
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>th.colorG, 
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>td.colorG {
+     background: rgb(204,255,204)!important;
+ }
+ 
+ .modal table.table.table-report th.colorY,
+ .modal table.table.table-report td.colorY,
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>th.colorY, 
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>td.colorY {
+     background: rgb(255,255,153)!important;
+ }
+ 
+ .modal table.table.table-report th.colorR,
+ .modal table.table.table-report td.colorR,
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>th.colorR, 
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>td.colorR {
+     background: rgb(255,0,0)!important;
+     color: #fff!important;
+ }
+ 
+ .modal table.table.table-report th.colorP,
+ .modal table.table.table-report td.colorP,
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>th.colorP, 
+ body.smart-style-6 .modal .table.table-report>tfoot>tr>td.colorP {
+     background: rgb(255,153,204)!important;
+     /* color: #fff!important; */
+ }
+ 
+ .modal table.table.table-report th.colorO,
+ .modal table.table.table-report td.colorO {
+     background: rgb(255,204,153)!important;
+ }
+ 
+ .modal table.table.table-report th.colorS,
+ .modal table.table.table-report td.colorS {
+     background: rgb(0,255,255)!important;
+ }
+ 
+ .modal table.table.table-report th.colorV,
+ .modal table.table.table-report td.colorV {
+     background: rgb(204,153,255)!important;
+ }
+ 
+ .modal table.table.table-report .box-none,
+ .modal table.table.table-report .box-none {
+     border: 1px solid #fff!important;
+     background: #fff!important;
+ }
+ 
+ textarea {
+	resize: none!important;
+}
+
+/******************************************************************************
+ * COLOR
+ */
+.color-contract,
+.color-project {
+    background: rgb(255,204,153)!important;
+}
+
+/******************************************************************************
+ * 집계표
+ */
+ .table.table-summery {
+	position: absolute;
+	width: 320px;
+	border: 1px solid #000!important;
+}
+
+.table.table-summery thead th {
+	border-left: 1px solid #000!important;
+	border-bottom: 1px solid #000!important;
+	font-size: 16px!important;
+	background: #0070C0!important;
+	color: #fff!important;
+	padding: 7px!important;
+	text-align: center!important;
+}

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+	<meta charset="UTF-8">
+
+	<title>넥셀시스템</title>
+	<meta name="description" content="">
+	<meta name="author" content="NerdGeeks Co.,Ltd.">
+
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+	<!-- #FAVICONS -->
+	<link rel="shortcut icon" href="/static/nexell/img/nexell.ico" type="image/x-icon">
+	<link rel="icon" href="/static/nexell/img/nexell.ico" type="image/x-icon">
+
+	<!-- User -->
+	<link rel="stylesheet" href="/static/nexell/css/login.css">
+	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css">
+
+	<style>
+		.login-wrap .login-form .input-basic {
+			padding-left: 36px!important;
+			font-size: 24px!important;
+		}
+		.login-wrap .login-form input[type="password"] {
+			color: #000;
+		}
+		.login-wrap .login-form  button {
+			width: 100%;
+			background: #326fb2;
+			height: 58px;
+			color: #fff;
+			font-size: 18px;
+			font-weight: 500;
+			line-height: 58px;
+			border: 0;
+			border-radius: 30px;
+			-webkit-border-radius: 30px;
+		}
+		.message {
+			text-align: center;
+			padding-top: 20px;
+			color: #fcff6b;
+			font-size: 20px;
+			height: 20px;
+			font-weight: bold;
+		}
+	</style>
+
+	<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script>
+		if (!window.jQuery) {
+			document.write('<script src="/static/smart-admin/js/libs/jquery-2.1.1.min.js"><\/script>');
+		}
+	</script>
+
+    <!-- user script -->
+    <script type="text/javascript" src="/static/nexell/js/user-function.js"></script>
+    <script type="text/javascript" src="/static/nexell/js/user-form.js"></script>
+
+</head>
+<body>
+	<div class="login-wrap">
+		<div class="innerbox">
+			<h1>넥셀관리시스템</h1>
+			<div class="login-form">
+				<form id="loginForm" onSubmit="return false;">
+					<ul id="login-ul">
+						<li><label style="width:100%;"><input class="input-basic" type="text" id="member_id" name="member_id"></label></li>
+						<li><label style="width:100%;"><input class="input-basic" type="password" id="member_pwd" name="member_pwd"></label></li>
+						<li><label style="width:100%;">
+								<input type="checkbox" style="width: 20px;height: 20px;" id="idSaveCheck" name="idSaveCheck"> <span style="vertical-align: super;">아이디 기억하기</span>
+							</label>
+						</li>
+					</ul>
+					<ul style="display:none;" id="qr-ul">
+                        <li style="display:none;" id="qr-li">
+
+                            <label style="width:100%;margin-left:75px!important"><img src="" id="qr"/></label>
+                            <hr/>
+                            <p>QR 코드가 안되는 경우 <b style="color:#ff0000" id="qrcode"></b>를 입력해주세요.</p>
+                            <hr/>
+
+                        </li>
+                        <li><label style="width:100%;margin-left:30px;">Google OTP 번호를 입력하세요.</label></li>
+                        <li><label style="width:100%;"><input class="input-basic" type="text" id="member_qr" name="member_qr"></label></li>
+
+					</ul>
+
+					<button type="button" id="btnLogin" name="btnLogin" value="로그인">로그인</button>
+				</form>
+			</div>
+
+			<div class="message" id="message"></div>
+			<input type="hidden" name="member_sn" id="member_sn" value=""/>
+		</div>
+	</div>
+<!-- javascript area start ================================================ -->
+<!--
+<script type="text/javascript" src="{base_url}js/common-function.js"></script>
+-->
+<script type="text/javascript">
+$(function() {
+
+	// 저장된 쿠키값을 가져와서 ID 칸에 넣어준다. 없으면 공백으로 들어감.
+	var userInputId = getCookie("userInputId");
+    $("input[name='member_id']").val(userInputId);
+
+    if($("input[name='member_id']").val() != ""){ // 그 전에 ID를 저장해서 처음 페이지 로딩 시, 입력 칸에 저장된 ID가 표시된 상태라면,
+		$("#idSaveCheck").attr("checked", true); // ID 저장하기를 체크 상태로 두기.
+		$('#member_pwd').focus();
+    } else {
+		$('#member_id').focus();
+	}
+
+    $("#idSaveCheck").change(function(){ // 체크박스에 변화가 있다면,
+        if($("#idSaveCheck").is(":checked")){ // ID 저장하기 체크했을 때,
+            var userInputId = $("input[name='member_id']").val();
+            setCookie("userInputId", userInputId, 7); // 7일 동안 쿠키 보관
+        }else{ // ID 저장하기 체크 해제 시,
+            deleteCookie("userInputId");
+        }
+    });
+
+    // ID 저장하기를 체크한 상태에서 ID를 입력하는 경우, 이럴 때도 쿠키 저장.
+    $("input[name='member_id']").keyup(function(){ // ID 입력 칸에 ID를 입력할 때,
+        if($("#idSaveCheck").is(":checked")){ // ID 저장하기를 체크한 상태라면,
+            var userInputId = $("input[name='member_id']").val();
+            setCookie("userInputId", userInputId, 7); // 7일 동안 쿠키 보관
+        }
+    });
+
+    /**********************************************************************
+     * 로그인 버튼 클릭 이벤트 처리
+     */
+    $('#btnLogin').on('click', function(event) {
+		if($(this).val() == "로그인"){
+			var member_id = $('#member_id').val();
+			if (member_id === '') {
+				$('#message').html('아이디를 입력해주세요.');
+				$('#member_id').focus();
+				return;
+			}
+
+			var member_pwd = $('#member_pwd').val();
+			if (member_pwd === '') {
+				$('#message').html('비밀번호를 입력해주세요.');
+				$('#member_pwd').focus();
+				return;
+			}
+
+			$.ajax({
+				url: '/api/account/ajax_login',
+				type: 'POST',
+				data: getFormData($('form')[0]),
+				dataType: 'json',
+				contentType: false,
+				processData: false,
+				beforeSend: function(pJqXHR, pSettings) {
+					console.log('ajax beforeSend');
+					$('#message').html('처리중입니다...');
+				},
+				success: function(result) {
+					console.log('success', result);
+					if (result.status) {
+						$('#message').html('');
+						$("#qr-ul").show();
+						$("#login-ul").hide();
+						$("#member_sn").val(result.mber_sn);
+						if(result.mber_qr == '1'){
+							$("#qr").attr("src", result.qrCodeUrl);
+							$("#qrcode").html(result.secret);
+							$("#qr-li").show();
+
+						}
+						else{
+							$("#qr-li").hide();
+						}
+						$("#btnLogin").val("인증");
+						$("#btnLogin").text("인증");
+						$('#member_qr').focus();
+
+					} else {
+						$('#message').html('아이디 또는 비밀번호가 올바르지 않습니다.');
+						$('#member_pwd').val('');
+						$('#member_pwd').focus();
+						return;
+					}
+				},
+				error: function(pJqXHR, pTextStatus, pErrorThrown) {
+					$('#message').html('');
+					alertError(pJqXHR, pTextStatus, pErrorThrown);
+				}
+			});
+		}
+		else{
+			var member_qr = $('#member_qr').val();
+			if (member_qr === '') {
+				$('#message').html('인증번호를 입력해주세요.');
+				$('#member_qr').focus();
+				return;
+			}
+			var member_sn = $("#member_sn").val();
+			if (member_sn === '') {
+				$('#message').html('로그인에 실패하였습니다. 다시 시도해주세요.');
+				$("#qr-ul").hide();
+				$("#login-ul").show();
+				$("#btnLogin").val("로그인");
+				$("#btnLogin").text("로그인");
+				$('#member_pwd').focus();
+
+				return;
+			}
+			$.ajax({
+				url: '/api/account/qr/ajax_qr_image_off',
+				type: 'POST',
+				data: {'member_qr' : member_qr, 'member_sn' : member_sn}
+			}).done(function(pResult){
+				console.log(pResult);
+				if(pResult.status){
+					$('#message').html('로딩중...');
+					location.href = '/dashboard';
+
+				}
+				else{
+
+					$('#message').html('인증번호가 올바르지 않거나 시간이 초과되었습니다.');
+					$('#member_qr').val('');
+					$('#member_qr').focus();
+				}
+
+			});
+
+		}
+
+    });
+
+    /**********************************************************************
+     * 엔터 키 입력 이벤트 처리
+     */
+    $('#member_pwd').on('keyup', function(event) {
+        if (event.keyCode === 13) {
+            $('#btnLogin').trigger('click');
+        }
+    });
+});
+</script>
+</body>
+</html>
