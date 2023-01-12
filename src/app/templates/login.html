@@ -151,7 +151,7 @@ $(function() {
 			}
 
 			$.ajax({
-				url: '/api/account/ajax_login',
+				url: '/api/member/ajax_login',
 				type: 'POST',
 				data: getFormData($('form')[0]),
 				dataType: 'json',
@@ -213,7 +213,7 @@ $(function() {
 				return;
 			}
 			$.ajax({
-				url: '/api/account/qr/ajax_qr_image_off',
+				url: '/api/member/qr/ajax_qr_image_off',
 				type: 'POST',
 				data: {'member_qr' : member_qr, 'member_sn' : member_sn}
 			}).done(function(pResult){

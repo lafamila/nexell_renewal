@@ -188,7 +188,7 @@
 logout = function()
 {
 	$.ajax({
-		url: '/api/account/ajax_logout',
+		url: '/api/member/ajax_logout',
 		type: 'POST',
 		data: '',
 		dataType: 'json',
@@ -288,7 +288,7 @@ $(function() {
 changePassword = function()
 {
 	$.ajax({
-		url: '/api/account/ajax_change_password',
+		url: '/api/member/ajax_change_password',
 		type: 'POST',
 		data: getFormData($('#frmPassword')[0]),
 		dataType: 'json',
