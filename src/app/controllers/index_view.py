@@ -6,10 +6,18 @@ bp = Blueprint('index', __name__, url_prefix='/')
 @session_helper.session_check
 def index_page():
     # return redirect('/login')
-    print(session.keys())
     return render_template("index.html")
 
 @bp.route('/login', methods=['GET'])
 @session_helper.session_clear
 def login_page():
     return render_template("login.html")
+
+
+@bp.route('/html/printNew.html', methods=['GET'])
+def printNew():
+    return render_template("common/printNew.html")
+
+@bp.route('/dev_test', methods=['GET'])
+def dev_test():
+    return render_template("dev_test.html")

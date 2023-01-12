@@ -1,0 +1,188 @@
+<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: uses lots of memory on iDevices)-->
+<script data-pace-options='{ "restartOnRequestAfter": true }' src="/static/smart-admin/js/plugin/pace/pace.min.js"></script>
+
+<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+	if (!window.jQuery) {
+		document.write('<script src="/static/smart-admin/js/libs/jquery-2.1.1.min.js"><\/script>');
+	}
+</script> -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+	if (!window.jQuery.ui) {
+		document.write('<script src="/static/smart-admin/js/libs/jquery-ui-1.10.3.min.js"><\/script>');
+	}
+</script>
+
+<!-- IMPORTANT: APP CONFIG -->
+<script src="/static/smart-admin/js/app.config.js"></script>
+
+<!-- JS TOUCH : include this plugin for mobile drag / drop touch events-->
+<script src="/static/smart-admin/js/plugin/jquery-touch/jquery.ui.touch-punch.min.js"></script>
+
+<!-- BOOTSTRAP JS -->
+<script src="/static/smart-admin/js/bootstrap/bootstrap.min.js"></script>
+
+<!-- CUSTOM NOTIFICATION -->
+<script src="/static/smart-admin/js/notification/SmartNotification.min.js"></script>
+
+<!-- JARVIS WIDGETS -->
+<script src="/static/smart-admin/js/smartwidgets/jarvis.widget.min.js"></script>
+
+<!-- EASY PIE CHARTS -->
+<script src="/static/smart-admin/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js"></script>
+
+<!-- SPARKLINES -->
+<script src="/static/smart-admin/js/plugin/sparkline/jquery.sparkline.min.js"></script>
+
+<!-- JQUERY VALIDATE -->
+<script src="/static/smart-admin/js/plugin/jquery-validate/jquery.validate.min.js"></script>
+
+<!-- JQUERY MASKED INPUT -->
+<script src="/static/smart-admin/js/plugin/masked-input/jquery.maskedinput.min.js"></script>
+
+<!-- JQUERY SELECT2 INPUT -->
+<script src="/static/smart-admin/js/plugin/select2/select2.min.js"></script>
+
+<!-- JQUERY UI + Bootstrap Slider -->
+<script src="/static/smart-admin/js/plugin/bootstrap-slider/bootstrap-slider.min.js"></script>
+
+<!-- browser msie issue fix -->
+<script src="/static/smart-admin/js/plugin/msie-fix/jquery.mb.browser.min.js"></script>
+
+<!-- FastClick: For mobile devices -->
+<script src="/static/smart-admin/js/plugin/fastclick/fastclick.min.js"></script>
+
+<!--[if IE 8]>
+
+<h1>Your browser is out of date, please update your browser by going to www.microsoft.com/download</h1>
+
+<![endif]-->
+
+<!-- Demo purpose only -->
+<!-- <script src="/static/smart-admin/js/demo.min.js"></script> -->
+
+<!-- MAIN APP JS FILE -->
+<script src="/static/smart-admin/js/app.min.js"></script>
+
+<!-- SmartChat UI : plugin -->
+<script src="/static/smart-admin/js/smart-chat-ui/smart.chat.ui.min.js"></script>
+<script src="/static/smart-admin/js/smart-chat-ui/smart.chat.manager.min.js"></script>
+
+
+<script type="text/javascript">
+	$(function() {
+
+		/**************************************************************************
+		 * 달력 플러그인 초기화
+		 */
+		// $.fn.datepicker.dates['kr'] = {
+		// 	days: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+		// 	daysShort: ['일', '월', '화', '수', '목', '금', '토'],
+		// 	daysMin: ['일', '월', '화', '수', '목', '금', '토'],
+		// 	months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		// 	monthsShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		// 	today: '오늘',
+		// 	clear: '초기화',
+		// 	format: 'yyyy-mm-dd',
+		// 	titleFormat: 'yyyy년 MM', /* Leverages same syntax as 'format' */
+		// 	weekStart: 0,
+		// 	orientation: 'bottom auto',
+		// };
+
+		/* DO NOT REMOVE : GLOBAL FUNCTIONS!
+		 *
+		 * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
+		 *
+		 * // activate tooltips
+		 * $("[rel=tooltip]").tooltip();
+		 *
+		 * // activate popovers
+		 * $("[rel=popover]").popover();
+		 *
+		 * // activate popovers with hover states
+		 * $("[rel=popover-hover]").popover({ trigger: "hover" });
+		 *
+		 * // activate inline charts
+		 * runAllCharts();
+		 *
+		 * // setup widgets
+		 * setup_widgets_desktop();
+		 *
+		 * // run form elements
+		 * runAllForms();
+		 *
+		 ********************************
+		 *
+		 * pageSetUp() is needed whenever you load a page.
+		 * It initializes and checks for all basic elements of the page
+		 * and makes rendering easier.
+		 *
+		 */
+		pageSetUp();
+
+		/*
+		 * ALL PAGE RELATED SCRIPTS CAN GO BELOW HERE
+		 * eg alert("my home function");
+		 *
+		 * var pagefunction = function() {
+		 *   ...
+		 * }
+		 * loadScript("js/plugin/_PLUGIN_NAME_.js", pagefunction);
+		 *
+		 * TO LOAD A SCRIPT:
+		 * var pagefunction = function (){
+		 *  loadScript(".../plugin.js", run_after_loaded);
+		 * }
+		 *
+		 * OR
+		 *
+		 * loadScript(".../plugin.js", run_after_loaded);
+		 */
+
+	});
+</script>
+
+<!-- ====================================================================== -->
+
+<script src="/static/smart-admin/js/plugin/jquery-form/jquery-form.min.js"></script>
+<script src="/static/smart-admin/js/plugin/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/smart-admin/js/plugin/datatables/dataTables.colVis.min.js"></script>
+<script src="/static/smart-admin/js/plugin/datatables/dataTables.tableTools.min.js"></script>
+<script src="/static/smart-admin/js/plugin/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/static/smart-admin/js/plugin/datatable-responsive/datatables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+
+<script type="text/javascript">
+	/**************************************************************************
+	 * WIDGET INIT
+	 *
+	 * data-widget-colorbutton="false"
+	 * data-widget-editbutton="false"
+	 * data-widget-togglebutton="false"
+	 * data-widget-deletebutton="false"
+	 * data-widget-fullscreenbutton="false"
+	 * data-widget-custombutton="false"
+	 * data-widget-collapsed="true"
+	 * data-widget-sortable="false"
+	 */
+	$('#widget-grid .jarviswidget').data('widget-editbutton', false);
+	$('#widget-grid .jarviswidget').data('widget-colorbutton', false);
+	$('#widget-grid .jarviswidget').data('widget-togglebutton', false);
+	$('#widget-grid .jarviswidget').data('widget-deletebutton', false);
+	$('#widget-grid .jarviswidget').data('widget-sortable', false);
+</script>
+
+<!-- NEXELL -->
+<script src="/static/yawn-admin/_plugin/fakeLoader/fakeLoader.ext.js"></script>
+<script src="/static/yawn-admin/js/yawn-prototype-ext.js"></script>
+<script src="/static/yawn-admin/js/yawn-jquery-ext.js"></script>
+<script src="/static/nexell/js/user-form.js"></script>
+<script src="/static/nexell/js/user-function.js"></script>
+<script src="/static/nexell/js/user-plugin-init.js"></script>

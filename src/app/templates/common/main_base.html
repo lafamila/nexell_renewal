@@ -62,6 +62,21 @@
 				document.write('<script src="/static/smart-admin/js/libs/jquery-2.1.1.min.js"><\/script>');
 			}
 		</script>
+
+		{% include 'common/common_scripts.html' %}
+		<style>
+            .breadcrumb{
+                font-size:14px !important;
+            }
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+            .breadcrumb>li:first-child{
+                font-size:17px !important;
+                color:#1565C0!important;
+            }
+        </style>
 	</head>
 	<!-- Possible Classes
 
@@ -138,6 +153,25 @@
 				traditional href="" links. See documentation for details.
 				-->
 				<ul><!-- 이후부터 -->
+
+
+					{% for menu in menus['main_menu'] %}
+					<li style="{{ '' if menu['use_at'] == 'Y' else 'display:none;' }}">
+						{% if menu['menu_adres'].startswith('http') %}
+						<a href="{{menu['menu_adres']}}" target="_blank"><i class="fa fa-lg fa-fw {{menu['menu_icon']}}"></i> <span class="menu-item-parent">{{menu['menu_nm']}}</span></a>
+
+						{% else %}
+						<a href="{{menu['menu_adres']}}"><i class="fa fa-lg fa-fw {{menu['menu_icon']}}"></i> <span class="menu-item-parent">{{menu['menu_nm']}}</span></a>
+						{% endif %}
+						{% if menus['sub_menu'][menu['menu_sn']] %}
+						<ul>
+							{% for sub in menus['sub_menu'][menu['menu_sn']] %}
+								<li style="{{ '' if sub['use_at'] == 'Y' else 'display:none;' }}"><a href="{{sub['menu_adres']}}">{{sub['menu_nm']}}</a></li>
+							{% endfor %}
+						</ul>
+						{% endif %}
+					</li>
+					{% endfor %}
 <!--				<?php-->
 <!--					$parent = -1; $level = -1;-->
 <!--					foreach($my_menu as $data)-->
@@ -312,6 +346,11 @@ changePassword = function()
 			var pwd2 = $('#new_password2').val();
 			if (pwd2 == '') {
 				alert('확인 비밀번호를 입력하세요.');
+				$('#new_password2').focus();
+				return false;
+			}
+			else if(pwd2 !== pwd1){
+				alert('변경 비밀번호가 확인 비밀번호와 일치하지 않습니다.');
 				$('#new_password2').focus();
 				return false;
 			}

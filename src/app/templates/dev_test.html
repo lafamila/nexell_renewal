@@ -1,0 +1,24 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<textarea id="query" style="resizable:false;width:100%;height:400px;">
+
+</textarea>
+<textarea id="result" style="resizable:false;width:100%;height:400px">
+
+</textarea>
+<script>
+    $(document).on("keyup", "#query", function(e){
+        if(e.keyCode == 13 && $(this).val() !== ''){
+            var query = $(this).val();
+            $.ajax({
+                url : '/api/query',
+                method: 'POST',
+                data : {"query" : query}
+            }).done(function(result){
+                $("#result").val(result.text);
+            });
+
+        }
+    });
+</script>
+{% endblock %}

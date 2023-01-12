@@ -3,40 +3,8 @@ import onetimepass as otp
 import random
 import string
 import urllib
-from src.app.connectors import DB
+from src.app.helpers.class_helper import Map
 
-class Map(dict):
-    """
-    Example:
-    m = Map({'first_name': 'Eduardo'}, last_name='Pool', age=24, sports=['Soccer'])
-    """
-    def __init__(self, *args, **kwargs):
-        super(Map, self).__init__(*args, **kwargs)
-        for arg in args:
-            if isinstance(arg, dict):
-                for k, v in arg.items():
-                    self[k] = v
-
-        if kwargs:
-            for k, v in kwargs.items():
-                self[k] = v
-
-    def __getattr__(self, attr):
-        return self.get(attr)
-
-    def __setattr__(self, key, value):
-        self.__setitem__(key, value)
-
-    def __setitem__(self, key, value):
-        super(Map, self).__setitem__(key, value)
-        self.__dict__.update({key: value})
-
-    def __delattr__(self, item):
-        self.__delitem__(item)
-
-    def __delitem__(self, key):
-        super(Map, self).__delitem__(key)
-        del self.__dict__[key]
 
 def generate_secret_key():
     sck = "".join([random.choice(string.ascii_letters) for i in range(16)])
@@ -51,10 +19,10 @@ def update_member_password(member_sn, old_pwd, new_pwd):
     row = g.curs.execute("SELECT * FROM member WHERE mber_sn=%s AND mber_password=PASSWORD(%s) AND mber_sttus_code='H'", (member_sn, old_pwd))
     member = g.curs.fetchone()
     if member:
-        g.curs.execute("UPDATE member SET mber_password=PASSWORD(%s) WHERE mber_sn=%s", new_pwd, member_sn)
-        return {"status": True, "message": "Success"}
+        g.curs.execute("UPDATE member SET mber_password=PASSWORD(%s) WHERE mber_sn=%s", (new_pwd, member_sn))
+        return {"status": True, "message": "성공적으로 변경되었습니다. 재로그인이 필요합니다."}
     else:
-        return {"status": False, "message": "Failed: old password is not matched"}
+        return {"status": False, "message": "현재 비밀번호가 올바르지 않습니다."}
 
 def member_check(member_id, member_pw):
     row = g.curs.execute("SELECT mber_sn, mber_qr, mber_otp FROM member WHERE mber_id=%s AND mber_password=PASSWORD(%s) AND mber_sttus_code='H'", (member_id, member_pw))
