@@ -1,0 +1,685 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<div id="ribbon">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+    <ol class="breadcrumb">
+        <li style="">사용자 관리</li><li><span> 시스템</span></li>
+	</ol>
+</div>
+
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info">
+		<p><i class="fa-fw fa fa-info"></i>
+			시스템 사용자를 관리합니다.
+		</p>
+	</div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>사용자 목록</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="120">
+									<col width="*">
+									<col width="120">
+									<col width="240">
+									<col width="170">
+									<col width="130">
+									<col width="110">
+									<col width="140">
+									<col width="100">
+									<col width="150">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_mber_id" name="s_mber_id">
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_mber_nm" name="s_mber_nm">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_ofcps_code" name="s_ofcps_code">
+												<option value="">[전체]</option>
+												{% for code in ofcps_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_rspofc_code" name="s_rspofc_code">
+												<option value="">[전체]</option>
+												{% for code in rspofc_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_author_sn" name="s_author_sn">
+												<option value="">[전체]</option>
+												{% for code in author_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_mber_sttus_code" name="s_mber_sttus_code">
+												<option value="">[전체]</option>
+												<option value="H">H.재직</option>
+											</select>
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>아이디</th>
+										<th>이름</th>
+										<th>연락처</th>
+										<th>이메일</th>
+										<th>소속부서</th>
+										<th>직위</th>
+										<th>직책</th>
+										<th>권한</th>
+										<th>상태</th>
+										<th>마지막로그인</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+
+<script type="text/javascript">
+/******************************************************************************
+ * 사용자 목록을 조회한다.
+ */
+getMemberList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 15,
+        ajax: {
+            url: '/api/member/ajax_get_member_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_mber_id': $('#dtList1').find('#s_mber_id').val(),
+					's_mber_nm': $('#dtList1').find('#s_mber_nm').val(),
+					's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_ofcps_code': $('#dtList1').find('#s_ofcps_code').val(),
+					's_rspofc_code': $('#dtList1').find('#s_rspofc_code').val(),
+					's_author_sn': $('#dtList1').find('#s_author_sn').val(),
+					's_mber_sttus_code': $('#dtList1').find('#s_mber_sttus_code').val()
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [2, 'asc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'mber_id' },
+            { data: 'mber_nm' },
+            { data: 'mber_telno' },
+            { data: 'mber_email' },
+            { data: 'dept_nm' },
+            { data: 'ofcps_nm' },
+            { data: 'rspofc_nm' },
+            { data: 'author_nm' },
+            { data: 'mber_sttus_nm' },
+            { data: 'login_dtm' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-mber_sn="'+row.mber_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+		initComplete: function(settings, json) {
+
+			$(this).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(this).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(this).on('click', '.btnUpdate', function(pEvent) {
+				var current = pEvent.currentTarget;
+				var mber_sn = $(current).data('mber_sn');
+				getMember(mber_sn);
+			});
+
+			$(this).on('keypress', 'thead input', function(pEvent){
+				if (pEvent.keyCode === 13) {
+					$('#dtList1').find('#btnSearch').trigger('click');
+				}
+			});
+
+			$(this).on('change', 'thead select', function(pEvent){
+				$('#dtList1').find('#btnSearch').trigger('click');
+			});
+		},
+    });
+}
+
+/******************************************************************************
+ * 사용자 목록을 조회한다.
+ */
+exportExcel = function()
+{
+	$('#btnExcel').on('click', function(event) {
+        // var url = '{base_url}member/member_export/excel/'+survey_sn;
+        // var start = $('.adv-table').find('#s_answer_dtm_start').val();
+        // if (start != '') {
+        //     url += '/' + start;
+        // }
+        // var end = $('.adv-table').find('#s_answer_dtm_end').val();
+        // if (end != '') {
+        //     url += '/' + end;
+        // }
+        // window.open(url, '_download');
+    });
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     *
+     */
+	$('#btnExcel').on('click', function(pEvent)
+	{
+		$('.dt-button.buttons-excel.buttons-html5').click();
+	});
+
+	getMemberList();
+});
+</script>
+<!--########################################################################-->
+<!--# page script end                                                      #-->
+<!--########################################################################-->
+
+
+<!-- 등록/수정 레이어 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>사용자 정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button class="btn btn-primary" id="btnSave"><i class="fa fa-save"> 저장</i></button>
+						<button class="btn btn-danger" id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<input type="hidden" id="mber_sn" name="mber_sn">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="120">
+										<col width="*">
+									</colgroup>
+									<tbody>
+										<tr><th>아이디<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="mber_id" name="mber_id">
+												<!-- <div class="input-group w100p">
+													<input class="form-control" type="text" id="mber_id" name="mber_id">
+													<div class="input-group-btn">
+														<button class="btn btn-info" type="button" id="btnDupCheck">
+															중복검사
+														</button>
+													</div>
+												</div> -->
+											</td>
+										</tr>
+										<tr><th>비밀번호<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="password" id="mber_password" name="mber_password">
+											</td>
+										</tr>
+										<tr><th>이름<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="mber_nm" name="mber_nm">
+											</td>
+										</tr>
+										<tr><th>연락처</th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="mber_telno" name="mber_telno">
+											</td>
+										</tr>
+										<tr><th>휴대폰</th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="mber_moblphon" name="mber_moblphon">
+											</td>
+										</tr>
+										<tr><th>이메일</th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="mber_email" name="mber_email">
+											</td>
+										</tr>
+										<tr><th>소속부서</th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="dept_code" name="dept_code">
+													<option value="">[선택]</option>
+													{% for code in dept_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>직위</th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="ofcps_code" name="ofcps_code">
+													<option value="">[선택]</option>
+													{% for code in ofcps_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>직책</th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="rspofc_code" name="rspofc_code">
+													<option value="">[선택]</option>
+													{% for code in rspofc_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>권한<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="author_sn" name="author_sn">
+													<option value="">[선택]</option>
+													{% for code in author_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>상태<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="mber_sttus_code" name="mber_sttus_code">
+													<option value="">[선택]</option>
+													<option value="H">H.재직</option>
+												</select>
+											</td>
+										</tr>
+										<tr><th>현장관리 가능 수<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="mber_size" name="mber_size">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	if (pMode === 'insert') {
+		$('#popBox1').find('#mber_sn').val('');
+		$('#popBox1').find('#mber_id').val('');
+		$('#popBox1').find('#mber_password').val('');
+		$('#popBox1').find('#mber_nm').val('');
+		$('#popBox1').find('#mber_telno').val('');
+		$('#popBox1').find('#mber_moblphon').val('');
+		$('#popBox1').find('#mber_email').val('');
+		$('#popBox1').find('#mber_size').val('');
+		$('#popBox1').find('#dept_code').val('').trigger('change');
+		$('#popBox1').find('#ofcps_code').val('').trigger('change');
+		$('#popBox1').find('#rspofc_code').val('').trigger('change');
+		$('#popBox1').find('#author_sn').val('').trigger('change');
+		$('#popBox1').find('#mber_sttus_code').val('H').trigger('change');
+		$('#popBox1').find('#mber_id').attr('readonly', false);
+		$('#popBox1').find('#btnDupCheck').attr('disabled', false);
+		$('#popBox1').find('#btnDelete').hide();
+	} else if (pMode === 'update') {
+		$('#popBox1').find('#mber_password').val('');
+		$('#popBox1').find('#mber_id').attr('readonly', true);
+		$('#popBox1').find('#btnDupCheck').attr('disabled', true);
+		$('#popBox1').find('#btnDelete').show();
+	}
+}
+
+/******************************************************************************
+ *
+ */
+getMember = function(s_mber_sn)
+{
+	var params = '';
+	params += '&s_mber_sn=' + s_mber_sn;
+
+	$.ajax({
+		url: '/api/member/ajax_get_member',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		success: function(result) {
+			// console.log(result);
+			if (result !== undefined && result !== '') {
+				$('#popBox1').find('#mber_sn').val(result.mber_sn);
+				$('#popBox1').find('#mber_id').val(result.mber_id);
+				$('#popBox1').find('#mber_nm').val(result.mber_nm);
+				$('#popBox1').find('#mber_telno').val(result.mber_telno);
+				$('#popBox1').find('#mber_moblphon').val(result.mber_moblphon);
+				$('#popBox1').find('#mber_size').val(result.mber_size);
+				$('#popBox1').find('#mber_email').val(result.mber_email);
+				$('#popBox1').find('#dept_code').val(result.dept_code).trigger('change');
+				$('#popBox1').find('#ofcps_code').val(result.ofcps_code).trigger('change');
+				$('#popBox1').find('#rspofc_code').val(result.rspofc_code).trigger('change');
+				$('#popBox1').find('#author_sn').val(result.author_sn).trigger('change');
+				$('#popBox1').find('#mber_sttus_code').val(result.mber_sttus_code).trigger('change');
+				$('#popBox1').data('action', 'update');
+				$('#popBox1').modal('show');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 아이디
+	var mber_id = $('#popBox1').find('#mber_id').val();
+	if (result == true && fnIsEmpty(mber_id)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#mber_id').focus();
+		result = false;
+	}
+
+	if (pMode === 'insert') {
+		// 비밀번호
+		var mber_password = $('#popBox1').find('#mber_password').val();
+		if (result == true && fnIsEmpty(mber_password)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#popBox1').find('#mber_password').focus();
+			result = false;
+		}
+	}
+
+	// 이름
+	var mber_nm = $('#popBox1').find('#mber_nm').val();
+	if (result == true && fnIsEmpty(mber_nm)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#mber_nm').focus();
+		result = false;
+	}
+
+	// 권한
+	var author_sn = $('#popBox1').find('#author_sn').val();
+	if (result == true && fnIsEmpty(author_sn)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#author_sn').focus();
+		result = false;
+	}
+
+	// 상태
+	var mber_sttus_code = $('#popBox1').find('#mber_sttus_code').val();
+	if (result == true && fnIsEmpty(mber_sttus_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#mber_sttus_code').focus();
+		result = false;
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertMember = function()
+{
+	$.ajax({
+		url: '/api/member/ajax_insert_member',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(result) {
+			// console.log(result);
+			if (result.message) {
+				isDataChange = true;
+				fnAlert(result.message);
+				formReset('insert');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateMember = function()
+{
+	$.ajax({
+		url: '{base_url}member/ajax_update_member',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(result) {
+			// console.log(result);
+			if (result.message) {
+				isDataChange = true;
+				fnAlert(result.message);
+				formReset('update');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteMember = function()
+{
+	$.ajax({
+		url: '{base_url}member/ajax_delete_member',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(result) {
+			// console.log(result);
+			if (result.message) {
+				$.datatable1.ajax.reload();
+				fnAlert(result.message);
+				$('#popBox1').modal('hide');
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+			$(this).data('action', action);
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === null || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		} else {
+			formReset(action);
+		}
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		if (action === 'insert') {
+			modal.find('#mber_id').focus();
+		} else if (action === 'update') {
+			modal.find('#mber_nm').focus();
+		}
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSave', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertMember();
+		} else if (action === 'update') {
+			updateMember();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnDelete', function(pEvent) {
+		if (confirm('삭제하시겠습니까?')) {
+			deleteMember();
+		}
+	});
+});
+</script>
+{% endblock %}

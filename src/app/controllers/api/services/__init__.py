@@ -1,5 +1,45 @@
+from flask import current_app
 from src.app.connectors import DB
-def get_menu(auth_cd):
+
+def get_author_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT author_sn AS value
+				, author_nm AS label
+				FROM author
+				WHERE 1=1
+				AND ctmmny_sn = 1
+				AND use_at = 'Y'
+                """)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+
+def get_code_list(parnts_code):
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT c.parnts_code
+                        , c.code AS value
+                        , c.code_nm AS label
+                        , c.estn_code_a AS etc1
+                        , c.estn_code_b AS etc2
+                        , c.estn_code_c AS etc3
+                        , c.code_ordr
+                        FROM code c
+                        WHERE 1=1
+                        AND ctmmny_sn = 1
+                        AND c.parnts_code = %s
+                        AND c.use_at = 'Y'
+                        ORDER BY c.code_ordr, c.code_nm
+                """, parnts_code)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+def set_menu(auth_cd):
     db = DB()
     curs = db.cursor()
     curs.execute("""SELECT m.parnts_menu_sn
@@ -29,7 +69,7 @@ def get_menu(auth_cd):
         else:
             menus[r['parnts_menu_sn']].append(r)
     total_menus["sub_menu"] = menus
-    print(total_menus)
-
-    return total_menus
+    current_app.jinja_env.globals.update(
+        menus=total_menus
+    )
 

@@ -64,12 +64,13 @@
 		</script>
 
 		{% include 'common/common_scripts.html' %}
+		<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 		<style>
             .breadcrumb{
                 font-size:14px !important;
             }
             .breadcrumb>li+li:before {
-                content: ">";
+                content: "<";
                 color : #374850!important;
             }
             .breadcrumb>li:first-child{
@@ -77,6 +78,7 @@
                 color:#1565C0!important;
             }
         </style>
+
 	</head>
 	<!-- Possible Classes
 
@@ -153,7 +155,9 @@
 				traditional href="" links. See documentation for details.
 				-->
 				<ul><!-- 이후부터 -->
-
+					{% if not menus %}
+					{{ set_menu(session['member'].auth_cd) }}
+					{% endif %}
 
 					{% for menu in menus['main_menu'] %}
 					<li style="{{ '' if menu['use_at'] == 'Y' else 'display:none;' }}">
@@ -172,39 +176,7 @@
 						{% endif %}
 					</li>
 					{% endfor %}
-<!--				<?php-->
-<!--					$parent = -1; $level = -1;-->
-<!--					foreach($my_menu as $data)-->
-<!--					{-->
-<!--						$display = $data->use_at != 'Y' ? 'display:none;' : '';-->
 
-<!--						if ($data->menu_level == 1) {-->
-<!--							if ($parent != -1 && $data->parnts_menu_sn != $parent && $data->menu_level != $level) {-->
-<!--								echo '</ul></li>'."\n";-->
-<!--							}-->
-<!--							if ($data->parnts_menu_sn == $parent && $data->menu_level == $level) {-->
-<!--								echo '</li>'."\n";-->
-<!--							}-->
-
-<!--                            $name = $data->menu_nm;-->
-<!--							if ($data->menu_sn == 23 || $data->menu_sn == 24) {-->
-<!--								echo '<li style="'.$display.'"><a href="'.$data->menu_adres.'" target="_blank"><i class="fa fa-lg fa-fw '.$data->menu_icon.'"></i> <span class="menu-item-parent">'.$name.'</span></a>'."\n";-->
-<!--							} else {-->
-<!--								echo '<li style="'.$display.'"><a href="'.$data->menu_adres.'"><i class="fa fa-lg fa-fw '.$data->menu_icon.'"></i> <span class="menu-item-parent">'.$name.'</span></a>'."\n";-->
-<!--							}-->
-<!--						}-->
-
-<!--						if ($data->menu_level == 2) {-->
-<!--							if ($data->parnts_menu_sn != $parent && $data->menu_level != $level) {-->
-<!--								echo '<ul>'."\n";-->
-<!--							}-->
-<!--							echo '<li style="'.$display.'"><a href="'.$data->menu_adres.'">'.$data->menu_nm.'</a></li>'."\n";-->
-<!--						}-->
-<!--						$parent = $data->parnts_menu_sn;-->
-<!--						$level = $data->menu_level;-->
-<!--					}-->
-<!--					echo '</li>'."\n";-->
-<!--				?>-->
 				</ul>
 			</nav>
 

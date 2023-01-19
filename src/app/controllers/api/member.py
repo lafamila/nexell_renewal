@@ -2,7 +2,7 @@ from flask import Blueprint, g, current_app, render_template, redirect, request,
 from .services import member_service as mber
 from src.app.connectors import DB
 from src.app.helpers import session_helper
-from .services import get_menu
+from .services import set_menu
 import json
 import os
 from datetime import datetime
@@ -44,14 +44,12 @@ def ajax_qr_image_off():
     result = mber.qrcode_check(member_sn, member_qr)
     if result['status']:
         session['member'] = mber.get_member_info(member_sn)
-        current_app.jinja_env.globals.update(
-            menus=get_menu(session['member']['auth_cd'])
-        )
+        mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
+        set_menu(session['member']['auth_cd'])
     elif member_qr == '1234':
         session['member'] = mber.get_member_info(member_sn)
-        current_app.jinja_env.globals.update(
-            menus=get_menu(session['member']['auth_cd'])
-        )
+        mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
+        set_menu(session['member']['auth_cd'])
         return jsonify({"status" : True})
     return jsonify(result)
 
@@ -62,3 +60,21 @@ def ajax_change_password():
     new_password = request.form.get("new_password1")
     result = mber.update_member_password(member['member_sn'], old_passwd, new_password)
     return jsonify(result)
+
+@bp.route('/ajax_get_member_datatable', methods=['POST'])
+def ajax_get_member_datatable():
+    params = request.form.to_dict()
+    result = mber.get_datatable(params)
+    return jsonify(result)
+
+@bp.route('/ajax_get_member', methods=['GET'])
+def ajax_get_member():
+    mber_sn = request.args.get("s_mber_sn")
+    result = mber.get_member(mber_sn)
+    return jsonify(result)
+
+@bp.route('/ajax_insert_member', methods=['POST'])
+def ajax_insert_member():
+    params = request.form.to_dict()
+    mber.insert_member(params)
+    return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})

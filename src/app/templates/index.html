@@ -1,13 +1,125 @@
 {% extends 'common/main_base.html' %}
 {% block content %}
-<div id="ribbon" style="background:#B3E5FC!important;">
-	<span class="ribbon-button-alignment">
-		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
-			<i class="fa fa-refresh"></i>
-		</span>
-	</span>
-    <ol class="breadcrumb">
-        <li style="">홈</li><li><span> 홈</span></li>
-	</ol>
+<!--<div id="ribbon" style="background:#B3E5FC!important;">-->
+<!--	<span class="ribbon-button-alignment">-->
+<!--		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">-->
+<!--			<i class="fa fa-refresh"></i>-->
+<!--		</span>-->
+<!--	</span>-->
+<!--    <ol class="breadcrumb">-->
+<!--        <li style="">홈</li><li><span> 홈</span></li>-->
+<!--	</ol>-->
+<!--</div>-->
+<div id="content" style="padding-top:30px!important;height:calc(100vh - 138px);">
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid" class="" style="height:100%;">
+
+		<!-- row -->
+		<div class="row report" style="height:100%;">
+			<style>
+				.grid-container{
+					display:grid;
+					grid-template-columns: 300px 1fr;
+					column-gap: 20px;
+					height:100%;
+				}
+				.left-container{
+					height:100%;
+					display:grid;
+					grid-template-rows: 200px 1.5fr 1fr;
+					row-gap:15px;
+				}
+				.right-container{
+					height:100%;
+					display:grid;
+					grid-template-rows: 1fr 1fr;
+					row-gap:15px;
+				}
+				.left-container > div:first-child{
+					background-color: #002060;
+				}
+				.right-container > div{
+					border: 1px solid #333;
+				}
+				.profile-container{
+					display:grid;
+					padding-right:10px;
+					padding-left:10px;
+					grid-template-rows: 5fr 1fr;
+					color: white;
+				}
+				.profile{
+					display:grid;
+					grid-template-columns: 1fr 1fr;
+					place-items: center center;
+				}
+				.profile > img{
+					border-radius: 50%;
+					width: 80%;
+					aspect-ratio: 1.0;
+				}
+				.profile > div{
+					width: 80%;
+					display:grid;
+					grid-template-rows: 1fr 1fr 1fr;
+					place-items: start start;
+					row-gap: 10px;
+				}
+
+			</style>
+			<div class="grid-container">
+				<div class="left-container" style="font-weight: normal!important;">
+					<div class="profile-container">
+						<div class="profile">
+							<img src="https://www.w3schools.com/howto/img_avatar2.png" alt="Avatar">
+							<div>
+								<span style="font-size:15px!important;">{{session['member'].member_nm}}</span>
+								<span style="font-weight:normal!important;">부서 : <span style="font-weight:normal!important;">{{session['member'].dept_nm}}</span></span>
+								<span style="font-weight:normal!important;">직급 : <span style="font-weight:normal!important;">{{session['member'].member_level}}</span></span>
+							</div>
+						</div>
+						<div style="text-align:center;font-weight:normal!important;">
+							<i class="fa fa-clock-o" style="font-weight:normal!important;" aria-hidden="true"></i> 최근 로그인 시각 :
+							{% if session['member'].login_dtm %}
+								<span>{{session['member'].login_dtm}}</span>
+							{% else %}
+								<span>최초 로그인</span>
+							{% endif %}
+						</div>
+					</div>
+					<div id="calendar">
+					</div>
+					<div></div>
+				</div>
+				<div class="right-container">
+					<div></div>
+					<div></div>
+				</div>
+
+			</div>
+
+
+
+		</div>
+		<!-- end row -->
+	</section>
+	<!-- end widget grid -->
+
 </div>
+
+<script>
+	var db_events = [{
+		title: "Board members meeting",
+		date: new Date().getTime()
+	}];
+
+	$(document).ready(function(){
+		$("#calendar").MEC({
+			events: db_events
+		});
+		$("#calTFooter").hide();
+	});
+</script>
+
 {% endblock %}

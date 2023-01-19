@@ -6,7 +6,7 @@ bp = Blueprint('index', __name__, url_prefix='/')
 @session_helper.session_check
 def index_page():
     # return redirect('/login')
-    return render_template("index.html")
+    return render_template("index.html", title="홈 | 넥셀시스템")
 
 @bp.route('/login', methods=['GET'])
 @session_helper.session_clear
@@ -19,5 +19,6 @@ def printNew():
     return render_template("common/printNew.html")
 
 @bp.route('/dev_test', methods=['GET'])
+@session_helper.session_check
 def dev_test():
     return render_template("dev_test.html")

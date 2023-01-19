@@ -2,7 +2,7 @@ from flask import Blueprint, g, current_app, render_template, redirect, request,
 from .services import member_service as mber
 from src.app.connectors import DB
 from src.app.helpers import session_helper
-from .services import get_menu
+from .services import set_menu
 import json
 import os
 from datetime import datetime
@@ -25,8 +25,10 @@ def disconnect(response):
 def query():
     query = request.form.get("query")
     result = '"""'
-    for line in query.split("\n"):
+    for i, line in enumerate(query.split("\n")):
         if len(line.strip()) > 0:
+            if i > 0:
+                result += '\t\t\t\t'
             result += line.strip().replace("$sql", "").replace('.=', '').replace('"', '').replace(";", "").strip() + "\n"
     result += '"""'
     return jsonify({"text" : result})
