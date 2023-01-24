@@ -17,7 +17,7 @@ def history_login(view_title, view_action, member_sn, member_id):
     return {"status": True}
 
 def insert_member(params):
-    query = """"""
+    query = """INSERT INTO member(ctmmny_sn, mber_id, mber_password, mber_nm, mber_telno, mber_mob)"""
 def get_member(member_sn):
     query = """SELECT ctmmny_sn
                 , mber_sn
