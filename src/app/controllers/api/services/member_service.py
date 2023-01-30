@@ -6,7 +6,7 @@ import urllib
 import datetime
 from src.app.helpers.class_helper import Map
 from src.app.helpers.datatable_helper import dt_query
-
+from collections import OrderedDict
 
 def generate_secret_key():
     sck = "".join([random.choice(string.ascii_letters) for i in range(16)])
@@ -16,8 +16,42 @@ def history_login(view_title, view_action, member_sn, member_id):
     row = g.curs.execute("""INSERT INTO history(client_sn, member_sn, view_title, view_path, view_action, regist_dtm, register_id) VALUES (1, %s, %s, '/', %s, NOW(), %s)""", (member_sn, view_title, view_action, member_id))
     return {"status": True}
 
+def update_member(params):
+    required = ("mber_password", )
+    mber_sn = params["mber_sn"]
+
+    data = OrderedDict()
+    for key in params:
+        if key not in ("mber_sn"):
+            if key in required:
+                if params[key] != '':
+                    data[key] = key
+            else:
+                data[key] = params[key]
+    sub_query = ["{0}=%({0})s".format(key) if key != "mber_password" else "{0}=password(%({0})s)".format(key) for key in data]
+    query = """UPDATE member SET {} WHERE mber_sn=%(mber_sn)s""".format(",".join(sub_query))
+    g.curs.execute(query, params)
+
 def insert_member(params):
-    query = """INSERT INTO member(ctmmny_sn, mber_id, mber_password, mber_nm, mber_telno, mber_mob)"""
+    data = OrderedDict()
+    for key in params:
+        if key not in ("mber_sn"):
+            data[key] = params[key]
+    if "ctmmny_sn" not in data:
+        data["ctmmny_sn"] = 1
+
+    if "regist_dtm" not in data:
+        data["regist_dtm"] = datetime.datetime.now()
+
+    if "register_id" not in data:
+        data["register_id"] = session["member"]["member_id"]
+
+    sub_query = [key for key in data]
+    params_query = ["%({})s".format(key) for key in data]
+
+    query = """INSERT INTO member({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data)
+
 def get_member(member_sn):
     query = """SELECT ctmmny_sn
                 , mber_sn
@@ -52,6 +86,7 @@ def get_member_info(member_sn):
     , (SELECT MAX(regist_dtm) as login_dtm FROM history WHERE member_sn=m.mber_sn AND view_title='로그인' GROUP BY mber_sn, view_title) AS login_dtm
     FROM member m LEFT JOIN ctmmny c ON m.ctmmny_sn = c.ctmmny_sn WHERE m.mber_sn=%s""", (member_sn, ))
     member = g.curs.fetchone()
+    ...
     for key in member:
         if type(member[key]) is datetime.datetime:
             member[key] = member[key].strftime("%Y-%m-%d %H:%M:%S")
@@ -74,7 +109,7 @@ def member_check(member_id, member_pw):
         secret_key = member['mber_otp']
         member_sn = member['mber_sn']
         member_qr = member['mber_qr']
-        if secret_key == '':
+        if secret_key == '' or secret_key is None:
             secret_key = generate_secret_key()
             g.curs.execute("UPDATE member SET mber_otp=%s WHERE mber_sn=%s", (secret_key, member_sn))
 
@@ -133,7 +168,7 @@ def get_datatable(params):
 
     if "s_mber_id" in params and params['s_mber_id']:
         query += " AND mber_id=%s"
-        data.append(params["s_author_sn"])
+        data.append(params["s_mber_id"])
     if "s_mber_nm" in params and params['s_mber_nm']:
         query += " AND mber_nm LIKE %s"
         data.append('%{}%'.format(params["s_mber_nm"]))

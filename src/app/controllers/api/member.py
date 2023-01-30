@@ -7,7 +7,7 @@ import json
 import os
 from datetime import datetime
 
-bp = Blueprint('api', __name__, url_prefix='/api/member')
+bp = Blueprint('api_member', __name__, url_prefix='/api/member')
 @bp.before_request
 def connect():
     g.db = DB()
@@ -78,3 +78,8 @@ def ajax_insert_member():
     params = request.form.to_dict()
     mber.insert_member(params)
     return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
+@bp.route('/ajax_update_member', methods=['POST'])
+def ajax_update_member():
+    params = request.form.to_dict()
+    mber.update_member(params)
+    return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})

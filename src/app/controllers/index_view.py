@@ -22,3 +22,8 @@ def printNew():
 @session_helper.session_check
 def dev_test():
     return render_template("dev_test.html")
+
+@bp.route('/dev_test2', methods=['GET'])
+@session_helper.session_check
+def dev_test2():
+    return render_template("dev_test2.html")

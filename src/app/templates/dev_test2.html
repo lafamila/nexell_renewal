@@ -1,0 +1,105 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<div style="width:100%;height:100vh;">
+  <style>
+    #table tr, #table td{
+      border: 1px solid black;
+    }
+    #table input[type=text]{
+      width:100%;
+      height:100%;
+    }
+    #table .done{
+      background-color: #0e70ca;
+    }
+  </style>
+  <table id="table" style="width:49%;float:left;border:1px solid #eee;">
+    <thead></thead>
+    <tbody>
+      <tr data-row="1">
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="checkbox" /> </td>
+      </tr>
+      <tr data-row="2">
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="checkbox" /> </td>
+      </tr>
+    </tbody>
+  </table>
+  <textarea id="result" style="resizable:false;width:49%;height:100%;float:right;">
+
+  </textarea>
+
+</div>
+<script>
+  $(document).ready(function(){
+    $(document).find("#table input").eq(0).focus();
+  });
+  var enter = false;
+    $(document).on("keyup", "#table input", function(e){
+        if(e.keyCode == 13){
+          console.log(enter);
+          let this_row = $(this).parent().parent().data("row");
+          let trs = $("#table tbody tr");
+          let last_row = trs.eq(trs.length-1).data("row");
+          if(enter){
+            clearTimeout(window.next);
+            let total_data = [];
+            $.each(trs, function(pIndex, pRow){
+              let row = $(pRow).data("row");
+              let column = $(pRow).find("input").eq(1).val();
+              let data = $(pRow).find("input").eq(0).val();
+              let isLike = $(pRow).find("input").eq(2).is(":checked");
+              if(column != '' && data != ''){
+                $(pRow).addClass("done");
+                total_data.push({"column" : column, "data" : data, "like" : isLike});
+              }
+
+            });
+            $.ajax({
+              url : '/api/subquery',
+              type : 'POST',
+              data: JSON.stringify(total_data),
+              contentType: "application/json; charset=utf-8",
+              dataType: "JSON"
+            }).done(function(pResult){
+              $("#result").val(pResult.text);
+            });
+
+
+
+            enter = false;
+          }
+          else{
+            enter = true;
+            window.next = setTimeout(function(){
+              enter = false;
+
+
+              if(this_row == last_row){
+                let row = parseInt(this_row) + 1;
+                let html = `<tr data-row="${row}">
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                    <td><input type="checkbox" /> </td>
+                                  </tr>
+                            `;
+                $("#table tbody").append(html);
+                $(`#table tbody tr[data-row='${row}'] td`).eq(0).find("input").focus();
+              }
+              else{
+                let row = parseInt(this_row) + 1;
+                $(`#table tbody tr[data-row='${row}'] td`).eq(0).find("input").focus();
+              }
+            }, 200);
+
+          }
+
+
+
+        }
+    });
+</script>
+{% endblock %}

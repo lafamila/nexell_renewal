@@ -1,10 +1,58 @@
 import pymysql
 import os
+import decimal
+import datetime
 DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT', "3306")
 DB_SCHEME = os.getenv('DB_SCHEME')
+
+class Cursor:
+    def __init__(self, cursor):
+        self.cursor = cursor
+
+    def execute(self, query, params=tuple()):
+        return self.cursor.execute(query, params)
+
+    def fetchone(self):
+        result = self.cursor.fetchone()
+        for key, obj in result.items():
+
+            if isinstance(obj, datetime.datetime):
+                result[key] = obj.strftime('%Y-%m-%d')
+
+            if isinstance(obj, datetime.date):
+                result[key] = obj.strftime('%Y-%m-%d')
+
+            if obj is None:
+                result[key] = ""
+
+        return result
+
+    def fetchall(self):
+        result = self.cursor.fetchall()
+        for r in result:
+            for key, obj in r.items():
+                if isinstance(obj, decimal.Decimal):
+                    r[key] = float(obj)
+
+                if isinstance(obj, datetime.datetime):
+                    r[key] = obj.strftime('%Y-%m-%d')
+                if isinstance(obj, datetime.date):
+                    r[key] = obj.strftime('%Y-%m-%d')
+                if obj is None:
+                    r[key] = ""
+        return result
+
+    @property
+    def lastrowid(self):
+        return self.cursor.lastrowid
+
+    def close(self):
+        self.cursor.close()
+
+
 
 class DB:
     def __init__(self):
@@ -15,7 +63,7 @@ class DB:
 
     def cursor(self):
         curs = self.conn.cursor(pymysql.cursors.DictCursor)
-        return curs
+        return Cursor(curs)
 
     def reconnect(self):
         if self.is_connected():

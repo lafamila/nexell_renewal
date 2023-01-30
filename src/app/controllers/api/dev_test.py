@@ -32,3 +32,19 @@ def query():
             result += line.strip().replace("$sql", "").replace('.=', '').replace('"', '').replace(";", "").strip() + "\n"
     result += '"""'
     return jsonify({"text" : result})
+
+@bp.route('/subquery', methods=['POST'])
+def subquery():
+    data = request.get_json()
+    result = ""
+    for d in data:
+        if not d['like']:
+            result += """    if "{0}" in params and params['{0}']:
+        query += " AND {1}=%s"
+        data.append(params["{0}"])""".format(d["data"], d["column"])
+        else:
+            result += """    if "{0}" in params and params['{0}']:
+        query += " AND {1} LIKE %s"
+        data.append('%{{}}%'.format(params["{0}"]))""".format(d["data"], d["column"])
+        result += "\n\n"
+    return jsonify({"text" : result})

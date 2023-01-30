@@ -1,0 +1,1863 @@
+{% extends 'common/report_base.html' %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReportNR">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report" id="exportExcelNR">
+
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReportNR{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+</style>
+
+                <div class="title"><span name="alte" style="vertical-align:bottom;">※사전입찰 확정 후 7일이내 프로젝트 작성<span name="blank" style="font-size:15px!important;font-weight:bold!important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>&nbsp;<h2 class="colorLS">프로젝트 보고서 (공조)</h2>&nbsp;<span name="alte" style="vertical-align:bottom;"><span name="blank" style="font-size:15px!important;font-weight:bold!important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>※공사완료 후 7일이내 마감/유보 결재</span></div>
+
+
+
+<table id="report_contract">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="225">
+		<col width="150">
+		<col width="225">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="6">계약관리 보고서 (영업/자동)</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="color-contract">계약번호</th>
+			<td id="manage_no"></td>
+			<th class="color-contract">작성일</th>
+			<td id="regist_dtm"></td>
+			<th class="color-contract">계약일</th>
+			<td id="cntrct_de"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">거래처명</th>
+			<td id="bcnc_nm"></td>
+			<th class="color-contract">공사기간</th>
+			<td id="cntrwk_period" colspan="3"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">현장명</th>
+			<td id="spt_nm"></td>
+			<th class="color-contract">현장주소</th>
+			<td id="spt_adres" colspan="3"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">넥셀영업담당</th>
+			<td id="bsn_chrg_nm"></td>
+			<th class="color-contract">넥셀현장담당</th>
+			<td id="spt_chrg_nm" colspan="3"></td>
+		</tr>
+<!--
+        <tr>
+			<th class="color-contract">프로젝트 유형</th>
+			<td></td>
+			<th class="color-contract">프로젝트 생성여부</th>
+			<td colspan="3"></td>
+		</tr>
+-->
+	</tbody>
+	<tfoot>
+	</tfoot>
+</table>
+<table id="report_project">
+	<colgroup>
+		<col width="150">
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="150">
+
+		<col width="200">
+		<col width="25">
+		<col width="150">
+		<col width="25">
+		<col width="200">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="10">프로젝트 진행 예정 보고서 (영업/자동)</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky" rowspan="2">본사담당</th>
+			<th class="colorSky">담당자명</th>
+			<th class="colorSky">휴대폰</th>
+			<th class="colorSky">유선전화</th>
+			<th class="colorSky" rowspan="2">거래처담당</th>
+			<th class="colorSky">담당자명</th>
+			<th class="colorSky" colspan="3">휴대폰</th>
+			<th class="colorSky">유선전화</th>
+		</tr>
+		<tr>
+			<td id="charger_nm1">-</td>
+			<td id="charger_moblphon1"></td>
+			<td id="charger_telno1"></td>
+			<td id="charger_nm2">-</td>
+			<td id="charger_moblphon2" colspan="3"></td>
+			<td id="charger_telno2"></td>
+		</tr>
+<!--
+		<tr>
+			<th class="colorSky">장비내역</th>
+			<td colspan="9" id="eqpmn_dtls"></td>
+		</tr>
+-->
+		<tr>
+			<th class="colorSky">장비/공사내역</th>
+			<td colspan="3" id="cntrwk_dtls"></td>
+			<th class="colorSky">계약DC(%)</th>
+            <td id="cntrct_dscnt_rt" colspan="2"></td>
+			<th class="colorSky">품의DC(%)</th>
+            <td id="cnsul_dscnt_rt" colspan="2"></td>
+		</tr>
+        <tr>
+            <th class="colorSky">도면작업자</th>
+			<td id="drw_opertor_nm" colspan="3"></td>
+			<th class="colorSky">실적신고</th>
+            <td id="acmslt_sttemnt_at" colspan="2"></td>
+			<th class="colorSky">건설공사대장</th>
+            <td id="cntwrk_regstr_ennc" colspan="2"></td>
+        </tr>
+        <tr>
+			<th class="colorSky">관리사</th>
+			<th class="colorSky">담당자명</th>
+			<th class="colorSky">휴대폰</th>
+			<th class="colorSky">유선전화</th>
+			<th class="colorSky">관리사</th>
+			<th class="colorSky">담당자명</th>
+			<th class="colorSky" colspan="3">휴대폰</th>
+			<th class="colorSky">유선전화</th>
+		</tr>
+
+		<tr>
+			<th class="colorSky">도면품질지도사</th>
+			<td id="charger_nm3"></td>
+			<td id="charger_moblphon3"></td>
+			<td id="charger_telno3"></td>
+			<th class="colorSky">현장품질관리사</th>
+			<td id="charger_nm4"></td>
+			<td id="charger_moblphon4" colspan="3"></td>
+			<td id="charger_telno4"></td>
+		</tr>
+		<tr>
+			<th class="colorSky">현장관리자</th>
+			<td id="charger_nm5"></td>
+			<td id="charger_moblphon5"></td>
+			<td id="charger_telno5"></td>
+			<th class="colorSky">설치팀장</th>
+			<td id="charger_nm6"></td>
+			<td id="charger_moblphon6" colspan="3"></td>
+			<td id="charger_telno6"></td>
+		</tr>
+	</tbody>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable3">
+	<colgroup>
+		<col width="145">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="*">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="7">공사비 산출 및 대금 입금방법 (영업/자동) - VAT 포함</th>
+		</tr>
+	</thead>
+	<tbody id="cCostList">
+		<tr>
+			<th class="colorSky">설치공사금액산출</th>
+			<th class="colorSky">실내기대수</th>
+			<th class="colorSky">대당단가</th>
+			<th class="colorSky">공급가액</th>
+			<th class="colorSky">세액</th>
+			<th class="colorSky">합계</th>
+			<th class="colorSky">공사비총액</th>
+		</tr>
+		<tr>
+			<td class="text-center" id="cCost5_model_no"></td>
+			<td class="text-number" id="cCost5_qy"></td>
+			<td class="text-number" id="cCost5_amt"></td>
+			<td class="text-number" id="cCost5_amt_total"></td>
+			<td class="text-number" id="cCost5_vat_total"></td>
+			<td class="text-number" id="cCost5_sum"></td>
+			<td class="text-number" id="cCost5_total"></td>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<th class="colorSky" colspan="1">결제방법(1)</th>
+			<td class="text-left" colspan="6" id="setle_mth"></td>
+		</tr>
+		<tr>
+			<th class="colorSky" colspan="1">결제방법(2)</th>
+			<th class="colorSky" colspan="3">금액</th>
+			<th class="colorSky" colspan="2">일자</th>
+			<th class="colorSky">비고(특이사항)</th>
+		</tr>
+		<tr>
+			<th class="colorSky" colspan="1">계약금</th>
+			<td class="text-number" colspan="3" id="enty"></td>
+			<td colspan="2" id="enty_de"></td>
+			<td id="enty_rm"></td>
+		</tr>
+		<tr>
+			<th class="colorSky" colspan="1">중도금</th>
+			<td class="text-number" colspan="3" id="prtpay"></td>
+			<td colspan="2" id="prtpay_de"></td>
+			<td id="prtpay_rm"></td>
+		</tr>
+		<tr>
+			<th class="colorSky" colspan="1">잔금</th>
+			<td class="text-number" colspan="3" id="surlus"></td>
+			<td colspan="2" id="surlus_de"></td>
+			<td id="surlus_rm"></td>
+		</tr>
+	</tbody>
+</table>
+<table id="report_patrol">
+	<colgroup>
+		<col width="150">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="110">
+		<col width="120">
+		<col width="70">
+		<col width="70">
+		<col width="140">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="colorN text-center">투찰(사전입찰)</th>
+			<th class="colorSky">삼성장비매입금액</th>
+			<th class="colorSky">타사매입</th>
+			<th class="colorSky">설치비</th>
+			<th class="colorSky">로지텍자재</th>
+			<th class="colorSky">기타자재</th>
+			<th class="colorSky">옵션행사비</th>
+			<th class="colorSky">간접비</th>
+			<th class="colorSky">기타</th>
+			<th class="colorSky">M,S/H</th>
+			<th class="colorSky" colspan="3">총액</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky">㉠ 예정가</th>
+			<td class="text-number" id="aCost1"></td>
+			<td class="text-number" id="aCost2"></td>
+			<td class="text-number" id="aCost5"></td>
+			<td class="text-number" id="aCost3"></td>
+			<td class="text-number" id="aCost4"></td>
+			<td class="text-number" id="aCost7"></td>
+			<td class="text-number" id="aCost8"></td>
+			<td class="text-number" id="aCost10"></td>
+			<td class="text-number" id="aCost61"></td>
+			<th class="text-number colorY" id="aCostTotal" colspan="3"></th>
+		</tr>
+		<tr>
+			<th class="colorSky">실행가</th>
+			<td class="text-number" id="bCost1"></td>
+			<td class="text-number" id="bCost2"></td>
+			<td class="text-number" id="bCost5"></td>
+			<td class="text-number" id="bCost3"></td>
+			<td class="text-number" id="bCost4"></td>
+			<td class="text-number" id="bCost7"></td>
+			<td class="text-number" id="bCost8"></td>
+			<td class="text-number" id="bCost10"></td>
+			<td class="text-number" id="bCost61"></td>
+			<td class="text-number color0" id="bCostTotal" colspan="3"></td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<th class="colorSky">차액</th>
+			<td class="text-number" id="sCost1"></td>
+			<td class="text-number" id="sCost2"></td>
+			<td class="text-number" id="sCost5"></td>
+			<td class="text-number" id="sCost3"></td>
+			<td class="text-number" id="sCost4"></td>
+			<td class="text-number" id="sCost7"></td>
+			<td class="text-number footer" id="sCost8"></td>
+			<td class="text-number" id="sCost10"></td>
+			<td class="text-number" id="sCost61"></td>
+			<th class="colorLP">VA</th>
+			<td class="text-number" id="sCost11"></td>
+			<th class="text-number colorY" id="sCostTotal"></th>
+		</tr>
+	</tfoot>
+</table>
+
+<!-- ---------------------------------------------------------------------- -->
+<table id="report_plan">
+	<colgroup>
+		<col width="150">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="110">
+		<col width="120">
+		<col width="120">
+		<col width="70">
+		<col width="70">
+		<col width="120">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="colorN text-center">계약(예정공사비)</th>
+			<th class="colorSky">삼성장비매입금액</th>
+			<th class="colorSky">타사매입</th>
+			<th class="colorSky">설치비</th>
+			<th class="colorSky">로지텍자재</th>
+			<th class="colorSky">기타자재</th>
+			<th class="colorSky">옵션행사비</th>
+			<th class="colorSky">간접비</th>
+			<th class="colorSky">기타</th>
+			<th class="colorSky">M,S/H</th>
+			<th class="colorG">설계변경</th>
+			<th class="colorP" colspan="3">총액</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky">㉡ 계약가</th>
+			<td class="text-number" id="cCost1"></td>
+			<td class="text-number" id="cCost2"></td>
+			<td class="text-number" id="cCost5"></td>
+			<td class="text-number" id="cCost3"></td>
+			<td class="text-number" id="cCost4"></td>
+			<td class="text-number" id="cCost7"></td>
+			<td class="text-number" id="cCost8"></td>
+			<td class="text-number" id="cCost10"></td>
+			<td class="text-number" id="cCost61"></td>
+			<td class="text-number" id="cCost99"></td>
+			<th class="text-number colorY" id="cCostTotal" colspan="3"></th>
+		</tr>
+		<tr>
+			<th class="colorSky">실행가</th>
+			<td class="text-number" id="eCost1"></td>
+			<td class="text-number" id="eCost2"></td>
+			<td class="text-number" id="eCost5"></td>
+			<td class="text-number" id="eCost3"></td>
+			<td class="text-number" id="eCost4"></td>
+			<td class="text-number" id="eCost7"></td>
+			<td class="text-number" id="eCost8"></td>
+			<td class="text-number" id="eCost10"></td>
+			<td class="text-number" id="eCost61"></td>
+			<td class="text-number" id="eCost99"></td>
+			<td class="text-number color0" id="eCostTotal" colspan="3"></td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<th class="colorSky">차액</th>
+			<td class="text-number" id="tCost1"></td>
+			<td class="text-number" id="tCost2"></td>
+			<td class="text-number" id="tCost5"></td>
+			<td class="text-number" id="tCost3"></td>
+			<td class="text-number" id="tCost4"></td>
+			<td class="text-number" id="tCost7"></td>
+			<td class="text-number footer" id="tCost8"></td>
+			<td class="text-number" id="tCost10"></td>
+			<td class="text-number" id="tCost61"></td>
+			<td class="text-number" id="tCost99"></td>
+			<th class="colorLP">VA</th>
+			<td class="text-number color0" id="tCost11"></td>
+			<th class="text-number colorY" id="tCostTotal"></th>
+		</tr>
+	</tfoot>
+</table><!-- ---------------------------------------------------------------------- -->
+<table id="report_exec">
+	<colgroup>
+		<col width="145">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="11">결산내역 (관리) - VAT포함</th>
+		</tr>
+		<tr>
+			<th class="colorP">공사비(계약)총액</th>
+			<th class="colorP">입금합계</th>
+			<th class="colorP">① 삼성장비매입금액</th>
+			<th class="colorP">② 타사매입</th>
+			<th class="colorP">③ 설치비</th>
+			<th class="colorP">④ 로지텍자재</th>
+			<th class="colorP">⑤ 기타자재</th>
+			<th class="colorP">⑥ 기타비용(0.5% 이상), 옵션행사비</th>
+			<th class="colorP">⑦ M,S/H</th>
+			<th class="colorP" colspan="2">VA(%)</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+		<tr>
+			<td class="text-number colorP"></td>
+			<th class="text-number colorP"></th>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+		</tr>
+	</tbody>
+</table>
+<table id="report_biss">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tbody>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="9">협력업체 현황</th>
+		</tr>
+		<tr>
+			<th class="colorG">계약이행증권</th>
+			<th class="colorG">국세,지방세</th>
+			<th class="colorG">직불적용(2억이상)</th>
+			<th class="colorG">하자이행증권</th>
+			<th class="colorG">실명제라벨</th>
+			<th class="colorG">준공도면</th>
+			<th class="colorG">S-NET</th>
+			<th class="colorG">준공현장정보</th>
+			<th class="colorP">마지막기성</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+		<tr>
+			<td class="text-center" id="biss_a"></td>
+			<td class="text-center" id="biss_b"></td>
+			<td class="text-center" id="biss_c"></td>
+			<td class="text-center" id="biss_d"></td>
+			<td class="text-center" id="biss_e"></td>
+			<td class="text-center" id="biss_f"></td>
+			<td class="text-center" id="biss_g"></td>
+			<td class="text-center" id="biss_h"></td>
+			<td class="text-center" id="biss_i"></td>
+		</tr>
+	</tbody>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rcppay_status">
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="2">입금현황 (관리) - VAT포함</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+	</tbody>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable7">
+	<colgroup>
+		<col width="145">
+		<col width="*">
+	</colgroup>
+	<tbody class="">
+		<tr>
+			<th class="sub-title colorN text-center" colspan="12">① 삼성장비매입금액 (관리/자동) - VAT포함</th>
+		</tr>
+		<tr>
+			<th class="colorG" colspan="1" rowspan="3">출고일</th>
+			<th class="colorG" colspan="1" rowspan="3">모델명</th>
+			<th class="colorG" colspan="7">본사견적가(장비)</th>
+			<th class="colorG" colspan="1" rowspan="3">판매금액</th>
+			<th class="colorG" colspan="1" rowspan="3">이익금/수수료</th>
+			<th class="colorG" colspan="1" rowspan="3">매입처</th>
+		</tr>
+		<tr>
+			<th class="colorG" colspan="5">수량</th>
+			<th class="colorG" colspan="1" rowspan="2">매입단가</th>
+			<th class="colorG" colspan="1" rowspan="2">매입금액</th>
+		</tr>
+		<tr>
+			<th class="colorG" colspan="1">실내기</th>
+			<th class="colorG" colspan="1">실외기</th>
+			<th class="colorG" colspan="1">분기관</th>
+			<th class="colorG" colspan="1">판넬</th>
+			<th class="colorG" colspan="1">기타</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+	<tfoot>
+		<th class="colorG" colspan="2">합계</th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorP"></th>
+		<th class="text-number colorG"></th>
+		<th class="text-number colorG"></th>
+		<th class="colorG"></th>
+	</tfoot>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable8">
+	<colgroup>
+		<col width="145">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="9">② 타사매입 (관리/자동) - VAT포함</th>
+		</tr>
+		<tr>
+			<th class="colorG" colspan="1" rowspan="2">출고일</th>
+			<th class="colorG" colspan="1" rowspan="2">상품명</th>
+			<th class="colorG" colspan="1" rowspan="2">모델명</th>
+			<th class="colorG" colspan="3">타사매입분</th>
+			<th class="colorG" rowspan="2">판매금액</th>
+			<th class="colorG" rowspan="2">이익금/수수료</th>
+			<th class="colorG" rowspan="2">매입처</th>
+		</tr>
+		<tr>
+			<th class="colorG" colspan="1">수량</th>
+			<th class="colorG" colspan="1">매입단가</th>
+			<th class="colorG" colspan="1">매입금액</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+	<tfoot>
+		<tr>
+			<th class="colorG total" colspan="2">합계</th>
+			<th class="colorG total"></th>
+			<th class="colorG text-number total"></th>
+			<th class="colorG text-number total"></th>
+			<th class="colorP text-number total"></th>
+			<th class="colorG text-number total"></th>
+			<th class="colorG text-number total"></th>
+			<th class="colorG total"></th>
+		</tr>
+	</tfoot>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable9">
+	<colgroup>
+		<col width="145">
+		<col width="214">
+		<col width="214">
+		<col width="214">
+		<col width="145">
+		<col width="*">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="7">③ 설치비 산출 및 지급내역 (영업,관리/자동) - VAT포함</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable10">
+	<colgroup>
+		<col width="145">
+		<col width="130">
+		<col width="200">
+		<col width="130">
+		<col width="130">
+		<col width="130">
+		<col width="130">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8">④ 로지텍 자재 (관리/자동) - VAT포함</th>
+		</tr>
+		<tr>
+			<th class="colorG">날짜</th>
+			<th class="colorG">품목</th>
+			<th class="colorG">매입처</th>
+			<th class="colorG">로지텍 매입금액</th>
+			<th class="colorG">공급가액</th>
+			<th class="colorG">부가세</th>
+			<th class="colorG">합계</th>
+			<th class="colorG">비고</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+	<tfoot>
+		<tr>
+			<th class="colorG">합계</th>
+			<th class="colorG"></th>
+			<th class="colorG"></th>
+			<th class="text-number colorG"></th>
+			<th class="text-number colorG"></th>
+			<th class="text-number colorG"></th>
+			<th class="text-number colorP"></th>
+			<th class="colorG"></th>
+		</tr>
+	</tfoot>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable11">
+	<colgroup>
+		<col width="145">
+		<col width="130">
+		<col width="200">
+		<col width="130">
+		<col width="130">
+		<col width="130">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="7">⑤ 기타 자재 (관리/자동) - VAT포함</th>
+		</tr>
+		<tr>
+			<th class="colorG">날짜</th>
+			<th class="colorG">품목</th>
+			<th class="colorG">매입처</th>
+			<th class="colorG">공급가액</th>
+			<th class="colorG">부가세</th>
+			<th class="colorG">합계</th>
+			<th class="colorG">비고</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+	<tfoot>
+		<tr>
+			<th class="colorG">합계</th>
+			<th class="colorG"></th>
+			<th class="colorG"></th>
+			<th class="text-number colorG"></th>
+			<th class="text-number colorG"></th>
+			<th class="text-number colorP"></th>
+			<th class="colorG"></th>
+		</tr>
+	</tfoot>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable12">
+	<colgroup>
+		<col width="145">
+		<col width="150">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="5">⑥ 기타비용(0.5% 이상), 옵션행사비 (자동) - VAT포함</th>
+		</tr>
+		<tr>
+			<th class="colorY">일자</th>
+			<th class="colorY">계정과목</th>
+			<th class="colorY">내역</th>
+			<th class="colorY">지출자</th>
+			<th class="colorY">금액</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+	<tfoot>
+		<tr>
+			<th class="colorY">합계</th>
+			<th class="colorY"></th>
+			<th class="colorY"></th>
+			<th class="colorY"></th>
+			<th class="colorP text-number"></th>
+		</tr>
+	</tfoot>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table>
+	<tbody role="header">
+		<tr>
+			<th class="sub-title colorN text-center" colspan="10">⑦ M,S/H 비용 (자동) - VAT포함</th>
+		</tr>
+	</tbody>
+	<tbody role="body1">
+
+		<table id="rptTable14"><!--모델하우스-->
+			<colgroup>
+				<col width="145">
+				<col width="*">
+			</colgroup>
+			<tbody class="">
+				<tr>
+					<th class="colorG" colspan="1" rowspan="3">출고일</th>
+					<th class="colorG" colspan="1" rowspan="3">모델명</th>
+					<th class="colorG" colspan="7">본사견적가(장비)</th>
+					<th class="colorG" colspan="1" rowspan="3">매입처</th>
+					<th class="color-contract" colspan="1" rowspan="3">회수일</th>
+					<th class="color-contract" colspan="1" rowspan="3">수량</th>
+					<th class="colorG" colspan="1" rowspan="3">비고</th>
+				</tr>
+				<tr>
+					<th class="colorG" colspan="5">수량</th>
+					<th class="colorG" colspan="1" rowspan="2">매입단가</th>
+					<th class="colorG" colspan="1" rowspan="2">매입금액</th>
+				</tr>
+				<tr>
+					<th class="colorG" colspan="1">실내기</th>
+					<th class="colorG" colspan="1">실외기</th>
+					<th class="colorG" colspan="1">분기관</th>
+					<th class="colorG" colspan="1">판넬</th>
+					<th class="colorG" colspan="1">기타</th>
+				</tr>
+			</tbody>
+			<tbody role="body"></tbody>
+			<tfoot>
+				<th class="colorG" colspan="2">합계</th>
+				<th class="text-number colorG"></th>
+				<th class="text-number colorG"></th>
+				<th class="text-number colorG"></th>
+				<th class="text-number colorG"></th>
+				<th class="text-number colorG"></th>
+				<th class="text-number colorG"></th>
+				<th class="text-number colorP"></th>
+				<th class="colorG"></th>
+				<th class="color-contract"></th>
+				<th class="text-number color-contract"></th>
+				<th class="colorG"></th>
+			</tfoot>
+		</table>
+
+	</tbody>
+	<tbody role="body2">
+
+		<table id="rptTable13">
+			<colgroup>
+				<col width="145">
+				<col width="*">
+			</colgroup>
+
+			<thead>
+                <tr>
+                    <th class="sub-title colorN text-center" colspan="13">현장 참고사항 (자동) - VAT포함</th>
+                </tr>
+                <tr>
+					<th class="color-contract">구분</th>
+					<th class="color-contract">세대수</th>
+					<th class="color-contract">분양세대</th>
+					<th class="color-contract">분양률</th>
+					<th class="color-contract">옵션 채택</th>
+					<th class="color-contract">옵션률</th>
+					<th class="color-contract">추정계약금액</th>
+					<th class="color-contract">추정집행금액</th>
+					<th class="color-contract">M/H건립비(장비+설치비)</th>
+					<th class="color-contract">옵션행사 비용</th>
+					<th class="color-contract">투입비용 합계</th>
+					<th class="color-contract" colspan="2">VA(%)</th>
+				</tr>
+
+			</thead>
+			<tbody>
+
+            </tbody>
+			<tfoot>
+				<tr>
+					<th class="color-contract">특이사항</th>
+					<td class="text-left" style="vertical-align: top!important;word-break:break-all!important;" colspan="12" id="partclr_matter">
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+
+	</tbody>
+</table>
+
+<!-- <div id="img-out"></div> -->
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<!-- 레포트1 레이어 팝업 끝 -->
+
+<script>
+    $(document).ready(function(){
+    	$.ajax({
+		url: '/api/project/ajax_get_reportNR',
+		type: 'GET',
+		data: {{ params | tojson | safe}},
+		success: function(pResult) {
+			console.log('getReportNR', pResult);
+			if (pResult.status) {
+				var contract = pResult.contract;
+				var project = pResult.project;
+				var charger = pResult.charger;
+
+				$('#popReportNR').find('td').html('');
+
+				/* 프로젝트 기본 정보 */
+				/* ********************************************************* */
+				$('#popReportNR').find('#manage_no').html(contract.cntrct_no); //관리자,관리번호
+				$('#popReportNR').find('#regist_dtm').html(contract.regist_dtm); //작성일
+				$('#popReportNR').find('#bsn_chrg_nm').html(contract.bsn_chrg_nm); //영업담당
+				$('#popReportNR').find('#spt_chrg_nm').html(contract.spt_chrg_nm); //공무담당
+				$('#popReportNR').find('#cntrct_de').html(contract.cntrct_de); //계약일
+				$('#popReportNR').find('#bcnc_nm').html(contract.bcnc_nm); //거래처
+				$('#popReportNR').find('#spt_nm').html(contract.spt_nm); //현장명
+				$('#popReportNR').find('#cntrwk_period').html(contract.cntrwk_period); //공사기간
+
+                $('#popReportNR').find('#biss_a').html(biss2text(contract.biss_a));
+                $('#popReportNR').find('#biss_b').html(biss2text(contract.biss_b));
+                $('#popReportNR').find('#biss_c').html(biss2text(contract.biss_c));
+                $('#popReportNR').find('#biss_d').html(biss2text(contract.biss_d));
+                $('#popReportNR').find('#biss_e').html(biss2text(contract.biss_e));
+                $('#popReportNR').find('#biss_f').html(biss2text(contract.biss_f));
+                $('#popReportNR').find('#biss_g').html(biss2text(contract.biss_g));
+                $('#popReportNR').find('#biss_h').html(biss2text(contract.biss_h));
+                $('#popReportNR').find('#biss_i').html(biss2text(contract.biss_i));
+
+
+				$('#popReportNR').find('#spt_adres').html(contract.spt_adres); //현장주소
+				$('#popReportNR').find('#eqpmn_dtls').html(project.eqpmn_dtls); //장비내역
+				$('#popReportNR').find('#cntrwk_dtls').html(project.cntrwk_dtls); //공사내역
+				$('#popReportNR').find('#drw_opertor_nm').html(project.drw_opertor_nm); //도면작업자
+				$('#popReportNR').find('#acmslt_sttemnt_at').html(project.acmslt_sttemnt_at); //실적신고
+				$('#popReportNR').find('#cntwrk_regstr_ennc').html(project.cntwrk_regstr_ennc); //건설공사대장
+
+				$.each(charger, function(pIndex, pValue) { //담당자정보
+					$('#popReportNR').find('#charger_sn'+pValue.charger_se_code).html(pValue.charger_sn);
+					$('#popReportNR').find('#charger_nm'+pValue.charger_se_code).html(pValue.charger_nm);
+					$('#popReportNR').find('#charger_telno'+pValue.charger_se_code).html(pValue.charger_telno);
+					$('#popReportNR').find('#charger_moblphon'+pValue.charger_se_code).html(pValue.charger_moblphon);
+				});
+				/* ********************************************************* */
+
+                /* 프로젝트 진행 투찰 예정 보고서(영업) */
+				/* ********************************************************* */
+				var bCostList = pResult.bCostList, cCostTotal = 0, eCostTotal = 0;
+				console.log('bCostList', bCostList);
+				$.each(bCostList, function(pIndex, pValue) {
+					var amount = 0;
+					if (pValue.amount != '') { amount = parseInt(pValue.amount); }
+					if (pValue.cntrct_execut_code == 'B') // 계약
+					{
+						cCostTotal += amount;
+						$('#popReportNR').find('#aCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+					}
+					else if (pValue.cntrct_execut_code == 'D') // 실행
+					{
+						eCostTotal += amount;
+						$('#popReportNR').find('#bCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+					}
+				});
+
+//				if (cCostTotal != 0) {
+					$('#popReportNR').find('#aCostTotal').html(cCostTotal.toString().toFormat('NUMBER'));
+
+//				}
+//				if (eCostTotal != 0) {
+					$('#popReportNR').find('#bCostTotal').html(eCostTotal.toString().toFormat('NUMBER'));
+//				}
+
+				// 차액
+				var tCost = [];
+				var trList = $('#report_patrol').find('tbody tr');
+				$.each(trList, function(pIndex, pValue) {
+					var tdList = $(pValue).find('td');
+					console.log('tdList', tdList);
+					if (pIndex == 0) {
+						$.each(tdList, function(pIndex, pValue) {
+							var tmp = $(pValue).html().replaceAll(',', '');
+							if (tmp != '') {
+								tCost[pIndex] = parseInt(tmp);
+							} else {
+								tCost[pIndex] = 0;
+							}
+						});
+					} else {
+						$.each(tdList, function(pIndex, pValue) {
+							var tmp = $(pValue).html().replaceAll(',', '');
+							if (tmp != '') {
+								tCost[pIndex] -= parseInt(tmp);
+							} else {
+								tCost[pIndex] -= 0;
+							}
+						});
+					}
+				});
+				console.log('sCost', tCost);
+				var thList = $('#report_patrol').find('tfoot tr td');
+				$.each(thList, function(pIndex, pValue) {
+                    if(pIndex >= 9){
+                        return false;
+                    }
+					console.log('sCost['+pIndex+']', tCost[pIndex]);
+					if (tCost[pIndex]!==null) {
+						$(pValue).html(tCost[pIndex].toString().toFormat('NUMBER'));
+                    }
+				});
+
+				var tCostTotal = cCostTotal - eCostTotal;
+				$('#popReportNR').find('#sCostTotal').html(tCostTotal.toString().toFormat('NUMBER'));
+                $('#popReportNR').find('#sCost11').html((tCostTotal*100.0/cCostTotal).toFixed(1)+'%')
+                if(cCostTotal == 0 && eCostTotal == 0){
+                    $('#report_patrol').hide();
+                }
+                else{
+                    $('#report_patrol').show();
+                }
+
+				/* 프로젝트 진행 예정 보고서(영업) */
+				/* ********************************************************* */
+				var aCostList = pResult.aCostList, cCostTotal = 0, eCostTotal = 0;
+				console.log('aCostList', aCostList);
+				$.each(aCostList, function(pIndex, pValue) {
+					var amount = 0;
+					if (pValue.amount != '') { amount = parseInt(pValue.amount); }
+					if (pValue.cntrct_execut_code == 'C') // 계약
+					{
+						cCostTotal += amount;
+						$('#popReportNR').find('#cCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+					}
+					else if (pValue.cntrct_execut_code == 'E') // 실행
+					{
+						eCostTotal += amount;
+						$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+					}
+				});
+
+				var extraCostList = pResult.extraCostList;
+				console.log('aCostList', extraCostList);
+				$.each(extraCostList, function(pIndex, pValue) {
+					var amount = 0;
+					if (pValue.amount != '') { amount = parseInt(pValue.amount); }
+					if (pValue.cntrct_execut_code == 'C') // 계약
+					{
+						cCostTotal += amount;
+						$('#popReportNR').find('#cCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+					}
+					else if (pValue.cntrct_execut_code == 'E') // 실행
+					{
+						eCostTotal += amount;
+						$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+					}
+				});
+
+//				if (cCostTotal != 0) {
+					$('#popReportNR').find('#cCostTotal').html(cCostTotal.toString().toFormat('NUMBER'));
+					$('#popReportNR').find('#report_exec tbody[role=body] td:eq(0)').html(cCostTotal.toString().toFormat('NUMBER'));
+//				}
+//				if (eCostTotal != 0) {
+					$('#popReportNR').find('#eCostTotal').html(eCostTotal.toString().toFormat('NUMBER'));
+//				}
+
+				// 차액
+				var tCost = [];
+				var trList = $('#report_plan').find('tbody tr');
+				$.each(trList, function(pIndex, pValue) {
+					var tdList = $(pValue).find('td');
+					console.log('tdList', tdList);
+					if (pIndex == 0) {
+						$.each(tdList, function(pIndex, pValue) {
+							var tmp = $(pValue).html().replaceAll(',', '');
+							if (tmp != '') {
+								tCost[pIndex] = parseInt(tmp);
+							} else {
+								tCost[pIndex] = 0;
+							}
+						});
+					} else {
+						$.each(tdList, function(pIndex, pValue) {
+							var tmp = $(pValue).html().replaceAll(',', '');
+							if (tmp != '') {
+								tCost[pIndex] -= parseInt(tmp);
+							} else {
+								tCost[pIndex] -= 0;
+							}
+						});
+					}
+				});
+				console.log('tCost', tCost);
+				var thList = $('#report_plan').find('tfoot tr td');
+				$.each(thList, function(pIndex, pValue) {
+					console.log('tCost[pIndex]', tCost[pIndex]);
+                    if(pIndex >= 10){
+                        return false;
+                    }
+
+					if (tCost[pIndex]!==null) {
+						$(pValue).html(tCost[pIndex].toString().toFormat('NUMBER'));
+					}
+				});
+
+				var tCostTotal = cCostTotal - eCostTotal;
+				$('#popReportNR').find('#tCostTotal').html(tCostTotal.toString().toFormat('NUMBER'));
+
+				if (project.cntrct_dscnt_rt != 0) { //계약할인율
+					$('#popReportNR').find('#cntrct_dscnt_rt').html(project.cntrct_dscnt_rt+'%');
+				}
+				if (project.cnsul_dscnt_rt != 0) { //품의할인율
+					$('#popReportNR').find('#cnsul_dscnt_rt').html(project.cnsul_dscnt_rt+'%');
+				}
+				if (cCostTotal != 0 && tCost.length != 0) { //VA
+					var tmp = (tCostTotal/cCostTotal)*100;
+					$('#popReportNR').find('#tCost11').html(tmp.toFixed(1)+'%');
+				}
+				/* ********************************************************* */
+
+				/* 공사비 산출 및 대금 입금방법 */
+				/* ********************************************************* */
+				var cCost5 = pResult.c5CostList[0];
+                var cCost5_total = 0;
+				if (cCost5) {
+					var cCost5_amt = cCost5.amount/1.1;
+					var cCost5_amt_total = cCost5_amt * cCost5.qy;
+					var cCost5_vat_total = cCost5_amt_total / 10;
+					var cCost5_sum = cCost5_amt_total + cCost5_vat_total;
+					html += '<tr> ';
+					html += '	<th class="colorSky">설치공사금액산출</th> ';
+					html += '	<th class="colorSky">실내기대수</th> ';
+					html += '	<th class="colorSky">대당단가</th> ';
+					html += '	<th class="colorSky">공급가액</th> ';
+					html += '	<th class="colorSky">세액</th> ';
+					html += '	<th class="colorSky">합계</th> ';
+					html += '	<th class="colorSky">공사비총액</th> ';
+					html += '</tr> ';
+					html += '<tr> ';
+					html += '	<td class="text-center" id="cCost5_qy">'+cCost5.model_no+'</td> ';
+					html += '	<td class="text-number" id="cCost5_qy">'+cCost5.qy.toString().toFormat('NUMBER')+'</td> ';
+					html += '	<td class="text-number" id="cCost5_amt">'+Math.round(cCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+					html += '	<td class="text-number" id="cCost5_amt_total">'+cCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+					html += '	<td class="text-number" id="cCost5_vat_total">'+cCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+					html += '	<td class="text-number" id="cCost5_sum">'+cCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+					cCost5_total += cCost5_sum;
+					html += '	<td class="text-number" rowspan="'+pResult.c5CostList.length+'" id="cCost5_total">'+cCost5_total+'</td> ';
+					html += '</tr> ';
+					$.each(pResult.c5CostList, function(pIndex, pValue){
+						if (pIndex != 0) {
+							var cCost5_amt = pValue.amount/1.1;
+							var cCost5_amt_total = cCost5_amt * pValue.qy;
+							var cCost5_vat_total = cCost5_amt_total / 10;
+							var cCost5_sum = cCost5_amt_total + cCost5_vat_total;
+							html += '<tr> ';
+							html += '	<td class="text-center">'+pValue.model_no+'</td> ';
+							html += '	<td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td> ';
+							html += '	<td class="text-number">'+Math.round(cCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+							html += '	<td class="text-number">'+cCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+							html += '	<td class="text-number">'+cCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+							html += '	<td class="text-number">'+cCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+							html += '</tr> ';
+                            cCost5_total += cCost5_sum;
+						}
+					});
+					$('#popReportNR').find('#cCostList').html(html);
+                    $('#popReportNR').find('#cCost5_total').html(cCost5_total.toString().toFormat('NUMBER'));
+				}
+
+				$('#popReportNR').find('#enty').html(project.enty.toString().toFormat('NUMBER')); //계약금
+				$('#popReportNR').find('#enty_de').html(project.enty_de); //계약금일자
+				$('#popReportNR').find('#enty_rm').html(project.enty_rm); //계약금비고
+				$('#popReportNR').find('#prtpay').html(project.prtpay.toString().toFormat('NUMBER')); //중도금
+				$('#popReportNR').find('#prtpay_de').html(project.prtpay_de); //중도금일자
+				$('#popReportNR').find('#prtpay_rm').html(project.prtpay_rm); //중도금비고
+				$('#popReportNR').find('#surlus').html(project.surlus.toString().toFormat('NUMBER')); //잔금
+				$('#popReportNR').find('#surlus_de').html(project.surlus_de); //잔금일자
+				$('#popReportNR').find('#surlus_rm').html(project.surlus_rm); //잔금비고
+				$('#popReportNR').find('#setle_mth').html(project.setle_mth); //결제방법(2)
+				/* ********************************************************* */
+
+				/* 입금현황 */
+				/* ********************************************************* */
+				var html = '';
+                var amt_tot = 0;
+				$.each(pResult.rcppayList, function(pIndex, pValue) {
+					console.log('pResult.rcppayList', pValue);
+					var sTaxbilList = pValue.sTaxbilList;
+					var iRcppayList = pValue.iRcppayList;
+					html += '<tr>';
+					html += '    <th style="width:53%;padding:0px!important;vertical-align:top!important;">';
+					html += '        <table style="border:0px!important;">';
+					html += '            <colgroup>';
+					html += '                <col width="143">';
+					html += '                <col width="160">';
+					html += '                <col width="160">';
+					html += '                <col width="160">';
+					html += '                <col width="*">';
+					html += '            </colgroup>';
+					html += '            <thead>';
+					html += '                <tr>';
+					html += '                    <th class="colorG">세금계산서일자</th>';
+					html += '                    <th class="colorG">공급가액</th>';
+					html += '                    <th class="colorG">부가세</th>';
+					html += '                    <th class="colorG">합계</th>';
+					html += '                    <th class="colorG">발행업체</th>';
+					html += '                </tr>';
+					html += '            </thead>';
+					html += '            <tbody role="body">';
+
+					var splpc_am_total = 0, vat_total = 0, sum_total = 0;
+					$.each(sTaxbilList, function(pIndex, pValue) {
+						html += '<tr class="colorW">';
+						html += '    <td>'+pValue.pblicte_de+'</td>';
+						html += '    <td class="text-number">'+pValue.splpc_am.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.vat.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.total.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td>'+pValue.pblicte_trget_nm+'</td>';
+						html += '</tr>';
+						splpc_am_total += parseInt(pValue.splpc_am);
+						vat_total += parseInt(pValue.vat);
+						sum_total += parseInt(pValue.total);
+					});
+					if (sTaxbilList.length < iRcppayList.length) {
+						var max = iRcppayList.length - sTaxbilList.length;
+						for (i=0; i<max; i++) {
+							html += '<tr class="colorW">';
+							html += '    <td>-</td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '</tr>';
+						}
+					}
+
+					html += '            </tbody>';
+					html += '            <tfoot>';
+					html += '                <tr>';
+					html += '                    <th class="colorG">합계</th>';
+					html += '                    <th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorG text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorG text-number"></th>';
+					html += '                </tr>';
+					html += '            </tfoot>';
+					html += '        </table>';
+					html += '    </th>';
+					html += '    <th style="width:47%;padding:0px!important;vertical-align:top!important;">';
+					html += '        <table style="border:0px!important;">';
+					html += '            <colgroup>';
+					html += '                <col width="130">';
+					html += '                <col width="160">';
+					html += '                <col width="160">';
+					html += '                <col width="100">';
+					html += '                <col width="*">';
+					html += '            </colgroup>';
+					html += '            <thead>';
+					html += '                <tr>';
+					html += '                    <th class="colorY">입금일자</th>';
+					html += '                    <th class="colorY">금액</th>';
+					html += '                    <th class="colorY">잔액</th>';
+					html += '                    <th class="colorY">수금율</th>';
+					html += '                    <th class="colorY">수금내역</th>';
+					html += '                </tr>';
+					html += '            </thead>';
+					html += '            <tbody role="body">';
+
+					var iRcppay_sub = cCostTotal, iRcppay_rate = 0.0;
+					var amount_total = 0, sub_total = 0, rate_total = 0.0;
+					$.each(iRcppayList, function(pIndex, pValue) {
+						if (pIndex == 0) { iRcppay_sub = pValue.cntrct_amount; }
+						iRcppay_sub -= parseInt(pValue.amount);
+						iRcppay_rate = ((pValue.cntrct_amount-iRcppay_sub)/pValue.cntrct_amount)*100;
+						html += '<tr class="colorW">';
+						html += '    <td>'+pValue.rcppay_de+'</td>';
+						html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+iRcppay_sub.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+iRcppay_rate.toFixed(1)+'%</td>';
+						html += '    <td>'+pValue.rcppay_dtls+'</td>';
+						html += '</tr>';
+						amount_total += parseInt(pValue.amount);
+						sub_total = iRcppay_sub;
+						rate_total = iRcppay_rate;
+					});
+					if (iRcppayList.length < sTaxbilList.length) {
+						var max = sTaxbilList.length - iRcppayList.length;
+						for (i=0; i<max; i++) {
+							html += '<tr class="colorW">';
+							html += '    <td>-</td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '</tr>';
+						}
+					}
+
+					html += '            </tbody>';
+					html += '            <tfoot>';
+					html += '                <tr>';
+					html += '                    <th class="colorY">합계</th>';
+					html += '                    <th class="colorP text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorY text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorY text-number">'+rate_total.toFixed(1)+'%</th>';
+					html += '                    <th class="colorY text-number"></th>';
+					html += '                </tr>';
+					html += '            </tfoot>';
+					html += '        </table>';
+					html += '    </th>';
+					html += '</tr>';
+                    amt_tot += amount_total;
+				});
+                $('#popReportNR').find('#report_exec tbody[role=body] th:eq(0)').html(amt_tot.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rcppay_status tbody[role=body]').html(html);
+				/* ********************************************************* */
+
+				/* 삼성장비매입금액(삼성) */
+				/* ********************************************************* */
+				var html = '';
+				var s1AccountList = pResult.s1AccountList;
+				var dlnt1_total = 0, dlnt2_total = 0, dlnt3_total = 0, dlnt4_total = 0, dlnt9_total = 0;
+				var p_sum_total = 0, s_sum_total = 0, va_total = 0;
+				$.each(s1AccountList, function(pIndex, pValue) {
+					var va = parseInt(pValue.s_total) - parseInt(pValue.p_total);
+					html += '<tr>';
+					html += '    <td class="">'+pValue.s_dlivy_de+'</td>';
+					html += '    <td class="">'+pValue.s_model_no+'</td>';
+					html += '    <td class=" text-number">'+pValue.dlnt1.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.dlnt2.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.dlnt3.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.dlnt4.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.dlnt9.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.p_total.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.s_total.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+va.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
+					html += '</tr>';
+					if (pValue.dlnt1 != '') dlnt1_total += parseInt(pValue.dlnt1);
+					if (pValue.dlnt2 != '') dlnt2_total += parseInt(pValue.dlnt2);
+					if (pValue.dlnt3 != '') dlnt3_total += parseInt(pValue.dlnt3);
+					if (pValue.dlnt4 != '') dlnt4_total += parseInt(pValue.dlnt4);
+					if (pValue.dlnt9 != '') dlnt9_total += parseInt(pValue.dlnt9);
+					p_sum_total += parseInt(pValue.p_total);
+					s_sum_total += parseInt(pValue.s_total);
+					va_total += va;
+				});
+				$('#popReportNR').find('#rptTable7 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(1)').html(dlnt1_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(2)').html(dlnt2_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(3)').html(dlnt3_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(4)').html(dlnt4_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(5)').html(dlnt9_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(7)').html(p_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(8)').html(s_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable7 tfoot th:eq(9)').html(va_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* 장비매입금액(타사) */
+				/* ********************************************************* */
+				var html = '';
+				var s2AccountList = pResult.s2AccountList;
+				var dlnt_total = 0, p_sum_total = 0, s_sum_total = 0, va_total = 0;
+				$.each(s2AccountList, function(pIndex, pValue) {
+					var va = parseInt(pValue.s_total) - parseInt(pValue.p_total);
+					html += '<tr>';
+					html += '    <td class="">'+pValue.dlivy_de+'</td>';
+					html += '    <td class="">'+pValue.prdlst_se_nm+'</td>';
+					html += '    <td class="">'+pValue.model_no+'</td>';
+					html += '    <td class=" text-number">'+pValue.dlnt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.p_total.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+pValue.s_total.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+va.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
+					html += '</tr>';
+					dlnt_total += parseInt(pValue.dlnt);
+					p_sum_total += parseInt(pValue.p_total);
+					s_sum_total += parseInt(pValue.s_total);
+					va_total += va;
+				});
+				$('#popReportNR').find('#rptTable8 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable8 tfoot th:eq(2)').html(dlnt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable8 tfoot th:eq(4)').html(p_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable8 tfoot th:eq(5)').html(s_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable8 tfoot th:eq(6)').html(va_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(2)').html(p_sum_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* 설치비 산출 및 지급내역 */
+				/* ********************************************************* */
+				var html = '';
+				var outsrcList = pResult.outsrcList;
+				var all_amt_total = 0;
+                var all_sum_total = 0;
+				$.each(outsrcList, function(pIndex, pValue) {
+					html += '<tr>';
+					html += '    <th class="color-contract">도급계약사-'+(pIndex+1)+'</th>';
+					html += '    <td colspan="3">'+pValue.outsrc_fo_nm+'</td>';
+					html += '    <th class="color-contract">도급계약일</th>';
+					html += '    <td colspan="2">'+pValue.cntrct_de+'</td>';
+					html += '</tr>';
+					html += '<tr>';
+					html += '    <th class="color-contract">업무총책임자</th>';
+					html += '    <td colspan="3">'+pValue.rspnber_nm+'</td>';
+					html += '    <th class="color-contract">연락처</th>';
+					html += '    <td colspan="2">'+pValue.rspnber_telno+'</td>';
+					html += '</tr>';
+					html += '<tr>';
+					html += '    <th class="color-contract">담당자</th>';
+					html += '    <td colspan="3">'+pValue.charger_nm+'</td>';
+					html += '    <th class="color-contract">연락처</th>';
+					html += '    <td colspan="2">'+pValue.charger_telno+'</td>';
+					html += '</tr>';
+					html += '<tr>';
+					html += '    <th class="color-contract">도급업체선정근거</th>';
+					html += '    <td colspan="3">'+pValue.pymnt_mth+'</td>';
+					html += '    <th class="color-contract">이행증권내역</th>';
+					html += '    <td colspan="2">'+pValue.outsrc_dtls+'</td>';
+					html += '</tr>';
+					html += '<tr> ';
+					html += '	<th class="color-contract">설치비</th> ';
+					html += '	<th class="color-contract">실내기대수</th> ';
+					html += '	<th class="color-contract">대당단가</th> ';
+					html += '	<th class="color-contract">공급가액</th> ';
+					html += '	<th class="color-contract">세액</th> ';
+					html += '	<th class="color-contract">합계</th> ';
+					html += '	<th class="color-contract">공사비총액</th> ';
+					html += '</tr> ';
+
+					var eCost5 = pValue.e5CostList[0];
+					if (eCost5) {
+						var eCost5_amt = eCost5.amount/1.1;
+						var eCost5_amt_total = eCost5_amt * eCost5.qy;
+						var eCost5_vat_total = eCost5_amt_total / 10;
+						var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
+						console.log('eCost5', eCost5, eCost5_amt);
+						html += '<tr> ';
+						html += '	<td class="text-center" id="eCost5_qy">'+eCost5.model_no+'</td> ';
+						html += '	<td class="text-number" id="eCost5_qy">'+eCost5.qy.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_amt">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" rowspan="'+pValue.e5CostList.length+'">'+eCost5.total.toString().toFormat('NUMBER')+'</td> ';
+						html += '</tr> ';
+						$.each(pValue.e5CostList, function(pIndex, pValue){
+							if (pIndex != 0) {
+								var eCost5_amt = pValue.amount/1.1;
+								var eCost5_amt_total = eCost5_amt * pValue.qy;
+								var eCost5_vat_total = eCost5_amt_total / 10;
+								var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
+								html += '<tr> ';
+								html += '	<td class="text-center">'+pValue.model_no+'</td> ';
+								html += '	<td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+								html += '</tr> ';
+							}
+						});
+					}
+
+					html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;">';
+					//매입계산서
+					var pTaxbilList = pValue.taxbilList;
+					var splpc_am_total = 0, vat_total = 0, sum_total = 0;
+					html += '<table style="width:100%;border:0px!important;">';
+					html += '<colgroup>';
+					html += '	<col width="143">';
+					html += '	<col width="*">';
+					html += '	<col width="*">';
+					html += '	<col width="*">';
+					html += '	<col width="*">';
+					html += '</colgroup>';
+					html += '<thead>';
+					html += '	<tr>';
+					html += '		<th class="colorG">세금계산서일자</th>';
+					html += '		<th class="colorG">공급가액</th>';
+					html += '		<th class="colorG">부가세</th>';
+					html += '		<th class="colorG">합계</th>';
+					html += '		<th class="colorG">발행업체</th>';
+					html += '	</tr>';
+					html += '</thead>';
+					html += '<tbody>';
+					$.each(pTaxbilList, function(pIndex, pValue) {
+						html += '<tr>';
+						html += '    <td>'+pValue.pblicte_de+'</td>';
+						html += '    <td class="text-number">'+pValue.splpc_am.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.vat.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+(pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total)).toString().toFormat('NUMBER')+'</td>';
+						html += '    <td>'+pValue.pblicte_trget_nm+'</td>';
+						html += '</tr>';
+						splpc_am_total += parseInt(pValue.splpc_am);
+						vat_total += pValue.vat == '' ? 0 : parseInt(pValue.vat);
+						sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+					});
+					if (pValue.taxbilList.length < pValue.rcppayList.length) {
+						var max = pValue.rcppayList.length - pValue.taxbilList.length
+						for (i=0; i<max; i++) {
+							html += '<tr>';
+							html += '    <td>-</td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '</tr>';
+						}
+					}
+					html += '</tbody>';
+					html += '<tfoot>';
+					html += '	<tr>';
+					html += '		<th class="colorG">합계</th>';
+					html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number"></th>';
+					html += '	</tr>';
+					html += '</tfoot>';
+					html += '</table>';
+					html += '</td>';
+                    all_sum_total += sum_total;
+					//지급내역
+					html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
+					var oRcppayList = pValue.rcppayList;
+					var eCostTotal = 0, iRcppay_sub = 0, iRcppay_rate = 0.0;
+					if (eCost5 != undefined) {
+						eCostTotal = eCost5.total;
+						iRcppay_sub = eCost5.total;
+					}
+					var amount_total = 0, sub_total = 0, rate_total = 0.0;
+					html += '<table style="width:100%;border:0px!important;">';
+					html += '<colgroup>';
+					html += '	<col width="129">';
+					html += '	<col width="*">';
+					html += '	<col width="*">';
+					html += '	<col width="*">';
+					html += '	<col width="*">';
+					html += '</colgroup>';
+					html += '<thead>';
+					html += '	<tr>';
+					html += '		<th class="colorY">지급일자</th>';
+					html += '		<th class="colorY">금액</th>';
+					html += '		<th class="colorY">잔액</th>';
+					html += '		<th class="colorY">지급율</th>';
+					html += '		<th class="colorY">지급내역</th>';
+					html += '	</tr>';
+					html += '</thead>';
+					html += '<tbody>';
+					$.each(oRcppayList, function(pIndex, pValue) {
+						iRcppay_sub -= parseInt(pValue.amount);
+						iRcppay_rate = ((eCostTotal-iRcppay_sub)/eCostTotal)*100;
+						html += '<tr>';
+						html += '    <td>'+pValue.rcppay_de+'</td>';
+						html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+iRcppay_sub.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+iRcppay_rate.toFixed(1)+'%</td>';
+						html += '    <td>'+pValue.rcppay_dtls+'</td>';
+						html += '</tr>';
+						amount_total += parseInt(pValue.amount);
+						sub_total = iRcppay_sub;
+						rate_total = iRcppay_rate;
+					});
+					if (pValue.rcppayList.length < pValue.taxbilList.length) {
+						var max = pValue.taxbilList.length - pValue.rcppayList.length
+						for (i=0; i<max; i++) {
+							html += '<tr>';
+							html += '    <td>-</td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '    <td></td>';
+							html += '</tr>';
+						}
+					}
+					html += '</tbody>';
+					html += '<tfoot>';
+					html += '	<tr>';
+					html += '		<th class="colorY">합계</th>';
+					html += '		<th class="colorY text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorY text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorY text-number">'+rate_total.toFixed(1)+'%'+'</th>';
+					html += '		<th class="colorY text-number"></th>';
+					html += '	</tr>';
+					html += '</tfoot>';
+					html += '</table>';
+					html += '</td></tr>';
+					all_amt_total += amount_total;
+				});
+				$('#popReportNR').find('#rptTable9 tbody[role=body]').html(html);
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(3)').html(all_sum_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* 로지텍자재 */
+				/* ********************************************************* */
+				var html = '';
+				var s3AccountList = pResult.s3AccountList;
+				var amt_total = 0, vat_total = 0, sum_total = 0, pamt_total = 0;
+				$.each(s3AccountList, function(pIndex, pValue) {
+					var amt = Math.round(pValue.s_total/1.1);
+					var vat = Math.round(amt/10);
+					var sum = parseInt(pValue.s_total);
+                    var pamt = Math.round(parseInt(pValue.p_total));
+
+					html += '<tr>';
+					html += '    <td class="">'+pValue.dlivy_de+'</td>';
+					html += '    <td class="">'+pValue.prdlst_se_nm+'</td>';
+					html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
+					html += '    <td class=" text-number">'+pamt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+vat.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="">'+pValue.rm+'</td>';
+					html += '</tr>';
+					amt_total += parseInt(amt);
+					vat_total += parseInt(vat);
+					sum_total += parseInt(sum);
+                    pamt_total += parseInt(pamt);
+				});
+				$('#popReportNR').find('#rptTable10 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable10 tfoot th:eq(3)').html(pamt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable10 tfoot th:eq(4)').html(amt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable10 tfoot th:eq(5)').html(vat_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable10 tfoot th:eq(6)').html(sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* 기타자재 */
+				/* ********************************************************* */
+				var html = '';
+				var s4AccountList = pResult.s4AccountList;
+				var amt_total = 0, vat_total = 0, sum_total = 0;
+				$.each(s4AccountList, function(pIndex, pValue) {
+					var amt = Math.round(pValue.p_total/1.1);
+					var vat = Math.round(amt/10);
+					var sum = parseInt(pValue.p_total);
+					html += '<tr>';
+					html += '    <td class="">'+pValue.dlivy_de+'</td>';
+					html += '    <td class="">'+pValue.prdlst_se_nm+'</td>';
+					html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
+					html += '    <td class=" text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+vat.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="">'+pValue.rm+'</td>';
+					html += '</tr>';
+					amt_total += parseInt(amt);
+					vat_total += parseInt(vat);
+					sum_total += parseInt(sum);
+				});
+				$('#popReportNR').find('#rptTable11 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable11 tfoot th:eq(3)').html(amt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable11 tfoot th:eq(4)').html(vat_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable11 tfoot th:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* 기타 */
+				/* ********************************************************* */
+				var html = '';
+				var etcRcppayList = pResult.etcRcppayList;
+				var amt_total = 0;
+				$.each(etcRcppayList, function(pIndex, pValue) {
+					var amt = parseInt(pValue.amount);
+					html += '<tr>';
+					html += '    <td class="">'+pValue.rcppay_de+'</td>';
+					html += '    <td class="">'+pValue.acntctgr_nm+'</td>';
+					html += '    <td class="text-left">'+pValue.rcppay_dtls+'</td>';
+					html += '    <td class="">'+pValue.papr_invstmnt_nm+'</td>';
+					html += '    <td class=" text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
+					html += '</tr>';
+					amt_total += parseInt(amt);
+				});
+
+//				var etcCardList = pResult.etcCardList;
+//                $.each(etcCardList, function(pIndex, pValue) {
+//					var amt = parseInt(pValue.amount);
+//					html += '<tr>';
+//					html += '    <td class="">'+pValue.card_de+'</td>';
+//					html += '    <td class="">'+pValue.acntctgr_nm+'</td>';
+//					html += '    <td class="text-left">'+pValue.card_dtls+'</td>';
+//					html += '    <td class="">'+pValue.papr_invstmnt_nm+'</td>';
+//					html += '    <td class=" text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
+//					html += '</tr>';
+//					amt_total += parseInt(amt);
+//				});
+				$('#popReportNR').find('#rptTable12 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable12 tfoot th:eq(4)').html(amt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(6)').html(amt_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* 모델하우스 */
+				/* ********************************************************* */
+				var html = '';
+				var s61AccountList = pResult.s61AccountList;
+				var dlnt1_total = 0, dlnt2_total = 0, dlnt3_total = 0, dlnt4_total = 0, dlnt9_total = 0;
+				var p_sum_total = 0, s_sum_total = 0, va_total = 0;
+                var wrhousng_total = 0;
+				console.log('s61AccountList', s61AccountList);
+                console.log('model', pResult['modelList']);
+				$.each(s61AccountList, function(pIndex, pValue) {
+                    var wrhousng_de = [];
+                    if(pResult['modelList'].hasOwnProperty(pValue.s_model_no) && pResult['modelList'][pValue.s_model_no].hasOwnProperty(pValue.s_dlivy_de)){
+                        $.each(pResult['modelList'][pValue.s_model_no][pValue.s_dlivy_de], function(pI, pV){
+                            wrhousng_de.push([pV.ddt_man, pV.dlnt]);
+                        });
+                    }
+
+					var va = parseInt(pValue.s_total) - parseInt(pValue.p_total);
+                    if(wrhousng_de.length == 0){
+                        html += '<tr>';
+                        html += '    <td class="">'+pValue.s_dlivy_de+'</td>';
+                        html += '    <td class="">'+pValue.s_model_no+'</td>';
+                        html += '    <td class=" text-number">'+pValue.dlnt1.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class=" text-number">'+pValue.dlnt2.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class=" text-number">'+pValue.dlnt3.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class=" text-number">'+pValue.dlnt4.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class=" text-number">'+pValue.dlnt9.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class=" text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class=" text-number">'+pValue.p_total.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
+                        html += '    <td></td>';
+                        html += '    <td class=" text-number"></td>';
+                        html += '    <td class="">'+pValue.rm+'</td>';
+                        html += '</tr>';
+                    }
+                    else{
+                        console.log(wrhousng_de);
+                        $.each(wrhousng_de, function(i,v){
+                            html += '<tr>';
+                            if(i==0){
+                                html += '    <td class="" rowspan="'+wrhousng_de.length+'">'+pValue.s_dlivy_de+'</td>';
+                                html += '    <td class="" rowspan="'+wrhousng_de.length+'">'+pValue.s_model_no+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.dlnt1.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.dlnt2.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.dlnt3.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.dlnt4.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.dlnt9.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class=" text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_total.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="" rowspan="'+wrhousng_de.length+'">'+pValue.p_bcnc_nm+'</td>';
+
+                            }
+                            html += '    <td>'+v[0]+'</td>';
+                            html += '    <td class="text-number">'+v[1]+'</td>';
+                            if(i==0)
+                                html += '    <td class="" rowspan="'+wrhousng_de.length+'">'+pValue.rm+'</td>';
+                            html += '</tr>';
+                            wrhousng_total += parseInt(v[1]);
+                        });
+                    }
+
+					if (pValue.dlnt1 != '') dlnt1_total += parseInt(pValue.dlnt1);
+					if (pValue.dlnt2 != '') dlnt2_total += parseInt(pValue.dlnt2);
+					if (pValue.dlnt3 != '') dlnt3_total += parseInt(pValue.dlnt3);
+					if (pValue.dlnt4 != '') dlnt4_total += parseInt(pValue.dlnt4);
+					if (pValue.dlnt9 != '') dlnt9_total += parseInt(pValue.dlnt9);
+					p_sum_total += pValue.p_total == '' ? 0 : parseInt(pValue.p_total);
+					s_sum_total += pValue.s_total == '' ? 0 : parseInt(pValue.s_total);
+					va_total += va;
+				});
+				$('#popReportNR').find('#rptTable14 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(1)').html(dlnt1_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(2)').html(dlnt2_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(3)').html(dlnt3_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(4)').html(dlnt4_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(5)').html(dlnt9_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(7)').html(p_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot th:eq(10)').html(wrhousng_total.toString().toFormat('NUMBER'));
+//				$('#popReportNR').find('#rptTable14 tfoot th:eq(8)').html(va_total.toString().toFormat('NUMBER'));
+//				$('#popReportNR').find('#rptTable14 tfoot th:eq(9)').html(va_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(7)').html(p_sum_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
+
+				/* M/SH, 옵션 */
+				/* ********************************************************* */
+				var html = '';
+				var dspyCostList = pResult.dspyCostList;
+				var all_sum_total = 0, option_amt = 0;
+
+				$.each(dspyCostList, function(pIndex, pValue) {
+					var dspy_ct_se_nm = pValue.ct_se_code == '10' ? '예상' : '정산';
+					var color = pValue.ct_se_code == '10' ? 'colorY' : 'colorG';
+					var lttot_rt = (parseInt(pValue.lttot_hshld_co)/parseInt(pValue.hshld_co))*100;
+					var optn_rt = (parseInt(pValue.optn_hshld_co)/parseInt(pValue.hshld_co))*100;
+					all_sum_total = parseInt(pValue.erc_ct)+parseInt(pValue.optn_event_ct) + parseInt(pValue.amount);
+					html += '<tr>';
+					html += '    <td class="text-center '+color+'">'+dspy_ct_se_nm+'</td>';
+					html += '    <td class="text-number">'+pValue.hshld_co.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.lttot_hshld_co.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-center">'+lttot_rt.toFixed(0)+'%'+'</td>';
+					html += '    <td class="text-number">'+pValue.optn_hshld_co.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-center">'+optn_rt.toFixed(0)+'%'+'</td>';
+					html += '    <td class="text-number">'+pValue.prsmp_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-center">'+pValue.erc_ct.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.optn_event_ct.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+all_sum_total.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+(parseInt(pValue.prsmp_cntrct_amount) - all_sum_total).toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+((parseInt(pValue.prsmp_cntrct_amount) - all_sum_total) / parseInt(pValue.prsmp_cntrct_amount) * 100).toFixed(1)+'%</td>';
+					html += '</tr>';
+					if (dspy_ct_se_nm == '정산') {
+						option_amt = pValue.optn_event_ct == '' ? 0 : parseInt(pValue.optn_event_ct);
+					}
+				});
+				$('#popReportNR').find('#rptTable13 tbody').html(html);
+				/* ********************************************************* */
+
+				/* 결산내역 (관리) */
+				/* ********************************************************* */
+				var execData = $('#popReportNR').find('#report_exec tbody[role=body] td');
+				var execAmt0 = $(execData[0]).html().replaceAll(',', '');
+				if (execAmt0 != '') {
+					execAmt0 = parseInt(execAmt0);
+				} else {
+					execAmt0 = 0;
+				}
+				var execAmt1 = $(execData[1]).html().replaceAll(',', '');
+				if (execAmt1 != '') {
+					execAmt1 = parseInt(execAmt1);
+				} else {
+					execAmt1 = 0;
+				}
+				var execAmt2 = $(execData[2]).html().replaceAll(',', '');
+				if (execAmt2 != '') {
+					execAmt2 = parseInt(execAmt2);
+				} else {
+					execAmt2 = 0;
+				}
+				var execAmt3 = $(execData[3]).html().replaceAll(',', '');
+				if (execAmt3 != '') {
+					execAmt3 = parseInt(execAmt3);
+				} else {
+					execAmt3 = 0;
+				}
+				var execAmt4 = $(execData[4]).html().replaceAll(',', '');
+				if (execAmt4 != '') {
+					execAmt4 = parseInt(execAmt4);
+				} else {
+					execAmt4 = 0;
+				}
+				var execAmt5 = $(execData[5]).html().replaceAll(',', '');
+				if (execAmt5 != '') {
+					execAmt5 = parseInt(execAmt5);
+				} else {
+					execAmt5 = 0;
+				}
+				var execAmt6 = $(execData[6]).html().replaceAll(',', '');
+				if (execAmt6 != '') {
+					execAmt6 = parseInt(execAmt6);
+				} else {
+					execAmt6 = 0;
+				}
+				var execAmt7 = $(execData[7]).html().replaceAll(',', '');
+				if (execAmt7 != '') {
+					execAmt7 = parseInt(execAmt7);
+				} else {
+					execAmt7 = 0;
+				}
+				var execAmt8 = $(execData[8]).html().replaceAll(',', '');
+				if (execAmt8 != '') {
+					execAmt8 = parseInt(execAmt8);
+				} else {
+					execAmt8 = 0;
+				}
+				var vaTotal = execAmt0 - execAmt1 - execAmt2 - execAmt3 - execAmt4 - execAmt5 - execAmt6 - execAmt7 - execAmt8;
+				var vaRate = (vaTotal/execAmt0)*100;
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(8)').html(vaTotal.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(9)').html(vaRate.toFixed(1)+'%');
+				/* ********************************************************* */
+
+				/* 특이사항 */
+				/* ********************************************************* */
+				$('#popReportNR').find('#partclr_matter').html(project.partclr_matter); //특이사항
+				/* ********************************************************* */
+
+			}
+		}
+	});
+
+    });
+	$(function() {
+    /**************************************************************************
+     * 인쇄 버튼 클릭 처리
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReportNR').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+</script>
+{% endblock %}

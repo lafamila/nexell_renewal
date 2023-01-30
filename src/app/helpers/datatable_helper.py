@@ -1,4 +1,5 @@
 from flask import g
+import datetime
 def dt_query(query, data, params={}):
     result = dict()
     result['recordsTotal'] = g.curs.execute(query, data)
@@ -18,4 +19,9 @@ def dt_query(query, data, params={}):
 
     g.curs.execute(query, data)
     result['data'] = g.curs.fetchall()
+    for d in result['data']:
+
+        for key in d:
+            if type(d[key]) is datetime.datetime or type(d[key]) is datetime.date:
+                d[key] = d[key].strftime("%Y-%m-%d")
     return result

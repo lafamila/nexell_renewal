@@ -576,7 +576,7 @@ insertMember = function()
 updateMember = function()
 {
 	$.ajax({
-		url: '{base_url}member/ajax_update_member',
+		url: '/api/member/ajax_update_member',
 		type: 'POST',
 		data: getFormData($('#frmBox1')[0]),
 		contentType: false,
