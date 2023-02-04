@@ -193,9 +193,9 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
 												<option value="">[전체]</option>
-												{bcnc_list}
-												<option value="{value}">{value}.{label}</option>
-												{/bcnc_list}
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
@@ -208,34 +208,34 @@ tbody .btnUpdate, tbody .btnPrint{
                                         <th class="hasinput">
 											<select class="form-control select2 w100p" id="s_prjct_ty_code" name="s_prjct_ty_code">
 												<option value="">[전체]</option>
-												{prjct_ty_code_list}
-												<option value="{value}">{label}</option>
-												{/prjct_ty_code_list}
+												{% for code in prjct_ty_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
 												<option value="">[전체]</option>
 												<option value="TS">공조전체</option>
-												{dept_code_list}
-												<option value="{value}">{label}</option>
-												{/dept_code_list}
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_bsn_chrg_sn" name="s_bsn_chrg_sn">
 												<option value="">[전체]</option>
-												{member_list}
-												<option value="{value}">{label} {etc1}</option>
-												{/member_list}
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_spt_chrg_sn" name="s_spt_chrg_sn">
 												<option value="">[전체]</option>
-												{member_list}
-												<option value="{value}">{label} {etc1}</option>
-												{/member_list}
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
@@ -259,9 +259,9 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_progrs_sttus_code" name="s_progrs_sttus_code">
 												<option value="">[전체]</option>
-												{progrs_sttus_code_list}
-												<option value="{value}">{value}.{label}</option>
-												{/progrs_sttus_code_list}
+												{% for code in progrs_sttus_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 												<option value="BP" selected>BP.사전입찰/진행</option>
 												<option value="BPSN">BPSN.마감제외</option>
 											</select>
@@ -665,5 +665,400 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 
 }
 </script>
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+        #btnDelete{
+            display:none;
+        }
+
+    </style>
+    <div class="modal-dialog modal-w1200" style="width:1720px!important">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>계약 & 프로젝트</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:620px;">
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox no-padding" style="display:block;">
+<!--
+						<div class="alert alert-block alert-info" style="margin:0px;">
+							<p style="margin-bottom:7px;">
+								<i class="fa-fw fa fa-info"></i>
+								프로젝트(도급사, 예정공사비) 정보 등록을 위한 계약을 선택하세요.
+							</p>
+							<select class="form-control select2" style="width:100%;" id="s_cntrct_sn" name="s_cntrct_sn">
+								<option value="">[계약을 선택하세요]</option>
+								{contract_list}
+								<option value="{value}" data-project_yn="{prjct_creat_at}" data-project_cnt="{prjct_cnt}">{etc1}.{bcnc_nm} {label}</option>
+								{/contract_list}
+							</select>
+						</div>
+-->
+                        <div class="tab-pane fade active in" id="tabBoxContract1">
+                        <form id="frmBoxContract1">
+                            <input type="hidden" id="s_cntrct_sn" name="s_cntrct_sn">
+                            <input type="hidden" id="progrs_sttus_code" name="progrs_sttus_code" value="P">
+                            <input type="hidden" id="author" value="0">
+						<table class="table table-bordered table-form">
+							<colgroup>
+								<col width="175">
+								<col width="150">
+								<col width="175">
+								<col width="150">
+								<col width="175">
+								<col width="150">
+								<col width="175">
+								<col width="150">
+							</colgroup>
+							<tbody>
+								<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-right:none;" colspan="1">계약</th>
+                                    <th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="7">
+                                    <span class="widget-toolbar" id="popEditToolbarContract">
+                                        <button type="button" class="btn btn-primary" id="btnSaveKeepContract" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
+                                        <button type="button" class="btn btn-primary" id="btnSaveContract" title="수정 가능하도록 변경합니다."><i class="fa fa-save"> 수정</i></button>
+                                        <button type="button" class="btn btn-danger" id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+
+                                    </span>
+                                    </th>
+                                </tr>
+
+                                <tr class="required"><th class="color-contract">프로젝트 번호</th>
+                                    <td class="hasinput" colspan="3">
+                                        <input type="text" class="form-control" placeholder="" id="cntrct_no" name="cntrct_no">
+                                    </td>
+<!--
+                                    <td class="hasinput" colspan="2" style="padding:0 !important;">
+                                        <table>
+                                        <tbody>
+-->
+                                    <th class="color-contract">작성일(자동)</th>
+                                    <td class="hasinput">
+										2023.2.1
+                                    </td>
+                                    <th class="color-contract">계약일</th>
+                                    <td class="hasinput">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrct_de" name="cntrct_de">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </td>
+<!--
+                                        </tbody>
+                                        </table>
+                                    </td>
+-->
+                                </tr>
+                                <tr class="required"><th class="color-contract">거래처명</th>
+                                    <td class="hasinput" colspan="3">
+                                        <select class="form-control select2" id="bcnc_sn" name="bcnc_sn">
+                                            <option value=""></option>
+                                            {% for code in bcnc_list %}
+                                            <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <th class="color-contract">공사기간</th>
+                                    <td class="hasinput" colspan="3">
+                                        <div class="input-group">
+                                            <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_bgnde" name="cntrwk_bgnde">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_endde" name="cntrwk_endde">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="required"><th class="color-contract">현장명</th>
+                                    <td class="hasinput" colspan="3">
+                                        <input type="text" class="form-control" id="cntrct_nm" name="cntrct_nm">
+                                    </td>
+                                    <th class="color-contract">현장주소</th>
+                                    <td class="hasinput" colspan="3">
+                                        <input type="text" class="form-control" id="spt_adres" name="spt_adres">
+                                    </td>
+                                </tr>
+                                <tr class="required">
+									<th class="color-contract">세대수</th>
+                                    <td class="hasinput" colspan="1">
+                                        <input type="text" class="form-control" id="home_count" name="home_count">
+                                    </td>
+                                    <th class="color-contract">지역</th>
+                                    <td class="hasinput" colspan="1">
+                                        <input type="text" class="form-control" id="home_region" name="home_region">
+                                    </td>
+                                    <th class="color-contract">넥셀 현장담당</th>
+                                    <td class="hasinput" colspan="3">
+                                        <select class="form-control select2" id="spt_chrg_sn" name="spt_chrg_sn">
+                                            <option value=""></option>
+                                            {% for code in member_list %}
+                                            <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="required">
+									<th class="color-contract">프로젝트 유형</th>
+                                    <td class="hasinput" colspan="3">
+                                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+											{% for code in prjct_ty_code_list %}
+                                            <label class="btn btn-default">
+                                                <input type="radio" name="prjct_ty_code" value="{{code.value}}">{{code.label}}
+                                            </label>
+											{% endfor %}
+                                        </div>
+                                    </td>
+									<th class="color-contract">넥셀 영업담당</th>
+                                    <td class="hasinput" colspan="3">
+                                        <select class="form-control select2" id="bsn_chrg_sn" name="bsn_chrg_sn">
+                                            <option value=""></option>
+                                            {% for code in member_list %}
+                                            <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+
+                                <tr class="required">
+									<th class="color-contract">프로젝트 생성여부</th>
+                                    <td class="hasinput" colspan="3">
+                                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                                            <label class="btn btn-default">
+                                                <input type="radio" name="prjct_creat_at" value="Y">생성
+                                            </label>
+                                            <label class="btn btn-default">
+                                                <input type="radio" name="prjct_creat_at" value="N">단납건
+                                            </label>
+                                        </div>
+                                    </td>
+									<th class="color-contract">진행상태</th>
+                                    <td class="hasinput" colspan="3">
+                                        <div class="btn-group btn-group-justified" data-toggle="buttons">
+                                            {% for code in progrs_sttus_code_list %}
+                                            <label class="btn btn-default">
+                                                <input type="radio" name="progrs_sttus_code" value="{{code.value}}">{{code.label}}
+                                            </label>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <!-- -->
+<!--
+								<tr>
+									<th class="color-project">거래처명</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="bcnc_nm" name="bcnc_nm">
+									</td>
+									<th class="color-project">공사기간</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="cntrwk_period" name="cntrwk_period">
+									</td>
+								</tr>
+								<tr><th class="color-project">계약명(현장명)</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="spt_nm" name="spt_nm">
+									</td>
+									<th class="color-project">현장주소</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="spt_adres" name="spt_adres">
+									</td>
+								</tr>
+								<tr><th class="color-project">영업담당</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="bsn_chrg_nm" name="bsn_chrg_nm">
+									</td>
+									<th class="color-project">현장담당</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="spt_chrg_nm" name="spt_chrg_nm">
+									</td>
+								</tr>
+								<tr><th class="color-project">프로젝트 유형</th>
+									<td class="hasinput" colspan="1">
+										<div class="btn-group btn-group-justified" data-toggle="buttons">
+											{prjct_ty_code_list}
+											<label class="btn btn-default">
+												<input type="radio" name="prjct_ty_code" value="{value}">{label}
+											</label>
+											{/prjct_ty_code_list}
+										</div>
+									</td>
+									<th class="color-project">프로젝트 생성여부</th>
+									<td class="hasinput" colspan="1">
+										<input type="text" class="form-control" readonly id="prjct_creat_nm" name="prjct_creat_nm">
+										<input type="hidden" id="prjct_creat_at" value="Y">
+									</td>
+								</tr>
+-->
+							</tbody>
+						</table>
+                        </form>
+                        </div>
+					</div>
+					<!-- end widget edit box -->
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+									</colgroup>
+									<tbody>
+
+                                        <tr><th rowspan="2">본사담당</th>
+											<th>담당자명</th>
+											<th colspan="2">휴대폰</th>
+											<th rowspan="2">거래처담당</th>
+											<th>담당자명</th>
+											<th>휴대폰</th>
+										</tr>
+										<tr>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
+												<input type="hidden" id="charger_sn1" name="charger_sn1">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
+												<input type="hidden" id="charger_sn2" name="charger_sn2">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
+											</td>
+										</tr>
+
+
+										<tr>
+											<th>장비/공사내역</th>
+											<td class="hasinput" colspan="3">
+                                                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
+												<input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
+											</td>
+											<th>계약DC(%)</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
+											</td>
+											<th>품의DC(%)</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
+											</td>
+										</tr>
+                                        <tr name="charger2">
+											<th>도면작업자</th>
+											<td class="hasinput" colspan="3">
+												<select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
+													<option value=""></option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+											<th>실적신고</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
+											</td>
+											<th>건설공사대장</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
+											</td>
+										</tr>
+										<tr>
+											<th>결제방법(1)</th>
+											<td class="hasinput" colspan="7">
+												<input type="text" class="form-control" id="setle_mth" name="setle_mth">
+											</td>
+										</tr>
+										<tr>
+											<th>결제방법(2)</th>
+											<th colspan="2">금액</th>
+											<th colspan="1">일자</th>
+											<th colspan="4">비고(특이사항)</th>
+										</tr>
+										<tr>
+											<th>계약금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="enty" name="enty">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="enty_rm" name="enty_rm">
+											</td>
+										</tr>
+										<tr>
+											<th>중도금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="prtpay" name="prtpay">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
+											</td>
+										</tr>
+										<tr>
+											<th>잔금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="surlus" name="surlus">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
 
 {% endblock %}

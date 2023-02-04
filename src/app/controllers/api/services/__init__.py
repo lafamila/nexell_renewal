@@ -1,6 +1,46 @@
 from flask import current_app
 from src.app.connectors import DB
 
+def get_member_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT m.mber_sn AS value
+				, m.mber_nm AS label
+				, (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS etc1
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS etc2
+				, CONCAT( IFNULL((SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code),''), ' '
+				, m.mber_nm, ' '
+				, IFNULL((SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code),'')
+				) AS etc3
+				FROM member m
+				WHERE 1=1
+				AND ctmmny_sn = 1
+				AND mber_sttus_code = 'H'
+				AND dept_code != ''
+				ORDER BY mber_nm""")
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+
+def get_bcnc_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT bcnc_sn AS value
+				, bcnc_nm AS label
+				, bizrno AS et1
+				FROM bcnc
+				WHERE 1=1
+				AND ctmmny_sn = 1
+				AND use_at = 'Y'
+                """)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+
 def get_author_list():
     db = DB()
     curs = db.cursor()

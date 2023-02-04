@@ -1,0 +1,786 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+</style>
+
+<style>
+    #summery{
+        top:63px;
+        left:720px;
+        width:600px;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summery{
+        top:150px;
+        left:13px;
+        width:600px;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+    <ol class="breadcrumb">
+        <li style="">전자결재</li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					계약 및 프로젝트 등록 <span>> 계약 및 프로젝트</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>결재 목록</h2>
+						<div class="widget-toolbar">
+<!--                            <button class="btn btn-info" data-toggle="modal" href="#popReport7"><i class="fa fa-print"> 업무일지</i></button>-->
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<!-- <table class="table table-bordered" style="">
+								<colgroup>
+									<col width="667">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="120">
+									<col width="*">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="text-center"></th>
+										<th class="text-center" style="background:#ccc;">집계표</th>
+										<th class="text-center">건수</td>
+										<td class="text-center" style="background:#fff;">0</td>
+										<th class="text-center">합계</td>
+										<td class="text-number" style="background:#fff;">0</td>
+										<th class="text-center"></th>
+									</tr>
+								</thead>
+							</table> -->
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="110">
+									<col width="170">
+									<col width="*">
+									<col width="110">
+									<col width="220">
+									<col width="110">
+									<col width="110">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_approval_se_code" name="s_approval_se_code">
+												<option value="">[전체]</option>
+												{% for code in approval_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_approval_ty_code" name="s_approval_ty_code">
+												<option value="">[전체]</option>
+												{% for code in approval_ty_code_list %}
+												<option value="{{code.value}}" data-parent="{{code.etc1}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">
+												<option value="">[전체]</option>
+<!--												{% for code in bcnc_list %}-->
+<!--												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>-->
+<!--												{% endfor %}-->
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de_start" name="s_start_de_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de_end" name="s_start_de_end" placeholder="[종료일자]">
+										</th>
+                                        <th class="hasinput">
+<!--											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de_start" name="s_end_de_start" placeholder="[시작일자]">-->
+<!--											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>-->
+<!--											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de_end" name="s_end_de_end" placeholder="[종료일자]">-->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_final_mber_sn" name="s_final_mber_sn">
+												<option value="">[전체]</option>
+											</select>
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>문서구분</th>
+										<th>문서명</th>
+										<th>현장명</th>
+										<th>상태</th>
+										<th>기안일</th>
+										<th>종결일</th>
+										<th>최종결재자</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# page script start                                                    #-->
+<!--########################################################################-->
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+getApprovalList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		pageLength: 15,
+		buttons: ['excelHtml5'],
+        ajax: {
+            url: '/api/approval/ajax_get_approval_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_approval_se_code': $('#dtList1').find('#s_approval_se_code').val(),
+					's_approval_ty_code': $('#dtList1').find('#s_approval_ty_code').val(),
+					's_cntrct_nm': $('#dtList1').find('#s_cntrct_nm').val(),
+					's_approval_status': $('#dtList1').find('#s_approval_status').val(),
+                    's_start_de_start': $('#dtList1').find('#s_start_de_start').val(),
+					's_start_de_end': $('#dtList1').find('#s_start_de_end').val(),
+					// 's_end_de_start': $('#dtList1').find('#s_end_de_start').val(),
+					// 's_end_de_end': $('#dtList1').find('#s_end_de_end').val(),
+					's_final_mber_sn': $('#dtList1').find('#s_final_mber_sn').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'asc'],
+		// columnDefs: [
+        //     { targets: 4, visible: false }
+        // ],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'approval_se_nm' },
+            { data: 'approval_ty_nm' },
+            { data: 'cntrct_nm' },
+            { data: 'approval_status' },
+            { data: 'start_de' },
+            { data: 'end_de' },
+            { data: 'final_mber_nm' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+
+
+					return html;
+				}
+			},
+		],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			// var contract = pSettings.json.contract;
+			// var count = pSettings.json.count;
+            // $('#summery').find('tbody td').eq(0).html(count.total_count.toString().toFormat('NUMBER'));
+			// $('#summery').find('tbody td').eq(2).html(contract.total_amount.toFormat('NUMBER'));
+            // $('#summery').find('tbody td').eq(1).html(contract.amount.toFormat('NUMBER'));
+        },
+		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				if($(this).attr("id") == "s_approval_se_code"){
+					let html = `<option value="">[전체]</option>`;
+					{% for code in approval_ty_code_list %}
+					html += `<option value="{{code.value}}" data-parent="{{code.etc1}}">{{code.value}}.{{code.label}}</option>`;
+					{% endfor %}
+					$("#s_approval_ty_code").html(html);
+
+					let se_code = $(this).val();
+					if(se_code != ''){
+						let options = $("#s_approval_ty_code").find("option");
+						$.each(options, function(pIndex, pValue){
+							let parent_se_code = $(pValue).data("parent");
+							console.log(parent_se_code);
+							if(parent_se_code != undefined && parseInt(parent_se_code)!== parseInt(se_code)){
+								$(pValue).remove();
+							}
+						});
+					}
+					else{
+						$("#s_approval_ty_code").find("option").show();
+					}
+					$("#s_approval_ty_code").select2("destroy");
+					$("#s_approval_ty_code").select2();
+				}
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+
+	/**************************************************************************
+	* 계약일자 캘린더 셋팅
+	*/
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear()-1);
+        endDate.setMonth(0);
+        endDate.setDate(1);
+
+//		endDate.setDate(endDate.getDate() - (365*maxYears));
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/******************************************************************************
+	*
+	*/
+	// var selected_count = 0;
+	// $('.select2-multiple').select2({
+    // 	// templateSelection: function(selected, total) {
+	// 	templateResult: function(state) {
+	// 		return '';
+	// 	},
+    // 	// templateSelection: function(state) {
+	// 	// 	var selected = $('#s_progrs_sttus_code option:selected').length;
+	// 	// 	console.log($(this).parent());
+    //   	// 	return selected+'개 선택';
+    // 	// }
+  	// });
+	/**************************************************************************
+     *
+     */
+	getApprovalList();
+});
+
+</script>
+<!--########################################################################-->
+<!--# page script end                                                      #-->
+<!--########################################################################-->
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+        #btnDelete{
+            display:none;
+        }
+
+    </style>
+    <div class="modal-dialog modal-w1200" style="width:1720px!important">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>품의서 양식</span></a>
+						</li>
+						<li data-action="2">
+							<a data-toggle="tab" href="#tabBox2" data-action="tab2"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>결재라인</span></a>
+						</li>
+						<li data-action="3">
+							<a data-toggle="tab" href="#tabBox3" data-action="tab3"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>품의서</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:620px;">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+									</colgroup>
+									<tbody>
+
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox2">
+							<form id="frmBox2">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+									</colgroup>
+									<tbody>
+
+                                        <tr><th rowspan="2">본사담당</th>
+											<th>담당자명</th>
+											<th colspan="2">휴대폰</th>
+											<th rowspan="2">거래처담당</th>
+											<th>담당자명</th>
+											<th>휴대폰</th>
+										</tr>
+										<tr>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
+												<input type="hidden" id="charger_sn1" name="charger_sn1">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
+												<input type="hidden" id="charger_sn2" name="charger_sn2">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
+											</td>
+										</tr>
+
+
+										<tr>
+											<th>장비/공사내역</th>
+											<td class="hasinput" colspan="3">
+                                                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
+												<input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
+											</td>
+											<th>계약DC(%)</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
+											</td>
+											<th>품의DC(%)</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
+											</td>
+										</tr>
+                                        <tr name="charger2">
+											<th>도면작업자</th>
+											<td class="hasinput" colspan="3">
+												<select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
+													<option value=""></option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+											<th>실적신고</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
+											</td>
+											<th>건설공사대장</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
+											</td>
+										</tr>
+										<tr>
+											<th>결제방법(1)</th>
+											<td class="hasinput" colspan="7">
+												<input type="text" class="form-control" id="setle_mth" name="setle_mth">
+											</td>
+										</tr>
+										<tr>
+											<th>결제방법(2)</th>
+											<th colspan="2">금액</th>
+											<th colspan="1">일자</th>
+											<th colspan="4">비고(특이사항)</th>
+										</tr>
+										<tr>
+											<th>계약금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="enty" name="enty">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="enty_rm" name="enty_rm">
+											</td>
+										</tr>
+										<tr>
+											<th>중도금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="prtpay" name="prtpay">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
+											</td>
+										</tr>
+										<tr>
+											<th>잔금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="surlus" name="surlus">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox3">
+							<form id="frmBox3">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+										<col width="175">
+										<col width="150">
+									</colgroup>
+									<tbody>
+
+                                        <tr><th rowspan="2">본사담당</th>
+											<th>담당자명</th>
+											<th colspan="2">휴대폰</th>
+											<th rowspan="2">거래처담당</th>
+											<th>담당자명</th>
+											<th>휴대폰</th>
+										</tr>
+										<tr>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
+												<input type="hidden" id="charger_sn1" name="charger_sn1">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
+												<input type="hidden" id="charger_sn2" name="charger_sn2">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
+											</td>
+										</tr>
+
+
+										<tr>
+											<th>장비/공사내역</th>
+											<td class="hasinput" colspan="3">
+                                                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
+												<input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
+											</td>
+											<th>계약DC(%)</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
+											</td>
+											<th>품의DC(%)</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
+											</td>
+										</tr>
+                                        <tr name="charger2">
+											<th>도면작업자</th>
+											<td class="hasinput" colspan="3">
+												<select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
+													<option value=""></option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+											<th>실적신고</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
+											</td>
+											<th>건설공사대장</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
+											</td>
+										</tr>
+										<tr>
+											<th>결제방법(1)</th>
+											<td class="hasinput" colspan="7">
+												<input type="text" class="form-control" id="setle_mth" name="setle_mth">
+											</td>
+										</tr>
+										<tr>
+											<th>결제방법(2)</th>
+											<th colspan="2">금액</th>
+											<th colspan="1">일자</th>
+											<th colspan="4">비고(특이사항)</th>
+										</tr>
+										<tr>
+											<th>계약금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="enty" name="enty">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="enty_rm" name="enty_rm">
+											</td>
+										</tr>
+										<tr>
+											<th>중도금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="prtpay" name="prtpay">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
+											</td>
+										</tr>
+										<tr>
+											<th>잔금</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="surlus" name="surlus">
+											</td>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput" colspan="4">
+												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+
+{% endblock %}
