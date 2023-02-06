@@ -40,7 +40,7 @@
 					background-color: #002060;
 				}
 				.right-container > div{
-					border: 1px solid #333;
+					/*border: 1px solid #333;*/
 				}
 				.profile-container{
 					display:grid;
@@ -66,7 +66,73 @@
 					place-items: start start;
 					row-gap: 10px;
 				}
+				.table-container{
+					display:grid;
+					grid-template-rows: 30px 1fr;
+				}
+				.table-container > div {
+					padding-left: 10px;
+					padding-right: 10px;
+				}
+				.table-container div:first-child span:first-child, .attendance-container span:first-child{
+					font-size:15px!important;
+				}
+				.table-container div:first-child {
+					display: grid;
+					grid-template-columns: 100px 1fr 60px;
+				}
 
+				div.report .table-container thead tr th{
+					background-color:#002060!important;
+					color:white;
+				}
+
+				div.report .table-container table {
+					border: 1px solid #002060!important;
+				}
+				div.report .table-container thead, div.report .table-container tbody, div.report .table-container tbody[role=header], div.report .table-container tbody[role=body], div.report .table-container tbody[role=footer], div.report .table-container tfoot {
+					border: 1px solid #002060!important;
+				}
+				.attendance-container{
+					display:grid;
+					grid-template-rows: 30px 1fr 30px;
+				}
+				.attendance-container > div{
+					border:1px solid #002060!important;
+					padding-left: 10px;
+					padding-right: 10px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					gap: 20px;
+
+				}
+				.attendance-container > div:last-child{
+					border-top:none!important;
+					cursor:pointer;
+					color:#002060;
+					transition: 0.3s;
+				}
+				.attendance-container > div:last-child:hover{
+					background-color:#002060;
+					color:white;
+				}
+				.circle {
+					height: 120px;
+				    width: 120px;
+				    background-color: #bbb;
+				    border-radius: 50%;
+				    display: grid;
+					padding-top:10px;
+					padding-bottom:20px;
+					text-align:center;
+					opacity:0.8;
+
+				}
+				.active {
+					background-color: #002060;
+					color:white;
+				}
 			</style>
 			<div class="grid-container">
 				<div class="left-container" style="font-weight: normal!important;">
@@ -90,11 +156,82 @@
 					</div>
 					<div id="calendar">
 					</div>
-					<div></div>
+					<div class="attendance-container">
+						<span>출퇴근기록</span>
+						<div>
+							<span class="circle active">
+								<span>출근</span>
+								<span>08:48:35</span>
+							</span>
+							<span class="circle">
+								<span>퇴근</span>
+								<span>미등록</span>
+							</span>
+						</div>
+						<div id="attendance">근태관리 바로가기</div>
+					</div>
 				</div>
 				<div class="right-container">
-					<div></div>
-					<div></div>
+					<div class="table-container">
+						<div>
+							<span>결재문서</span>
+							<span></span>
+							<span><a href="/approval">전체보기</a></span>
+						</div>
+						<div>
+							<table style="width:100%;height:100%;" class="table table-bordered">
+								<colgroup>
+									<col width="20%">
+									<col width="60%">
+									<col width="10%">
+									<col width="10%">
+								</colgroup>
+								<thead>
+									<tr>
+										<th>양식</th>
+										<th>제목</th>
+										<th>기안일</th>
+										<th>기안자</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="4" style="vertical-align: middle;">현재 수신된 결재문서가 존재하지 않습니다.</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="table-container">
+						<div>
+							<span>공지사항</span>
+							<span></span>
+							<span></span>
+						</div>
+						<div>
+							<table style="width:100%;height:100%;" class="table table-bordered">
+								<colgroup>
+									<col width="20%">
+									<col width="60%">
+									<col width="10%">
+									<col width="10%">
+								</colgroup>
+								<thead>
+									<tr>
+										<th>분류</th>
+										<th>제목</th>
+										<th>작성일</th>
+										<th>작성자</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="4" style="vertical-align: middle;">현재 등록된 공지사항이 존재하지 않습니다.</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 
 			</div>
@@ -109,17 +246,421 @@
 </div>
 
 <script>
-	var db_events = [{
-		title: "Board members meeting",
-		date: new Date().getTime()
-	}];
+	// var db_events = [{
+	// 	title: "Today",
+	// 	date: (new Date()).toISOString().split("T")[0]
+	// }];
 
 	$(document).ready(function(){
 		$("#calendar").MEC({
-			events: db_events
+			events: []
 		});
 		$("#calTFooter").hide();
+		$("#attendance").on("click", ()=>(location.href="/work"));
+	});
+	$(document).on("click", "#calendar button.a-date", function(){
+		var clicked = parseInt($(this).text().trim()).toString();
+		var monthYear = $("#monthYear").data("date");
+		var date = monthYear+"-"+(clicked.padStart(2, "0"));
+		$("#popReport7").find("#s_ddt_man").datepicker('setDate', date);
+		$("#popReport7").modal("show");
 	});
 </script>
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<!--<script src="//code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script>-->
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 매입/매출 레포트 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" id="popReport7">
+    <div class="modal-dialog modal-w1200" style="width:98%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint7"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man" name="s_ddt_man">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+				<div id="rpt7">
+				<!--<div class="title"><h2 class="colorLS" id="title">팀별 VA 현황</h2></div>-->
+				<style>
+
+					#rpt7 .table>tbody>tr>td, #rpt7 .table>tbody>tr>th, #rpt7 .table>tfoot>tr>td, #rpt7 .table>tfoot>tr>th, #rpt7 .table>thead>tr>td, #rpt7 .table>thead>tr>th {
+						line-height: 0.5 !important;
+						font-size:12px!important;
+					}
+					#rpt7 .table>tbody[role=header]>tr>td, #rpt7 .table>tbody[role=header]>tr>th,
+					#rpt7 .table>tbody[role=top]>tr>td, #rpt7 .table>tbody[role=top]>tr>th,
+					#rpt7 .table>tbody[role=chair]>tr>td, #rpt7 .table>tbody[role=chair]>tr>th,
+					#rpt7 .table>tbody[role=foot]>tr>td, #rpt7 .table>tbody[role=foot]>tr>th,
+					#temp>tbody[role=body]>tr>td, #temp>tbody[role=body]>tr>th
+					{
+						line-height: 1.0 !important;
+						font-size: 15px !important;
+					}
+
+					#rpt7 .title>h2 {
+						padding:4px 45px!important;
+					}
+
+					#rpt7 .table>tbody>tr>td, body.smart-style-6 .modal .table>tfoot>tr>th, body.smart-style-6 .modal .table>tfoot>tr>td, body.smart-style-6 .modal .table>thead>tr>td {
+						padding:7px!important;
+					}
+
+				</style>
+				<div class="title" style="margin-bottom:-5px!important;"><h2 class="colorLS" style="font-size:17px!important;">넥셀시스템 / 일일 업무현황</h2></div>
+				<!-- 기성 현황 시작 -->
+				<div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
+					<h5 class="sub-title" id="rptDate7"></h5>
+					<h5></h5>
+					<h5 class="sub-title" style="text-align: left!important;">(현)현장 , (영)영업 , (내)내근, (출)출장 / <span style="color:blue;font-size: 17px!important;">당일 9시 이전 기재 완료</span></h5>
+				</div>
+
+
+				<table id="todo" class="table table-bordered w100p">
+					 <colgroup>
+						<col width="100">
+						<col width="150">
+						<col width="600">
+						<col width="600">
+					</colgroup>
+					<tbody role="header">
+						<tr>
+							<th class="colorG" colspan="2">구 분</th>
+							<th class="colorG" colspan="1">오전</th>
+							<th class="colorG" colspan="1">오후</th>
+						</tr>
+					</tbody>
+					<tbody role="top">
+						<th class="colorSky" colspan="2">소식알리미(공통)</th>
+						<th class="text-left colorW" colspan="1" name="todo_head" data-mber="-1" data-time="0" style="color:blue!important;"></th>
+						<th class="text-left colorW" colspan="1" name="todo_head" data-mber="-1" data-time="1" style="color:blue!important;"></th>
+
+					</tbody>
+					<tbody role="chair">
+						<th class="colorSky" colspan="2">대표이사</th>
+						<th class="text-left colorW" colspan="1" name="todo_text" data-mber="4" data-time="0" style="color:blue!important;" ></th>
+						<th class="text-left colorW" colspan="1" name="todo_text" data-mber="4" data-time="1" style="color:blue!important;" ></th>
+
+					</tbody>    <tbody role="body">
+					</tbody>
+					<tbody role="foot">
+						<th class="colorSky" colspan="2">공지사항/협조사항(공통)</th>
+						<th class="text-left colorW" colspan="1" name="todo_foot" data-mber="-2" data-time="0" style="color:blue!important;"></th>
+						<th class="text-left colorW" colspan="1" name="todo_foot" data-mber="-2" data-time="1" style="color:blue!important;"></th>
+					</tbody>
+
+
+
+
+
+
+				</table>
+
+				<br/>
+
+
+				</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<!-- 매입/매출 레포트 팝업 끝 -->
+<script type="text/javascript">
+
+
+getWeek = function(date){
+    var week = ['일', '월', '화', '수', '목', '금', '토'];
+    var day = new Date(date);
+    var dayOfWeek = week[day.getDay()];
+
+    return day.getFullYear()+'년 '+(day.getMonth()+1)+'월 '+(day.getDate())+'일 ('+dayOfWeek+'요일)';
+}
+
+insertTodo = function(pMberSN, pTodoTime, pTodoText)
+{
+
+	var params = '';
+	params += '&mber_sn='+pMberSN;
+	params += '&todo_time='+pTodoTime;
+	params += '&todo_text='+pTodoText;
+	params += '&todo_de='+$('#s_ddt_man').val();
+	params += '&regist_sn=0';
+	$.ajax({
+		url: '/api/member/ajax_insert_todo',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            getTodo($('#s_ddt_man').val());
+		}
+	});
+}
+updateTodo = function(pTodoSN, pMberSN, pTodoTime, pTodoText)
+{
+	var params = '';
+	params += '&todo_sn='+pTodoSN;
+	params += '&mber_sn='+pMberSN;
+	params += '&todo_time='+pTodoTime;
+	params += '&todo_text='+pTodoText;
+	params += '&todo_de='+$('#s_ddt_man').val();
+	$.ajax({
+		url: '/api/member/ajax_update_todo',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            getTodo($('#s_ddt_man').val());
+		},
+        error: function(pResult){
+            console.log(pResult)
+        }
+	});
+}
+getTodo = function(s_ddt_man)
+{
+    var params = '';
+	params += '&s_ddt_man='+s_ddt_man;
+
+	$.ajax({
+		url: '/api/member/ajax_get_member_todo',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getTodo', pResult);
+			var html = '';
+            var before = '';
+            $.each(pResult.data, function(pIndex, pValue){
+                if(pValue.mber_sn == '73' || pValue.mber_sn == '74' || pValue.mber_sn =='81'){
+                    return true;
+                }
+                if(pValue.mber_sn == '4'){
+
+                    $("#rpt7").find("#todo tbody[role=chair] th").eq(1).html(pValue.text_m);
+                    $("#rpt7").find("#todo tbody[role=chair] th").eq(2).html(pValue.text_a);
+                    var sn_m = parseInt(pValue.sn_m);
+                    var sn_a = parseInt(pValue.sn_a);
+                    var update_m = ' ';
+                    if(sn_m != 0){
+                        $("#rpt7").find("#todo tbody[role=chair] th").eq(1).data('sn', sn_m);
+                    }
+                    var update_a = ' ';
+                    if(sn_a != 0){
+                        $("#rpt7").find("#todo tbody[role=chair] th").eq(2).data('sn', sn_a);
+                    }
+                }
+                else{
+                    if(before != '' && before != pValue.dept_nm)
+                        html += '<tr style="border-top:solid 2px black !important">';
+                    else
+                        html += '<tr>';
+                    html += '    <td class="text-center colorSky">'+pValue.dept_nm+'</td>';
+                    html += '    <td class="text-center">'+pValue.mber_nm+'</td>';
+
+                    var sn_m = parseInt(pValue.sn_m);
+                    var sn_a = parseInt(pValue.sn_a);
+                    var update_m = ' ';
+                    if(sn_m != 0){
+                        update_m = ' data-sn="'+sn_m+'"';
+                    }
+                    var update_a = ' ';
+                    if(sn_a != 0){
+                        update_a = ' data-sn="'+sn_a+'"';
+                    }
+                    html += '    <td class="text-left" name="todo_text" data-mber="'+pValue.mber_sn+'" data-time="0"'+update_m+'>'+pValue.text_m+'</td>';
+                    html += '    <td class="text-left" name="todo_text" data-mber="'+pValue.mber_sn+'" data-time="1"'+update_a+'>'+pValue.text_a+'</td>';
+                    html += '</tr>';
+                    before = pValue.dept_nm;
+                }
+
+            });
+            $.each(pResult.extra, function(pIndex, pValue){
+                if(pValue.ordr == '-1'){
+                    $("#rpt7").find("#todo tbody[role=top] th").eq(1).html(pValue.text_m);
+                    $("#rpt7").find("#todo tbody[role=top] th").eq(2).html(pValue.text_a);
+                    var sn_m = parseInt(pValue.sn_m);
+                    var sn_a = parseInt(pValue.sn_a);
+                    var update_m = ' ';
+                    if(sn_m != 0){
+                        $("#rpt7").find("#todo tbody[role=top] th").eq(1).data('sn', sn_m);
+                    }
+                    var update_a = ' ';
+                    if(sn_a != 0){
+                        $("#rpt7").find("#todo tbody[role=top] th").eq(2).data('sn', sn_a);
+                    }
+
+                }
+                else{
+                    $("#rpt7").find("#todo tbody[role=foot] th").eq(1).html(pValue.text_m);
+                    $("#rpt7").find("#todo tbody[role=foot] th").eq(2).html(pValue.text_a);
+                    var sn_m = parseInt(pValue.sn_m);
+                    var sn_a = parseInt(pValue.sn_a);
+                    var update_m = ' ';
+                    if(sn_m != 0){
+                        $("#rpt7").find("#todo tbody[role=foot] th").eq(1).data('sn', sn_m);
+                    }
+                    var update_a = ' ';
+                    if(sn_a != 0){
+                        $("#rpt7").find("#todo tbody[role=foot] th").eq(2).data('sn', sn_a);
+                    }
+
+                }
+
+
+            });
+
+            $("#rpt7").find("#todo tbody[role=body]").html(html);
+            $('#rpt7').find('#todo tbody[role=body]').yRowspan(0);
+            $('#rptDate7').html(getWeek($('#s_ddt_man').val()));
+		}
+	});
+}
+
+
+
+</script>
+
+
+
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport7').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#s_ddt_man').val() == '') {
+			modal.find('#s_ddt_man').datepicker('setDate', 'today');
+		}
+		getTodo(modal.find('#s_ddt_man').val());
+	});
+	$('#popReport7').on('change', '#s_ddt_man', function(pEvent) {
+        getTodo($(this).val());
+	});
+	$('#popReport7').find('#todo').on('dblclick', 'td[name=todo_text], th[name=todo_text]', function(pEvent) {
+        if($(this).data('mber') != $('#loginSN').val()){
+            alert("본인 업무만 수정 가능합니다.");
+            return false;
+        }
+        if($(this).data('sn')){
+            var todo_sn = $(this).data('sn');
+            var todo_text = $(this).html();
+            var mber_sn = $(this).data('mber');
+            var todo_time = $(this).data('time');
+            var inputValue = prompt('업무를 입력하세요.', todo_text);
+            if (inputValue != null && inputValue != todo_text) {
+                $(this).html(inputValue);
+                updateTodo(todo_sn, mber_sn, todo_time, inputValue);
+            }
+        }
+        else{
+            var todo_text = $(this).html();
+            var mber_sn = $(this).data('mber');
+            var todo_time = $(this).data('time');
+            var inputValue = prompt('업무를 입력하세요.', todo_text);
+            if (inputValue != null && inputValue != todo_text) {
+                $(this).html(inputValue);
+                insertTodo(mber_sn, todo_time, inputValue);
+            }
+        }
+	});
+!function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"750",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
+
+      $( document ).on( "long-press", "#popReport7 td[name=todo_text], #popReport7 th[name=todo_text]", function( event ){
+        var year = $("#s_year").val();
+        var row = $( event.target ).parent().attr('id');
+        if($( event.target ).data('mber') != $('#loginSN').val()){
+            alert("본인 업무만 수정 가능합니다.");
+            return false;
+        }
+        if($( event.target ).data('sn')){
+            var todo_sn = $( event.target ).data('sn');
+            var todo_text = $( event.target ).html();
+            var mber_sn = $( event.target ).data('mber');
+            var todo_time = $( event.target ).data('time');
+            var inputValue = prompt('업무를 입력하세요.', todo_text);
+            if (inputValue != null && inputValue != todo_text) {
+                $( event.target ).html(inputValue);
+                updateTodo(todo_sn, mber_sn, todo_time, inputValue);
+            }
+        }
+        else{
+            var todo_text = $( event.target ).html();
+            var mber_sn = $( event.target ).data('mber');
+            var todo_time = $( event.target ).data('time');
+            var inputValue = prompt('업무를 입력하세요.', todo_text);
+            if (inputValue != null && inputValue != todo_text) {
+                $( event.target ).html(inputValue);
+                insertTodo(mber_sn, todo_time, inputValue);
+            }
+        }
+      });
+
+
+    $('#popReport7').find('#todo').on('dblclick', 'th[name=todo_head], th[name=todo_foot]', function(pEvent) {
+        if($(this).data('sn')){
+            var todo_sn = $(this).data('sn');
+            var todo_text = $(this).html();
+            var mber_sn = $(this).data('mber');
+            var todo_time = $(this).data('time');
+            var inputValue = prompt('업무를 입력하세요.', todo_text);
+            if (inputValue != null && inputValue != todo_text) {
+                $(this).html(inputValue);
+                updateTodo(todo_sn, mber_sn, todo_time, inputValue);
+            }
+        }
+        else{
+            var todo_text = $(this).html();
+            var mber_sn = $(this).data('mber');
+            var todo_time = $(this).data('time');
+            var inputValue = prompt('업무를 입력하세요.', todo_text);
+            if (inputValue != null && inputValue != todo_text) {
+                $(this).html(inputValue);
+                insertTodo(mber_sn, todo_time, inputValue);
+            }
+        }
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint7').on('click', function(pEvent) {
+		var html = $('#popReport7').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+</script>
+<!--########################################################################-->
+<!--# page layer end                                                       #-->
+<!--########################################################################-->
 
 {% endblock %}

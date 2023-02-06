@@ -1,7 +1,7 @@
 from flask import Blueprint, g, current_app, render_template, redirect, request, make_response, jsonify, send_file, Response, url_for, session
 from .services import member_service as mber
-from src.app.connectors import DB
-from src.app.helpers import session_helper
+from app.connectors import DB
+from app.helpers import session_helper
 from .services import set_menu
 import json
 import os
@@ -83,3 +83,24 @@ def ajax_update_member():
     params = request.form.to_dict()
     mber.update_member(params)
     return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
+
+@bp.route('/ajax_get_member_todo', methods=['GET'])
+def ajax_get_member_todo():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = mber.get_member_todo(params)
+    result['extra'] = mber.get_extra_todo(params)
+    return jsonify(result)
+
+@bp.route('/ajax_insert_todo', methods=['GET'])
+def ajax_insert_todo():
+    params = request.args.to_dict()
+    mber.insert_todo(params)
+    return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
+
+@bp.route('/ajax_update_todo', methods=['GET'])
+def ajax_update_todo():
+    params = request.args.to_dict()
+    mber.update_todo(params)
+    return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
+

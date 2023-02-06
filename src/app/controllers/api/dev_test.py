@@ -1,7 +1,7 @@
 from flask import Blueprint, g, current_app, render_template, redirect, request, make_response, jsonify, send_file, Response, url_for, session
 from .services import member_service as mber
-from src.app.connectors import DB
-from src.app.helpers import session_helper
+from app.connectors import DB
+from app.helpers import session_helper
 from .services import set_menu
 import json
 import os

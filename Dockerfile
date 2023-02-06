@@ -22,4 +22,4 @@ WORKDIR /erp-service
 
 ENV PATH=/root/.local:$PATH
 
-CMD ["python", "./"]
+CMD ["python", "./__main__.py"]

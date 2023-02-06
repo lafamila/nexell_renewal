@@ -1,5 +1,5 @@
 from flask import current_app
-from src.app.connectors import DB
+from app.connectors import DB
 
 def get_member_list():
     db = DB()

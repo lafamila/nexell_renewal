@@ -3,8 +3,8 @@ from .services import project_service as prj
 from .services import member_service as mber
 from .services import charger_service as chrg
 from .services import dspy_cost_service as dsp
-from src.app.connectors import DB
-from src.app.helpers import session_helper
+from app.connectors import DB
+from app.helpers import session_helper
 from .services import set_menu
 import json
 import os

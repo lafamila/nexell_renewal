@@ -156,7 +156,10 @@
 				-->
 				<ul><!-- 이후부터 -->
 					{% if not menus %}
-					{{ set_menu(session['member'].auth_cd) }}
+					<script>
+						alert("로그인이 만료되었습니다.");
+						location.replace("/login");
+					</script>
 					{% endif %}
 
 					{% for menu in menus['main_menu'] %}

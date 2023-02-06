@@ -4,8 +4,8 @@ import random
 import string
 import urllib
 import datetime
-from src.app.helpers.class_helper import Map
-from src.app.helpers.datatable_helper import dt_query
+from app.helpers.class_helper import Map
+from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 
 def generate_secret_key():
@@ -193,3 +193,49 @@ def get_datatable(params):
 
 
     return dt_query(query, data, params)
+
+
+def get_member_todo(params):
+    query = """				SELECT m.mber_nm
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+				, m.mber_sn
+				, IF(m.dept_code = 'MA', 999, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code)) AS code_ordr
+				, (SELECT t.todo_text FROM todo t WHERE t.mber_sn=m.mber_sn AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_m
+				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=m.mber_sn AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_m
+				, (SELECT t.todo_text FROM todo t WHERE t.mber_sn=m.mber_sn AND t.todo_time=1 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_a
+				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=m.mber_sn AND t.todo_time=1 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_a
+				, IF(m.mber_sn=30, 1, 0) AS ordr
+				FROM member m
+				WHERE m.mber_sttus_code <> 'R'
+				AND m.dept_code IS NOT NULL
+				AND m.dept_code <> ''
+				ORDER BY code_ordr, m.ofcps_code, rspofc_code, ordr"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_extra_todo(params):
+    query = """(SELECT  (SELECT t.todo_text FROM todo t WHERE t.mber_sn=-1 AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_m
+				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=-1 AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_m
+				, (SELECT t.todo_text FROM todo t WHERE t.mber_sn=-1 AND t.todo_time=1 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_a
+				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=-1 AND t.todo_time=1 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_a
+				, -1 AS ordr)
+				UNION
+				(SELECT  (SELECT t.todo_text FROM todo t WHERE t.mber_sn=-2 AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_m
+				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=-2 AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_m
+				, (SELECT t.todo_text FROM todo t WHERE t.mber_sn=-2 AND t.todo_time=1 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_a
+				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=-2 AND t.todo_time=1 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_a
+				, -2 AS ordr)"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def insert_todo(params):
+    query = """INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES(%(mber_sn)s, %(todo_time)s, %(todo_text)s, %(todo_de)s, NOW(), %(regist_sn)s)"""
+
+    params["regist_sn"] = session['member']['member_sn']
+    g.curs.execute(query, params)
+
+def update_todo(params):
+    query = """UPDATE todo SET todo_text=%(todo_text)s WHERE todo_sn=%(todo_sn)s"""
+    g.curs.execute(query, params)

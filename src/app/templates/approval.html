@@ -464,7 +464,7 @@ $(function(){
         }
 
     </style>
-    <div class="modal-dialog modal-w1200" style="width:1720px!important">
+    <div class="modal-dialog modal-w900" style="width:800px!important" id="approval-tab-container">
         <div class="modal-content">
 			<div class="jarviswidget jarviswidget-color-greenDark">
 				<header>
@@ -484,24 +484,77 @@ $(function(){
 					</div>
 
 				</header>
-				<div role="content" style="min-height:620px;">
-					<div class="widget-body no-padding">
-						<div class="tab-content">
+				<div role="content" style="min-height:620px;height:620px;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
 
 							<!-- 프로젝트 -->
-							<div class="tab-pane fade active in" id="tabBox1">
-							<form id="frmBox1">
-								<table class="table table-bordered table-form">
-									<colgroup>
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-									</colgroup>
-									<tbody>
+							<div class="tab-pane fade active in" id="tabBox1" style="height:100%;">
+							<form id="frmBox1" style="height:100%;">
+								<style>
+									.approval-list-container{
+										display:grid;
+										grid-template-columns: 1fr 3fr;
+										height: 100%;
+									}
+									.approval-se-list{
+										border-top:2px solid #aaa;
+										border-right: 1px solid #eee;
+										background-color: #eee;
+									}
+									.approval-se-list > div{
+										padding: 10px;
+										height: 40px;
+										font-weight: bold;
+										cursor:pointer;
 
-									</tbody>
-								</table>
+									}
+									.approval-se-list > div.active{
+										background-color:#0070C0;
+										color:white;
+									}
+									body.smart-style-6 .modal .table.table-form.table-approval>thead>tr>th{
+										background-color: #eee;
+										text-align:center;
+										border-top:2px solid #aaa;
+										border-bottom:2px solid #aaa;
+									}
+								</style>
+								<script>
+									$(document).on("click", ".approval-se-list > div", function(){
+										$(document).find(".approval-se-list > div.active").removeClass("active");
+										$(this).addClass("active");
+										let code = $(this).data("code");
+										//ty code들 반복문돌리면서 etc1이 code와 같은 애들만 아래 table에 띄우기
+										//어차피 desc랑 etc2, 3도 가져와야해서 따로 ajax 만들기
+									})
+								</script>
+								<div class="approval-list-container">
+									<div class="approval-se-list">
+										{% for code in approval_se_code_list %}
+										<div class="" data-code="{{code.value}}">{{code.label}}</div>
+										{% endfor %}
+
+									</div>
+									<div class="approval-ty-list-container">
+										<table class="table table-bordered table-form table-approval" style="height:100%;">
+											<colgroup>
+												<col width="60%">
+												<col width="40%">
+											</colgroup>
+											<thead>
+												<tr>
+													<th colspan="2">양 식</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td colspan="2" style="text-align:center;">좌측의 품의 구분을 선택해주세요.</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
 							</form>
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox2">
@@ -781,6 +834,20 @@ $(function(){
         </div><!--modal-content-->
     </div><!--modal-dialog-->
 </div><!--modal-->
-
+<script>
+	$(document).on("shown.bs.tab", "a[data-toggle='tab']",function(e){
+		let tab = $(e.target).data("action");
+		console.log(tab);
+		if(tab == "tab1"){
+			$("#approval-tab-container").attr("style", "width:800px!important");
+		}
+		else if(tab == "tab2"){
+			$("#approval-tab-container").attr("style", "width:1200px!important");
+		}
+		else{
+			$("#approval-tab-container").attr("style", "width:100vw!important");
+		}
+	});
+</script>
 
 {% endblock %}

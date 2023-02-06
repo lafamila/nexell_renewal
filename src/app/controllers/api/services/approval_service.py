@@ -1,5 +1,5 @@
 from flask import session, jsonify, g
-from src.app.helpers.datatable_helper import dt_query
+from app.helpers.datatable_helper import dt_query
 
 def get_approval_datatable(params):
 #     query = """SELECT c.ctmmny_sn
