@@ -457,8 +457,8 @@ getProjectList = function()
 			var contract = pSettings.json.contract;
 			var count = pSettings.json.count;
             $('#summery').find('tbody td').eq(0).html(count.total_count.toString().toFormat('NUMBER'));
-			$('#summery').find('tbody td').eq(2).html(contract.total_amount.toFormat('NUMBER'));
-            $('#summery').find('tbody td').eq(1).html(contract.amount.toFormat('NUMBER'));
+			$('#summery').find('tbody td').eq(2).html(contract.total_amount.toString().toFormat('NUMBER'));
+            $('#summery').find('tbody td').eq(1).html(contract.amount.toString().toFormat('NUMBER'));
         },
 		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
 			var myList = this;

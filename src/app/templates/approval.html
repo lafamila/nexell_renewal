@@ -34,6 +34,114 @@ tbody .btnUpdate, tbody .btnPrint{
     }
 }
 </style>
+<style>
+	.approval-list-container{
+		display:grid;
+		grid-template-columns: 1fr 3fr;
+		height: 100%;
+	}
+	.approval-se-list{
+		border-top:2px solid #aaa;
+		border-right: 1px solid #eee;
+		background-color: #eee;
+	}
+	.approval-se-list > div{
+		padding: 10px;
+		height: 40px;
+		font-weight: bold;
+		cursor:pointer;
+
+	}
+	.approval-ty-list{
+		overflow-y: auto;
+		max-height: 575px;
+	}
+	.approval-se-list > div.active{
+		background-color:#0070C0;
+		color:white;
+	}
+	.approval-ty-list > div.selectable{
+		height: 40px!important;
+		cursor:pointer;
+		display:grid;
+		grid-template-columns: 1fr 6fr 4fr;
+		border-bottom:1px solid #eee;
+	}
+	.selectable.active{
+		background-color:#0070C0;
+		color:white;
+	}
+	.selectable > div{
+		display:flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.approval-ty-list-header{
+		display:flex;
+		justify-content: center;
+		align-items: center;
+		border-top:2px solid #aaa;
+		border-bottom:2px solid #aaa;
+		background-color: #eee;
+		padding:10px;
+	}
+	.member-search{
+		display:grid;
+		grid-template-rows: 32px 1fr;
+		height:620px;
+	}
+	.member-list{
+		display:grid;
+		grid-template-columns: 1fr 1fr;
+		height:100%;
+	}
+	.member-header{
+		display:grid;
+		grid-template-columns: 8.375fr 7.625fr 0.75fr;
+	}
+	.approval-left{
+		border-right:1px solid #ccc;
+	}
+	.approval-right{
+		border-left:1px solid #ccc;
+	}
+	.approval-left, .approval-right{
+		height:100%;
+	}
+	.approval-left > div, .approval-right > div{
+		margin:5px;
+		height: 32px;
+		display: grid;
+		grid-template-columns: 40px 1fr 60px 40px;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	.approval-left > div.badge{
+		cursor:pointer;
+		border: 2px solid rgba(12, 124, 213, 0.5);
+		border-radius:8px;
+		background-color: rgba(12, 124, 213, 0.5);
+	}
+	.approval-right > div.badge{
+		cursor:pointer;
+		border-radius:8px;
+	}
+	.approval-left > div > div, .approval-right > div > div{
+		padding:5px;
+	}
+	.title{
+		margin:0px!important;
+	}
+	.title > div{
+		grid-column: 1 / span 4;background-color: #eee;display:flex;justify-content: center;align-items: center;font-weight:bold;
+	}
+	.close {position:relative;float:left;display:inline-block;text-align:center;padding:0px!important;}
+	.close:after {content: "\00d7";}
+</style>
 <!--########################################################################-->
 <!--# contents style end                                                   #-->
 <!--########################################################################-->
@@ -475,7 +583,7 @@ $(function(){
 						<li data-action="2">
 							<a data-toggle="tab" href="#tabBox2" data-action="tab2"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>결재라인</span></a>
 						</li>
-						<li data-action="3">
+						<li data-action="3" style="display:none;">
 							<a data-toggle="tab" href="#tabBox3" data-action="tab3"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>품의서</span></a>
 						</li>
 					</ul>
@@ -491,44 +599,7 @@ $(function(){
 							<!-- 프로젝트 -->
 							<div class="tab-pane fade active in" id="tabBox1" style="height:100%;">
 							<form id="frmBox1" style="height:100%;">
-								<style>
-									.approval-list-container{
-										display:grid;
-										grid-template-columns: 1fr 3fr;
-										height: 100%;
-									}
-									.approval-se-list{
-										border-top:2px solid #aaa;
-										border-right: 1px solid #eee;
-										background-color: #eee;
-									}
-									.approval-se-list > div{
-										padding: 10px;
-										height: 40px;
-										font-weight: bold;
-										cursor:pointer;
 
-									}
-									.approval-se-list > div.active{
-										background-color:#0070C0;
-										color:white;
-									}
-									body.smart-style-6 .modal .table.table-form.table-approval>thead>tr>th{
-										background-color: #eee;
-										text-align:center;
-										border-top:2px solid #aaa;
-										border-bottom:2px solid #aaa;
-									}
-								</style>
-								<script>
-									$(document).on("click", ".approval-se-list > div", function(){
-										$(document).find(".approval-se-list > div.active").removeClass("active");
-										$(this).addClass("active");
-										let code = $(this).data("code");
-										//ty code들 반복문돌리면서 etc1이 code와 같은 애들만 아래 table에 띄우기
-										//어차피 desc랑 etc2, 3도 가져와야해서 따로 ajax 만들기
-									})
-								</script>
 								<div class="approval-list-container">
 									<div class="approval-se-list">
 										{% for code in approval_se_code_list %}
@@ -537,294 +608,63 @@ $(function(){
 
 									</div>
 									<div class="approval-ty-list-container">
-										<table class="table table-bordered table-form table-approval" style="height:100%;">
-											<colgroup>
-												<col width="60%">
-												<col width="40%">
-											</colgroup>
-											<thead>
-												<tr>
-													<th colspan="2">양 식</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td colspan="2" style="text-align:center;">좌측의 품의 구분을 선택해주세요.</td>
-												</tr>
-											</tbody>
-										</table>
+										<div class="approval-ty-list-header">양식</div>
+										<div class="approval-ty-list">
+
+										</div>
 									</div>
 								</div>
 							</form>
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox2">
-							<form id="frmBox2">
-								<table class="table table-bordered table-form">
-									<colgroup>
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-									</colgroup>
-									<tbody>
 
-                                        <tr><th rowspan="2">본사담당</th>
-											<th>담당자명</th>
-											<th colspan="2">휴대폰</th>
-											<th rowspan="2">거래처담당</th>
-											<th>담당자명</th>
-											<th>휴대폰</th>
-										</tr>
-										<tr>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
-												<input type="hidden" id="charger_sn1" name="charger_sn1">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
-												<input type="hidden" id="charger_sn2" name="charger_sn2">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
-											</td>
-										</tr>
+								<div class="member-search">
+									<div class="member-header">
+										<div class="hasinput">
+											<select class="form-control select2 w100p" id="member-search-select" name="member-search-select">
+												<option value=""></option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="hasinput">
+											<select class="form-control select2 w100p" id="member-approval-select" name="member-approval-select">
+												<option value=""></option>
+												<option value="0">협조</option>
+												<option value="1">결재</option>
+												<option value="2">수신</option>
+											</select>
+										</div>
+										<div class="hasinput">
+											<div class="btn-group">
+												<button class="btn btn-table btn-info" title="등록" id="regist-member">
+													<i class="fa fa-edit"></i>
+												</button>
+											</div>
+										</div>
 
+									</div>
 
-										<tr>
-											<th>장비/공사내역</th>
-											<td class="hasinput" colspan="3">
-                                                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
-												<input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
-											</td>
-											<th>계약DC(%)</th>
-											<td class="hasinput" colspan="1">
-												<input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
-											</td>
-											<th>품의DC(%)</th>
-											<td class="hasinput" colspan="1">
-												<input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
-											</td>
-										</tr>
-                                        <tr name="charger2">
-											<th>도면작업자</th>
-											<td class="hasinput" colspan="3">
-												<select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
-													<option value=""></option>
-													{% for code in member_list %}
-													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<th>실적신고</th>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
-											</td>
-											<th>건설공사대장</th>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
-											</td>
-										</tr>
-										<tr>
-											<th>결제방법(1)</th>
-											<td class="hasinput" colspan="7">
-												<input type="text" class="form-control" id="setle_mth" name="setle_mth">
-											</td>
-										</tr>
-										<tr>
-											<th>결제방법(2)</th>
-											<th colspan="2">금액</th>
-											<th colspan="1">일자</th>
-											<th colspan="4">비고(특이사항)</th>
-										</tr>
-										<tr>
-											<th>계약금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="enty" name="enty">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="enty_rm" name="enty_rm">
-											</td>
-										</tr>
-										<tr>
-											<th>중도금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="prtpay" name="prtpay">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
-											</td>
-										</tr>
-										<tr>
-											<th>잔금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="surlus" name="surlus">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</form>
+									<div class="member-list">
+										<div class="approval-left">
+											<div class="title">
+												<div>결재/협조</div>
+											</div>
+										</div>
+										<div class="approval-right">
+											<div class="title">
+												<div>수신</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								
+
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
 							<form id="frmBox3">
-								<table class="table table-bordered table-form">
-									<colgroup>
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-									</colgroup>
-									<tbody>
-
-                                        <tr><th rowspan="2">본사담당</th>
-											<th>담당자명</th>
-											<th colspan="2">휴대폰</th>
-											<th rowspan="2">거래처담당</th>
-											<th>담당자명</th>
-											<th>휴대폰</th>
-										</tr>
-										<tr>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
-												<input type="hidden" id="charger_sn1" name="charger_sn1">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
-												<input type="hidden" id="charger_sn2" name="charger_sn2">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
-											</td>
-										</tr>
-
-
-										<tr>
-											<th>장비/공사내역</th>
-											<td class="hasinput" colspan="3">
-                                                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
-												<input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
-											</td>
-											<th>계약DC(%)</th>
-											<td class="hasinput" colspan="1">
-												<input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
-											</td>
-											<th>품의DC(%)</th>
-											<td class="hasinput" colspan="1">
-												<input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
-											</td>
-										</tr>
-                                        <tr name="charger2">
-											<th>도면작업자</th>
-											<td class="hasinput" colspan="3">
-												<select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
-													<option value=""></option>
-													{% for code in member_list %}
-													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<th>실적신고</th>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
-											</td>
-											<th>건설공사대장</th>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
-											</td>
-										</tr>
-										<tr>
-											<th>결제방법(1)</th>
-											<td class="hasinput" colspan="7">
-												<input type="text" class="form-control" id="setle_mth" name="setle_mth">
-											</td>
-										</tr>
-										<tr>
-											<th>결제방법(2)</th>
-											<th colspan="2">금액</th>
-											<th colspan="1">일자</th>
-											<th colspan="4">비고(특이사항)</th>
-										</tr>
-										<tr>
-											<th>계약금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="enty" name="enty">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="enty_rm" name="enty_rm">
-											</td>
-										</tr>
-										<tr>
-											<th>중도금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="prtpay" name="prtpay">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
-											</td>
-										</tr>
-										<tr>
-											<th>잔금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="surlus" name="surlus">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
-											</td>
-										</tr>
-									</tbody>
-								</table>
 							</form>
 							</div><!--tab-pane-->
 						</div><!--tab-content-->
@@ -835,6 +675,19 @@ $(function(){
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
+	$(document).ready(function(){
+		$.ajax({
+			url : '/api/approval/ajax_get_approval_ty_list',
+			methods: 'GET',
+			success: function(pResult){
+				window.approval_ty_list = pResult;
+			},
+			error: function(pResult){
+				alert("에러가 발생했습니다.");
+				location.reload();
+			}
+		})
+	});
 	$(document).on("shown.bs.tab", "a[data-toggle='tab']",function(e){
 		let tab = $(e.target).data("action");
 		console.log(tab);
@@ -842,11 +695,84 @@ $(function(){
 			$("#approval-tab-container").attr("style", "width:800px!important");
 		}
 		else if(tab == "tab2"){
-			$("#approval-tab-container").attr("style", "width:1200px!important");
+			$("#approval-tab-container").attr("style", "width:800px!important");
 		}
 		else{
 			$("#approval-tab-container").attr("style", "width:100vw!important");
 		}
+	});
+
+	$(document).on("click", ".approval-se-list > div", function(){
+		$(document).find(".approval-se-list > div.active").removeClass("active");
+		$(this).addClass("active");
+		let code = $(this).data("code");
+		let approval_ty_list = window.approval_ty_list[parseInt(code)];
+		let html = '';
+		$.each(approval_ty_list, function(pIndex, pRow){
+			html += `<div class="selectable" data-code="${pRow.code}" data-url="${pRow.template_url}">
+						<div>${pIndex+1}</div>
+						<div>${pRow.code_nm}</div>
+						<div>${pRow.code_dc}</div>
+					 </div>`;
+		});
+		$(".approval-ty-list").html(html);
+		//ty code들 반복문돌리면서 etc1이 code와 같은 애들만 아래 table에 띄우기
+		//어차피 desc랑 etc2, 3도 가져와야해서 따로 ajax 만들기
+	});
+	$(document).on("click", ".selectable", function(){
+		$(document).find(".selectable.active").removeClass("active");
+		$(this).addClass("active");
+		if($(this).data("url") == ""){
+			alert("아직 준비되지 않은 품의서입니다.");
+			$(this).removeClass("active");
+		}
+		else{
+			var url = $(this).data("url");
+			$.ajax({
+				url : '/api/approval/ajax_get_approval_template',
+				method : 'GET',
+				data : {"url" : url},
+				success: function(pResult){
+					$("#frmBox3").html(pResult.html);
+					$("#popEditTabs").find("li[data-action='3']").show();
+				},
+				error: function(){
+					alert("에러가 발생했습니다.");
+					location.reload();
+				}
+			})
+
+		}
+	});
+
+
+	$(document).on("click", "#regist-member", function(){
+		let mber_sn = $("#member-search-select").find(":selected").val();
+		let mber_nm = $("#member-search-select").find(":selected").text();
+		let apvl_type = $("#member-approval-select").find(":selected").val();
+		let apvl_nm = $("#member-approval-select").find(":selected").text();
+		var target = ".approval-left";
+		if(apvl_type == "2"){
+			target = ".approval-right";
+		}
+		let idx = $(target).find("div.badge").length+1;
+		let html = `<div data-sn="${mber_sn}" class="badge badge-pill badge-dark">
+						<div>${idx}</div>
+						<div>${mber_nm}</div>
+						<div>${apvl_nm}</div>
+						<div class="close badge-close"></div>
+					</div>`;
+		$(target).append(html);
+
+	});
+	$(document).on("click", ".badge-close", function(){
+		let container = $(this).parent().parent();
+		$(this).parent().remove();
+		let badges = $(container).find("div.badge");
+		console.log(badges);
+		$.each(badges, function(pIndex, pValue){
+			$(pValue).find("div").eq(0).text(pIndex+1);
+		});
 	});
 </script>
 

@@ -25,6 +25,9 @@ class Cursor:
             if isinstance(obj, datetime.date):
                 result[key] = obj.strftime('%Y-%m-%d')
 
+            if isinstance(obj, decimal.Decimal):
+                result[key] = float(obj)
+
             if obj is None:
                 result[key] = ""
 

@@ -1,5 +1,30 @@
-from flask import session, jsonify, g
+from flask import session, jsonify, g, render_template
 from app.helpers.datatable_helper import dt_query
+
+def get_approval_template(url):
+    return render_template("approvals/{}.html".format(url))
+
+def get_approval_ty_list(params):
+    query = """SELECT code
+    , code_nm
+    , code_dc
+    , estn_code_a as parent_code
+    , estn_code_b as template_url
+    , estn_code_c AS api_url 
+    FROM code
+    WHERE use_at='Y'
+    AND parnts_code='APPROVAL_TY_CODE'
+    ORDER BY code_ordr"""
+    g.curs.execute(query)
+    rows = g.curs.fetchall()
+
+    result = {}
+    for r in rows:
+        parent_code = r['parent_code']
+        if parent_code not in result:
+            result[parent_code] = list()
+        result[parent_code].append(r)
+    return result
 
 def get_approval_datatable(params):
 #     query = """SELECT c.ctmmny_sn

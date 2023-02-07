@@ -29,3 +29,15 @@ def ajax_get_project_datatable():
     result = apvl.get_approval_datatable(params)
     return jsonify(result)
 
+@bp.route('/ajax_get_approval_ty_list', methods=['GET'])
+def ajax_get_approval_ty_list():
+    params = request.args.to_dict()
+    result = apvl.get_approval_ty_list(params)
+    return jsonify(result)
+
+
+@bp.route('/ajax_get_approval_template', methods=['GET'])
+def get_approval_template():
+    params = request.args.to_dict()
+    html = apvl.get_approval_template(params['url'])
+    return jsonify({"html" : html})
