@@ -1,0 +1,565 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint, .btnDelete{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    .btnUpdateBuilt, .btnUpdateGeneral, .btnUpdateNull{
+    line-height: 1.1!important;
+
+    }
+    tbody{
+        font-size:12px!important;
+    }
+</style>
+<style type="text/css">
+body.smart-style-6 .table>tbody>tr>th,
+body.smart-style-6 .table>tfoot>tr>th,
+body.smart-style-6 .table>thead>tr>th {
+	vertical-align: middle;
+}
+/*
+body.smart-style-6 .table>tbody>tr>td,
+body.smart-style-6 .table>tfoot>tr>td,
+body.smart-style-6 .table>thead>tr>td {
+    padding: 9px 5px;
+}
+*/
+body.smart-style-6 .table thead tr {
+	background: #eee!important;
+}
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb">
+		<li>창고관리(공조)</li><li>종합관리</li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					창고 관리(공조) <span>> 종합관리</span>
+			</h1>
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info">
+		<p><i class="fa-fw fa fa-info"></i>
+			창고 재고를 관리합니다.
+		</p>
+	</div>
+	<!-- 집계표 -->
+	<table class="table table-bordered table-summery" style="top:42px;left:235px;width:700px;z-index:902;" id="summary">
+		<thead>
+<!--			<tr><th colspan="6">-->
+					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
+<!--					창&nbsp;고&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표-->
+<!--				</th>-->
+<!--			</tr>-->
+		</thead>
+		<tbody>
+<!--			<tr>-->
+<!--				<th rowspan="2" style="background:#fff;width:90px;text-align:center;">현장전시</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--				<th rowspan="2" style="background:#fff;width:90px;text-align:center;">이현창고</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--				<th rowspan="2" style="background:#fff;width:90px;text-align:center;">기타창고</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--				<th rowspan="2" style="background:#fff;width:90px;text-align:center;">계</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--				<th rowspan="2" style="background:#fff;width:90px;text-align:center;">판매</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--				<th rowspan="2" style="background:#fff;width:90px;text-align:center;">폐기</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--			</tr>-->
+<!--            <tr>-->
+<!--                <td style="background:#fff;text-align:center;">0</td>-->
+<!--                <td style="background:#fff;text-align:center;">0</td>-->
+<!--                <td style="background:#fff;text-align:center;">0</td>-->
+<!--                <td style="background:#fff;text-align:center;">0</td>-->
+<!--                <td style="background:#fff;text-align:center;">-</td>-->
+<!--                <td style="background:#fff;text-align:center;">-</td>-->
+<!--            </tr>-->
+            <tr>
+                <th rowspan="4" style="border-right: 1px solid #000!important;
+                                       border-top: 1px solid #000!important;
+										font-size: 16px!important;
+										background: #0070C0!important;
+										color: #fff!important;
+										padding: 7px!important;
+										vertical-align: middle!important;
+										text-align: center!important;">집<br>계<br>표</th>
+                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;"></th>
+                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">현장전시</th>
+                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">이현창고</th>
+                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">기타창고</th>
+                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">판매</th>
+                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">폐기</th>
+            </tr>
+            <tr>
+                <th style="background:#fff;text-align:center;">계약수</th>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+            </tr>
+            <tr>
+                <th style="background:#fff;text-align:center;">수량</th>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;">-</td>
+            </tr>
+            <tr>
+                <th style="background:#fff;text-align:center;">금액</th>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;"></td>
+                <td style="background:#fff;text-align:center;">-</td>
+                <td style="background:#fff;text-align:center;">-</td>
+            </tr>
+		</tbody>
+	</table>
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>재고 현황</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 종합재고현황</i></button>
+<!--							<button class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 재고 등록</i></button>-->
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover floating-thead" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="125">
+									<col width="155">
+									<col width="94">
+									<col width="75">
+									<col width="90">
+									<col width="165">
+									<col width="*">
+									<col width="125">
+									<col width="125">
+									<col width="100">
+									<col width="155">
+									<col width="75">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_prduct_ty_code" name="s_prduct_ty_code">
+												<option value="">[전체]</option>
+                                                <option value="0">실내기/실외기</option>
+												{% for code in prduct_ty_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+                                        </th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_modl_nm" name="s_modl_nm">
+										</th>
+										<th class="hasinput">
+<!--											<div class="input-group">-->
+<!--												<input type="text" class="form-control datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_puchas_de" name="s_puchas_de" placeholder="[전체]">-->
+<!--	   										 <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
+<!--											</div>-->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_puchas_se_code" name="s_puchas_se_code">
+												<option value="">[전체]</option>
+												<option value="0">본사</option>
+												<option value="1">재고</option>
+												<!-- {member_list}
+												<option value="{value}">{label} {etc1}</option>
+												{/member_list} -->
+											</select>
+										</th>
+										<th class="hasinput"></th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">
+										</th>
+                                        <th class="hasinput" colspan="2" style="text-align:center;">
+                                            <input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_start" name="s_ddt_man_start" placeholder="[시작일자]">
+                                            <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                                            <input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_end" name="s_ddt_man_end" placeholder="[종료일자]">
+                                            <!-- <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_invn_sttus_code" name="s_invn_sttus_code">
+												<option value="">[전체]</option>
+												{% for code in invn_sttus_code_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
+                                                <option value="2S">이현/예약 </option>
+                                                <option value="3S">기타/예약 </option>
+                                                <option value="100">창고전체 </option>
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_rm" name="s_rm">
+										</th>
+
+										<th class="hasinput text-center">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+                                        </th>
+									</tr>
+									<!-- 헤더 -->
+                                </thead>
+                                <thead role="head">
+									<tr>
+										<th class="text-center" rowspan="1">No.</th>
+										<th class="text-center" rowspan="1">분류</th>
+										<th class="text-center" rowspan="1">모델명</th>
+										<th class="text-center" rowspan="1">매입일</th>
+										<th class="text-center" rowspan="1">매입구분</th>
+										<th class="text-center" rowspan="1">매입단가</th>
+										<th class="text-center" rowspan="1">거래처명</th>
+										<th class="text-center" rowspan="1">계약명(현장명)</th>
+										<th class="text-center" rowspan="1">출고일</th>
+										<th class="text-center" rowspan="1">회수/폐기일</th>
+										<th class="text-center" rowspan="1">분류</th>
+										<th class="text-center" rowspan="1">비고</th>
+										<th class="text-center" rowspan="1">종합현황</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script type="text/javascript">
+/******************************************************************************
+ * 재고 목록을 조회한다.
+ */
+getInventoryList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		pageLength: 50,
+		buttons: [
+            'excelHtml5',
+		],
+        ajax: {
+            url: '/api/stock/ajax_get_inventory_datatable_ts',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_prduct_ty_code': $('#dtList1').find('#s_prduct_ty_code').val(),
+					's_modl_nm': $('#dtList1').find('#s_modl_nm').val(),
+					's_instl_de': $('#dtList1').find('#s_instl_de').val(),
+					's_se_code': $('#dtList1').find('#s_se_code').val(),
+					's_sttus_code': $('#dtList1').find('#s_sttus_code').val(),
+					's_cntrct_nm': $('#dtList1').find('#s_cntrct_nm').val(),
+					's_rm': $('#dtList1').find('#s_rm').val(),
+					's_bcnc_sn': $('#dtList1').find('#s_bcnc_sn').val(),
+					// 's_puchas_de': $('#dtList1').find('#s_puchas_de').val(),
+					's_puchas_se_code': $('#dtList1').find('#s_puchas_se_code').val(),
+					's_invn_sttus_code': $('#dtList1').find('#s_invn_sttus_code').val(),
+					's_ddt_man_start': $('#dtList1').find('#s_ddt_man_start').val(),
+					's_ddt_man_end': $('#dtList1').find('#s_ddt_man_end').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'prduct_ty_nm', className: 'text-center' },
+            { data: 'modl_nm' , className: 'text-center'},
+            { data: 'puchas_de' , className: 'text-center'},
+            { data: 'puchas_se_code', className: 'text-center',
+				render: function(data, type, row, meta) {
+					var result = '';
+					if (data == 0) {
+						result = '본사';
+					} else if (data == 1) {
+						result = '재고';
+					}
+					return result;
+				}
+			},
+            { data: 'puchas_amount_one', className: 'text-right',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+            },
+            { data: 'bcnc_nm' , className: 'text-center'},
+            { data: 'cntrct_nm' , className: 'text-center'},
+            { data: 'instl_de' , className: 'text-center'},
+            { data: 'wrhousng_de', className: 'text-center' },
+            { data: 'invn_sttus_nm' , className: 'text-center'},
+            { data: 'rm' , className: 'text-center'},
+
+            { data: 'stock_sn', className: 'hasinput text-center', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+
+
+                    html += '<div class="btn-group">';
+                    html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-sn="'+row.stock_sn+'">';
+                    html += '		<i class="fa fa-edit"></i>';
+                    html += '	</button>';
+                    html += '</div>';
+					return html;
+				}
+			},
+        ],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+            var summary = pSettings.json.summary;
+            console.log(summary);
+            let cntrct_row = 1;
+            let qy_row = 2;
+            let amount_row = 3;
+            $.each($("#summary").find("tbody td"), function(pIndex, pTag){
+            	$(pTag).text("-");
+			});
+            $.each(summary, function(pIndex, pRow){
+            	if(pRow.STOCK_STTUS == 1){
+            		$('#summary').find('tbody tr').eq(cntrct_row).find('td').eq(pRow.cntrct_sn-1).text("-");
+            		$('#summary').find('tbody tr').eq(qy_row).find('td').eq(pRow.cntrct_sn-1).text(pRow.cnt.toString().toFormat('NUMBER'));
+            		$('#summary').find('tbody tr').eq(amount_row).find('td').eq(pRow.cntrct_sn-1).text(pRow.amount.toString().toFormat('NUMBER'));
+				}
+            	else if(pRow.STOCK_STTUS == 2){
+            		$('#summary').find('tbody tr').eq(cntrct_row).find('td').eq(0).text(pRow.cntrct_count.toString().toFormat('NUMBER'));
+            		$('#summary').find('tbody tr').eq(qy_row).find('td').eq(0).text(pRow.cnt.toString().toFormat('NUMBER'));
+            		$('#summary').find('tbody tr').eq(amount_row).find('td').eq(0).text(pRow.amount.toString().toFormat('NUMBER'));
+				}
+            	else{
+            		$('#summary').find('tbody tr').eq(cntrct_row).find('td').eq(pRow.STOCK_STTUS).text(pRow.cntrct_count.toString().toFormat('NUMBER'));
+            		$('#summary').find('tbody tr').eq(qy_row).find('td').eq(pRow.STOCK_STTUS).text(pRow.cnt.toString().toFormat('NUMBER'));
+            		$('#summary').find('tbody tr').eq(amount_row).find('td').eq(pRow.STOCK_STTUS).text(pRow.amount.toString().toFormat('NUMBER'));
+				}
+			});
+			// $('#summary').find('tbody tr').eq(0).find('td').eq(0).html(summary.cnt0.toFormat('NUMBER'));
+			// $('#summary').find('tbody tr').eq(0).find('td').eq(1).html(summary.cnt1.toString().toFormat('NUMBER'));
+			// $('#summary').find('tbody tr').eq(0).find('td').eq(2).html(summary.cnt2.toString().toFormat('NUMBER'));
+			// $('#summary').find('tbody tr').eq(0).find('td').eq(4).html(summary.cnt3.toString().toFormat('NUMBER'));
+			// $('#summary').find('tbody tr').eq(0).find('td').eq(5).html(summary.cnt4.toString().toFormat('NUMBER'));
+			// $('#summary').find('tbody tr').eq(0).find('td').eq(3).html((parseInt(summary.cnt0)+parseInt(summary.cnt1)+parseInt(summary.cnt2)).toString().toFormat('NUMBER'));
+			$(this).find("a.tooltips").tooltip();
+
+            // $('#summary').find('tbody tr').eq(1).find('td').eq(0).html(amount_data[1].toString().toFormat('NUMBER'));
+            // $('#summary').find('tbody tr').eq(1).find('td').eq(1).html(amount_data[2].toString().toFormat('NUMBER'));
+            // $('#summary').find('tbody tr').eq(1).find('td').eq(2).html(amount_data[3].toString().toFormat('NUMBER'));
+            // $('#summary').find('tbody tr').eq(1).find('td').eq(3).html(amount_data['total'].toString().toFormat('NUMBER'));
+
+		},
+
+		initComplete: function(pSettings, pJson) { console.log('initComplete', pJson);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var item_sn = $(this).data('sn');
+                getReport(item_sn);
+            });
+			$(myList).on('change', 'thead input', function(pEvent){
+				$.datatable1.ajax.reload();
+				// if (pEvent.keyCode === 13) {
+				// }
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead[role=head]:first').clone().hide().css('top',155).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead[role=head]:last'),
+        clone = $(this).find('thead[role=head]:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-80 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 1;
+      clone.find('th').each(function(i) {
+        if(i==4){
+            fixP = 0;
+        }
+        if(i==5){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+      clone.css("z-index", 500);
+    });
+  });
+});
+$(function(){
+
+	/**************************************************************************
+	* 거래일 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 10;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(0);
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/**************************************************************************
+     *
+     */
+	// $('#dtList1').find('#s_ddt_man').datepicker('setDate', 'today');
+
+	/**************************************************************************
+     *
+     */
+	getInventoryList();
+});
+
+</script>
+
+{% endblock %}

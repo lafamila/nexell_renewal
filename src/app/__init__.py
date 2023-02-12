@@ -4,10 +4,12 @@ from .controllers.dashboard_view import bp as dashboard_bp
 from .controllers.member_view import bp as member_bp
 from .controllers.approval_view import bp as approval_bp
 from .controllers.project_view import bp as project_bp
+from .controllers.stock_view import bp as stock_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
 from .controllers.api.project import bp as project_api_bp
 from .controllers.api.approval import bp as approval_api_bp
+from .controllers.api.stock import bp as stock_api_bp
 from .controllers.api.dev_test import bp as dev_api
 from .controllers.api.services import *
 # from .controllers.ajax_controller import bp as ajax
@@ -26,6 +28,8 @@ app.register_blueprint(project_api_bp)
 app.register_blueprint(member_bp)
 app.register_blueprint(member_api_bp)
 app.register_blueprint(dev_api)
+app.register_blueprint(stock_bp)
+app.register_blueprint(stock_api_bp)
 
 app.jinja_env.globals.update(
     zip=zip,
@@ -41,6 +45,8 @@ app.jinja_env.globals.update(
     approval_ty_code_list=get_code_list('approval_ty_code'.upper()),
     author_list=get_author_list(),
     bcnc_list=get_bcnc_list(),
-    member_list=get_member_list()
+    member_list=get_member_list(),
+    prduct_ty_code_list=get_code_list('prduct_ty_code'.upper()),
+    invn_sttus_code_list=get_code_list('invn_sttus_code'.upper())
 )
 
