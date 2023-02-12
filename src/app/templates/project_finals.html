@@ -1,0 +1,725 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+
+    .border-left{
+        border-left: 1px solid black !important;
+    }
+    #summery{
+        top:45px;
+        left:720px;
+        width:400px;
+    }
+    #summery th, #summery td{
+        padding: 3px 3px!important;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summery{
+        top:150px;
+        left:13px;
+        width:400px;
+    }
+    #summery th, #summery td{
+        padding: 3px 3px!important;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">프로젝트 종합현황 </li><li><span> 계약 / 프로젝트</span></li>
+	</ol>
+</div>
+
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					계약 및 프로젝트 등록 <span>> 계약 및 프로젝트</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			 프로젝트의 종합현황을 관리합니다.
+		</p>
+		<p><i class="fa-fw fa fa-info"></i>
+			사전입찰 / 계약현황 / 마감현황의 금액을 더블클릭해 입력합니다.
+		</p>
+	</div>
+
+    <!-- 집계표 -->
+	<table class="table table-bordered table-summery" id="summery">
+		<thead>
+			<tr><th colspan="4" style="text-align:right!important;">
+					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
+					프&nbsp;로&nbsp;젝&nbsp;트&nbsp;&nbsp;종&nbsp;합&nbsp;현&nbsp;황&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표&nbsp;&nbsp;<span style="font-size:9px!important;">(단위 : 만원)</span>
+				</th>
+			</tr>
+		</thead>
+        <tbody role="thead">
+			<tr>
+				<th style="background:#fff;width:200px;text-align:center;border-right:2px solid black;" colspan="2">㉠ 사전입찰</th>
+				<th style="background:#fff;width:200px;text-align:center;" colspan="2">㉡ 계약현황</th>
+			</tr>
+            <tr>
+				<th style="background:#fff;width:100px;text-align:center;">수주예상금액</th>
+				<th style="background:#fff;width:100px;text-align:center;border-right:2px solid black;">VA금액</th>
+				<th style="background:#fff;width:100px;text-align:center;">계약금액</th>
+				<th style="background:#fff;width:100px;text-align:center;">VA금액</th>
+			</tr>
+        </tbody>
+		<tbody>
+			<tr>
+				<td style="background:#fff;text-align:right;">0</td>
+				<td style="background:#fff;text-align:right;border-right:2px solid black;">0</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<td style="background:#fff;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+
+    <div id="temp">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>계약 / 프로젝트 목록</h2>
+						<div class="widget-toolbar">
+
+                            <h2>VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="120">
+									<col width="232">
+									<col width="140">
+									<col width="250">
+									<col width="100">
+									<col width="70">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												<option value="TS">공조전체</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_cntrct_de_start" name="s_cntrct_de_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_cntrct_de_end" name="s_cntrct_de_end" placeholder="[종료일자]">
+											<!-- <div class="input-group">
+												<input type="text" class="form-control datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_cntrct_de_start" name="s_cntrct_de_start" placeholder="[전체]">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												<span class="input-group-addon">~</span>
+												<input type="text" class="form-control datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_cntrct_de_end" name="s_cntrct_de_end" placeholder="[전체]">
+											</div> -->
+										</th>
+
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
+										</th>
+
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_spt_chrg_sn" name="s_spt_chrg_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+												<option value="{{code.value}}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_prjct_ty_code" name="s_prjct_ty_code">
+												<option value="">[전체]</option>
+												{% for code in prjct_ty_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+
+										<th class="hasinput text-center border-left" colspan="2" style="vertical-align:middle!important;border-left:1px solid black!important;">사전입찰</th>
+										<th class="hasinput text-center border-left" colspan="2" style="vertical-align:middle!important;border-left:1px solid black!important;">계약현황</th>
+										<th class="hasinput text-center border-left" colspan="2" style="vertical-align:middle!important;border-left:1px solid black!important;">마감현황</th>
+
+										<th class="hasinput text-right border-left" style="border-left:1px solid black!important;">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>영업부서</th>
+										<th>계약일자</th>
+										<th>건설사</th>
+										<th>현장명</th>
+										<th>현장 담당자</th>
+                                        <th style="text-align:left!important;">계약분류</th>
+                                        <th style="text-align:left!important;border-left:1px solid black!important;">수주예상금액</th>
+                                        <th style="text-align:left!important;">VA금액</th>
+                                        <th style="text-align:left!important;border-left:1px solid black!important;">계약금액</th>
+                                        <th style="text-align:left!important;">VA금액</th>
+                                        <th style="text-align:left!important;border-left:1px solid black!important;">계약금액</th>
+                                        <th style="text-align:left!important;">VA금액</th>
+										<th class="text-right" style="border-left:1px solid black!important;">
+<!--
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
+											</div>
+-->
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# page script start                                                    #-->
+<!--########################################################################-->
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+
+insertFinals = function(col, data, sn)
+{
+	var params = '';
+	params += '&finals_'+col+'='+data;
+	params += '&cntrct_sn='+sn;
+	$.ajax({
+		url: '/api/project/ajax_insert_finals',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            $.datatable1.ajax.reload();
+		}
+	});
+}
+
+updateFinals = function(col, data, sn)
+{
+	var params = '';
+	params += '&finals_'+col+'='+data;
+	params += '&finals_sn='+sn;
+	$.ajax({
+		url: '/api/project/ajax_update_finals',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            $.datatable1.ajax.reload();
+		}
+	});
+}
+
+deleteFinals = function(sn)
+{
+	var params = '';
+	params += '&finals_sn='+sn;
+	$.ajax({
+		url: '/api/project/ajax_delete_finals',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            $.datatable1.ajax.reload();
+		}
+	});
+}
+
+getFinalsList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		pageLength: 500,
+		buttons: ['excelHtml5'],
+        ajax: {
+            url: '/api/project/ajax_get_finals',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+                    's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_cntrct_de_start': $('#dtList1').find('#s_cntrct_de_start').val(),
+					's_cntrct_de_end': $('#dtList1').find('#s_cntrct_de_end').val(),
+					's_bcnc_sn': $('#dtList1').find('#s_bcnc_sn').val(),
+					's_spt_nm': $('#dtList1').find('#s_spt_nm').val(),
+					's_spt_chrg_sn': $('#dtList1').find('#s_spt_chrg_sn').val(),
+					's_prjct_ty_code': $('#dtList1').find('#s_prjct_ty_code').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [2, 'asc'],
+		// columnDefs: [
+        //     { targets: 4, visible: false }
+        // ],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'dept_nm' },
+            { data: 'cntrct_de' },
+            { data: 'bcnc_nm' },
+            { data: 'spt_nm' },
+            { data: 'spt_chrg_nm' },
+            { data: 'prjct_ty_nm', className: 'text-left',
+				render: function(pData, pType, pRow, pMeta) {
+                    console.log(pData);
+					var html = '';
+                    var regExp = /\(([^)]+)\)/;
+                    var matches = regExp.exec(pData);
+
+
+//                    if(pRow.prjct_ty_code){
+//                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
+//                        html += '	<i class="fa fa-print"></i>'+pData;
+//                        html += '</button>';
+
+//                    }
+                    if(matches)
+                        return matches[1];
+                    else
+                        return '';
+                }
+			},
+            { data: 'finals_amt1', className: 'text-number border-left', //계약금액
+                render: function(data, type, row, meta) {
+                    var html = '';
+                    if(parseInt(data) == 0){
+                        data = '';
+                    }
+                    if(row.finals_sn == ''){
+                        html += '<span class="insert" data-col="amt1" data-sn="'+row.cntrct_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    else{
+                        html += '<span class="update" data-col="amt1" data-sn="'+row.finals_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    return html;
+                }
+            },
+            { data: 'finals_amt2', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    var html = '';
+                    if(parseInt(data) == 0){
+                        data = '';
+                    }
+                    if(row.finals_sn == ''){
+                        html += '<span class="insert" data-col="amt2" data-sn="'+row.cntrct_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    else{
+                        html += '<span class="update" data-col="amt2" data-sn="'+row.finals_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    return html;
+                }
+            },
+            { data: 'finals_amt3', className: 'text-number border-left', //계약금액
+                render: function(data, type, row, meta) {
+                    var html = '';
+                    if(parseInt(data) == 0){
+                        data = '';
+                    }
+                    if(row.finals_sn == ''){
+                        html += '<span class="insert" data-col="amt3" data-sn="'+row.cntrct_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    else{
+                        html += '<span class="update" data-col="amt3" data-sn="'+row.finals_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    return html;
+                }
+            },
+            { data: 'finals_amt4', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    var html = '';
+                    if(parseInt(data) == 0){
+                        data = '';
+                    }
+                    if(row.finals_sn == ''){
+                        html += '<span class="insert" data-col="amt4" data-sn="'+row.cntrct_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    else{
+                        html += '<span class="update" data-col="amt4" data-sn="'+row.finals_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    return html;
+                }
+            },
+            { data: 'finals_amt5', className: 'text-number border-left', //계약금액
+                render: function(data, type, row, meta) {
+                    var html = '';
+                    if(parseInt(data) == 0){
+                        data = '';
+                    }
+                    if(row.finals_sn == ''){
+                        html += '<span class="insert" data-col="amt5" data-sn="'+row.cntrct_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    else{
+                        html += '<span class="update" data-col="amt5" data-sn="'+row.finals_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    return html;
+                }
+            },
+            { data: 'finals_amt6', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    var html = '';
+                    if(parseInt(data) == 0){
+                        data = '';
+                    }
+                    if(row.finals_sn == ''){
+                        html += '<span class="insert" data-col="amt6" data-sn="'+row.cntrct_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    else{
+                        html += '<span class="update" data-col="amt6" data-sn="'+row.finals_sn+'">'+data.toString().toFormat('NUMBER')+'</span>';
+                    }
+                    return html;
+                }
+            },
+            { data: 'ctmmny_sn', className: 'hasinput text-right border-left', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+                        html += '<div class="btn-group">';
+                        html += '	<button class="btn btn-table btn-danger btnUpdate" title="완료" data-finals_sn="'+row.finals_sn+'">';
+                        html += '		<i class="fa fa-trash-o"></i>완료';
+                        html += '	</button>';
+                        html += '</div>';
+					return html;
+				}
+			},
+		],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			var count = pSettings.json.count;
+            $('#summery').find('tbody td').eq(0).html(count.amt1.toString().toFormat('NUMBER'));
+            $('#summery').find('tbody td').eq(1).html(count.amt2.toString().toFormat('NUMBER'));
+            $('#summery').find('tbody td').eq(2).html(count.amt3.toString().toFormat('NUMBER'));
+            $('#summery').find('tbody td').eq(3).html(count.amt4.toString().toFormat('NUMBER'));
+        },
+		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
+
+			var myList = this;
+
+			$(myList).on('dblclick', 'tbody tr td', function(pEvent) {
+                var loginid = $('#loginID').val();
+                if(loginid != 'ma_keunmi'){
+                    alert("권한이 없습니다.");
+                    return;
+                }
+				if ($(this).parent().parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else if($(this).find('span').hasClass('insert') || $(this).find('span').hasClass('update')) {
+                    var data = $(this).find('span').hasClass('insert') ? '' : $(this).find('span').html().replace(",", "");
+                    var inputValue = prompt('값을 입력하세요.', data);
+                    var sn = $(this).find('span').data('sn');
+                    var col = $(this).find('span').data('col');
+                    if (inputValue != null && inputValue != '') {
+                        inputValue = inputValue.replaceAll(',', '');
+                        if($(this).find('span').hasClass('insert')){
+                            insertFinals(col, inputValue, sn);
+                        }
+                        else{
+                            updateFinals(col, inputValue, sn);
+                        }
+                    }
+                    else{
+                        inputValue = '0';
+                        if($(this).find('span').hasClass('insert')){
+                            insertFinals(col, inputValue, sn);
+                        }
+                        else{
+                            updateFinals(col, inputValue, sn);
+                        }
+                    }
+
+                } else {
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+
+                var finals_sn = $(this).data('finals_sn');
+                var loginid = $('#loginID').val();
+                if(loginid == 'rotcwhang'){
+                    if(confirm('제거하시겠습니까?')){
+                        if(finals_sn){
+                            deleteFinals(finals_sn);
+                        }
+                        else{
+                            alert("값을 하나라도 입력한 후 완료해주세요.");
+                        }
+                    }
+                }
+                else{
+                    alert("권한이 없습니다.");
+                }
+
+
+			});
+
+//            $(myList).on('click', '.btnPrint', function(pEvent) {
+//				var prjct_ty_code = $(this).data('prjct_ty_code');
+//				var cntrct_sn = $(this).data('cntrct_sn');
+//				var prjct_sn = $(this).data('prjct_sn');
+//				if (prjct_ty_code == 'NR') { //일반공무
+//					getReportNR(cntrct_sn, prjct_sn);
+//				} else if (prjct_ty_code == 'BD') { //빌트인직계약
+//					getReportBD(cntrct_sn, prjct_sn);
+//				} else if (prjct_ty_code == 'BF') { //빌트인수수료
+//					getReportBF(cntrct_sn, prjct_sn);
+//				}
+//			});
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+
+	/**************************************************************************
+	* 계약일자 캘린더 셋팅
+	*/
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear()-1);
+        endDate.setMonth(0);
+        endDate.setDate(1);
+
+//		endDate.setDate(endDate.getDate() - (365*maxYears));
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/******************************************************************************
+	*
+	*/
+	// var selected_count = 0;
+	// $('.select2-multiple').select2({
+    // 	// templateSelection: function(selected, total) {
+	// 	templateResult: function(state) {
+	// 		return '';
+	// 	},
+    // 	// templateSelection: function(state) {
+	// 	// 	var selected = $('#s_progrs_sttus_code option:selected').length;
+	// 	// 	console.log($(this).parent());
+    //   	// 	return selected+'개 선택';
+    // 	// }
+  	// });
+	/**************************************************************************
+     *
+     */
+	getFinalsList();
+});
+
+$(document).keyup(function(e) {
+    if (e.keyCode == 27) { // escape key maps to keycode `27`
+        $("button[data-dismiss=modal]").trigger('click');
+    }
+});
+</script>
+<!--########################################################################-->
+<!--# page script end                                                      #-->
+<!--########################################################################-->
+
+
+
+
+
+{% endblock %}

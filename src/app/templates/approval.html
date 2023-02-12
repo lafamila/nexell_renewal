@@ -567,9 +567,6 @@ $(function(){
 #popBox1 tbody{
     font-size:12px!important;
 }
-        #btnDelete{
-            display:none;
-        }
 
     </style>
     <div class="modal-dialog modal-w900" style="width:800px!important" id="approval-tab-container">
@@ -665,6 +662,15 @@ $(function(){
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
 							<form id="frmBox3">
+								<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;">
+									<div style="display:inline-block;width: calc(100% - 56px);">
+										<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
+									</div>
+									<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
+								</span>
+								<div id="formContent">
+
+								</div>
 							</form>
 							</div><!--tab-pane-->
 						</div><!--tab-content-->
@@ -675,6 +681,29 @@ $(function(){
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
+	$(document).on('click', '#btnSave', function(){
+		var data = $("#frmBox3").formSerialize();
+		console.log(data);
+	});
+	init = function(){
+		$('#popEditTabs').find("a[data-action='tab1']").trigger('click');
+		$(document).find(".approval-se-list .active").removeClass("active");
+		$(document).find(".approval-ty-list").html("");
+		$("#formContent").html("");
+		$("#popEditTabs").find("li[data-action='3']").hide();
+		$('#popBox1').find('#member-search-select').val('').trigger('change');
+		$('#popBox1').find('#member-approval-select').val('').trigger('change');
+		$('#popBox1').find("#approval_title").val('');
+		$('#popBox1').find('.member-list .badge').remove();
+	}
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		init();
+	});
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+
+	});
 	$(document).ready(function(){
 		$.ajax({
 			url : '/api/approval/ajax_get_approval_ty_list',
@@ -733,7 +762,7 @@ $(function(){
 				method : 'GET',
 				data : {"url" : url},
 				success: function(pResult){
-					$("#frmBox3").html(pResult.html);
+					$("#formContent").html(pResult.html);
 					$("#popEditTabs").find("li[data-action='3']").show();
 				},
 				error: function(){
@@ -752,18 +781,20 @@ $(function(){
 		let mber_nm = $("#member-search-select").find(":selected").text();
 		let apvl_type = $("#member-approval-select").find(":selected").val();
 		let apvl_nm = $("#member-approval-select").find(":selected").text();
-		var target = ".approval-left";
-		if(apvl_type == "2"){
-			target = ".approval-right";
+		if(mber_sn != "" && apvl_type != ""){
+			var target = ".approval-left";
+			if(apvl_type == "2"){
+				target = ".approval-right";
+			}
+			let idx = $(target).find("div.badge").length+1;
+			let html = `<div data-sn="${mber_sn}" class="badge badge-pill badge-dark">
+							<div>${idx}</div>
+							<div>${mber_nm}</div>
+							<div>${apvl_nm}</div>
+							<div class="close badge-close"></div>
+						</div>`;
+			$(target).append(html);
 		}
-		let idx = $(target).find("div.badge").length+1;
-		let html = `<div data-sn="${mber_sn}" class="badge badge-pill badge-dark">
-						<div>${idx}</div>
-						<div>${mber_nm}</div>
-						<div>${apvl_nm}</div>
-						<div class="close badge-close"></div>
-					</div>`;
-		$(target).append(html);
 
 	});
 	$(document).on("click", ".badge-close", function(){

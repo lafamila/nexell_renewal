@@ -135,3 +135,31 @@ def ajax_get_reportBF():
     result["status"] = True
 
     return result
+
+@bp.route('/ajax_get_finals', methods=['POST'])
+def ajax_get_finals():
+    params = request.form.to_dict()
+    result = prj.get_finals(params)
+    result['count'] = prj.get_finals_summary(params)
+    return jsonify(result)
+
+@bp.route('/ajax_insert_finals', methods=['GET'])
+def ajax_insert_finals():
+    params = request.args.to_dict()
+    prj.insert_finals(params)
+    return jsonify({"status": True, "message": "성공적으로 입력되었습니다."})
+
+@bp.route('/ajax_update_finals', methods=['GET'])
+def ajax_update_finals():
+    params = request.args.to_dict()
+    prj.update_finals(params)
+    return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
+
+
+@bp.route('/ajax_delete_finals', methods=['GET'])
+def ajax_delete_finals():
+    params = request.args.to_dict()
+    prj.delete_finals(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+
