@@ -17,6 +17,8 @@ class Cursor:
 
     def fetchone(self):
         result = self.cursor.fetchone()
+        if result is None:
+            return result
         for key, obj in result.items():
 
             if isinstance(obj, datetime.datetime):

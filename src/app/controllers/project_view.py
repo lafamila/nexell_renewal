@@ -7,6 +7,11 @@ bp = Blueprint('project', __name__, url_prefix='/project')
 def index_page():
     return render_template('project.html')
 
+@bp.route('/finals')
+@session_helper.session_check
+def finals_page():
+    return render_template('project_finals.html')
+
 @bp.route('/report/NR')
 @session_helper.session_check
 def report_NR():

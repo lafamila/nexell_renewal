@@ -1,5 +1,18 @@
 {% extends 'common/main_base.html' %}
 {% block content %}
+<style>
+
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.5 !important;
+    }
+
+    #rcppay_status_result{
+        line-height: 0.5 !important;
+
+    }
+
+</style>
+
 <div id="ribbon" style="background:#B3E5FC!important;">
 	<span class="ribbon-button-alignment">
 		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
@@ -10,4 +23,840 @@
         <li style="">대시보드</li>
 	</ol>
 </div>
+
+<div id="content" style="width:1580px!important;margin: 0 auto;">
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid" class="" style="margin-top:20px;">
+
+		<!-- row -->
+		<div class="row report">
+
+<!-- 기성 현황 시작 -->
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div style="position: relative;">
+
+        <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline" id="dashboard_title1">팀별 실적 현황 <span style="font-size:12px!important;">(VAT 포함)</span></h5>
+        <div style="position: absolute; right: 0; top: -5px; text-align: right; max-width: 50%; overflow: hidden">
+<!--            <button class="btn btn-info" data-toggle="modal" href="#popReport8"><i class="fa fa-print"> 사전입찰</i></button>-->
+<!--            <button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 연간현황</i></button>-->
+            <input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;padding-top:5px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt" placeholder="[시작일자]">
+            <button class="btn btn-info" id="dash_search">이동</button>
+
+        </div>
+    </div>
+    <br/>
+    <br/>
+	<table id="rptContractStatus" class="table table-bordered w100p">
+		<colgroup>
+			<col width="100">
+			<col width="150">
+			<col width="*">
+		</colgroup>
+		<tbody role="header">
+			<tr>
+				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" rowspan="2">구분</th>
+				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" rowspan="2">팀</th>
+				<th class="colorB" colspan="3" id="rptContractStatus_m" style="border-right:2px solid black!important;">월</th>
+				<th class="colorB" colspan="3" style="border-right:2px solid black!important;">누계</th>
+				<th class="colorB" colspan="2" style="border-right:2px solid black!important;">
+
+                    연간
+
+                </th>
+                <th class="colorB" style="vertical-align:middle;" rowspan="2">팀점유율</th>
+			</tr>
+			<tr>
+				<th class="colorB">목표</th>
+				<th class="colorB">실적</th>
+				<th class="colorB" style="border-right:2px solid black!important;">%</th>
+				<th class="colorB">목표</th>
+				<th class="colorB">실적</th>
+				<th class="colorB" style="border-right:2px solid black!important;">%</th>
+				<th class="colorB">목표</th>
+				<th class="colorB" style="border-right:2px solid black!important;">%</th>
+			</tr>
+		</tbody>
+		<tbody role="body">
+		</tbody>
+	</table>
+	<br>
+</div>
+<!-- 기성 현황 끝 -->
+
+<!-- CS 발생현황 시작 -->
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<h5 class="sub-title underline">현장현황 및 BISS 지적현황</h5>
+    <table class="table table-bordered w100p" style="width:30%!important;border-bottom:none!important;">
+		<colgroup>
+			<col width="75">
+			<col width="140">
+			<col width="75">
+			<col width="75">
+			<col width="75">
+			<col width="75">
+		</colgroup>
+		<tbody role="header" style="border-bottom:none!important;">
+            <tr>
+                <th rowspan="3" class="colorB" style="vertical-align:middle;font-size:11px!important;">기준</th>
+                <th class="colorB" style="font-size:11px!important;">부서</th>
+                <th class="colorB" style="font-size:11px!important;">진행</th>
+                <th class="colorB" style="font-size:11px!important;">대기</th>
+                <th class="colorB" style="font-size:11px!important;">사전</th>
+                <th class="colorB" style="font-size:11px!important;">유보</th>
+            </tr>
+            <tr>
+                <td style="font-size:11px!important;">공조</td>
+                <td style="font-size:11px!important;">공1%</td>
+                <td style="font-size:11px!important;">공0%</td>
+                <td style="font-size:11px!important;">낙찰</td>
+                <td style="font-size:11px!important;">미지급</td>
+            </tr>
+            <tr>
+                <td style="font-size:11px!important;">빌트</td>
+                <td style="font-size:11px!important;">납품1%</td>
+                <td style="font-size:11px!important;">납품0%</td>
+                <td style="font-size:11px!important;">낙찰</td>
+                <td style="font-size:11px!important;">미입금</td>
+            </tr>
+        </tbody>
+
+    </table>
+	<table id="rptBissSummery" class="table table-bordered w100p">
+		<colgroup>
+			<col width="75">
+			<col width="140">
+			<col width="30">
+			<col width="75">
+			<col width="75">
+			<col width="75">
+			<col width="75">
+			<col width="75">
+			<col width="75">
+			<col width="125">
+<!--			<col width="*">-->
+			<col width="575">
+			<col width="75">
+			<col width="75">
+		</colgroup>
+		<tbody role="header">
+			<tr>
+				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" colspan="9">현장현황</th>
+				<th class="colorG" colspan="4">BiSS 지적현황</th>
+			</tr>
+			<tr>
+				<th class="colorB" style="vertical-align:middle;">부서</th>
+				<th class="colorB" style="vertical-align:middle;" colspan="2">담당자</th>
+				<th class="colorB" style="vertical-align:middle;">진행현장</th>
+				<th class="colorB" style="vertical-align:middle;">대기현장</th>
+				<th class="colorB" style="vertical-align:middle;">사전입찰</th>
+				<th class="colorB" style="vertical-align:middle;">유보</th>
+				<th class="colorB" style="vertical-align:middle;">판매</th>
+				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;">계</th>
+
+
+
+
+
+                <th class="colorG">건설사</th>
+				<th class="colorG">계약명(현장명)</th>
+				<th class="colorG">BiSS건수</th>
+				<th class="colorG">계</th>
+			</tr>
+		</tbody>
+		<tbody role="body">
+		</tbody>
+        <tbody role="foot">
+
+				<th class="colorSky" style="vertical-align:middle;" colspan="3">총계</th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+				<th class="colorSky" style="vertical-align:middle;border-right:2px solid black!important;"></th>
+				<th class="colorSky" style="vertical-align:middle;" colspan="2"></th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+				<th class="colorSky" style="vertical-align:middle;"></th>
+
+        </tbody>
+	</table>
+	<br>
+</div>
+<!-- CS 발생현황 끝 -->
+
+<!-- 미수금현황 시작 -->
+<!--
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<h5 class="sub-title underline">외상미수금</h5>
+		<table id="rcppay_status_result">
+			<colgroup>
+                        <col width="60">
+                        <col width="120">
+                        <col width="220">
+                        <col width="80">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="120">
+                        <col width="80">
+                        <col width="60">
+                        <col width="80">
+                        <col width="100">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="colorG" colspan="12">입금</th>
+                </tr>
+                <tr>
+                    <th class="colorG">출고월</th>
+                    <th class="colorG">거래처명</th>
+                    <th class="colorG">현장명</th>
+                    <th class="colorG">부서</th>
+                    <th class="colorG">장비대</th>
+                    <th class="colorG">로지텍</th>
+                    <th class="colorG">설치비</th>
+                    <th class="colorG">세금계산서금액</th>
+                    <td class="colorG">거래구분</td>
+                    <th class="colorG">예정일</th>
+                    <th class="colorButton">입금일</th>
+                    <th class="colorButton">입금액</th>
+
+                </tr>
+            </thead>
+            <tbody role="body">
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="colorG" style="" colspan="4">합계</th>
+                    <th class="colorG text-number"></th>
+                    <th class="colorG text-number"></th>
+                    <th class="colorG text-number"></th>
+                    <th class="colorG text-number"></th>
+                    <th class="colorP text-number" colspan="2"></th>
+                    <th class="colorButton"></th>
+                    <th class="colorButton"></th>
+                </tr>
+            </tfoot>
+		</table>
+	<br>
+</div>
+-->
+<!-- 미수금현황 끝 -->
+
+<!-- 매입/매출 현황 시작 -->
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+    <div style="position: relative;">
+
+        <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline">매입처별 매입 현황 (장비, 자재)</h5>
+        <div style="position: absolute; right: 0; top: -5px; text-align: right; max-width: 50%; overflow: hidden">
+<!--            <button class="btn btn-info" data-toggle="modal" href="#popReport9"><i class="fa fa-print"> 로지텍</i></button>-->
+<!--            <button class="btn btn-info" data-toggle="modal" href="#popReport4"><i class="fa fa-print"> 연간현황</i></button>-->
+            <input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;padding-top:5px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt_last" name="s_pxcond_mt_last" placeholder="[시작일자]">
+            <button class="btn btn-info" id="last_search">이동</button>
+
+        </div>
+    </div>
+    <br/>
+    <br/>
+	<table id="rptSalesSummery" class="table table-bordered w100p">
+	</table>
+	<br>
+</div>
+<!-- 매입/매출 현황 끝 -->
+
+		</div>
+		<!-- end row -->
+	</section>
+	<!-- end widget grid -->
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+
+	/**************************************************************************
+	* 거래일 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('#s_pxcond_mt').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+		},
+	});
+
+	var end = $('#s_pxcond_mt').val();
+	if (end == '') {
+		$('#s_pxcond_mt').datepicker('setDate', 'today');
+	}
+    end = $('#s_pxcond_mt').val();
+
+	$('#s_pxcond_mt_last').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+		},
+	});
+
+	var end = $('#s_pxcond_mt_last').val();
+	if (end == '') {
+		$('#s_pxcond_mt_last').datepicker('setDate', 'today');
+	}
+    end = $('#s_pxcond_mt').val();
+	getCompletedSummary(end);
+    // getReportExpectSales(end);
+	getBissSummery();
+    end = $('#s_pxcond_mt_last').val();
+	getSalesSummery(end);
+});
+$("#dash_search").on("click", function(){
+    var end = $('#s_pxcond_mt').val();
+	getCompletedSummary(end);
+
+});
+$("#last_search").on("click", function(){
+    var end = $('#s_pxcond_mt_last').val();
+	getSalesSummery(end);
+
+});
+
+/******************************************************************************
+ * 기성현황
+ */
+getCompletedSummary = function(s_pxcond_mt)
+{
+    var params = '';
+	params += '&s_pxcond_mt='+s_pxcond_mt;
+	$.ajax({
+		url: '/api/dashboard/ajax_get_completed_summary',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log("ajax_get_completed_summary", pResult);
+			var pxcond_mt = pResult.s_pxcond_mt;
+			var pxcond_mt_arr = pxcond_mt.split('-');
+			var year = parseInt(pxcond_mt_arr[0]);
+			var month = parseInt(pxcond_mt_arr[1]);
+			var day = parseInt(pxcond_mt_arr[2]);
+            $("#dashboard_title1").html(year+'년 '+month+'월 팀별 실적 현황 <span style="font-size:12px!important;">(VAT 포함)</span>');
+			// ============================================================
+			var html = '';
+			var rt1 = 0, rt2 = 0, rt3 = 0;
+			var b_amt1 = 0, b_amt2 = 0, b_amt3 = 0, b_amt4 = 0, b_amt5 = 0;
+			var total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+			$('#content').find('#rptContractStatus_m').html(month+'월');
+			$.each(pResult.contractStatusList, function(pIndex, pValue){
+				if (pValue.amt_ty_code == '2') { // 수주
+                    b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
+                    b_amt2 = parseInt(pValue['m'+parseInt(pxcond_mt_arr[1])]); if(isNaN(b_amt2)) b_amt2 = 0;
+                    b_amt3 = parseInt(pValue.y_contract_amount); if(isNaN(b_amt3)) b_amt3 = 0;
+                    b_amt4 = 0; for(i=1; i<=month; i++) { b_amt4 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt4)) b_amt4 = 0;
+                    b_amt5 = 0; for(i=1; i<=12; i++) { b_amt5 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt5)) b_amt5 = 0;
+					rt1 = (b_amt2 < 0) ? 100.0 + (b_amt2 - b_amt1)*100/b_amt2 : (b_amt1/b_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+					rt2 = (b_amt4 < 0) ? 100.0 + (b_amt4 - b_amt3)*100/b_amt4 : (b_amt3/b_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+					rt3 = (b_amt3/b_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+
+					html += '<tr>';
+					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
+                    html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
+                    html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number total-rates" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+b_amt5+'"></td>';
+                    html += '</tr>';
+					// 합계처리
+					total1 += parseInt(b_amt1);
+					total2 += parseInt(b_amt2);
+					total3 += parseInt(b_amt3);
+					total4 += parseInt(b_amt4);
+					total5 += parseInt(b_amt5);
+					if ((pIndex+1)%pValue.dept_count == 0) {
+						rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
+						rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
+						rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
+						html += '<tr>';
+						html += '    <td class="text-center" style="border-right:2px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
+						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
+                        html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" id="suju_rates'+pValue.amt_ty_code+'">'+total5.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky"></td>';
+                        html += '</tr>';
+						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+					}
+				} else if (pValue.amt_ty_code == '3' || pValue.amt_ty_code == '5') { // 매출, VA
+                    b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
+                    b_amt2 = parseInt(pValue['m'+parseInt(pxcond_mt_arr[1])]); if(isNaN(b_amt2)) b_amt2 = 0;
+                    b_amt3 = parseInt(pValue.y_contract_amount); if(isNaN(b_amt3)) b_amt3 = 0;
+                    b_amt4 = 0; for(i=1; i<=month; i++) { b_amt4 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt4)) b_amt4 = 0;
+                    b_amt5 = 0; for(i=1; i<=12; i++) { b_amt5 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt5)) b_amt5 = 0;
+                    var link_start = '<a data-toggle="modal" href="#popReport'+pValue.amt_ty_code+'" style="color:inherit;">';
+                    var link_end = '</a>';
+
+					html += '<tr class="'+pValue.dept_code+'">';
+					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
+					html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+                    html += '    <td class="text-number '+pValue.dept_code+'"></td>';
+					html += '</tr>';
+					// 장려금
+                    j_amt1 = parseInt(pValue.ty9_goal_amount); if(isNaN(j_amt1)) j_amt1 = 0;
+                    j_amt2 = parseInt(pValue.ty8_goal_amount); if(isNaN(j_amt2)) j_amt2 = 0;
+                    j_amt3 = parseInt(pValue.ty9_goal_amount_sum); if(isNaN(j_amt3)) j_amt3 = 0;
+                    j_amt4 = parseInt(pValue.ty8_goal_amount_sum); if(isNaN(j_amt4)) j_amt4 = 0;
+                    j_amt5 = parseInt(pValue.ty8_goal_amount_total); if(isNaN(j_amt5)) j_amt5 = 0;
+					html += '<tr>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;">장려금</td>';
+					html += '    <td class="text-number">'+j_amt2.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+j_amt1.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					html += '    <td class="text-number">'+j_amt4.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+j_amt3.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					html += '    <td class="text-number">'+j_amt5.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					html += '    <td class="text-number '+pValue.dept_code+'"></td>';
+					html += '</tr>';
+					// 소계
+					t_amt1 = parseInt(b_amt1) + parseInt(j_amt1);
+					t_amt2 = parseInt(b_amt2) + parseInt(j_amt2);
+					t_amt3 = parseInt(b_amt3) + parseInt(j_amt3);
+					t_amt4 = parseInt(b_amt4) + parseInt(j_amt4);
+					t_amt5 = parseInt(b_amt5) + parseInt(j_amt5);
+					rt1 = (t_amt2 < 0) ? 100.0 + (t_amt2 - t_amt1)*100/t_amt2 : (t_amt1/t_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+					rt2 = (t_amt4 < 0) ? 100.0 + (t_amt4 - t_amt3)*100/t_amt4 : (t_amt3/t_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+					rt3 = (t_amt3/t_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+					html += '<tr>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
+					html += '    <td class="text-center colorN3" style="border-right:2px solid black!important;">소계</td>';
+                    html += '    <td class="text-number colorN3">'+t_amt2.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number colorN3">'+t_amt1.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number colorN3" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number colorN3">'+t_amt4.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number colorN3">'+t_amt3.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number colorN3" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number colorN3">'+t_amt5.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number colorN3" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number colorN3 total-rates '+pValue.dept_code+'" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+t_amt5+'"></td>';
+                    html += '</tr>';
+
+					// 합계처리
+                    if(pValue.dept_code !== 'ST' ) {
+                        total1 += parseInt(t_amt1);
+                        total2 += parseInt(t_amt2);
+                        total3 += parseInt(t_amt3);
+                        total4 += parseInt(t_amt4);
+                        total5 += parseInt(t_amt5);
+                    }
+					if ((pIndex+1)%pValue.dept_count == 0) {
+						rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
+						rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
+						rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
+						html += '<tr>';
+						html += '    <td class="text-center" style="border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
+						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
+                        html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1) + '%'))+'</td>';
+                        html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1) + '%'))+'</td>';
+                        html += '    <td class="text-number colorSky" id="suju_rates'+pValue.amt_ty_code+'">'+total5.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky"></td>';
+                        html += '</tr>';
+						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+					}
+				}
+			});
+			$('#content').find('#rptContractStatus tbody[role=body]').html(html);
+			$('#content').find('#rptContractStatus tbody[role=body] td.ST').parent().remove();
+            var rates = $('#content').find('#rptContractStatus tbody[role=body]').find(".total-rates");
+            $.each(rates, function(pIndex, pValue){
+                var tot_rates = parseInt($(document).find('#'+$(pValue).data("target")).html().replaceAll(",", ""));
+                if(isNaN(tot_rates)) tot_rates = 0.0;
+                var v = $(pValue).data("amount");
+                console.log(tot_rates, pValue);
+                $(pValue).html((parseInt(v)*100.0 / tot_rates).toFixed(1)+'%');
+            });
+
+			$('#content').find('#rptContractStatus tbody[role=body]').yRowspan(0);
+			var cells = $('#content').find('#rptContractStatus tbody[role=body] td, #rptContractStatus tbody[role=body] th');
+            $.each(cells, function(pIndex, pValue){
+                let value = $(pValue).html();
+                if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+
+                    $(pValue).html('');
+                }
+            });
+		}
+	});
+}
+/******************************************************************************
+ * 현장담당자별 BiSS지적현황
+ */
+getBissSummery = function()
+{
+	$.ajax({
+		url: '/api/dashboard/ajax_get_biss_state',
+		type: 'GET',
+		data: '',
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+			if (pResult.status) {
+                console.log(pResult);
+
+				var html = '';
+				var cntrct_sum = 0, flaw_sum = 0, ct_sum = 0, n_sum = 0, k_sum = 0, s_sum=0, before='';
+                var k_cnts = {};
+                $.each(pResult.data, function(pIndex, pValue){
+                    if(!k_cnts.hasOwnProperty(pValue.mber_sn)){
+                        k_cnts[pValue.mber_sn] = 0;
+                    }
+                    var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
+                    if(rate == 0.0)
+                        k_cnts[pValue.mber_sn]++;
+                });
+                var small_tot = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+                var flag = false;
+				$.each(pResult.list, function(pIndex, pValue){
+					var bgColor = '';
+					if (pValue.mber_nm == '총계') {
+						bgColor = 'colorSky';
+					}
+                    if((parseInt(pValue.cntrct_cnt) != 0 || parseInt(pValue.ct_cnt) != 0)){
+                        if(pValue.dept_code[0] != 'T' && pValue.dept_code[0] != 'P' && !flag){
+
+                            html += '<tr>';
+                            html += '    <td class="colorSky " style="vertical-align:middle;" colspan="2">공조팀 계</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[0]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[1]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[2]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[3]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[4]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[5]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[6]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;" colspan="2"></td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[7]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[8]+'</td>';
+                            html += '</tr>';
+                            small_tot = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            flag = true;
+                        }
+
+                        var k_cnt = k_cnts.hasOwnProperty(pValue.mber_sn) ? k_cnts[pValue.mber_sn] : 0;
+                        var s = parseInt(pValue.ct_cnt) + parseInt(pValue.cntrct_cnt) + parseInt(pValue.n_cnt) + parseInt(pValue.s_cnt);
+                        html += '<tr>';
+                        html += '    <td class="colorSky '+bgColor+'" style="vertical-align:middle;"><a style="color:inherit;" class="btnDept" data-code="'+pValue.dept_code+'">'+pValue.dept_nm+'</a></td>';
+                        html += '    <td class="colorSky '+bgColor+'" style="vertical-align:middle;"><a style="color:inherit;" class="btnMber" data-code="'+pValue.mber_sn+'">'+pValue.mber_nm+'</a></td>';
+                        html += '    <td class="colorSky '+bgColor+'" style="vertical-align:middle;" data-code="'+pValue.mber_sn+'">'+pValue.mber_size+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+(parseInt(pValue.cntrct_cnt)-k_cnt).toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+k_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.ct_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.n_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.s_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;border-right:2px solid black!important;">'+s.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'">'+pValue.bcnc_nm+'</td>';
+                        html += '    <td class="text-left '+bgColor+'">'+pValue.spt_nm+'</td>';
+                        html += '    <td class="text-center '+bgColor+'">'+pValue.flaw_co.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.flaw_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '</tr>';
+                        if(before != pValue.mber_sn){
+                            cntrct_sum += parseInt(pValue.cntrct_cnt)-k_cnt;
+                            ct_sum += parseInt(pValue.ct_cnt);
+                            flaw_sum += parseInt(pValue.flaw_cnt);
+                            n_sum += parseInt(pValue.n_cnt);
+                            s_sum += parseInt(pValue.s_cnt);
+                            k_sum += k_cnt;
+                            before = pValue.mber_sn;
+                            small_tot[0] += parseInt(pValue.mber_size);
+                            small_tot[1] += (parseInt(pValue.cntrct_cnt)-k_cnt);
+                            small_tot[2] += k_cnt;
+                            small_tot[3] += parseInt(pValue.ct_cnt);
+                            small_tot[4] += parseInt(pValue.n_cnt);
+                            small_tot[5] += parseInt(pValue.s_cnt);
+                            small_tot[6] += s;
+                        }
+                        small_tot[7] += parseInt(pValue.flaw_co == '' ? 0 : pValue.flaw_co);
+                        small_tot[8] += parseInt(pValue.flaw_co == '' ? 0 : pValue.flaw_co);
+                    }
+				});
+                html += '<tr>';
+                html += '    <td class="colorSky " style="vertical-align:middle;" colspan="2">빌트인 계</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[0]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[1]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[2]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[3]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[4]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[5]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;border-right:2px solid black!important;">'+small_tot[6]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;" colspan="2"></td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[7]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[8]+'</td>';
+                html += '</tr>';
+
+				$('#rptBissSummery tbody[role=body]').html(html);
+				$('#rptBissSummery tbody[role=body]').yRowspan(0);
+				$('#rptBissSummery tbody[role=body]').yRowspan(1);
+				$('#rptBissSummery tbody[role=body]').yRowspan(2);
+				$('#rptBissSummery tbody[role=body]').yRowspan(3);
+				$('#rptBissSummery tbody[role=body]').yRowspan(4);
+				$('#rptBissSummery tbody[role=body]').yRowspan(5);
+				$('#rptBissSummery tbody[role=body]').yRowspan(6);
+//				$('#rptBissSummery tbody[role=body]').yRowspan(5);
+//				$('#rptBissSummery tbody[role=body]').yRowspan(9);
+				$('#rptBissSummery tbody[role=body]').yRowspan(7);
+				$('#rptBissSummery tbody[role=body]').yRowspan(8);
+				$('#rptBissSummery tbody[role=body]').yRowspan(12);
+
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(1).html(cntrct_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(2).html(k_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(3).html(ct_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(4).html(n_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(5).html(s_sum);
+//				$('#rptBissSummery tbody[role=foot]').find('th').eq(6).html(flaw_sum);
+//				$('#rptBissSummery tbody[role=foot]').find('th').eq(7).html(flaw_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(6).html(cntrct_sum + ct_sum + n_sum + k_sum + s_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(8).html(flaw_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(9).html(flaw_sum);
+                var cells = $('#rptBissSummery tbody[role=body] td, #rptBissSummery tbody[role=body] th');
+                $.each(cells, function(pIndex, pValue){
+                    let value = $(pValue).clone().children().remove().end().text();
+                    if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+
+                        $(pValue).html('');
+                    }
+                });
+			}
+		}
+	});
+};
+
+/******************************************************************************
+ * 장비/자재 매입 현황
+ */
+getSales = function(pResult, label, dept)
+{
+    var result = 0;
+    $.each(pResult, function(pIndex, pValue){
+       if(pValue.label == label && pValue.bsn_dept_nm == dept){
+        result += parseInt(pValue.p_month);
+       }
+    });
+    return result;
+}
+
+getSalesSummery = function(s_pxcond_mt)
+{
+    var params = '';
+	params += '&s_pxcond_mt='+s_pxcond_mt;
+	$.ajax({
+		url: '/api/dashboard/ajax_get_sales_summery',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+			if (pResult.status) {
+                console.log("sales", pResult);
+				var html = '';
+
+                var bcncs = [];
+                var depts = [];
+                $.each(pResult.one, function(pIndex, pValue){
+                   bcncs.push(pValue.label);
+                    if(pValue.bsn_dept_nm != ''){
+                        depts.push(pValue.bsn_dept_nm);
+                    }
+                });
+                bcncs = bcncs.reduce(function(a,b){
+                       if (a.indexOf(b) < 0 ) a.push(b);
+                       return a;
+                    },[]);
+				bcncs.sort((a,b) => {
+					if(a.includes("자재") && b.includes("자재")){
+						if(a.includes("타사")){
+							return 1;
+						}
+						else if(b.includes("타사")) {
+							return -1;
+						}
+						else{
+							return a.localeCompare(b);
+						}
+					}
+					else if(a.includes("자재")){
+						return 1;
+					}
+					else if(b.includes("자재")){
+						return -1;
+					}
+					else{
+						if(a.includes("타사")){
+							return 1;
+						}
+						else if(b.includes("타사")) {
+							return -1;
+						}
+						else{
+							return a.localeCompare(b);
+						}
+					}
+				});
+                depts = depts.reduce(function(a,b){
+                       if (a.indexOf(b) < 0 ) a.push(b);
+                       return a;
+                    },[]);
+
+                sales = {};
+                var prices = [];
+                $.each(depts, function(p, q){
+                    prices.push(0);
+                });
+                prices.push(0);
+                $.each(bcncs, function(pIndex, pValue){
+                    var row = '';
+                    row += '<tr>';
+                    var sum = 0;
+                    row += '  <td class="colorSky">'+pValue+'</td>';
+                    $.each(depts, function(p, q){
+                       let price = getSales(pResult.one, pValue, q);
+                       row += '  <td>'+price.toString().toFormat('NUMBER')+'</td>';
+                       sum += parseInt(price);
+
+                        prices[p] += parseInt(price);
+                    });
+                    row += '  <td>'+sum.toString().toFormat('NUMBER')+'</td>';
+                    row += '</tr>';
+                    prices[depts.length] += sum;
+                    if(sum != 0){
+                        sales[sum] = row;
+                    }
+					html += row;
+                });
+                // $.each(sales, function(key, value){
+                //     if(key > 0){
+                //         html = value + html;
+                //     }
+                // });
+                // $.each(sales, function(key, value){
+                //     if(key < 0){
+                //         html = html + value;
+                //     }
+                // });
+
+                var table = '';
+                table += '<colgroup>';
+                table += '	<col width="200">';
+                $.each(depts, function(key, value){
+                    table += '	<col width="110">';
+                });
+                table += '	<col width="110">';
+                table += '</colgroup>';
+                table += '<tbody role="header">';
+                table += '	<tr>';
+                table += '		<th class="colorB">'+s_pxcond_mt.split("-")[1]+'월 매입처</th>';
+                $.each(depts, function(key, value){
+                    table += '  <th class="colorB">'+value+'</th>';
+                });
+                table += '      <th class="colorB">누계</th>';
+                table += '	</tr>';
+                table += '</tbody>';
+                table += '<tbody role="body">';
+                table += '</tbody>';
+                table += '<tbody role="footer">';
+                table += '</tbody>';
+                $('#rptSalesSummery').html(table);
+
+
+                $('#rptSalesSummery tbody[role=body]').html(html);
+                html = '';
+                html += '<tr>';
+                html += '    <td class="colorSky">총계</td>';
+                $.each(prices, function(k, v){
+                    html += '<td class="colorSky">'+v.toString().toFormat('NUMBER')+'</td>';
+                });
+                html += '</tr>';
+                $('#rptSalesSummery tbody[role=footer]').html(html);
+
+
+                //console.log(sales);
+//				html = '';
+//                $.each(pResult.list, function(pIndex, pValue){
+//					var bgColor = '';
+//					if (pValue.label == '총계') {
+//						bgColor = 'colorSky';
+//					}
+//					html += '<tr>';
+//					html += '    <td class="colorLG '+bgColor+'">'+pValue.label+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month01.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month02.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month03.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month04.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month05.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month06.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month07.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month08.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month09.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month10.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month11.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month12.toString().toFormat('NUMBER')+'</td>';
+//					html += '    <td class="text-number '+bgColor+'">'+pValue.p_month99.toString().toFormat('NUMBER')+'</td>';
+//					html += '</tr>';
+//				});
+//				$('#rptSalesSummery tbody[role=body]').html(html);
+			}
+		}
+	});
+};
+
+</script>
+
+
 {% endblock %}

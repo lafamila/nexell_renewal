@@ -1,5 +1,6 @@
 from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
+from collections import OrderedDict
 
 def get_project_datatable(params):
     query = """SELECT c.ctmmny_sn
@@ -1350,3 +1351,164 @@ def get_i1_rcppay_report_list(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+
+def get_finals(params):
+    query = """SELECT c.ctmmny_sn
+				, m.dept_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=k.dept_code) AS dept_nm
+				, c.cntrct_sn
+				, c.cntrct_de
+				, c.bcnc_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+				, c.spt_nm
+				, c.spt_chrg_sn
+				, GET_MEMBER_NAME(c.spt_chrg_sn, 'S') AS spt_chrg_nm
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=p.prjct_ty_code) AS prjct_ty_nm
+				, f.finals_amt1
+				, f.finals_amt2
+				, f.finals_amt3
+				, f.finals_amt4
+				, f.finals_amt5
+				, f.finals_amt6
+				, f.finals_sn
+				FROM contract c
+				LEFT OUTER JOIN member m
+				ON m.mber_sn=c.spt_chrg_sn
+				LEFT OUTER JOIN member k
+				ON k.mber_sn=c.bsn_chrg_sn
+				LEFT OUTER JOIN project p
+				ON p.cntrct_sn=c.cntrct_sn
+				LEFT OUTER JOIN finals f
+				ON f.cntrct_sn=c.cntrct_sn
+				WHERE 1=1
+				AND (c.cntrct_de BETWEEN '{0} 00:00:00'
+				AND '{1} 23:59:59')
+				AND c.progrs_sttus_code IN ('B', 'P', 'S')
+				AND IFNULL(f.finals_done, 'P')='P'
+				AND c.prjct_creat_at = 'Y'""".format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
+
+    data = []
+
+
+
+    if "s_spt_nm" in params and params['s_spt_nm']:
+        query += " AND c.spt_nm LIKE %s"
+        data.append('%{}%'.format(params["s_spt_nm"]))
+
+    if "s_prjct_ty_code" in params and params['s_prjct_ty_code']:
+        query += " AND p.prjct_ty_code=%s"
+        data.append(params["s_prjct_ty_code"])
+
+
+    if "s_bcnc_sn" in params and params['s_bcnc_sn']:
+        query += " AND c.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
+
+    if "s_dept_code" in params and params['s_dept_code']:
+        if params["s_dept_code"] == "TS":
+            query += " AND m.dept_code LIKE %s"
+            data.append('TS%')
+        else:
+            query += " AND m.dept_code=%s"
+            data.append(params["s_dept_code"])
+
+    if "s_spt_chrg_sn" in params and params['s_spt_chrg_sn']:
+        query += " AND c.spt_chrg_sn=%s"
+        data.append(params["s_spt_chrg_sn"])
+
+
+    return dt_query(query, data, params)
+
+def get_finals_summary(params):
+    query = """SELECT IFNULL(COUNT(c.cntrct_sn),0) AS total_count
+				, IFNULL(COUNT(IF(c.progrs_sttus_code='B', c.cntrct_sn, null)),0) AS count1
+				, SUM(IFNULL(f.finals_amt1, 0)) AS amt1
+				, SUM(IFNULL(f.finals_amt2, 0)) AS amt2
+				, SUM(IFNULL(f.finals_amt3, 0)) AS amt3
+				, SUM(IFNULL(f.finals_amt4, 0)) AS amt4
+				, IFNULL(COUNT(IF(c.progrs_sttus_code IN ('P', 'S'), c.cntrct_sn, null)),0) AS count2
+				, IFNULL(COUNT(IF(c.progrs_sttus_code='C', c.cntrct_sn, null)),0) AS count3
+				, SUM(IF(c.progrs_sttus_code='C', IFNULL(f.finals_amt5, 0), 0)) AS amt5
+				, SUM(IF(c.progrs_sttus_code='C', IFNULL(f.finals_amt6, 0), 0)) AS amt6
+				FROM contract c
+				LEFT OUTER JOIN member m
+				ON m.mber_sn=c.spt_chrg_sn
+				LEFT OUTER JOIN project p
+				ON p.cntrct_sn=c.cntrct_sn
+				LEFT OUTER JOIN finals f
+				ON f.cntrct_sn=c.cntrct_sn
+				WHERE 1=1
+				AND (c.cntrct_de BETWEEN '{0} 00:00:00'
+				AND '{1} 23:59:59')
+				AND c.progrs_sttus_code IN ('B', 'P', 'S')
+				AND IFNULL(f.finals_done, 'P')='P'
+				AND c.prjct_creat_at = 'Y' """.format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
+    data = []
+
+
+
+    if "s_spt_nm" in params and params['s_spt_nm']:
+        query += " AND c.spt_nm LIKE %s"
+        data.append('%{}%'.format(params["s_spt_nm"]))
+
+    if "s_prjct_ty_code" in params and params['s_prjct_ty_code']:
+        query += " AND p.prjct_ty_code=%s"
+        data.append(params["s_prjct_ty_code"])
+
+
+    if "s_bcnc_sn" in params and params['s_bcnc_sn']:
+        query += " AND c.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
+
+    if "s_dept_code" in params and params['s_dept_code']:
+        if params["s_dept_code"] == "TS":
+            query += " AND m.dept_code LIKE %s"
+            data.append('TS%')
+        else:
+            query += " AND m.dept_code=%s"
+            data.append(params["s_dept_code"])
+
+    if "s_spt_chrg_sn" in params and params['s_spt_chrg_sn']:
+        query += " AND c.spt_chrg_sn=%s"
+        data.append(params["s_spt_chrg_sn"])
+
+
+    g.curs.execute(query, data)
+    result = g.curs.fetchone()
+    return result
+
+def insert_finals(params):
+    data = OrderedDict()
+    for key in params:
+        data[key] = params[key]
+
+    for i in range(1, 7):
+        key = "finals_amt{}".format(i)
+        if key not in data:
+            data[key] = None
+
+
+    data['finals_done'] = 'P'
+
+    sub_query = [key for key in data]
+    params_query = ["%({})s".format(key) for key in data]
+
+    query = """INSERT INTO finals({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data)
+
+
+def update_finals(params):
+    finals_sn = params["finals_sn"]
+
+    data = OrderedDict()
+    for key in params:
+        if key not in ("finals_sn"):
+            data[key] = params[key]
+    sub_query = ["{0}=%({0})s".format(key) for key in data]
+    query = """UPDATE finals SET {} WHERE finals_sn=%(finals_sn)s""".format(",".join(sub_query))
+    g.curs.execute(query, params)
+
+def delete_finals(params):
+    query = """UPDATE finals SET finals_done='F' WHERE finals_sn=%(finals_sn)s"""
+    g.curs.execute(query, params)

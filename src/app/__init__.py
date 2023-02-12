@@ -5,6 +5,7 @@ from .controllers.member_view import bp as member_bp
 from .controllers.approval_view import bp as approval_bp
 from .controllers.project_view import bp as project_bp
 from .controllers.api.member import bp as member_api_bp
+from .controllers.api.dashboard import bp as dashboard_api_bp
 from .controllers.api.project import bp as project_api_bp
 from .controllers.api.approval import bp as approval_api_bp
 from .controllers.api.dev_test import bp as dev_api
@@ -17,6 +18,7 @@ app = Flask(__name__)
 app.secret_key = "asdfasdfasdfasdf"
 app.register_blueprint(index_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(dashboard_api_bp)
 app.register_blueprint(approval_bp)
 app.register_blueprint(approval_api_bp)
 app.register_blueprint(project_bp)
