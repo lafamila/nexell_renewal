@@ -395,6 +395,68 @@ def get_contract(params):
     result = g.curs.fetchone()
     return result
 
+def get_project_list(params):
+    query = """SELECT p.ctmmny_sn
+    				, p.cntrct_sn
+    				, c.cntrct_nm
+    				, prjct_sn
+    				, p.prjct_ty_code
+    				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=p.prjct_ty_code) AS prjct_ty_nm
+    				, cntrct_se_code
+    				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='CNTRCT_SE_CODE' AND code=p.cntrct_se_code) AS cntrct_se_nm
+    				, mngr_sn
+    				, (SELECT mber_nm FROM member WHERE mber_sn=p.mngr_sn) AS mngr_nm
+    				, manage_no
+    				, eqpmn_dtls
+    				, cntrwk_dtls
+    				, cntrct_dscnt_rt
+    				, cnsul_dscnt_rt
+    				, drw_opertor_sn
+    				, (SELECT mber_nm FROM member WHERE mber_sn=p.drw_opertor_sn) AS drw_opertor_nm
+    				, acmslt_sttemnt_at
+    				, cntwrk_regstr_ennc
+    				, p.partclr_matter
+    				, enty
+    				, enty_de
+    				, enty_rm
+    				, prtpay
+    				, prtpay_de
+    				, prtpay_rm
+    				, surlus
+    				, surlus_de
+    				, surlus_rm
+    				, setle_mth
+    				, p.regist_dtm
+    				, p.register_id
+    				, p.update_dtm
+    				, p.updater_id
+    				, c.cntrct_no
+    				, c.cntrct_de
+    				, c.cntrct_nm
+    				, c.cntrct_amount
+    				, c.bcnc_sn
+    				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+    				, c.spt_nm
+    				, c.cntrwk_bgnde
+    				, c.cntrwk_endde
+    				, CONCAT(c.cntrwk_endde, '~', c.cntrwk_endde) AS cntrwk_prod
+    				, c.bsn_chrg_sn
+    				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS bsn_chrg_nm
+    				, c.spt_chrg_sn
+    				, (SELECT mber_nm FROM member WHERE mber_sn=c.spt_chrg_sn) AS spt_chrg_nm
+    				, c.prjct_creat_at
+    				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_CREAT_AT' AND code=c.prjct_creat_at) AS prjct_sttus_nm
+    				FROM project p
+    				LEFT JOIN contract c
+    				ON p.ctmmny_sn=c.ctmmny_sn AND p.cntrct_sn=c.cntrct_sn
+    				WHERE 1=1
+    				AND p.ctmmny_sn = 1
+    				AND p.cntrct_sn = %(s_cntrct_sn)s
+    """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 
 def get_project(params):
     query = """SELECT ctmmny_sn

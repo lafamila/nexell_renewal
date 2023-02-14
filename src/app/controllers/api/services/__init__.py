@@ -1,6 +1,49 @@
 from flask import current_app
 from app.connectors import DB
 
+def get_contract_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT cntrct_sn AS value
+				, cntrct_nm AS label
+				, cntrct_no AS etc1
+				, cntrct_de AS etc2
+				, CONCAT(
+				cntrct_no, '.',
+				cntrct_nm, '.',
+				cntrct_de
+				) AS etc3
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+				, prjct_creat_at
+				, (SELECT COUNT(prjct_sn) FROM project WHERE cntrct_sn=c.cntrct_sn) AS prjct_cnt
+				FROM contract c
+				WHERE 1=1
+				AND ctmmny_sn = 1
+				AND progrs_sttus_code IN ('B', 'P', 'N', 'S')
+                """)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+def get_inventory_name_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT code AS value
+                    , code_nm AS label
+                    FROM code
+                    WHERE 1=1
+                    AND ctmmny_sn=1
+                    AND use_at = 'Y'
+                    AND parnts_code = 'INVN_STTUS_CODE'
+                    AND code > '1'
+                    AND code <> '4'
+                    """)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
 def get_member_list():
     db = DB()
     curs = db.cursor()

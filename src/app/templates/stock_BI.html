@@ -12,6 +12,11 @@ tbody .btnUpdate, tbody .btnPrint, .btnDelete{
     tbody{
         font-size:12px!important;
     }
+	li[aria-selected="true"]{
+		background-color:#eee!important;
+	}
+	.close-icon {position:relative;float:right;display:inline-block;text-align:center;padding:0px!important;}
+	.close-icon:after {content: "\00d7";}
 </style>
 <style type="text/css">
 body.smart-style-6 .table>tbody>tr>th,
@@ -161,7 +166,7 @@ body.smart-style-6 .table thead tr {
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
 						<h2>재고 현황</h2>
 						<div class="widget-toolbar">
-							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 종합재고현황</i></button>
+<!--							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 종합재고현황</i></button>-->
 <!--							<button class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 재고 등록</i></button>-->
 							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
@@ -211,8 +216,9 @@ body.smart-style-6 .table thead tr {
                                         <th class="hasinput">
 											<select class="form-control select2 w100p" id="s_bigo" name="s_bigo">
 												<option value="">[전체]</option>
-												<option value="0"></option>
-												<option value="1">자재</option>
+												<option value="일반">일반</option>
+												<option value="빌트인">빌트인</option>
+												<option value="자재">자재</option>
 												<!-- {member_list}
 												<option value="{value}">{label} {etc1}</option>
 												{/member_list} -->
@@ -354,17 +360,7 @@ getInventoryList = function()
             },
             { data: 'prduct_ty_nm', className: 'text-center' },
             { data: 'modl_nm' , className: 'text-center'},
-            { data: 'bigo', className: 'text-center' ,
-				render: function(data, type, row, meta) {
-					var result = '';
-					if (data == 0) {
-						result = '';
-					} else if (data == 1) {
-						result = '자재';
-					}
-					return result;
-				}
-			},
+            { data: 'bigo', className: 'text-center' },
             { data: 'puchas_de' , className: 'text-center'},
             { data: 'puchas_se_code', className: 'text-center',
 				render: function(data, type, row, meta) {
@@ -463,8 +459,8 @@ getInventoryList = function()
 
 
 			$(myList).on('click', '.btnUpdate', function(pEvent) {
-				var item_sn = $(this).data('sn');
-                getReport(item_sn);
+				var stock_sn = $(this).data('sn');
+                getReport(stock_sn);
             });
 			$(myList).on('change', 'thead input', function(pEvent){
 				$.datatable1.ajax.reload();
@@ -583,6 +579,1053 @@ $(function(){
      */
 	getInventoryList();
 });
+
+</script>
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>재고관리</span></a>
+						</li>
+						<!-- <li class="" data-action="2">
+							<a data-toggle="tab" href="#popEdit1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>매출</span></a>
+						</li> -->
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar" id="popEditToolbar">
+						<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+
+								<table class="table table-bordered">
+									<colgroup>
+										<col width="120">
+										<col width="210">
+										<col width="120">
+										<col width="155">
+										<col width="120">
+										<col width="155">
+									</colgroup>
+									<tbody id="delng_se">
+										<tr>
+											<!-- <th>매입/매출 구분</th> -->
+											<td colspan="6" style="padding:0px!important;margin:0px!important;">
+												<div class="alert alert-block alert-info" style="margin:0px;">
+													<p style="margin-bottom:7px;">
+														<i class="fa-fw fa fa-info"></i>
+														재고 관리 유형을 선택하세요.
+													</p>
+													<div class="btn-group btn-group-justified" data-toggle="buttons">
+														<label class="btn btn-default">
+															<input type="radio" name="t_delng_se_code" value="D">폐기
+														</label>
+														<label class="btn btn-default">
+															<input type="radio" name="t_delng_se_code" value="R">회수
+														</label>
+														<label class="btn btn-default">
+															<input type="radio" name="t_delng_se_code" value="M">예약
+														</label>
+<!--
+                                                        <label class="btn btn-default">
+															<input type="radio" name="t_delng_se_code" value="B">유형
+														</label>
+-->
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+									<tbody id="delete" style="display:none;">
+									<form id="frmBoxD">
+										<tr>
+											<th style="background:#bbb!important;" colspan="6">폐기<input type="hidden" id="s_delng_sn" name="s_delng_sn"></th>
+										</tr>
+										<tr><th class="hasinput" style="background:transparent!important;" colspan="6">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;color:red!important;">
+													<p><i class="fa-fw fa fa-info"></i>
+														폐기할 재고를 선택해주세요.
+													</p>
+												</div>
+											</th>
+										</tr>
+
+
+										<tr>
+											<th>재고</th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p item_list" id="item_sn" name="item_sn[]" multiple="multiple">
+<!--
+													{invn_code_list}
+													<option value="{etc2}.{value}">{name} ({etc1})</option>
+													{/invn_code_list}
+-->
+												</select>
+											</td>
+										</tr>
+                                        <tr>
+											<th>폐기사유</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="rm" name="rm">
+											</td>
+
+											<th class="required">폐기일</th>
+											<td class="hasinput" colspan="2">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="ddt_man" name="ddt_man">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+												<input type="hidden" id="delng_se_code" name="delng_se_code" value="D">
+											</td>
+										</tr>
+										<tr style="display:none;">
+											<th></th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn">
+													<option value=""></option>
+												</select>
+											</td>
+										</tr>
+										<tr id="projectP" style="display:none;">
+											<th></th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p" id="prjct_sn" name="prjct_sn">
+													<option value=""></option>
+												</select>
+												<input type="hidden" id="t_prjct_sn">
+											</td>
+										</tr>
+
+									</form>
+									</tbody>
+									<tbody id="return" style="display:none;">
+									<form id="frmBoxR">
+										<tr>
+											<th style="background:#bbb!important;" colspan="6">매출<input type="hidden" id="s_delng_sn" name="s_delng_sn"></th>
+										</tr>
+
+                                        <tr>
+                                            <th>전시번호</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="item_sn" name="item_sn" readonly>
+                                                <input type="hidden" class="form-control" id="oridlnt" name="oridlnt">
+											</td>
+
+											<th>창고</th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2 w100p" id="invn_sttus_code" name="invn_sttus_code">
+													<option value=""></option>
+													{% for code in inventory_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+											<th class="required">회수일</th>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="ddt_man_r" name="ddt_man">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+												<input type="hidden" id="delng_se_code" name="delng_se_code" value="R">
+											</td>
+
+                                        </tr>
+
+										<tr>
+											<th class="required">출고일</th>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="dlivy_de_r" name="dlivy_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+                                            <th class="required">제품분류</th>
+											<td class="hasinput" colspan="3">
+												<select class="form-control select2 w100p" id="prduct_se_code" name="prduct_se_code">
+													<option value=""></option>
+													{% for code in prduct_sse_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+
+										</tr>
+
+
+										<tr>
+											<th>모델번호</th>
+											<td class="hasinput">
+												<input type="text" class="form-control" id="model_no" name="model_no">
+											</td>
+                                            <th class="required">제품유형</th>
+											<td class="hasinput" colspan="3">
+												<select class="form-control select2 w100p" id="prduct_ty_code" name="prduct_ty_code">
+													<option value=""></option>
+													{% for code in prduct_ty_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+
+
+										<tr>
+											<th>계약</th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn">
+													<option value=""></option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.etc1}}.{{code.bcnc_nm}} {{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr id="projectP" style="display:none;">
+											<th>프로젝트</th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p" id="prjct_sn" name="prjct_sn">
+													<option value=""></option>
+												</select>
+												<input type="hidden" id="t_prjct_sn">
+											</td>
+										</tr>
+                                        <tr>
+											<th>전시목록</th>
+											<td class="hasinput" colspan="5" style="max-height:500px;overflow-y:scroll;">
+												<table class="table table-bordered" id="dtList2">
+													<thead>
+														<tr>
+															<td class="hasinput" style="width:1px;">
+																<button type="button" class="btn btn-default" id="btnCancel">취소</button>
+															</td>
+															<td>전시번호</td>
+															<td>출고일</td>
+															<td>모델명</td>
+															<td>대분류</td>
+															<td>소분류</td>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</td>
+										</tr>
+                                        <tr>
+											<th>선택목록</th>
+											<td class="hasinput" colspan="5" style="max-height:500px;overflow-y:scroll;" id="stock_items">
+
+											</td>
+										</tr>
+									</form>
+									</tbody>
+									<tbody id="memo" style="display:none;">
+									<form id="frmBoxM">
+										<tr>
+											<th style="background:#bbb!important;" colspan="6">예약<input type="hidden" id="s_delng_sn" name="s_delng_sn"></th>
+										</tr>
+										<tr><th class="hasinput" style="background:transparent!important;" colspan="6">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;color:red!important;">
+													<p><i class="fa-fw fa fa-info"></i>
+														예약할 재고를 선택해주세요.
+													</p>
+												</div>
+											</th>
+										</tr>
+
+
+										<tr>
+											<th>재고</th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p item_list" id="item_sn" name="item_sn[]" multiple="multiple">
+<!--
+													{invn_code_list}
+													<option value="{etc2}.{value}">{name} ({etc1})</option>
+													{/invn_code_list}
+-->
+												</select>
+											</td>
+										</tr>
+                                        <tr>
+											<th>비고</th>
+											<td class="hasinput" colspan="5">
+												<input type="text" class="form-control" id="rm" name="rm">
+											</td>
+
+										</tr>
+										<tr style="display:none;">
+											<th></th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn">
+													<option value=""></option>
+												</select>
+											</td>
+										</tr>
+										<tr id="projectP" style="display:none;">
+											<th></th>
+											<td class="hasinput" colspan="5">
+												<select class="form-control select2 w100p" id="prjct_sn" name="prjct_sn">
+													<option value=""></option>
+												</select>
+												<input type="hidden" id="t_prjct_sn">
+											</td>
+										</tr>
+
+									</form>
+									</tbody>
+								</table>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{ console.log('formReset', pMode);
+	if (pMode === 'init') {
+		$('#popBox1').find('input:radio[name=t_delng_se_code]').yVal('D');
+		$('#popBox1').find('input:radio[name=t_delng_se_code]').yReadonly(false);
+		$('#dtList2').find('tbody').html('');
+	}
+	if (pMode === 'insert' || pMode === 'insertAfter' || pMode === 'init')
+	{ //delete,return,memo
+		if (pMode !== 'insertAfter') {
+			$('#popBox1').find('input:radio[name=t_delng_se_code]').yVal('D');
+            $('#delete').find('#item_sn').val('').trigger('change');
+            $('#delete').find('#item_sn').yReadonly(false);
+            $('#delete').find('#dlnt').val('');
+            $('#delete').find('#rm').val('');
+            $('#delete').find('#ddt_man').val('');
+
+
+
+            $('#return').find('#item_sn').yVal('');
+            $('#return').find('#oridlnt').yVal('');
+
+            $('#return').find('#invn_sttus_code').val('').trigger('change');
+            $('#return').find('#dlivy_de_r').yVal('');
+            $('#return').find('#ddt_man_r').yVal('');
+            $('#return').find('#dlnt').yVal('');
+            $('#return').find('#model_no').yVal('');
+
+            $('#return').find('#prduct_se_code').val('').trigger('change');
+            $('#return').find('#prduct_ty_code').val('').trigger('change');
+            $('#return').find('#cntrct_sn').val('').trigger('change');
+            $('#return').find('#stock_items').html("");
+
+            $('#memo').find('#item_sn').val('').trigger('change');
+            $('#memo').find('#item_sn').yReadonly(false);
+            $('#memo').find('#dlnt').val('');
+            $('#memo').find('#rm').val('');
+
+            $('#dtList2').find('tbody').html('');
+
+		}
+
+	}
+}
+
+/******************************************************************************
+ *
+ */
+
+
+getContract = function(s_cntrct_sn)
+{
+	if (s_cntrct_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+
+	$.ajax({
+		url: '/api/stock/ajax_get_contract',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
+				var targetForm = '';
+				if (delng_se_code == 'D') {
+					targetForm = '#delete';
+				} else if (delng_se_code == 'R') {
+					targetForm = '#return';
+				} else if (delng_se_code == 'M') {
+					targetForm = '#memo';
+				} else if (delng_se_code == 'B') {
+					targetForm = '#bigo';
+				}
+
+				var data = pResult.data;
+				if (delng_se_code == 'R') { // 매출일 경우에만 처리
+					var html = '';
+                    console.log(pResult.inventory);
+					$.each(pResult.inventory, function(pIndex, pValue){
+						html += '<tr>';
+						html += '    <td class="hasinput" style="width:1px;">';
+						html += '        <button type="button" class="btn btn-default btnSelect" data-item_sn="'+pValue.item_sn+'" data-prduct_se_code="'+pValue.prduct_se_code+'" data-model_no="'+pValue.model_no+'" data-prduct_ty_code="'+pValue.prduct_ty_code+'" data-ddt_man="'+pValue.ddt_man+'" data-oridlnt="'+pValue.dlnt+'" >선택</button>';
+						html += '    </td>';
+						html += '    <td>'+pValue.item_sn+'</td>';
+						html += '    <td>'+pValue.ddt_man+'</td>';
+						html += '    <td>'+pValue.model_no+'</td>';
+						html += '    <td>'+pValue.prduct_se_nm+'</td>';
+						html += '    <td>'+pValue.prduct_ty_nm+'</td>';
+						html += '</tr>';
+					});
+					$('#dtList2 tbody').html(html);
+
+					$('#dtList2').on('click', 'tbody tr', function(pEvent) {
+						if ($(this).parent().find('td.dataTables_empty').length > 0) {
+							return;
+						} else {
+							$(this).parent().find('tr.selected').removeClass('selected');
+							$(this).addClass('selected');
+						}
+					});
+
+					$('#dtList2').on('click', '.btnSelect', function(pEvent) {
+						$('#return').find('#prduct_se_code').yVal($(this).data('prduct_se_code'));
+						$('#return').find('#prduct_ty_code').yVal($(this).data('prduct_ty_code'));
+						$('#return').find('#dlivy_de_r').yVal($(this).data('ddt_man'));
+						$('#return').find('#model_no').yVal($(this).data('model_no'));
+						$('#return').find('#item_sn').yVal($(this).data('item_sn'));
+						$('#return').find('#oridlnt').yVal($(this).data('oridlnt'));
+						let sn = $(this).data("item_sn");
+						let already = false;
+						$.each($("#stock_items").find("div.badge"), function(pIndex, pTag){
+							if(sn == $(pTag).data("sn")){
+								already = true;
+								return false;
+							}
+						});
+						if(!already){
+							$("#stock_items").append(`<div data-sn="${sn}" class="badge badge-pill badge-dark"><div style="display:inline;">${sn}</div><div class="close-icon badge-close"></div></div>`);
+						}
+					});
+					$(document).on("click", "#stock_items div.badge", function(){
+						$(this).remove();
+						$('#return').find('#prduct_se_code').yVal('');
+						$('#return').find('#prduct_ty_code').yVal('');
+						$('#return').find('#dlivy_de_r').yVal('');
+						$('#return').find('#model_no').yVal('');
+						$('#return').find('#item_sn').yVal('');
+						$('#return').find('#oridlnt').yVal('');
+					});
+
+					$('#dtList2').on('click', '#btnCancel', function(pEvent) {
+						$('#return').find('#prduct_se_code').yVal('');
+						$('#return').find('#prduct_ty_code').yVal('');
+						$('#return').find('#dlivy_de_r').yVal('');
+						$('#return').find('#model_no').yVal('');
+						$('#return').find('#item_sn').yVal('');
+						$('#return').find('#oridlnt').yVal('');
+					});
+				}
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+getInventoryDeleteList = function()
+{
+	var params = '';
+	$.ajax({
+		url: '/api/stock/ajax_get_stock_list_bi',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('result', pResult);
+            var html = '';
+            $.each(pResult.data, function(pIndex, pValue){
+
+                html += '<option value="'+pValue.value+'" data-invn_sttus_code="'+pValue.item_sttus_code+'" data-ty="'+pValue.ty+'" data-se="'+pValue.se+'" data-model="'+pValue.name.trim()+'">';
+                html += pValue.name + '('+pValue.etc3+')';
+                if(pValue.etc4 != ''){
+
+                    html += ' / '+pValue.etc4;
+                    if(pValue.dlivy_de != ''){
+                        html += ' / '+pValue.dlivy_de;
+
+                    }
+                }
+                html += '</option>';
+            });
+            var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
+            var targetForm = '';
+            if (delng_se_code == 'D') {
+                targetForm = '#delete';
+            } else if (delng_se_code == 'M') {
+                targetForm = '#memo';
+            }else if (delng_se_code == 'B') {
+                targetForm = '#bigo';
+            }
+            $('#popBox1').find('.item_list').html(html);
+
+            var html = '';
+            $.each(pResult.mData, function(pIndex, pValue){
+
+                html += '<option value="'+pValue.value+'" data-invn_sttus_code="'+pValue.item_sttus_code+'" data-ty="'+pValue.ty+'" data-se="'+pValue.se+'" data-model="'+pValue.name.trim()+'">';
+                html += pValue.name + '('+pValue.etc3+')';
+                if(pValue.etc4 != ''){
+
+                    html += ' / '+pValue.etc4;
+                    if(pValue.dlivy_de != ''){
+                        html += ' / '+pValue.dlivy_de;
+
+                    }
+                }
+                html += '</option>';
+            });
+            var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
+            var targetForm = '';
+            if (delng_se_code == 'D') {
+                targetForm = '#delete';
+            } else if (delng_se_code == 'M') {
+                targetForm = '#memo';
+            }else if (delng_se_code == 'B') {
+                targetForm = '#bigo';
+            }
+            $('#popBox1').find('#memo .item_list').html(html);
+
+
+        }
+	});
+}
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+	var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
+
+	if (delng_se_code == 'D') {
+
+		// 매입일
+		var item_sn = $('#delete').find('#item_sn').val();
+		if (result == true && fnIsEmpty(item_sn)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#delete').find('#item_sn').focus().click();
+			result = false;
+		}
+
+
+
+	} else if (delng_se_code == 'R') {
+
+		var ddt_man = $('#return').find('#ddt_man_r').val();
+		if (result == true && fnIsEmpty(ddt_man)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#return').find('#ddt_man_r').focus().click();
+			result = false;
+		}
+
+		// 매출유형
+		var invn_sttus_code = $('#return').find('#invn_sttus_code').val();
+		if (result == true && fnIsEmpty(invn_sttus_code)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#return').find('#invn_sttus_code').focus().click();
+			result = false;
+		}
+
+        var badges = $('#return').find('#stock_items div.badge');
+		if (result == true && badges.length == 0) {
+			alert('재고를 한개 이상 선택해주시기 바랍니다.');
+			result = false;
+		}
+
+	} else if (delng_se_code == 'M') {
+
+		// 매입일
+		var item_sn = $('#memo').find('#item_sn').val();
+		if (result == true && fnIsEmpty(item_sn)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#memo').find('#item_sn').focus().click();
+			result = false;
+		}
+
+		var rm = $('#memo').find("#rm").val();
+		if(result == true && !fnIsEmpty(rm)){
+			if(!rm.includes("예약")){
+				alert("'예약' 이라는 문구가 포함되어야 합니다.");
+				$('#memo').find("#rm").focus().click();
+				result = false;
+			}
+		}
+
+
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertDeletes = function(pFormName, pIsReset = true)
+{
+	$.ajax({
+		url: '/api/stock/ajax_insert_delete',
+		type: 'POST',
+		data: getFormData($(pFormName)[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+                getInventoryDeleteList();
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+insertMemo = function(pFormName, pIsReset = true)
+{
+	$.ajax({
+		url: '/api/stock/ajax_insert_memo',
+		type: 'POST',
+		data: getFormData($(pFormName)[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+                getInventoryDeleteList();
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+insertReturn = function(pFormName, pIsReset = true)
+{
+	var formData = getFormData($(pFormName)[0]);
+	var badges = $("#stock_items div.badge");
+	$.each(badges, function(pIndex, pTag){
+		formData.append("item_sn[]", $(pTag).data("sn"));
+	});
+	$.ajax({
+		url: '/api/stock/ajax_insert_return',
+		type: 'POST',
+		data: formData,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+			$(this).data('action', action);
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === null || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		} else {
+			formReset(action);
+		}
+		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=P1]').parent().hide();
+		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S1]').parent().hide();
+		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S2]').parent().hide();
+		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S3]').parent().hide();
+        getInventoryDeleteList();
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		// if (action === 'insert') {
+		// 	modal.find('#cntrct_no').focus();
+		// } else if (action === 'update') {
+		// 	modal.find('#cntrct_no').focus();
+		// }
+	});
+
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		formReset('init');
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSave', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
+        var loginid = $('#loginID').val();
+        if(loginid == 'ma_keunmi' || loginid == 'bi_joo' || loginid == 'nexelll'){
+            if(delng_se_code == 'D')
+                insertDeletes('#frmBox'+delng_se_code);
+
+            else if(delng_se_code == 'R')
+                insertReturn('#frmBox'+delng_se_code);
+            else if(delng_se_code == 'M')
+                insertMemo('#frmBox'+delng_se_code);
+        }
+        else{
+            alert("권한이 없습니다.");
+        }
+//        else if(delng_se_code == 'B')
+//            insertBigo('#frmBox'+delng_se_code);
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('change', 'input:radio[name=t_delng_se_code]', function(pEvent) {
+		var delng_se_code = $(this).val();
+		if (delng_se_code == 'D') {
+			$('#popBox1').find('#return').hide();
+			$('#popBox1').find('#memo').hide();
+//			$('#popBox1').find('#bigo').hide();
+			$('#popBox1').find('#delete').show();
+		} else if (delng_se_code == 'R') {
+			$('#popBox1').find('#delete').hide();
+			$('#popBox1').find('#memo').hide();
+//			$('#popBox1').find('#bigo').hide();
+			$('#popBox1').find('#return').show();
+		} else if (delng_se_code == 'M') {
+			$('#popBox1').find('#delete').hide();
+			$('#popBox1').find('#memo').show();
+			$('#popBox1').find('#return').hide();
+//			$('#popBox1').find('#bigo').hide();
+		}else if (delng_se_code == 'B') {
+			$('#popBox1').find('#delete').hide();
+			$('#popBox1').find('#memo').hide();
+			$('#popBox1').find('#return').hide();
+//			$('#popBox1').find('#bigo').show();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#delete').on('change', '#cntrct_sn', function(pEvent) {
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+//			getContract($(this).val());
+		// }
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#return').on('change', '#cntrct_sn', function(pEvent) {
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+			getContract($(this).val());
+		// }
+	});
+//	$('#return').on('change', '#invn_sttus_code', function(pEvent) {
+//		var action = $('#popBox1').data('action');
+//		// if (action == 'insert') {
+//			getInventory($(this).val());
+//		// }
+//	});
+});
+</script>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<div class="modal fade" keyboard="true" id="popReport2">
+    <div class="modal-dialog modal-w1200" style="width:50%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report" id="exportExcelNR">
+
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReport2{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+</style>
+
+
+<table id="report_summary">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="600">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorB text-center" colspan="4">사용 이력</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="colorSky">제품분류</th>
+			<td id="prduct_se"></td>
+			<th class="colorSky">제품유형</th>
+			<td id="prduct_ty"></td>
+		</tr>
+        <tr>
+			<th class="colorSky">모델명</th>
+			<td id="model_nm"></td>
+			<th class="colorSky" id="dlnt_nm">수량</th>
+			<td id="qy"></td>
+		</tr>
+        <tr>
+			<th class="colorSky">거래처명</th>
+			<td id="bcnc_nm"></td>
+			<th class="colorSky" id="cntrct_nm">현장명</th>
+			<td id="invn_nm"></td>
+		</tr>
+	</tbody>
+	<tfoot>
+	</tfoot>
+</table>
+<table id="report_status">
+	<colgroup>
+		<col width="150">
+		<col width="200">
+		<col width="400">
+		<col width="200">
+		<col width="200">
+	</colgroup>
+	<thead role="head">
+		<tr>
+			<th class="colorN text-center">구분</th>
+			<th class="colorN text-center">날짜</th>
+			<th class="colorN text-center">이력</th>
+			<th class="colorN text-center">매입단가</th>
+			<th class="colorN text-center">매출금액(판매)</th>
+		</tr>
+
+	</thead>
+	<tbody role="body">
+	</tbody>
+	<tfoot>
+	</tfoot>
+</table>
+
+<!-- <div id="img-out"></div> -->
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+getReport = function(s_stock_sn)
+{
+	var params = '';
+	params += '&s_stock_sn=' + s_stock_sn;
+	$.ajax({
+		url: '/api/stock/ajax_get_stock_log',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReport2', pResult);
+			if (pResult.status) {
+
+                var pValue = pResult.summary;
+				$('#report_summary').find("#prduct_se").html(pValue.prduct_se_nm);
+				$('#report_summary').find("#prduct_ty").html(pValue.prduct_ty_nm);
+				$('#report_summary').find("#invn_nm").html(pValue.invn_sttus_nm);
+				$('#report_summary').find("#bcnc_nm").html(pValue.bcnc_nm);
+				$('#report_summary').find("#qy").html(pValue.qy.toString().toFormat('NUMBER'));
+				$('#report_summary').find("#model_nm").html(pValue.modl_nm);
+				var sttus = parseInt(pValue.item_sttus);
+				if(sttus == 0 || sttus == 1){
+					$("#dlnt_nm").html("재고수량");
+					$("#cntrct_nm").html("창고명");
+				}
+				else if(sttus == 2){
+					$("#dlnt_nm").html("전시수량");
+					$("#cntrct_nm").html("현장명");
+				}
+				else if(sttus == 3){
+					$("#dlnt_nm").html("판매수량");
+					$("#cntrct_nm").html("현장명");
+				}
+				else{
+					$("#dlnt_nm").html("수량");
+					$("#cntrct_nm").html("현장명");
+				}
+                var pLog = pResult.log;
+                var html = '';
+                $.each(pLog, function(pIndex, pValue){
+                    if(pValue.stock_sttus == 1) {
+						var num = pIndex == 0 ? '' : (pLog[pIndex - 1].stock_sttus == 2 ? "회수" : "반품");
+					}
+                    else {
+                    	var num = pValue.stock_sttus == 2 ? "전시" : (pValue.stock_sttus == 3 ? "판매" : "폐기");
+					}
+					var damt = pValue.damt == '' ? 0 : parseInt(pValue.damt);
+					html += '<tr>';
+					html += '    <td class="text-center">'+num+'</td>';
+					html += '    <td class="text-center">'+pValue.ddt_man+'</td>';
+					html += '    <td class="text-center">'+pValue.cntrct_nm+'</td>';
+					html += '    <td class="text-number">'+damt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.samt.toString().toFormat('NUMBER')+'</td>';
+					html += '</tr>';
+                });
+                $('#report_status').find("tbody[role=body]").html(html);
+				$('#popReport2').modal('show');
+			}
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     * 인쇄 버튼 클릭 처리
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport2').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+
+});
+
 
 </script>
 
