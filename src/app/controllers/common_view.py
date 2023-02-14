@@ -6,3 +6,8 @@ bp = Blueprint('common', __name__, url_prefix='/')
 @session_helper.session_check
 def work_page():
     return render_template('work.html')
+
+@bp.route('/bnd')
+@session_helper.session_check
+def bnd_page():
+    return render_template('bnd.html')

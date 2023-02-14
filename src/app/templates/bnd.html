@@ -1,0 +1,711 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 1.0!important;
+    }
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">빌트인 현장현황</li><li><span> 계약 / 프로젝트</span></li>
+	</ol>
+
+
+
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			월별 수주 계획을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+                    <script>
+
+
+                    </script>
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>빌트인 현장현황</h2>
+						<div class="widget-toolbar">
+                            <h2>VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <input type="hidden" id="s_year" name="s_year" style="color:#333;" value="2020"/>
+<!--                            <button type="button" class="btn btn-info" id="s_submit">검색</button>-->
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+
+
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+
+                            .top_border{
+
+                                border-top: 2px solid #666!important;
+                            }
+                            .top_b_border{
+
+                                border-top: 3px solid #666!important;
+                            }
+                            .right_border{
+                                border-right: 2px solid #666!important;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+
+                            #dtList1 tbody, #dtList1 thead tr{
+                                font-size: 11px!important;
+                            }
+                            .colorEG{
+                                background:rgb(255,204,153)!important;
+                                font-weight: bold;
+                            }
+                            .colorJ{
+                                background:#3d8b40!important;
+                                font-weight: bold;
+                                color:white;
+                            }
+                            .colorSkyB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:8px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:11px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+/*
+                            .{
+                                background: #FDFD96!important;
+                            }
+*/
+                            .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .table>thead+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .middle{
+                                vertical-align: middle!important;
+                            }
+                            @media (min-width: 100px) and (max-width: 1024px) {
+
+
+                                body.smart-style-6 #content{
+                                        margin-left: 0px;
+                                        padding:30px 0px;
+                                }
+                            }
+                            .jarviswidget>div{
+                                font-size:12px!important;
+                            }
+                            .colored{
+                                background: #FFFF00!important   ;
+                            }
+                            .coloredRed{
+                                background: rgb(255,153,204)!important;
+                            }
+                            .redColored{
+                                background: rgba(255,204,153, 0.8)!important   ;
+                            }
+                            .no-padding>table tr th:last-child {
+                                border-right: 2px solid #666!important;
+                            }
+                            .no-padding>.table-bordered thead tr th:last-child{
+                                border-right: 2px solid #666!important;
+                            }
+                            .bold{
+                                font-size: 10px!important;
+                            }
+                            #dtList1 tbody, #dtList1 thead tr {
+                                font-size: 10px!important;
+                            }
+                            .select2-selection__rendered, .select2-results__option{
+                                font-size: 10px!important;
+                            }
+                            [data-tooltip-text]:hover{
+                                position:relative;
+                            }
+                            [data-tooltip-text]:after {
+                                -webkit-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+                                -moz-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+                                transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+
+                                background-color: rgba(0, 0, 0, 0.8);
+
+                              -webkit-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+                                -moz-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+                                box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+
+                              -webkit-border-radius: 5px;
+                                -moz-border-radius: 5px;
+                                border-radius: 5px;
+
+                              color: #FFFFFF;
+                                font-size: 12px;
+                                margin-bottom: 10px;
+                                padding: 7px 12px;
+                                position: absolute;
+                                width: auto;
+                                min-width: 200px;
+                                max-width: 300px;
+                                word-wrap: break-word;
+
+                                z-index: 9999;
+
+                                opacity: 0;
+                                right: -9999px;
+                              top: 90%;
+
+                                content: attr(data-tooltip-text);
+                            }
+
+                            [data-tooltip-text]:hover:after {
+                                top: 130%;
+                                right: 0;
+                                opacity: 1;
+                            }
+
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+
+                        </style>
+						<!-- widget content -->
+                        <input type="hidden" id="s_resrv_bcnc" value="-1"/>
+                        <input type="hidden" id="s_resrv_type" value="-1"/>
+                        <input type="hidden" id="s_resrv_chrg" value="-1"/>
+                        <input type="hidden" id="s_resrv_c_chrg" value="-1"/>
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w120p floating-thead" id="dtList1">
+								<colgroup>
+									<col width="65">
+									<col width="80">
+									<col width="110">
+									<col width="170">
+									<col width="80">
+									<col width="80">
+									<col width="80">
+									<col width="120">
+
+                                    <col width="110">
+									<col width="90">
+									<col width="150">
+									<col width="80">
+
+                                    <col width="110">
+									<col width="90">
+									<col width="150">
+									<col width="80">
+
+									<col width="100">
+                                    <col width="160">
+									<col width="100">
+									<col width="160">
+									<col width="110">
+									<col width="50">
+<!--									<col width="80">-->
+
+
+                                    <col width="130">
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="3">분류</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:65px;" rowspan="3">계약일</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="3">현장명</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_type" name="s_resrv_type">
+												<option value="-1">[전체]</option>
+                                                <option value="BD">직계약</option>
+                                                <option value="BF">수수료</option>
+
+											</select>
+										</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_chrg" name="s_resrv_chrg">
+												<option value="-1">[전체]</option>
+
+											</select>
+										</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_c_chrg" name="s_resrv_c_chrg">
+												<option value="-1">[전체]</option>
+
+											</select>
+										</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:45px;" rowspan="3">수주금액</th>
+										<th class="colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
+										<th class="colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">M/H<br>회수예정일</th>
+										<th class="colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
+										<th class="colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">S/H<br>회수예정일</th>
+										<th class="colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="3" rowspan="2">판매/수수료</th>
+										<th class="colorEG right_border middle bottom_border" style="text-align:center;min-width:90px;" rowspan="3">준공예정일</th>
+										<th class="colorEG right_border middle bottom_border" style="text-align:center;min-width:110px;" rowspan="3">비고</th>
+									</tr>
+									<tr>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="2">건설사</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="2">계약분류</th>
+                                        <th class="colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">담당</th>
+                                        <th class="colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">본사</th>
+
+										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">M/H</th>
+										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">S/H</th>
+<!--										<th class="colorSkyB bottom_border right_border middle" style="text-align:center!important;min-width:50px;" rowspan="2">분류</th>-->
+                                    </tr>
+                                    <tr>
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:130px;">출고월</th>
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:75px;">발행일자</th>
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:60px;">추가DC</th>
+										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;min-width:45px;">잔액</th>
+
+                                        <th class="colorSkyB bottom_border" style="text-align:center!important;min-width:130px;">출고월</th>
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:75px;">발행일자</th>
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:60px;">추가DC</th>
+										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;min-width:45px;">잔액</th>
+
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:60px;">발행일자</th>
+										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:45px;">금액</th>
+										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;min-width:45px;">잔액</th>
+									</tr>
+								</thead>
+                                <tbody role='exec'>
+                                </tbody>
+                                <tbody role='total'>
+
+                                </tbody>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+
+<script type="text/javascript">
+  var progrs = {1 : '진행', 2 : '사전<br>입찰', 3 : '유보'}
+  getReserveType = function(s_resrv_bcnc, s_resrv_type, s_resrv_chrg, s_resrv_c_chrg)
+  {
+      var params = '';
+      var resrv_bcnc = s_resrv_bcnc;
+      var resrv_type = s_resrv_type;
+      var resrv_chrg = s_resrv_chrg;
+      var resrv_c_chrg = s_resrv_c_chrg;
+      $.ajax({
+          url: '/api/bnd/ajax_get_bcnc_list',
+          type: 'GET',
+          data: params,
+          dataType: 'json',
+          contentType: false,
+          processData: false,
+          success: function(pResult) {
+
+              var html = '<option value="-1">[전체]</option>';
+              $.each(pResult.bData, function(pIndex, pValue){
+                  html += '<option value="'+pValue.num+'">';
+                  html += pValue.name;
+                  html += '</option>';
+              });
+              $('.s_resrv_bcnc').html(html);
+              $('.s_resrv_bcnc').val(resrv_bcnc);
+              $('#s_resrv_bcnc').val(resrv_bcnc);
+
+
+              $('.s_resrv_type').val(resrv_type);
+              $('#s_resrv_type').val(resrv_type);
+
+
+              var html = '<option value="-1">[전체]</option>';
+              $.each(pResult.cData, function(pIndex, pValue){
+                  html += '<option value="'+pValue.num+'">';
+                  html += pValue.name;
+                  html += '</option>';
+              });
+              $('.s_resrv_chrg').html(html);
+              $('.s_resrv_chrg').val(resrv_chrg);
+              $('#s_resrv_chrg').val(resrv_chrg);
+
+
+              var html = '<option value="-1">[전체]</option>';
+              $.each(pResult.dData, function(pIndex, pValue){
+                  html += '<option value="'+pValue.num+'">';
+                  html += pValue.name;
+                  html += '</option>';
+              });
+              $('.s_resrv_c_chrg').html(html);
+              $('.s_resrv_c_chrg').val(resrv_c_chrg);
+              $('#s_resrv_c_chrg').val(resrv_c_chrg);
+
+          }
+      });
+  }
+  getBndList = function(bnd_year)
+  {
+	var s_resrv_bcnc = $('#s_resrv_bcnc').val();
+	var s_resrv_type = $('#s_resrv_type').val();
+	var s_resrv_chrg = $('#s_resrv_chrg').val();
+	var s_resrv_c_chrg = $('#s_resrv_c_chrg').val();
+
+	var params = '';
+    if(s_resrv_bcnc != '' && s_resrv_bcnc != '-1'){
+        params += '&s_resrv_bcnc='+s_resrv_bcnc;
+    }
+    if(s_resrv_type != '' && s_resrv_type != '-1'){
+        params += '&s_resrv_type='+s_resrv_type;
+    }
+    if(s_resrv_chrg != '' && s_resrv_chrg != '-1'){
+        params += '&s_resrv_chrg='+s_resrv_chrg;
+    }
+    if(s_resrv_c_chrg != '' && s_resrv_c_chrg != '-1'){
+        params += '&s_resrv_c_chrg='+s_resrv_c_chrg;
+    }
+	params += '&bnd_year='+bnd_year;
+	$.ajax({
+		url: '/api/bnd/ajax_get_bnd',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			var before = -1;
+            var html = '';
+            var _class = '';
+            var count = 1;
+            var total = {"cntrct_amount" : 0};
+            $.each(pResult.data, function(pIndex, pValue){
+              if(before != pValue.progrs_order && before != -1){
+                html += `<tr class="total">
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                         </tr>
+                        `;
+              }
+              if(before != pValue.progrs_order){
+                before = pValue.progrs_order;
+                count = 0;
+                _class = "top_b_border";
+                total.cntrct_amount = 0;
+              }
+              else{
+                _class = "";
+              }
+
+              html += `<tr class="row${pValue.cntrct_sn}" id="${pValue.cntrct_sn}" data-count="${Math.floor(count/15)}" data-nm="${_class}" data-label="${progrs[pValue.progrs_order]}">
+                            <td class="bold colorBtn top_border text-center middle ${_class}"><span class="${Math.floor(count/15)}"></span>${progrs[pValue.progrs_order]}</td>
+                            <td class="bold colorBtn top_border middle ${_class}" style="text-align:left;">${pValue.cntrct_de}</td>
+                            <td class="bold colorBtn top_border middle ${_class}" style="text-align:left;">${pValue.bcnc_nm}</td>
+                            <td class="bold colorBtn top_border middle ${_class}" style="text-align:left;">${pValue.spt_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.prjct_ty_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.bsn_chrg_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.chrg_nm}</td>
+                            <td class="bold colorBtn top_border middle right_border ${_class}" style="text-align:right;">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+                            <td class="bold colorBtn top_border ${_class} m-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} m-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} m-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border middle right_border ${_class} m-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border middle right_border ${_class} m-next-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} s-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} s-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} s-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border middle right_border ${_class} s-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border middle right_border ${_class} s-next-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} t-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border ${_class} t-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border middle right_border ${_class} t-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border right_border ${_class}" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border right_border ${_class}" style="text-align:left;"></td>
+                       </tr>
+                      `;
+              count++;
+              total.cntrct_amount += parseInt(pValue.cntrct_amount);
+              if(pIndex == pResult.data.length - 1){
+                html += `<tr class="total">
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                         </tr>
+                        `;
+              }
+            });
+            $("#dtList1").find("tbody[role=exec]").html(html);
+
+            $.each(pResult.account, function(cntrct_sn, pRow){
+            	var row = $(document).find(`#${cntrct_sn}`);
+            	var count = $(row).data("count");
+            	var _class = $(row).data("nm");
+            	var label = $(row).data("label");
+            	console.log(pRow.max_row);
+            	for(let i=1;i<8;i++){
+					$(row).find("td").eq(i).attr("rowspan", pRow.max_row.toString());
+				}
+				$(row).find("td").eq(11).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(12).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(16).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(17).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(20).attr("rowspan", pRow.max_row.toString());
+            	var html = `<tr class="row${cntrct_sn}">
+	                            <td class="bold colorBtn top_border text-center middle ${_class}"><span class="${count}"></span>${label}</td>
+								<td class="bold colorBtn ${_class} m-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} m-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} m-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} s-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} s-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} s-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} t-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} t-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn right_border ${_class}" style="text-align:left;"></td>
+								<td class="bold colorBtn right_border ${_class}" style="text-align:left;"></td>
+							</tr>`;
+            	for(let i=0;i<pRow.max_row-1;i++){
+	            	$(html).insertAfter(`#${cntrct_sn}`);
+				}
+
+
+            	let offset = (new Date()).getTimezoneOffset() * 60000;
+            	$.each(pRow.M, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-date").eq(0).text(pValue);
+				});
+            	if(pRow.M.length > 0){
+					var pDate = pRow.M[pRow.M.length-1];
+					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`)+12, 0);
+					var nextDateStr = (new Date(nextDate.getTime()-offset)).toISOString().split("T")[0];
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-next-date").eq(0).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+				}
+
+
+
+				$.each(pRow.S, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-date").eq(0).text(pValue);
+				});
+            	if(pRow.S.length > 0) {
+					var pDate = pRow.S[pRow.S.length - 1];
+					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`) + 6, 0);
+					var nextDateStr = (new Date(nextDate.getTime() - offset)).toISOString().split("T")[0];
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-next-date").eq(0).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+				}
+			});
+
+			var rcppay = pResult.rcppay;
+            $.each(pResult.taxbill, function(cntrct_sn, pRow){
+            	var mTotal = 0, tTotal=0;
+
+            	$.each(pRow.M, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(0).text(pValue[0]);
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(1).text(Math.round(pValue[1]/10000));
+	            	mTotal += pValue[1];
+				});
+            	$.each(pRow.T, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(0).text(pValue[0]);
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(1).text(Math.round(pValue[1]/10000));
+	            	tTotal += pValue[1];
+				});
+            	if(rcppay.hasOwnProperty(cntrct_sn)){
+					var remain = Math.round((mTotal - rcppay[cntrct_sn].M)/10000);
+            		if(mTotal > 0) {
+						$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain);
+					}
+            		if(remain == 0){
+            			$(document).find(`.row${cntrct_sn}`).find(".m-date").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
+					}
+					var remain = Math.round((tTotal - rcppay[cntrct_sn].T)/10000);
+            		if(tTotal > 0) {
+						$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain);
+					}
+            		if(remain == 0){
+            			$(document).find(`.row${cntrct_sn}`).find(".t-date").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".t-t-date").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".t-remain").addClass("colorY");
+					}
+				}
+
+			});
+
+
+            // $("#dtList1").find("tbody[role=exec]").yRowspan(0);
+            getReserveType(s_resrv_bcnc, s_resrv_type, s_resrv_chrg);
+        }
+	});
+  }
+
+
+</script>
+<script type="text/javascript">
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+
+$(function() {
+	  getBndList(2023);
+});
+</script>
+
+{% endblock %}

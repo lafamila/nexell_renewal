@@ -17,3 +17,223 @@ def get_work(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+def get_bcncs():
+    query = """SELECT DISTINCT c.bcnc_sn AS num
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS name
+				FROM contract c
+				WHERE 1=1
+				AND c.prjct_ty_code IN ('BD', 'BF')
+				AND c.prjct_creat_at IN ('Y')
+				AND c.progrs_sttus_code NOT IN ('C')
+            """
+    g.curs.execute(query, ())
+    result = g.curs.fetchall()
+    return result
+
+def get_chrgs():
+    query = """SELECT DISTINCT c.bsn_chrg_sn AS num
+				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS name
+				FROM contract c
+				WHERE 1=1
+				AND c.prjct_ty_code IN ('BD', 'BF')
+				AND c.prjct_creat_at IN ('Y')
+				AND c.progrs_sttus_code NOT IN ('C')
+            """
+    g.curs.execute(query, ())
+    result = g.curs.fetchall()
+    return result
+
+def get_c_chrgs():
+    query = """SELECT DISTINCT SUBSTRING_INDEX(SUBSTRING_INDEX(ch.charger_nm, ' ', 1), ' ', -1) AS num
+				, SUBSTRING_INDEX(SUBSTRING_INDEX(ch.charger_nm, ' ', 1), ' ', -1) AS name
+				FROM charger ch LEFT JOIN contract c
+				ON ch.cntrct_sn=c.cntrct_sn
+				WHERE 1=1
+				AND c.prjct_ty_code IN ('BD', 'BF')
+				AND c.prjct_creat_at IN ('Y')
+				AND c.progrs_sttus_code NOT IN ('C')
+				AND ch.charger_se_code = '1'
+            """
+    g.curs.execute(query, ())
+    result = g.curs.fetchall()
+    return result
+
+def get_s6_account_list(params):
+    query = """SELECT CAST(DATE_FORMAT(s.dlivy_de, %s) AS CHAR ) AS s_dlivy_de
+    				, p.delng_ty_code AS p_delng_ty_code
+    				, c.cntrct_sn
+    				FROM account s
+    				LEFT JOIN account p
+    				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+    				LEFT JOIN contract c 
+    				ON s.cntrct_sn=c.cntrct_sn
+                    LEFT JOIN charger ch
+                    ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
+    				WHERE s.ctmmny_sn = 1
+    				AND s.delng_se_code = 'S'
+    				AND p.delng_ty_code IN ('61', '62')
+    """
+    data = ['%y/%m']
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += """ GROUP BY s_dlivy_de, p.delng_ty_code, c.cntrct_sn
+    	         ORDER BY s_dlivy_de ASC """
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_i2_rcppay_list(params):
+    query = """SELECT SUM(r.amount) AS amount
+				, r.rcppay_se_code
+				, c.cntrct_sn
+				FROM rcppay r
+                LEFT JOIN contract c 
+                ON r.cntrct_sn=c.cntrct_sn
+                LEFT JOIN charger ch
+                ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
+				WHERE r.ctmmny_sn = 1
+				AND r.rcppay_se_code IN ('I1', 'I2')
+    """
+    data = []
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += """ GROUP BY r.rcppay_se_code, c.cntrct_sn """
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_s6_taxbill_list(params):
+    query = """SELECT CAST(DATE_FORMAT(t.pblicte_de, %s) AS CHAR ) AS s_dlivy_de
+    				, t.delng_se_code AS s_delng_se_code
+    				, c.cntrct_sn
+    				, SUM(t.splpc_am + IFNULL(t.vat, 0)) as amount
+    				FROM taxbil t
+    				LEFT JOIN contract c 
+    				ON t.cntrct_sn=c.cntrct_sn
+                    LEFT JOIN charger ch
+                    ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
+    				WHERE t.delng_se_code IN ('S1', 'S2')
+    				AND t.taxbil_yn = 'Y'
+    """
+    data = ['%y/%m']
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += """ GROUP BY s_dlivy_de, s_delng_se_code, c.cntrct_sn
+    	         ORDER BY s_dlivy_de ASC """
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_bnd_projects(params):
+    query = """SELECT c.cntrct_sn
+				, c.bcnc_sn
+				, DATE_FORMAT(c.cntrct_de, %s) AS cntrct_de
+				, c.bsn_chrg_sn
+				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS bsn_chrg_nm
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+				, c.spt_nm
+				, SUBSTRING_INDEX(SUBSTRING_INDEX(ch.charger_nm, ' ', 1), ' ', -1) AS chrg_nm
+				, ch.charger_sn AS chrg_sn
+				, IF(c.prjct_ty_code IN ('BD'), '직계약', '수수료') AS prjct_ty_nm
+				, c.progrs_sttus_code
+				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+				ELSE 0
+				END AS cntrct_amount
+				, IF(c.progrs_sttus_code = 'P', 1, IF(c.progrs_sttus_code = 'B', 2, 3)) AS progrs_order
+				FROM contract c
+				LEFT JOIN charger ch
+				ON c.cntrct_sn=ch.cntrct_sn
+				AND ch.charger_se_code='1'
+				WHERE 1=1
+            """
+    data = ["%y/%c/%d"]
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += " ORDER BY progrs_order, cntrct_de "
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
