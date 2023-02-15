@@ -1,0 +1,765 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.95!important;
+    }
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">공무건설사 월별진행 / VA 월별진행</li><li><span> 계약 / 프로젝트</span></li>
+	</ol>
+
+
+
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			월별 수주 계획을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+                    <script>
+
+
+                    </script>
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2><span id="year">2020</span>년 공무건설사 월별진행 / VA 월별진행</h2>
+						<div class="widget-toolbar">
+                            <h2>매월 12일까지 입력완료 / 미완료시 기성지급 보류&nbsp;&nbsp; VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+
+
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+                            .top_border{
+
+                                border-top: 2px solid #666!important;
+                            }
+                            .right_border{
+                                border-right: 2px solid #666!important;
+                            }
+
+                            .left_border{
+                                border-left: 2px solid #666!important;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+
+                            #dtList1 tbody, #dtList1 thead tr{
+                                font-size: 11px!important;
+                            }
+                            .colorEG{
+                                background:rgb(255,204,153)!important;
+                                font-weight: bold;
+                            }
+                            .colorJ{
+                                background:#3d8b40!important;
+                                font-weight: bold;
+                                color:white;
+                            }
+                            .colorSky{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:8px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:11px!important;
+                                font-weight: 600!important;
+								text-overflow: ellipsis!important;
+								overflow: hidden;
+								white-space: nowrap;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+/*
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+*/
+                            .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .table>thead+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .middle{
+                                vertical-align: middle!important;
+                            }
+                            @media (min-width: 100px) and (max-width: 1024px) {
+
+
+                                body.smart-style-6 #content{
+                                        margin-left: 0px;
+                                        padding:30px 0px;
+                                }
+                            }
+                            .jarviswidget>div{
+                                font-size:12px!important;
+                            }
+                            .colored{
+                                background: #FFFF00!important   ;
+                            }
+                            .coloredRed{
+                                background: rgb(255,153,204)!important;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+							.no-padding-3{
+								padding-right:3px!important;
+								padding-left:3px!important;
+							}
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p floating-thead" id="dtList1">
+								<colgroup>
+									<col width="1.82%">
+									<col width="3.2%">
+									<col width="2.48%">
+									<col width="3.0%">
+									<col width="4.2%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="4.2%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="2.86%">
+									<col width="4.2%">
+<!--									<col width="130">-->
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:28px;" rowspan="2">부서</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:55px;" rowspan="2">담당자</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;" rowspan="2">건설사</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:122px;" rowspan="2">현장명</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:70px;" rowspan="2">계약금액</th>
+										<th class="colorSky right_border bottom_border" style="text-align:center!important;" colspan="13">월 매출 금액(기성현황 기준)</th>
+										<th class="colorG bold right_border middle bottom_border" style="text-align:center;min-width:70px;" rowspan="2">투입금액</th>
+										<th class="colorJ right_border bottom_border" style="text-align:center!important;" colspan="13">투입금액=장비+자재+도급비(기성현황 기준)</th>
+										<th class="colorG bold right_border middle bottom_border" style="text-align:center;" rowspan="2">VA 계</th>
+<!--										<th style="text-align:center!important;">합계</th>-->
+									</tr>
+									<tr>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">1월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">2월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">3월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">4월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">5월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">6월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">7월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">8월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">9월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">10월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">11월</th>
+										<th class="colorSky bold bottom_border" style="text-align:center!important;">12월</th>
+										<th class="colorEG right_border bottom_border" style="text-align:center!important;">계</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">1월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">2월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">3월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">4월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">5월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">6월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">7월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">8월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">9월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">10월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">11월</th>
+										<th class="colorJ bold bottom_border" style="text-align:center!important;">12월</th>
+										<th class="colorEG right_border bottom_border" style="text-align:center!important;border-right: 2px solid #666 !important;">계</th>
+<!--										<th style="text-align:center!important;">합계</th>-->
+									</tr>
+								</thead>
+                                <tbody role='calc'>
+
+
+                                </tbody>
+                                <tbody role='exec'>
+
+
+                                </tbody>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<script>
+	getMonthSales = function(s_year)
+	{
+		var params = '';
+		params += '&s_year='+s_year;
+		params += '&s_dept_code=TS';
+		$.ajax({
+			url: '/api/bcnc/ajax_get_month_sales',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function(pResult) {
+				console.log(pResult);
+				var html = '';
+				var small_cntrct = {};
+				$.each(pResult.contract, function(pIndex, pValue){
+					if(!small_cntrct.hasOwnProperty(pValue.spt_chrg_sn)){
+						small_cntrct[pValue.spt_chrg_sn] = {"spt_chrg_nm": pValue.spt_chrg_nm, "bcnc_nm" : "", "spt_nm" : "단납(5천 이하)", "dept_nm" : pValue.dept_nm, "p_total" : {}, "s_total" : {}, "cntrct_amount" : 0, "a_cost" : 0, "tot_p" : 0, "tot_s" : 0};
+						for(let i=1;i<=12;i++){
+							small_cntrct[pValue.spt_chrg_sn].p_total[i.toString()] = 0;
+							small_cntrct[pValue.spt_chrg_sn].s_total[i.toString()] = 0;
+						}
+					}
+					let cntrct_sn = pValue.cntrct_sn;
+					let s_total = {}, p_total = {};
+					for(let i=1;i<=12;i++){
+						p_total[i.toString()] = 0;
+						s_total[i.toString()] = 0;
+					}
+					if(pResult.taxbill.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							s_total[month] += pResult.taxbill[cntrct_sn][month];
+						}
+
+					}
+					if(pResult.s12_account.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							p_total[month] += pResult.s12_account[cntrct_sn][month];
+						}
+					}
+					if(pResult.s34_account.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							p_total[month] += pResult.s34_account[cntrct_sn][month];
+						}
+					}
+					if(pResult.outsrc_taxbill.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							p_total[month] += pResult.outsrc_taxbill[cntrct_sn][month];
+						}
+					}
+					var tot_p = 0, tot_s = 0;
+					$.each(p_total, function(_, p){
+						tot_p += p;
+					});
+					$.each(s_total, function(_, s){
+						tot_s += s;
+					});
+					if(pValue.cntrct_amount <= 50000000){
+
+						var a_cost = pResult.a_cost.hasOwnProperty(cntrct_sn) ? pResult.a_cost[cntrct_sn]/10000 : 0;
+						if(isNaN(a_cost)) a_cost = 0;
+
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							small_cntrct[pValue.spt_chrg_sn].p_total[month] += p_total[month];
+							small_cntrct[pValue.spt_chrg_sn].s_total[month] += s_total[month];
+						}
+						small_cntrct[pValue.spt_chrg_sn].cntrct_amount += pValue.cntrct_amount;
+						small_cntrct[pValue.spt_chrg_sn].tot_p += tot_p;
+						small_cntrct[pValue.spt_chrg_sn].tot_s += tot_s;
+						small_cntrct[pValue.spt_chrg_sn].a_cost += a_cost;
+						return true;
+
+					}
+					var a_cost = pResult.a_cost.hasOwnProperty(cntrct_sn) ? pResult.a_cost[cntrct_sn] : 0;
+					if(isNaN(a_cost)) a_cost = 0;
+					html += `<tr id="row${pValue.cntrct_sn}" data-sn="${pValue.spt_chrg_sn}">
+								<td class="bold colorG right_border text-center middle broken">${pValue.dept_nm}</td>
+								<td class="bold right_border text-center middle">${pValue.spt_chrg_nm}</td>
+								<td class="bold right_border text-center middle">${pValue.bcnc_nm}</td>
+								<td class="bold right_border colorBtn text-left middle" data-column="spt_nm">${pValue.spt_nm}</td>
+								<td class="bold right_border colorBtn text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s1m">${Math.round(s_total["1"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s2m">${Math.round(s_total["2"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s3m">${Math.round(s_total["3"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s4m">${Math.round(s_total["4"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s5m">${Math.round(s_total["5"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s6m">${Math.round(s_total["6"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s7m">${Math.round(s_total["7"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s8m">${Math.round(s_total["8"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s9m">${Math.round(s_total["9"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s10m">${Math.round(s_total["10"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s11m">${Math.round(s_total["11"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s12m">${Math.round(s_total["12"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(tot_s/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border colorBtn text-right middle nozero no-padding-3 input-available" data-column="p_amount">${Math.round(a_cost/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p1m">${Math.round(p_total["1"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p2m">${Math.round(p_total["2"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p3m">${Math.round(p_total["3"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p4m">${Math.round(p_total["4"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p5m">${Math.round(p_total["5"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p6m">${Math.round(p_total["6"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p7m">${Math.round(p_total["7"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p8m">${Math.round(p_total["8"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p9m">${Math.round(p_total["9"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p10m">${Math.round(p_total["10"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p11m">${Math.round(p_total["11"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p12m">${Math.round(p_total["12"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(tot_p/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border text-right middle no-padding-3">${Math.round((tot_s - tot_p)/10000).toString().toFormat('NUMBER')}</td>
+							 </tr>`;
+				});
+				$(document).find("#dtList1").find("tbody[role='exec']").html(html);
+				$.each(small_cntrct, function(sn, pValue){
+					var trs = $(document).find("#dtList1").find(`tr[data-sn="${sn}"]`);
+					var html = `<tr id="rowSmall${sn}" data-sn="${sn}">
+								<td class="bold colorG right_border text-center middle broken">${pValue.dept_nm}</td>
+								<td class="bold right_border text-center middle">${pValue.spt_chrg_nm}</td>
+								<td class="bold right_border text-center middle">${pValue.bcnc_nm}</td>
+								<td class="bold right_border colorBtn text-left middle" data-column="spt_nm">${pValue.spt_nm}</td>
+								<td class="bold right_border colorBtn text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s1m">${Math.round(pValue.s_total["1"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s2m">${Math.round(pValue.s_total["2"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s3m">${Math.round(pValue.s_total["3"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s4m">${Math.round(pValue.s_total["4"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s5m">${Math.round(pValue.s_total["5"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s6m">${Math.round(pValue.s_total["6"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s7m">${Math.round(pValue.s_total["7"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s8m">${Math.round(pValue.s_total["8"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s9m">${Math.round(pValue.s_total["9"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s10m">${Math.round(pValue.s_total["10"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s11m">${Math.round(pValue.s_total["11"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s12m">${Math.round(pValue.s_total["12"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(pValue.tot_s/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border colorBtn text-right middle nozero no-padding-3 input-available" data-column="p_amount">${Math.round(pValue.a_cost/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p1m">${Math.round(pValue.p_total["1"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p2m">${Math.round(pValue.p_total["2"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p3m">${Math.round(pValue.p_total["3"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p4m">${Math.round(pValue.p_total["4"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p5m">${Math.round(pValue.p_total["5"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p6m">${Math.round(pValue.p_total["6"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p7m">${Math.round(pValue.p_total["7"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p8m">${Math.round(pValue.p_total["8"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p9m">${Math.round(pValue.p_total["9"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p10m">${Math.round(pValue.p_total["10"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p11m">${Math.round(pValue.p_total["11"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p12m">${Math.round(pValue.p_total["12"]/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(pValue.tot_p/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border text-right middle no-padding-3">${Math.round((pValue.tot_s - pValue.tot_p)/10000).toString().toFormat('NUMBER')}</td>
+							 </tr>`;
+					$(html).insertAfter($(trs).eq(trs.length-1));
+				});
+				$.each(pResult.bcnc_data, function(pIndex, pValue){
+					var rowId = pValue.bcnc_row;
+					var column = pValue.bcnc_month;
+					var data = pValue.bcnc_data;
+					$(document).find(`#${rowId}`).find(`td[data-column="${column}"]`).removeClass("colored");
+					if(parseInt(pValue.bcnc_class) == 1)
+						$(document).find(`#${rowId}`).find(`td[data-column="${column}"]`).addClass("colored");
+					if(["p_amount"].includes(column) && data != ""){
+						$(document).find(`#${rowId}`).find(`td[data-column="${column}"]`).html(`${data.toFormat('NUMBER')}`);
+					}
+
+				});
+				var html = '';
+				$.each(small_cntrct, function(sn, pValue) {
+					var trs = $(document).find("#dtList1").find(`tr[data일-sn="${sn}"]`);
+					var total = ($(trs).calculation(4, 32));
+					html += `<tr data-row="calcTotal">
+									<td class="bold colorSky right_border text-center middle">종합<br>(자동)</td>
+									<td class="bold colorSky right_border text-center middle">${pValue.spt_chrg_nm}</td>
+									<td class="bold right_border text-center middle"></td>
+									<td class="bold right_border text-left middle" data-column="spt_nm"></td>
+									<td class="bold right_border text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(total[0]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s1m">${Math.round(total[1]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s2m">${Math.round(total[2]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s3m">${Math.round(total[3]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s4m">${Math.round(total[4]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s5m">${Math.round(total[5]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s6m">${Math.round(total[6]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s7m">${Math.round(total[7]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s8m">${Math.round(total[8]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s9m">${Math.round(total[9]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s10m">${Math.round(total[10]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s11m">${Math.round(total[11]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s12m">${Math.round(total[12]).toString().toFormat('NUMBER')}</td>
+									<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total[13]).toString().toFormat('NUMBER')}</td>
+									<td class="bold right_border text-right middle nozero no-padding-3">${Math.round(total[14]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p1m">${Math.round(total[15]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p2m">${Math.round(total[16]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p3m">${Math.round(total[17]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p4m">${Math.round(total[18]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p5m">${Math.round(total[19]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p6m">${Math.round(total[20]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p7m">${Math.round(total[21]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p8m">${Math.round(total[22]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p9m">${Math.round(total[23]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p10m">${Math.round(total[24]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p11m">${Math.round(total[25]).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p12m">${Math.round(total[26]).toString().toFormat('NUMBER')}</td>
+									<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total[27]).toString().toFormat('NUMBER')}</td>
+									<td class="bold right_border text-right middle no-padding-3">${Math.round(total[28]).toString().toFormat('NUMBER')}</td>
+							 </tr>`;
+				});
+				$(document).find("#dtList1").find("tbody[role='calc']").html(html);
+				var html = '';
+				var trs = $(document).find("#dtList1 tbody[role='calc']").find(`tr[data-row="calcTotal"]`);
+				var total = ($(trs).calculation(4, 32));
+				html += `<tr data-row="calcTotal">
+							<td class="bold colorSky right_border text-center middle">종합<br>(자동)</td>
+							<td class="bold colorSky right_border top_border text-center middle" colspan="3">총 계</td>
+							<td class="bold right_border text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(total[0]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s1m">${Math.round(total[1]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s2m">${Math.round(total[2]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s3m">${Math.round(total[3]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s4m">${Math.round(total[4]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s5m">${Math.round(total[5]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s6m">${Math.round(total[6]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s7m">${Math.round(total[7]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s8m">${Math.round(total[8]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s9m">${Math.round(total[9]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s10m">${Math.round(total[10]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s11m">${Math.round(total[11]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="s12m">${Math.round(total[12]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total[13]).toString().toFormat('NUMBER')}</td>
+							<td class="bold right_border text-right middle nozero no-padding-3">${Math.round(total[14]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p1m">${Math.round(total[15]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p2m">${Math.round(total[16]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p3m">${Math.round(total[17]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p4m">${Math.round(total[18]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p5m">${Math.round(total[19]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p6m">${Math.round(total[20]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p7m">${Math.round(total[21]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p8m">${Math.round(total[22]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p9m">${Math.round(total[23]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p10m">${Math.round(total[24]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p11m">${Math.round(total[25]).toString().toFormat('NUMBER')}</td>
+							<td class="bold text-right middle nozero no-padding-3" data-column="p12m">${Math.round(total[26]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total[27]).toString().toFormat('NUMBER')}</td>
+							<td class="bold right_border text-right middle no-padding-3">${Math.round(total[28]).toString().toFormat('NUMBER')}</td>
+					 </tr>`;
+				$(html).insertAfter("#dtList1 tbody[role='calc'] tr:last-child");
+				$(document).find("#dtList1").hideZero();
+				$(document).find("#dtList1 tbody[role='exec']").yRowspan(0);
+				$(document).find("#dtList1 tbody[role='calc']").yRowspan(0);
+				$(document).find("#dtList1 tbody[role='calc'] tr:last-child td:not(:first-child)").attr("style", "border-bottom:2px solid #666!important;");
+				$(document).find("#dtList1 tbody[role='calc'] tr:first-child td:first-child").attr("style", "border-bottom:2px solid #666!important;");
+				$(document).find("#dtList1 tbody[role='exec']").yRowClass(0, "bottom_border");
+				$(document).find("#dtList1 tbody[role='exec']").yRowspan(1);
+				$(document).find("#dtList1 tbody[role='exec']").yRowClass(1, "bottom_border");
+				$(document).find("#dtList1 tbody[role='exec']").yRowClassNext(1, "bottom_border");
+				$(document).find("#dtList1 tbody[role='exec']").yRowspan(2);
+				$(document).find("#dtList1 tbody[role='exec']").brokenWord(0);
+				$(document).find("#dtList1 tbody[role='exec']").brokenWord(1);
+				$(document).find("#year").text(s_year);
+			}
+		});
+	}
+
+
+
+</script>
+
+<script>
+$(document).on("dblclick", ".input-available", function(){
+	var colored = $(this).hasClass("colored");
+	if(colored)
+		return false;
+
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+
+	var data = prompt("값을 입력하세요.");
+	try{
+		if(/^\d+$/.test(data)){
+			data = parseInt(data);
+		}
+		else{
+			throw new Error(`Parameter is not a number : ${data}`);
+		}
+	}catch(e){
+		alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+		return false;
+	}
+	var td = $(this);
+	var rowId = $(this).parent().attr("id");
+	var s_year = $(document).find("#year").text();
+	var column = $(this).data("column");
+	var params = '';
+	params += '&bcnc_year='+s_year;
+	params += '&bcnc_row='+rowId;
+	params += '&bcnc_month='+column;
+	params += '&bcnc_data='+data;
+	params += '&bcnc_class=0';
+	$.ajax({
+		url: '/api/bcnc/ajax_set_bcnc_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+				$(td).text(data.toString().toFormat("NUMBER"));
+			}
+		}
+	});
+
+});
+$(document).on('click', "#s_submit", function(pEvent){
+
+    var year = $("#s_year").val();
+    //resetTable();
+	getMonthSales(year);
+
+});
+set_color = function(td){
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+
+	var rowId = $(td).parent().attr("id");
+	var column = $(td).data("column");
+	var year = $("#year").text();
+	var colored = $(td).hasClass("colored") ? 0 : 1;
+	var params = '';
+	params += '&bcnc_year='+year;
+	params += '&bcnc_row='+rowId;
+	params += '&bcnc_month='+column;
+	params += '&bcnc_class='+colored;
+	$.ajax({
+		url: '/api/bcnc/ajax_set_bcnc_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+				if(colored == 0){
+					$(td).removeClass("colored");
+				}
+				else{
+					$(td).addClass("colored");
+				}
+			}
+		}
+	});
+
+
+}
+var timer;
+$(document).on("click", ".colorBtn", function(){
+	var td = $(this);
+	if(timer){
+		clearTimeout(timer);
+		timer = null;
+	}
+	else{
+		timer = setTimeout(function(){
+			set_color(td);
+            clearTimeout(timer);
+            timer = null;
+		}, 250);
+	}
+});
+
+$(document).on('click', '#btnExcel', function(e) {
+    var postfix = $("#s_year").val();
+    var fileName = "월별 매출현황(공조)"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList1';
+    var table_div = document.getElementById(tbl);
+
+    table_html += table_div.outerHTML.replace(/ /g, '%20');
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+	getMonthSales(postfix);
+
+
+    e.preventDefault();
+
+
+
+});
+
+</script>
+<script type="text/javascript">
+
+
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+
+$(function() {
+	/**************************************************************************
+     *
+     */
+    //$('#dtList1 tbody').yRowspan(0);
+    var year = new Date().getFullYear();
+    $("#s_year").val(year);
+	getMonthSales(year);
+});
+</script>
+{% endblock %}

@@ -86,3 +86,66 @@ def ajax_get_bnd():
 
 
     return jsonify(result)
+
+@bp.route('/bcnc/ajax_get_month_sales', methods=['GET'])
+def ajax_get_month_sales():
+    params = request.args.to_dict()
+    result = dict()
+    result['contract'] = cm.get_bcnc_contract_list(params)
+
+    taxbill = cm.get_s_taxbil_list(params)
+    result['taxbill'] = dict()
+    for tax in taxbill:
+        cntrct_sn = str(tax['cntrct_sn'])
+        s_dlivy_de = str(int(tax['s_dlivy_de']))
+        amount = tax['total']
+        if cntrct_sn not in result['taxbill']:
+            result['taxbill'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
+        result['taxbill'][cntrct_sn][s_dlivy_de] = amount
+
+    s12_account = cm.get_s12_account_list(params)
+    result['s12_account'] = dict()
+    for s in s12_account:
+        cntrct_sn = str(s['cntrct_sn'])
+        s_dlivy_de = str(int(s['s_dlivy_de']))
+        amount = s['p_total']
+        if cntrct_sn not in result['s12_account']:
+            result['s12_account'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
+        result['s12_account'][cntrct_sn][s_dlivy_de] = amount
+
+    s34_account = cm.get_s34_account_list(params)
+    result['s34_account'] = dict()
+    for s in s34_account:
+        cntrct_sn = str(s['cntrct_sn'])
+        s_dlivy_de = str(int(s['s_dlivy_de']))
+        amount = s['s_total']
+        if cntrct_sn not in result['s34_account']:
+            result['s34_account'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
+        result['s34_account'][cntrct_sn][s_dlivy_de] = amount
+
+    outsrc_taxbill = cm.get_outsrc_taxbill_list(params)
+    result['outsrc_taxbill'] = dict()
+    for t in outsrc_taxbill:
+        cntrct_sn = str(t['cntrct_sn'])
+        s_dlivy_de = str(int(t['s_dlivy_de']))
+        amount = t['total']
+        if cntrct_sn not in result['outsrc_taxbill']:
+            result['outsrc_taxbill'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
+        result['outsrc_taxbill'][cntrct_sn][s_dlivy_de] = amount
+
+    a_e_cost_list = cm.get_a_e_cost_list(params)
+    result['a_cost'] = dict()
+    for a in a_e_cost_list:
+        cntrct_sn = str(a['cntrct_sn'])
+        amount = a['amount']
+        result['a_cost'][cntrct_sn] = amount
+
+    result['bcnc_data'] = cm.get_bcnc_data(params)
+
+    return jsonify(result)
+
+@bp.route('/bcnc/ajax_set_bcnc_data', methods=['GET'])
+def ajax_set_bcnc_data():
+    params = request.args.to_dict()
+    cm.set_bcnc_data(params)
+    return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})

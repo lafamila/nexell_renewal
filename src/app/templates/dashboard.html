@@ -421,38 +421,40 @@ getCompletedSummary = function(s_pxcond_mt)
                     var link_start = '<a data-toggle="modal" href="#popReport'+pValue.amt_ty_code+'" style="color:inherit;">';
                     var link_end = '</a>';
 
-					html += '<tr class="'+pValue.dept_code+'">';
-					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
-					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
-					html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-					html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-					html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-                    html += '    <td class="text-number '+pValue.dept_code+'"></td>';
-					html += '</tr>';
-					// 장려금
-                    j_amt1 = parseInt(pValue.ty9_goal_amount); if(isNaN(j_amt1)) j_amt1 = 0;
+					//장려금 합산
+					j_amt1 = parseInt(pValue.ty9_goal_amount); if(isNaN(j_amt1)) j_amt1 = 0;
                     j_amt2 = parseInt(pValue.ty8_goal_amount); if(isNaN(j_amt2)) j_amt2 = 0;
                     j_amt3 = parseInt(pValue.ty9_goal_amount_sum); if(isNaN(j_amt3)) j_amt3 = 0;
                     j_amt4 = parseInt(pValue.ty8_goal_amount_sum); if(isNaN(j_amt4)) j_amt4 = 0;
                     j_amt5 = parseInt(pValue.ty8_goal_amount_total); if(isNaN(j_amt5)) j_amt5 = 0;
-					html += '<tr>';
-					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
-					html += '    <td class="text-center" style="border-right:2px solid black!important;">장려금</td>';
-					html += '    <td class="text-number">'+j_amt2.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+j_amt1.toString().toFormat('NUMBER')+'</td>';
+
+					html += '<tr class="'+pValue.dept_code+'">';
+					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
+					html += '    <td class="text-number">'+(b_amt2 + j_amt2).toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+(b_amt1 + j_amt1).toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-					html += '    <td class="text-number">'+j_amt4.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+j_amt3.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+(b_amt4 + j_amt4).toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+(b_amt3 + j_amt3).toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-					html += '    <td class="text-number">'+j_amt5.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+(b_amt5 + j_amt5).toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-					html += '    <td class="text-number '+pValue.dept_code+'"></td>';
+                    html += '    <td class="text-number '+pValue.dept_code+'"></td>';
 					html += '</tr>';
+					// 장려금금
+					// html += '<tr>';
+					// html += '    <td class="text-center" style="border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
+					// html += '    <td class="text-center" style="border-right:2px solid black!important;">장려금</td>';
+					// html += '    <td class="text-number">'+j_amt2.toString().toFormat('NUMBER')+'</td>';
+					// html += '    <td class="text-number">'+j_amt1.toString().toFormat('NUMBER')+'</td>';
+					// html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					// html += '    <td class="text-number">'+j_amt4.toString().toFormat('NUMBER')+'</td>';
+					// html += '    <td class="text-number">'+j_amt3.toString().toFormat('NUMBER')+'</td>';
+					// html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					// html += '    <td class="text-number">'+j_amt5.toString().toFormat('NUMBER')+'</td>';
+					// html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					// html += '    <td class="text-number '+pValue.dept_code+'"></td>';
+					// html += '</tr>';
 					// 소계
 					t_amt1 = parseInt(b_amt1) + parseInt(j_amt1);
 					t_amt2 = parseInt(b_amt2) + parseInt(j_amt2);

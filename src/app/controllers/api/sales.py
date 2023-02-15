@@ -79,9 +79,12 @@ def ajax_insert_sales():
 
         # 바로 구매->전시
         else:
-            for _ in range(int(params['dlnt'])):
-                item_sn = st.insert_stock(params, 0)
-                st.insert_log(item_sn, 2, params['cntrct_sn'], delng_sn, params['ddt_man'])
+            # for _ in range(int(params['dlnt'])):
+            #     item_sn = st.insert_stock(params, 0)
+            #     st.insert_log(item_sn, 2, params['cntrct_sn'], delng_sn, params['ddt_man'])
+            params['s_delng_sn'] = delng_sn
+            sales.delete_account(params)
+            return jsonify({"status": False, "message": "재고를 선택해주세요."})
 
     # 창고->판매
     elif delng_se_code == 'P' and bcnc_sn == '79' and delng_ty_code == '1' and "invn_sttus_code" in params and params["invn_sttus_code"] and "cntrct_sn" in params and params["cntrct_sn"] and int(params['dlnt']) > 0:
@@ -91,9 +94,12 @@ def ajax_insert_sales():
                 st.insert_log(item_sn, 3, params['cntrct_sn'], delng_sn, params['ddt_man'])
         # 바로 구매->판매
         else:
-            for _ in range(int(params['dlnt'])):
-                item_sn = st.insert_stock(params, 0)
-                st.insert_log(item_sn, 3, params['cntrct_sn'], delng_sn, params['ddt_man'])
+            # for _ in range(int(params['dlnt'])):
+            #     item_sn = st.insert_stock(params, 0)
+            #     st.insert_log(item_sn, 3, params['cntrct_sn'], delng_sn, params['ddt_man'])
+            params['s_delng_sn'] = delng_sn
+            sales.delete_account(params)
+            return jsonify({"status": False, "message": "재고를 선택해주세요."})
 
     # 현장->반품
     elif delng_se_code == 'P' and bcnc_sn == '79' and delng_ty_code == '1' and "invn_sttus_code" in params and params["invn_sttus_code"] and "cntrct_sn" in params and params["cntrct_sn"] and int(params['dlnt']) < 0:

@@ -11,3 +11,13 @@ def work_page():
 @session_helper.session_check
 def bnd_page():
     return render_template('bnd.html')
+
+@bp.route('/bcnc/ts')
+@session_helper.session_check
+def bcnc_ts():
+    return render_template('bcnc_TS.html')
+
+@bp.route('/bcnc/bi')
+@session_helper.session_check
+def bcnc_bi():
+    return render_template('bcnc_BI.html')

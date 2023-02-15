@@ -74,11 +74,91 @@ $.fn.yReadonly = function(pValue = true)
     }
 }
 
+$.fn.hideZero = function() {
+    return this.each(function() {
+        $('.nozero', this).each(function() {
+			  let text = $(this).text();
+			  text = text.replaceAll(",", "");
+			  if(parseInt(text) == 0){
+				  $(this).text("");
+			  }
+        });
+    });
+};
+
+$.fn.brokenWord = function(colIdx, isStats) {
+    return this.each(function() {
+        $('tr', this).each(function(row) {
+            $('td', this).eq(colIdx).each(function(col) {
+				let text = $(this).text();
+				$(this).html([...text].join("<br>"));
+            });
+        });
+    });
+};
+$.fn.yRowClass = function(colIdx, _className, isStats) {
+    return this.each(function() {
+		var length = $('tr', this).length;
+        $('tr', this).each(function(row) {
+            $('td', this).eq(colIdx).each(function(col) {
+				if($(this).is(':visible')){
+					if(row+parseInt($(this).attr("rowspan")) != length)
+						$(this).addClass(_className);
+				}
+            });
+        });
+    });
+};
+$.fn.yRowClassNext = function(colIdx, _className, isStats) {
+    return this.each(function() {
+		var rowspans = [];
+        $('tr', this).each(function(row) {
+			var rowspan = 0;
+			$('td', this).eq(colIdx).each(function(col) {
+				if($(this).is(':visible')){
+					rowspan = $(this).attr("rowspan");
+				}
+			});
+			if(rowspan > 0){
+				rowspans.push(row+parseInt(rowspan));
+			}
+        });
+        console.log(rowspans);
+		var _ = 0;
+        $('tr', this).each(function(row) {
+			if(row == (parseInt(rowspans[_])-1)){
+				for (let idx = colIdx + 1; idx < $(this).find('td').length; idx++) {
+					$('td', this).eq(idx).each(function (col) {
+						$(this).addClass(_className);
+					});
+				}
+				_++;
+			}
+		});
+
+    });
+};
+$.fn.calculation = function(colStart, colEnd) {
+	let result = [];
+	for(let idx=colStart;idx <= colEnd;idx++) {
+		result.push(0);
+	}
+    this.each(function() {
+		var i = 0;
+		for(let idx=colStart;idx <= colEnd;idx++){
+			var count =  $(this).find("td").eq(idx).text().replaceAll(",", "");
+			result[i] += (count == "" ? 0 : parseInt(count));
+            i++;
+		}
+    });
+	return result;
+};
 /******************************************************************************
  * 같은 값이 있는 열을 병합함  
  *   
  * 사용법 : $('#테이블 ID').yRowspan(0);
- */       
+ */
+
 $.fn.yRowspan = function(colIdx, isStats) {
     return this.each(function() {
         var that;
