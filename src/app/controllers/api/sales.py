@@ -109,6 +109,10 @@ def ajax_insert_sales():
             st.insert_log(item_sn, 1, params['invn_sttus_code'], delng_sn, params['ddt_man'])
 
     # 구매->현장 전시???
+    elif delng_se_code == 'P' and bcnc_sn in ('74', '100') and delng_ty_code == '61' and "invn_sttus_code" in params and params["invn_sttus_code"] == "0" and "cntrct_sn" in params and params["cntrct_sn"] and int(params['dlnt']) > 0:
+        for _ in range(int(params['dlnt'])):
+            item_sn = st.insert_stock(params, 0)
+            st.insert_log(item_sn, 2, params['cntrct_sn'], delng_sn, params['ddt_man'])
 
     return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
 

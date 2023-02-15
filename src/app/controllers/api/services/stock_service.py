@@ -318,7 +318,10 @@ def insert_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man):
     query = "SELECT x.log_sn AS log_sn FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn WHERE x.stock_sn=%s"
     g.curs.execute(query, stock_sn)
     row = g.curs.fetchone()
-    cnnc_sn = row['log_sn']
+    if row:
+        cnnc_sn = row['log_sn']
+    else:
+        cnnc_sn = None
     g.curs.execute("INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES (%s, %s, %s, %s, %s, %s)", (stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn))
 
 def update_stock_rm(stock_sn, rm):

@@ -154,6 +154,9 @@ tbody .btnUpdate, tbody .btn{
                             .bold{
                                 font-size:11px!important;
                                 font-weight: 600!important;
+								text-overflow: ellipsis!important;
+								overflow: hidden;
+								white-space: nowrap;
                             }
                             .colorG {
                                 background: rgb(204,255,204)!important;
@@ -207,6 +210,9 @@ tbody .btnUpdate, tbody .btn{
                             .select2-selection__rendered, .select2-results__option{
                                 font-size: 10px!important;
                             }
+							tbody span[role=combobox]{
+								z-index:0!important;
+							}
                             [data-tooltip-text]:hover{
                                 position:relative;
                             }
@@ -266,32 +272,36 @@ tbody .btnUpdate, tbody .btn{
 									<col width="65">
 									<col width="80">
 									<col width="110">
-									<col width="170">
+									<col width="250">
 									<col width="80">
 									<col width="80">
 									<col width="80">
 									<col width="120">
 
-                                    <col width="110">
-									<col width="90">
-									<col width="150">
-									<col width="80">
-
-                                    <col width="110">
-									<col width="90">
-									<col width="150">
-									<col width="80">
-
+                                    <col width="50">
+									<col width="50">
 									<col width="100">
-                                    <col width="160">
 									<col width="100">
-									<col width="160">
-									<col width="110">
+
+                                    <col width="70">
+
+                                    <col width="50">
+									<col width="50">
+									<col width="100">
+									<col width="100">
+
+									<col width="70">
+
+									<col width="50">
+									<col width="100">
+									<col width="100">
+
+									<col width="70">
+									<col width="50">
 									<col width="50">
 <!--									<col width="80">-->
 
 
-                                    <col width="130">
 
 								</colgroup>
 								<thead>
@@ -325,39 +335,40 @@ tbody .btnUpdate, tbody .btn{
 
 											</select>
 										</th>
-										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:45px;" rowspan="3">수주금액</th>
-										<th class="colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
-										<th class="colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">M/H<br>회수예정일</th>
-										<th class="colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
-										<th class="colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">S/H<br>회수예정일</th>
-										<th class="colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="3" rowspan="2">판매/수수료</th>
-										<th class="colorEG right_border middle bottom_border" style="text-align:center;min-width:90px;" rowspan="3">준공예정일</th>
-										<th class="colorEG right_border middle bottom_border" style="text-align:center;min-width:110px;" rowspan="3">비고</th>
+										<th class="bold colorG right_border middle bottom_border" style="text-align:center;min-width:45px;" rowspan="3">수주금액</th>
+										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">M/H<br>회수예정일</th>
+										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">S/H<br>회수예정일</th>
+										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="3" rowspan="2">판매/수수료</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;" rowspan="3">준공예정일</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:80px;" rowspan="3">공정률</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:110px;" rowspan="3">비고</th>
 									</tr>
 									<tr>
-										<th class="colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="2">건설사</th>
-										<th class="colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="2">계약분류</th>
-                                        <th class="colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">담당</th>
-                                        <th class="colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">본사</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="2">건설사</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="2">계약분류</th>
+                                        <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">담당</th>
+                                        <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">본사</th>
 
-										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">M/H</th>
-										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">S/H</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">M/H</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">S/H</th>
 <!--										<th class="colorSkyB bottom_border right_border middle" style="text-align:center!important;min-width:50px;" rowspan="2">분류</th>-->
                                     </tr>
                                     <tr>
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:130px;">출고월</th>
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:75px;">발행일자</th>
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:60px;">추가DC</th>
-										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;min-width:45px;">잔액</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">출고월</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:80px;">추가DC</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:80px;">잔액</th>
 
-                                        <th class="colorSkyB bottom_border" style="text-align:center!important;min-width:130px;">출고월</th>
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:75px;">발행일자</th>
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:60px;">추가DC</th>
-										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;min-width:45px;">잔액</th>
+                                        <th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">출고월</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:80px;">추가DC</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:80px;">잔액</th>
 
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:60px;">발행일자</th>
-										<th class="colorSkyB bottom_border" style="text-align:center!important;min-width:45px;">금액</th>
-										<th class="colorSkyB bottom_border right_border" style="text-align:center!important;min-width:45px;">잔액</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:80px;">금액</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:80px;">잔액</th>
 									</tr>
 								</thead>
                                 <tbody role='exec'>
@@ -500,6 +511,7 @@ tbody .btnUpdate, tbody .btn{
                             <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
                          </tr>
                         `;
               }
@@ -522,21 +534,33 @@ tbody .btnUpdate, tbody .btn{
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.bsn_chrg_nm}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.chrg_nm}</td>
                             <td class="bold colorBtn top_border middle right_border ${_class}" style="text-align:right;">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border ${_class} m-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} m-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} m-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border middle right_border ${_class} m-remain" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border middle right_border ${_class} m-next-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} s-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} s-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} s-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border middle right_border ${_class} s-remain" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border middle right_border ${_class} s-next-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} t-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border ${_class} t-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border middle right_border ${_class} t-remain" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border right_border ${_class}" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border right_border ${_class}" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} m-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} m-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} m-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} m-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} m-next-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} s-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} s-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} s-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} s-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} s-next-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} t-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} t-t-date" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} t-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} input-available" style="text-align:left;" data-column="cntrwk_endde">${pValue.cntrwk_endde}</td>`;
+              if(pValue.prjct_ty_code == 'BF'){
+              	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class} input-available-select" style="text-align:left;padding:0px!important" data-column="rate">
+								<select class="select2" name="s_rate" style="width:100%;">
+									<option value="0">0%</option>
+									<option value="90">90%</option>
+									<option value="100">100%</option>
+								</select>
+							</td>`;
+			  }
+              else{
+              	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class}" style="text-align:left;" data-column="rate-text"></td>`;
+			  }
+              html += `     <td class="bold colorBtn top_border text-left middle right_border ${_class} input-available" style="text-align:left;" data-column="rm"></td>
                        </tr>
                       `;
               count++;
@@ -560,6 +584,7 @@ tbody .btnUpdate, tbody .btn{
                             <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
                          </tr>
                         `;
               }
@@ -571,7 +596,6 @@ tbody .btnUpdate, tbody .btn{
             	var count = $(row).data("count");
             	var _class = $(row).data("nm");
             	var label = $(row).data("label");
-            	console.log(pRow.max_row);
             	for(let i=1;i<8;i++){
 					$(row).find("td").eq(i).attr("rowspan", pRow.max_row.toString());
 				}
@@ -580,18 +604,19 @@ tbody .btnUpdate, tbody .btn{
 				$(row).find("td").eq(16).attr("rowspan", pRow.max_row.toString());
 				$(row).find("td").eq(17).attr("rowspan", pRow.max_row.toString());
 				$(row).find("td").eq(20).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(21).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(22).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(23).attr("rowspan", pRow.max_row.toString());
             	var html = `<tr class="row${cntrct_sn}">
 	                            <td class="bold colorBtn top_border text-center middle ${_class}"><span class="${count}"></span>${label}</td>
-								<td class="bold colorBtn ${_class} m-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} m-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} m-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} s-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} s-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} s-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} t-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} t-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn right_border ${_class}" style="text-align:left;"></td>
-								<td class="bold colorBtn right_border ${_class}" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-center m-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-center m-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-right m-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-center s-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-center s-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-right s-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-center t-t-date" style="text-align:left;"></td>
+								<td class="bold colorBtn ${_class} text-right t-t-date" style="text-align:left;border-right:1px solid #ddd!important;"></td>
 							</tr>`;
             	for(let i=0;i<pRow.max_row-1;i++){
 	            	$(html).insertAfter(`#${cntrct_sn}`);
@@ -624,12 +649,17 @@ tbody .btnUpdate, tbody .btn{
 
 			var rcppay = pResult.rcppay;
             $.each(pResult.taxbill, function(cntrct_sn, pRow){
-            	var mTotal = 0, tTotal=0;
+            	var mTotal = 0, sTotal = 0, tTotal=0;
 
             	$.each(pRow.M, function(pIndex, pValue){
 	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(0).text(pValue[0]);
 	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(1).text(Math.round(pValue[1]/10000));
 	            	mTotal += pValue[1];
+				});
+            	$.each(pRow.S, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(0).text(pValue[0]);
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(1).text(Math.round(pValue[1]/10000));
+	            	sTotal += pValue[1];
 				});
             	$.each(pRow.T, function(pIndex, pValue){
 	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(0).text(pValue[0]);
@@ -646,6 +676,15 @@ tbody .btnUpdate, tbody .btn{
             			$(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
 					}
+					var remain = Math.round((sTotal - rcppay[cntrct_sn].S)/10000);
+            		if(sTotal > 0) {
+						$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain);
+					}
+            		if(remain == 0){
+            			$(document).find(`.row${cntrct_sn}`).find(".s-date").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".s-remain").addClass("colorY");
+					}
 					var remain = Math.round((tTotal - rcppay[cntrct_sn].T)/10000);
             		if(tTotal > 0) {
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain);
@@ -660,13 +699,109 @@ tbody .btnUpdate, tbody .btn{
 			});
 
 
-            // $("#dtList1").find("tbody[role=exec]").yRowspan(0);
+            $("#dtList1").find("tbody[role=exec]").yRowspan(0);
+            $("#dtList1").find("tbody .select2").select2();
+            $.each(pResult.bnd, function(pIndex, pValue){
+            	if(pValue.bnd_month == 'rate'){
+					$(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"] select`).val(pValue.bnd_data).trigger('change');
+				}
+            	else{
+	            	$(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"]`).text(pValue.bnd_data);
+				}
+			});
+            $.each(pResult.rate, function(cntrct_sn, pValue){
+            	var rate = 0.0;
+            	if(Math.round(pValue.cntrct_amount) == 0){
+            		rate = 0.0;
+				}
+            	else{
+					rate = (pValue.amount * 100.0 / pValue.cntrct_amount);
+				}
+            	console.log($(document).find(`.row${cntrct_sn}`).find(`td[data-column="rate-text"]`));
+            	$(document).find(`.row${cntrct_sn}`).find(`td[data-column="rate-text"]`).text(rate.toFixed(0)+"%");
+			});
             getReserveType(s_resrv_bcnc, s_resrv_type, s_resrv_chrg);
         }
 	});
   }
+$(document).on("change", ".input-available-select", function(){
+	var column = $(this).data("column");
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+	var data = $(this).find("option:selected").val();
+	var td = $(this);
+	var rowId = $(this).parent().attr("class");
+	var s_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+	var params = '';
+	params += '&bnd_year='+s_year;
+	params += '&bnd_row='+rowId;
+	params += '&bnd_month='+column;
+	params += '&bnd_data='+data;
+	params += '&bnd_class=0';
+	$.ajax({
+		url: '/api/bnd/ajax_set_bnd_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+			}
+		}
+	});
 
+});
+$(document).on("dblclick", ".input-available", function(){
+	var column = $(this).data("column");
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+	if(column == "cntrwk_endde"){
+		var data = prompt("값을 입력하세요. (yy/m/dd)");
+	}
+	else{
+		var data = prompt("값을 입력하세요.");
+	}
+	try{
+		if(data.trim().length == 0){
+			throw new Error(`Parameter is not a number : ${data}`);
+		}
+	}catch(e){
+		alert("올바른 형식으로 입력해주세요.");
+		return false;
+	}
+	var td = $(this);
+	var rowId = $(this).parent().attr("class");
+	var s_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+	var params = '';
+	params += '&bnd_year='+s_year;
+	params += '&bnd_row='+rowId;
+	params += '&bnd_month='+column;
+	params += '&bnd_data='+data;
+	params += '&bnd_class=0';
+	$.ajax({
+		url: '/api/bnd/ajax_set_bnd_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+				$(td).text(data);
+			}
+		}
+	});
 
+});
 </script>
 <script type="text/javascript">
 $(function () {
@@ -698,7 +833,7 @@ $(function () {
         }
         $(this).width( thead.find('th').eq(i).width() +fixP);
       });
-      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+      clone.css("z-index", "20").css("margin-left", -scrollLeft ).width( thead.width() ).show();
     });
   });
 });

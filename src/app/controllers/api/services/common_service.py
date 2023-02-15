@@ -59,10 +59,11 @@ def get_c_chrgs():
     result = g.curs.fetchall()
     return result
 
-def get_s12_account_list(params):
+def get_s12_account_list(params, s_dlivy_de=True):
+
     query = """SELECT DATE_FORMAT(s.dlivy_de, %s) AS s_dlivy_de
 				, c.cntrct_sn
-				, SUM((s.dlnt * p.dlamt)) AS p_total
+				, IFNULL(SUM((s.dlnt * p.dlamt)), 0) AS p_total
 				FROM account s
 				LEFT JOIN account p
 				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
@@ -74,10 +75,11 @@ def get_s12_account_list(params):
 				AND s.delng_se_code = 'S'
 				AND p.delng_ty_code IN ('1', '2')
 				AND s.delng_ty_code <> 14
-				AND s.dlivy_de BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'
                 AND (c.progrs_sttus_code IN ('P') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))
 							
 """.format(params['s_year'])
+    if s_dlivy_de:
+        query += "				AND s.dlivy_de BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'".format(params['s_year'])
     data = ['%m']
     if "s_dept_code" in params and params["s_dept_code"]:
         if params["s_dept_code"] == "TS":
@@ -86,7 +88,7 @@ def get_s12_account_list(params):
         else:
             query += " AND m.dept_code='BI' "
     query += " GROUP BY s_dlivy_de, c.cntrct_sn"
-
+    print(query, data)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -173,7 +175,7 @@ def get_i2_rcppay_list(params):
                 LEFT JOIN charger ch
                 ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
 				WHERE r.ctmmny_sn = 1
-				AND r.rcppay_se_code IN ('I1', 'I2')
+				AND r.rcppay_se_code IN ('I1', 'I2', 'I4')
     """
     data = []
     if "s_resrv_type" in params and params['s_resrv_type']:
@@ -265,7 +267,7 @@ def get_s6_taxbill_list(params):
     				ON t.cntrct_sn=c.cntrct_sn
                     LEFT JOIN charger ch
                     ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
-    				WHERE t.delng_se_code IN ('S1', 'S2')
+    				WHERE t.delng_se_code IN ('S1', 'S2', 'S4')
     				AND t.taxbil_yn = 'Y'
     """
     data = ['%y/%m']
@@ -296,9 +298,55 @@ def get_s6_taxbill_list(params):
     result = g.curs.fetchall()
     return result
 
+def get_bnd_rates(params):
+    query = """SELECT c.cntrct_sn
+                    , CASE WHEN c.prjct_ty_code IN ('NR') THEN
+                        (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                        WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+                        (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+                        WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+                        (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                        WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+                        (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+                        ELSE 0
+                        END AS cntrct_amount
+    				FROM contract c
+                    LEFT JOIN charger ch
+                    ON c.cntrct_sn=ch.cntrct_sn
+                    AND ch.charger_se_code='1'
+    				WHERE 1=1
+    """
+    data = []
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += " GROUP BY c.cntrct_sn"
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 def get_bnd_projects(params):
     query = """SELECT c.cntrct_sn
 				, c.bcnc_sn
+				, DATE_FORMAT(c.cntrwk_endde, %s) AS cntrwk_endde
 				, DATE_FORMAT(c.cntrct_de, %s) AS cntrct_de
 				, c.bsn_chrg_sn
 				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS bsn_chrg_nm
@@ -308,6 +356,7 @@ def get_bnd_projects(params):
 				, ch.charger_sn AS chrg_sn
 				, IF(c.prjct_ty_code IN ('BD'), '직계약', '수수료') AS prjct_ty_nm
 				, c.progrs_sttus_code
+				, c.prjct_ty_code
 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
@@ -325,7 +374,7 @@ def get_bnd_projects(params):
 				AND ch.charger_se_code='1'
 				WHERE 1=1
             """
-    data = ["%y/%c/%d"]
+    data = ["%y/%c/%d", "%y/%c/%d"]
     if "s_resrv_type" in params and params['s_resrv_type']:
         query += " AND c.prjct_ty_code=%s"
         data.append(params["s_resrv_type"])
@@ -435,7 +484,27 @@ def set_bcnc_data(params):
             params["bcnc_data"] = ""
         g.curs.execute("INSERT INTO bcnced(bcnc_year, bcnc_row, bcnc_month, bcnc_data, bcnc_class) VALUES(%(bcnc_year)s, %(bcnc_row)s, %(bcnc_month)s, %(bcnc_data)s, %(bcnc_class)s)", params)
 
+def set_bnd_data(params):
+    row = g.curs.execute("SELECT bnd_sn FROM bnd WHERE bnd_year=%(bnd_year)s AND bnd_row=%(bnd_row)s AND bnd_month=%(bnd_month)s", params)
+    if row:
+        result = g.curs.fetchone()
+        params['bnd_sn'] = result['bnd_sn']
+        if "bnd_data" in params:
+            g.curs.execute("UPDATE bnd SET bnd_data=%(bnd_data)s, bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+        else:
+            g.curs.execute("UPDATE bnd SET bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+
+    else:
+        if "bnd_data" not in params:
+            params["bnd_data"] = ""
+        g.curs.execute("INSERT INTO bnd(bnd_year, bnd_row, bnd_month, bnd_data, bnd_class) VALUES(%(bnd_year)s, %(bnd_row)s, %(bnd_month)s, %(bnd_data)s, %(bnd_class)s)", params)
+
 def get_bcnc_data(params):
     g.curs.execute("SELECT bcnc_sn, bcnc_year, bcnc_row, bcnc_month, bcnc_data, bcnc_class FROM bcnced WHERE bcnc_year=%s", params['s_year'])
+    result = g.curs.fetchall()
+    return result
+
+def get_bnd_data(params):
+    g.curs.execute("SELECT bnd_sn, bnd_year, bnd_row, bnd_month, bnd_data, bnd_class FROM bnd WHERE bnd_year=%s", params['bnd_year'])
     result = g.curs.fetchall()
     return result

@@ -252,7 +252,7 @@ def get_account(params):
 def insert_account(params):
     data = OrderedDict()
     for key in params:
-        if key not in ("item_sn[]", "invn_sttus_code", "prduct_se_code", "prduct_ty_code"):
+        if key not in ("item_sn[]", "invn_sttus_code", "prduct_se_code", "prduct_ty_code", "use_type"):
             if params[key] != '':
                 data[key] = params[key]
     if "ctmmny_sn" not in data:

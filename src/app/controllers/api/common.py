@@ -46,7 +46,24 @@ def ajax_get_bcnc_list():
 def ajax_get_bnd():
     params = request.args.to_dict()
     result = dict()
+    result['bnd'] = cm.get_bnd_data(params)
     result['data'] = cm.get_bnd_projects(params)
+    result['rate'] = dict()
+    cntrct_amount = cm.get_bnd_rates(params)
+    for c in cntrct_amount:
+        cntrct_sn = str(c['cntrct_sn'])
+        if cntrct_sn not in result['rate']:
+            result['rate'][cntrct_sn] = {"amount" : 0}
+        result['rate'][cntrct_sn]["cntrct_amount"] = c['cntrct_amount']
+    params['s_year'] = params['bnd_year']
+    s12_account = cm.get_s12_account_list(params, s_dlivy_de=False)
+    for s in s12_account:
+        cntrct_sn = str(s['cntrct_sn'])
+        amount = s['p_total']
+        print(amount)
+        if cntrct_sn not in result['rate']:
+            result['rate'][cntrct_sn] = {"cntrct_amount" : 0.0, "amount" : 0.0}
+        result['rate'][cntrct_sn]["amount"] += amount
     accounts = cm.get_s6_account_list(params)
     result['account'] = dict()
     for acc in accounts:
@@ -61,11 +78,11 @@ def ajax_get_bnd():
     result['taxbill'] = dict()
     for tax in taxbill:
         cntrct_sn = str(tax['cntrct_sn'])
-        delng_se_code = 'M' if tax['s_delng_se_code'] == 'S2' else 'T'
+        delng_se_code = 'M' if tax['s_delng_se_code'] == 'S2' else ('S' if tax['s_delng_se_code'] == 'S4' else 'T')
         dlivy_de = tax['s_dlivy_de']
         amount = tax['amount']
         if cntrct_sn not in result['taxbill']:
-            result['taxbill'][cntrct_sn] = {"M" : [], "T" : []}
+            result['taxbill'][cntrct_sn] = {"M" : [], "S" : [], "T" : []}
         result['taxbill'][cntrct_sn][delng_se_code].append((dlivy_de, amount))
 
     rcppay = cm.get_i2_rcppay_list(params)
@@ -73,9 +90,9 @@ def ajax_get_bnd():
     for r in rcppay:
         cntrct_sn = str(r['cntrct_sn'])
         amount = r['amount']
-        rcppay_se_code = 'M' if r['rcppay_se_code'] == 'I2' else 'T'
+        rcppay_se_code = 'M' if r['rcppay_se_code'] == 'I2' else ('S' if r['rcppay_se_code'] == 'I4' else 'T')
         if cntrct_sn not in result['rcppay']:
-            result['rcppay'][cntrct_sn] = {"M" : 0, "T" : 0}
+            result['rcppay'][cntrct_sn] = {"M" : 0, "S" : 0, "T" : 0}
         result['rcppay'][cntrct_sn][rcppay_se_code] = amount
 
     for cntrct_sn in result['account']:
@@ -148,4 +165,10 @@ def ajax_get_month_sales():
 def ajax_set_bcnc_data():
     params = request.args.to_dict()
     cm.set_bcnc_data(params)
+    return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+
+@bp.route('/bnd/ajax_set_bnd_data', methods=['GET'])
+def ajax_set_bnd_data():
+    params = request.args.to_dict()
+    cm.set_bnd_data(params)
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
