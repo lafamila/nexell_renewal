@@ -117,6 +117,9 @@ $.fn.yRowClassNext = function(colIdx, _className, isStats) {
 			$('td', this).eq(colIdx).each(function(col) {
 				if($(this).is(':visible')){
 					rowspan = $(this).attr("rowspan");
+                    if(rowspan == "" || rowspan == undefined){
+                        rowspan = 1;
+                    }
 				}
 			});
 			if(rowspan > 0){

@@ -116,15 +116,15 @@ body.smart-style-6 .table thead tr {
 										padding: 7px!important;
 										vertical-align: middle!important;
 										text-align: center!important;">집<br>계<br>표</th>
-                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;"></th>
-                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">현장전시</th>
-                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">이현창고</th>
-                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">기타창고</th>
-                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">판매</th>
-                <th style="border-top: 1px solid #000!important;background:#fff;text-align:center;">폐기</th>
+                <th style="border-right: 1px solid #000!important;border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">구분</th>
+                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">현장전시</th>
+                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">이현창고</th>
+                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">기타창고</th>
+                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">판매</th>
+                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">폐기</th>
             </tr>
             <tr>
-                <th style="background:#fff;text-align:center;">계약수</th>
+                <th style="border-right: 1px solid #000!important;background:#fff;text-align:center;">현장수</th>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
@@ -132,7 +132,7 @@ body.smart-style-6 .table thead tr {
                 <td style="background:#fff;text-align:center;"></td>
             </tr>
             <tr>
-                <th style="background:#fff;text-align:center;">수량</th>
+                <th style="border-right: 1px solid #000!important;background:#fff;text-align:center;">수량</th>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
@@ -140,7 +140,7 @@ body.smart-style-6 .table thead tr {
                 <td style="background:#fff;text-align:center;">-</td>
             </tr>
             <tr>
-                <th style="background:#fff;text-align:center;">금액</th>
+                <th style="border-right: 1px solid #000!important;background:#fff;text-align:center;">금액</th>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
@@ -183,7 +183,7 @@ body.smart-style-6 .table thead tr {
 									<col width="94">
 									<col width="75">
 									<col width="90">
-									<col width="165">
+									<col width="205">
 									<col width="*">
 									<col width="125">
 									<col width="125">
@@ -1549,7 +1549,7 @@ getReport = function(s_stock_sn)
 				$('#report_summary').find("#bcnc_nm").html(pValue.bcnc_nm);
 				$('#report_summary').find("#qy").html(pValue.qy.toString().toFormat('NUMBER'));
 				$('#report_summary').find("#model_nm").html(pValue.modl_nm);
-				var sttus = parseInt(pValue.item_sttus);
+				var sttus = parseInt(pValue.stock_sttus);
 				if(sttus == 0 || sttus == 1){
 					$("#dlnt_nm").html("재고수량");
 					$("#cntrct_nm").html("창고명");

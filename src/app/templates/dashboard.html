@@ -158,7 +158,7 @@
 
 
 
-                <th class="colorG">건설사</th>
+                <th class="colorG" style="border-right:2px solid black!important;">건설사</th>
 				<th class="colorG">계약명(현장명)</th>
 				<th class="colorG">BiSS건수</th>
 				<th class="colorG">계</th>
@@ -600,7 +600,7 @@ getBissSummery = function()
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.n_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.s_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;border-right:2px solid black!important;">'+s.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
-                        html += '    <td class="text-center '+bgColor+'">'+pValue.bcnc_nm+'</td>';
+                        html += '    <td class="text-center '+bgColor+'" style="border-right:2px solid black!important;">'+pValue.bcnc_nm+'</td>';
                         html += '    <td class="text-left '+bgColor+'">'+pValue.spt_nm+'</td>';
                         html += '    <td class="text-center '+bgColor+'">'+pValue.flaw_co.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.flaw_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';

@@ -1,0 +1,675 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.95!important;
+    }
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">월별 매출현황(빌트인)</li><li><span> 영업부</span></li>
+	</ol>
+
+
+
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			월별 수주 계획을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+                    <script>
+
+
+                    </script>
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2><span id="year">2020</span>년 월별 매출 현황</h2>
+						<div class="widget-toolbar">
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+						<div class="widget-toolbar">
+                            <div class="input-group" style="width:150px;">
+                                <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt2" name="s_pxcond_mt2">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            </div>
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+						</div>
+
+
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+                            .top_border{
+
+                                border-top: 2px solid #666!important;
+                            }
+                            .right_border{
+                                border-right: 2px solid #666!important;
+                            }
+
+                            .left_border{
+                                border-left: 2px solid #666!important;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+
+                            #dtList1 tbody, #dtList1 thead tr{
+                                font-size: 11px!important;
+                            }
+                            .colorEG{
+                                background:rgb(255,204,153)!important;
+                                font-weight: bold;
+                            }
+                            .colorJ{
+                                background:#3d8b40!important;
+                                font-weight: bold;
+                                color:white;
+                            }
+                            .colorSky{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:8px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:11px!important;
+                                font-weight: 600!important;
+								text-overflow: ellipsis!important;
+								overflow: hidden;
+								white-space: nowrap;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+/*
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+*/
+                            .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .table>thead+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .middle{
+                                vertical-align: middle!important;
+                            }
+                            @media (min-width: 100px) and (max-width: 1024px) {
+
+
+                                body.smart-style-6 #content{
+                                        margin-left: 0px;
+                                        padding:30px 0px;
+                                }
+                            }
+                            .jarviswidget>div{
+                                font-size:12px!important;
+                            }
+                            .colored{
+                                background: #FFFF00!important   ;
+                            }
+                            .coloredRed{
+                                background: rgb(255,153,204)!important;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+							.no-padding-3{
+								padding-right:3px!important;
+								padding-left:3px!important;
+							}
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p floating-thead" id="dtList1">
+								<colgroup>
+									<col width="150">
+									<col width="150">
+									<col width="220">
+									<col width="106">
+									<col width="150">
+									<col width="110">
+									<col width="120">
+									<col width="60">
+									<col width="120">
+									<col width="60">
+									<col width="120">
+									<col width="60">
+									<col width="73">
+									<col width="120">
+									<col width="60">
+									<col width="60">
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:28px;">분류</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;">건설사</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:122px;">현장명</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:70px;">공사기간</th>
+										<th class="colorSky right_border bottom_border" style="text-align:center!important;" colspan="2">계약금액</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;min-width:70px;">전회까지</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;min-width:70px;">기성율</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;min-width:70px;">금회</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;min-width:70px;">기성율</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;min-width:70px;">누계</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;min-width:70px;">기성율</th>
+										<th class="colorSky right_border bold middle bottom_border" style="text-align:center;">현장관리</th>
+										<th class="colorSky right_border bottom_border" style="text-align:center!important;" colspan="2">기성누계</th>
+										<th class="colorSky bottom_border" style="text-align:center!important;">공정률</th>
+<!--										<th style="text-align:center!important;">합계</th>-->
+									</tr>
+								</thead>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<script>
+	getMonthSalesBD = function(s_pxcond_mt)
+	{
+		var params = '';
+		params += '&s_pxcond_mt='+s_pxcond_mt;
+		params += '&s_dept_code=BI';
+		$.ajax({
+			url: '/api/bcnc/ajax_get_month_sales',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function(pResult) {
+				console.log(pResult);
+				$("#dtList1").find("tbody").remove();
+				var html = '';
+				var before = '';
+				var c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+				var e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
+
+
+				$.each(pResult.completedList, function(pIndex, pValue){
+
+                    if ((before != '' && before != pValue.bsn_dept_nm) ) {
+						var c_sum = parseInt(c_complete_amount)+parseInt(c_excut_amount);
+						var c_rt1 = (c_complete_amount/c_cntrct_amount)*100;
+						var c_rt2 = (c_excut_amount/c_cntrct_amount)*100;
+						var c_rt3 = (c_sum/c_cntrct_amount)*100;
+						html += '</tbody>';
+						html += '<tbody role="footer">';
+						html += '	<tr>';
+						html += '		<th class="middle colorB top_border bottom_border right_border" colspan="4" rowspan="2" style="border-bottom-width: 2px!important;">'+before+' 계</th>';
+						html += '		<th class="colorB top_border right_border">당사분</th>';
+						html += '       <td class="text-number top_border right_border">'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number top_border right_border">'+c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number top_border right_border">'+c_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorB top_border right_border">매출차액</th>';
+						var p_sub_amt = parseInt(c_excut_amount) - parseInt(e_excut_amount)
+						html += '       <td class="text-center top_border" colspan="3">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+						html += '	</tr>';
+
+						var e_sum = parseInt(e_complete_amount)+parseInt(e_excut_amount);
+						var e_rt1 = (e_complete_amount/e_cntrct_amount)*100;
+						var e_rt2 = (e_excut_amount/e_cntrct_amount)*100;
+						var e_rt3 = (e_sum/e_cntrct_amount)*100;
+						html += '	<tr>';
+						html += '		<th class="colorB bottom_border right_border" style="border-bottom-width: 2px!important;">업체분</th>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number bottom_border right_border" style="border-bottom-width: 2px!important;">'+e_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorB bottom_border right_border" style="border-bottom-width: 2px!important;">수주잔고</th>';
+                        var p_sub_amt = parseInt(c_cntrct_amount) - parseInt(c_sum_amount);
+                        html += '       <td class="text-center bottom_border" colspan="3" style="border-bottom-width: 2px!important;">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+
+						html += '	</tr>';
+						html += '</tbody>';
+                        c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+
+						e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
+					}
+
+					// header
+					if (before != pValue.bsn_dept_nm) {
+						html += `<tbody role="body" data-row="${pValue.bsn_dept_nm}">`;
+					}
+					// body
+					var sum = parseInt(pValue.complete_amount)+(
+                    parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+					var rt1 = (pValue.complete_amount/pValue.cntrct_amount)*100; if (isNaN(rt1)) { rt1 = 0.0; }
+					var rt2 = ((parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount))/pValue.cntrct_amount)*100; if (isNaN(rt2)) { rt2 = 0.0; }
+					var rt3 = (sum/pValue.cntrct_amount)*100; if (isNaN(rt3)) { rt3 = 0.0; }
+					var cbg = pValue.cntrct_execut_code == 'C' ? ' colorSky' : '';
+                    var cbg2 = parseInt(pValue.tax_amount) == 0? cbg : (parseInt(pValue.excut_amount)==parseInt(pValue.tax_amount)? cbg : ' colorP');
+					var pink = rt3>100.0 ? ' colorP' : '';
+                    var gray = pValue.prjct_creat_at == 'N' ? ' style="background:#eee!important;"' : '';
+                    var progrs_sttus_code = pValue.progrs_sttus_code;
+                    var red = ' ';
+                    // var show = $('#popReportBD').find('input:checkbox[name=progrs_sttus_code]').is(":checked");
+                    // var show2 = $('#popReportBD').find('input:checkbox[name=progrs_sttus_code_n]').is(":checked");
+					var show = true, show2 = false;
+                    if(progrs_sttus_code == 'C' && !show){
+
+                    }
+                    else{
+                        if(progrs_sttus_code == 'N' && !show2){
+
+                        }
+                        else{
+
+
+                            if(progrs_sttus_code == 'C'){
+                                red = ' style="color:red;"';
+                            }
+                            else if(progrs_sttus_code == 'N'){
+                                red = ' style="color:blue;"';
+                            }
+                            if(parseInt(pValue.extra_amount) != 0){
+                                var sum_m = parseInt(pValue.complete_amount_m)+parseInt(pValue.tax_amount_m);
+                                var rt1_m = (pValue.complete_amount_m/pValue.extra_amount)*100; if (isNaN(rt1_m)) { rt1_m = 0.0; }
+                                var rt2_m = (parseInt(pValue.tax_amount_m)/pValue.extra_amount)*100; if (isNaN(rt2_m)) { rt2_m = 0.0; }
+                                var rt3_m = (sum_m/pValue.extra_amount)*100; if (isNaN(rt3_m)) { rt3_m = 0.0; }
+                                var cbg_m = pValue.cntrct_execut_code == 'C' ? ' colorSky' : '';
+                                var pink_m = rt3_m>100.0 ? ' colorP' : '';
+                                html += `<tr ${red} data-row="row${pValue.cntrct_sn}">`;
+                                html += '    <td class="middle text-center right_border">'+pValue.bsn_dept_nm+'</td>';
+                                html += '    <td class="middle text-center right_border">'+pValue.cntrct_bcnc_nm+'</td>';
+                                html += '    <td class="middle text-left right_border" '+gray+'>'+pValue.spt_nm+'</td>';
+                                html += '    <td class="middle text-center right_border">'+pValue.cntrwk_bgnde+'<br>~'+pValue.cntrwk_endde+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
+                                html += '    <td class="middle text-center colorSky">M,S/H 추가DC금액<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
+                                html += '    <td class="middle text-number colorSky right_border">'+pValue.extra_amount.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="middle text-number colorSky right_border">'+pValue.complete_amount_m.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="middle text-number colorSky right_border">'+rt1_m.toFixed(1)+'%</td>';
+                                html += '    <td class="middle text-number colorSky right_border">'+pValue.tax_amount_m.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="middle text-number colorSky right_border">'+rt2_m.toFixed(1)+'%</td>';
+                                html += '    <td class="middle text-number colorSky right_border">'+sum_m.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="middle text-number colorSky right_border'+pink_m+'">'+rt3_m.toFixed(1)+'%</td>';
+                                html += '    <td class="middle text-center right_border">'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
+                                html += `    <td class="middle text-left" data-column="execut"></td>`;
+                                html += `    <td class="middle text-left right_border" data-column="execut_r"></td>`;
+                                html += '    <td class="middle text-left"><span style="display:none;">'+pValue.cntrct_sn+'</span></td>';
+                                html += '</tr>';
+                                c_cntrct_amount += parseInt(pValue.extra_amount);
+        						c_complete_amount += parseInt(pValue.complete_amount_m);
+        						c_excut_amount += parseInt(pValue.tax_amount_m);
+                                c_sum_amount += parseInt(sum_m);
+                            }
+
+
+							html += `<tr ${red} data-row="row${pValue.cntrct_sn}">`;
+                            html += '    <td class="middle text-center right_border">'+pValue.bsn_dept_nm+'</td>';
+                            html += '    <td class="middle text-center right_border">'+pValue.cntrct_bcnc_nm+'</td>';
+                            html += '    <td class="middle text-left right_border" '+gray+'>'+pValue.spt_nm+'</td>';
+                            html += '    <td class="middle text-center right_border">'+pValue.cntrwk_bgnde+'<br>~'+pValue.cntrwk_endde+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
+                            html += '    <td class="middle text-center'+cbg+'">'+pValue.purchsofc_nm+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
+                            html += '    <td class="middle text-number right_border'+cbg+'">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                            html += '    <td class="middle text-number right_border'+cbg+'">'+pValue.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                            html += '    <td class="middle text-number right_border'+cbg+'">'+rt1.toFixed(1)+'%</td>';
+                            html += '    <td class="middle text-number right_border'+cbg2+'">'+(parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount)).toString().toFormat('NUMBER')+'</td>';
+                            html += '    <td class="middle text-number right_border'+cbg2+'">'+rt2.toFixed(1)+'%</td>';
+                            html += '    <td class="middle text-number right_border'+cbg+'">'+sum.toString().toFormat('NUMBER')+'</td>';
+                            html += '    <td class="middle text-number right_border'+cbg+' right_border">'+rt3.toFixed(1)+'%</td>';
+                            html += '    <td class="middle text-center right_border">'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
+							html += `    <td class="middle text-left" data-column="execut"></td>`;
+							html += `    <td class="middle text-left right_border" data-column="execut_r"></td>`;
+							html += '    <td class="middle text-left"><span style="display:none;">'+pValue.cntrct_sn+'</span></td>';
+                            html += '</tr>';
+                        }
+                    }
+
+
+					// footer
+					if (pValue.cntrct_execut_code == 'C') {
+						c_cntrct_amount += parseInt(pValue.cntrct_amount);
+						c_complete_amount += parseInt(pValue.complete_amount);
+						c_excut_amount += (parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+						c_sum_amount += parseInt(sum);
+					}
+					if (pValue.cntrct_execut_code == 'E') {
+						e_cntrct_amount += parseInt(pValue.cntrct_amount);
+						e_complete_amount += parseInt(pValue.complete_amount);
+						e_excut_amount += (parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+						e_sum_amount += parseInt(sum);
+					}
+
+                    if(pIndex == (pResult.completedList.length-1)){
+						var c_sum = parseInt(c_complete_amount)+parseInt(c_excut_amount);
+						var c_rt1 = (c_complete_amount/c_cntrct_amount)*100;
+						var c_rt2 = (c_excut_amount/c_cntrct_amount)*100;
+						var c_rt3 = (c_sum/c_cntrct_amount)*100;
+						html += '</tbody>';
+						html += '<tbody role="footer">';
+						html += '	<tr>';
+						html += '		<th class="middle colorB top_border right_border" colspan="4" rowspan="2">'+pValue.bsn_dept_nm+' 계</th>';
+						html += '		<th class="colorB top_border right_border">당사분</th>';
+						html += '       <td class="text-number top_border right_border">'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number top_border right_border">'+c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number top_border right_border">'+c_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number top_border right_border">'+c_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorB top_border right_border">매출차액</th>';
+						var p_sub_amt = parseInt(c_excut_amount) - parseInt(e_excut_amount)
+						html += '       <td class="text-center top_border" colspan="3">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+						html += '	</tr>';
+
+						var e_sum = parseInt(e_complete_amount)+parseInt(e_excut_amount);
+						var e_rt1 = (e_complete_amount/e_cntrct_amount)*100;
+						var e_rt2 = (e_excut_amount/e_cntrct_amount)*100;
+						var e_rt3 = (e_sum/e_cntrct_amount)*100;
+						html += '	<tr>';
+						html += '		<th class="colorB right_border">업체분</th>';
+						html += '       <td class="text-number right_border">'+e_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number right_border">'+e_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number right_border">'+e_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number right_border">'+e_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number right_border">'+e_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number right_border">'+e_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number right_border">'+e_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorB right_border">수주잔고</th>';
+                        var p_sub_amt = parseInt(c_cntrct_amount) - parseInt(c_sum_amount);
+                        html += '       <td class="text-center" colspan="3">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+
+						html += '	</tr>';
+						html += '</tbody>';
+						if (pIndex != (pResult.completedList.length-1)) {
+						}
+                        c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+
+						e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
+                    }
+
+					// 테이블 행 처리용
+					before = pValue.bsn_dept_nm;
+				});
+				$(html).insertAfter('#dtList1 thead:first-child');
+				$('#dtList1').find('tbody[role=body]').yRowspan(0);
+				$('#dtList1').find('tbody[role=body]').yRowspan(1);
+				$('#dtList1').find('tbody[role=body]').yRowspan(2);
+				$('#dtList1').find('tbody[role=body]').yRowspan(3);
+				$('#dtList1').find('tbody[role=body]').yRowspan(4);
+				$('#dtList1').find('tbody[role=body]').yRowspan(12);
+				$('#dtList1').find('tbody[role=body]').yRowspan(15);
+
+				var total_counts = {};
+				var total_cntrct = {};
+				var total_stack = {};
+				$.each($('#dtList1').find('tbody[role=body] tr'), function(pIndex, pRow){
+					var rowid = $(pRow).data("row");
+					var type = $(pRow).find("td").eq(5).hasClass("colorSky") ? "C" : "E";
+					var cntrct_amount = parseInt($(pRow).find("td").eq(5).text().replaceAll(",", "")); if(isNaN(cntrct_amount)) cntrct_amount = 0;
+					var stack_amount = parseInt($(pRow).find("td").eq(10).text().replaceAll(",", "")); if(isNaN(stack_amount)) stack_amount = 0;
+
+
+					if(!total_counts.hasOwnProperty(rowid)){
+						total_counts[rowid] = {"C" : 0, "E" : 0};
+						total_cntrct[rowid] = {"C" : 0, "E" : 0};
+						total_stack[rowid] = {"C" : 0, "E" : 0};
+					}
+					total_counts[rowid][type]++;
+					total_cntrct[rowid][type] += cntrct_amount;
+					total_stack[rowid][type] += stack_amount;
+				});
+				$.each(total_counts, function(rowid, data){
+					var tds = $(document).find(`tr[data-row="${rowid}"] td[data-column="execut"]`);
+					var rtds = $(document).find(`tr[data-row="${rowid}"] td[data-column="execut_r"]`);
+					if(data.C > 0){
+						$.each(tds, function(pIndex, pTag){
+							if(pIndex == 0){
+								$(pTag).text(total_stack[rowid].C.toString().toFormat("NUMBER"));
+								$(pTag).attr("rowspan", data.C);
+								$(pTag).addClass("colorSky");
+							}
+							else if(pIndex == data.C){
+								$(pTag).text(total_stack[rowid].E.toString().toFormat("NUMBER"));
+								$(pTag).attr("rowspan", data.E);
+								$(pTag).addClass("bottom_border");
+							}
+							else{
+								$(pTag).hide();
+							}
+						});
+						$.each(rtds, function(pIndex, pTag){
+							if(pIndex == 0){
+								if(total_cntrct[rowid].C != 0){
+									$(pTag).text((total_stack[rowid].C*100.0/total_cntrct[rowid].C).toFixed(1)+"%");
+								}
+								$(pTag).attr("rowspan", data.C);
+								$(pTag).addClass("colorSky");
+							}
+							else if(pIndex == data.C){
+								if(total_cntrct[rowid].E != 0){
+									$(pTag).text((total_stack[rowid].E*100.0/total_cntrct[rowid].E).toFixed(1)+"%");
+								}
+								$(pTag).attr("rowspan", data.E);
+								$(pTag).addClass("bottom_border");
+							}
+							else{
+								$(pTag).hide();
+							}
+						});
+					}
+					else{
+						$.each(tds, function(pIndex, pTag){
+							if(pIndex == 0){
+								$(pTag).text(total_stack[rowid].E.toString().toFormat("NUMBER"));
+								$(pTag).attr("rowspan", data.E);
+								$(pTag).addClass("bottom_border");
+							}
+							else{
+								$(pTag).hide();
+							}
+						});
+						$.each(rtds, function(pIndex, pTag){
+							if(pIndex == 0){
+								if(total_cntrct[rowid].E != 0){
+									$(pTag).text((total_stack[rowid].E*100.0/total_cntrct[rowid].E).toFixed(1)+"%");
+								}
+								$(pTag).attr("rowspan", data.E);
+								$(pTag).addClass("bottom_border");
+							}
+							else{
+								$(pTag).hide();
+							}
+						});
+					}
+				});
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(0, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(1, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(2, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(3, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(12, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(15, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClassNext(2, "bottom_border");
+
+
+			}
+		});
+	}
+
+
+
+</script>
+
+<script>
+
+$(document).on('click', '#btnExcel', function(e) {
+    var postfix = $("#s_year").val();
+    var fileName = "월별 매출현황(빌트인)"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList1';
+    var table_div = document.getElementById(tbl);
+
+    table_html += table_div.outerHTML.replace(/ /g, '%20');
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+	getMonthSales(postfix);
+
+
+    e.preventDefault();
+
+
+
+});
+
+</script>
+<script type="text/javascript">
+
+
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+
+$(function() {
+	/**************************************************************************
+     *
+     */
+    //$('#dtList1 tbody').yRowspan(0);
+    $(document).find('#s_pxcond_mt2').datepicker('setDate', 'today');
+    $("#year").text($('#s_pxcond_mt2').val().split("-")[0]);
+	getMonthSalesBD($('#s_pxcond_mt2').val());
+});
+
+$(document).find('#s_pxcond_mt2').on('change', function(pEvent) {
+    getMonthSalesBD($(this).val());
+});
+</script>
+{% endblock %}

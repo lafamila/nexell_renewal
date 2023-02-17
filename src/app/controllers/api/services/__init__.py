@@ -16,6 +16,8 @@ def get_contract_list():
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
 				, prjct_creat_at
 				, (SELECT COUNT(prjct_sn) FROM project WHERE cntrct_sn=c.cntrct_sn) AS prjct_cnt
+				, c.spt_chrg_sn
+				, c.bsn_chrg_sn
 				FROM contract c
 				WHERE 1=1
 				AND ctmmny_sn = 1

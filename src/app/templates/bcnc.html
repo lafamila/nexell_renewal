@@ -31,7 +31,7 @@ tbody .btnUpdate, tbody .btn{
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">공무건설사 월별진행 / VA 월별진행</li><li><span> 계약 / 프로젝트</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">월별 매출현황({{dept_nm}})</li><li><span> 영업부</span></li>
 	</ol>
 
 
@@ -86,7 +86,7 @@ tbody .btnUpdate, tbody .btn{
                     </script>
 					<header>
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
-                        <h2><span id="year">2020</span>년 공무건설사 월별진행 / VA 월별진행</h2>
+                        <h2><span id="year">2020</span>년 월별 매출 현황</h2>
 						<div class="widget-toolbar">
                             <h2>매월 12일까지 입력완료 / 미완료시 기성지급 보류&nbsp;&nbsp; VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
@@ -317,7 +317,7 @@ tbody .btnUpdate, tbody .btn{
 	{
 		var params = '';
 		params += '&s_year='+s_year;
-		params += '&s_dept_code=TS';
+		params += '&s_dept_code={{dept_code}}';
 		$.ajax({
 			url: '/api/bcnc/ajax_get_month_sales',
 			type: 'GET',
@@ -571,7 +571,6 @@ tbody .btnUpdate, tbody .btn{
 				$(document).find("#dtList1 tbody[role='exec']").yRowClassNext(1, "bottom_border");
 				$(document).find("#dtList1 tbody[role='exec']").yRowspan(2);
 				$(document).find("#dtList1 tbody[role='exec']").brokenWord(0);
-				$(document).find("#dtList1 tbody[role='exec']").brokenWord(1);
 				$(document).find("#year").text(s_year);
 			}
 		});

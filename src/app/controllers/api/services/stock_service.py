@@ -16,10 +16,14 @@ def get_stock_datatable(params, prduct_se_code):
 				, m.cntrct_sn AS cntrct_sn
 				, p.ddt_man AS puchas_de
 				, s.use_flag as puchas_se_code
-				, IF(p.delng_ty_code <> '61', GREATEST(IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100), GREATEST(IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)) AS puchas_amount_one
+				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                    WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                    ELSE 0
+                    END AS puchas_amount_one
 				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn), '')
 				  ELSE IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS cntrct_nm
-				, IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '') AS bcnc_nm
+				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '')
+				  ELSE IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS bcnc_nm
 				, CASE WHEN m.stock_sttus IN (2, 3) THEN sa.dlivy_de ELSE '' END AS instl_de
 				, m.ddt_man AS wrhousng_de
 				, s.rm AS rm
@@ -110,7 +114,10 @@ def get_stock_summary(params, prduct_se_code):
                 , count(*) as cnt
                 , m.stock_sttus
                 , count(distinct m.cntrct_sn) AS cntrct_count
-                , sum(IF(p.delng_ty_code <> '61', GREATEST(IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100), GREATEST(IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100))) as amount
+                , sum(CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                    WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                    ELSE 0
+                    END) as amount
                 , IF(m.stock_sttus=1, m.cntrct_sn, 0) AS cntrct_sn
 				FROM stock s 
 				INNER JOIN 
@@ -206,7 +213,8 @@ def get_stock(params):
 				, s.model_no AS modl_nm
 				, m.stock_sttus AS item_sttus
 				FROM stock s 
-				LEFT JOIN (SELECT * FROM stock_log WHERE log_sn IN (SELECT MAX(log_sn) FROM stock_log WHERE stock_sn=%(s_stock_sn)s GROUP BY log_sn)) m ON s.stock_sn=m.stock_sn
+				INNER JOIN 
+				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
 				WHERE s.stock_sn=%(s_stock_sn)s"""
     params['reserv'] = "%예약%"
     g.curs.execute(query, params)

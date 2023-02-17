@@ -15,6 +15,9 @@ class Cursor:
     def execute(self, query, params=tuple()):
         return self.cursor.execute(query, params)
 
+    def executemany(self, query, params=tuple()):
+        return self.cursor.executemany(query, params)
+
     def fetchone(self):
         result = self.cursor.fetchone()
         if result is None:

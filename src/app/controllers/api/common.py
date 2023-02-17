@@ -104,10 +104,19 @@ def ajax_get_bnd():
 
     return jsonify(result)
 
+@bp.route('/month/ajax_get_month_plan', methods=['GET'])
+def ajax_get_month_plan():
+    params = request.args.to_dict()
+    result = dict()
+    result['contract'] = cm.get_month_contract_list(params)
+    result['colored'] = cm.get_month_data(params)
+    return jsonify(result)
+
 @bp.route('/bcnc/ajax_get_month_sales', methods=['GET'])
 def ajax_get_month_sales():
     params = request.args.to_dict()
     result = dict()
+
     result['contract'] = cm.get_bcnc_contract_list(params)
 
     taxbill = cm.get_s_taxbil_list(params)
@@ -159,6 +168,8 @@ def ajax_get_month_sales():
 
     result['bcnc_data'] = cm.get_bcnc_data(params)
 
+
+
     return jsonify(result)
 
 @bp.route('/bcnc/ajax_set_bcnc_data', methods=['GET'])
@@ -172,3 +183,12 @@ def ajax_set_bnd_data():
     params = request.args.to_dict()
     cm.set_bnd_data(params)
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+
+@bp.route('/month/ajax_set_month_data', methods=['GET'])
+def ajax_set_month_data():
+    params = request.args.to_dict()
+    print(params)
+    cm.set_month_data(params)
+
+    return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+

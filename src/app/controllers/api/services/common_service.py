@@ -2,6 +2,7 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import datetime
+import calendar
 
 def get_work(params):
     query = """SELECT t.*, IFNULL(s.memo_sn, -1) AS memo_sn, IFNULL(s.memo_state, -1) AS memo_state FROM
@@ -407,6 +408,9 @@ def get_bcnc_contract_list(params):
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
 				, c.spt_nm
 				, m.dept_code
+				, c.cntrwk_bgnde
+				, c.cntrwk_endde
+				, CONCAT(c.cntrwk_bgnde,' ~ ',c.cntrwk_endde) AS cntrwk_period
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, c.bsn_chrg_sn
 				, GET_MEMBER_NAME(c.bsn_chrg_sn, 'S') AS bsn_chrg_nm
@@ -438,6 +442,7 @@ def get_bcnc_contract_list(params):
             data.append("TS%")
         else:
             query += " AND m.dept_code='BI' "
+
     query += " ORDER BY code_ordr ASC, spt_chrg_nm ASC, bcnc_nm ASC, spt_nm ASC"
     g.curs.execute(query, data)
     result = g.curs.fetchall()
@@ -499,6 +504,21 @@ def set_bnd_data(params):
             params["bnd_data"] = ""
         g.curs.execute("INSERT INTO bnd(bnd_year, bnd_row, bnd_month, bnd_data, bnd_class) VALUES(%(bnd_year)s, %(bnd_row)s, %(bnd_month)s, %(bnd_data)s, %(bnd_class)s)", params)
 
+def set_month_data(params):
+    row = g.curs.execute("SELECT month_sn FROM month WHERE month_year=%(month_year)s AND month_row=%(month_row)s AND month_month=%(month_month)s", params)
+    if row:
+        result = g.curs.fetchone()
+        params['month_sn'] = result['month_sn']
+        if "month_data" in params:
+            g.curs.execute("UPDATE month SET month_data=%(month_data)s, month_class=%(month_class)s WHERE month_sn=%(month_sn)s", params)
+        else:
+            g.curs.execute("UPDATE month SET month_class=%(month_class)s WHERE month_sn=%(month_sn)s", params)
+
+    else:
+        if "month_data" not in params:
+            params["month_data"] = ""
+        g.curs.execute("INSERT INTO month(month_year, month_row, month_month, month_data, month_class) VALUES(%(month_year)s, %(month_row)s, %(month_month)s, %(month_data)s, %(month_class)s)", params)
+
 def get_bcnc_data(params):
     g.curs.execute("SELECT bcnc_sn, bcnc_year, bcnc_row, bcnc_month, bcnc_data, bcnc_class FROM bcnced WHERE bcnc_year=%s", params['s_year'])
     result = g.curs.fetchall()
@@ -508,3 +528,153 @@ def get_bnd_data(params):
     g.curs.execute("SELECT bnd_sn, bnd_year, bnd_row, bnd_month, bnd_data, bnd_class FROM bnd WHERE bnd_year=%s", params['bnd_year'])
     result = g.curs.fetchall()
     return result
+
+def get_month_data(params):
+    g.curs.execute("SELECT month_sn, month_year, month_row, month_month, month_data, month_class FROM month WHERE month_year=%s", params['s_year'])
+    result = g.curs.fetchall()
+    return result
+
+def get_month_contract_list(params):
+    query = """SELECT g.stdyy AS year
+                    , g.1m AS 1m
+                    , g.2m AS 2m
+                    , g.3m AS 3m
+                    , g.4m AS 4m
+                    , g.5m AS 5m
+                    , g.6m AS 6m
+                    , g.7m AS 7m
+                    , g.8m AS 8m
+                    , g.9m AS 9m
+                    , g.10m AS 10m
+                    , g.11m AS 11m
+                    , g.12m AS 12m
+                    , (IFNULL(g.1m, 0) + IFNULL(g.2m, 0) + IFNULL(g.3m, 0)+ IFNULL(g.4m, 0)+ IFNULL(g.5m, 0)+ IFNULL(g.6m, 0)+ IFNULL(g.7m, 0)+ IFNULL(g.8m, 0)+ IFNULL(g.9m, 0)+ IFNULL(g.10m, 0)+ IFNULL(g.11m, 0)+ IFNULL(g.12m, 0)) AS tot
+                    , g.cntrct_sn AS cntrct_sn
+                    , c.spt_nm
+    				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+    				, m.dept_code
+    				, c.bcnc_sn
+    				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+    				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
+                    , CASE WHEN c.prjct_ty_code IN ('NR') THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                    WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+                    (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+                    WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                    WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+                    ELSE 0
+                    END AS cntrct_amount
+                    , DATE_FORMAT(c.cntrct_de, %s) AS cntrct_de
+                    FROM (SELECT * FROM goal WHERE amt_ty_code='2' AND cntrct_sn <> 0 AND stdyy=%s) g
+                    LEFT JOIN contract c ON g.cntrct_sn=c.cntrct_sn
+                    LEFT JOIN member m ON g.mber_sn=m.mber_sn        
+                    WHERE (IFNULL(g.1m, 0) + IFNULL(g.2m, 0) + IFNULL(g.3m, 0)+ IFNULL(g.4m, 0)+ IFNULL(g.5m, 0)+ IFNULL(g.6m, 0)+ IFNULL(g.7m, 0)+ IFNULL(g.8m, 0)+ IFNULL(g.9m, 0)+ IFNULL(g.10m, 0)+ IFNULL(g.11m, 0)+ IFNULL(g.12m, 0)) > 0
+                    ORDER BY code_ordr, bcnc_nm, spt_nm
+            """
+    data = ["%Y-%m", params['s_year']]
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+## 기성현황서 빌트인 두번째 표
+# def get_completed_reportBALL(params):
+#     s_pxcond_mt = params['s_pxcond_mt']
+#     year = s_pxcond_mt.split("-")[0]
+#     month = s_pxcond_mt.split("-")[1]
+#     day = calendar.monthrange(int(year), int(month))[-1]
+#     day = str(day).zfill(2)
+#     params['s_pxcond_mt'] = "{}-{}".format(year, month)
+#
+#     query = """SELECT t.prjct_ty_code
+# 				, t.prjct_creat_at
+# 				, t.bsn_dept_code
+# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=t.prjct_ty_code) AS bsn_dept_nm
+# 				, t.bsn_chrg_sn
+# 				, GET_MEMBER_NAME(t.bsn_chrg_sn, 'M') AS bsn_chrg_nm
+# 				, t.cntrct_bcnc_sn
+# 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.cntrct_bcnc_sn) AS cntrct_bcnc_nm
+# 				, t.spt_chrg_sn
+# 				, GET_MEMBER_NAME(t.spt_chrg_sn, 'M') AS spt_chrg_nm
+# 				, t.spt_nm
+# 				, t.cntrwk_bgnde
+# 				, t.cntrwk_endde
+# 				, t.cntrct_sn
+# 				, t.cntrct_execut_code
+# 				, t.progrs_sttus_code
+# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='CNTRCT_EXECUT_CODE' AND code=t.cntrct_execut_code) AS cntrct_execut_nm
+# 				, t.ct_se_code
+# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='CT_SE_CODE' AND code=t.ct_se_code) AS ct_se_nm
+# 				, t.purchsofc_sn
+# 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.purchsofc_sn) AS purchsofc_nm
+# 				, SUM(t.cntrct_amount) AS cntrct_amount
+# 				, SUM(t.extra_amount) AS extra_amount
+# 				, CASE WHEN ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('3') THEN GET_ACCOUNT_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('8') THEN GET_PXCOND_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('61') THEN GET_ACCOUNT_COMPLETE_AMOUNT_M(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+# 				ELSE GET_TAXBIL_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+# 				END AS complete_amount
+# 				, CASE WHEN ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('3') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('8') THEN GET_PXCOND_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('61') THEN GET_ACCOUNT_EXCUT_AMOUNT_M(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+# 				ELSE GET_TAXBIL_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+# 				END AS tax_amount
+# 				, CASE WHEN ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+# 				WHEN ct_se_code IN ('3') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+# 				ELSE GET_PXCOND_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+# 				END AS excut_amount
+# 				, GET_TAXBIL_COMPLETE_AMOUNT_M(t.cntrct_sn, t.purchsofc_sn, 'C', %(s_pxcond_mt)s) AS complete_amount_m
+# 				, GET_TAXBIL_EXCUT_AMOUNT_M(t.cntrct_sn, t.purchsofc_sn, 'C', %(s_pxcond_mt)s) AS tax_amount_m
+# 				, (SELECT rm FROM pxcond WHERE cntrct_sn=t.cntrct_sn AND cntrct_execut_code=t.cntrct_execut_code AND bcnc_sn=t.purchsofc_sn ORDER BY pxcond_mt DESC LIMIT 1) AS rm
+#                         FROM (
+#                         SELECT ct.prjct_ty_code
+#                         , m.dept_code AS bsn_dept_code
+#                         , ct.bcnc_sn AS cntrct_bcnc_sn
+#                         , ct.bsn_chrg_sn
+#                         , ct.prjct_creat_at
+#                         , ct.spt_chrg_sn
+#                         , ct.spt_nm
+#                         , ct.cntrwk_bgnde
+#                         , ct.cntrwk_endde
+#                         , IF(ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{2} 23:59:59', 'P', ct.progrs_sttus_code) AS progrs_sttus_code
+#                         , co.cntrct_sn
+#                         , co.cntrct_execut_code
+#                         , CASE WHEN co.cntrct_execut_code = 'C' THEN '0'
+#                         WHEN co.cntrct_execut_code = 'A' THEN '0'
+#                         ELSE co.ct_se_code
+#                         END AS ct_se_code
+#                         , co.purchsofc_sn
+#                         , CASE WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code NOT IN ('9') THEN IFNULL(co.qy*co.salamt, 0)
+#                         WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code IN ('9') THEN IFNULL(ROUND((co.puchas_amount*((100-co.dscnt_rt)/100))*co.qy * (co.fee_rt/100)), 0)
+#                         WHEN co.cntrct_execut_code = 'E' AND co.ct_se_code IN ('61') THEN IFNULL(ROUND(co.qy*co.puchas_amount*((100-co.dscnt_rt)/100)), 0)
+#                         WHEN co.cntrct_execut_code = 'A' THEN IFNULL(co.qy*co.salamt, 0)
+#                         ELSE IFNULL(co.qy*co.puchas_amount, 0)
+#                         END AS cntrct_amount
+#                         , CASE WHEN co.cntrct_execut_code = 'E' AND co.ct_se_code IN ('61') THEN IFNULL(ROUND(co.qy*co.puchas_amount*((co.add_dscnt_rt)/100)), 0)
+#                         ELSE 0
+#                         END AS extra_amount
+#                         FROM cost co
+#                         JOIN contract ct
+#                         ON co.cntrct_sn=ct.cntrct_sn
+#                         LEFT OUTER JOIN member m
+#                         ON ct.bsn_chrg_sn=m.mber_sn
+#                         WHERE 1=1
+#                         AND ct.cntrct_sn IN (SELECT cntrct_sn FROM contract WHERE progrs_sttus_code <> 'C' OR (progrs_sttus_code = 'C' AND update_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'))
+#                         AND co.ct_se_code NOT IN ('62','7','10')
+#                         AND ct.prjct_ty_code IN ('BD','BF')
+#                         AND co.cntrct_execut_code NOT IN ('B','D')
+# """.format("{}-01-01".format(year), "{}-12-31".format(year), "{}-{}-01".format(year, month))
+#     if "s_cntrct_execut_code" in params and params["s_cntrct_execut_code"]:
+#         query += "      AND co.cntrct_execut_code = %(s_cntrct_execut_code)s "
+#
+#     query += """    ) t
+# 				GROUP BY prjct_ty_code, bsn_chrg_sn, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
+# 				ORDER BY prjct_ty_code, bsn_chrg_sn, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
+#              """
+#
+#     g.curs.execute(query, params)
+#     result = g.curs.fetchall()
+#     return result

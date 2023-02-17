@@ -6,6 +6,7 @@ from .controllers.approval_view import bp as approval_bp
 from .controllers.project_view import bp as project_bp
 from .controllers.stock_view import bp as stock_bp
 from .controllers.sales_view import bp as sales_bp
+from .controllers.goal_view import bp as goal_bp
 from .controllers.common_view import bp as common_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
@@ -14,6 +15,7 @@ from .controllers.api.approval import bp as approval_api_bp
 from .controllers.api.stock import bp as stock_api_bp
 from .controllers.api.dev_test import bp as dev_api
 from .controllers.api.sales import bp as sales_api_bp
+from .controllers.api.goal import bp as goal_api_bp
 from .controllers.api.common import bp as common_api_bp
 from .controllers.api.services import *
 # from .controllers.ajax_controller import bp as ajax
@@ -35,6 +37,8 @@ app.register_blueprint(stock_bp)
 app.register_blueprint(stock_api_bp)
 app.register_blueprint(sales_bp)
 app.register_blueprint(sales_api_bp)
+app.register_blueprint(goal_bp)
+app.register_blueprint(goal_api_bp)
 app.register_blueprint(common_bp)
 app.register_blueprint(common_api_bp)
 app.register_blueprint(dev_api)
@@ -62,7 +66,7 @@ app.jinja_env.globals.update(
     prduct_sse_code_list=get_code_list('prduct_sse_code'.upper()),
     invn_sttus_code_list=get_code_list('invn_sttus_code'.upper()),
     inventory_list=get_inventory_name_list(),
-    contract_list=get_contract_list()
-
+    contract_list=get_contract_list(),
+    amt_ty_code_list=get_code_list('amt_ty_code'.upper())
 )
 

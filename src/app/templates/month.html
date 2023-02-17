@@ -1,0 +1,469 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.95!important;
+    }
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">월별 매출현황({{dept_nm}})</li><li><span> 영업부</span></li>
+	</ol>
+
+
+
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			월별 수주 계획을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+                    <script>
+
+
+                    </script>
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2><span id="year">2020</span>년 월별 매출 현황</h2>
+						<div class="widget-toolbar">
+                            <h2>VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+
+
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+                            .top_border{
+
+                                border-top: 2px solid #666!important;
+                            }
+                            .right_border{
+                                border-right: 2px solid #666!important;
+                            }
+
+                            .left_border{
+                                border-left: 2px solid #666!important;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+
+                            #dtList1 tbody, #dtList1 thead tr{
+                                font-size: 11px!important;
+                            }
+                            .colorEG{
+                                background:rgb(255,204,153)!important;
+                                font-weight: bold;
+                            }
+                            .colorJ{
+                                background: rgba(204,255,204, 0.7)!important;
+                                font-weight: bold;
+                            }
+                            .colorSky{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:8px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:11px!important;
+                                font-weight: 600!important;
+								text-overflow: ellipsis!important;
+								overflow: hidden;
+								white-space: nowrap;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+/*
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+*/
+                            .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .table>thead+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .middle{
+                                vertical-align: middle!important;
+                            }
+                            @media (min-width: 100px) and (max-width: 1024px) {
+
+
+                                body.smart-style-6 #content{
+                                        margin-left: 0px;
+                                        padding:30px 0px;
+                                }
+                            }
+                            .jarviswidget>div{
+                                font-size:12px!important;
+                            }
+                            .colored{
+                                background: #FFFF00!important   ;
+                            }
+                            .coloredRed{
+                                background: rgb(255,153,204)!important;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+							.no-padding-3{
+								padding-right:3px!important;
+								padding-left:3px!important;
+							}
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p floating-thead" id="dtList1">
+								<colgroup>
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:28px;" rowspan="2">부서</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;" rowspan="2">거래처</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:122px;" rowspan="2">현장명</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:70px;" rowspan="2">구분</th>
+										<th class="colorSky right_border bottom_border" style="text-align:center!important;" colspan="13">월</th>
+										<th class="tot bold right_border middle bottom_border" style="text-align:center;min-width:70px;" rowspan="2">진척률</th>
+									</tr>
+									<tr>
+										<th class="colorSky text-center bold right_border bottom_border">1월</th>
+										<th class="colorSky text-center bold right_border bottom_border">2월</th>
+										<th class="colorSky text-center bold right_border bottom_border">3월</th>
+										<th class="colorSky text-center bold right_border bottom_border">4월</th>
+										<th class="colorSky text-center bold right_border bottom_border">5월</th>
+										<th class="colorSky text-center bold right_border bottom_border">6월</th>
+										<th class="colorSky text-center bold right_border bottom_border">7월</th>
+										<th class="colorSky text-center bold right_border bottom_border">8월</th>
+										<th class="colorSky text-center bold right_border bottom_border">9월</th>
+										<th class="colorSky text-center bold right_border bottom_border">10월</th>
+										<th class="colorSky text-center bold right_border bottom_border">11월</th>
+										<th class="colorSky text-center bold right_border bottom_border">12월</th>
+										<th class="colorSky text-center bold right_border bottom_border" style="border-right:2px solid #666!important;">계</th>
+									</tr>
+								</thead>
+                                <tbody role='body'>
+
+
+                                </tbody>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<script>
+	getMonthPlan = function(s_year)
+	{
+		var params = '';
+		params += '&s_year='+s_year;
+		$.ajax({
+			url: '/api/month/ajax_get_month_plan',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function(pResult) {
+				console.log(pResult);
+				var html = '';
+				if(pResult.contract.length == 0){
+					html += `<tr>
+								<td class="text-center middle bold" style="height:100px;" colspan="18">목표 금액이 입력된 현장이 없습니다.<br><button class="btn btnUpdate" style="margin-top:10px;" onclick="javascript:location.href='/goal';">목표 금액 입력</button></td>
+							 </tr>`
+				}
+				$.each(pResult.contract, function(pIndex, pValue) {
+					var pData = {"tot" : 0};
+					for(let i=1;i<=12;i++) pData[`${i}m`] = 0;
+					if(pValue.cntrct_de !== ""){
+						let year = pValue.cntrct_de.split("-")[0];
+						let month = pValue.cntrct_de.split("-")[1];
+						if(year == s_year){
+							pData[`${parseInt(month)}m`] = pValue.cntrct_amount;
+						}
+					}
+					for(let i=1;i<=12;i++) pData["tot"] += pData[`${i}m`];
+
+					html += `<tr id="row${pValue.cntrct_sn}-1" data-year="${s_year}">
+								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
+								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
+								<td class="right_border middle text-left bold">${pValue.spt_nm}</td>
+								<td class="right_border middle text-center bold">계획</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="1m">${pValue["1m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="2m">${pValue["2m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="3m">${pValue["3m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="4m">${pValue["4m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="5m">${pValue["5m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="6m">${pValue["6m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="7m">${pValue["7m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="8m">${pValue["8m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="9m">${pValue["9m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="10m">${pValue["10m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="11m">${pValue["11m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="12m">${pValue["12m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="tot">${pValue["tot"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(pData.tot*100.0/pValue.tot).toFixed(2)+"%"}</td>
+							 </tr>
+							 <tr id="row${pValue.cntrct_sn}-2" data-year="${s_year}">
+								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
+								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
+								<td class="right_border middle text-left bold">${pValue.spt_nm}</td>
+								<td class="colorJ right_border middle text-center bold">달성</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${pData["1m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${pData["2m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${pData["3m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${pData["4m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${pData["5m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${pData["6m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${pData["7m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${pData["8m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${pData["9m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${pData["10m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${pData["11m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${pData["12m"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${pData["tot"].toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(pData.tot*100.0/pValue.tot).toFixed(2)+"%"}</td>
+							 </tr>`;
+                });
+				$("#dtList1").find("tbody").html(html);
+				$("#dtList1").find("tbody").yRowspan(0);
+				$("#dtList1").find("tbody").yRowspan(1);
+				$("#dtList1").find("tbody").yRowspan(2);
+				$("#dtList1").find("tbody").yRowspan(17);
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(0, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(1, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(2, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(17, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClassNext(2, "bottom_border");
+				$(document).find(".colored").removeClass("colored");
+				$.each(pResult.colored, function(pIndex, pValue){
+					if(parseInt(pValue.month_class) == 1)
+						$(document).find(`tr#${pValue.month_row} td[data-column="${pValue.month_month}"]`).addClass("colored")
+				});
+			}
+		});
+	}
+
+
+
+</script>
+
+<script>
+
+$(document).on('click', "#s_submit", function(pEvent){
+
+    var year = $("#s_year").val();
+	var now_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+	if((parseInt(now_year)-5) >= parseInt(year)){
+		alert("검색 기간은 최대 5년입니다.");
+		return false;
+	}
+    //resetTable();
+	getMonthPlan(year);
+
+});
+set_color = function(td){
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+
+	var rowId = $(td).parent().attr("id");
+	var column = $(td).data("column");
+	var year = $(td).parent().data("year")
+	var colored = $(td).hasClass("colored") ? 0 : 1;
+	var params = '';
+	params += '&month_year='+year;
+	params += '&month_row='+rowId;
+	params += '&month_month='+column;
+	params += '&month_class='+colored;
+	$.ajax({
+		url: '/api/month/ajax_set_month_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+				if(colored == 0){
+					$(td).removeClass("colored");
+				}
+				else{
+					$(td).addClass("colored");
+				}
+			}
+		}
+	});
+
+
+}
+var timer;
+$(document).on("click", ".colorBtn", function(){
+	var td = $(this);
+	if(timer){
+		clearTimeout(timer);
+		timer = null;
+	}
+	else{
+		timer = setTimeout(function(){
+			set_color(td);
+            clearTimeout(timer);
+            timer = null;
+		}, 250);
+	}
+});
+
+
+</script>
+<script type="text/javascript">
+
+
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+
+$(function() {
+	/**************************************************************************
+     *
+     */
+    //$('#dtList1 tbody').yRowspan(0);
+    var year = new Date().getFullYear();
+    $("#s_year").val(year);
+	getMonthPlan(year);
+});
+</script>
+{% endblock %}

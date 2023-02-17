@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect
+from flask import Blueprint, render_template, make_response, session, redirect
 from ..helpers import session_helper
 bp = Blueprint('common', __name__, url_prefix='/')
 
@@ -12,12 +12,15 @@ def work_page():
 def bnd_page():
     return render_template('bnd.html')
 
-@bp.route('/bcnc/ts')
+@bp.route('/bcnc/<dept_code>')
 @session_helper.session_check
-def bcnc_ts():
-    return render_template('bcnc_TS.html')
+def bcnc_page(dept_code):
+    dept = {"bi" : "빌트인", "ts" : "공조"}
+    if dept_code not in dept:
+        return make_response('', 404)
+    return render_template('bcnc.html', dept_code=dept_code.upper(), dept_nm=dept[dept_code])
 
-@bp.route('/bcnc/bi')
+@bp.route('/month')
 @session_helper.session_check
-def bcnc_bi():
-    return render_template('bcnc_BI.html')
+def month_page():
+    return render_template("month.html")
