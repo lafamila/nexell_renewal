@@ -565,3 +565,7 @@ label.btn.btn-default.active {
 	padding: 7px!important;
 	text-align: center!important;
 }
+
+.input-available{
+    cursor:pointer!important;
+}

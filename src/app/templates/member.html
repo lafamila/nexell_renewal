@@ -60,6 +60,7 @@
 									<col width="110">
 									<col width="140">
 									<col width="100">
+									<col width="100">
 									<col width="150">
 									<col width="1">
 								</colgroup>
@@ -112,8 +113,12 @@
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_mber_sttus_code" name="s_mber_sttus_code">
 												<option value="">[전체]</option>
-												<option value="H">H.재직</option>
+												{% for code in mber_sttus_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
+										</th>
+										<th class="hasinput">
 										</th>
 										<th class="hasinput">
 										</th>
@@ -135,6 +140,7 @@
 										<th>직책</th>
 										<th>권한</th>
 										<th>상태</th>
+										<th>입사일</th>
 										<th>마지막로그인</th>
 										<th class="text-right">
 											<div class="btn-group">
@@ -202,6 +208,7 @@ getMemberList = function()
             { data: 'rspofc_nm' },
             { data: 'author_nm' },
             { data: 'mber_sttus_nm' },
+            { data: 'enter_de' },
             { data: 'login_dtm' },
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
@@ -401,8 +408,15 @@ $(function() {
 											<td class="hasinput" colspan="1">
 												<select class="form-control select2" id="mber_sttus_code" name="mber_sttus_code">
 													<option value="">[선택]</option>
-													<option value="H">H.재직</option>
+													{% for code in mber_sttus_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
 												</select>
+											</td>
+										</tr>
+										<tr><th>입사일<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control datepicker-e" style="display:inline-block;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enter_de" name="enter_de" placeholder="[입사일자]">
 											</td>
 										</tr>
 										<tr><th>현장관리 가능 수<em>*</em></th>
@@ -442,6 +456,7 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#mber_moblphon').val('');
 		$('#popBox1').find('#mber_email').val('');
 		$('#popBox1').find('#mber_size').val('');
+		$('#popBox1').find('#enter_de').val('');
 		$('#popBox1').find('#dept_code').val('').trigger('change');
 		$('#popBox1').find('#ofcps_code').val('').trigger('change');
 		$('#popBox1').find('#rspofc_code').val('').trigger('change');
@@ -480,6 +495,7 @@ getMember = function(s_mber_sn)
 				$('#popBox1').find('#mber_telno').val(result.mber_telno);
 				$('#popBox1').find('#mber_moblphon').val(result.mber_moblphon);
 				$('#popBox1').find('#mber_size').val(result.mber_size);
+				$('#popBox1').find('#enter_de').val(result.enter_de);
 				$('#popBox1').find('#mber_email').val(result.mber_email);
 				$('#popBox1').find('#dept_code').val(result.dept_code).trigger('change');
 				$('#popBox1').find('#ofcps_code').val(result.ofcps_code).trigger('change');
@@ -619,6 +635,16 @@ deleteMember = function()
 </script>
 <script type="text/javascript">
 $(function() {
+
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		}
+	});
+
 
     /**************************************************************************
      * 등록/수정 팝업을 처리한다.

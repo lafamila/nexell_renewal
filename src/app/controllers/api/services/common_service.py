@@ -4,21 +4,6 @@ from collections import OrderedDict
 import datetime
 import calendar
 
-def get_work(params):
-    query = """SELECT t.*, IFNULL(s.memo_sn, -1) AS memo_sn, IFNULL(s.memo_state, -1) AS memo_state FROM
-				(SELECT e.work_row
-				, e.work_month
-				, e.work_data
-				FROM work e
-				WHERE 1=1
-				AND e.work_year=%(work_year)s
-				AND e.work_sn IN (SELECT MAX(ex.work_sn) FROM work ex WHERE ex.work_year=%(work_year)s GROUP BY ex.work_row, ex.work_month)
-				) t LEFT OUTER JOIN (SELECT * FROM work_memo WHERE work_date=DATE_FORMAT(now(), %(format)s)) s ON t.work_row=s.work_row"""
-    params['format'] = '%Y-%m-%d'
-    g.curs.execute(query, params)
-    result = g.curs.fetchall()
-    return result
-
 def get_bcncs():
     query = """SELECT DISTINCT c.bcnc_sn AS num
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS name
@@ -89,7 +74,6 @@ def get_s12_account_list(params, s_dlivy_de=True):
         else:
             query += " AND m.dept_code='BI' "
     query += " GROUP BY s_dlivy_de, c.cntrct_sn"
-    print(query, data)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -149,11 +133,11 @@ def get_s6_account_list(params):
                  AND c.progrs_sttus_code NOT IN ('C')  """
 
     if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
-        query += " AND bcnc_sn=%s"
+        query += " AND c.bcnc_sn=%s"
         data.append(params["s_resrv_bcnc"])
 
     if "s_resrv_chrg" in params and params['s_resrv_chrg']:
-        query += " AND bsn_chrg_sn=%s"
+        query += " AND c.bsn_chrg_sn=%s"
         data.append(params["s_resrv_chrg"])
 
     if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
@@ -340,7 +324,7 @@ def get_bnd_rates(params):
         data.append(params["s_resrv_c_chrg"])
 
     query += " GROUP BY c.cntrct_sn"
-    g.curs.execute(query, params)
+    g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
 

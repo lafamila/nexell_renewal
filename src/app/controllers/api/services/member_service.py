@@ -29,7 +29,7 @@ def update_member(params):
             else:
                 data[key] = params[key]
     sub_query = ["{0}=%({0})s".format(key) if key != "mber_password" else "{0}=password(%({0})s)".format(key) for key in data]
-    query = """UPDATE member SET {} WHERE mber_sn=%(mber_sn)s""".format(",".join(sub_query))
+    query = """UPDATE member SET {}, UPDATE_DTM=NOW() WHERE mber_sn=%(mber_sn)s""".format(",".join(sub_query))
     g.curs.execute(query, params)
 
 def insert_member(params):
@@ -62,6 +62,7 @@ def get_member(member_sn):
                 , mber_moblphon
                 , mber_email
                 , mber_size
+                , enter_de
                 , dept_code
                 , team_code
                 , ofcps_code
@@ -154,12 +155,15 @@ def get_datatable(params):
                 , (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='MBER_STTUS_CODE' AND code=m.mber_sttus_code) AS mber_sttus_nm
                 , author_sn
                 , (SELECT author_nm FROM author WHERE ctmmny_sn=1 AND author_sn=m.author_sn) AS author_nm
-                , login_dtm
-                , regist_dtm
+                , enter_de
+                , m.regist_dtm
                 , register_id
                 , update_dtm
                 , updater_id
+                , IFNULL(h.regist_dtm, '') AS login_dtm
                 FROM member m
+				LEFT OUTER JOIN 
+				(SELECT x.regist_dtm, x.member_sn FROM history x INNER JOIN (SELECT member_sn, MAX(history_sn) AS h_sn FROM history WHERE view_action='login' GROUP BY member_sn) y ON x.member_sn=y.member_sn AND x.history_sn=y.h_sn) h ON h.member_sn=m.mber_sn
                 WHERE 1=1
                 AND ctmmny_sn = 1
                 """

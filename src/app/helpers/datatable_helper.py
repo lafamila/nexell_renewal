@@ -17,6 +17,7 @@ def dt_query(query, data, params={}):
     if "length" in params and int(params["length"]) > 0:
         query += " LIMIT {}, {}".format(params['start'], params['length'])
 
+    print(query, data)
     g.curs.execute(query, data)
     result['data'] = g.curs.fetchall()
     for d in result['data']:

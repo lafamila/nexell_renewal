@@ -244,6 +244,11 @@ $(function() {
             $('#btnLogin').trigger('click');
         }
     });
+    $('#member_qr').on('keyup', function(event) {
+        if (event.keyCode === 13) {
+            $('#btnLogin').trigger('click');
+        }
+    });
 });
 </script>
 </body>

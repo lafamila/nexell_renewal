@@ -24,14 +24,6 @@ def disconnect(response):
     g.db.close()
     return response
 
-@bp.route('/work/ajax_get_work', methods=['GET'])
-def ajax_get_work():
-    params = request.args.to_dict()
-    result = dict()
-    result['data'] = cm.get_work(params)
-    result['status'] = True
-    return jsonify(result)
-
 @bp.route('/bnd/ajax_get_bcnc_list', methods=['GET'])
 def ajax_get_bcnc_list():
     params = request.args.to_dict()
@@ -60,7 +52,6 @@ def ajax_get_bnd():
     for s in s12_account:
         cntrct_sn = str(s['cntrct_sn'])
         amount = s['p_total']
-        print(amount)
         if cntrct_sn not in result['rate']:
             result['rate'][cntrct_sn] = {"cntrct_amount" : 0.0, "amount" : 0.0}
         result['rate'][cntrct_sn]["amount"] += amount
@@ -187,7 +178,6 @@ def ajax_set_bnd_data():
 @bp.route('/month/ajax_set_month_data', methods=['GET'])
 def ajax_set_month_data():
     params = request.args.to_dict()
-    print(params)
     cm.set_month_data(params)
 
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})

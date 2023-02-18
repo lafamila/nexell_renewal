@@ -1,0 +1,648 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.95!important;
+    }
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">연차현황</li><li><span> 근태 관리</span></li>
+	</ol>
+
+
+
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			월별 수주 계획을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+                    <script>
+
+
+                    </script>
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>개인별 연차 현황</h2>
+						<div class="widget-toolbar">
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+
+
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+                            .top_border{
+
+                                border-top: 2px solid #666!important;
+                            }
+                            .right_border{
+                                border-right: 2px solid #666!important;
+                            }
+
+                            .left_border{
+                                border-left: 2px solid #666!important;
+                            }
+                            #dtList1{
+								border: 1px solid #666!important;
+							}
+
+                            #dtList1 tbody, #dtList1 thead tr{
+                                font-size: 11px!important;
+                            }
+                            .colorEG{
+                                background:rgb(255,204,153)!important;
+                                font-weight: bold;
+                            }
+                            .colorJ{
+                                background:#3d8b40!important;
+                                font-weight: bold;
+                                color:white;
+                            }
+                            .colorSky{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:8px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:11px!important;
+                                font-weight: 600!important;
+								text-overflow: ellipsis!important;
+								overflow: hidden;
+								white-space: nowrap;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+/*
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+*/
+                            .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .table>thead+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .middle{
+                                vertical-align: middle!important;
+                            }
+                            @media (min-width: 100px) and (max-width: 1024px) {
+
+
+                                body.smart-style-6 #content{
+                                        margin-left: 0px;
+                                        padding:30px 0px;
+                                }
+                            }
+                            .jarviswidget>div{
+                                font-size:12px!important;
+                            }
+                            .colored{
+                                background: #FFFF00!important   ;
+                            }
+                            .coloredRed{
+                                background: rgb(255,153,204)!important;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+							.no-padding-3{
+								padding-right:3px!important;
+								padding-left:3px!important;
+							}
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="45">
+									<col width="120">
+									<col width="120">
+									<col width="90">
+									<col width="100">
+									<col width="120">
+									<col width="60">
+
+									<col width="120">
+
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="*">
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="hasinput" colspan="17">
+											<span style="margin-left:15px;margin-right:20px;">기준일자</span>
+											<input type="text" class="form-control datepicker-s" style="display:inline;width:84px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_stdyy" name="s_stdyy" placeholder="[기준일자]">
+										</th>
+									</tr>
+                                    <tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_mber_sn" name="s_mber_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_mber_sttus_code" name="s_mber_sttus_code">
+												<option value="">[전체]</option>
+												{% for code in mber_sttus_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+											<input type="number" step="1" min="1" class="form-control" placeholder="[년차]" id="s_cal_year" name="s_cal_year">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput text-center" colspan="4">
+											직전 연차일수
+										</th>
+										<th class="hasinput text-center" colspan="4">
+											현 연차일수
+										</th>
+										<th class="hasinput">
+										</th>
+									</tr>
+									<tr>
+										<th style="text-align:center!important;">No.</th>
+										<th style="text-align:center!important;">부서</th>
+										<th style="text-align:center!important;">사원명</th>
+										<th style="text-align:center!important;">상태</th>
+										<th style="text-align:center!important;">입사일자</th>
+										<th style="text-align:center!important;">근속년수</th>
+										<th style="text-align:center!important;">년차</th>
+										<th style="text-align:center!important;">퇴사일자</th>
+										<th style="text-align:center!important;">발생일수</th>
+										<th style="text-align:center!important;">조정일수</th>
+										<th style="text-align:center!important;">사용일수</th>
+										<th style="text-align:center!important;">잔여일수</th>
+										<th style="text-align:center!important;">발생일수</th>
+										<th style="text-align:center!important;">조정일수</th>
+										<th style="text-align:center!important;">사용일수</th>
+										<th style="text-align:center!important;">잔여일수</th>
+										<th style="text-align:center!important;">비고</th>
+<!--										<th style="text-align:center!important;">합계</th>-->
+									</tr>
+								</thead>
+                                <tbody>
+
+
+                                </tbody>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<script>
+getWorkYear = function(){
+
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		ordering: false,
+		pageLength: 30,
+        ajax: {
+            url: '/api/work/ajax_get_year_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_stdyy': $('#dtList1').find('#s_stdyy').val(),
+					's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_mber_sn': $('#dtList1').find('#s_mber_sn').val(),
+					's_spt_nm': $('#dtList1').find('#s_spt_nm').val(),
+					's_enter_de': $('#dtList1').find('#s_enter_de').val(),
+					's_cal_year': $('#dtList1').find('#s_cal_year').val(),
+					's_mber_sttus_code': $('#dtList1').find('#s_mber_sttus_code').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		createdRow: function (row, data, dataIndex) {
+			var columns = ["tot", "mod", "use"];
+            $(row).attr('data-year', data.stdyy.split("-")[0]);
+            $(row).attr('data-mber', data.mber_sn);
+			$(row).find("td.input-available").each(function(pIndex, pCol){
+				if(pIndex >= columns.length * 2){
+					$(pCol).attr("data-col", "rm");
+					$(pCol).attr("data-diff", 1);
+					return true;
+				}
+				$(pCol).attr("data-col", columns[(pIndex%columns.length)]);
+				$(pCol).attr("data-diff", Math.floor(pIndex/columns.length));
+			});
+        },
+		order: [1, 'asc'],
+        columns: [
+            { data: 'mber_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+			{ data: 'dept_nm' },
+			{ data: 'mber_nm' },
+			{ data: 'mber_sttus_nm' },
+			{ data: 'enter_de' },
+			{ data: 'enter_de' , className: 'text-center',
+				render: function(data, type, row, meta) {
+					let std = new Date(row.stdyy);
+					let now = new Date(data);
+					let diff = std.getTime() - now.getTime();
+					let days = diff/1000/60/60/24;
+					let y = Math.floor(days/365);
+					days -= y*365;
+					let m = Math.floor(days/30);
+					days -= m*30;
+
+					return `${y}년 ${m}개월 ${days}일`;
+				}
+			},
+			{ data: 'enter_de' , className: 'text-center',
+				render: function(data, type, row, meta) {
+					let std = new Date(row.stdyy);
+					let now = new Date(data);
+					let diff = std.getTime() - now.getTime();
+					let days = diff/1000/60/60/24;
+					return (Math.floor(days/365) + 1).toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'out_dtm' },
+			{ data: 'last_tot', className: 'text-center input-available',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'last_mod', className: 'text-center input-available',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'last_use', className: 'text-center input-available',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'mber_sn', className: 'text-center',
+				render: function(data, type, row, meta) {
+
+					return (parseInt(row.last_tot) + parseInt(row.last_mod) - parseInt(row.last_use)).toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'tot', className: 'text-center input-available',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'mod', className: 'text-center input-available',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'use', className: 'text-center input-available',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'mber_sn', className: 'text-center',
+				render: function(data, type, row, meta) {
+					return (parseInt(row.tot) + parseInt(row.mod) - parseInt(row.use)).toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'rm', className: 'text-left input-available',
+				render: function(data, type, row, meta) {
+					return data;
+				}
+			}
+		],
+		footerCallback: function ( row, data, start, end, display ) {
+			var api = this.api(), data;
+			var intVal = function ( i ) {
+                return typeof i === 'string' ? i.replace(/[\$,]/g, '')*1 : typeof i === 'number' ? i : 0;
+			};
+
+			for (i=4; i<17; i++) {
+				pageTotal = api.column( i, { page: 'current'} ).data().reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+				}, 0 );
+				$('#dtList1').find('tfoot th:eq('+(i-3)+')').html(pageTotal.toString().toFormat('NUMBER'));
+			}
+		},
+		initComplete: function(settings, json) { //console.log('initComplete', json);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr td.input-available', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					if($(this).hasClass("selected")){
+						$(this).removeClass("selected");
+					}
+					else{
+						$(document).find('td.selected').removeClass('selected');
+						$(this).addClass('selected');
+					}
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+
+
+		},
+    });
+
+
+
+}
+
+</script>
+
+<script>
+$(document).on("dblclick", ".input-available", function(){
+	var column = $(this).data("col");
+
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+
+	var data = prompt("값을 입력하세요.");
+	if(column != 'rm'){
+		try{
+			if(/^\d+$/.test(data)){
+				data = parseInt(data);
+			}
+			else{
+				throw new Error(`Parameter is not a number : ${data}`);
+			}
+		}catch(e){
+			alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+			return false;
+		}
+
+	}
+	var td = $(this);
+	var s_mber_sn = $(this).parent().data("mber");
+	var s_year = parseInt($(this).parent().data("year")) + parseInt($(this).data("diff")) - 1;
+	var params = '';
+	params += '&work_row='+s_mber_sn;
+	params += '&work_year='+s_year;
+	params += '&work_month='+column;
+	params += '&work_data='+data;
+	$.ajax({
+		url: '/api/work/ajax_set_work_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+				if(column != "rm"){
+					$(td).text(data.toString().toFormat("NUMBER"));
+					let idx = column.slice(-1);
+					var total = parseInt($(td).parent().find(`td[data-col="tot${idx}"]`).text().replace(",","")); if(isNaN(total)) total = 0;
+					var mod = parseInt($(td).parent().find(`td[data-col="mod${idx}"]`).text().replace(",","")); if(isNaN(mod)) mod = 0;
+					var use = parseInt($(td).parent().find(`td[data-col="use${idx}"]`).text().replace(",","")); if(isNaN(use)) use = 0;
+					$(td).parent().find(`td.rem${idx}`).text((total+mod-use).toString().toFormat("NUMBER"));
+				}
+				else{
+					$(td).text(data);
+				}
+			}
+		}
+	});
+
+});
+
+$(document).on('click', '#btnExcel', function(e) {
+    var postfix = $("#s_stdyy").val();
+    var fileName = "월별 매출현황(공조)"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList1';
+    var table_div = document.getElementById(tbl);
+
+    table_html += table_div.outerHTML.replace(/ /g, '%20');
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+
+
+    e.preventDefault();
+
+
+
+});
+
+</script>
+<script type="text/javascript">
+
+
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+
+$(function() {
+	/**************************************************************************
+     *
+     */
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		}
+	});
+
+	var stdyy = $('.datepicker-s').val();
+	if (stdyy == '') {
+		$('.datepicker-s').datepicker('setDate', 'today');
+	}
+
+	getWorkYear();
+});
+</script>
+{% endblock %}

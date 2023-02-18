@@ -89,7 +89,7 @@ tbody .btnUpdate, tbody .btn{
                         <h2>빌트인 현장현황</h2>
 						<div class="widget-toolbar">
                             <h2>VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
-                            <input type="hidden" id="s_year" name="s_year" style="color:#333;" value="2020"/>
+                            <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
 <!--                            <button type="button" class="btn btn-info" id="s_submit">검색</button>-->
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
@@ -477,6 +477,7 @@ tbody .btnUpdate, tbody .btn{
         params += '&s_resrv_c_chrg='+s_resrv_c_chrg;
     }
 	params += '&bnd_year='+bnd_year;
+	console.log(params);
 	$.ajax({
 		url: '/api/bnd/ajax_get_bnd',
 		type: 'GET',
@@ -518,7 +519,7 @@ tbody .btnUpdate, tbody .btn{
               if(before != pValue.progrs_order){
                 before = pValue.progrs_order;
                 count = 0;
-                _class = "top_b_border";
+                _class = "";
                 total.cntrct_amount = 0;
               }
               else{
@@ -717,7 +718,6 @@ tbody .btnUpdate, tbody .btn{
             	else{
 					rate = (pValue.amount * 100.0 / pValue.cntrct_amount);
 				}
-            	console.log($(document).find(`.row${cntrct_sn}`).find(`td[data-column="rate-text"]`));
             	$(document).find(`.row${cntrct_sn}`).find(`td[data-column="rate-text"]`).text(rate.toFixed(0)+"%");
 			});
             getReserveType(s_resrv_bcnc, s_resrv_type, s_resrv_chrg);
@@ -735,7 +735,7 @@ $(document).on("change", ".input-available-select", function(){
 	var data = $(this).find("option:selected").val();
 	var td = $(this);
 	var rowId = $(this).parent().attr("class");
-	var s_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+	var s_year = $("#s_year").val();
 	var params = '';
 	params += '&bnd_year='+s_year;
 	params += '&bnd_row='+rowId;
@@ -780,7 +780,7 @@ $(document).on("dblclick", ".input-available", function(){
 	}
 	var td = $(this);
 	var rowId = $(this).parent().attr("class");
-	var s_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+	var s_year = $("#s_year").val();
 	var params = '';
 	params += '&bnd_year='+s_year;
 	params += '&bnd_row='+rowId;
@@ -837,9 +837,29 @@ $(function () {
     });
   });
 });
+$(document).on('click', "#s_submit", function(pEvent){
+
+    var year = $("#s_year").val();
+	var now_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+	if((parseInt(now_year)-5) >= parseInt(year)){
+		alert("검색 기간은 최대 5년입니다.");
+		return false;
+	}
+    //resetTable();
+	getBndList(year);
+
+});
+$(document).on('change', 'thead select', function(pEvent){
+    $("#"+$(this).attr("name")).val($(this).val());
+    let year = $("#s_year").val();
+    getBndList(year);
+});
 
 $(function() {
-	  getBndList(2023);
+    var year = new Date().getFullYear();
+	getReserveType("-1", "-1", "-1", "-1");
+    $("#s_year").val(year);
+    getBndList(year);
 });
 </script>
 
