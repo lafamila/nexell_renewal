@@ -201,11 +201,11 @@ tbody .btnUpdate, tbody .btn{
 									<col width="120">
 									<col width="120">
 									<col width="90">
-									<col width="100">
+									<col width="90">
 									<col width="120">
 									<col width="60">
 
-									<col width="120">
+									<col width="90">
 
 									<col width="60">
 									<col width="60">
@@ -406,7 +406,7 @@ getWorkYear = function(){
 					return data.toString().toFormat('NUMBER');
 				}
 			},
-			{ data: 'mber_sn', className: 'text-center',
+			{ data: 'mber_sn', className: 'text-center rem',
 				render: function(data, type, row, meta) {
 
 					return (parseInt(row.last_tot) + parseInt(row.last_mod) - parseInt(row.last_use)).toString().toFormat('NUMBER');
@@ -427,7 +427,7 @@ getWorkYear = function(){
 					return data.toString().toFormat('NUMBER');
 				}
 			},
-			{ data: 'mber_sn', className: 'text-center',
+			{ data: 'mber_sn', className: 'text-center rem',
 				render: function(data, type, row, meta) {
 					return (parseInt(row.tot) + parseInt(row.mod) - parseInt(row.use)).toString().toFormat('NUMBER');
 				}
@@ -550,11 +550,11 @@ $(document).on("dblclick", ".input-available", function(){
 			if(pResult.status){
 				if(column != "rm"){
 					$(td).text(data.toString().toFormat("NUMBER"));
-					let idx = column.slice(-1);
-					var total = parseInt($(td).parent().find(`td[data-col="tot${idx}"]`).text().replace(",","")); if(isNaN(total)) total = 0;
-					var mod = parseInt($(td).parent().find(`td[data-col="mod${idx}"]`).text().replace(",","")); if(isNaN(mod)) mod = 0;
-					var use = parseInt($(td).parent().find(`td[data-col="use${idx}"]`).text().replace(",","")); if(isNaN(use)) use = 0;
-					$(td).parent().find(`td.rem${idx}`).text((total+mod-use).toString().toFormat("NUMBER"));
+					let diff = $(td).data("diff");
+					var total = parseInt($(td).parent().find(`td[data-col="tot"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(total)) total = 0;
+					var mod = parseInt($(td).parent().find(`td[data-col="mod"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(mod)) mod = 0;
+					var use = parseInt($(td).parent().find(`td[data-col="use"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(use)) use = 0;
+					$(td).parent().find(`td.rem`).eq(parseInt(diff)).text((total+mod-use).toString().toFormat("NUMBER"));
 				}
 				else{
 					$(td).text(data);
