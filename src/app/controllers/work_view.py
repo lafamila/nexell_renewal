@@ -12,3 +12,8 @@ def index_page():
 @session_helper.session_check
 def year_page():
     return render_template('work_year.html')
+
+@bp.route('/personal')
+@session_helper.session_check
+def personal_page():
+    return render_template('work_personal.html')

@@ -40,6 +40,14 @@ def ajax_get_year_datatable():
     # result['data'] = []
     return jsonify(result)
 
+@bp.route('/ajax_get_personal', methods=['GET'])
+def ajax_get_personal():
+    params = request.args.to_dict()
+    params["s_mber_sn"] = session["member"]["member_sn"]
+    result = wk.get_work_datatable(params)
+    return jsonify(result)
+
+
 @bp.route('/ajax_set_work_data', methods=['GET'])
 def ajax_set_work_data():
     params = request.args.to_dict()
