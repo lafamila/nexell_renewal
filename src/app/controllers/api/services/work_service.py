@@ -48,6 +48,36 @@ def get_work_datatable(params):
     query += " ORDER BY code_ordr, mber_nm"
     return dt_query(query, data, params)
 
+def get_work_time(params):
+    y, m, d = params["calendar"].split("-")
+    query = """SELECT workdate AS work_date
+                    , WSTime AS start_time
+                    , WCTime AS end_time 
+                FROM t_secom_workhistory 
+                WHERE WorkDate LIKE %s AND Name=%s AND WSTime <> ''"""
+    data = ['{0}{1}%'.format(y, m), params['s_mber_nm']]
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_work_calendar(params):
+    cal = calendar.TextCalendar()
+    cal.setfirstweekday(calendar.SUNDAY)
+    y, m, d = params["calendar"].split("-")
+    text = cal.formatmonth(int(y), int(m)).strip()
+    title = text.split("\n")[0]
+    result = []
+    for row in text.split("\n")[2:]:
+        rowlist = list()
+        for i in range(len(row)//3+1):
+            cell = row[3*i:3*i+2]
+            if cell.strip() != '':
+                cell = int(cell)
+            else:
+                cell = ''
+            rowlist.append(cell)
+        result.append(rowlist)
+    return {"title" : title, "rows" : result}
 
 def get_work(params):
     query = """SELECT t.*, IFNULL(s.memo_sn, -1) AS memo_sn, IFNULL(s.memo_state, -1) AS memo_state FROM

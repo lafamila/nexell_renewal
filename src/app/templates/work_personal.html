@@ -15,6 +15,12 @@ tbody .btnUpdate, tbody .btn{
     .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
         line-height: 0.95!important;
     }
+    #dtList1.table>tbody>tr>td, #dtList1.table>tbody>tr>th, #dtList1.table>tfoot>tr>td, #dtList1.table>tfoot>tr>th, #dtList1.table>thead>tr>td, #dtList1.table>thead>tr>th {
+        line-height: 1.95!important;
+    }
+	.color-blue{
+		color:blue!important;
+	}
 </style>
 <!--########################################################################-->
 <!--# RIBBON area start                                                    #-->
@@ -116,13 +122,22 @@ tbody .btnUpdate, tbody .btn{
                             .left_border{
                                 border-left: 2px solid #666!important;
                             }
-                            #dtList1{
-								border: 1px solid #666!important;
-							}
-
                             #dtList1 tbody, #dtList1 thead tr{
                                 font-size: 11px!important;
                             }
+							#dtList tbody tr td:first-child{
+								border-left-width:0!important;
+							}
+							#dtList tbody tr td:last-child{
+								border-right-width:0!important;
+							}
+							#dtList tbody tr:last-child td{
+								border-bottom-width:0!important;
+							}
+							table.table-bordered tbody td, table.table-bordered tbody th {
+								border-left-width: 1px;
+								border-bottom-width: 1px;
+							}
                             .colorEG{
                                 background:rgb(255,204,153)!important;
                                 font-weight: bold;
@@ -186,12 +201,12 @@ tbody .btnUpdate, tbody .btn{
                             .coloredRed{
                                 background: rgb(255,153,204)!important;
                             }
-                            .jarviswidget>div {
-                                border-right-color: transparent!important;
-                            }
 							.no-padding-3{
 								padding-right:3px!important;
 								padding-left:3px!important;
+							}
+							.color-red{
+								color: red!important;
 							}
                         </style>
 						<!-- widget content -->
@@ -232,98 +247,33 @@ tbody .btnUpdate, tbody .btn{
                       <div class="widget-body no-padding">
 							<table class="datatable table table-bordered table-hover" id="dtList1">
 								<colgroup>
-									<col width="45">
-									<col width="120">
-									<col width="120">
-									<col width="90">
-									<col width="90">
-									<col width="120">
-									<col width="60">
-
-									<col width="90">
-
-									<col width="60">
-									<col width="60">
-									<col width="60">
-									<col width="60">
-
-									<col width="60">
-									<col width="60">
-									<col width="60">
-									<col width="60">
-									<col width="*">
+									<col width="14.28%">
+									<col width="14.28%">
+									<col width="14.28%">
+									<col width="14.28%">
+									<col width="14.28%">
+									<col width="14.28%">
+									<col width="14.28%">
 								</colgroup>
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th class="hasinput" colspan="17">
-											<span style="margin-left:15px;margin-right:20px;">기준일자</span>
-											<input type="text" class="form-control datepicker-s" style="display:inline;width:84px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_stdyy" name="s_stdyy" placeholder="[기준일자]">
-										</th>
-									</tr>
-                                    <tr>
-										<th class="search">검색</th>
-										<th class="hasinput">
-											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
-												<option value="">[전체]</option>
-												{% for code in dept_code_list %}
-												<option value="{{code.value}}">{{code.label}}</option>
-												{% endfor %}
-											</select>
-										</th>
-										<th class="hasinput">
-											<select class="form-control select2 w100p" id="s_mber_sn" name="s_mber_sn">
-												<option value="">[전체]</option>
-												{% for code in member_list %}
-												<option value="{{code.value}}">{{code.label}}</option>
-												{% endfor %}
-											</select>
-										</th>
-										<th class="hasinput">
-											<select class="form-control select2 w100p" id="s_mber_sttus_code" name="s_mber_sttus_code">
-												<option value="">[전체]</option>
-												{% for code in mber_sttus_code_list %}
-												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
-												{% endfor %}
-											</select>
-										</th>
-										<th class="hasinput">
-										</th>
-										<th class="hasinput">
-										</th>
-										<th class="hasinput">
-											<input type="number" step="1" min="1" class="form-control" placeholder="[년차]" id="s_cal_year" name="s_cal_year">
-										</th>
-										<th class="hasinput">
-										</th>
-										<th class="hasinput text-center" colspan="4">
-											직전 연차일수
-										</th>
-										<th class="hasinput text-center" colspan="4">
-											현 연차일수
-										</th>
-										<th class="hasinput">
+										<th class="hasinput" colspan="7">
+											<span style="margin-left:15px;margin-right:20px;">년월</span>
+											<input type="text" class="form-control datepicker-s" style="display:inline;width:96px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_calendar" name="s_calendar" placeholder="[기준일자]">
 										</th>
 									</tr>
 									<tr>
-										<th style="text-align:center!important;">No.</th>
-										<th style="text-align:center!important;">부서</th>
-										<th style="text-align:center!important;">사원명</th>
-										<th style="text-align:center!important;">상태</th>
-										<th style="text-align:center!important;">입사일자</th>
-										<th style="text-align:center!important;">근속년수</th>
-										<th style="text-align:center!important;">년차</th>
-										<th style="text-align:center!important;">퇴사일자</th>
-										<th style="text-align:center!important;">발생일수</th>
-										<th style="text-align:center!important;">조정일수</th>
-										<th style="text-align:center!important;">사용일수</th>
-										<th style="text-align:center!important;">잔여일수</th>
-										<th style="text-align:center!important;">발생일수</th>
-										<th style="text-align:center!important;">조정일수</th>
-										<th style="text-align:center!important;">사용일수</th>
-										<th style="text-align:center!important;">잔여일수</th>
-										<th style="text-align:center!important;">비고</th>
-<!--										<th style="text-align:center!important;">합계</th>-->
+										<th class="text-center" colspan="7" id="title">2023년 2월</th>
+									</tr>
+                                    <tr>
+										<th class="text-center color-red">일</th>
+										<th class="text-center">월</th>
+										<th class="text-center">화</th>
+										<th class="text-center">수</th>
+										<th class="text-center">목</th>
+										<th class="text-center">금</th>
+										<th class="text-center">토</th>
 									</tr>
 								</thead>
                                 <tbody>
@@ -359,8 +309,10 @@ getWorkPersonal = function(){
 
 	var params = '';
 	let offset = (new Date()).getTimezoneOffset() * 60000;
-
+	var calendar = $('.datepicker-s').val();
 	params += '&s_stdyy='+(new Date(now.getTime()-offset)).toISOString().split("T")[0];
+	params += '&calendar='+calendar;
+	console.log(params);
 	$.ajax({
 		url: '/api/work/ajax_get_personal',
 		type: 'GET',
@@ -371,8 +323,33 @@ getWorkPersonal = function(){
 		success: function (pResult) {
 			var pData = pResult.data[0];
 			var html = `<tr>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.last_tot).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.last_mod).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.last_use).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseInt(pData.last_tot) + parseInt(pData.last_mod) - parseInt(pData.last_use)).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.tot).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.mod).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.use).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseInt(pData.tot) + parseInt(pData.mod) - parseInt(pData.use)).toString().toFormat('NUMBER')}</td>
 						</tr>`;
 			$(document).find("#dtList0").find("tbody").html(html);
+			console.log(pResult.calendar);
+			var html = '';
+			$.each(pResult.calendar.rows, function(pIndex, pRow){
+				html += `<tr>`;
+				$.each(pRow, function(i, r){
+					let text = [0, 6].includes(i) ? "휴일" : (r == '' ? '' : pResult.timer[r]);
+					var rowHTML = `<div style="margin-top:10px;text-align:left!important;">${text}</div>`;
+					if(r=='') rowHTML = `<div style="margin-top:10px;text-align:left!important;"></div>`;
+					if([0, 6].includes(i)) html += `<td class="color-red text-right">${r}${rowHTML}</td>`;
+					else html += `<td class="text-right">${r}${rowHTML}</td>`;
+				});
+				for(let _=0;_<7-pRow.length;_++) html += `<td></td>`;
+				html += `</tr>`;
+			});
+			$(document).find("#dtList1").find("tbody").html(html);
+			$(document).find("#dtList1").find("#title").html(`${calendar.split("-")[0]}년 ${calendar.split("-")[1]}월`);
+			console.log();
 		}
 	});
 
@@ -445,7 +422,24 @@ $(function() {
 	/**************************************************************************
      *
      */
-
+	$('.datepicker-s').datepicker({
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+	});
+	var date = $('.datepicker-s').val();
+	if (date == '') {
+		$('.datepicker-s').datepicker('setDate', 'today');
+	}
+	$(document).on('change', '.datepicker-s', function(pEvent){
+		if ($(this).data('before')) {
+			if ($(this).data('before') != $(this).val()) {
+				getWorkPersonal();
+			}
+		} else {
+			getWorkPersonal();
+		}
+	});
 	getWorkPersonal();
 });
 </script>
