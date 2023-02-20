@@ -1,0 +1,310 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+
+    .border-left{
+        border-left: 1px solid black !important;
+    }
+    #summery{
+        top:45px;
+        left:720px;
+        width:400px;
+    }
+    #summery th, #summery td{
+        padding: 3px 3px!important;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summery{
+        top:150px;
+        left:13px;
+        width:400px;
+    }
+    #summery th, #summery td{
+        padding: 3px 3px!important;
+    }
+}
+</style>
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">일일근태현황 </li><li><span> 근태 관리</span></li>
+	</ol>
+</div>
+
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info">
+		<p><i class="fa-fw fa fa-info"></i>
+			일일 근태 현황을 관리합니다.
+		</p>
+	</div>
+    <!-- 집계표 -->
+	<table class="table table-bordered table-summery" id="summery">
+		<thead>
+			<tr><th colspan="4" style="text-align:center!important;">
+					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
+					집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+		</thead>
+        <tbody role="thead">
+			<tr>
+				<th style="background:#fff;width:200px;text-align:center;border-right:2px solid black;">총 인원</th>
+				<th style="background:#fff;width:200px;text-align:center;">휴가</th>
+				<th style="background:#fff;width:200px;text-align:center;">출장</th>
+				<th style="background:#fff;width:200px;text-align:center;">지각</th>
+			</tr>
+        </tbody>
+		<tbody>
+			<tr>
+				<td style="background:#fff;text-align:right;border-right:2px solid black;">0</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<td style="background:#fff;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+    <div id="temp">
+    </div>
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>사용자 목록</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="120">
+									<col width="120">
+									<col width="*">
+									<col width="120">
+									<col width="120">
+									<col width="120">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="hasinput" colspan="7">
+											<span style="margin-left:15px;margin-right:20px;">년월</span>
+											<input type="text" class="form-control datepicker-s" style="display:inline;width:96px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_calendar" name="s_calendar" placeholder="[기준일자]">
+										</th>
+									</tr>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_ofcps_code" name="s_ofcps_code">
+												<option value="">[전체]</option>
+												{% for code in ofcps_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_mber_nm" name="s_mber_nm">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>부서</th>
+										<th>직위</th>
+										<th>이름</th>
+										<th>근태</th>
+										<th>출근</th>
+										<th>퇴근</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+
+<script type="text/javascript">
+/******************************************************************************
+ * 사용자 목록을 조회한다.
+ */
+getWorkDailyList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 15,
+        ajax: {
+            url: '/api/work/ajax_get_work_daily_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_mber_nm': $('#dtList1').find('#s_mber_nm').val(),
+					's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_ofcps_code': $('#dtList1').find('#s_ofcps_code').val(),
+					's_calendar' : $('.datepicker-s').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'asc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'dept_nm' },
+            { data: 'ofcps_nm' },
+            { data: 'mber_nm' },
+            { data: 'status' },
+            { data: 'start_time' },
+            { data: 'end_time' },
+        ],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			var pData = pSettings.json.summary;
+			console.log(pData);
+            $('#summery').find('tbody td').eq(0).html(pData.total_count.toString().toFormat('NUMBER'));
+			$('#summery').find('tbody td').eq(1).html(pData.off_count.toString().toFormat('NUMBER'));
+            $('#summery').find('tbody td').eq(2).html(pData.out_count.toString().toFormat('NUMBER'));
+            $('#summery').find('tbody td').eq(3).html(pData.rate_count.toString().toFormat('NUMBER'));
+        },
+		initComplete: function(settings, json) {
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+		},
+    });
+}
+
+/******************************************************************************
+ * 사용자 목록을 조회한다.
+ */
+exportExcel = function()
+{
+	$('#btnExcel').on('click', function(event) {
+        // var url = '{base_url}member/member_export/excel/'+survey_sn;
+        // var start = $('.adv-table').find('#s_answer_dtm_start').val();
+        // if (start != '') {
+        //     url += '/' + start;
+        // }
+        // var end = $('.adv-table').find('#s_answer_dtm_end').val();
+        // if (end != '') {
+        //     url += '/' + end;
+        // }
+        // window.open(url, '_download');
+    });
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     *
+     */
+	$('#btnExcel').on('click', function(pEvent)
+	{
+		$('.dt-button.buttons-excel.buttons-html5').click();
+	});
+	$('.datepicker-s').datepicker({
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+	});
+	var date = $('.datepicker-s').val();
+	if (date == '') {
+		$('.datepicker-s').datepicker('setDate', 'today');
+	}
+
+	getWorkDailyList();
+});
+</script>
+{% endblock %}

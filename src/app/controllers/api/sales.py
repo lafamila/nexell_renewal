@@ -140,4 +140,17 @@ def ajax_get_contract():
         salesParams = {"s_cntrct_sn" : result['data']['cntrct_sn']}
         result['sales'] = sales.get_account_list(salesParams)
     result['status'] = True
-    return result
+    return jsonify(result)
+
+@bp.route('/ajax_get_sales_report', methods=['GET'])
+def ajax_get_sales_report():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = sales.get_account_report(params)
+    result['pAccountList'] = sales.get_p_account_list(params)
+    result['sAccountList'] = sales.get_s_account_list(params)
+    if "s_ddt_man" in params and params["s_ddt_man"]:
+        y, m, d = map(int, params["s_ddt_man"].split("-"))
+        result['date'] = "{}년 {}월 {}일".format(y, m, d)
+    result['status'] = True
+    return jsonify(result)

@@ -15,6 +15,9 @@ tbody .btnUpdate, tbody .btn{
     .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
         line-height: 0.85!important;
     }
+	.middle{
+		vertical-align: middle!important;
+	}
 
 </style>
 <!--########################################################################-->
@@ -81,10 +84,8 @@ tbody .btnUpdate, tbody .btn{
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
                         <h2><span id="year">2020</span>년 근태현황</h2>
 						<div class="widget-toolbar">
-                            <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
-							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+							<input type="text" class="form-control datepicker-s" style="display:inline;width:96px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_year" name="s_year" placeholder="[기준일자]">
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
-							<button type="button" class="btn btn-info" id="btnScreen"><i class="fa fa-print"> 출력 </i></button>
 						</div>
 						<div class="widget-toolbar">
 						</div>
@@ -99,7 +100,7 @@ tbody .btnUpdate, tbody .btn{
                             .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
                                 line-height: 0.95!important;
                             }
-                            .colorB{
+                            .colorSkyB{
                                 background:rgb(146, 205, 220);
                                 font-weight: bold;
                             }
@@ -158,7 +159,6 @@ tbody .btnUpdate, tbody .btn{
 									<col width="60">
 									<col width="60">
 									<col width="60">
-									<col width="60">
 									<col width="240">
 									<col width="240">
 									<col width="180">
@@ -168,41 +168,23 @@ tbody .btnUpdate, tbody .btn{
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th class="colorB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">부서</th>
-										<th class="colorB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">직위</th>
-										<th class="colorB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">성명</th>
+										<th class="colorSkyB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">부서</th>
+										<th class="colorSkyB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">직위</th>
+										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">성명</th>
 										<th class="tot right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">지&nbsp;&nbsp;&nbsp;각<br>(연간누계)</th>
-										<th class="colorB right_border" style="text-align:center!important;" colspan="5">휴가</th>
-										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">일반휴가 사용날짜</th>
-										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">반차 사용날짜</th>
+										<th class="colorSkyB right_border" style="text-align:center!important;" colspan="4">휴가</th>
+										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">연차 사용일</th>
+										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">반차 사용일</th>
 										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">기타</th>
 									</tr>
 									<tr>
-										<th class="colorB bottom_border" style="text-align:center;">총휴가일</th>
-										<th class="colorB bottom_border" style="text-align:center;">여름휴가</th>
-										<th class="colorB bottom_border" style="text-align:center;">일반휴가</th>
-										<th class="colorB bottom_border" style="text-align:center;">반차</th>
+										<th class="colorSkyB bottom_border" style="text-align:center;">총휴가일</th>
+										<th class="colorSkyB bottom_border" style="text-align:center;">연차</th>
+										<th class="colorSkyB bottom_border" style="text-align:center;">반차</th>
 										<th class="color-contract right_border bottom_border" style="text-align:center;">잔여<br>휴가일</th>
 									</tr>
                                 </thead>
                                 <tbody role='exec'>
-                                    {% for i in range(1, 31) %}
-                                    <tr id="row{{i}}" data-name="{{i}}">
-                                        <td class="colorG" style="text-align:center;" name="dept">&nbsp;</td>
-                                        <td class="colorG" style="text-align:center;" name="level"></td>
-                                        <td class="colorY right_border colorBtn" style="text-align:center;" name="name"></td>
-                                        <td class="text-number right_border" name="late"></td>
-                                        <td class="text-number" name="total"></td>
-                                        <td class="text-number" name="summer"></td>
-                                        <td class="text-number" name="ordinary"></td>
-                                        <td class="text-number" name="half"></td>
-                                        <td class="text-number right_border" name="remain"></td>
-                                        <td class="text-left" name="special"></td>
-                                        <td class="text-left" name="remark"></td>
-                                        <td class="text-left" name="new_remark"></td>
-                                    </tr>
-
-                                    {% endfor %}
                                 </tbody>
                             </table>
 						</div>
@@ -230,12 +212,13 @@ tbody .btnUpdate, tbody .btn{
 /******************************************************************************
  *
  */
-getWork = function(work_year)
+getWork = function(work_date)
 {
-    $("#dtList1").find("tbody[role=exec]").find("td").html('');
-    $("#dtList1").find("tbody[role=exec]").find("td[name=dept]").html('&nbsp;');
+	var work_year = work_date.split("-")[0];
+	let offset = (new Date()).getTimezoneOffset() * 60000;
+	var today = (new Date((new Date()).getTime()-offset)).toISOString().split("T")[0];
 	var params = '';
-	params += '&work_year='+work_year;
+	params += '&work_date='+work_date;
 	$.ajax({
 		url: '/api/work/ajax_get_work',
 		type: 'GET',
@@ -245,43 +228,35 @@ getWork = function(work_year)
 		processData: false,
 		success: function(pResult) {
 			console.log(pResult);
-            var pData = pResult.data;
-            $.each(pData, function(pIndex, pValue){
-                console.log(pValue);
-                if(pValue.work_month == 'late' || pValue.work_month == 'total' || pValue.work_month == 'summer' || pValue.work_month == 'ordinary'){
-                    var data = parseInt(pValue.work_data);
-                    if(isNaN(data)) data = 0;
-                    if(data == 0){
-                        data = '';
-                    }
-                    else{
-                        data = data + '';
-                    }
-                    $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").html(data.toFormat('NUMBER'));
-
-                }
-                else if(pValue.work_month == 'half'){
-                    var data = parseFloat(pValue.work_data);
-                    if(isNaN(data)) data = 0.0;
-                    if(data == 0.0){
-                        $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").html('');
-                    }
-                    else{
-                        $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").html(data.toFixed(1));
-                    }
-
-                }
-                else{
-                    $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").html(pValue.work_data);
-                    $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").data("state", pValue.memo_state);
-                    $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").data("sn", pValue.memo_sn);
-                    if(pValue.work_month == 'name' && pValue.memo_state == 1){
-                        $("#"+pValue.work_row).find("td[name="+pValue.work_month+"]").addClass("colored");
-                    }
-                }
-            });
-
-            calcTotal();
+			var html = '';
+			$.each(pResult.data, function(pIndex, pValue){
+				var _class = (pValue.today_rate == 1) ? "colorY" : "";
+				html += `<tr id="${pValue.mber_sn}" data-year="${work_year}">
+							<td class="colorG middle">${pValue.dept_nm}</td>
+							<td class="colorG middle">${pValue.ofcps_nm}</td>
+							<td>${pValue.mber_nm}</td>
+							<td class="${_class}">${pValue.rate_count}</td>
+							<td class="input-available" data-column="tot2">${pValue.tot}</td>
+							<td data-column="use">${pValue.use}</td>
+							<td data-column="half">${pValue.half}</td>
+							<td data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - parseFloat(pValue.half)).toFixed(1)}</td>
+							<td></td>
+							<td></td>
+							<td class="colorBtn input-available" data-column="rm2">${pValue.rm}</td>
+						 </tr>`;
+			});
+			$(document).find("#dtList1 tbody").html(html);
+			$(document).find("#dtList1 tbody").yRowspan(0);
+			$(document).find("#dtList1 tbody").yRowspan(1);
+			
+			$.each(pResult.work_data, function(pIndex, pValue){
+				var rowId = pValue.work_row;
+				var column = pValue.work_month;
+				$(document).find(`#${rowId}`).find(`td[data-column="${column}"]`).removeClass("colored");
+				if(parseInt(pValue.work_class) == 1)
+					$(document).find(`#${rowId}`).find(`td[data-column="${column}"]`).addClass("colored");
+			});
+			
             $("#year").html(work_year);
 		}
 	});
@@ -289,233 +264,121 @@ getWork = function(work_year)
 
 
 
-calcTotal = function()
-{
-    var trs = $("#dtList1").find("tbody[role=exec]").find("tr");
-    $.each(trs, function(pIndex, pValue){
-        var tr = $(pValue);
-        var total = $(tr).find("td[name=total]").html();
-        var summer = $(tr).find("td[name=summer]").html();
-        var ordinary = $(tr).find("td[name=ordinary]").html();
-        var half = $(tr).find("td[name=half]").html();
 
-        if(total == '' && summer == '' && ordinary == '' && half == ''){
-            return;
-        }
+set_color = function(td){
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
 
-        total = total == '' ? 0.0 : parseFloat(total);
-        summer = summer == '' ? 0.0 : parseFloat(summer);
-        ordinary = ordinary == '' ? 0.0 : parseFloat(ordinary);
-        half = half == '' ? 0.0 : parseFloat(half);
-        var remain = total - summer - ordinary - half;
-
-        $(tr).find("td[name=remain]").html(remain.toFixed(1));
-//        if($(tr).find("td[name=name]").hasClass("colored")){
-//            $(tr).find("td[name=summer]").addClass("colored");
-//            $(tr).find("td[name=ordinary]").addClass("colored");
-//            $(tr).find("td[name=half]").addClass("colored");
-//            $(tr).find("td[name=late]").addClass("colored");
-//        }
-//        else{
-//            $(tr).find("td[name=summer]").removeClass("colored");
-//            $(tr).find("td[name=ordinary]").removeClass("colored");
-//            $(tr).find("td[name=half]").removeClass("colored");
-//            $(tr).find("td[name=late]").removeClass("colored");
-//
-//        }
-    });
-}
-
-insertWork = function(work_year, work_row, work_month, work_data)
-{
+	var rowId = $(td).parent().attr("id");
+	var column = $(td).data("column");
+	var year = $(td).parent().data("year")
+	var colored = $(td).hasClass("colored") ? 0 : 1;
 	var params = '';
-	params += '&work_year='+work_year;
-	params += '&work_row='+work_row;
-	params += '&work_month='+work_month;
-	params += '&work_data='+work_data;
-    console.log(params);
+	params += '&work_year='+year;
+	params += '&work_row='+rowId;
+	params += '&work_month='+column;
+	params += '&work_class='+colored;
 	$.ajax({
-		url: '{base_url}work/ajax_insert_work',
+		url: '/api/work/ajax_set_work_data',
 		type: 'GET',
 		data: params,
 		dataType: 'json',
 		contentType: false,
 		processData: false,
-		validate: function() {
-			return true;
-		},
-		success: function(pResult) {
-            calcTotal();
+		success: function (pResult) {
+			if(pResult.status){
+				if(colored == 0){
+					$(td).removeClass("colored");
+				}
+				else{
+					$(td).addClass("colored");
+				}
+			}
 		}
 	});
+
+
 }
-
-insertMemo = function(work_row, memo_state)
-{
-	var params = '';
-	params += '&work_row='+work_row;
-	params += '&memo_state='+memo_state;
-    console.log(params);
-	$.ajax({
-		url: '{base_url}work/ajax_insert_memo',
-		type: 'GET',
-		data: params,
-		dataType: 'json',
-		contentType: false,
-		processData: false,
-		validate: function() {
-			return true;
-		},
-		success: function(pResult) {
-            location.reload();
-		}
-	});
-}
-
-updateMemo = function(work_row, memo_sn, memo_state)
-{
-	var params = '';
-	params += '&memo_sn='+memo_sn;
-	params += '&memo_state='+memo_state;
-    console.log(params);
-	$.ajax({
-		url: '{base_url}work/ajax_update_memo',
-		type: 'GET',
-		data: params,
-		dataType: 'json',
-		contentType: false,
-		processData: false,
-		validate: function() {
-			return true;
-		},
-		success: function(pResult) {
-            if(memo_state==1){
-
-                $(document).find("#"+work_row).find("td[name=name]").addClass("colored");
-//                $(document).find("#"+work_row).find("td[name=summer]").addClass("colored");
-//                $(document).find("#"+work_row).find("td[name=ordinary]").addClass("colored");
-//                $(document).find("#"+work_row).find("td[name=half]").addClass("colored");
-//                $(document).find("#"+work_row).find("td[name=late]").addClass("colored");
-            }
-            else{
-                $(document).find("#"+work_row).find("td[name=name]").removeClass("colored");
-//                $(document).find("#"+work_row).find("td[name=summer]").removeClass("colored");
-//                $(document).find("#"+work_row).find("td[name=ordinary]").removeClass("colored");
-//                $(document).find("#"+work_row).find("td[name=half]").removeClass("colored");
-//                $(document).find("#"+work_row).find("td[name=late]").removeClass("colored");
-
-            }
-            $.each($(document).find("#"+work_row).find("td"), function(pI, pTag){
-                $(pTag).data("state", memo_state);
-            });
-		}
-	});
-}
-
-$(document).on('dblclick', "td[name=dept],td[name=level], td[name=name], td[name=late], td[name=total], td[name=summer], td[name=ordinary], td[name=half], td[name=special], td[name=remark], td[name=new_remark]", function(pEvent){
-    var loginid = $('#loginID').val();
-    if(loginid != 'ma_keunmi' && loginid != 'rachel' && loginid != 'nexelll'){
-        alert("권한이 없습니다.");
-        return;
-    }
-    var year = $("#s_year").val();
-    var row = $(this).parent().attr('id');
-    var month = $(this).attr('name');
-    var data = $(this).html().replaceAll(',', '');
-    if(data == '&nbsp;'){
-        data = '';
-    }
-    var inputValue = prompt('값을 입력하세요.', data);
-    inputValue = inputValue.replaceAll(',', '');
-    if (inputValue != null && inputValue != data) {
-
-        if(month == 'late' || month == 'total' || month == 'summer' || month == 'ordinary'){
-            if(parseInt(inputValue) != 0)
-                $(this).html(inputValue.toString().toFormat('NUMBER'));
-            else{
-                $(this).html('');
-                inputValue = 0;
-            }
-            insertWork(year, row, month, inputValue);
-        }
-        else if(month == 'half'){
-            if(parseFloat(inputValue) != 0.0)
-                $(this).html(parseFloat(inputValue).toFixed(1));
-            else{
-                $(this).html('');
-                inputValue = 0;
-            }
-            insertWork(year, row, month, inputValue);
-
-        }
-        else{
-            if(inputValue == ''){
-                $(this).html('&nbsp;');
-            }
-            else
-                $(this).html(inputValue);
-            insertWork(year, row, month, inputValue);
-        }
-
-    }
-
-});
-
 var timer;
-$(document).on('click', ".colorBtn", function(pEvent){
-    var row = $(this).parent().attr('id');
-    var data = $(this).html().replaceAll(',', '');
-    var _class = $(this).hasClass('colored');
-    var loginid = $('#loginID').val();
-    var state = parseInt($(this).data("state"));
-    var sn = parseInt($(this).data("sn"));
-    if(data == '&nbsp;'){
-        data = '';
-    }
-    if (timer) {
-        clearTimeout(timer);
-        timer = null;
-    }
-    else{
-        timer = setTimeout(function() {
-            if(loginid == 'ma_keunmi' || loginid == 'rachel'){
-                if(data != ''){
-                    if(_class){
-                        updateMemo(row, sn, 0);
-
-                    }
-                    else{
-                        if(state == -1){
-                            insertMemo(row, 1);
-                        }
-                        else{
-                            updateMemo(row, sn, 1);
-                        }
-                    }
-                }
-
-            }
-            else{
-                alert("권한이 없습니다.");
-            }
-
+$(document).on("click", ".colorBtn", function(){
+	var td = $(this);
+	if(timer){
+		clearTimeout(timer);
+		timer = null;
+	}
+	else{
+		timer = setTimeout(function(){
+			set_color(td);
             clearTimeout(timer);
             timer = null;
-        }, 250);
+		}, 250);
+	}
+});
 
-    }
+$(document).on("dblclick", ".input-available", function(){
+	var column = $(this).data("column");
+	var colored = $(this).hasClass("colored");
+	if(colored)
+		return false;
+
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+
+	var data = prompt("값을 입력하세요.");
+	if(!['rm2'].includes(column)){
+		try{
+			if(/^\d+$/.test(data)){
+				data = parseInt(data);
+			}
+			else{
+				throw new Error(`Parameter is not a number : ${data}`);
+			}
+		}catch(e){
+			alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+			return false;
+		}
+	}
+	var td = $(this);
+	var rowId = $(this).parent().attr("id");
+	var s_year = $(this).parent().data("year");
+	var params = '';
+	params += '&work_year='+s_year;
+	params += '&work_row='+rowId;
+	params += '&work_month='+column;
+	params += '&work_data='+data;
+	params += '&work_class=0';
+	$.ajax({
+		url: '/api/work/ajax_set_work_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			if(pResult.status){
+				if(column == 'rm2'){
+					$(td).text(data.toString());
+				}
+				else{
+					$(td).text(data.toString().toFormat("NUMBER"));
+					let use = parseFloat($(td).parent().find(`td[data-column="use"]`).html().replace(",", "")); if(isNaN(use)) use=0.0;
+					let half = parseFloat($(td).parent().find(`td[data-column="half"]`).html().replace(",", "")); if(isNaN(half)) half=0.0;
+					$(td).parent().find(`td[data-column="remain"]`).html((data-use-half).toFixed(1))
+				}
+			}
+		}
+	});
 
 });
 
-$(document).on('click', "#s_submit", function(pEvent){
-
-    var year = $("#s_year").val();
-	getWork(year);
-
-});
-$(document).on('click', '#btnScreen', function(e) {
-	window.print();
-});
 $(document).on('click', '#btnExcel', function(e) {
     var postfix = $("#s_year").val();
     var fileName = "근태관리현황_"+postfix+".xls";
@@ -557,8 +420,6 @@ $(document).on('click', '#btnExcel', function(e) {
     a.download = fileName;
     a.click();
 	getWork(postfix);
-
-//    getReportExpectSales2($('#popReport3').find('#r3_s_ddt_man').val());
 
     e.preventDefault();
 
@@ -608,9 +469,28 @@ $(function() {
      *
      */
     //$('#dtList1 tbody').yRowspan(0);
-    var year = new Date().getFullYear();
-    $("#s_year").val(year);
-	getWork(year);
+	$('.datepicker-s').datepicker({
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+	});
+	var date = $('.datepicker-s').val();
+	if (date == '') {
+		$('.datepicker-s').datepicker('setDate', 'today');
+		var date = $('.datepicker-s').val();
+	}
+	$(document).on('change', '.datepicker-s', function(pEvent){
+		var date = $(this).val();
+		if ($(this).data('before')) {
+			if ($(this).data('before') != $(this).val()) {
+				getWork(date);
+			}
+		} else {
+			getWork(date);
+		}
+	});
+
+	getWork(date);
 });
 </script>
 

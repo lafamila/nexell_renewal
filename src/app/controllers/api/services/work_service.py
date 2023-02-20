@@ -27,6 +27,7 @@ def get_work_datatable(params):
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
                     FROM member m
                     WHERE m.enter_de <= '{0}'
+                    AND m.dept_code <> ''
             """.format(params["s_stdyy"], last, last_years+1, last_years)
     data = ['%Y-%m-%d']
     if "s_dept_code" in params and params["s_dept_code"]:
@@ -53,12 +54,76 @@ def get_work_time(params):
     query = """SELECT workdate AS work_date
                     , WSTime AS start_time
                     , WCTime AS end_time 
-                FROM t_secom_workhistory 
+                FROM T_SECOM_WORKHISTORY
                 WHERE WorkDate LIKE %s AND Name=%s AND WSTime <> ''"""
     data = ['{0}{1}%'.format(y, m), params['s_mber_nm']]
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
+
+def get_work_daily_summary(params, limit):
+    query = """SELECT COUNT(*) AS total_count
+                    , SUM(IF((w.WSTime IS NOT NULL AND w.WSTime > %s),1, 0)) AS rate_count
+                    , 0 AS off_count
+                    , 0 AS out_count
+                FROM member m
+                LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
+                ON m.mber_nm=w.Name
+                WHERE 1=1
+                AND m.mber_sttus_code='H'
+                AND m.dept_code <> ''
+            """
+    data = [params['s_calendar'].replace("-", "")+limit+"00", params['s_calendar'].replace("-", "")]
+    if "s_mber_nm" in params and params["s_mber_nm"]:
+        query += " AND m.mber_nm LIKE %s"
+        data.append("%{}%".format(params['s_mber_nm']))
+
+    if "s_dept_code" in params and params["s_dept_code"]:
+        query += " AND m.dept_code = %s"
+        data.append(params['s_dept_code'])
+
+    if "s_ofcps_code" in params and params["s_ofcps_code"]:
+        query += " AND m.ofcps_code = %s"
+        data.append(params['s_ofcps_code'])
+
+    g.curs.execute(query, data)
+    result = g.curs.fetchone()
+    return result
+
+def get_work_daily_datatable(params):
+    query = """SELECT '1' AS ctmmny_sn
+                    , m.mber_sn
+                    , m.mber_nm
+                    , m.ofcps_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm
+                    , m.dept_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+                    , w.WSTime AS status
+                    , w.WSTime AS start_time
+                    , w.WCTime AS end_time
+                FROM member m
+                LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
+                ON m.mber_nm=w.Name
+                WHERE 1=1
+                AND m.mber_sttus_code='H'
+                AND m.dept_code <> ''
+            """
+    data = [params['s_calendar'].replace("-", "")]
+    if "s_mber_nm" in params and params["s_mber_nm"]:
+        query += " AND m.mber_nm LIKE %s"
+        data.append("%{}%".format(params['s_mber_nm']))
+
+    if "s_dept_code" in params and params["s_dept_code"]:
+        query += " AND m.dept_code = %s"
+        data.append(params['s_dept_code'])
+
+    if "s_ofcps_code" in params and params["s_ofcps_code"]:
+        query += " AND m.ofcps_code = %s"
+        data.append(params['s_ofcps_code'])
+
+
+    return dt_query(query, data, params)
+
 
 def get_work_calendar(params):
     cal = calendar.TextCalendar()
@@ -79,18 +144,56 @@ def get_work_calendar(params):
         result.append(rowlist)
     return {"title" : title, "rows" : result}
 
+def get_work_data(params):
+    g.curs.execute("SELECT work_sn, work_year, work_row, work_month, work_data, work_class FROM work WHERE work_year=%s", params['work_date'].split("-")[0])
+    result = g.curs.fetchall()
+    return result
+
+
 def get_work(params):
-    query = """SELECT t.*, IFNULL(s.memo_sn, -1) AS memo_sn, IFNULL(s.memo_state, -1) AS memo_state FROM
-				(SELECT e.work_row
-				, e.work_month
-				, e.work_data
-				FROM work e
-				WHERE 1=1
-				AND e.work_year=%(work_year)s
-				AND e.work_sn IN (SELECT MAX(ex.work_sn) FROM work ex WHERE ex.work_year=%(work_year)s GROUP BY ex.work_row, ex.work_month)
-				) t LEFT OUTER JOIN (SELECT * FROM work_memo WHERE work_date=DATE_FORMAT(now(), %(format)s)) s ON t.work_row=s.work_row"""
-    params['format'] = '%Y-%m-%d'
-    g.curs.execute(query, params)
+    work_date = params['work_date']
+    work_year = work_date.split("-")[0]
+    query = """SELECT '1' AS ctmmny_sn
+                    , m.mber_sn
+                    , m.mber_nm
+                    , m.ofcps_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm
+                    , m.dept_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+                    , IFNULL(wt.rate_tot, 0) AS rate_count
+                    , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='tot2'), (15 + FLOOR(DATEDIFF('{0}', m.enter_de)/730))) AS tot
+                    , 0 AS `use`
+                    , 0 AS `half`
+                    , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='rm2'), '') AS rm
+                    , IF(w.WSTime IS NULL OR w.WSTime='', 0,
+                    CASE DAYOFWEEK(STR_TO_DATE(w.WorkDate, %s))-1
+                        WHEN 0 THEN 0
+                        WHEN 6 THEN 0
+                        WHEN 1 THEN IF(SUBSTRING(w.WSTime, 9, 4) > '0900', 1, 0)
+                        ELSE IF(SUBSTRING(w.WSTime, 9, 4) > '0840', 1, 0)
+                    END) AS today_rate
+    				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
+                FROM member m
+                LEFT OUTER JOIN 
+                (SELECT SUM(IF(WSTime IS NULL OR WSTime='', 0,
+                    CASE DAYOFWEEK(STR_TO_DATE(WorkDate, %s))-1
+                        WHEN 0 THEN 0
+                        WHEN 6 THEN 0
+                        WHEN 1 THEN IF(SUBSTRING(WSTime, 9, 4) > '0900', 1, 0)
+                        ELSE IF(SUBSTRING(WSTime, 9, 4) > '0840', 1, 0)
+                    END)) AS rate_tot
+                    , Name AS name 
+                    FROM T_SECOM_WORKHISTORY WHERE 1=1 AND WorkDate LIKE %s GROUP BY Name, Sabun) wt
+                ON m.mber_nm=wt.name
+                LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
+                ON m.mber_nm=w.Name
+                WHERE 1=1
+                AND m.mber_sttus_code='H'
+                AND m.dept_code <> ''
+                ORDER BY code_ordr ASC
+                    """.format(work_date, work_year)
+    data = ['%Y%m%d', '%Y%m%d', '{}%'.format(work_year), work_date.replace("-", "")]
+    g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
 
@@ -100,7 +203,35 @@ def set_work_data(params):
     if row:
         result = g.curs.fetchone()
         params['work_sn'] = result['work_sn']
-        g.curs.execute("UPDATE work SET work_data=%(work_data)s WHERE work_sn=%(work_sn)s", params)
+
+        g.curs.execute("UPDATE work SET {} WHERE work_sn=%(work_sn)s".format(",".join(["{0}=%({0})s".format(t) for t in ["work_data", "work_class"] if t in params])), params)
 
     else:
-        g.curs.execute("INSERT INTO work(work_year, work_row, work_month, work_data) VALUES(%(work_year)s, %(work_row)s, %(work_month)s, %(work_data)s)", params)
+        if "work_data" not in params:
+            params["work_data"] = ""
+        if "work_class" not in params:
+            params["work_class"] = 0
+        g.curs.execute("INSERT INTO work(work_year, work_row, work_month, work_data, work_class) VALUES(%(work_year)s, %(work_row)s, %(work_month)s, %(work_data)s, %(work_class)s)", params)
+
+def get_today(params):
+    work_date = params['s_today']
+    work_year = work_date.split("-")[0]
+    query = """SELECT '1' AS ctmmny_sn
+                    , IF(w.WSTime IS NULL OR w.WSTime='', 0,
+                    CASE DAYOFWEEK(STR_TO_DATE(w.WorkDate, %s))-1
+                        WHEN 0 THEN 0
+                        WHEN 6 THEN 0
+                        WHEN 1 THEN IF(SUBSTRING(w.WSTime, 9, 4) > '0900', 1, 0)
+                        ELSE IF(SUBSTRING(w.WSTime, 9, 4) > '0840', 1, 0)
+                    END) AS today_rate
+    				, w.WSTime AS start_time
+    				, w.WCTime AS end_time
+                FROM member m
+                LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
+                ON m.mber_nm=w.Name
+                WHERE 1=1
+                AND m.mber_sn=%s"""
+    data = ['%Y%m%d', work_date.replace("-", ""), params['mber_sn']]
+    g.curs.execute(query, data)
+    result = g.curs.fetchone()
+    return result

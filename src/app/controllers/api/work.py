@@ -29,6 +29,7 @@ def ajax_get_work():
     params = request.args.to_dict()
     result = dict()
     result['data'] = wk.get_work(params)
+    result['work_data'] = wk.get_work_data(params)
     result['status'] = True
     return jsonify(result)
 
@@ -53,7 +54,6 @@ def ajax_get_personal():
         work_date = t['work_date']
         y, m, d = work_date[:4], work_date[4:6], work_date[6:]
         result['timer'][int(d)] = (t['start_time'], t['end_time'])
-    print(result['timer'])
     for _ in result['calendar']['rows']:
         for i, d in enumerate(_):
             if d != '':
@@ -62,7 +62,6 @@ def ajax_get_personal():
                     s = "{}:{}".format(start_time[-6:-4], start_time[-4:-2])
                     _class = "color-blue"
                     status = "근무"
-                    print(LIMIT_TIMER[i], start_time[-6:-2])
                     if int(LIMIT_TIMER[i]) < int(start_time[-6:-2]):
                         _class = "color-red"
                         status = "지각"
@@ -83,3 +82,30 @@ def ajax_set_work_data():
     wk.set_work_data(params)
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
 
+@bp.route('/ajax_get_work_daily_datatable', methods=['POST'])
+def ajax_get_work_daily_datatable():
+    params = request.form.to_dict()
+    result = wk.get_work_daily_datatable(params)
+    weekday = (datetime.strptime(params["s_calendar"], "%Y-%m-%d").weekday()+1)%7
+    result['summary'] = wk.get_work_daily_summary(params, LIMIT_TIMER[weekday])
+    for d in result['data']:
+        if d["start_time"] == '':
+            d["status"] = "미등록"
+        elif int(d["start_time"][-6:-2]) > int(LIMIT_TIMER[weekday]):
+            d["status"] = "지각"
+            d["start_time"] = "{}:{}:{}".format(d["start_time"][-6:-4], d["start_time"][-4:-2], d["start_time"][-2:])
+        # TODO : 휴가 출장 추가
+        else:
+            d["start_time"] = "{}:{}:{}".format(d["start_time"][-6:-4], d["start_time"][-4:-2], d["start_time"][-2:])
+            d["status"] = "근무"
+            if d["end_time"] != '':
+                d["end_time"] = "{}:{}:{}".format(d["end_time"][-6:-4], d["end_time"][-4:-2], d["end_time"][-2:])
+    return jsonify(result)
+
+
+@bp.route('/ajax_today', methods=['GET'])
+def ajax_today():
+    params = request.args.to_dict()
+    params['mber_sn'] = session['member']['member_sn']
+    result = wk.get_today(params)
+    return jsonify({"status" : True, "data" : result})

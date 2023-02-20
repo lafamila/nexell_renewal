@@ -17,3 +17,8 @@ def year_page():
 @session_helper.session_check
 def personal_page():
     return render_template('work_personal.html')
+
+@bp.route('/daily')
+@session_helper.session_check
+def daily_page():
+    return render_template('work_daily.html')

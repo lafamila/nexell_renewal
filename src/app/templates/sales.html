@@ -101,9 +101,8 @@ tbody .btnUpdate, tbody .btnPrint{
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
 						<h2>매입/매출 목록</h2>
 						<div class="widget-toolbar">
-<!--							<button type="button" class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 매입/매출 보고서</i></button>-->
-<!--							<button type="button" class="btn btn-info colorP" data-toggle="modal" href="#popReport2"><i class="fa fa-print"> 외상 채권</i></button>-->
-<!--							<button type="button" class="btn btn-info colorP" data-toggle="modal" href="#popReport3"><i class="fa fa-print"> 외상 채권</i></button>-->
+							<button type="button" class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 매입/매출 보고서</i></button>
+							<button type="button" class="btn btn-info colorP" data-toggle="modal" href="#popReport3"><i class="fa fa-print"> 외상 채권</i></button>
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
 					</header>
@@ -1627,6 +1626,772 @@ $(function() {
 //	});
 });
 </script>
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:82%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r1_s_ddt_man" name="r1_s_ddt_man">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+<style>
+@media only screen and (min-width:320px) and (max-width:800px)  {
+    #popReport1{
+        font-size: 9px !important;
+        line-height: 1.0 !important;
+    }
+    #temp.table>tbody>tr>td, #temp.table>tbody>tr>th, #temp.table>tfoot>tr>td, #temp.table>tfoot>tr>th, #temp.table>thead>tr>td, #temp.table>thead>tr>th {
+        font-size: 9px !important;
+        line-height: 1.0 !important;
+    }
 
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+
+    #popReport1{
+        font-size: 11px !important;
+        line-height: 0.5 !important;
+    }
+    #temp.table>tbody>tr>td, #temp.table>tbody>tr>th, #temp.table>tfoot>tr>td, #temp.table>tfoot>tr>th, #temp.table>thead>tr>td, #temp.table>thead>tr>th {
+        font-size: 13px !important;
+        line-height: 0.5 !important;
+    }
+
+}
+#rcppay_status00 , #rcppay_status00 thead, #rcppay_status00 tbody, #rcppay_status00 tbody[role=header], #rcppay_status00 tbody[role=body], #rcppay_status00 tbody[role=footer], #rcppay_status00 tfoot, #rcppay_status00 th, #rcppay_status00 td{
+	border:none!important;
+}
+#rcppay_status11 , #rcppay_status11 thead, #rcppay_status11 tbody, #rcppay_status11 tbody[role=header], #rcppay_status11 tbody[role=body], #rcppay_status11 tbody[role=footer], #rcppay_status11 tfoot, #rcppay_status11 th, #rcppay_status11 td{
+	border:none!important;
+}
+#rcppay_status22 , #rcppay_status22 thead, #rcppay_status22 tbody, #rcppay_status22 tbody[role=header], #rcppay_status22 tbody[role=body], #rcppay_status22 tbody[role=footer], #rcppay_status22 tfoot, #rcppay_status22 th, #rcppay_status22 td{
+	border:none!important;
+}
+#rcppay_status_result2 , #rcppay_status_result2 thead, #rcppay_status_result2 tbody, #rcppay_status_result2 tbody[role=header], #rcppay_status_result2 tbody[role=body], #rcppay_status_result2 tbody[role=footer], #rcppay_status_result2 tfoot, #rcppay_status_result2 th, #rcppay_status_result2 td{
+	border:none!important;
+}
+
+
+</style>
+
+
+<div class="title"><h2 class="colorLS">매입/매출 보고서</h2></div>
+
+<br>
+<h5 class="sub-title" id="rptDate">0000년 00월 00일</h5>
+<table id="rptTable1">
+	<colgroup>
+		<col width="100">
+		<col width="*">
+		<col width="50">
+		<col width="120">
+		<col width="140">
+		<col width="230">
+		<col width="120">
+		<col width="*">
+		<col width="50">
+		<col width="130">
+		<col width="130">
+		<col width="130">
+		<col width="130">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="colorG" colspan="4">매입</th>
+			<th class="colorO" colspan="9">매출</th>
+		</tr>
+		<tr>
+			<th class="colorG">매입처코드</th>
+			<th class="colorG">모델명</th>
+			<th class="colorG">수량</th>
+			<th class="colorG">금액</th>
+			<th class="colorO">거래처명</th>
+			<th class="colorO">현장명</th>
+			<th class="colorO">영업부서</th>
+			<th class="colorO">모델명</th>
+			<th class="colorO">수량</th>
+			<th class="colorO">현금</th>
+			<th class="colorO">외상</th>
+			<th class="colorO">M(S)/H</th>
+			<th class="colorO">현장지원</th>
+		</tr>
+	</thead>
+	<tbody role="body">
+	</tbody>
+	<tfoot>
+		<tr>
+			<th class="colorG" style="" colspan="3" rowspan="2">합계</th>
+			<th class="colorG text-number" rowspan="2"></th>
+			<th class="colorO" style="" colspan="5">소계</th>
+			<th class="colorO text-number"></th>
+			<th class="colorO text-number"></th>
+			<th class="colorO text-number"></th>
+			<th class="colorO text-number"></th>
+		</tr>
+        <tr>
+            <th class="colorO" style="" colspan="5">매출 합계 (현금 + 외상)</th>
+            <th class="colorO" style="" colspan="4"></th>
+        </tr>
+	</tfoot>
+</table>
+<!------------------------------------------------------------------------------------------->
+<br>
+<div class="row-x" style="display:flow-root;">
+	<article style="width:49%!important;float:left!important;">
+		<h5 class="sub-title underline">매입처별 월 누계금액</h5>
+		<table id="rptTable2">
+			<colgroup>
+				<col width="250">
+				<col width="*">
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="colorG">매입코드</th>
+					<th class="colorG">금액</th>
+				</tr>
+			</thead>
+			<tbody role="body">
+			</tbody>
+			<tfoot>
+				<tr>
+					<th class="colorG">매입 월 누계</th>
+					<td class="colorG text-number">0</td>
+				</tr>
+			</tfoot>
+		</table>
+	</article>
+	<article style="width:49%!important;float:right!important;">
+		<h5 class="sub-title underline">매출유형별 월 누계금액</h5>
+		<table id="rptTable3">
+			<colgroup>
+				<col width="250">
+				<col width="*">
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="colorO">매출구분</th>
+					<th class="colorO">금액</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			<tfoot>
+				<tr>
+					<th class="colorO">매출 월 누계</th>
+					<td class="colorO text-number">0</td>
+				</tr>
+			</tfoot>
+		</table>
+	</article>
+                </div>
+
+<br/>
+<div class="title"><h2 class="colorLS" style="font-size:15px!important;">외상채권/미수금현황</h2></div>
+<table class="table table-bordered w80p" id="temp">
+     <colgroup>
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="150">
+        <col width="150">
+    </colgroup>
+    <tbody role="header">
+        <tr>
+            <th class="colorG">내역</th>
+            <th class="colorG">채권전일잔액</th>
+            <th class="colorG">금일입금액</th>
+            <th class="colorG">금일 장비출고외상금액</th>
+            <th class="colorG" id="sales_memo_title" name="memo"></th>
+            <th class="colorG">채권금일잔액</th>
+        </tr>
+    </tbody>
+    <tbody role="body">
+        <tr class="colorW">
+            <th class="colorG">금액</th>
+<!--            <th class="colorW" colspan="4">저장된 값이 없습니다.</th>-->
+            <th class="colorY text-number" id="value0" name="memo"></th>
+            <th class="colorY text-number" id="value1" name="memo"></th>
+            <th class="colorY text-number" id="value2" name="memo"></th>
+            <th class="colorY text-number" id="value3" name="memo"></th>
+            <th class="colorW text-number" id="total"></th>
+        </tr>
+    </tbody>
+</table>
+<!-- 기성 현황 시작 -->
+<h5 class="sub-title" id="rptDate8"></h5>
+<table class="table table-bordered w80p" id="temp">
+     <colgroup>
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="150">
+        <col width="150">
+    </colgroup>
+    <tbody role="header">
+        <tr>
+            <th class="colorO">내역</th>
+            <th class="colorO" colspan="1" id="month1">&nbsp;</th>
+            <th class="colorO" colspan="1" id="month2">&nbsp;</th>
+            <th class="colorO" colspan="1" id="month3">&nbsp;</th>
+            <th class="colorO" colspan="1">장기미수금</th>
+            <th class="colorO" colspan="1">계</th>
+        </tr>
+    </tbody>
+    <tbody role="body">
+        <tr class="colorW">
+            <th class="colorO">금액</th>
+<!--            <th class="colorW" colspan="4">저장된 값이 없습니다.</th>-->
+            <th class="colorW text-number" colspan="1" id="valueTemp0">&nbsp;</th>
+            <th class="colorW text-number" colspan="1" id="valueTemp1">&nbsp;</th>
+            <th class="colorW text-number" colspan="1" id="valueTemp2">&nbsp;</th>
+            <th class="colorW text-number" colspan="1" id="valueTemp3">&nbsp;</th>
+            <th class="colorW text-number" colspan="1" id="totalTemp">0</th>
+        </tr>
+    </tbody>
+</table>
+<table id="rcppay_status00" class="custom" style="visibility:hidden;">
+	<tbody role="body">
+        <tr>
+            <th style="width:62%;padding:0px!important;vertical-align: top!important;">
+                <table class="sData" style="border:0px!important;">
+
+                    <colgroup>
+                        <col width="60">
+                        <col width="120">
+                        <col width="220">
+                        <col width="80">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="120">
+                        <col width="80">
+                        <col width="60">
+                        <col width="80">
+                        <col width="100">
+                    </colgroup>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorG" colspan="12">입금</th>
+                        </tr>
+                    </tbody>
+
+
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <td class="colorG">출고월</td>
+                            <td class="colorG">거래처명</td>
+                            <td class="colorG">현장명</td>
+                            <td class="colorG">부서</td>
+                            <td class="colorG">장비대</td>
+                            <td class="colorG">로지텍</td>
+                            <td class="colorG">설치비</td>
+                            <td class="colorG">세금계산서금액</td>
+                            <td class="colorG">거래구분</td>
+                            <td class="colorG">예정일</td>
+                            <td class="colorButton">입금일</td>
+                            <td class="colorButton">입금액</td>
+                        </tr>
+                    </tbody>
+                    <tbody role="body" style="border:0px!important;">
+                        <tr class="colorW">
+
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorG" style="" colspan="4">합계</th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorP text-number" colspan="2"></th>
+                            <th class="colorButton"></th>
+                            <th class="colorButton text-number"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </th>
+            <th style="width:38%;padding:0px!important;vertical-align: top!important;">
+                <table class="pData" style="border:0px!important;">
+
+                    <colgroup>
+                        <col width="120">
+                        <col width="270">
+
+                        <col width="110">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                    </colgroup>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorO" colspan="6">출금</th>
+                        </tr>
+                    </tbody>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorO">거래처명</th>
+                            <th class="colorO">현장명</th>
+                            <th class="colorO">세금계산서금액</th>
+                            <th class="colorO">예정일</th>
+                            <th class="colorButton">지급일</th>
+                            <th class="colorButton">지급액</th>
+                        </tr>
+                    </tbody>
+                    <tbody role="body" style="border:0px!important;">
+                        <tr class="colorW">
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorO" style="" colspan="2">합계</th>
+                            <th class="colorO text-number"></th>
+                            <th class="colorO text-number"></th>
+                            <th class="colorButton"></th>
+                            <th class="colorButton text-number"></th>
+                        </tr>
+                    </tfoot>
+
+                </table>
+            </th>
+        </tr>
+	</tbody>
+</table>
+<table id="rcppay_status11" class="custom" style="visibility:hidden;">
+	<tbody role="body">
+        <tr>
+            <th style="width:62%;padding:0px!important;vertical-align: top!important;">
+                <table class="sData" style="border:0px!important;">
+
+                    <colgroup>
+                        <col width="60">
+                        <col width="120">
+                        <col width="220">
+                        <col width="80">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="120">
+                        <col width="80">
+                        <col width="60">
+                        <col width="80">
+                        <col width="100">
+                    </colgroup>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorG" colspan="12">입금</th>
+                        </tr>
+                    </tbody>
+
+
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <td class="colorG">출고월</td>
+                            <td class="colorG">거래처명</td>
+                            <td class="colorG">현장명</td>
+                            <td class="colorG">부서</td>
+                            <td class="colorG">장비대</td>
+                            <td class="colorG">로지텍</td>
+                            <td class="colorG">설치비</td>
+                            <td class="colorG">세금계산서금액</td>
+                            <td class="colorG">거래구분</td>
+                            <td class="colorG">예정일</td>
+                            <td class="colorButton">입금일</td>
+                            <td class="colorButton">입금액</td>
+                        </tr>
+                    </tbody>
+                    <tbody role="body" style="border:0px!important;">
+                        <tr class="colorW">
+
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorG" style="" colspan="4">합계</th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorP text-number" colspan="2"></th>
+                            <th class="colorButton"></th>
+                            <th class="colorButton text-number"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </th>
+            <th style="width:38%;padding:0px!important;vertical-align: top!important;">
+                <table class="pData" style="border:0px!important;">
+
+                    <colgroup>
+                        <col width="120">
+                        <col width="270">
+
+                        <col width="110">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                    </colgroup>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorO" colspan="6">출금</th>
+                        </tr>
+                    </tbody>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorO">거래처명</th>
+                            <th class="colorO">현장명</th>
+                            <th class="colorO">세금계산서금액</th>
+                            <th class="colorO">예정일</th>
+                            <th class="colorButton">지급일</th>
+                            <th class="colorButton">지급액</th>
+                        </tr>
+                    </tbody>
+                    <tbody role="body" style="border:0px!important;">
+                        <tr class="colorW">
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorO" style="" colspan="2">합계</th>
+                            <th class="colorO text-number"></th>
+                            <th class="colorO text-number"></th>
+                            <th class="colorButton"></th>
+                            <th class="colorButton text-number"></th>
+                        </tr>
+                    </tfoot>
+
+                </table>
+            </th>
+        </tr>
+	</tbody>
+</table>
+<table id="rcppay_status22" class="custom" style="visibility:hidden;">
+	<tbody role="body">
+        <tr>
+            <th style="width:62%;padding:0px!important;vertical-align: top!important;">
+                <table class="sData" style="border:0px!important;">
+
+                    <colgroup>
+                        <col width="60">
+                        <col width="120">
+                        <col width="220">
+                        <col width="80">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="120">
+                        <col width="80">
+                        <col width="60">
+                        <col width="80">
+                        <col width="100">
+                    </colgroup>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorG" colspan="12">입금</th>
+                        </tr>
+                    </tbody>
+
+
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <td class="colorG">출고월</td>
+                            <td class="colorG">거래처명</td>
+                            <td class="colorG">현장명</td>
+                            <td class="colorG">부서</td>
+                            <td class="colorG">장비대</td>
+                            <td class="colorG">로지텍</td>
+                            <td class="colorG">설치비</td>
+                            <td class="colorG">세금계산서금액</td>
+                            <td class="colorG">거래구분</td>
+                            <td class="colorG">예정일</td>
+                            <td class="colorButton">입금일</td>
+                            <td class="colorButton">입금액</td>
+                        </tr>
+                    </tbody>
+                    <tbody role="body" style="border:0px!important;">
+                        <tr class="colorW">
+
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorG" style="" colspan="4">합계</th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorG text-number"></th>
+                            <th class="colorP text-number" colspan="2"></th>
+                            <th class="colorButton"></th>
+                            <th class="colorButton text-number"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </th>
+            <th style="width:38%;padding:0px!important;vertical-align: top!important;">
+                <table class="pData" style="border:0px!important;">
+
+                    <colgroup>
+                        <col width="120">
+                        <col width="270">
+
+                        <col width="110">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                    </colgroup>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorO" colspan="6">출금</th>
+                        </tr>
+                    </tbody>
+                    <tbody style="border:0px!important;">
+                        <tr>
+                            <th class="colorO">거래처명</th>
+                            <th class="colorO">현장명</th>
+                            <th class="colorO">세금계산서금액</th>
+                            <th class="colorO">예정일</th>
+                            <th class="colorButton">지급일</th>
+                            <th class="colorButton">지급액</th>
+                        </tr>
+                    </tbody>
+                    <tbody role="body" style="border:0px!important;">
+                        <tr class="colorW">
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorO" style="" colspan="2">합계</th>
+                            <th class="colorO text-number"></th>
+                            <th class="colorO text-number"></th>
+                            <th class="colorButton"></th>
+                            <th class="colorButton text-number"></th>
+                        </tr>
+                    </tfoot>
+
+                </table>
+            </th>
+        </tr>
+	</tbody>
+</table>
+<table id="rcppay_status_result2" style="visibility:hidden;">
+<colgroup>
+            <col width="60">
+            <col width="120">
+            <col width="220">
+            <col width="80">
+            <col width="100">
+            <col width="100">
+            <col width="100">
+            <col width="120">
+            <col width="80">
+            <col width="60">
+            <col width="80">
+            <col width="100">
+</colgroup>
+<thead>
+    <tr>
+        <th class="colorG" colspan="12">입금</th>
+    </tr>
+    <tr>
+        <th class="colorG">출고월</th>
+        <th class="colorG">거래처명</th>
+        <th class="colorG">현장명</th>
+        <th class="colorG">부서</th>
+        <th class="colorG">장비대</th>
+        <th class="colorG">로지텍</th>
+        <th class="colorG">설치비</th>
+        <th class="colorG">세금계산서금액</th>
+        <td class="colorG">거래구분</td>
+        <th class="colorG">예정일</th>
+        <th class="colorButton">입금일</th>
+        <th class="colorButton">입금액</th>
+
+    </tr>
+</thead>
+<tbody role="body">
+</tbody>
+<tfoot>
+    <tr>
+        <th class="colorG" style="" colspan="4">합계</th>
+        <th class="colorG text-number"></th>
+        <th class="colorG text-number"></th>
+        <th class="colorG text-number"></th>
+        <th class="colorG text-number"></th>
+        <th class="colorP text-number" colspan="2"></th>
+        <th class="colorButton"></th>
+        <th class="colorButton"></th>
+    </tr>
+</tfoot>
+</table>
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+getReportSales = function(s_ddt_man)
+{
+	var params = '';
+	params += '&s_ddt_man=' + s_ddt_man;
+
+	$.ajax({
+		url: '/api/sales/ajax_get_sales_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReportSales', pResult);
+			if (pResult.status) {
+				$('#popReport1').find('#rptDate').html(pResult.date);
+				// ============================================================
+				var html = '';
+				var p_dlamt_total = 0;
+				var s_dlamt11_total = 0, s_dlamt12_total = 0, s_dlamt13_total = 0, s_dlamt14_total = 0;
+				$.each(pResult.data, function(pIndex, pValue)
+				{
+					var p_dlamt = pValue.p_dlamt_sum == '' ? 0 : pValue.p_dlamt_sum;
+					var s_dlamt = pValue.s_dlamt_sum == '' ? 0 : pValue.s_dlamt_sum;
+					var s_delng_ty_code = pValue.s_delng_ty_code;
+					html += '<tr>';
+					html += '    <td>'+pValue.p_bcnc_nm+'</td>';
+					html += '    <td class="text-left">'+pValue.p_model_no+'</td>';
+					html += '    <td class="text-number">'+pValue.p_dlnt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-left">'+pValue.s_bcnc_nm+'</td>';
+					html += '    <td class="text-left">'+pValue.s_spt_nm+'</td>';
+					html += '    <td class="text-left">'+pValue.dept_nm+'</td>';
+					html += '    <td class="text-left">'+pValue.s_model_no+'</td>';
+					html += '    <td class="text-number">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
+					if (s_delng_ty_code == '11') {
+						html += '    <td class="text-number">'+pValue.s_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+						s_dlamt11_total += parseInt(s_dlamt);
+					} else { html += '<td></td>'; }
+					if (s_delng_ty_code == '12') {
+						html += '    <td class="text-number">'+pValue.s_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+						s_dlamt12_total += parseInt(s_dlamt);
+					} else { html += '<td></td>'; }
+					if (s_delng_ty_code == '13') {
+						html += '    <td class="text-number">'+pValue.s_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+						s_dlamt13_total += parseInt(s_dlamt);
+					} else { html += '<td></td>'; }
+					if (s_delng_ty_code == '14') {
+						html += '    <td class="text-number">'+pValue.s_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+						s_dlamt14_total += parseInt(s_dlamt);
+					} else { html += '<td></td>'; }
+					html += '</tr>';
+					p_dlamt_total += parseInt(p_dlamt);
+				});
+				$('#popReport1').find('#rptTable1 tfoot th:eq(1)').html(p_dlamt_total.toString().toFormat('NUMBER'));
+				$('#popReport1').find('#rptTable1 tfoot th:eq(3)').html(s_dlamt11_total.toString().toFormat('NUMBER'));
+				$('#popReport1').find('#rptTable1 tfoot th:eq(4)').html(s_dlamt12_total.toString().toFormat('NUMBER'));
+				$('#popReport1').find('#rptTable1 tfoot th:eq(5)').html(s_dlamt13_total.toString().toFormat('NUMBER'));
+				$('#popReport1').find('#rptTable1 tfoot th:eq(6)').html(s_dlamt14_total.toString().toFormat('NUMBER'));
+				$('#popReport1').find('#rptTable1 tfoot th:eq(8)').html((s_dlamt11_total+s_dlamt12_total).toString().toFormat('NUMBER'));
+				if (pResult.data.length == 0)
+				{
+					html = '<tr><td colspan="13">등록된 자료가 없습니다.</td></tr>';
+				}
+				$('#popReport1').find('#rptTable1 tbody').html(html);
+				// ============================================================
+				// 매입처별 월계
+				var html = '';
+				var dlamt_total = 0;
+				$.each(pResult.pAccountList, function(pIndex, pValue)
+				{
+					var dlamt = pValue.dlamt == '' ? 0 : pValue.dlamt;
+					html += '<tr>';
+					if (pValue.esntl_delng_no != '') {
+						html += '    <td>'+pValue.esntl_delng_nm+'('+pValue.esntl_delng_no+')'+'</td>';
+					} else {
+						html += '    <td>'+pValue.esntl_delng_nm+'</td>';
+					}
+					html += '    <td class="text-number">'+pValue.dlamt.toString().toFormat('NUMBER')+'</td>';
+					html += '</tr>';
+					dlamt_total += parseInt(dlamt);
+				});
+				$('#popReport1').find('#rptTable2 tfoot td:eq(0)').html(dlamt_total.toString().toFormat('NUMBER'));
+				if (pResult.pAccountList.length == 0)
+				{
+					html = '<tr><td colspan="2">등록된 자료가 없습니다.</td></tr>';
+				}
+				$('#popReport1').find('#rptTable2 tbody').html(html);
+				// ============================================================
+				// 매출유형별 월계
+				var html = '';
+				var dlamt_total = 0;
+				$.each(pResult.sAccountList, function(pIndex, pValue)
+				{
+					var dlamt = pValue.dlamt == '' ? 0 : pValue.dlamt;
+					html += '<tr>';
+					html += '    <td>'+pValue.delng_ty_nm+'</td>';
+					html += '    <td class="text-number">'+dlamt.toString().toFormat('NUMBER')+'</td>';
+					html += '</tr>';
+					dlamt_total += parseInt(dlamt);
+				});
+				$('#popReport1').find('#rptTable3 tfoot td:eq(0)').html(dlamt_total.toString().toFormat('NUMBER'));
+				if (pResult.sAccountList.length == 0)
+				{
+					html = '<tr><td colspan="2">등록된 자료가 없습니다.</td></tr>';
+				}
+				$('#popReport1').find('#rptTable3 tbody').html(html);
+				// ============================================================
+                // getMemoList('sales_report');
+
+			}
+		}
+	});
+}
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#r1_s_ddt_man').val() == '') {
+			modal.find('#r1_s_ddt_man').datepicker('setDate', 'today');
+		}
+		getReportSales(modal.find('#r1_s_ddt_man').val());
+        // getSalesTodo(modal.find('#r1_s_ddt_man').val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('change', '#r1_s_ddt_man', function(pEvent) {
+		getReportSales($(this).val());
+        // getSalesTodo($(this).val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport1').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+</script>
 
 {% endblock %}

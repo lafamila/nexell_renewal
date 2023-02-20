@@ -159,13 +159,13 @@
 					<div class="attendance-container">
 						<span>출퇴근기록</span>
 						<div>
-							<span class="circle active">
+							<span class="circle" id="start_time">
 								<span>출근</span>
-								<span>08:48:35</span>
+								<span class="timer">미등록</span>
 							</span>
-							<span class="circle">
+							<span class="circle" id="end_time">
 								<span>퇴근</span>
-								<span>미등록</span>
+								<span class="timer">미등록</span>
 							</span>
 						</div>
 						<div id="attendance">근태관리 바로가기</div>
@@ -250,13 +250,50 @@
 	// 	title: "Today",
 	// 	date: (new Date()).toISOString().split("T")[0]
 	// }];
+	getTodayWork = function(){
+		let offset = (new Date()).getTimezoneOffset() * 60000;
+		var today = (new Date((new Date()).getTime()-offset)).toISOString().split("T")[0];
+		var params = '';
+		params += '&s_today='+today;
+		$.ajax({
+			url: '/api/work/ajax_today',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			validate: function() {
+				return true;
+			},
+			success: function(pResult) {
+				var pData = pResult.data;
+				if(pData.start_time == ''){
+					$(document).find("#start_time").removeClass("active");
+					$(document).find("#start_time").find(".timer").html("미등록");
+				}
+				else{
+					$(document).find("#start_time").addClass("active");
+					$(document).find("#start_time").find(".timer").html(`${pData.start_time.slice(8,10)}:${pData.start_time.slice(10,12)}`);
+				}
+				if(pData.end_time == ''){
+					$(document).find("#end_time").removeClass("active");
+					$(document).find("#end_time").find(".timer").html("미등록");
+				}
+				else{
+					$(document).find("#end_time").addClass("active");
+					$(document).find("#end_time").find(".timer").html(`${pData.end_time.slice(8,10)}:${pData.end_time.slice(10,12)}`);
+				}
+			}
+		});
+	}
 
 	$(document).ready(function(){
 		$("#calendar").MEC({
 			events: []
 		});
 		$("#calTFooter").hide();
-		$("#attendance").on("click", ()=>(location.href="/work"));
+		getTodayWork();
+		$("#attendance").on("click", ()=>(location.href="/work/personal"));
 	});
 	$(document).on("click", "#calendar button.a-date", function(){
 		var clicked = parseInt($(this).text().trim()).toString();

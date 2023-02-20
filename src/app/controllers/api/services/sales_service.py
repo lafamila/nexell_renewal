@@ -295,3 +295,98 @@ def update_account(params):
 def delete_account(params):
     query = """DELETE FROM account WHERE 1=1 AND delng_sn=%(s_delng_sn)s"""
     g.curs.execute(query, params)
+
+def get_account_report(params):
+    query = """SELECT p.bcnc_sn AS p_bcnc_sn
+				, (SELECT CONCAT(esntl_delng_no) FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS p_bcnc_nm
+				, p.model_no AS p_model_no
+				, p.dlnt AS p_dlnt
+				, p.dlamt AS p_dlamt
+				, (p.dlnt * p.dlamt) AS p_dlamt_sum
+				, s.bcnc_sn AS s_bcnc_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=s.bcnc_sn) AS s_bcnc_nm
+				, s.cntrct_sn AS s_cntrct
+				, (SELECT spt_nm FROM contract WHERE ctmmny_sn=s.ctmmny_sn AND cntrct_sn=s.cntrct_sn) AS s_spt_nm
+				, s.model_no AS s_model_no
+				, s.dlnt AS s_dlnt
+				, s.dlamt AS s_dlamt
+				, (s.dlnt * s.dlamt) AS s_dlamt_sum
+				, s.delng_ty_code AS s_delng_ty_code
+				, s.delng_sn AS s_delng_sn
+				, (SELECT m.dept_code FROM contract c LEFT OUTER JOIN member m ON m.mber_sn = c.bsn_chrg_sn WHERE c.cntrct_sn=s.cntrct_sn) AS dept_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=dept_code) AS dept_nm
+				FROM account p
+				LEFT JOIN account s
+				ON p.ctmmny_sn=s.ctmmny_sn AND p.cntrct_sn=s.cntrct_sn AND p.delng_sn = s.cnnc_sn AND s.ddt_man=%(s_ddt_man)s
+				WHERE p.ctmmny_sn = 1
+				AND p.ddt_man = %(s_ddt_man)s
+				AND p.delng_se_code = 'P'
+				UNION
+				SELECT p.bcnc_sn AS p_bcnc_sn
+				, (SELECT CONCAT(esntl_delng_no) FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS p_bcnc_nm
+				, p.model_no AS p_model_no
+				, p.dlnt AS p_dlnt
+				, p.dlamt AS p_dlamt
+				, (p.dlnt * p.dlamt) AS p_dlamt_sum
+				, s.bcnc_sn AS s_bcnc_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=s.bcnc_sn) AS s_bcnc_nm
+				, s.cntrct_sn AS s_cntrct
+				, (SELECT spt_nm FROM contract WHERE ctmmny_sn=s.ctmmny_sn AND cntrct_sn=s.cntrct_sn) AS s_spt_nm
+				, s.model_no AS s_model_no
+				, s.dlnt AS s_dlnt
+				, s.dlamt AS s_dlamt
+				, (s.dlnt * s.dlamt) AS s_dlamt_sum
+				, s.delng_ty_code AS s_delng_ty_code
+				, s.delng_sn AS s_delng_sn
+				, (SELECT m.dept_code FROM contract c LEFT OUTER JOIN member m ON m.mber_sn = c.bsn_chrg_sn WHERE c.cntrct_sn=s.cntrct_sn) AS dept_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=dept_code) AS dept_nm
+				FROM account p
+				RIGHT JOIN account s
+				ON p.ctmmny_sn=s.ctmmny_sn AND p.cntrct_sn=s.cntrct_sn AND p.delng_sn = s.cnnc_sn AND p.ddt_man=%(s_ddt_man)s
+				WHERE s.ctmmny_sn = 1
+				AND s.ddt_man = %(s_ddt_man)s
+				AND s.delng_se_code = 'S'
+				AND p.delng_sn IS NULL
+            """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_p_account_list(params):
+    params['s_start_ddt_man'] = datetime.datetime.strptime(params["s_ddt_man"], "%Y-%m-%d").strftime("%Y-%m-01")
+    params['s_end_ddt_man'] = params['s_ddt_man']
+    query = """SELECT b.esntl_delng_no
+				, CASE b.esntl_delng_no
+				WHEN '' THEN '타사매입'
+				ELSE MAX(b.bcnc_nm)
+				END AS esntl_delng_nm
+				, SUM(a.dlnt * a.dlamt) AS dlamt
+				FROM account a
+				LEFT JOIN bcnc b
+				ON a.ctmmny_sn=b.ctmmny_sn AND a.bcnc_sn=b.bcnc_sn
+				WHERE a.ctmmny_sn = 1
+				AND a.ddt_man BETWEEN %(s_start_ddt_man)s AND %(s_end_ddt_man)s
+				AND a.delng_se_code = 'P'
+				GROUP BY b.esntl_delng_no
+				ORDER BY b.esntl_delng_no DESC"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_s_account_list(params):
+    params['s_start_ddt_man'] = datetime.datetime.strptime(params["s_ddt_man"], "%Y-%m-%d").strftime("%Y-%m-01")
+    params['s_end_ddt_man'] = params['s_ddt_man']
+    query = """SELECT a.delng_ty_code
+				, c.code_nm AS delng_ty_nm
+				, SUM(a.dlnt * a.dlamt) AS dlamt
+				FROM account a
+				LEFT JOIN code c
+				ON c.parnts_code='SELNG_TY_CODE' AND c.code=a.delng_ty_code
+				WHERE a.ctmmny_sn = 1
+				AND a.ddt_man BETWEEN %(s_start_ddt_man)s AND %(s_end_ddt_man)s
+				AND a.delng_se_code = 'S'
+				GROUP BY a.delng_ty_code, c.code_nm
+				ORDER BY c.code_ordr"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result

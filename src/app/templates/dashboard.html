@@ -38,6 +38,7 @@
 
         <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline" id="dashboard_title1">팀별 실적 현황 <span style="font-size:12px!important;">(VAT 포함)</span></h5>
         <div style="position: absolute; right: 0; top: -5px; text-align: right; max-width: 50%; overflow: hidden">
+            <button class="btn btn-info" data-toggle="modal" href="#popReport99"><i class="fa fa-print"> 영업점검</i></button>
 <!--            <button class="btn btn-info" data-toggle="modal" href="#popReport8"><i class="fa fa-print"> 사전입찰</i></button>-->
 <!--            <button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 연간현황</i></button>-->
             <input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;padding-top:5px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt" placeholder="[시작일자]">
@@ -860,5 +861,24 @@ getSalesSummery = function(s_pxcond_mt)
 
 </script>
 
+<div class="modal fade" data-backdrop="static" id="popReport99">
+    <div class="modal-dialog modal-w1200" style="width:98%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint7"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+
+
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
 
 {% endblock %}
