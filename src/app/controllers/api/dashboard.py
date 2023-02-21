@@ -63,8 +63,8 @@ def ajax_get_biss_state():
     result['status'] = True
     return jsonify(result)
 
-@bp.route('/ajax_get_sales_summery', methods=['GET'])
-def ajax_get_sales_summery():
+@bp.route('/ajax_get_sales_summary', methods=['GET'])
+def ajax_get_sales_summary():
     params = request.args.to_dict()
     result = dict()
 
@@ -73,9 +73,27 @@ def ajax_get_sales_summery():
     result['status'] = True
     return jsonify(result)
 
-@bp.route('/ajax_get_projects_by_member', methods=['GET'])
-def ajax_get_projects_by_member():
+@bp.route('/ajax_get_projects_by_dept_member', methods=['GET'])
+def ajax_get_projects_by_dept_member():
     params = request.args.to_dict()
     result = dict()
-    result['data'] = db.get_projects_by_member(params)
+    result['data'] = db.get_projects_by_dept_member(params)
+    return jsonify(result)
+
+@bp.route('/ajax_get_month_report', methods=['GET'])
+def ajax_get_month_report():
+    params = request.args.to_dict()
+    if "s_pxcond_mt" not in params:
+        params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+    result = dict()
+    result['contractStatusList'] = cp.get_completed_summary(params)
+    params["s_stdyy"], params["s_month"], _ = map(int, params['s_pxcond_mt'].split("-"))
+    contracts = db.get_goal_contract(params)
+    result['contractList'] = dict()
+    for c in contracts:
+        if c['dept_code'] not in result['contractList']:
+            result['contractList'][c['dept_code']] = dict()
+        if c['amt_ty_code'] not in result['contractList'][c['dept_code']]:
+            result['contractList'][c['dept_code']][c['amt_ty_code']] = list()
+        result['contractList'][c['dept_code']][c['amt_ty_code']].append(c)
     return jsonify(result)

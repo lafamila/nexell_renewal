@@ -464,7 +464,7 @@ def get_kisung_va(params):
     result = g.curs.fetchall()
     return result
 
-def get_projects_by_member(params):
+def get_projects_by_dept_member(params):
     if "s_pxcond_mt" in params and params["s_pxcond_mt"]:
         s_pxcond_mt = params["s_pxcond_mt"]
     else:
@@ -472,7 +472,9 @@ def get_projects_by_member(params):
 
     data = dict()
     data["s_pxcond_mt"] = s_pxcond_mt
-    data["s_mber_sn"] = params["s_mber_sn"]
+    data["s_dept_code"] = params["s_dept_code"]
+    if "s_mber_sn" in params:
+        data["s_mber_sn"] = params["s_mber_sn"]
     query = """SELECT c.progrs_sttus_code
 				, (SELECT co.code_nm FROM code co WHERE co.parnts_code='PROGRS_STTUS_CODE' AND co.code=c.progrs_sttus_code) AS sttus_nm
 				, c.bcnc_sn
@@ -480,7 +482,9 @@ def get_projects_by_member(params):
 				, c.spt_nm
 				, cntrwk_bgnde
 				, cntrwk_endde
-				, CONCAT(cntrwk_bgnde,'~',cntrwk_endde) AS cntrwk_period
+				, prjct_ty_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=c.prjct_ty_code) AS prjct_ty_nm
+				, CONCAT(DATE_FORMAT(cntrwk_bgnde, '%%Y-%%m'),'~',DATE_FORMAT(cntrwk_endde, '%%Y-%%m')) AS cntrwk_period
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
 				, (SELECT SUM(IFNULL(co.qy*co.puchas_amount, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code='E' AND co.ct_se_code NOT IN ('61','62', '63','7', '8', '10')) AS exec_sum
 				, (SELECT SUM(CASE WHEN co.ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'P', %(s_pxcond_mt)s)
@@ -500,10 +504,45 @@ def get_projects_by_member(params):
 				END AS ordr
 				, (SELECT IFNULL(SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code = 'C', IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))),0) FROM cost cst WHERE cst.cntrct_sn = c.cntrct_sn AND cst.cntrct_execut_code <> 'B') AS cntrct_amount
 				FROM contract c
-				WHERE c.spt_chrg_sn = %(s_mber_sn)s
+				LEFT JOIN member m
+				ON c.spt_chrg_sn=m.mber_sn
+				WHERE 1=1
 				AND c.progrs_sttus_code IN ('P', 'B', 'N', 'S')
 				AND c.prjct_creat_at = 'Y'
-				ORDER BY ordr, bcnc_nm, c.spt_nm"""
+				AND m.dept_code = %(s_dept_code)s
+				"""
+    if "s_mber_sn" in data:
+        query += " AND c.spt_chrg_sn = %(s_mber_sn)s "
+    """ ORDER BY ordr, bcnc_nm, c.spt_nm"""
     g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_goal_contract(params):
+    query = """SELECT g.stdyy AS stdyy
+                    , g.amt_ty_code AS amt_ty_code
+                    , m.dept_code AS dept_code
+                    , `{0}m` AS value
+                    , g.cntrct_sn AS cntrct_sn
+                    , CASE WHEN c.prjct_ty_code IN ('NR') THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                    WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+                    (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+                    WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                    WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+                    ELSE 0
+                    END AS cntrct_amount
+                    FROM goal g
+                    LEFT JOIN member m
+                    ON g.mber_sn=m.mber_sn
+                    LEFT JOIN contract c
+                    ON g.cntrct_sn=c.cntrct_sn
+                    WHERE 1=1
+                    AND `{0}m` IS NOT NULL
+                    AND amt_ty_code IN ('2', '3')
+                    AND stdyy={1}""".format(params['s_month'], params['s_stdyy'])
+    g.curs.execute(query)
     result = g.curs.fetchall()
     return result
