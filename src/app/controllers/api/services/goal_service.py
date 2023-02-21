@@ -18,15 +18,21 @@ def get_contract_list_by_amt(params):
 				, (SELECT COUNT(prjct_sn) FROM project WHERE cntrct_sn=c.cntrct_sn) AS prjct_cnt
 				, c.spt_chrg_sn
 				, c.bsn_chrg_sn
+				, c.progrs_sttus_code
 				FROM contract c
 				WHERE 1=1
 				AND ctmmny_sn = 1
                 """
+    data = []
     if params["s_amt_ty_code"] == "2":
         query += " AND (progrs_sttus_code = 'B' OR (progrs_sttus_code = 'P' AND regist_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))".format(params['s_year'])
     else:
         query += " AND progrs_sttus_code = 'P' "
-    g.curs.execute(query)
+
+    if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
+        query += " AND c.bsn_chrg_sn=%s"
+        data.append(params["s_bsn_chrg_sn"])
+    g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
 

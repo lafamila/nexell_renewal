@@ -197,7 +197,7 @@ tbody .btnUpdate, tbody .btn{
 						<div class="widget-body no-padding">
 							<table class="datatable table table-bordered table-hover" id="dtList1">
 								<colgroup>
-									<col width="1.8%">
+									<col width="2.5%">
 									<col width="3.2%">
 									<col width="5.5%">
 									<col width="5.5%">
@@ -215,11 +215,12 @@ tbody .btnUpdate, tbody .btn{
 									<col width="5.5%">
 									<col width="5.5%">
 									<col width="5.5%">
+									<col width="3.5%">
 								</colgroup>
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th colspan="18">
+										<th colspan="19">
                                             <ul class="nav nav-tabs" id="popEditTabs">
                                                 <input type="hidden" name="s_amt_ty_code" id="s_amt_ty_code"/>
                                                 {% for i, code in enumerate(amt_ty_code_list) %}
@@ -256,8 +257,13 @@ tbody .btnUpdate, tbody .btn{
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
 										</th>
-										<th class="" style="color:red!important;" colspan="14">
+										<th class="" style="color:red!important;" colspan="13">
 											&nbsp;※ 목표 금액은 VAT가 포함된 원 단위 금액입니다.
+										</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" id="buttonAdd" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
+											</div>
 										</th>
 									</tr>
 									<tr>
@@ -279,6 +285,7 @@ tbody .btnUpdate, tbody .btn{
 										<th style="text-align:center!important;">11월</th>
 										<th style="text-align:center!important;">12월</th>
 										<th style="text-align:center!important;">계</th>
+										<th></th>
 <!--										<th style="text-align:center!important;">합계</th>-->
 									</tr>
 								</thead>
@@ -415,6 +422,11 @@ getGoals = function(){
 				render: function(data, type, row, meta) {
 					return data.toString().toFormat('NUMBER');
 				}
+			},
+			{ data: 'tot', className: 'text-right',
+				render: function(data, type, row, meta){
+					return '';
+				}
 			}
 		],
 		footerCallback: function ( row, data, start, end, display ) {
@@ -475,6 +487,13 @@ getGoals = function(){
             $('[data-toggle="tab"]').on('click', function(pEvent){
                var s_amt_ty_code = $(this).parent().data('action');
                 $("#s_amt_ty_code").val(s_amt_ty_code);
+				if(s_amt_ty_code == '2'){
+					$(document).find("#buttonAdd").show();
+				}
+				else{
+
+					$(document).find("#buttonAdd").hide();
+				}
 				$.datatable1.ajax.reload();
             });
 
@@ -608,7 +627,7 @@ $(document).on('click', '#btnExcel', function(e) {
 
 </script>
 <script type="text/javascript">
-
+var isDataChange = false;
 
 $(function () {
   $('table.floating-thead').each(function() {
@@ -660,4 +679,155 @@ $(function() {
 	getGoals();
 });
 </script>
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="width:800px!important" id="approval-tab-container">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs2">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>수주 프로젝트 목표 등록</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;height:110px;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox1" style="height:100%;">
+							<form id="frmBox1" style="height:100%;">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbarContract">
+												<button type="button" class="btn btn-primary" id="btnSave" title="저장합니다."><i class="fa fa-save"> 저장</i></button>
+
+											</span>
+											</th>
+										</tr>
+
+										<tr class="required">
+											<th class="color-contract">영업담당</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_bsn_chrg_sn" name="s_bsn_chrg_sn" >
+													<option value="">[영업담당을 선택해주세요.]</option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+												</select>
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+	init = function(){
+		$("#popBox1").find("#s_bsn_chrg_sn").yVal('');
+		// $(modal).find("#cntrct_sn").select2('destroy');
+		$("#popBox1").find("#cntrct_sn").html(`<option value="">[계약을 선택해주세요.]</option>`);
+		$("#popBox1").find("#cntrct_sn").yVal('');
+
+	}
+	$(document).on('click', '#btnSave', function(){
+		var params = $("#frmBox1").formSerialize();
+		if($('#popBox1').find("#cntrct_sn").val() == ''){
+			alert("계약을 선택해주세요.");
+			return false;
+		}
+		var s_year = $('#dtList1').find('#s_year').val();
+		var s_amt_ty_code = $('#dtList1').find('#s_amt_ty_code').val();
+		params += "&s_year="+s_year;
+		params += "&s_amt_ty_code="+s_amt_ty_code;
+		$.ajax({
+			url: '/api/goal/ajax_add_goal_member',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				console.log(pResult);
+				isDataChange = true;
+				init();
+			}
+
+		});
+	});
+
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		init();
+	});
+	$(document).on("change", "#s_bsn_chrg_sn", function(){
+		var s_bsn_chrg_sn = $(this).val();
+		var s_year = $('#dtList1').find('#s_year').val();
+		var s_amt_ty_code = $('#dtList1').find('#s_amt_ty_code').val();
+		if(s_bsn_chrg_sn != ''){
+			$.ajax({
+				url:'/api/goal/ajax_get_contracts_by_member',
+				method: 'POST',
+				data : {"s_bsn_chrg_sn" : s_bsn_chrg_sn, 's_year': s_year, 's_amt_ty_code': s_amt_ty_code},
+				success : function(pResult){
+					var html = '<option value="">[계약을 선택해주세요.]</option>';
+					$.each(pResult, function(pIndex, pValue){
+						html += `<option value="${pValue.value}">${pValue.label}</option>`
+					});
+					$("#popBox1").find("#cntrct_sn").html(html);
+				}
+			})
+		}
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+</script>
+
+
 {% endblock %}

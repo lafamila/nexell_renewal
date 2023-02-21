@@ -7,11 +7,11 @@ import datetime
 from app.helpers.class_helper import Map
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
-
+import itertools
 def get_completed_summary(params):
     year = int(params['s_pxcond_mt'].split("-")[0])
     month = int(params['s_pxcond_mt'].split("-")[1])
-    query = """SELECT t.amt_ty_code
+    query = """SELECT t.amt_ty_code AS amt_ty_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='AMT_TY_CODE' AND code=t.amt_ty_code) AS amt_ty_nm
 				, t.dept_code
 				, IF(dept_code='ETC', '기타', (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=t.dept_code)) AS dept_nm
@@ -70,11 +70,11 @@ def get_completed_summary(params):
 				, g.10m
 				, g.11m
 				, g.12m
-				FROM goal g
-				RIGHT OUTER JOIN member m
+				, g.stdyy
+				FROM (SELECT * FROM goal WHERE stdyy = SUBSTRING({0}, 1, 4) AND amt_ty_code IN ('2','3','5')) g
+				JOIN member m
 				ON m.mber_sn=g.mber_sn
-				WHERE g.stdyy = SUBSTRING({0}, 1, 4)
-				AND g.amt_ty_code IN ('2','3','5','6')
+				WHERE 1=1				
 				"""
     if year >= 2023:
         query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))"""
@@ -87,7 +87,41 @@ def get_completed_summary(params):
 				GROUP BY t.amt_ty_code, t.dept_code
 				ORDER BY t.amt_ty_code, dept_order, t.dept_code"""
 
-    print(query.format("'{}'".format(params['s_pxcond_mt']), month))
     g.curs.execute(query.format("'{}'".format(params['s_pxcond_mt']), month))
     result = g.curs.fetchall()
-    return result
+
+    g.curs.execute("SELECT parnts_code AS p, code AS v, code_nm AS nm, code_ordr AS ordr FROM code WHERE PARNTS_CODE IN ('AMT_TY_CODE', 'DEPT_CODE')")
+    codes = g.curs.fetchall()
+    code_nms = {(c["p"], c["v"]) : (c["nm"], c["ordr"]) for c in codes}
+    dept_codes = ['TS1', 'TS2', 'TS3', 'BI']
+    amt_ty_codes = ['2', '3', '5']
+    if year >= 2023:
+        dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'ETC']
+
+    tables = {(r['amt_ty_code'], r['dept_code']) : r for r in result}
+    table_result = []
+    for amt_ty_code, dept_code in itertools.product(amt_ty_codes, dept_codes):
+        if (amt_ty_code, dept_code) not in tables:
+            table_result.append(new_row(amt_ty_code, code_nms[("AMT_TY_CODE", amt_ty_code)][0], dept_code, code_nms[("DEPT_CODE", dept_code)][0], code_nms[("DEPT_CODE", dept_code)][1]))
+        else:
+            table_result.append(tables[(amt_ty_code, dept_code)])
+
+    for r in table_result:
+        r['dept_count'] = len(dept_codes)
+
+    return table_result
+
+def new_row(amt_ty_code, amt_ty_nm, dept_code, dept_nm, dept_ordr):
+    row = {"amt_ty_code" : amt_ty_code, "amt_ty_nm" : amt_ty_nm, "dept_code" : dept_code, "dept_nm" : dept_nm}
+    row['m_contract_amount'] = 0
+    row['y_contract_amount'] = 0
+    row['ty8_goal_amount'] = 0
+    row['ty9_goal_amount'] = 0
+    row['ty8_goal_amount_sum'] = 0
+    row['ty9_goal_amount_sum'] = 0
+    row['ty8_goal_amount_total'] = 0
+    for _ in range(1, 13):
+        row["m{}".format(_)] = 0
+    row["dept_count"] = 0
+    row["dept_order"] = dept_ordr
+    return row

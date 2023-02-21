@@ -43,6 +43,104 @@ Array.prototype.replaceAll = function(search, replacement) {
  * @param   {string}    pFormatType 포맷팅유형
  * @param   {string}    pDelimiter 구분자
  */
+Number.prototype.toFormat = function(pDataType, pFormatType, pDelimiter)
+{
+    var result = this.toString();
+    var dataType = pDataType.toUpperCase();
+    var formatType = dataType;
+    if (pFormatType !== undefined) {
+        formatType = pFormatType.toUpperCase();
+    }
+    if (dataType === 'DATE') {
+        if (pDelimiter === undefined) {
+            pDelimiter = '/';
+        }
+        if (formatType === 'DATE') {
+            if (result.length === 6) {
+                result = result.substr(0,4) + pDelimiter
+                    + result.substr(4,2);
+            } else if (result.length === 8) {
+                result = result.substr(0,4) + pDelimiter
+                    + result.substr(4,2) + pDelimiter
+                    + result.substr(6,2);
+            } else if (result.length > 8) {
+                result = result.substr(0,10);
+            }
+        }
+    } else if (dataType === 'TIME') {
+        if (pDelimiter === undefined) {
+            pDelimiter = ':';
+        }
+        if (formatType === 'TIME') {
+            if (result.length === 4) {
+                result = result.substr(0,2) + pDelimiter
+                    + result.substr(2,2);
+            } else if (result.length === 6) {
+                result = result.substr(0,2) + pDelimiter
+                    + result.substr(2,2) + pDelimiter
+                    + result.substr(4,2);
+            }
+        }
+    } else if (dataType === 'DATETIME') {
+        pDelimiter1 = '/';
+        pDelimiter2 = ':';
+        if (result.length === 12) {
+            result = result.substr(0,4) + pDelimiter1
+                + result.substr(4,2) + pDelimiter1
+                + result.substr(6,2) + ' '
+                + result.substr(8,2) + pDelimiter2
+                + result.substr(10,2);
+        } else if (result.length === 14) {
+            result = result.substr(0,4) + pDelimiter1
+                + result.substr(4,2) + pDelimiter1
+                + result.substr(6,2) + ' '
+                + result.substr(8,2) + pDelimiter2
+                + result.substr(10,2) + pDelimiter2
+                + result.substr(12,2);
+        }
+    } else if (dataType === 'NUMBER') {
+        if (result != '') {
+            result = result.replaceAll(',','');
+            result = parseInt(result);
+            result = result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    } else if (dataType === 'SECOND') {
+        if (pDelimiter === undefined) {
+            pDelimiter = ':';
+        }
+        if (result == 'NaN') {
+            result = '0';
+        }
+        var h = '';
+        var m = '';
+        var s = '';
+        var second = parseInt(result);
+        if (formatType === 'MINUTE') {
+            m = parseInt((second/60)%60).toString();
+            m = '0'.repeat(2-m.length) + m;
+            s = parseInt(second%60).toString();
+            s = '0'.repeat(2-s.length) + s;
+            result = m + pDelimiter + s;
+        } else if (formatType === 'TIME') {
+            h = parseInt(second/(60*60)).toString();
+            h = '0'.repeat(2-h.length) + h;
+            m = parseInt((second/60)%60).toString();
+            m = '0'.repeat(2-m.length) + m;
+            s = parseInt(second%60).toString();
+            s = '0'.repeat(2-s.length) + s;
+            result = h + pDelimiter + m + pDelimiter + s;
+        } else if (formatType === 'HOUR') {
+            h = parseInt(second/(60*60)).toString();
+            h = '0'.repeat(3-h.length) + h;
+            m = parseInt((second/60)%60).toString();
+            m = '0'.repeat(2-m.length) + m;
+            s = parseInt(second%60).toString();
+            s = '0'.repeat(2-s.length) + s;
+            result = h + pDelimiter + m + pDelimiter + s;
+        }
+    }
+    return result;
+}
 String.prototype.toFormat = function(pDataType, pFormatType, pDelimiter)
 {
     var result = this;
