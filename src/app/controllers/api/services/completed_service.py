@@ -71,7 +71,7 @@ def get_completed_summary(params):
 				, g.11m
 				, g.12m
 				, g.stdyy
-				FROM (SELECT * FROM goal WHERE stdyy = SUBSTRING({0}, 1, 4) AND amt_ty_code IN ('2','3','5')) g
+				FROM (SELECT stdyy, amt_ty_code, mber_sn, SUM(IFNULL(1m, 0)) AS 1m, SUM(IFNULL(2m, 0)) AS 2m, SUM(IFNULL(3m, 0)) AS 3m, SUM(IFNULL(4m, 0)) AS 4m, SUM(IFNULL(5m, 0)) AS 5m, SUM(IFNULL(6m, 0)) AS 6m, SUM(IFNULL(7m, 0)) AS 7m, SUM(IFNULL(8m, 0)) AS 8m, SUM(IFNULL(9m, 0)) AS 9m, SUM(IFNULL(10m, 0)) AS 10m, SUM(IFNULL(11m, 0)) AS 11m, SUM(IFNULL(12m, 0)) AS 12m FROM goal WHERE stdyy = SUBSTRING({0}, 1, 4) AND amt_ty_code IN ('2','3','5') GROUP BY mber_sn, amt_ty_code, stdyy) g
 				JOIN member m
 				ON m.mber_sn=g.mber_sn
 				WHERE 1=1				
@@ -93,6 +93,7 @@ def get_completed_summary(params):
     g.curs.execute("SELECT parnts_code AS p, code AS v, code_nm AS nm, code_ordr AS ordr FROM code WHERE PARNTS_CODE IN ('AMT_TY_CODE', 'DEPT_CODE')")
     codes = g.curs.fetchall()
     code_nms = {(c["p"], c["v"]) : (c["nm"], c["ordr"]) for c in codes}
+    code_nms[('DEPT_CODE', 'ETC')] = "기타"
     dept_codes = ['TS1', 'TS2', 'TS3', 'BI']
     amt_ty_codes = ['2', '3', '5']
     if year >= 2023:

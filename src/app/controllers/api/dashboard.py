@@ -23,6 +23,24 @@ def disconnect(response):
     g.db.close()
     return response
 
+@bp.route('/ajax_get_completed_sales', methods=['GET'])
+def ajax_get_completed_sales():
+    params = request.args.to_dict()
+    if "s_pxcond_mt" not in params:
+        params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+    result = dict()
+    result['data'] = db.get_completed_sales(params)
+    return jsonify(result)
+
+@bp.route('/ajax_get_completed_suju', methods=['GET'])
+def ajax_get_completed_suju():
+    params = request.args.to_dict()
+    if "s_pxcond_mt" not in params:
+        params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+    result = dict()
+    result['data'] = db.get_completed_suju(params)
+    return jsonify(result)
+
 @bp.route('/ajax_get_completed_suju_b', methods=['GET'])
 def ajax_get_completed_suju_b():
     params = request.args.to_dict()
@@ -88,6 +106,7 @@ def ajax_get_month_report():
     result = dict()
     result['contractStatusList'] = cp.get_completed_summary(params)
     params["s_stdyy"], params["s_month"], _ = map(int, params['s_pxcond_mt'].split("-"))
+    params["s_pxcond_m"] = "-".join(params['s_pxcond_mt'].split("-")[:2])
     contracts = db.get_goal_contract(params)
     result['contractList'] = dict()
     for c in contracts:
@@ -96,4 +115,13 @@ def ajax_get_month_report():
         if c['amt_ty_code'] not in result['contractList'][c['dept_code']]:
             result['contractList'][c['dept_code']][c['amt_ty_code']] = list()
         result['contractList'][c['dept_code']][c['amt_ty_code']].append(c)
+    for r in result['contractStatusList']:
+        if r['dept_code'] not in result['contractList']:
+            result['contractList'][r['dept_code']] = dict()
     return jsonify(result)
+
+@bp.route('/ajax_set_dashboard_data', methods=['GET'])
+def ajax_set_dashboard_data():
+    params = request.args.to_dict()
+    db.set_dashboard_data(params)
+    return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})

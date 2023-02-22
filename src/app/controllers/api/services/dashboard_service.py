@@ -164,6 +164,83 @@ def get_sales_one_summery(params):
     result = g.curs.fetchall()
     return result
 
+def get_completed_suju(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    f, l = calendar.monthrange(int(y), int(m))
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
+    query = """SELECT co.code_nm
+				, co.code_ordr
+				, 0 AS ordr
+				, c.cntrct_nm
+				, cst.cost_date AS cntrct_de
+				, SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code = 'C', IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))) AS price_1
+				, SUM(IF(c.progrs_sttus_code = 'B', IF(cst.cntrct_execut_code = 'B',IFNULL(cst.salamt,0)*cst.qy, 0), 0)) AS price_2
+				, 1 AS count
+				, m.dept_code
+				, (SELECT bcnc_nm FROM bcnc b WHERE b.bcnc_sn = c.bcnc_sn) AS bcnc_nm
+				FROM cost cst
+				LEFT JOIN contract c
+				ON c.cntrct_sn = cst.cntrct_sn
+				LEFT JOIN member m
+				ON c.bsn_chrg_sn = m.mber_sn
+				LEFT JOIN code co
+				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
+				WHERE (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))
+				AND m.mber_sttus_code = 'H'
+				AND cst.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+				AND (cst.cntrct_execut_code IN ('A', 'B', 'C'))
+				GROUP BY m.dept_code, c.bcnc_sn, cst.cntrct_sn,  cst.cost_date
+				ORDER BY code_ordr, dept_code, ordr, bcnc_nm, cntrct_de """.format(first_day, last_day)
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_completed_sales(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    f, l = calendar.monthrange(int(y), int(m))
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+    query = """(SELECT SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)) AS amount
+				, co.code_nm AS dept_nm
+				, bcnc_nm
+				, c.spt_nm
+				, t.pblicte_de
+				, 1 AS s_order
+				FROM taxbil t
+				LEFT JOIN contract c
+				ON t.cntrct_sn = c.cntrct_sn
+				LEFT JOIN member m
+				ON c.bsn_chrg_sn = m.mber_sn
+				LEFT JOIN code co
+				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
+				LEFT JOIN bcnc b
+				ON t.pblicte_trget_sn = b.bcnc_sn
+				WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3')
+				AND t.pblicte_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+				AND bcnc_nm <> ''
+				GROUP BY dept_nm, bcnc_nm, spt_nm, pblicte_de)
+				UNION (
+				SELECT SUM(IFNULL({2}, 0)) AS amount
+				, co.code_nm AS dept_nm
+				, '장려금' AS bcnc_nm
+				, '' AS spt_nm
+				, '{1}' AS pblicte_de
+				, 2 AS s_order
+				FROM goal g
+				LEFT JOIN member m
+				ON g.mber_sn = m.mber_sn
+				LEFT JOIN code co
+				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
+				WHERE g.amt_ty_code = 9
+				AND g.stdyy BETWEEN YEAR('{0} 00:00:00') AND '{1} 23:59:59'
+				GROUP BY dept_nm)
+				ORDER BY dept_nm, s_order, bcnc_nm, pblicte_de, spt_nm """.format(first_day, last_day, "{}m".format(int(m)))
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
 def get_completed_suju_b(params):
     query = """SELECT co.code_nm
 				, co.code_ordr
@@ -189,7 +266,7 @@ def get_completed_suju_b(params):
                     LEFT JOIN code co
                     ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
 				WHERE 1=1
-                    AND (m.dept_code LIKE 'TS%%' OR m.dept_code = 'BI')
+                    AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))
                     AND m.mber_sttus_code = 'H'
                     AND cst.cntrct_execut_code IN ('B', 'C')
                     AND c.PROGRS_STTUS_CODE IN ('B')
@@ -231,7 +308,7 @@ def get_kisung_suju(params):
 				+ IFNULL(SUM(IFNULL(11m,0)),0)
 				+ IFNULL(SUM(IFNULL(12m,0)),0) AS total
 				FROM goal go
-				JOIN member mb
+				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code = '2'
@@ -268,9 +345,9 @@ def get_kisung_suju(params):
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-11-01'), mb.mber_sn, 'M') AS m11
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12-01'), mb.mber_sn, 'M') AS m12
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12-01'), mb.mber_sn, 'A') AS total
-				FROM member mb
+				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE 1
-				AND (mb.dept_code LIKE 'TS%%' OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('ST', 'EL', 'CT', 'MA'))
+				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('ST', 'EL', 'CT', 'MA'))
 				) t
 				GROUP BY t.dept
 				) sj
@@ -301,7 +378,7 @@ def get_kisung_sales(params):
 				, IFNULL(SUM(IFNULL(12m,0)), 0) AS m12
 				, IFNULL(SUM(1m),0)+IFNULL(SUM(2m),0)+IFNULL(SUM(3m),0)+IFNULL(SUM(4m),0)+IFNULL(SUM(5m),0)+IFNULL(SUM(6m),0)+IFNULL(SUM(7m),0)+IFNULL(SUM(8m),0)+IFNULL(SUM(9m),0)+IFNULL(SUM(10m),0)+IFNULL(SUM(11m),0)+IFNULL(SUM(12m),0) AS total
 				FROM goal go
-				JOIN member mb
+				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code IN ('3','8')
@@ -338,9 +415,9 @@ def get_kisung_sales(params):
 				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-11-01'), mb.mber_sn),0) AS m11
 				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-12-01'), mb.mber_sn),0) AS m12
 				, GET_PXCOND_TOTAL_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn) AS total
-				FROM member mb
+				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE 1
-				AND (mb.dept_code LIKE 'TS%%' OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
+				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
 				UNION
 				SELECT mb.dept_code AS dept
 				, IFNULL(SUM(1m),0) AS m01
@@ -357,7 +434,7 @@ def get_kisung_sales(params):
 				, IFNULL(SUM(12m), 0) AS m12
 				, IFNULL(SUM(1m),0)+IFNULL(SUM(2m),0)+IFNULL(SUM(3m),0)+IFNULL(SUM(4m),0)+IFNULL(SUM(5m),0)+IFNULL(SUM(6m),0)+IFNULL(SUM(7m),0)+IFNULL(SUM(8m),0)+IFNULL(SUM(9m),0)+IFNULL(SUM(10m),0)+IFNULL(SUM(11m),0)+IFNULL(SUM(12m),0) AS total
 				FROM goal go
-				JOIN member mb
+				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code = '9'
@@ -392,7 +469,7 @@ def get_kisung_va(params):
 				, IFNULL(SUM(IFNULL(12m, 0)), 0) AS m12
 				, IFNULL(SUM(1m),0)+IFNULL(SUM(2m),0)+IFNULL(SUM(3m),0)+IFNULL(SUM(4m),0)+IFNULL(SUM(5m),0)+IFNULL(SUM(6m),0)+IFNULL(SUM(7m),0)+IFNULL(SUM(8m),0)+IFNULL(SUM(9m),0)+IFNULL(SUM(10m),0)+IFNULL(SUM(11m),0)+IFNULL(SUM(12m),0) AS total
 				FROM goal go
-				JOIN member mb
+				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code IN ('5','8')
@@ -429,8 +506,8 @@ def get_kisung_va(params):
 				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-11'), mb.mber_sn)) AS m11
 				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn)) AS m12
 				, SUM(GET_VA_TOTAL_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn)) AS total
-				FROM member mb
-				WHERE (mb.dept_code LIKE 'TS%%' OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
+				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
+				WHERE (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
 				GROUP BY mb.dept_code
 				UNION
 				SELECT mb.dept_code AS dept
@@ -448,7 +525,7 @@ def get_kisung_va(params):
 				, IFNULL(SUM(12m), 0) AS m12
 				, IFNULL(SUM(1m),0)+IFNULL(SUM(2m),0)+IFNULL(SUM(3m),0)+IFNULL(SUM(4m),0)+IFNULL(SUM(5m),0)+IFNULL(SUM(6m),0)+IFNULL(SUM(7m),0)+IFNULL(SUM(8m),0)+IFNULL(SUM(9m),0)+IFNULL(SUM(10m),0)+IFNULL(SUM(11m),0)+IFNULL(SUM(12m),0) AS total
 				FROM goal go
-				JOIN member mb
+				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code = '9'
@@ -519,11 +596,19 @@ def get_projects_by_dept_member(params):
     return result
 
 def get_goal_contract(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    f, l = calendar.monthrange(int(y), int(m))
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
     query = """SELECT g.stdyy AS stdyy
                     , g.amt_ty_code AS amt_ty_code
                     , m.dept_code AS dept_code
                     , `{0}m` AS value
                     , g.cntrct_sn AS cntrct_sn
+                    , c.spt_nm AS cntrct_nm
+                    , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_value
+                    , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_rm
                     , CASE WHEN c.prjct_ty_code IN ('NR') THEN
                     (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
                     WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
@@ -534,6 +619,17 @@ def get_goal_contract(params):
                     (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
                     ELSE 0
                     END AS cntrct_amount
+                    , CASE g.amt_ty_code
+                    WHEN '2' THEN 
+                    IFNULL((SELECT SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(co.cntrct_execut_code = 'B',0, IFNULL(co.salamt,0)*co.qy), 0),IF(co.cntrct_execut_code = 'C', IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01, 0)))
+                        FROM cost co 
+                       WHERE co.cost_date BETWEEN CONCAT(SUBSTRING('{3}',1,7),'-01') AND CONCAT(SUBSTRING('{3}',1,7),'-31')
+                         AND co.cntrct_execut_code IN ('A', 'B', 'C')
+                         AND co.cntrct_sn = c.cntrct_sn
+                        GROUP BY co.cntrct_sn
+                    ), 0)
+                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
+                    END AS amount
                     FROM goal g
                     LEFT JOIN member m
                     ON g.mber_sn=m.mber_sn
@@ -542,7 +638,18 @@ def get_goal_contract(params):
                     WHERE 1=1
                     AND `{0}m` IS NOT NULL
                     AND amt_ty_code IN ('2', '3')
-                    AND stdyy={1}""".format(params['s_month'], params['s_stdyy'])
+                    AND stdyy={1}""".format(params['s_month'], params['s_stdyy'], params['s_pxcond_m'], first_day, last_day)
+
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+
+def set_dashboard_data(params):
+    row = g.curs.execute("SELECT dashboard_sn FROM dashboard WHERE dashboard_date=%(dashboard_date)s AND dashboard_row=%(dashboard_row)s AND dashboard_column=%(dashboard_column)s", params)
+    if row:
+        result = g.curs.fetchone()
+        params['dashboard_sn'] = result['dashboard_sn']
+        g.curs.execute("UPDATE dashboard SET dashboard_data=%(dashboard_data)s WHERE dashboard_sn=%(dashboard_sn)s", params)
+
+    else:
+        g.curs.execute("INSERT INTO dashboard(dashboard_date, dashboard_row, dashboard_column, dashboard_data) VALUES(%(dashboard_date)s, %(dashboard_row)s, %(dashboard_column)s, %(dashboard_data)s)", params)
