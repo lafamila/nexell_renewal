@@ -8,6 +8,7 @@ from .controllers.stock_view import bp as stock_bp
 from .controllers.sales_view import bp as sales_bp
 from .controllers.goal_view import bp as goal_bp
 from .controllers.work_view import bp as work_bp
+from .controllers.tax_view import bp as tax_bp
 from .controllers.common_view import bp as common_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
@@ -18,6 +19,7 @@ from .controllers.api.dev_test import bp as dev_api
 from .controllers.api.sales import bp as sales_api_bp
 from .controllers.api.goal import bp as goal_api_bp
 from .controllers.api.work import bp as work_api_bp
+from .controllers.api.tax import bp as tax_api_bp
 from .controllers.api.common import bp as common_api_bp
 from .controllers.api.services import *
 # from .controllers.ajax_controller import bp as ajax
@@ -43,6 +45,8 @@ app.register_blueprint(goal_bp)
 app.register_blueprint(goal_api_bp)
 app.register_blueprint(work_bp)
 app.register_blueprint(work_api_bp)
+app.register_blueprint(tax_bp)
+app.register_blueprint(tax_api_bp)
 app.register_blueprint(common_bp)
 app.register_blueprint(common_api_bp)
 app.register_blueprint(dev_api)

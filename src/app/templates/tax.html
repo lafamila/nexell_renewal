@@ -1,0 +1,903 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+	body.smart-style-6 .table.table-form .hasinput {
+		padding: 2px;
+	}
+
+	body.smart-style-6 .table.table-form th {
+		padding: 9px;
+	}
+
+	#btnDelete {
+		display: none;
+	}
+
+	#frmBox1 th {
+		background: rgb(205,255,204)!important;
+	}
+</style>
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}       tbody{
+        font-size:12px!important;
+    }
+</style>
+<style>
+    #summary{
+        top:51px;
+        left:795px;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summary{
+        top:51px;
+        left:280px;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">세금계산서 관리 </li><li><span> 매입 / 매출</span></li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					세금계산서 관리 <span>> 자금</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			세금계산서 발행 내역을 관리합니다.
+		</p>
+	</div>
+
+	<!-- 집계표 -->
+	<table class="table table-bordered table-summery" style="" id="summary">
+		<thead>
+			<tr><th colspan="4">
+					세&nbsp;금&nbsp;계&nbsp;산&nbsp;서&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style="background:#fff;width:60px;text-align:center;">건수</td>
+				<td style="background:#fff;text-align:center;">0</td>
+				<th style="background:#fff;width:60px;text-align:center;">합계</td>
+				<td style="background:#fff;width:121px;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+
+			<article class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<form id="frmBox1">
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>세금계산서 관리</h2>
+						<div class="widget-toolbar">
+							<!-- <button type="button" class="btn btn-primary" data-toggle="modal" href="#popEdit" id="btnSave"><i class="fa fa-save"> 저장</i></button> -->
+							<button type="button" class="btn btn-primary" id="btnSaveKeep" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장 후 계속</i></button>
+							<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+							<button type="button" class="btn btn-primary" id="btnNew"><i class="fa fa-refresh"> 신규</i></button>
+							<button type="button" class="btn btn-danger" id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<input type="hidden" id="s_taxbil_sn" name="s_taxbil_sn">
+							<table class="table table-bordered table-form">
+								<colgroup>
+									<col width="120">
+									<col width="*">
+								</colgroup>
+								<tbody>
+									<tr><td class="hasinput" colspan="3">
+											<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+												<option value="">[계약을 선택하세요]</option>
+												{% for code in contract_list %}
+												<option value="{{code.value}}">{{code.etc1}}.{{code.bcnc_nm}} {{code.label}}</option>
+												{% endfor %}
+											</select>
+											<input type="hidden" id="prjct_creat_at">
+										</td>
+									</tr>
+									<tr id="project">
+										<th class="required">프로젝트</th>
+										<td class="hasinput" colspan="2">
+											<select class="form-control select2" id="prjct_sn" name="prjct_sn">
+												<option value=""></option>
+											</select>
+										</td>
+										<input type="hidden" id="t_prjct_sn">
+									</tr>
+									<tr><th class="required">거래구분</th>
+										<td class="hasinput" colspan="2">
+											<select class="form-control select2" id="delng_se_code" name="delng_se_code">
+												<option value=""></option>
+												{% for code in delng_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</td>
+									</tr>
+									<tr class="required"><th>대상업체</th>
+										<td class="hasinput" colspan="2">
+											<select class="form-control select2" id="pblicte_trget_sn" name="pblicte_trget_sn">
+												<option value=""></option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</td>
+									</tr>
+									<tr><th class="required-x">발행일자</th>
+										<td class="hasinput" colspan="2">
+											<div class="input-group" style="width:100%;">
+												<input type="text" class="form-control datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="pblicte_de" name="pblicte_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div>
+										</td>
+									</tr>
+                                    <tr><th class="required-x">발행횟수</th>
+										<td class="hasinput" colspan="2">
+                                            <input type="number" class="form-control" id="collct_time" name="collct_time" value="1"/>
+                                        </td>
+<!--
+                                        <td class="hasinput">
+                                            <button type="button" class="btn btn-table btn-warning" title="등록" id="plus"><i class="fa fa-plus"></i></button>
+                                        </td>
+
+-->
+									</tr>
+                                    <tr><th class="required-x">수금예정일</th>
+										<td class="hasinput" colspan="2">
+											<div class="input-group" style="width:100%;">
+												<input type="text" class="form-control datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="collct_de" name="collct_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div>
+										</td>
+									</tr>
+									<tr><th class="required-x">공급가액</th>
+										<td class="hasinput" colspan="2">
+											<input type="number" class="form-control" id="splpc_am" name="splpc_am">
+										</td>
+									</tr>
+									<tr><th class="required-x">부가세</th>
+										<td class="hasinput" colspan="2">
+											<input type="number" class="form-control" id="vat" name="vat">
+										</td>
+									</tr>
+									<tr><th class="required-x">계산서 발행여부</th>
+										<td class="hasinput" colspan="2">
+											<div class="btn-group btn-group-justified" data-toggle="buttons">
+												<label class="btn btn-default">
+													<input type="radio" name="taxbil_yn" value="Y">발행
+												</label>
+												<label class="btn btn-default">
+													<input type="radio" name="taxbil_yn" value="N">미발행
+												</label>
+											</div>
+										</td>
+									</tr>
+									<!-- <tr><th class="required-x">비고(수금내역)</th>
+										<td class="hasinput">
+											<input type="text" class="form-control" id="rm" name="rm">
+										</td>
+									</tr> -->
+								</tbody>
+							</table>
+
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				</form>
+
+			</article>
+
+			<article class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>세금계산서 목록</h2>
+						<div class="widget-toolbar">
+							<!-- <button class="btn btn-warning" data-toggle="modal" href="#popEdit"><i class="fa fa-plus"> 세금계산서 등록</i></button> -->
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50"><!--No-->
+									<col width="110">
+									<col width="*">
+									<col width="130">
+									<col width="130">
+									<col width="180">
+									<col width="110">
+									<col width="80">
+									<col width="120">
+									<col width="110">
+									<col width="120">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_no" name="s_cntrct_no">
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">
+										</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_delng_se_code" name="s_delng_se_code">
+												<option value="">[전체]</option>
+												{% for code in delng_se_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+												<option value="SS">총 매출</option>
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_pblicte_trget_sn" name="s_pblicte_trget_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pblicte_de_start" name="s_pblicte_de_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pblicte_de_end" name="s_pblicte_de_end" placeholder="[종료일자]">
+											<!-- <div class="input-group date">
+												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pblicte_de" name="s_pblicte_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div> -->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_taxbil_yn" name="s_taxbil_yn">
+												<option value="">[전체]</option>
+												<option value="Y">발행</option>
+												<option value="N">미발행</option>
+											</select>
+										</th>
+										<th class="hasinput"></th>
+										<th class="hasinput"></th>
+										<th class="hasinput"></th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<th>No.</th>
+										<th>계약번호</th>
+										<th>계약명(현장명)</th>
+										<th>영업부서</th>
+										<th>거래구분</th>
+										<th>대상업체</th>
+										<th>발행일자</th>
+										<th>발행여부</th>
+										<th style="text-align:left!important;">공급가액</th>
+										<th style="text-align:left!important;">부가세</th>
+										<th style="text-align:left!important;">합계금액</th>
+										<th></th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+getTaxList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 15,
+        ajax: {
+            url: '/api/tax/ajax_get_tax_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_cntrct_no': $('#dtList1').find('#s_cntrct_no').val(),
+					's_cntrct_nm': $('#dtList1').find('#s_cntrct_nm').val(),
+                    's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_delng_se_code': $('#dtList1').find('#s_delng_se_code').val(),
+					's_pblicte_trget_sn': $('#dtList1').find('#s_pblicte_trget_sn').val(),
+					's_pblicte_de_start': $('#dtList1').find('#s_pblicte_de_start').val(),
+					's_pblicte_de_end': $('#dtList1').find('#s_pblicte_de_end').val(),
+					's_taxbil_yn': $('#dtList1').find('#s_taxbil_yn').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                alert('알수없는 오류가 발생하였습니다.');
+				console.error(pJqXHR);
+            }
+        },
+		order: [4, 'asc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'cntrct_no' }, //계약번호
+            { data: 'cntrct_nm' }, //계약명
+            { data: 'dept_nm' },
+            { data: 'delng_se_nm' }, //계약번호
+            { data: 'pblicte_trget_nm' },
+			{ data: 'pblicte_de' },
+			{ data: 'taxbil_yn' },
+			{ data: 'splpc_am', className: 'text-right',
+			    render: function(data, type, row, meta) {
+					return data.toFormat('NUMBER');
+				}
+			},
+			{ data: 'vat', className: 'text-right',
+			    render: function(data, type, row, meta) {
+					var result = '';
+					if (data != null) {
+						result = data;
+					}
+					return result.toFormat('NUMBER');
+				}
+			},
+			{ data: 'total', className: 'text-right',
+			    render: function(data, type, row, meta) {
+					var result = '';
+					if (data != null) {
+						result = data;
+					}
+					return result.toFormat('NUMBER');
+				}
+			},
+			{ data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-action="update" data-cntrct_sn="'+row.cntrct_sn+'" data-taxbil_sn="'+row.taxbil_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+		],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			var summary = pSettings.json.summary;
+			$('#summary').find('tbody td').eq(0).html(summary.total_count.toFormat('NUMBER'));
+			$('#summary').find('tbody td').eq(1).html(summary.total_amount.toFormat('NUMBER'));
+		},
+		initComplete: function(settings, json) {
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				// pEvent.stopPropagation();
+				var current = pEvent.currentTarget;
+				var cntrct_sn = $(current).data('cntrct_sn');
+				var taxbil_sn = $(current).data('taxbil_sn');
+				getTax(cntrct_sn, taxbil_sn);
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+
+/******************************************************************************
+ *
+ */
+getContract = function(s_cntrct_sn)
+{
+	if (s_cntrct_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+
+	$.ajax({
+		url: '/api/sales/ajax_get_contract',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#frmBox1').find('#prjct_creat_at').yVal(data.prjct_creat_at);
+				if (data.prjct_creat_at == 'Y') {
+					var html = '';
+					$.each(pResult.project, function(pIndex, pValue){
+						html += '<option value="'+pValue.prjct_sn+'">';
+						html += pValue.cntrct_se_nm + '(' + pValue.manage_no + ')';
+						html += '</option>';
+						if (pIndex == 0) {
+							$('#frmBox1').find('#t_prjct_sn').val(pValue.prjct_sn);
+						}
+					});
+					$('#frmBox1').find('#prjct_sn').html(html);
+
+					var prjct_sn = $('#frmBox1').find('#t_prjct_sn').val();
+					if (prjct_sn !== '') {
+						$('#frmBox1').find('#prjct_sn').val(prjct_sn).trigger('change');
+					}
+					$('#frmBox1').find('#project').show();
+				} else {
+					$('#frmBox1').find('#prjct_sn').yVal('');
+					$('#frmBox1').find('#project').hide();
+				}
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+getTax = function(s_cntrct_sn, s_taxbil_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_taxbil_sn=' + s_taxbil_sn;
+	// alert(params);
+	$.ajax({
+		url: '/api/tax/ajax_get_tax',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#frmBox1').find('#s_taxbil_sn').val(data.taxbil_sn);
+				$('#frmBox1').find('#cntrct_sn').val(data.cntrct_sn).trigger('change');
+				$('#frmBox1').find('#prjct_creat_at').val(data.prjct_creat_at);
+				$('#frmBox1').find('#t_prjct_sn').val(data.prjct_sn);
+				// alert(data.prjct_sn);
+				$('#frmBox1').find('#prjct_sn').val(data.prjct_sn).trigger('change');
+				$('#frmBox1').find('input[name=taxbil_yn]').yVal(data.taxbil_yn);
+				$('#frmBox1').find('#collct_time').val(data.collct_time);
+
+				$('#frmBox1').find('#delng_se_code').val(data.delng_se_code).trigger('change');
+				$('#frmBox1').find('#pblicte_trget_sn').val(data.pblicte_trget_sn).trigger('change');
+				$('#frmBox1').find('#pblicte_de').val(data.pblicte_de);
+				$('#frmBox1').find('#collct_de').val(data.collct_de);
+				$('#frmBox1').find('#splpc_am').val(data.splpc_am);
+				$('#frmBox1').find('#vat').val(data.vat);
+				$('#frmBox1').find('#rm').val(data.rm);
+				formReset('update');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	if (pMode === 'insert' || pMode === 'init') {
+		//폼처리
+		$('#frmBox1').find('#s_taxbil_sn').val('');
+		$('#frmBox1').find('#cntrct_sn').val('').trigger('change');
+		$('#frmBox1').find('#prjct_creat_at').val('');
+		$('#frmBox1').find('#t_prjct_sn').val('');
+		$('#frmBox1').find('#prjct_sn').val('').trigger('change');
+		$('#frmBox1').find('#prjct_sn').html('<option value=""></option>');
+		$('#frmBox1').find('input[name=taxbil_yn]').yVal('Y');
+		$('#frmBox1').find('#delng_se_code').val('').trigger('change');
+		$('#frmBox1').find('#pblicte_trget_sn').val('').trigger('change');
+		$('#frmBox1').find('#pblicte_de').val('');
+		$('#frmBox1').find('#collct_de').val('');
+		$('#frmBox1').find('#splpc_am').val('');
+		$('#frmBox1').find('#vat').val('');
+		$('#frmBox1').find('#rm').val('');
+		$('#frmBox1').find('#collct_time').val('1');
+		$('#frmBox1').find('#cntrct_sn').yReadonly(false);
+		$('#frmBox1').find('#prjct_sn').yReadonly(false);
+		//버튼처리
+		$('#frmBox1').find('#btnSaveKeep').show();
+		$('#frmBox1').find('#btnDelete').hide();
+	} else if (pMode === 'update') {
+		//폼처리
+		$('#frmBox1').find('#cntrct_sn').yReadonly(true);
+		$('#frmBox1').find('#prjct_sn').yReadonly(true);
+		//버튼처리
+		$('#frmBox1').find('#btnSaveKeep').hide();
+		$('#frmBox1').find('#btnDelete').show();
+	}
+}
+
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 계약번호
+	var cntrct_sn = $('#frmBox1').find('#cntrct_sn').val();
+	if (result == true && fnIsEmpty(cntrct_sn)) {
+		alert('계약정보가 선택되지 않았습니다.');
+		$('#frmBox1').find('#cntrct_sn').focus();
+		result = false;
+	}
+
+	// 프로젝트
+	var prjct_creat_at = $('#frmBox1').find('#prjct_creat_at').val();
+	if (prjct_creat_at === 'Y') {
+		var prjct_sn = $('#frmBox1').find('#prjct_sn').val();
+		if (result == true && fnIsEmpty(prjct_sn)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#frmBox1').find('#prjct_sn').focus();
+			result = false;
+		}
+	}
+
+	// 거래구분
+	var delng_se_code = $('#frmBox1').find('#delng_se_code').val();
+	if (result == true && fnIsEmpty(delng_se_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#frmBox1').find('#delng_se_code').focus();
+		result = false;
+	}
+
+	// 대상업체
+	var pblicte_trget_sn = $('#frmBox1').find('#pblicte_trget_sn').val();
+	if (result == true && fnIsEmpty(pblicte_trget_sn)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#frmBox1').find('#pblicte_trget_sn').focus();
+		result = false;
+	}
+
+	// 발행일자
+	var pblicte_de = $('#frmBox1').find('#pblicte_de').val();
+	if (result == true && fnIsEmpty(pblicte_de)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#frmBox1').find('#pblicte_de').focus();
+		result = false;
+	}
+
+	// 발행일자
+	var collct_de = $('#frmBox1').find('#collct_de').val();
+	if (result == true && fnIsEmpty(collct_de)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#frmBox1').find('#collct_de').focus();
+		result = false;
+	}
+
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertTax = function(pIsReset = true)
+{
+	$.ajax({
+		url: '/api/tax/ajax_insert_tax',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+				$.datatable1.ajax.reload();
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateTax = function()
+{
+	$.ajax({
+		url: '/api/tax/ajax_update_tax',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				formReset('update');
+				$.datatable1.ajax.reload();
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteTax = function()
+{
+	$.ajax({
+		url: '/api/tax/ajax_delete_tax',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				$.datatable1.ajax.reload();
+				fnAlert(pResult.message);
+				formReset('init');
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+	/**************************************************************************
+	* 발행일자 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(endDate.getMonth());
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+    /**************************************************************************
+     *
+     */
+	$('#frmBox1').on('change', '#cntrct_sn', function(pEvent) {
+		var action = $('#frmBox1').data('action');
+		// if (action == 'insert') {
+			getContract($(this).val());
+		// }
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#frmBox1').on('click', '#btnSaveKeep', function(pEvent) {
+		var taxbil_sn = $('#frmBox1').find('#s_taxbil_sn').val();
+		if (taxbil_sn === '') {
+			insertTax(false);
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#frmBox1').on('click', '#btnSave', function(pEvent) {
+		var taxbil_sn = $('#frmBox1').find('#s_taxbil_sn').val();
+		if (taxbil_sn === '') {
+			insertTax();
+		} else {
+			updateTax();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#frmBox1').on('click', '#btnDelete', function(pEvent) {
+		if (confirm('삭제하시겠습니까?')) {
+			deleteTax();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#frmBox1').on('click', '#btnNew', function(pEvent) {
+		formReset('init');
+	});
+
+
+    $('#frmBox1').on('click', '#plus', function(pEvent) {
+        console.log($(this).parent().parent().parent().html());
+        var now = parseInt($("#collct_time").val())+1;
+        $("#collct_time").val(now);
+	});
+
+	/**************************************************************************
+     *
+     */
+	getTaxList();
+	formReset('init');
+});
+</script>
+
+{% endblock %}
