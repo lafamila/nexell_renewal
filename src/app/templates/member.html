@@ -61,6 +61,7 @@
 									<col width="140">
 									<col width="100">
 									<col width="100">
+									<col width="100">
 									<col width="150">
 									<col width="1">
 								</colgroup>
@@ -122,6 +123,8 @@
 										</th>
 										<th class="hasinput">
 										</th>
+										<th class="hasinput">
+										</th>
 										<th class="hasinput text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
@@ -141,6 +144,7 @@
 										<th>권한</th>
 										<th>상태</th>
 										<th>입사일</th>
+										<th>퇴사일</th>
 										<th>마지막로그인</th>
 										<th class="text-right">
 											<div class="btn-group">
@@ -209,6 +213,7 @@ getMemberList = function()
             { data: 'author_nm' },
             { data: 'mber_sttus_nm' },
             { data: 'enter_de' },
+            { data: 'out_de' },
             { data: 'login_dtm' },
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
@@ -419,6 +424,11 @@ $(function() {
 												<input type="text" class="form-control datepicker-e" style="display:inline-block;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enter_de" name="enter_de" placeholder="[입사일자]">
 											</td>
 										</tr>
+										<tr><th>퇴사일</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control datepicker-e" style="display:inline-block;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="out_de" name="out_de" placeholder="[퇴사일자]">
+											</td>
+										</tr>
 										<tr><th>현장관리 가능 수<em>*</em></th>
 											<td class="hasinput" colspan="1">
 												<input class="form-control" type="text" id="mber_size" name="mber_size">
@@ -457,6 +467,7 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#mber_email').val('');
 		$('#popBox1').find('#mber_size').val('');
 		$('#popBox1').find('#enter_de').val('');
+		$('#popBox1').find('#out_de').val('');
 		$('#popBox1').find('#dept_code').val('').trigger('change');
 		$('#popBox1').find('#ofcps_code').val('').trigger('change');
 		$('#popBox1').find('#rspofc_code').val('').trigger('change');
@@ -496,6 +507,7 @@ getMember = function(s_mber_sn)
 				$('#popBox1').find('#mber_moblphon').val(result.mber_moblphon);
 				$('#popBox1').find('#mber_size').val(result.mber_size);
 				$('#popBox1').find('#enter_de').val(result.enter_de);
+				$('#popBox1').find('#out_de').val(result.out_de);
 				$('#popBox1').find('#mber_email').val(result.mber_email);
 				$('#popBox1').find('#dept_code').val(result.dept_code).trigger('change');
 				$('#popBox1').find('#ofcps_code').val(result.ofcps_code).trigger('change');

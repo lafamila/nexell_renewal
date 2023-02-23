@@ -580,17 +580,24 @@ def get_projects_by_dept_member(params):
 				WHEN progrs_sttus_code = 'S' THEN 1
 				END AS ordr
 				, (SELECT IFNULL(SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code = 'C', IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))),0) FROM cost cst WHERE cst.cntrct_sn = c.cntrct_sn AND cst.cntrct_execut_code <> 'B') AS cntrct_amount
+				, m.dept_code
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_ordr
 				FROM contract c
 				LEFT JOIN member m
 				ON c.spt_chrg_sn=m.mber_sn
 				WHERE 1=1
 				AND c.progrs_sttus_code IN ('P', 'B', 'N', 'S')
 				AND c.prjct_creat_at = 'Y'
-				AND m.dept_code = %(s_dept_code)s
 				"""
+    if "s_dept_code" in data:
+        if data["s_dept_code"] == "all":
+            query += " AND (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) >= 95.0"
+        else:
+            query += " AND m.dept_code = %(s_dept_code)s "
     if "s_mber_sn" in data:
         query += " AND c.spt_chrg_sn = %(s_mber_sn)s "
-    """ ORDER BY ordr, bcnc_nm, c.spt_nm"""
+    """ ORDER BY dept_ordr, ordr, bcnc_nm, c.spt_nm"""
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result

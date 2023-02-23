@@ -2161,7 +2161,6 @@ $('#popReport1').on('click', '.btnSearch', function(pEvent) {
 						<col width="100">
 						<col width="160">
 						<col width="60">
-						<col width="60">
 					</colgroup>
 					<tbody role="header">
 						<tr>
@@ -2172,7 +2171,6 @@ $('#popReport1').on('click', '.btnSearch', function(pEvent) {
 							<th class="colorB" colspan="1">금액</th>
 							<th class="colorB" colspan="1">공사기간</th>
 							<th class="colorB" colspan="1">공정률</th>
-							<th class="colorB" colspan="1">마감월</th>
 						</tr>
 					</tbody>
 					<tbody role="body">
@@ -2241,7 +2239,6 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                     html += '    <td class="text-right colorN3">'+amount.toString().toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-center colorN3"></td>';
                     html += '    <td class="text-center colorN3"></td>';
-                    html += '    <td class="text-center colorN3"></td>';
                     html += '</tr>';
 
                     count_tot += count;
@@ -2257,7 +2254,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 html += '<tr>';
                 html += '    <td class="text-center">'+pValue.sttus_nm+'</td>'
                 html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>'
-                html += '    <td class="text-center">'+pValue.prjct_ty_nm.split("(")[1].replaceAll(")", "")+'</td>'
+                html += '    <td class="text-center">'+pValue.prjct_ty_nm.split("(")[1].replaceAll(")", "").replaceAll("일반", "직계약")+'</td>'
                 html += '    <td class="text-center">'+pValue.spt_nm+'</td>'
                 html += '    <td class="text-right">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>'
                 html += '    <td class="text-center">'+pValue.cntrwk_period+'</td>'
@@ -2272,7 +2269,6 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 html += '    <td class="text-center colorN3" colspan="3">계</td>';
                 html += '    <td class="text-center colorN3">'+count.toString().toFormat('NUMBER')+'개</td>';
                 html += '    <td class="text-right colorN3">'+amount.toString().toFormat('NUMBER')+'</td>';
-                html += '    <td class="text-center colorN3"></td>';
                 html += '    <td class="text-center colorN3"></td>';
                 html += '    <td class="text-center colorN3"></td>';
                 html += '</tr>';
@@ -2291,7 +2287,6 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
             html += '    <td class="text-center colorSky" colspan="3">합계</td>';
             html += '    <td class="text-center colorSky">'+count_tot.toString().toFormat('NUMBER')+'개</td>';
             html += '    <td class="text-right colorSky">'+amount_tot.toString().toFormat('NUMBER')+'</td>';
-            html += '    <td class="text-center colorSky"></td>';
             html += '    <td class="text-center colorSky"></td>';
             html += '    <td class="text-center colorSky"></td>';
             html += '</tr>';

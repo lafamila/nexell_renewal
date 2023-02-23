@@ -182,3 +182,17 @@ def ajax_set_month_data():
 
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
 
+@bp.route('/memo/ajax_get_memo_list', methods=['GET'])
+def memo_ajax_get_memo_list():
+    params = request.args.to_dict()
+    result = dict()
+    result['memo_list'] = cm.get_memo_list(params)
+    result['status'] = True
+    return jsonify(result)
+
+
+@bp.route('/memo/ajax_insert_memo', methods=['GET'])
+def memo_ajax_insert_memo():
+    params = request.args.to_dict()
+    cm.insert_memo(params)
+    return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})

@@ -207,21 +207,22 @@ tbody .btnUpdate, tbody .btn{
 
 									<col width="90">
 
-									<col width="60">
-									<col width="60">
-									<col width="60">
-									<col width="60">
+									<col width="70">
+									<col width="70">
+									<col width="70">
+									<col width="70">
 
-									<col width="60">
-									<col width="60">
-									<col width="60">
-									<col width="60">
+									<col width="70">
+									<col width="70">
+									<col width="70">
+									<col width="70">
+									<col width="70">
 									<col width="*">
 								</colgroup>
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th class="hasinput" colspan="17">
+										<th class="hasinput" colspan="18">
 											<span style="margin-left:15px;margin-right:20px;">기준일자</span>
 											<input type="text" class="form-control datepicker-s" style="display:inline;width:84px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_stdyy" name="s_stdyy" placeholder="[기준일자]">
 										</th>
@@ -269,6 +270,8 @@ tbody .btnUpdate, tbody .btn{
 										</th>
 										<th class="hasinput">
 										</th>
+										<th class="hasinput">
+										</th>
 									</tr>
 									<tr>
 										<th style="text-align:center!important;">No.</th>
@@ -287,6 +290,7 @@ tbody .btnUpdate, tbody .btn{
 										<th style="text-align:center!important;">조정일수</th>
 										<th style="text-align:center!important;">사용일수</th>
 										<th style="text-align:center!important;">잔여일수</th>
+										<th style="text-align:center!important;">출장일수</th>
 										<th style="text-align:center!important;">비고</th>
 <!--										<th style="text-align:center!important;">합계</th>-->
 									</tr>
@@ -430,6 +434,11 @@ getWorkYear = function(){
 			{ data: 'mber_sn', className: 'text-center rem',
 				render: function(data, type, row, meta) {
 					return (parseInt(row.tot) + parseInt(row.mod) - parseInt(row.use)).toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'out', className: 'text-center',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
 				}
 			},
 			{ data: 'rm', className: 'text-left input-available',

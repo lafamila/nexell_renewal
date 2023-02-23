@@ -27,3 +27,8 @@ def dev_test():
 @session_helper.session_check
 def dev_test2():
     return render_template("dev_test2.html")
+
+@bp.route('/index/almost', methods=['GET'])
+@session_helper.session_check
+def index_almost():
+    return render_template("index_project_almost.html")

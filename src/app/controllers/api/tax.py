@@ -55,3 +55,11 @@ def ajax_delete_tax():
     params = request.form.to_dict()
     tx.delete_taxbil(params)
     return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
+
+@bp.route('/ajax_get_tax_list', methods=['GET'])
+def ajax_get_tax_list():
+    params = request.args.to_dict()
+    result = dict()
+    result['tax'] = tx.get_taxbil_list(params)
+    result['status'] = True
+    return jsonify(result)

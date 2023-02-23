@@ -487,13 +487,6 @@ getGoals = function(){
             $('[data-toggle="tab"]').on('click', function(pEvent){
                var s_amt_ty_code = $(this).parent().data('action');
                 $("#s_amt_ty_code").val(s_amt_ty_code);
-				if(s_amt_ty_code == '2'){
-					$(document).find("#buttonAdd").show();
-				}
-				else{
-
-					$(document).find("#buttonAdd").hide();
-				}
 				$.datatable1.ajax.reload();
             });
 
@@ -558,7 +551,7 @@ $(document).on("dblclick", ".input-available", function(){
 
 	var data = prompt("값을 입력하세요.");
 	try{
-		if(/^\d+$/.test(data)){
+		if(/^-?\d+$/.test(data)){
 			data = parseInt(data);
 		}
 		else{

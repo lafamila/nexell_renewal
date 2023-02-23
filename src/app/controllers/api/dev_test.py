@@ -29,7 +29,7 @@ def query():
         if len(line.strip()) > 0:
             if i > 0:
                 result += '\t\t\t\t'
-            result += line.strip().replace("$sql", "").replace('.=', '').replace('"', '').replace(";", "").strip() + "\n"
+            result += line.strip().replace("$sql", "").replace('.=', '').replace('"', '').replace('{$s_ctmmny_sn}', "'1'").replace("%", "%%").replace(";", "").strip() + "\n"
     result += '"""'
     return jsonify({"text" : result})
 

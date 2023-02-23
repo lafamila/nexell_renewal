@@ -1,0 +1,1743 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+    .hidden { display:none!important; }
+    tbody .btnUpdate, tbody .btn{
+        line-height: 0.3!important;
+    }
+    tbody{
+        font-size:12px!important;
+    }
+    #summery{
+        top:15px;
+        left:385px;
+        width:780px;
+    }
+    #temp{
+        display:none;
+    }
+    @media (min-width: 100px) and (max-width: 1024px) {
+        #summery{
+            top:130px;
+            left:13px;
+            width:780px;
+        }
+        #temp{
+            display:block;
+        }
+    }
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">입/출금 관리</li><li><span> 관리</span></li>
+	</ol>
+</div>
+
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					입/출금 관리 <span>> 자금</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info"  style="background:#e6faff!important;">
+		<!-- <a class="close" data-dismiss="alert" href="#">×</a> -->
+		<p><i class="fa-fw fa fa-info"></i>
+			자금의 입/출금 내역을 관리합니다.
+		</p>
+	</div>
+
+    <!-- 집계표 -->
+	<table class="table table-bordered table-summery" style="z-index:901;" id="summery">
+		<thead>
+<!--
+			<tr><th colspan="6">
+					입&nbsp;/&nbsp;출&nbsp;금&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+-->
+		</thead>
+		<tbody>
+			<tr>
+                <th rowspan="4" style="border-right: 1px solid #000!important;
+                                       border-top: 1px solid #000!important;
+    font-size: 16px!important;
+    background: #0070C0!important;
+    color: #fff!important;
+    padding: 7px!important;
+    vertical-align: middle!important;
+    text-align: center!important;">집<br/>계<br/>표</th>
+				<th style="border-top: 1px solid #000!important;background:#fff;width:90px;text-align:center;">구분</th>
+				<th style="border-top: 1px solid #000!important;background:#fff;width:80px;text-align:center;">입금건수</th>
+				<th style="border-top: 1px solid #000!important;background:#fff;width:150px;text-align:center;">입금합계</th>
+				<th style="border-top: 1px solid #000!important;background:#fff;width:80px;text-align:center;">출금건수</th>
+				<th style="border-top: 1px solid #000!important;background:#fff;width:150px;text-align:center;">출금합계</th>
+				<th style="border-top: 1px solid #000!important;background:#fff;width:150px;text-align:center;">차액</th>
+<!--				<td style="background:#fff;width:121px;text-align:right;">0</td>-->
+			</tr>
+			<tr>
+				<th style="background:#fff;width:90px;text-align:center;">계좌(유)</th>
+				<td style="background:#fff;width:80px;text-align:center;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+				<td style="background:#fff;width:80px;text-align:center;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+			</tr>
+			<tr>
+				<th style="background:#fff;width:90px;text-align:center;">계좌(무)</th>
+				<td style="background:#fff;width:80px;text-align:center;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+				<td style="background:#fff;width:80px;text-align:center;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+			</tr>
+			<tr>
+				<th style="background:#fff;width:90px;text-align:center;">합계</th>
+				<td style="background:#fff;width:80px;text-align:center;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+				<td style="background:#fff;width:80px;text-align:center;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+				<td style="background:#fff;width:150px;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+    <div id="temp">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+    <br/>
+	<!-- 등록/수정 -->
+	<!-- <div class="well">
+	</div> -->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>입/출금 목록</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-info colorP" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 자금일보</i></button>
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="80">
+									<col width="*">
+									<col width="180">
+									<col width="202">
+									<col width="166">
+									<col width="130">
+									<col width="*">
+									<col width="122">
+									<col width="120">
+									<col width="100">
+									<col width="120">
+									<col width="130">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<!-- <th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_no" name="s_cntrct_no">
+										</th> -->
+										<th class="hasinput">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-success" title="복사" id="check-copy"><i class="fa fa-clone"></i></button>
+												<button type="button" class="btn btn-table btn-danger" title="삭제" id="check-delete"><i class="fa fa-trash-o"></i></button>
+											</div>
+
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_prvent_sn" name="s_prvent_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_rcppay_de_start" name="s_rcppay_de_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_rcppay_de_end" name="s_rcppay_de_end" placeholder="[종료일자]">
+											<!-- <div class="input-group date">
+												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_rcppay_de" name="s_rcppay_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div> -->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_acntctgr_code" name="s_acntctgr_code">
+												<option value="">[전체]</option>
+												{% for code in acntctgr_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<div class="input-group date">
+												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_bil_exprn_de" name="s_bil_exprn_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_rcppay_dtls" name="s_rcppay_dtls">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_papr_invstmnt_sn" name="s_papr_invstmnt_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_rcppay_se_code" name="s_rcppay_se_code">
+												<option value="">[전체]</option>
+												{% for code in rcppay_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_acnut_code" name="s_acnut_code">
+												<option value="">[전체]</option>
+												{% for code in acnut_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+												<option value="999">현금/계좌외</option>
+											</select>
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<th>No.</th>
+										<th style="vertical-align: middle;">
+											<input type="checkbox" class="checkbox-inline" id="check-all"/>
+										</th>
+										<th>계약명(현장명)</th>
+										<th>거래처명</th>
+										<th>입/출금일</th>
+										<th>계정과목</th>
+										<th>어음만기일</th>
+										<th>내역</th>
+										<th>지출자</th>
+										<th>부서</th>
+										<th>입/출금구분</th>
+										<th style="text-align:left!important;">금액</th>
+										<th>계좌</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script type="text/javascript">
+function isValidDate(dateString) {
+  var regEx = /^\d{4}-\d{2}-\d{2}$/;
+  if(!dateString.match(regEx)) return false;  // Invalid format
+  var d = new Date(dateString);
+
+  var dNum = d.getTime();
+  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+}
+
+getFundList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 15,
+        ajax: {
+            url: '/api/fund/ajax_get_fund_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					// 's_rcppay_de': $('#dtList1').find('#s_rcppay_de').val(),
+					's_rcppay_de_start': $('#dtList1').find('#s_rcppay_de_start').val(),
+					's_rcppay_de_end': $('#dtList1').find('#s_rcppay_de_end').val(),
+					// 's_cntrct_no': $('#dtList1').find('#s_cntrct_no').val(),
+					's_spt_nm': $('#dtList1').find('#s_spt_nm').val(),
+					's_acntctgr_code': $('#dtList1').find('#s_acntctgr_code').val(),
+					's_bil_exprn_de': $('#dtList1').find('#s_bil_exprn_de').val(),
+					's_prvent_sn': $('#dtList1').find('#s_prvent_sn').val(),
+					's_papr_invstmnt_sn': $('#dtList1').find('#s_papr_invstmnt_sn').val(),
+					's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_rcppay_se_code': $('#dtList1').find('#s_rcppay_se_code').val(),
+					's_acnut_code': $('#dtList1').find('#s_acnut_code').val(),
+					's_rcppay_dtls': $('#dtList1').find('#s_rcppay_dtls').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [3, 'desc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+			{ data: 'rcppay_sn', className: 'hasinput text-center', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += `	<input type="checkbox" data-sn="${data}" class="checkbox-inline row-check" />`;
+					html += '</div>';
+					return html;
+				}
+			},
+            // { data: 'cntrct_no' },
+            { data: 'spt_nm' },
+            { data: 'prvent_nm' },
+			{ data: 'rcppay_de' },
+			{ data: 'acntctgr_nm' },
+            { data: 'bil_exprn_de' },
+            { data: 'rcppay_dtls' },
+            { data: 'papr_invstmnt_nm' },
+            { data: 'dept_nm' },
+            { data: 'rcppay_se_nm' },
+			{ data: 'amount', className: 'text-right',
+			    render: function(data, type, row, meta) {
+					var result = '';
+					if (data != '') {
+						result = data.toFormat('NUMBER');
+					}
+					return result;
+				}
+			},
+            { data: 'acnut_nm' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-cntrct_sn="'+row.cntrct_sn+'" data-rcppay_sn="'+row.rcppay_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+        drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+            var last = [0, 0, 0, 0, 0];
+			var eSummary = pSettings.json.eSummary;
+            var total = 0;
+            $.each(eSummary, function(pIndex, pValue){
+                var amount = (pValue.amount == '') ? 0 : parseInt(pValue.amount);
+                total += (pValue.rcppay_se_code == 'I') ? amount : -1*amount;
+                $('#summery').find('tbody tr').eq(1).find('td').eq(pIndex*2).html(pValue.count);
+                $('#summery').find('tbody tr').eq(1).find('td').eq(pIndex*2 + 1).html(amount.toString().toFormat('NUMBER'));
+                last[pIndex * 2] += parseInt(pValue.count);
+                last[pIndex * 2 + 1] += amount;
+            });
+            last[4] += total;
+            $('#summery').find('tbody tr').eq(1).find('td').eq(4).html(total.toString().toFormat('NUMBER'));
+
+
+            var nSummary = pSettings.json.nSummary;
+            var total = 0;
+            $.each(nSummary, function(pIndex, pValue){
+                var amount = (pValue.amount == '') ? 0 : parseInt(pValue.amount);
+                total += (pValue.rcppay_se_code == 'I') ? amount : -1*amount;
+                $('#summery').find('tbody tr').eq(2).find('td').eq(pIndex*2).html(pValue.count);
+                $('#summery').find('tbody tr').eq(2).find('td').eq(pIndex*2 + 1).html(amount.toString().toFormat('NUMBER'));
+                last[pIndex * 2] += parseInt(pValue.count);
+                last[pIndex * 2 + 1] += amount;
+            });
+            last[4] += total;
+            $('#summery').find('tbody tr').eq(2).find('td').eq(4).html(total.toString().toFormat('NUMBER'));
+
+            $.each(last, function(pIndex, pValue){
+                $('#summery').find('tbody tr').eq(3).find('td').eq(pIndex).html(pValue.toString().toFormat('NUMBER'));
+            });
+		},
+		initComplete: function(settings, json) { //console.log('initComplete', json);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var cntrct_sn = $(this).data('cntrct_sn'); //if (cntrct_sn == '') cntrct_sn = '0';
+				var rcppay_sn = $(this).data('rcppay_sn');
+				getFund(cntrct_sn, rcppay_sn);
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+
+			$(myList).on('change', '#check-all', function(pEvent){
+				$(document).find(".row-check").prop('checked', $(this).is(":checked"));
+			});
+			$(myList).on('click', '#check-copy', function(pEvent){
+				var checked = $(document).find(".row-check:checked");
+				if(checked.length > 0){
+					var data = prompt(`총 ${checked.length}개의 데이터를 복사할 날짜를 입력해주세요. (YYYY-MM-DD)`);
+					if(isValidDate(data)){
+						var rcppay_sns = [];
+						$.each(checked, function(pIndex, pTag){
+							rcppay_sns.push($(pTag).data("sn"));
+						});
+						var params = {"rcppay_sns" : rcppay_sns, "rcppay_de" : data};
+						$.ajax({
+							url : "/api/fund/ajax_copy_funds",
+							method : "POST",
+							contentType: "application/json;charset=utf-8",
+							data : JSON.stringify(params),
+							success: function(pResult){
+								if(pResult.status){
+									$.datatable1.ajax.reload();
+								}
+							}
+						});
+					}
+					else{
+						alert("입력한 형식이 올바르지 않습니다.");
+					}
+
+				}
+			});
+			$(myList).on('click', '#check-delete', function(pEvent){
+				var checked = $(document).find(".row-check:checked");
+				if(checked.length > 0){
+
+					if(confirm(`총 ${checked.length}개의 데이터를 삭제하시겠습니까?`)){
+						var rcppay_sns = [];
+						$.each(checked, function(pIndex, pTag){
+							rcppay_sns.push($(pTag).data("sn"));
+						});
+						var params = {"rcppay_sns" : rcppay_sns};
+						$.ajax({
+							url : "/api/fund/ajax_delete_fund_many",
+							method : "POST",
+							contentType: "application/json;charset=utf-8",
+							data : JSON.stringify(params),
+							success: function(pResult){
+								if(pResult.status){
+									$.datatable1.ajax.reload();
+								}
+							}
+						});
+					}
+
+				}
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+	/**************************************************************************
+	* 입/출금일 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(endDate.getMonth());
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/**************************************************************************
+     *
+     */
+	getFundList();
+});
+</script>
+<style>
+#popBox1 th {
+	background: rgb(255,153,255)!important;
+}
+</style>
+
+<!-- 등록/수정 레이어 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" data-action="" id="popBox1">
+    <div class="modal-dialog modal-w600">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>입/출금 정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button type="button" class="btn btn-primary" id="btnSaveKeep" accesskey="s" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장 후 계속(<u>s</u>)</i></button>
+						<button type="button" class="btn btn-primary" id="btnSaveNew" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+						<button type="button" class="btn btn-danger"  id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<input type="hidden" id="s_rcppay_sn" name="s_rcppay_sn">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="130">
+										<col width="*">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="required">계약명(현장명)</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+													<option value="">-</option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.etc1}}.{{code.bcnc_nm}} {{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr id="project">
+											<th class="required">프로젝트</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="prjct_sn" name="prjct_sn">
+													<option value="">-</option>
+												</select>
+												<input type="hidden" id="t_prjct_sn">
+											</td>
+										</tr>
+
+										<tr><th>거래처명</th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="prvent_sn" name="prvent_sn">
+													<option value="">-</option>
+													{% for code in bcnc_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+                                        <tr id="taxbil">
+											<th class="required">세금계산서</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="cnnc_sn" name="cnnc_sn">
+													<option value="">-</option>
+												</select>
+												<input type="hidden" id="t_cnnc_sn">
+											</td>
+										</tr>
+										<tr><th class="required-x">입/출금일</th>
+											<td class="hasinput">
+												<div class="input-group">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="rcppay_de" name="rcppay_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+										</tr>
+										<tr><th class="required-x">계정과목</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="acntctgr_code" name="acntctgr_code">
+													<option value="">-</option>
+													{% for code in acntctgr_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>어음만기일</th>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="bil_exprn_de" name="bil_exprn_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+										</tr>
+										<tr><th>내역</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="rcppay_dtls" name="rcppay_dtls">
+											</td>
+										</tr>
+										<tr><th>지출자</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="papr_invstmnt_sn" name="papr_invstmnt_sn">
+													<option value="">-</option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>부서</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="dept_code" name="dept_code">
+													<option value="">-</option>
+													{% for i, code in enumerate(dept_code_list, 1) %}
+													<option value="{{code.value}}">{{i}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th class="required-x">입/출금구분</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="rcppay_se_code" name="rcppay_se_code">
+													<option value="">-</option>
+													{% for i, code in enumerate(rcppay_se_code_list, 1) %}
+													<option value="{{code.value}}">{{i}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th class="required-x">금액</th>
+											<td class="hasinput">
+												<input type="number" class="form-control" id="amount" name="amount">
+											</td>
+										</tr>
+										<tr><th class="required-x">계좌</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="acnut_code" name="acnut_code">
+													<option value="">-</option>
+													{% for code in acnut_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+												<input type="hidden" name="before_acnut_code">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	if (pMode === 'insert' || pMode === 'init') {
+		$('#popBox1').find('#cntrct_sn').val('').trigger('change');
+		$('#popBox1').find('#t_prjct_sn').val('');
+		$('#popBox1').find('#s_rcppay_sn').val('');
+		$('#popBox1').find('#prvent_sn').val('').trigger('change');
+		$('#popBox1').find('#rcppay_de').val('');
+		$('#popBox1').find('#acntctgr_code').val('').trigger('change');
+		$('#popBox1').find('#bil_exprn_de').val(''); //어음만기일
+		$('#popBox1').find('#rcppay_dtls').val('');
+		$('#popBox1').find('#papr_invstmnt_sn').val('').trigger('change');
+		$('#popBox1').find('#dept_code').val('').trigger('change');
+		$('#popBox1').find('#rcppay_se_code').val('').trigger('change');
+		$('#popBox1').find('#amount').val('');
+		$('#popBox1').find('#cnnc_sn').val('').trigger('change');
+		$('#popBox1').find('#acnut_code').val('').trigger('change');
+		$('#popBox1').find('#before_acnut_code').val('').trigger('change');
+		// $('#popBox1').find('#cntrct_sn').yReadonly(false);
+		// $('#popBox1').find('#prjct_sn').yReadonly(false);
+		$('#popBox1').find('#project').hide();
+		$('#popBox1').find('#taxbil').hide();
+
+		$('#popBox1').find('#btnSaveKeep').show();
+		$('#popBox1').find('#btnDelete').hide();
+	} else if (pMode === 'update') {
+		// $('#popBox1').find('#cntrct_sn').yReadonly(true);
+		// $('#popBox1').find('#prjct_sn').yReadonly(true);
+
+		$('#popBox1').find('#btnSaveKeep').hide();
+		$('#popBox1').find('#btnDelete').show();
+	}
+}
+
+/******************************************************************************
+ *
+ */
+getFund = function(s_cntrct_sn, s_rcppay_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_rcppay_sn=' + s_rcppay_sn;
+
+	$.ajax({
+		url: '/api/fund/ajax_get_fund',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#popBox1').find('#s_rcppay_sn').val(data.rcppay_sn);
+				$('#popBox1').find('#cntrct_sn').val(data.cntrct_sn).trigger('change');
+				$('#popBox1').find('#t_prjct_sn').val(data.prjct_sn);
+				$('#popBox1').find('#t_cnnc_sn').val(data.cnnc_sn).trigger('change');
+				// if (prjct_sn !== '') {
+				// 	$('#popBox1').find('#prjct_sn').val(prjct_sn).trigger('change');
+				// 	$('#popBox1').find('#prjct_sn').yReadonly(true);
+				// }
+				// $('#popBox1').find('#prjct_sn').yReadonly(true);
+				// if (data.prjct_sn > 0) {
+				// 	$('#popBox1').find('#prjct_sn').val(data.prjct_sn).trigger('change');
+				// 	$('#popBox1').find('#project').show();
+				// } else {
+				// 	$('#popBox1').find('#prjct_sn').val('').trigger('change');
+				// 	$('#popBox1').find('#project').hide();
+				// }
+				$('#popBox1').find('#prvent_sn').val(data.prvent_sn).trigger('change');
+				$('#popBox1').find('#rcppay_de').val(data.rcppay_de);
+				$('#popBox1').find('#acntctgr_code').val(data.acntctgr_code).trigger('change');
+				$('#popBox1').find('#bil_exprn_de').val(data.bil_exprn_de); //어음만기일
+				$('#popBox1').find('#rcppay_dtls').val(data.rcppay_dtls);
+				$('#popBox1').find('#papr_invstmnt_sn').val(data.papr_invstmnt_sn).trigger('change');
+				$('#popBox1').find('#dept_code').val(data.dept_code).trigger('change');
+				$('#popBox1').find('#rcppay_se_code').val(data.rcppay_se_code).trigger('change');
+				$('#popBox1').find('#amount').val(data.amount);
+				$('#popBox1').find('#acnut_code').val(data.acnut_code).trigger('change');
+				$('#popBox1').find('#before_acnut_code').yVal(data.acnut_code);
+				$('#popBox1').data('action', 'update');
+				$('#popBox1').modal('show');
+			}
+		}
+	});
+}
+
+
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 입/출금일
+	var rcppay_de = $('#popBox1').find('#rcppay_de').val();
+	if (result == true && fnIsEmpty(rcppay_de)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#rcppay_de').trigger('focus');
+		result = false;
+	}
+
+	// 계정과목
+	var acntctgr_code = $('#popBox1').find('#acntctgr_code').val();
+	if (result == true && fnIsEmpty(acntctgr_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#acntctgr_code').trigger('focus');
+		result = false;
+	}
+
+	// 입출금구분
+	var rcppay_se_code = $('#popBox1').find('#rcppay_se_code').val();
+	if (result == true && fnIsEmpty(rcppay_se_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#rcppay_se_code').trigger('focus');
+		result = false;
+	}
+
+	// 금액
+	var amount = $('#popBox1').find('#amount').val();
+	if (result == true && fnIsEmpty(amount)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#amount').trigger('focus');
+		result = false;
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertFund = function(pIsReset = true)
+{
+	$.ajax({
+		url: '/api/fund/ajax_insert_fund',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log('insertFund', pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateFund = function()
+{
+	$.ajax({
+		url: '/api/fund/ajax_update_fund',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				formReset('update');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteFund = function()
+{
+	$.ajax({
+		url: '/api/fund/ajax_delete_fund',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				$.datatable1.ajax.reload();
+				fnAlert(pResult.message);
+				$('#popBox1').modal('hide');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+getContract = function(s_cntrct_sn)
+{
+	if (s_cntrct_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+
+	$.ajax({
+		url: '/api/fund/ajax_get_contract',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#popBox1').find('#prjct_creat_at').yVal(data.prjct_creat_at);
+				if (data.prjct_creat_at == 'Y') {
+					var html = '<option value="">[프로젝트를 선택하세요]</option>';
+					$.each(pResult.project, function(pIndex, pValue){
+						html += '<option value="'+pValue.prjct_sn+'">';
+						html += pValue.cntrct_se_nm + '(' + pValue.manage_no + ')';
+						html += '</option>';
+						if (pIndex == 0) {
+							$('#popBox1').find('#t_prjct_sn').val(pValue.prjct_sn);
+						}
+					});
+					$('#popBox1').find('#prjct_sn').html(html);
+					var prjct_sn = $('#popBox1').find('#t_prjct_sn').val();
+					if (prjct_sn !== '') {
+						$('#popBox1').find('#prjct_sn').val(prjct_sn).trigger('change');
+					}
+					$('#popBox1').find('#project').show();
+				} else {
+					$('#popBox1').find('#prjct_sn').yVal('');
+					$('#popBox1').find('#project').hide();
+				}
+                getTaxbil($("#cntrct_sn").val(), $("#prvent_sn").val());
+			}
+		}
+	});
+}
+
+
+getTaxbil = function(s_cntrct_sn, s_prvent_sn)
+{
+	if (s_cntrct_sn == "" && s_prvent_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prvent_sn=' + s_prvent_sn;
+    console.log(params);
+	$.ajax({
+		url: '/api/tax/ajax_get_tax_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('result', pResult);
+			if (pResult.status) {
+                if(pResult.tax.length > 0){
+                    var html = '<option value="">[세금계산서를 선택하세요]</option>';
+                    $.each(pResult.tax, function(pIndex, pValue){
+                        console.log(pValue);
+                        var am = pValue.amount == '' ? 0 : parseInt(pValue.amount);
+                        var vat = pValue.vat == '' ? 0 : parseInt(pValue.vat);
+                        var rm = (parseInt(pValue.splpc_am)+vat) - am;
+
+                            html += '<option value="'+pValue.taxbil_sn+'">';
+                            html += pValue.pblicte_de + '(' + (parseInt(pValue.splpc_am)+vat).toString().toFormat('NUMBER') + ', 잔금 '+rm.toString().toFormat('NUMBER')+')';
+                            html += '</option>';
+//                        if (pIndex == 0) {
+//                            $('#popBox1').find('#t_cnnc_sn').val(pValue.taxbil_sn);
+//                        }
+                    });
+                    $('#popBox1').find('#cnnc_sn').html(html);
+                    var cnnc_sn = $('#popBox1').find('#t_cnnc_sn').val();
+                    if (cnnc_sn !== '') {
+                        $('#popBox1').find('#cnnc_sn').val(cnnc_sn).trigger('change');
+                    }
+                    else{
+                        $('#popBox1').find('#cnnc_sn').val(cnnc_sn).trigger('change');
+
+                    }
+                    $('#popBox1').find('#taxbil').show();
+                }
+                else{
+					$('#popBox1').find('#cnnc_sn').yVal('');
+                    $('#popBox1').find('#taxbil').hide();
+
+                }
+
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+			$(this).data('action', action);
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === null || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		} else {
+			formReset(action);
+		}
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		if (action === 'insert') {
+			modal.find('#cntrct_no').focus();
+		} else if (action === 'update') {
+			modal.find('#cntrct_no').focus();
+		}
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		$('#popBox1').data('action', '');
+		formReset('init');
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSaveKeep', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertFund(false);
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSaveNew', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertFund();
+		} else if (action === 'update') {
+			updateFund();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnDelete', function(pEvent) {
+		if (confirm('삭제하시겠습니까?')) {
+			deleteFund();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#cntrct_sn').on('change', function(pEvent){
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+		// 	getContract($(this).val());
+		// }
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('change', '#cntrct_sn', function(pEvent) {
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+			getContract($(this).val());
+		// }
+	});
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('change', '#prvent_sn', function(pEvent) {
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+        getTaxbil($("#cntrct_sn").val(), $("#prvent_sn").val());
+		// }
+	});
+
+});
+</script>
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:82%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_r_rcppay_de" name="s_r_rcppay_de">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+<style>
+div.report table th,
+div.report table td {
+	padding: 3px 7px!important;
+}
+
+div.report table th.header-title,
+div.report table td.header-title,
+div.report table td.header-title span,
+div.report table th.header-title span {
+	font-size: 15px!important;
+}
+
+div.report table .text-small{
+    font-size: 10px!important;
+}
+</style>
+<style>
+#popReport1{
+    font-size: 11px !important;
+    line-height: 1.0 !important;
+}
+
+</style>
+
+<div class="title"><h2 class="colorLS"><span style="letter-spacing:25px;">자금일보</span></h2></div>
+
+<h5 class="sub-title" id="rptDate">0000년 00월 00일</h5>
+<table id="rptTable1">
+	<colgroup>
+		<col width="85">
+		<col width="280">
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="*">
+	</colgroup>
+	<tbody role="header">
+		<tr>
+			<th class="colorP header-title" colspan="2"><span style="letter-spacing:100px;">구</span>분</th>
+			<th class="colorP header-title">전&nbsp;일&nbsp;잔&nbsp;액</th>
+			<th class="colorP header-title"><span style="letter-spacing:25px;">입</span>금</th>
+			<th class="colorP header-title"><span style="letter-spacing:25px;">출</span>금</th>
+			<th class="colorP header-title">금&nbsp;일&nbsp;잔&nbsp;액</th>
+			<th class="colorP header-title"><span style="letter-spacing:100px;">비</span>고</th>
+		</tr>
+	</tbody>
+	<tbody role="body" name="summary1" style="border-bottom:3px double #000!important;">
+	</tbody>
+	<tbody role="body" name="summary2" style="border-top:3px double #000!important;">
+	</tbody>
+</table>
+
+<br>
+<table id="rptTable2">
+	<colgroup>
+		<col width="140">
+		<col width="260">
+		<col width="220">
+		<col width="190">
+		<col width="110">
+		<col width="90">
+		<col width="130">
+		<col width="130">
+		<col width="65">
+		<col width="65">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="colorP header-title">계정과목</th>
+			<th class="colorP header-title"><span style="letter-spacing:25px;">내</span>역</th>
+			<th class="colorP header-title">계약명(현장명)</th>
+			<th class="colorP header-title">거래처명</th>
+			<th class="colorP header-title">지출자</th>
+			<th class="colorP header-title"><span style="letter-spacing:25px;">부</span>서</th>
+			<th class="colorP header-title"><span style="letter-spacing:25px;">입</span>금</th>
+			<th class="colorP header-title"><span style="letter-spacing:25px;">출</span>금</th>
+			<th class="colorP header-title" colspan="2" style="max-width:141px;"><span style="letter-spacing:25px;">계</span>좌</th>
+		</tr>
+	</thead>
+	<tbody role="body">
+        <tr class="hiddend">
+            <td class="text-center"></td>
+            <td class="text-left"></td>
+            <td class="text-left"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-number"></td>
+            <td class="text-number"></td>
+            <td class="text-center text-small">&nbsp;</td>
+            <td class="text-center text-small">&nbsp;</td>
+        </tr>
+	</tbody>
+	<tbody role="footer">
+		<th class="colorG header-title" colspan="6">합계</th>
+		<td class="colorG header-title text-number"></td>
+		<td class="colorG header-title text-number"></td>
+		<td class="colorG header-title text-number" style="border-right: 1px solid rgb(204,255,204)!important"></td>
+		<td class="colorG header-title text-number"></td>
+	</tbody>
+</table>
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+
+valid = function(pResults, i, j){
+    if(j >= pResults.length){
+        return false;
+    }
+    var before = pResults[i];
+    var after = pResults[j];
+    if(before.acntctgr_code == '103' && before.acntctgr_code == after.acntctgr_code){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    if(before.acntctgr_code == '134' && after.acntctgr_code == '120'){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    if(before.acntctgr_code == '120' && after.acntctgr_code == '134'){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    if(before.acntctgr_code == '110' && after.acntctgr_code == '108'){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    if(before.acntctgr_code == '108' && after.acntctgr_code == '110'){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    if(before.acntctgr_code == '501' && after.acntctgr_code == '108'){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    if(before.acntctgr_code == '108' && after.acntctgr_code == '501'){
+        if(before.rcppay_de == after.rcppay_de && before.rcppay_dtls == after.rcppay_dtls && (parseInt(before.i_amount) + parseInt(before.o_amount)) == (parseInt(after.i_amount) + parseInt(after.o_amount)) && before.i_amount != after.i_amount){
+            return true;
+        }
+    }
+    return false;
+}
+
+getReport = function(s_rcppay_de)
+{
+	var params = '';
+	params += '&s_rcppay_de=' + s_rcppay_de;
+
+	$.ajax({
+		url: '/api/fund/ajax_get_fund_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReport', pResult);
+			if (pResult.status) {
+				$('#popReport1').find('#rptDate').html(pResult.date);
+				// ============================================================
+				var html = '';
+				var b_balance_sum = 0, i_amount_sum = 0, o_amount_sum = 0;
+				var b_balance_sum_total = 0, i_amount_sum_total = 0, o_amount_sum_total = 0;
+				$.each(pResult.summary1, function(pIndex, pValue){
+					// console.log('pValue', pValue);
+					var t_balance = parseInt(pValue.balance)+parseInt(pValue.i_amount)-parseInt(pValue.o_amount);
+					if (pIndex == 0) { // 현금
+						html += '<tr>';
+						html += '    <td class="colorLP text-center" colspan="2">①&nbsp;<span style="letter-spacing:100px;">현</span>금</td>';
+						html += '    <td class="colorLP text-number">'+pValue.balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="colorLP text-number">'+pValue.i_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="colorLP text-number">'+pValue.o_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="colorLP text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="colorLP-x text-left" id="memo_cash" name="memo"></td>';
+						html += '</tr>';
+					} else { // 예금계좌
+						html += '<tr>';
+						html += '    <td class="text-center">예금계좌</td>';
+						html += '    <td class="text-center">'+pValue.estn_code_a+'</td>';
+						html += '    <td class="text-number">'+pValue.balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.i_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.o_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-left" id="memo_deposit_'+pValue.code+'" name="memo"></td>';
+						html += '</tr>';
+					}
+
+					if (pIndex != 0) { // 소계계산
+						b_balance_sum += parseInt(pValue.balance);
+						i_amount_sum += parseInt(pValue.i_amount);
+						o_amount_sum += parseInt(pValue.o_amount);
+					}
+
+					{ // 가용자금계산
+						b_balance_sum_total += parseInt(pValue.balance);
+						i_amount_sum_total += parseInt(pValue.i_amount);
+						o_amount_sum_total += parseInt(pValue.o_amount);
+					}
+				});
+
+				// 소계출력
+				var t_balance = parseInt(b_balance_sum)+parseInt(i_amount_sum)-parseInt(o_amount_sum);
+				html += '<tr>';
+				html += '    <td class="text-center">예금계좌</td>';
+				html += '    <td class="colorLP text-center">②&nbsp;<span style="letter-spacing:100px;">소</span>계</td>';
+				html += '    <td class="colorLP text-number">'+b_balance_sum.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorLP text-number">'+i_amount_sum.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorLP text-number">'+o_amount_sum.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorLP text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorLP-x text-left" id="memo_deposit_sum" name="memo"></td>';
+				html += '</tr>';
+
+				// 가용자금출력
+				var t_balance = parseInt(b_balance_sum_total)+parseInt(i_amount_sum_total)-parseInt(o_amount_sum_total);
+				html += '<tr>';
+				html += '    <td class="colorG header-title text-center" colspan="2">①+②&nbsp;가용자금</td>';
+				html += '    <td class="colorG header-title text-number">'+b_balance_sum_total.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG header-title text-number">'+i_amount_sum_total.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG header-title text-number">'+o_amount_sum_total.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG header-title text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG-x text-left" id="memo_able_fund" name="memo"></td>';
+				html += '</tr>';
+
+				$('#popReport1').find('#rptTable1 tbody[name=summary1]').html(html);
+				$('#popReport1').find('#rptTable1 tbody[name=summary1]').yRowspan(0);
+				// ============================================================
+
+                var s1 = '';
+                $.each(pResult.s1, function(pIndex, pValue){
+                    var border = pIndex == 0? ' style="border-top:2px black solid!important;"' : '';
+                    if(pResult.s1.length==1){
+                        border =  ' style="border-top:2px black solid!important;border-bottom:2px black solid!important;"';
+                    }
+                    else{
+                        border = pIndex == pResult.s1.length-1? ' style="border-bottom:2px black solid!important;"' : border;
+                    }
+                    if(parseInt(pValue.amount) == 0)
+                        return true;
+					s1 += '<tr class="s1" style="display:none;">';
+                    s1 += '    <td class="text-center colorLP"'+border+' colspan="4"></td>';
+					s1 += '    <td class="text-center"'+border+'>'+pValue.prvent_nm+'</td>';
+					s1 += '    <td class="text-number"'+border+'>'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
+					s1 += '    <td class="text-left"'+border+'></td>';
+					s1 += '</tr>';
+                });
+                var s2 = '';
+                $.each(pResult.s2, function(pIndex, pValue){
+                    var border = pIndex == 0? ' style="border-top:2px black solid!important;"' : '';
+                    if(pResult.s2.length==1){
+                        border =  ' style="border-top:2px black solid!important;border-bottom:2px black solid!important;"';
+                    }
+                    else{
+                        border = pIndex == pResult.s2.length-1? ' style="border-bottom:2px black solid!important;"' : border;
+                    }
+                    if(parseInt(pValue.amount) == 0)
+                        return true;
+
+                    console.log("pIndex", pIndex);
+					s2 += '<tr class="s2" style="display:none;">';
+                    s2 += '    <td class="text-center colorLP"'+border+' colspan="3"></td>';
+					s2 += '    <td class="text-center"'+border+'>'+pValue.bil_exprn_de+'</td>';
+					s2 += '    <td class="text-center"'+border+'>'+pValue.prvent_nm+'</td>';
+					s2 += '    <td class="text-number"'+border+'>'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
+					s2 += '    <td class="text-left"'+border+'></td>';
+					s2 += '</tr>';
+                });
+
+
+				var html = '';
+				var b_balance_sum = 0, i_amount_sum = 0, o_amount_sum = 0;
+				$.each(pResult.summary2, function(pIndex, pValue){
+					// console.log('pValue', pValue);
+					var t_balance = parseInt(pValue.balance)+parseInt(pValue.i_amount)-parseInt(pValue.o_amount);
+					html += '<tr>';
+					if (pValue.code == '134' || pValue.code == '110') { //가지급금&받을어음
+						html += '    <td class="text-center" colspan="2"><a class="btnSearch" data-code="'+pValue.code+'">'+pValue.code_nm+'</a></td>';
+					} else {
+						html += '    <td class="text-center" colspan="2">'+pValue.code_nm+'</td>';
+					}
+					html += '    <td class="text-number">'+pValue.balance.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.i_amount.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.o_amount.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-left" id="memo_account_'+pValue.code+'" name="memo"></td>';
+					html += '</tr>';
+                    if (pValue.code == '134'){
+                        html += s1;
+                    }
+                    else if(pValue.code == '110'){
+                        html += s2;
+                    }
+					b_balance_sum += parseInt(pValue.balance);
+					i_amount_sum += parseInt(pValue.i_amount);
+					o_amount_sum += parseInt(pValue.o_amount);
+				});
+				var b_balance_sum_total = parseInt(b_balance_sum_total) + parseInt(b_balance_sum);
+				var i_amount_sum_total = parseInt(i_amount_sum_total) + parseInt(i_amount_sum);
+				var o_amount_sum_total = parseInt(o_amount_sum_total) + parseInt(o_amount_sum);
+				var t_balance = parseInt(b_balance_sum_total)+parseInt(i_amount_sum_total)-parseInt(o_amount_sum_total);
+				html += '<tr>';
+				html += '    <td class="colorG header-title text-center" colspan="2">현재현금자산(③)</td>';
+				html += '    <td class="colorG header-title text-number">'+b_balance_sum_total.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG header-title text-number">'+i_amount_sum_total.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG header-title text-number">'+o_amount_sum_total.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG header-title text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="colorG-x text-left" id="memo_cash_sum" name="memo"></td>';
+				html += '</tr>';
+
+				// 금일입금,금일출금
+				$.each(pResult.summary11, function(pIndex, pValue){
+					// console.log('summary11', pValue);
+					var t_balance = 0;
+					if (pValue.code == 'I') {
+						t_balance = parseInt(pValue.balance)+parseInt(pValue.i_amount);
+						html += '<tr>';
+						html += '    <td class="text-center" colspan="2">금일입금(당월)</td>';
+						html += '    <td class="text-number">'+pValue.balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.i_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">0</td>';
+						html += '    <td class="text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-left" id="memo_today_'+pValue.code+'" name="memo"></td>';
+						html += '</tr>';
+					} else if (pValue.code == 'O') {
+						t_balance = parseInt(pValue.balance)+parseInt(pValue.o_amount);
+						html += '<tr>';
+						html += '    <td class="text-center" colspan="2">금일출금(당월)</td>';
+						html += '    <td class="text-number">'+pValue.balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">0</td>';
+						html += '    <td class="text-number">'+pValue.o_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+t_balance.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-left" id="memo_today_'+pValue.code+'" name="memo"></td>';
+						html += '</tr>';
+					}
+				});
+
+				$('#popReport1').find('#rptTable1 tbody[name=summary2]').html(html);
+				// ============================================================
+				var html = '';
+				var i_amount_sum = 0, o_amount_sum = 0;
+                for(var i=0;i<pResult.list.length;i++){
+                    console.log(valid(pResult.list, i, i+1));
+                    if(valid(pResult.list, i, i+1)){
+                        var pValue = pResult.list[i];
+                        var nValue = pResult.list[i+1];
+                        var acntctgr_nm = (parseInt(pValue.acntctgr_code) > parseInt(nValue.acntctgr_code)) ? pValue.acntctgr_nm : nValue.acntctgr_nm;
+                        var i_amount = (pValue.i_amount == '0')?nValue.i_amount : pValue.i_amount;
+                        var o_amount = (pValue.o_amount == '0')?nValue.o_amount : pValue.o_amount;
+                        console.log(pValue, nValue);
+                        var acnut_nm = (pValue.i_amount == '0')?nValue.acnut_nm+"|"+pValue.acnut_nm : pValue.acnut_nm+"|"+nValue.acnut_nm;
+                        var dept_nm = (pValue.o_amount == '0')?nValue.dept_nm : pValue.dept_nm;
+
+
+                        html += '<tr>';
+
+                        html += '    <td class="text-center">'+acntctgr_nm+'</td>';
+                        html += '    <td class="text-left">'+pValue.rcppay_dtls+'</td>';
+                        html += '    <td class="text-left">'+pValue.cntrct_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.papr_invstmnt_nm+'</td>';
+                        html += '    <td class="text-center">'+dept_nm+'</td>';
+                        html += '    <td class="text-number">'+i_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+o_amount.toString().toFormat('NUMBER')+'</td>';
+                        var acnut_num_1 = acnut_nm.split("|")[0] == '' ?  acntctgr_nm : acnut_nm.split("|")[0];
+                        var acnut_num_2 = acnut_nm.split("|")[1] == '' ?  acntctgr_nm : acnut_nm.split("|")[1];
+                        html += '    <td class="text-center text-small">'+acnut_num_1+'</td>';
+                        html += '    <td class="text-center text-small">'+acnut_num_2+'</td>';
+                        html += '</tr>';
+                        i_amount_sum += parseInt(i_amount);
+                        o_amount_sum += parseInt(o_amount);
+                        i++;
+                    }
+                    else{
+                        var pValue = pResult.list[i];
+                        var acnut_num = pValue.acnut_nm == '' ? pValue.acntctgr_nm : pValue.acnut_nm;
+                        html += '<tr>';
+                        html += '    <td class="text-center">'+pValue.acntctgr_nm+'</td>';
+                        html += '    <td class="text-left">'+pValue.rcppay_dtls+'</td>';
+                        html += '    <td class="text-left">'+pValue.cntrct_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.papr_invstmnt_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.dept_nm+'</td>';
+                        html += '    <td class="text-number">'+pValue.i_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+pValue.o_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-center" colspan="2">'+acnut_num+'</td>';
+                        html += '</tr>';
+                        i_amount_sum += parseInt(pValue.i_amount);
+                        o_amount_sum += parseInt(pValue.o_amount);
+
+                    }
+                }
+
+				$('#popReport1').find('#rptTable2 tbody[role=body]').html(html);
+				$('#popReport1').find('#rptTable2 tbody[role=footer] td').eq(0).html(i_amount_sum.toString().toFormat('NUMBER'));
+				$('#popReport1').find('#rptTable2 tbody[role=footer] td').eq(1).html(o_amount_sum.toString().toFormat('NUMBER'));
+				// ============================================================
+
+				getMemoList('fund_report');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+insertMemo = function(pMemoID, pMemo)
+{
+	var params = '';
+	params += '&memo_ty=fund_report';
+	params += '&memo_id='+pMemoID;
+	params += '&memo='+pMemo;
+	params += '&memo_de='+$('#s_r_rcppay_de').val();
+	$.ajax({
+		url: '/api/memo/ajax_insert_memo',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+getMemoList = function(s_memo_ty)
+{
+	var params = '';
+	params += '&s_memo_ty=' + s_memo_ty;
+	params += '&s_memo_de='+$('#s_r_rcppay_de').val();
+
+	$.ajax({
+		url: '/api/memo/ajax_get_memo_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				$.each(pResult.memo_list, function(pIndex, pValue) {
+					$('#popReport1').find('#'+pValue.memo_id).html(pValue.memo);
+				});
+			}
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+	/**************************************************************************
+     *
+     */
+	$('#popReport1').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#s_r_rcppay_de').val() == '') {
+			modal.find('#s_r_rcppay_de').datepicker('setDate', 'today');
+		}
+		getReport(modal.find('#s_r_rcppay_de').val());
+	});
+
+	/**************************************************************************
+     *
+     */
+	$('#popReport1').find('#s_r_rcppay_de').on('change', function(pEvent) {
+		getReport($(this).val());
+	});
+
+	/**************************************************************************
+     *
+     */
+	$('#popReport1').find('#rptTable1').on('dblclick', 'td[name=memo]', function(pEvent) {
+		var memo = $(this).html();
+		var memoID = $(this).attr('id');
+	    var inputValue = prompt('비고를 입력하세요.', memo);
+		if (inputValue != null && inputValue != memo) {
+			$(this).html(inputValue);
+			insertMemo(memoID, inputValue);
+		}
+	});
+
+	/**************************************************************************
+     *
+     */
+	$('#popReport1').on('click', '.btnSearch', function(pEvent) {
+		var code = $(this).data('code');
+        var de = $("popReport1").find('#s_r_rcppay_de').val();
+        if(code =='134'){
+            $(".s1").toggle();
+        }
+        if(code =='110'){
+            $(".s2").toggle();
+        }
+	});
+
+	/**************************************************************************
+     *
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport1').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+</script>
+{% endblock %}

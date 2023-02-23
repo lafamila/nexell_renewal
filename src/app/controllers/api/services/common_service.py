@@ -562,6 +562,39 @@ def get_month_contract_list(params):
     result = g.curs.fetchall()
     return result
 
+def insert_memo(params):
+    data = OrderedDict()
+    for key in params:
+        if key not in (None,):
+            if params[key] != '':
+                data[key] = params[key]
+
+    if "regist_dtm" not in data:
+        data["regist_dtm"] = datetime.datetime.now()
+
+    if "register_id" not in data:
+        data["register_id"] = session["member"]["member_id"]
+
+    sub_query = [key for key in data]
+    params_query = ["%({})s".format(key) for key in data]
+
+    query = """INSERT INTO memo({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data)
+    return g.curs.lastrowid
+
+def get_memo_list(params):
+    query = """SELECT memo_ty
+				, memo_id
+				, memo
+				FROM memo m
+				WHERE memo_sn IN (SELECT MAX(memo_sn) FROM memo WHERE memo_ty = %(s_memo_ty)s AND memo_de <= %(s_memo_de)s GROUP BY memo_ty, memo_id)
+				AND memo_id <> ''
+				AND memo_de <= %(s_memo_de)s """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):
 #     s_pxcond_mt = params['s_pxcond_mt']

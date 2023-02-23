@@ -1885,17 +1885,17 @@ div.report table th, div.report table td {
 
     });
 	$(function() {
-    /**************************************************************************
-     * 인쇄 버튼 클릭 처리
-     */
-	$('#btnPrint2').on('click', function(pEvent) {
-		var html = $('#popReportBD').find('.modal-body').html();
-		$('#_print').contents().find('body>div.report').html('');
-		$('#_print').contents().find('body>div.report').html(html);
-		parent.frames['_print'].focus();
-    	parent.frames['_print'].print();
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReportBD').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
 	});
-});
 
 </script>
 {% endblock %}

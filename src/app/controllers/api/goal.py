@@ -53,8 +53,8 @@ def ajax_get_goals_datatable():
 @bp.route('/ajax_get_contracts_by_member', methods=['POST'])
 def ajax_get_contracts_by_member():
     params = request.form.to_dict()
-    contracts = gl.get_contract_list_by_amt(params)
-    cntrct_sns = set([c["value"] for c in contracts if c["progrs_sttus_code"] == 'B'])
+    contracts = gl.get_contract_list_by_amt_regist(params)
+    cntrct_sns = set([c["value"] for c in contracts])
     params["chrg_sn"] = params["s_bsn_chrg_sn"]
     r_cs = gl.get_goals_by_member(params)
     reg_cntrct_sns = set([r["cntrct_sn"] for r in r_cs])

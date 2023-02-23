@@ -38,19 +38,20 @@ class Cursor:
 
         return result
 
-    def fetchall(self):
+    def fetchall(self, transform=True):
         result = self.cursor.fetchall()
-        for r in result:
-            for key, obj in r.items():
-                if isinstance(obj, decimal.Decimal):
-                    r[key] = float(obj)
+        if transform:
+            for r in result:
+                for key, obj in r.items():
+                    if isinstance(obj, decimal.Decimal):
+                        r[key] = float(obj)
 
-                if isinstance(obj, datetime.datetime):
-                    r[key] = obj.strftime('%Y-%m-%d')
-                if isinstance(obj, datetime.date):
-                    r[key] = obj.strftime('%Y-%m-%d')
-                if obj is None:
-                    r[key] = ""
+                    if isinstance(obj, datetime.datetime):
+                        r[key] = obj.strftime('%Y-%m-%d')
+                    if isinstance(obj, datetime.date):
+                        r[key] = obj.strftime('%Y-%m-%d')
+                    if obj is None:
+                        r[key] = ""
         return result
 
     @property

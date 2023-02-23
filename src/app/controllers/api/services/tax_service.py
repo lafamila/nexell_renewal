@@ -197,3 +197,41 @@ def update_taxbil(params):
 
 def delete_taxbil(params):
     g.curs.execute("DELETE FROM taxbil WHERE taxbil_sn=%(s_taxbil_sn)s", params)
+
+def get_taxbil_list(params):
+    query = """SELECT t.ctmmny_sn
+				, t.cntrct_sn
+				, t.prjct_sn
+				, t.taxbil_sn
+				, t.taxbil_yn
+				, t.delng_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DELNG_SE_CODE' AND code=t.delng_se_code) AS delng_se_nm
+				, t.pblicte_trget_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS pblicte_trget_nm
+				, t.pblicte_de
+				, t.splpc_am
+				, t.vat
+				, (t.splpc_am + t.vat) AS total
+				, t.rm
+				, t.regist_dtm
+				, t.register_id
+				, t.update_dtm
+				, t.updater_id
+				, x.amount
+				FROM taxbil t LEFT OUTER JOIN (SELECT SUM(r.amount) AS amount, r.cnnc_sn FROM rcppay r WHERE 1 GROUP BY r.cnnc_sn) x ON t.taxbil_sn = x.cnnc_sn
+				WHERE 1=1
+				AND t.ctmmny_sn = '1' """
+
+    data = []
+    if "s_cntrct_sn" in params and params["s_cntrct_sn"]:
+        query += " AND t.cntrct_sn = %s "
+        data.append(params['s_cntrct_sn'])
+
+    if "s_prvent_sn" in params and params["s_prvent_sn"]:
+        query += " AND t.pblicte_trget_sn = %s "
+        data.append(params['s_prvent_sn'])
+
+    query += " ORDER BY t.pblicte_de ASC "
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result

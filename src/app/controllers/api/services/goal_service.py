@@ -36,6 +36,39 @@ def get_contract_list_by_amt(params):
     result = g.curs.fetchall()
     return result
 
+def get_contract_list_by_amt_regist(params):
+    query = """SELECT cntrct_sn AS value
+				, cntrct_nm AS label
+				, cntrct_no AS etc1
+				, cntrct_de AS etc2
+				, CONCAT(
+				cntrct_no, '.',
+				cntrct_nm, '.',
+				cntrct_de
+				) AS etc3
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+				, prjct_creat_at
+				, (SELECT COUNT(prjct_sn) FROM project WHERE cntrct_sn=c.cntrct_sn) AS prjct_cnt
+				, c.spt_chrg_sn
+				, c.bsn_chrg_sn
+				, c.progrs_sttus_code
+				FROM contract c
+				WHERE 1=1
+				AND ctmmny_sn = 1
+                """
+    data = []
+    if params["s_amt_ty_code"] == "2":
+        query += " AND (progrs_sttus_code IN ('B', 'P'))".format(params['s_year'])
+    else:
+        query += " AND progrs_sttus_code = 'B' "
+
+    if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
+        query += " AND c.bsn_chrg_sn=%s"
+        data.append(params["s_bsn_chrg_sn"])
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
 
 def get_goals(params):
     query = """SELECT g.stdyy

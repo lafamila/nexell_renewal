@@ -63,6 +63,7 @@ def get_member(member_sn):
                 , mber_email
                 , mber_size
                 , enter_de
+                , out_de
                 , dept_code
                 , team_code
                 , ofcps_code
@@ -156,6 +157,7 @@ def get_datatable(params):
                 , author_sn
                 , (SELECT author_nm FROM author WHERE ctmmny_sn=1 AND author_sn=m.author_sn) AS author_nm
                 , enter_de
+                , out_de
                 , m.regist_dtm
                 , register_id
                 , update_dtm

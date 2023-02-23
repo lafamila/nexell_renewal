@@ -9,6 +9,8 @@ from .controllers.sales_view import bp as sales_bp
 from .controllers.goal_view import bp as goal_bp
 from .controllers.work_view import bp as work_bp
 from .controllers.tax_view import bp as tax_bp
+from .controllers.fund_view import bp as fund_bp
+from .controllers.card_view import bp as card_bp
 from .controllers.common_view import bp as common_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
@@ -20,6 +22,8 @@ from .controllers.api.sales import bp as sales_api_bp
 from .controllers.api.goal import bp as goal_api_bp
 from .controllers.api.work import bp as work_api_bp
 from .controllers.api.tax import bp as tax_api_bp
+from .controllers.api.fund import bp as fund_api_bp
+from .controllers.api.card import bp as card_api_bp
 from .controllers.api.common import bp as common_api_bp
 from .controllers.api.services import *
 # from .controllers.ajax_controller import bp as ajax
@@ -47,6 +51,10 @@ app.register_blueprint(work_bp)
 app.register_blueprint(work_api_bp)
 app.register_blueprint(tax_bp)
 app.register_blueprint(tax_api_bp)
+app.register_blueprint(fund_bp)
+app.register_blueprint(fund_api_bp)
+app.register_blueprint(card_bp)
+app.register_blueprint(card_api_bp)
 app.register_blueprint(common_bp)
 app.register_blueprint(common_api_bp)
 app.register_blueprint(dev_api)
@@ -59,6 +67,7 @@ app.jinja_env.globals.update(
     selng_ty_code_list=get_code_list('selng_ty_code'.upper()),
     prdlst_se_code_list=get_code_list('prdlst_se_code'.upper()),
     dept_code_list=get_code_list('dept_code'.upper()),
+    card_code_list=get_code_list('card_code'.upper()),
     puchas_ty_code_list=get_code_list('ct_se_code'.upper()),
     delng_se_code_list=get_code_list('delng_se_code'.upper()),
     ofcps_code_list=get_code_list('ofcps_code'.upper()),
@@ -68,6 +77,9 @@ app.jinja_env.globals.update(
     approval_se_code_list=get_code_list('approval_se_code'.upper()),
     approval_ty_code_list=get_code_list('approval_ty_code'.upper()),
     mber_sttus_code_list=get_code_list('mber_sttus_code'.upper()),
+    acntctgr_code_list=get_code_list('acntctgr_code'.upper()),
+    rcppay_se_code_list=get_code_list('rcppay_se_code'.upper()),
+    acnut_code_list=get_code_list('acnut_code'.upper()),
     author_list=get_author_list(),
     bcnc_list=get_bcnc_list(),
     member_list=get_member_list(),

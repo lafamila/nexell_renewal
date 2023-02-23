@@ -16,7 +16,7 @@ def get_work_datatable(params):
                     , m.mber_sttus_code
                     , (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='MBER_STTUS_CODE' AND code=m.mber_sttus_code) AS mber_sttus_nm
                     , m.enter_de
-                    , IF(m.mber_sttus_code = 'R', DATE_FORMAT(m.update_dtm, %s), '') AS out_dtm
+                    , IF(m.mber_sttus_code = 'R', DATE_FORMAT(m.out_de, %s), '') AS out_dtm
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{3}' AND work_row=m.mber_sn AND work_month='tot'), (15 + FLOOR(DATEDIFF('{1}', m.enter_de)/730))) AS last_tot
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='tot'), (15 + FLOOR(DATEDIFF('{0}', m.enter_de)/730))) AS tot
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{3}' AND work_row=m.mber_sn AND work_month='mod'), 0) AS last_mod
@@ -25,6 +25,7 @@ def get_work_datatable(params):
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='use'), 0) AS `use`
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='rm'), '') AS rm
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
+    				, 10 AS `out`
                     FROM member m
                     WHERE m.enter_de <= '{0}'
                     AND m.dept_code <> ''
@@ -46,7 +47,7 @@ def get_work_datatable(params):
         query += " and FLOOR(DATEDIFF('{0}', m.enter_de)/365)=%s".format(params["s_stdyy"])
         data.append(int(params["s_cal_year"])-1)
 
-    query += " ORDER BY code_ordr, mber_nm"
+    query += " ORDER BY code_ordr, mber_sttus_code, mber_nm"
     return dt_query(query, data, params)
 
 def get_work_time(params):

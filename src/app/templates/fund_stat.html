@@ -1,0 +1,557 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<style type="text/css">
+	.text-left {
+		text-align: left!important;
+	}
+
+    #summary1{
+        top:51px;
+        left:222px;
+        width:540px;
+    }
+    #summary2{
+        top:51px;
+        left:1000px;
+        width:540px;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+    #summary1{
+        top:51px;
+        left:200px;
+        width:540px;
+    }
+    #summary2{
+        top:130px;
+        left:200px;
+        width:540px;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">월별 누계 </li><li><span> 관리</span></li>
+	</ol>
+</div>
+
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					월별 누계 <span>> 자금</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<!-- <a class="close" data-dismiss="alert" href="#">×</a> -->
+		<p><i class="fa-fw fa fa-info"></i>
+			월별 누계를 조회합니다.
+		</p>
+	</div>
+
+	<!-- 집계표1 -->
+	<table class="table table-bordered table-summery" style="" id="summary1">
+		<colgroup>
+			<col width="75">
+			<col width="110">
+			<col width="75">
+			<col width="110">
+			<col width="50">
+			<col width="120">
+		</colgroup>
+		<thead>
+			<tr><th colspan="6">
+					계정과목별 입/출금누계 집계표
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style="background:#fff;text-align:center;">입금누계</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<th style="background:#fff;text-align:center;">출금누계</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<th style="background:#fff;text-align:center;">차액</td>
+				<td style="background:#fff;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- 집계표2 -->
+	<table class="table table-bordered table-summery" style="" id="summary2">
+		<colgroup>
+			<col width="75">
+			<col width="110">
+			<col width="75">
+			<col width="110">
+			<col width="50">
+			<col width="120">
+		</colgroup>
+		<thead>
+			<tr><th colspan="6">
+					부서&계정과목별 입/출금누계 집계표
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style="background:#fff;text-align:center;">입금누계</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<th style="background:#fff;text-align:center;">출금누계</td>
+				<td style="background:#fff;text-align:right;">0</td>
+				<th style="background:#fff;text-align:center;">차액</td>
+				<td style="background:#fff;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+
+    <div id="temp">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>계정과목별</h2>
+						<div class="widget-toolbar">
+							<button type="button" class="btn btn-success" id="btnExcel1"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50"><!--No-->
+									<col width="162">
+									<col width="170">
+									<col width="*">
+									<col width="*">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:69px!important;" readonly data-id="s_rcppay_de1" id="s_rcppay_de1_start" name="s_rcppay_de1_start" placeholder="[시작]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:69px!important;" readonly data-id="s_rcppay_de1" id="s_rcppay_de1_end" name="s_rcppay_de1_end" placeholder="[종료]">
+											<!-- <div class="input-group">
+												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm" data-mask="9999-99" data-mask-placeholder="_" id="s_rcppay_de" name="s_rcppay_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div> -->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_acntctgr_code" name="s_acntctgr_code">
+												<option value="">[전체]</option>
+												{% for code in acntctgr_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+									</tr>
+									<tr>
+										<th>No.</th>
+										<th class="text-left">입/출금년월</th>
+										<th class="text-left">계정과목</th>
+										<th class="text-left">입금누계</th>
+										<th class="text-left">출금누계</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+			<article class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>부서별 계정과목별</h2>
+						<div class="widget-toolbar">
+							<button type="button" class="btn btn-success" id="btnExcel2"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList2">
+								<colgroup>
+									<col width="50"><!--No-->
+									<col width="162">
+									<col width="140">
+									<col width="170">
+									<col width="*">
+									<col width="*">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:69px!important;" readonly data-id="s_rcppay_de2" id="s_rcppay_de2_start" name="s_rcppay_de2_start" placeholder="[시작]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:69px!important;" readonly data-id="s_rcppay_de2" id="s_rcppay_de2_end" name="s_rcppay_de2_end" placeholder="[종료]">
+											<!-- <div class="input-group">
+												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm" data-mask="9999-99" data-mask-placeholder="_" id="s_rcppay_de" name="s_rcppay_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div> -->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_acntctgr_code" name="s_acntctgr_code">
+												<option value="">[전체]</option>
+												{% for code in acntctgr_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+									</tr>
+									<tr>
+										<th>No.</th>
+										<th class="text-left">입/출금년월</th>
+										<th class="text-left">부서</th>
+										<th class="text-left">계정과목</th>
+										<th class="text-left">입금누계</th>
+										<th class="text-left">출금누계</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+getFundStatDatatables1 = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		pageLength: 15,
+		buttons: ['excelHtml5'],
+        ajax: {
+            url: '/api/fund/ajax_get_fund_datatable1',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					// 's_rcppay_de': $('#dtList1').find('#s_rcppay_de').val(),
+					's_rcppay_de1_start': $('#dtList1').find('#s_rcppay_de1_start').val(),
+					's_rcppay_de1_end': $('#dtList1').find('#s_rcppay_de1_end').val(),
+					's_acntctgr_code': $('#dtList1').find('#s_acntctgr_code').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                alert('알수없는 오류가 발생하였습니다.');
+				console.error(pJqXHR);
+            }
+        },
+		order: [1, 'desc'],
+        columns: [
+            { data: 'rcppay_de', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'rcppay_de' },
+            { data: 'acntctgr_code',
+				render: function(data, type, row, meta) {
+					return row.acntctgr_nm;
+				}
+			},
+			{ data: 'i_amount', className: 'text-number',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'o_amount', className: 'text-number',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+		],
+		drawCallback: function(settings) { console.log('drawCallback1', settings.json);
+			var i_amount = settings.json.summary1.i_amount;
+			var o_amount = settings.json.summary1.o_amount;
+			var summary1 = i_amount - o_amount;
+			$('#summary1 tbody td').eq(0).html(i_amount.toString().toFormat('NUMBER'))
+			$('#summary1 tbody td').eq(1).html(o_amount.toString().toFormat('NUMBER'))
+			$('#summary1 tbody td').eq(2).html(summary1.toString().toFormat('NUMBER'))
+		},
+		initComplete: function(settings, json) { console.log('initComplete1', json);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel1').on('click', function(pEvent) {
+				$(myList).parent().find('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+
+/******************************************************************************
+ *
+ */
+getFundStatDatatables2 = function()
+{
+    $.datatable2 = $('#dtList2').DataTable({
+		serverSide: true,
+		pageLength: 15,
+		buttons: ['excelHtml5'],
+        ajax: {
+            url: '/api/fund/ajax_get_fund_datatable2',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					// 's_rcppay_de': $('#dtList2').find('#s_rcppay_de').val(),
+					's_rcppay_de2_start': $('#dtList2').find('#s_rcppay_de2_start').val(),
+					's_rcppay_de2_end': $('#dtList2').find('#s_rcppay_de2_end').val(),
+					's_dept_code': $('#dtList2').find('#s_dept_code').val(),
+					's_acntctgr_code': $('#dtList2').find('#s_acntctgr_code').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                alert('알수없는 오류가 발생하였습니다.');
+				console.error(pJqXHR);
+            }
+        },
+		order: [1, 'desc'],
+        columns: [
+            { data: 'rcppay_de', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'rcppay_de' },
+            { data: 'dept_nm' },
+            { data: 'acntctgr_nm' },
+			{ data: 'i_amount', className: 'text-number',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'o_amount', className: 'text-number',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+			},
+		],
+		drawCallback: function(settings) { console.log('drawCallback2');
+			var i_amount = settings.json.summary2.i_amount;
+			var o_amount = settings.json.summary2.o_amount;
+			var summary2 = i_amount - o_amount;
+			$('#summary2 tbody td').eq(0).html(i_amount.toString().toFormat('NUMBER'))
+			$('#summary2 tbody td').eq(1).html(o_amount.toString().toFormat('NUMBER'))
+			$('#summary2 tbody td').eq(2).html(summary2.toString().toFormat('NUMBER'))
+		},
+		initComplete: function(settings, json) { console.log('initComplete2', json);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable2.ajax.reload();
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable2.ajax.reload();
+					}
+				} else {
+					$.datatable2.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable2.ajax.reload();
+			});
+
+			$('#btnExcel2').on('click', function(pEvent) {
+				$(myList).parent().find('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+	/**************************************************************************
+	* 입/출금년월 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).val(fnGetLastDay($(this).val()));
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var id = '#'+$(this).data('id');
+			var minDate = new Date($(id+'_end').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(id+'_start').datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		var today = new Date();
+		$('.datepicker-e').datepicker('setDate', today.lastDay());
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var id = '#'+$(this).data('id');
+			var minDate = new Date($(id+'_end').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(id+'_start').datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).val(fnGetFirstDay($(this).val()));
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(endDate.getMonth());
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/**************************************************************************
+     *
+     */
+	getFundStatDatatables1();
+	getFundStatDatatables2();
+	// getFundS2atDatatables2();
+});
+</script>
+
+{% endblock %}

@@ -293,6 +293,7 @@
 		});
 		$("#calTFooter").hide();
 		getTodayWork();
+		getAlmostDoneProject();
 		$("#attendance").on("click", ()=>(location.href="/work/personal"));
 	});
 	$(document).on("click", "#calendar button.a-date", function(){
@@ -418,6 +419,27 @@
 <!-- 매입/매출 레포트 팝업 끝 -->
 <script type="text/javascript">
 
+getAlmostDoneProject = function(){
+	var params = "";
+	params += "&s_dept_code=all";
+	$.ajax({
+		url: '/api/dashboard/ajax_get_projects_by_dept_member',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+			console.log(pResult);
+			if(pResult.data.length > 0){
+				var new_window_width = 1200;
+				var positionX = ( window.screen.width / 2 ) - ( new_window_width / 2 );
+				var report = window.open("/index/almost", "projects", `width=${new_window_width}, left=${positionX}`);
+
+			}
+		}
+	});
+}
 
 getWeek = function(date){
     var week = ['일', '월', '화', '수', '목', '금', '토'];

@@ -1,0 +1,1603 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<style type="text/css">
+	.hidden { display:none!important; }
+	tbody .btnUpdate, tbody .btnPrint{
+	    line-height: 0.3!important;
+	    padding: 3px 7px!important;
+	}
+    tbody{
+        font-size:12px!important;
+    }
+
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    line-height: 1.1!important;
+    }
+</style>
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">카드지출 관리 </li><li><span> 관리</span></li>
+	</ol>
+</div>
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					카드 관리 <span>> 관리</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<!-- <a class="close" data-dismiss="alert" href="#">×</a> -->
+		<p><i class="fa-fw fa fa-info"></i>
+			카드지출 내역을 관리합니다.
+		</p>
+	</div>
+
+    <!-- 집계표 -->
+	<table class="table table-bordered table-summery" style="top:50px;left:385px;" id="summary">
+		<thead>
+			<tr><th colspan="4">
+					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
+					카&nbsp;드&nbsp;지&nbsp;출&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style="background:#fff;width:60px;text-align:center;">건수</th>
+				<td style="background:#fff;text-align:center;">0</td>
+				<th style="background:#fff;width:60px;text-align:center;">합계</th>
+				<td style="background:#fff;width:121px;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- 등록/수정 -->
+	<!-- <div class="well">
+	</div> -->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>카드지출 목록</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 월 카드지출 내역</i></button>
+							<button class="btn btn-info" data-toggle="modal" href="#popReport2"><i class="fa fa-print"> 연간 부서별 카드지출 내역</i></button>
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<!-- <col width="110"> -->
+									<col width="80">
+									<col width="202">
+									<col width="70">
+									<col width="192">
+									<col width="90">
+									<col width="80">
+									<col width="120">
+									<col width="100">
+									<col width="130">
+									<col width="313">
+                                    <col width="*">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<!-- <th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_no" name="s_cntrct_no">
+										</th> -->
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_card_code" name="s_card_code">
+												<option value="">[전체]</option>
+												{% for code in card_code_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_card_de_start" name="s_card_de_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_card_de_end" name="s_card_de_end" placeholder="[종료일자]">
+											<!-- <div class="input-group date">
+												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_card_de" name="s_card_de">
+												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+											</div> -->
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_frch_nm" name="s_frch_nm">
+										</th>
+                                        <th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_region" name="s_region">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_papr_invstmnt_sn" name="s_papr_invstmnt_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_acntctgr_code" name="s_acntctgr_code">
+												<option value="">[전체]</option>
+												{% for code in acntctgr_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_card_dtls" name="s_card_dtls">
+										</th>
+                                        <th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+                                </thead>
+								<thead role="head">
+									<tr>
+										<th>No.</th>
+										<!-- <th>계약번호</th> -->
+                                        <th>카드사명</th>
+                                        <th>일자</th>
+                                        <th>시간</th>
+										<th>가맹점명</th>
+										<th>지역</th>
+										<th style="text-align:left!important;">지출금액</th>
+										<th>지출자</th>
+										<th>부서</th>
+										<th>계정과목</th>
+										<th>내역</th>
+										<th>계약명(현장명)</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+getCardList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 300,
+        ajax: {
+            url: '/api/card/ajax_get_card_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					// 's_card_de': $('#dtList1').find('#s_card_de').val(),
+                    's_card_code': $('#dtList1').find('#s_card_code').val(),
+					's_card_de_start': $('#dtList1').find('#s_card_de_start').val(),
+					's_card_de_end': $('#dtList1').find('#s_card_de_end').val(),
+					// 's_cntrct_no': $('#dtList1').find('#s_cntrct_no').val(),
+					's_frch_nm': $('#dtList1').find('#s_frch_nm').val(),
+					's_region': $('#dtList1').find('#s_region').val(),
+                    's_papr_invstmnt_sn': $('#dtList1').find('#s_papr_invstmnt_sn').val(),
+                    's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+
+					's_acntctgr_code': $('#dtList1').find('#s_acntctgr_code').val(),
+                    's_card_dtls': $('#dtList1').find('#s_card_dtls').val(),
+                    's_spt_nm': $('#dtList1').find('#s_spt_nm').val(),
+
+					//'s_card_se_code': $('#dtList1').find('#s_card_se_code').val(),
+
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [2, 'desc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            // { data: 'cntrct_no' },
+            { data: 'card_nm' },
+            { data: 'card_de' },
+            { data: 'card_time' },
+            { data: 'frch_nm' },
+            { data: 'region' },
+			{ data: 'amount', className: 'text-right', orderable: true,
+			    render: function(data, type, row, meta) {
+					var result = '';
+					if (data != '') {
+						result = data.toFormat('NUMBER');
+					}
+					return result;
+				}
+			},
+            { data: 'papr_invstmnt_nm' },
+            { data: 'dept_nm' },
+			{ data: 'acntctgr_nm' },
+			{ data: 'card_dtls' },
+            { data: 'spt_nm' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-cntrct_sn="'+row.cntrct_sn+'" data-card_sn="'+row.card_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+        drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			var summary = pSettings.json.summary;
+			$('#summary').find('tbody td').eq(0).html(summary.total_count.toFormat('NUMBER'));
+			$('#summary').find('tbody td').eq(1).html(summary.total_amount.toFormat('NUMBER'));
+		},
+		initComplete: function(settings, json) { //console.log('initComplete', json);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var card_sn = $(this).data('card_sn');
+				getCard(card_sn);
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead[role=head]:first').clone().hide().css('top',155).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead[role=head]:last'),
+        clone = $(this).find('thead[role=head]:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-40 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+      clone.css("z-index", 500);
+    });
+  });
+});
+$(function(){
+	/**************************************************************************
+	* 입/출금일 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(endDate.getMonth());
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/**************************************************************************
+     *
+     */
+	getCardList();
+});
+</script>
+
+<style>
+#popBox1 th {
+	background: rgb(255,153,255)!important;
+}
+</style>
+
+<!-- 등록/수정 레이어 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" data-action="" id="popBox1">
+    <div class="modal-dialog modal-w600">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>카드지출 정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button type="button" class="btn btn-primary" id="btnSaveKeep" accesskey="s" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장 후 계속(<u>s</u>)</i></button>
+						<button type="button" class="btn btn-primary" id="btnSaveNew" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+						<button type="button" class="btn btn-danger"  id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<input type="hidden" id="s_card_sn" name="s_card_sn">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="130">
+										<col width="*">
+									</colgroup>
+									<tbody>
+
+                                        <tr><th class="required-x">카드사명</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="card_code" name="card_code">
+													<option value="">-</option>
+													{% for code in card_code_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+                                        <tr><th class="required-x">일자</th>
+											<td class="hasinput">
+												<div class="input-group">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="card_de" name="card_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+										</tr>
+                                        <tr><th>시간</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="card_time" name="card_time" placeholder="00:00">
+											</td>
+										</tr>
+
+                                        <tr><th>가맹점명</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="frch_nm" name="frch_nm">
+											</td>
+										</tr>
+                                        <tr><th>지역</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="region" name="region">
+											</td>
+										</tr>
+                                        <tr><th class="required-x">지출금액</th>
+											<td class="hasinput">
+												<input type="number" class="form-control" id="amount" name="amount">
+											</td>
+										</tr>
+                                        <tr><th>지출자</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="papr_invstmnt_sn" name="papr_invstmnt_sn">
+													<option value="">-</option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>부서</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="dept_code" name="dept_code">
+													<option value="">-</option>
+													{% for code in dept_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+
+												</select>
+											</td>
+										</tr>
+										<tr><th class="required-x">계정과목</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="acntctgr_code" name="acntctgr_code">
+													<option value="">-</option>
+													{% for code in acntctgr_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr><th>내역</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="card_dtls" name="card_dtls">
+											</td>
+										</tr>
+
+
+
+
+										<tr>
+											<th class="required">계약명(현장명)</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+													<option value="">-</option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.etc1}}.{{code.bcnc_nm}} {{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	if (pMode === 'insert' || pMode === 'init') {
+		$('#popBox1').find('#cntrct_sn').val('').trigger('change');
+		$('#popBox1').find('#s_card_sn').val('');
+		$('#popBox1').find('#card_de').val('');
+		$('#popBox1').find('#card_time').val('');
+		$('#popBox1').find('#acntctgr_code').val('').trigger('change');
+		$('#popBox1').find('#card_code').val('').trigger('change');
+		$('#popBox1').find('#card_dtls').val('');
+		$('#popBox1').find('#papr_invstmnt_sn').val('').trigger('change');
+		$('#popBox1').find('#dept_code').val('').trigger('change');
+		$('#popBox1').find('#amount').val('');
+		$('#popBox1').find('#frch_nm').val('');
+		$('#popBox1').find('#region').val('');
+		// $('#popBox1').find('#cntrct_sn').yReadonly(false);
+		// $('#popBox1').find('#prjct_sn').yReadonly(false);
+		$('#popBox1').find('#project').hide();
+
+		$('#popBox1').find('#btnSaveKeep').show();
+		$('#popBox1').find('#btnDelete').hide();
+	} else if (pMode === 'update') {
+		// $('#popBox1').find('#cntrct_sn').yReadonly(true);
+		// $('#popBox1').find('#prjct_sn').yReadonly(true);
+
+		$('#popBox1').find('#btnSaveKeep').hide();
+		$('#popBox1').find('#btnDelete').show();
+	}
+}
+
+/******************************************************************************
+ *
+ */
+getCard = function(s_card_sn)
+{
+	var params = '';
+	params += '&s_card_sn=' + s_card_sn;
+
+	$.ajax({
+		url: '/api/card/ajax_get_card',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#popBox1').find('#s_card_sn').val(data.card_sn);
+				$('#popBox1').find('#cntrct_sn').val(data.cntrct_sn).trigger('change');
+		        $('#popBox1').find('#card_code').val(data.card_code).trigger('change');
+                $('#popBox1').find('#frch_nm').val(data.frch_nm);
+		        $('#popBox1').find('#region').val(data.region);
+
+				// if (prjct_sn !== '') {
+				// 	$('#popBox1').find('#prjct_sn').val(prjct_sn).trigger('change');
+				// 	$('#popBox1').find('#prjct_sn').yReadonly(true);
+				// }
+				// $('#popBox1').find('#prjct_sn').yReadonly(true);
+				// if (data.prjct_sn > 0) {
+				// 	$('#popBox1').find('#prjct_sn').val(data.prjct_sn).trigger('change');
+				// 	$('#popBox1').find('#project').show();
+				// } else {
+				// 	$('#popBox1').find('#prjct_sn').val('').trigger('change');
+				// 	$('#popBox1').find('#project').hide();
+				// }
+				$('#popBox1').find('#card_de').val(data.card_de);
+				$('#popBox1').find('#card_time').val(data.card_time);
+				$('#popBox1').find('#acntctgr_code').val(data.acntctgr_code).trigger('change');
+				$('#popBox1').find('#card_dtls').val(data.card_dtls);
+				$('#popBox1').find('#papr_invstmnt_sn').val(data.papr_invstmnt_sn).trigger('change');
+				$('#popBox1').find('#dept_code').val(data.dept_code).trigger('change');
+				$('#popBox1').find('#amount').val(data.amount);
+				$('#popBox1').data('action', 'update');
+				$('#popBox1').modal('show');
+			}
+		}
+	});
+}
+
+
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 입/출금일
+	var card_de = $('#popBox1').find('#card_de').val();
+	if (result == true && fnIsEmpty(card_de)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#card_de').trigger('focus');
+		result = false;
+	}
+
+	// 시간
+	var card_time = $('#popBox1').find('#card_time').val();
+	if (result == true && fnIsEmpty(card_time)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#card_time').trigger('focus');
+		result = false;
+	}
+
+
+	// 계정과목
+	var acntctgr_code = $('#popBox1').find('#acntctgr_code').val();
+	if (result == true && fnIsEmpty(acntctgr_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#acntctgr_code').trigger('focus');
+		result = false;
+	}
+
+
+
+	// 금액
+	var amount = $('#popBox1').find('#amount').val();
+	if (result == true && fnIsEmpty(amount)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#amount').trigger('focus');
+		result = false;
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertCard = function(pIsReset = true)
+{
+	$.ajax({
+		url: '/api/card/ajax_insert_card',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log('insertCard', pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateCard = function()
+{
+	$.ajax({
+		url: '/api/card/ajax_update_card',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				formReset('update');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteCard = function()
+{
+	$.ajax({
+		url: '/api/card/ajax_delete_card',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				$.datatable1.ajax.reload();
+				fnAlert(pResult.message);
+				$('#popBox1').modal('hide');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+getContract = function(s_cntrct_sn)
+{
+	if (s_cntrct_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+
+	$.ajax({
+		url: '/api/card/ajax_get_contract',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				if(data != null)
+					$('#popBox1').find('#prjct_creat_at').yVal(data.prjct_creat_at);
+
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+			$(this).data('action', action);
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === null || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		} else {
+			formReset(action);
+		}
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		if (action === 'insert') {
+			modal.find('#cntrct_no').focus();
+		} else if (action === 'update') {
+			modal.find('#cntrct_no').focus();
+		}
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		$('#popBox1').data('action', '');
+		formReset('init');
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSaveKeep', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertCard(false);
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSaveNew', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertCard();
+		} else if (action === 'update') {
+			updateCard();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnDelete', function(pEvent) {
+		if (confirm('삭제하시겠습니까?')) {
+			deleteCard();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#cntrct_sn').on('change', function(pEvent){
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+		// 	getContract($(this).val());
+		// }
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('change', '#cntrct_sn', function(pEvent) {
+		var action = $('#popBox1').data('action');
+		// if (action == 'insert') {
+			getContract($(this).val());
+		// }
+	});
+
+});
+</script>
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:82%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card" name="s_ddt_card">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+<style>
+
+    body{
+        line-height: 1.0 !important;
+    }
+
+
+</style>
+<style>
+@media only screen and (min-width:320px) and (max-width:800px)  {
+    #popReport1{
+        font-size: 9px !important;
+        line-height: 1.0 !important;
+    }
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+
+    #popReport1{
+        font-size: 11px !important;
+        line-height: 0.5 !important;
+    }
+
+}
+</style>
+<div class="title"><h2 class="colorLS" id="title"></h2></div>
+
+<div id="year">
+
+</div>
+
+<br/>
+
+<div id="summary">
+
+</div>
+
+<div id="tables">
+
+</div>
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+
+getDashboardCards = function(card_de)
+{
+
+    $("#year").html('');
+	var params = '';
+	params += '&card_de=' + card_de;
+	$.ajax({
+		url: '/api/card/ajax_get_card_dashboard',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log(pResult);
+            var html = '';
+            var pData = pResult.data;
+            html += '<h5 class="sub-title">'+pResult.title+'</h5>';
+            html += '<table id="rptTableDash">';
+            html += '    <colgroup>';
+            html += '        <col width="100">';
+            for(let month=1;month<=12;month++){
+                html += '        <col width="110">';
+            }
+            html += '        <col width="110">';
+            html += '    </colgroup>';
+            html += '    <thead>';
+            html += '        <tr>';
+            html += '            <th class="colorG header-title">구분</th>';
+            for(let month=1;month<=12;month++){
+                html += '        <th class="colorG header-title">'+month+'월</th>';
+            }
+            html += '            <th class="colorG header-title">누계</th>';
+            html += '        </tr>';
+            html += '    </thead>';
+            html += '    <tbody role="body">';
+            var cs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var ms = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            $.each(pData, function(pIndex, pValue){
+                var c = 0;
+                var m = 0;
+                html += '    <tr>';
+                html += '        <td class="">건수</th>';
+                html += '        <td class="text-number">'+pValue.c01.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c01);
+                cs[0] += parseInt(pValue.c01);
+                html += '        <td class="text-number">'+pValue.c02.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c02);
+                cs[1] += parseInt(pValue.c02);
+                html += '        <td class="text-number">'+pValue.c03.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c03);
+                cs[2] += parseInt(pValue.c03);
+                html += '        <td class="text-number">'+pValue.c04.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c04);
+                cs[3] += parseInt(pValue.c04);
+                html += '        <td class="text-number">'+pValue.c05.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c05);
+                cs[4] += parseInt(pValue.c05);
+                html += '        <td class="text-number">'+pValue.c06.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c06);
+                cs[5] += parseInt(pValue.c06);
+                html += '        <td class="text-number">'+pValue.c07.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c07);
+                cs[6] += parseInt(pValue.c07);
+                html += '        <td class="text-number">'+pValue.c08.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c08);
+                cs[7] += parseInt(pValue.c08);
+                html += '        <td class="text-number">'+pValue.c09.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c09);
+                cs[8] += parseInt(pValue.c09);
+                html += '        <td class="text-number">'+pValue.c10.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c10);
+                cs[9] += parseInt(pValue.c10);
+                html += '        <td class="text-number">'+pValue.c11.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c11);
+                cs[10] += parseInt(pValue.c11);
+                html += '        <td class="text-number">'+pValue.c12.toString().toFormat('NUMBER')+'</td>';
+                c += parseInt(pValue.c12);
+                cs[11] += parseInt(pValue.c12);
+                cs[12] += parseInt(c);
+
+                html += '        <td class="text-number">'+c.toString().toFormat('NUMBER')+'</td>';
+                html += '    </tr>';
+                html += '    <tr>';
+                html += '        <td class="">월계</th>';
+                html += '        <td class="text-number">'+pValue.m01.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m01);
+                ms[0] += parseInt(pValue.m01);
+                html += '        <td class="text-number">'+pValue.m02.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m02);
+                ms[1] += parseInt(pValue.m02);
+                html += '        <td class="text-number">'+pValue.m03.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m03);
+                ms[2] += parseInt(pValue.m03);
+                html += '        <td class="text-number">'+pValue.m04.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m04);
+                ms[3] += parseInt(pValue.m04);
+                html += '        <td class="text-number">'+pValue.m05.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m05);
+                ms[4] += parseInt(pValue.m05);
+                html += '        <td class="text-number">'+pValue.m06.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m06);
+                ms[5] += parseInt(pValue.m06);
+                html += '        <td class="text-number">'+pValue.m07.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m07);
+                ms[6] += parseInt(pValue.m07);
+                html += '        <td class="text-number">'+pValue.m08.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m08);
+                ms[7] += parseInt(pValue.m08);
+                html += '        <td class="text-number">'+pValue.m09.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m09);
+                ms[8] += parseInt(pValue.m09);
+                html += '        <td class="text-number">'+pValue.m10.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m10);
+                ms[9] += parseInt(pValue.m10);
+                html += '        <td class="text-number">'+pValue.m11.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m11);
+                ms[10] += parseInt(pValue.m11);
+                html += '        <td class="text-number">'+pValue.m12.toString().toFormat('NUMBER')+'</td>';
+                m += parseInt(pValue.m12);
+                ms[11] += parseInt(pValue.m12);
+                ms[12] += m;
+                html += '        <td class="text-number">'+m.toString().toFormat('NUMBER')+'</td>';
+                html += '    </tr>';
+
+            });
+
+            html += '    </tbody>';
+//            html += '    <tbody role="footer">';
+//            html += '        <tr>';
+//            html += '            <td class="colorG header-title">건수</td>';
+//            for(let month=1;month<=12;month++){
+//                html += '            <th class="colorG header-title text-number">'+cs[month-1].toString().toFormat('NUMBER')+'</td>';
+//            }
+//                html += '            <th class="colorG header-title text-number">'+cs[12].toString().toFormat('NUMBER')+'</td>';
+//            html += '        </tr>';
+//            html += '        <tr>';
+//            html += '            <td class="colorG header-title">금액</td>';
+//            for(let month=1;month<=12;month++){
+//                 html += '            <th class="colorG header-title text-number">'+ms[month-1].toString().toFormat('NUMBER')+'</td>';
+//            }
+//                html += '            <th class="colorG header-title text-number">'+ms[12].toString().toFormat('NUMBER')+'</td>';
+//            html += '        </tr>';
+//            html += '';
+//            html += '    </tbody>';
+            html += '</table>';
+            $("#popReport1 #year").append(html);
+        }
+
+    });
+}
+
+
+
+getReportCards = function(card_de)
+{
+
+    $("#popReport1 #tables").html('');
+	var params = '';
+	params += '&card_de=' + card_de;
+	$.ajax({
+		url: '/api/card/ajax_get_card_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReportCards', pResult);
+			if (pResult.status) {
+                $("#popReport1 #title").html(pResult.title);
+                var pData = pResult.data;
+                var idx = 1;
+                var summary = {};
+                var order = {};
+                $.each(pData, function(pIndex, pValue){
+                    var html = '';
+                    var pResult = pValue.rows;
+                    html += '<h5 class="sub-title" id="rptCard'+idx+'">'+pIndex+'</h5>';
+                    html += '<table id="rptTable'+idx+'">';
+                    html += '    <colgroup>';
+                    html += '        <col width="120">';
+                    html += '        <col width="80">';
+                    html += '        <col width="210">';
+                    html += '        <col width="120">';
+                    html += '        <col width="130">';
+                    html += '        <col width="110">';
+                    html += '        <col width="130">';
+                    html += '        <col width="130">';
+                    html += '        <col width="260">';
+                    html += '        <col width="*">';
+                    html += '    </colgroup>';
+                    html += '    <thead>';
+                    html += '        <tr>';
+                    html += '            <th class="colorP header-title">일자</th>';
+                    html += '            <th class="colorP header-title">시간</th>';
+                    html += '            <th class="colorP header-title">가맹점명</th>';
+                    html += '            <th class="colorP header-title">지역</th>';
+                    html += '            <th class="colorP header-title">지출금액</th>';
+                    html += '            <th class="colorP header-title">지출자</th>';
+                    html += '            <th class="colorP header-title"><span style="letter-spacing:25px;">부</span>서</th>';
+                    html += '            <th class="colorP header-title">계정과목</th>';
+                    html += '            <th class="colorP header-title"><span style="letter-spacing:25px;">내</span>역</th>';
+                    html += '            <th class="colorP header-title">계약명(현장명)</th>';
+                    html += '        </tr>';
+                    html += '    </thead>';
+                    html += '    <tbody role="body">';
+                    html += '    </tbody>';
+                    html += '    <tbody role="footer">';
+                    html += '        <tr>';
+                    html += '            <th class="colorG header-title" colspan="4">월계</th>';
+                    html += '            <td class="colorG header-title text-number"></td>';
+                    html += '            <th class="colorG header-title" colspan="5"></td>';
+                    html += '        </tr>';
+                    html += '        <tr>';
+                    html += '            <th class="colorSky header-title" colspan="4">누계</th>';
+                    html += '            <td class="colorSky header-title text-number"></td>';
+                    html += '            <th class="colorSky header-title" colspan="5"></td>';
+                    html += '        </tr>';
+                    html += '';
+                    html += '    </tbody>';
+                    html += '</table>';
+                    $("#popReport1 #tables").append(html);
+
+                    html = '';
+                    var amount_total = 0;
+                    $.each(pResult, function(ppIndex, ppValue){
+                        var p_amount = (ppValue.amount == '') ? 0 : parseInt(ppValue.amount);
+                        amount_total += p_amount;
+                        html += '<tr>';
+                        html += '    <td class="">'+ppValue.card_de+'</td>';
+                        html += '    <td class="">'+ppValue.card_time+'</td>';
+                        html += '    <td class="text-left">'+ppValue.frch_nm+'</td>';
+                        html += '    <td class="">'+ppValue.region+'</td>';
+                        html += '    <td class="text-number">'+p_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="">'+ppValue.papr_invstmnt_nm+'</td>';
+                        html += '    <td class="">'+ppValue.dept_nm+'</td>';
+                        html += '    <td class="">'+ppValue.acntctgr_nm+'</td>';
+                        html += '    <td class="">'+ppValue.card_dtls+'</td>';
+                        html += '    <td class="">'+ppValue.spt_nm+'</td>';
+                        html += '</tr>';
+
+
+                        if(!summary.hasOwnProperty(ppValue.dept_nm)){
+                            summary[ppValue.dept_nm] = [];
+                        }
+
+                        summary[ppValue.dept_nm].push(p_amount);
+
+                        if(ppValue.dept_nm != ''){
+                            order[ppValue.dept_nm] = ppValue.code_order;
+                        }
+                    });
+
+                    $('#popReport1').find('#rptTable'+idx+' tbody[role=body]').html(html);
+                    $('#popReport1').find('#rptTable'+idx+' tbody[role=footer] td').eq(0).html(amount_total.toString().toFormat('NUMBER'));
+                    $('#popReport1').find('#rptTable'+idx+' tbody[role=footer] td').eq(1).html(pValue.total[0].total.toString().toFormat('NUMBER'));
+                    idx += 1;
+                });
+                console.log("order", order);
+                $.each(order, function(k, v){
+                    if(v.length == 1){
+                        v = "0"+v;
+                    }
+                    order[k] = v;
+                });
+                const ordered = [];
+                Object.values(order).sort().forEach(function(values) {
+                  var key = 0;
+                  $.each(order, function(k,v){
+                      if(v == values){
+                          key = k;
+                      }
+                  });
+                  ordered.push(key);
+                });
+                var count = 0;
+                $.each(ordered, function(pIndex, pValue){
+                   if(pValue != "")
+                       count += 1;
+                });
+                if(count > 0){
+
+                    var html = "";
+                    html += '<table>';
+                    html += '    <colgroup>';
+                    html += '        <col width="5%">';
+                    for(var i=0;i<count;i++){
+                        html += '        <col width="'+(95/(count+1))+'%">';
+                    }
+                    html += '        <col width="'+(95/(count+1))+'%">';
+                    html += '    </colgroup>';
+                    html += '    <thead>';
+                    html += '        <tr>';
+                    html += '            <th class="colorP header-title">부서</th>';
+                    $.each(ordered, function(pIndex, pValue){
+                       if(pValue != "")
+                           html += '            <th class="colorP header-title">'+pValue+'</th>';
+                    });
+                    html += '            <th class="colorP header-title">월계</th>';
+
+                    html += '        </tr>';
+                    html += '    </thead>';
+                    html += '    <tbody role="body">';
+
+                    html += '<tr>';
+                    var len = 0;
+                    html += '    <td class="">건수</td>';
+                    $.each(ordered, function(pIndex, p){
+                       var pValue = summary[p];
+                       if(p != ""){
+                           html += '    <td class="text-number">'+pValue.length+'</td>';
+                           len += pValue.length;
+                       }
+                    });
+                    html += '    <td class="text-number">'+len+'</td>';
+                    html += '</tr>';
+
+                    html += '<tr>';
+                    var pr = 0;
+                    html += '    <td class="">금액</td>';
+                    $.each(ordered, function(pIndex, p){
+                       var pValue = summary[p];
+                       if(p != ""){
+                           html += '    <td class="text-number">'+pValue.reduce((a, b) => a + b, 0).toString().toFormat('NUMBER')+'</td>';
+                           pr += pValue.reduce((a, b) => a + b, 0);
+                       }
+                    });
+                    html += '    <td class="text-number">'+pr.toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+
+
+                    html += '    </tbody>';
+                    html += '</table>';
+                    $('#popReport1').find('#summary').html(html);
+                }
+                else{
+                    var html = "";
+                    html += '<table>';
+                    html += '    <colgroup>';
+                    html += '        <col width="60">';
+                    html += '        <col width="*">';
+                    html += '    </colgroup>';
+                    html += '    <thead>';
+                    html += '        <tr>';
+                    html += '            <th class="colorP header-title">부서</th>';
+                    html += '            <td class="colorP header-title"></th>';
+
+                    html += '        </tr>';
+                    html += '    </thead>';
+                    html += '    <tbody role="body">';
+
+                    html += '<tr>';
+                    var len = 0;
+                    html += '    <td class="">건수</td>';
+                    html += '    <td class="" rowspan="2">부서별 카드 사용 내역이 없습니다.</th>';
+                    html += '</tr>';
+
+                    html += '<tr>';
+                    var pr = 0;
+                    html += '    <td class="">금액</td>';
+                    html += '</tr>';
+
+
+                    html += '    </tbody>';
+                    html += '</table>';
+                    $('#popReport1').find('#summary').html(html);
+                }
+
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#s_ddt_card').val() == '') {
+			modal.find('#s_ddt_card').datepicker('setDate', 'today');
+		}
+		getReportCards(modal.find('#s_ddt_card').val());
+        getDashboardCards(modal.find('#s_ddt_card').val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('change', '#s_ddt_card', function(pEvent) {
+		getReportCards($(this).val());
+        getDashboardCards($(this).val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport1').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+</script>
+
+<div class="modal fade" data-backdrop="static" id="popReport2">
+    <div class="modal-dialog modal-w1200" style="width:82%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card2" name="s_ddt_card2">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+<style>
+
+    body{
+        line-height: 1.0 !important;
+    }
+
+
+</style>
+<style>
+@media only screen and (min-width:320px) and (max-width:800px)  {
+    #popReport2{
+        font-size: 9px !important;
+        line-height: 1.0 !important;
+    }
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+
+    #popReport2{
+        font-size: 11px !important;
+        line-height: 0.5 !important;
+    }
+
+}
+</style>
+<div class="title"><h2 class="colorLS">연간 부서별 카드 지출</h2></div>
+
+<div>
+    <table id="rptTableDashYear">
+        <colgroup>
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="colorG header-title">구분</th>
+                <th class="colorG header-title">1월</th>
+                <th class="colorG header-title">2월</th>
+                <th class="colorG header-title">3월</th>
+                <th class="colorG header-title">4월</th>
+                <th class="colorG header-title">5월</th>
+                <th class="colorG header-title">6월</th>
+                <th class="colorG header-title">7월</th>
+                <th class="colorG header-title">8월</th>
+                <th class="colorG header-title">9월</th>
+                <th class="colorG header-title">10월</th>
+                <th class="colorG header-title">11월</th>
+                <th class="colorG header-title">12월</th>
+                <th class="colorG header-title">누계</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <th class="colorG header-title">월계</th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+                <th class="colorG header-title text-number total"></th>
+            </tr>
+        </tfoot>
+    </table>
+
+</div>
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+
+getReportCardsYears = function(card_de){
+	var params = '';
+	params += '&card_de=' + card_de;
+	$.ajax({
+		url: '/api/card/ajax_get_card_dashboard_year',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            var html = '';
+            var tot01 = 0,tot02 = 0,tot03 = 0,tot04 = 0,tot05 = 0,tot06 = 0,tot07 = 0,tot08 = 0,tot09 = 0,tot10 = 0,tot11 = 0,tot12 = 0,tot = 0;
+            $.each(pResult.data, function(pIndex, pValue){
+
+                html += '<tr>';
+                html += '   <th class="colorP">'+pValue.dept_nm+'</th>';
+                html += '   <td class="text-number">'+pValue.m01.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m02.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m03.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m04.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m05.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m06.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m07.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m08.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m09.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m10.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m11.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.m12.toString().toFormat('NUMBER')+'</td>';
+                html += '   <td class="text-number">'+pValue.mtotal.toString().toFormat('NUMBER')+'</td>';
+                html += '</tr>';
+                tot01 += parseInt(pValue.m01);
+                tot02 += parseInt(pValue.m02);
+                tot03 += parseInt(pValue.m03);
+                tot04 += parseInt(pValue.m04);
+                tot05 += parseInt(pValue.m05);
+                tot06 += parseInt(pValue.m06);
+                tot07 += parseInt(pValue.m07);
+                tot08 += parseInt(pValue.m08);
+                tot09 += parseInt(pValue.m09);
+                tot10 += parseInt(pValue.m10);
+                tot11 += parseInt(pValue.m11);
+                tot12 += parseInt(pValue.m12);
+                tot += parseInt(pValue.mtotal);
+            });
+            $("#popReport2").find("#rptTableDashYear").find("tbody").html(html);
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(0).html(tot01.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(1).html(tot02.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(2).html(tot03.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(3).html(tot04.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(4).html(tot05.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(5).html(tot06.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(6).html(tot07.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(7).html(tot08.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(8).html(tot09.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(9).html(tot10.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(10).html(tot11.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(11).html(tot12.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#rptTableDashYear").find("tfoot th.total").eq(12).html(tot.toString().toFormat('NUMBER'));
+            console.log(pResult);
+
+        }
+
+    });
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport2').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#s_ddt_card2').val() == '') {
+			modal.find('#s_ddt_card2').datepicker('setDate', 'today');
+		}
+		getReportCardsYears(modal.find('#s_ddt_card2').val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popReport2').on('change', '#s_ddt_card2', function(pEvent) {
+		getReportCardsYears($(this).val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint2').on('click', function(pEvent) {
+		var html = $('#popReport2').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+</script>
+
+{% endblock %}
