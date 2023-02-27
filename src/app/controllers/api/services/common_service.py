@@ -594,6 +594,156 @@ def get_memo_list(params):
     result = g.curs.fetchall()
     return result
 
+def get_bcnc_datatable(params):
+    query = """SELECT ctmmny_sn
+				, bcnc_sn
+				, bcnc_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='BCNC_SE_CODE' AND code=b.bcnc_se_code) AS bcnc_se_nm
+				, bcnc_nm
+				, bcnc_telno
+				, bcnc_adres
+				, rprsntv_nm
+				, bizrno
+				, bsnm_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='BSNM_SE_CODE' AND code=b.bsnm_se_code) AS bsnm_se_nm
+				, esntl_delng_no
+				, use_at
+				, regist_dtm
+				, register_id
+				, update_dtm
+				, updater_id
+				FROM bcnc b
+				WHERE 1=1
+				AND ctmmny_sn = '1' """
+    data = []
+    if "s_bcnc_nm" in params and params['s_bcnc_nm']:
+        query += " AND bcnc_nm LIKE %s"
+        data.append('%{}%'.format(params["s_bcnc_nm"]))
+
+    if "s_bizrno" in params and params['s_bizrno']:
+        query += " AND bizrno LIKE %s"
+        data.append('%{}%'.format(params["s_bizrno"]))
+
+    if "s_bsnm_se_code" in params and params['s_bsnm_se_code']:
+        query += " AND bsnm_se_code=%s"
+        data.append(params["s_bsnm_se_code"])
+
+    if "s_bcnc_se_code" in params and params['s_bcnc_se_code']:
+        query += " AND bcnc_se_code=%s"
+        data.append(params["s_bcnc_se_code"])
+
+    if "s_rprsntv_nm" in params and params['s_rprsntv_nm']:
+        query += " AND rprsnty_nm LIKE %s"
+        data.append('%{}%'.format(params["s_rprsntv_nm"]))
+
+    return dt_query(query, data, params)
+
+
+def get_bcnc(params):
+    query = """SELECT ctmmny_sn
+				, bcnc_sn
+				, bcnc_se_code
+				, bcnc_nm
+				, bcnc_telno
+				, bcnc_adres
+				, rprsntv_nm
+				, bizrno
+				, bsnm_se_code
+				, esntl_delng_no
+				, use_at
+				, regist_dtm
+				, register_id
+				, update_dtm
+				, updater_id
+				FROM bcnc
+				WHERE 1=1
+				AND ctmmny_sn = '1'
+				AND bcnc_sn = %(s_bcnc_sn)s """
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+
+def insert_bcnc(params):
+    data = OrderedDict()
+    for key in params:
+        if key not in (None,):
+            if params[key] != '':
+                data[key] = params[key]
+
+    if "ctmmny_sn" not in data:
+        data["ctmmny_sn"] = '1'
+
+    if "use_at" not in data:
+        data["use_at"] = 'Y'
+
+    if "regist_dtm" not in data:
+        data["regist_dtm"] = datetime.datetime.now()
+
+    if "register_id" not in data:
+        data["register_id"] = session["member"]["member_id"]
+
+    sub_query = [key for key in data]
+    params_query = ["%({})s".format(key) for key in data]
+
+    query = """INSERT INTO bcnc({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data)
+    return g.curs.lastrowid
+
+def update_bcnc(params):
+    required = (None, )
+    bcnc_sn = params["bcnc_sn"]
+
+    data = OrderedDict()
+    for key in params:
+        if key not in ("bcnc_sn"):
+            if key in required:
+                if params[key] != '':
+                    data[key] = key
+            else:
+                data[key] = params[key]
+    sub_query = ["{0}=%({0})s".format(key) for key in data]
+    query = """UPDATE bcnc SET {}, UPDATE_DTM=NOW() WHERE bcnc_sn=%(bcnc_sn)s""".format(",".join(sub_query))
+    g.curs.execute(query, params)
+
+def delete_bcnc(params):
+    g.curs.execute("DELETE FROM bcnc WHERE bcnc_sn=%(bcnc_sn)s", params)
+
+def get_money_data(params):
+    query = """ SELECT c.cntrct_sn AS cntrct_sn
+                , c.spt_nm AS cntrct_nm
+				, t.delng_se_code AS delng_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DELNG_SE_CODE' AND code=t.delng_se_code) AS delng_se_nm
+                , t.pblicte_trget_sn AS bcnc_sn
+                , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+				, MIN(t.collct_de) AS collct_de
+				, SUM(t.splpc_am + IFNULL(t.vat, 0)) AS amount
+				, MIN(IFNULL(r.rcppay_de, '9999-99-99')) AS rcppay_de
+				, SUM(IFNULL(r.price_1, 0)) AS price_1
+				, SUM(IFNULL(r.price_2, 0)) AS price_2		
+                , (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr						
+                FROM (SELECT * FROM taxbil WHERE delng_se_code LIKE 'S%%' AND DATE_FORMAT(collct_de, '%%Y-%%m') = %(s_mt)s) t
+                LEFT JOIN contract c
+                ON t.cntrct_sn=c.cntrct_sn
+                LEFT JOIN member m
+                ON c.spt_chrg_sn=m.mber_sn
+                LEFT OUTER JOIN (SELECT cnnc_sn
+                                , MAX(rcppay_de) AS rcppay_de
+                                , SUM(IF(bil_exprn_de IS NULL, amount, 0)) AS price_1
+                                , SUM(IF(bil_exprn_de IS NULL, 0, amount)) AS price_2
+                                 FROM rcppay 
+                                 WHERE rcppay_se_code LIKE 'I%%' AND cnnc_sn IS NOT NULL
+                                 GROUP BY cnnc_sn) r 
+                ON t.taxbil_sn=r.cnnc_sn
+                WHERE 1=1
+                AND c.progrs_sttus_code IN ('P', 'B')
+                GROUP BY c.cntrct_sn, t.pblicte_trget_sn, t.delng_se_code, DATE_FORMAT(t.collct_de, '%%Y-%%m')
+                ORDER BY code_ordr, bcnc_sn, cntrct_nm
+            """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
 
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):

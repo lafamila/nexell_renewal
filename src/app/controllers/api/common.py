@@ -196,3 +196,45 @@ def memo_ajax_insert_memo():
     params = request.args.to_dict()
     cm.insert_memo(params)
     return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
+
+
+@bp.route('/partner/ajax_get_partner_datatable', methods=['POST'])
+def partner_ajax_get_partner_datatable():
+    params = request.form.to_dict()
+    result = cm.get_bcnc_datatable(params)
+    result['status'] = True
+    return jsonify(result)
+
+
+
+@bp.route('/partner/ajax_get_partner', methods=['GET'])
+def partner_ajax_get_partner():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = cm.get_bcnc(params)
+    result['status'] = True
+    return jsonify(result)
+
+@bp.route('/partner/ajax_insert_partner', methods=['POST'])
+def partner_ajax_insert_partner():
+    params = request.form.to_dict()
+    cm.insert_bcnc(params)
+    return jsonify({"status": True, "message" : "성공적으로 추가되었습니다."})
+@bp.route('/partner/ajax_update_partner', methods=['POST'])
+def partner_ajax_update_partner():
+    params = request.form.to_dict()
+    cm.update_bcnc(params)
+    return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
+
+@bp.route('/partner/ajax_delete_partner', methods=['POST'])
+def partner_ajax_delete_partner():
+    params = request.form.to_dict()
+    cm.delete_bcnc(params)
+    return jsonify({"status": True, "message" : "성공적으로 삭제되었습니다."})
+
+@bp.route('/money/ajax_get_money_data', methods=['GET'])
+def money_ajax_get_money_data():
+    params = request.args.to_dict()
+    result = dict()
+    result['contract'] = cm.get_money_data(params)
+    return jsonify(result)

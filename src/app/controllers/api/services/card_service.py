@@ -246,7 +246,8 @@ def get_card_dashboard(params):
 def get_report(params, card_code):
     ymd = params['card_de']
     y, m, d = ymd.split("-")
-    f, l = calendar.monthrange(int(y), int(m))
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
 
@@ -280,7 +281,8 @@ def get_report(params, card_code):
 def get_total(params, card_code):
     ymd = params['card_de']
     y, m, d = ymd.split("-")
-    f, l = calendar.monthrange(int(y), int(m))
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
 

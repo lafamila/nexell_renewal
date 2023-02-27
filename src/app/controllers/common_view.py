@@ -19,3 +19,13 @@ def bcnc_page(dept_code):
 @session_helper.session_check
 def month_page():
     return render_template("month.html")
+@bp.route('/partner')
+@session_helper.session_check
+def partner_page():
+    return render_template("partner.html")
+
+@bp.route('/money')
+@session_helper.session_check
+def money_page():
+    return render_template("money.html")
+

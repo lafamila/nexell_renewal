@@ -1,0 +1,1818 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+                <style>
+                    div.report.report-completed1 table th,
+                    div.report.report-completed1 table td {
+                        font-size: 12px!important;
+                    }
+
+                    div.report.report-completed1 #rptCompletedArea table th,
+                    div.report.report-completed1 #rptCompletedArea table td {
+                        font-size: 12px!important;
+                        padding: 7px 5px!important;
+                    }
+                    div.report table tbody[role=header] tr:last-child th {
+                        border-bottom: black 1px solid !important;
+                    }
+
+                    div.report *{
+                        font-size:12px !important;
+                    }
+                    #popReport{
+                        font-size: 9px !important;
+                        line-height: 1.0 !important;
+                    }
+                    tr.etc{
+                        display:none;
+                    }
+                    tr.myETC, #eETC{
+                        cursor:pointer;
+                    }
+                </style>
+                <div class="title"><h2 class="colorLS">공조사업부 / <span id="rptTitle"></span> / 기성현황서</h2></div>
+                <h5 class="sub-title underline">공조사업부 영업 실적현황</h5>
+                <table id="rptContractStatus">
+                    <colgroup>
+                        <col width="100">
+                        <col width="150">
+                        <col width="*">
+                    </colgroup>
+                    <tbody role="header">
+                        <tr>
+                            <th class="colorZ" rowspan="2" style="border-bottom: black 1px solid !important">구분</th>
+                            <th class="colorZ" rowspan="2" style="border-bottom: black 1px solid !important;border-right:2px solid black!important;">팀</th>
+                            <th class="colorZ" colspan="3" id="rptContractStatus_m" style="border-right:2px solid black!important;">월</th>
+                            <th class="colorZ" colspan="3" style="border-right:2px solid black!important;">누계</th>
+                            <th class="colorZ" colspan="2">연간</th>
+                        </tr>
+                        <tr>
+                            <th class="colorZ">목표</th>
+                            <th class="colorZ">실적</th>
+                            <th class="colorZ" style="border-right:2px solid black!important;">%</th>
+                            <th class="colorZ">목표</th>
+                            <th class="colorZ">실적</th>
+                            <th class="colorZ" style="border-right:2px solid black!important;">%</th>
+                            <th class="colorZ">목표</th>
+                            <th class="colorZ">%</th>
+                        </tr>
+                    </tbody>
+                    <tbody role="body">
+                    </tbody>
+                </table>
+                <!------------------------------------------------------------------------------------------->
+                <br>
+                <h5 class="sub-title underline">공조사업부 현장 집행현황</h5>
+                <table id="rptExecutStatus">
+                    <colgroup>
+                        <col width="100">
+                        <col width="150">
+                        <col width="*">
+                    </colgroup>
+                    <tbody role="header">
+                        <tr>
+                            <th class="colorZ" rowspan="2">구분</th>
+                            <th class="colorZ" rowspan="2" style="border-right:2px solid black!important;">담당</th>
+                            <th class="colorZ" colspan="3"id="rptExecutStatus_m" style="border-right:2px solid black!important;">월</th>
+                            <th class="colorZ" colspan="3" style="border-right:2px solid black!important;">누계</th>
+                            <th class="colorZ" rowspan="2">총 진행 현장수</th>
+                        </tr>
+                        <tr>
+                            <th class="colorZ">매출</th>
+                            <th class="colorZ">집행</th>
+                            <th class="colorZ" style="border-right:2px solid black!important;">%</th>
+                            <th class="colorZ">매출</th>
+                            <th class="colorZ">집행</th>
+                            <th class="colorZ" style="border-right:2px solid black!important;">%</th>
+                        </tr>
+                    </tbody>
+                    <tbody role="body">
+                    </tbody>
+                </table>
+                <!------------------------------------------------------------------------------------------->
+                <br>
+                <div style="position:relative">
+                <h5 class="sub-title underline">거래처 현장별 기성현황</h5>
+                <div class="" style="position: absolute; right: 0; top: -8px;margin-right:10px;" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="checkbox" name="progrs_sttus_code">마감
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="checkbox" name="progrs_sttus_code_n">유보
+                    </label>
+                </div>
+                </div>
+                <div id="rptCompletedArea"></div>
+                <br>
+                <div id="rptCompletedTotal"></div>
+                <!------------------------------------------------------------------------------------------->
+                <br>
+                <h5 class="sub-title underline">건설사별 실적현황</h5>
+                <table id="rptParnterStatus1">
+                    <colgroup>
+                        <col width="100">
+                        <col width="150">
+                        <col width="150">
+                        <col width="150">
+                        <col width="50">
+                        <col width="150">
+                        <col width="50">
+                        <col width="150">
+                        <col width="50">
+                        <col width="160">
+                    </colgroup>
+                    <tbody role="header">
+                        <tr>
+                            <th class="colorZ" colspan="2">발주처</th>
+                            <th class="colorZ">계약금액</th>
+                            <th class="colorZ">전회까지</th>
+                            <th class="colorZ">기성율</th>
+                            <th class="colorZ">금회</th>
+                            <th class="colorZ">기성율</th>
+                            <th class="colorZ">누계</th>
+                            <th class="colorZ">기성율</th>
+                            <th class="colorZ">당년도 매출금액</th>
+                        </tr>
+                        </tbody>
+                    <tbody role="body">
+                    </tbody>
+                    <tbody role="footer">
+                        <tr>
+                            <th class="colorZ" colspan="2">계</th>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!------------------------------------------------------------------------------------------->
+                <br>
+                <h5 class="sub-title underline">협력업체별 집행금액</h5>
+                <table id="rptParnterStatus2">
+                    <colgroup>
+                        <col width="250">
+                        <col width="25">
+                        <col width="150">
+                        <col width="150">
+                        <col width="50">
+                        <col width="150">
+                        <col width="50">
+                        <col width="150">
+                        <col width="50">
+                        <col width="160">
+                    </colgroup>
+                    <tbody role="header">
+                        <tr>
+                            <th class="colorZ">협력사</th>
+                            <th class="colorZ">계약건수</th>
+                            <th class="colorZ">계약금액</th>
+                            <th class="colorZ">전회까지</th>
+                            <th class="colorZ">기성율</th>
+                            <th class="colorZ">금회</th>
+                            <th class="colorZ">기성율</th>
+                            <th class="colorZ">누계</th>
+                            <th class="colorZ">기성율</th>
+                            <th class="colorZ">당년도 매입금액</th>
+                            <!-- <th class="colorZ">비고</th> -->
+                        </tr>
+                    </tbody>
+                    <tbody role="body">
+                    </tbody>
+                    <tbody role="footer">
+                        <tr>
+                            <th class="colorZ">계</th>
+                            <td class="colorZ"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <td class="colorZ text-number"></td>
+                            <!-- <td class="colorZ"></td> -->
+                        </tr>
+                    </tbody>
+                </table>
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<!-- 레포트1 레이어 팝업 끝 -->
+<script type="text/javascript">
+/**************************************************************************
+ *
+ */
+getReportNR = function(s_pxcond_mt)
+{
+	var params = '';
+	params += '&s_pxcond_mt=' + s_pxcond_mt;
+	console.log('getReportNR', params);
+
+	$.ajax({
+		url: '/api/completed/ajax_get_completed_reportNR',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReportNR', pResult); //rptCompletedArea
+			if (pResult.status) {
+				var pxcond_mt = $('#popReport').find('#s_pxcond_mt').val();
+				var pxcond_mt_arr = pxcond_mt.split('-');
+				var year = parseInt(pxcond_mt_arr[0]);
+				var month = parseInt(pxcond_mt_arr[1]);
+				var day = parseInt(pxcond_mt_arr[2]);
+				$('#popReport').find('#rptTitle').html(year+'년&nbsp;'+month+'월분');
+				// ============================================================
+				// 공조사업부 영업 실적현황
+				var html = '';
+				var rt1 = 0, rt2 = 0, rt3 = 0;
+				var b_amt1 = 0, b_amt2 = 0, b_amt3 = 0, b_amt4 = 0, b_amt5 = 0;
+				var j_amt1 = 0, j_amt2 = 0, j_amt3 = 0, j_amt4 = 0, j_amt5 = 0;
+				var total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+				$('#popReport').find('#rptContractStatus_m').html(month+'월');
+				$.each(pResult.contractStatusList, function(pIndex, pValue){
+					if (pValue.amt_ty_code == '2') { // 수주
+						b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
+						b_amt2 = parseInt(pValue['m'+parseInt(pxcond_mt_arr[1])]); if(isNaN(b_amt2)) b_amt2 = 0;
+						b_amt3 = parseInt(pValue.y_contract_amount); if(isNaN(b_amt3)) b_amt3 = 0;
+						b_amt4 = 0; for(i=1; i<=month; i++) { b_amt4 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt4)) b_amt4 = 0;
+						b_amt5 = 0; for(i=1; i<=12; i++) { b_amt5 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt5)) b_amt5 = 0;
+						rt1 = (b_amt2 < 0) ? 100.0 + (b_amt2 - b_amt1)*100/b_amt2 : (b_amt1/b_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+                        rt2 = (b_amt4 < 0) ? 100.0 + (b_amt4 - b_amt3)*100/b_amt4 : (b_amt3/b_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+                        rt3 = (b_amt3/b_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+						html += '<tr>';
+						html += '    <td class="text-center colorSky">'+pValue.amt_ty_nm+'</td>';
+						html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
+						html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+						html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+						html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+						html += '</tr>';
+						// 합계처리
+						total1 += parseInt(b_amt1);
+						total2 += parseInt(b_amt2);
+						total3 += parseInt(b_amt3);
+						total4 += parseInt(b_amt4);
+						total5 += parseInt(b_amt5);
+						if ((pIndex+1)%pValue.dept_count == 0) {
+							rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
+                            rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
+                            rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
+							html += '<tr>';
+							html += '    <td class="text-center">'+pValue.amt_ty_nm+'</td>';
+							html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
+							html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+							html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+							html += '    <td class="text-number colorSky">'+total5.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+							html += '</tr>';
+							total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+						}
+					} else if (pValue.amt_ty_code == '3' || pValue.amt_ty_code == '5') { // 매출, VA
+						b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
+						b_amt2 = parseInt(pValue['m'+parseInt(pxcond_mt_arr[1])]); if(isNaN(b_amt2)) b_amt2 = 0;
+						b_amt3 = parseInt(pValue.y_contract_amount); if(isNaN(b_amt3)) b_amt3 = 0;
+						b_amt4 = 0; for(i=1; i<=month; i++) { b_amt4 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt4)) b_amt4 = 0;
+						b_amt5 = 0; for(i=1; i<=12; i++) { b_amt5 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt5)) b_amt5 = 0;
+						html += '<tr class="amt'+pValue.dept_nm+'" data-ty="'+pValue.amt_ty_code+'">';
+						html += '    <td class="text-center colorSky">'+pValue.amt_ty_nm+'</td>';
+						html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
+						html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+						html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+						html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number"></td>';
+						html += '</tr>';
+						// 장려금
+						j_amt1 = parseInt(pValue.ty9_goal_amount); if(isNaN(j_amt1)) j_amt1 = 0;
+						j_amt2 = parseInt(pValue.ty8_goal_amount); if(isNaN(j_amt2)) j_amt2 = 0;
+						j_amt3 = parseInt(pValue.ty9_goal_amount_sum); if(isNaN(j_amt3)) j_amt3 = 0;
+						j_amt4 = parseInt(pValue.ty8_goal_amount_sum); if(isNaN(j_amt4)) j_amt4 = 0;
+						j_amt5 = parseInt(pValue.ty8_goal_amount_total); if(isNaN(j_amt5)) j_amt5 = 0;
+						html += '<tr>';
+						html += '    <td class="text-center">'+pValue.amt_ty_nm+'</td>';
+						html += '    <td class="text-center" style="border-right:2px solid black!important;">장려금</td>';
+						html += '    <td class="text-number">'+j_amt2.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+j_amt1.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+						html += '    <td class="text-number">'+j_amt4.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+j_amt3.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+						html += '    <td class="text-number">'+j_amt5.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number"></td>';
+						html += '</tr>';
+						// 소계
+						t_amt1 = parseInt(b_amt1) + parseInt(j_amt1);
+						t_amt2 = parseInt(b_amt2) + parseInt(j_amt2);
+						t_amt3 = parseInt(b_amt3) + parseInt(j_amt3);
+						t_amt4 = parseInt(b_amt4) + parseInt(j_amt4);
+						t_amt5 = parseInt(b_amt5) + parseInt(j_amt5);
+						rt1 = (t_amt2 < 0) ? 100.0 + (t_amt2 - t_amt1)*100/t_amt2 : (t_amt1/t_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+                        rt2 = (t_amt4 < 0) ? 100.0 + (t_amt4 - t_amt3)*100/t_amt4 : (t_amt3/t_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+                        rt3 = (t_amt3/t_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+						html += '<tr>';
+						html += '    <td class="text-center">'+pValue.amt_ty_nm+'</td>';
+						html += '    <td class="text-center colorN3" style="border-right:2px solid black!important;">소계</td>';
+						html += '    <td class="text-number colorN3">'+t_amt2.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorN3">'+t_amt1.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorN3" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+						html += '    <td class="text-number colorN3">'+t_amt4.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorN3">'+t_amt3.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorN3" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+						html += '    <td class="text-number colorN3">'+t_amt5.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorN3">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+						html += '</tr>';
+						// 합계처리
+						total1 += parseInt(t_amt1);
+						total2 += parseInt(t_amt2);
+						total3 += parseInt(t_amt3);
+						total4 += parseInt(t_amt4);
+						total5 += parseInt(t_amt5);
+						if ((pIndex+1)%pValue.dept_count == 0) {
+							rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
+                            rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
+                            rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
+							html += '<tr class="dept_total">';
+							html += '    <td class="text-center">'+pValue.amt_ty_nm+'</td>';
+							html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
+							html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1) + '%'))+'</td>';
+							html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1) + '%'))+'</td>';
+							html += '    <td class="text-number colorSky">'+total5.toString().toFormat('NUMBER')+'</td>';
+							html += '    <td class="text-number colorSky">'+((rt3 == Infinity)? '' : (rt3.toFixed(1) + '%'))+'</td>';
+							html += '</tr>';
+							total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+						}
+					}
+				});
+				$('#popReport').find('#rptContractStatus tbody[role=body]').html(html);
+				$('#popReport').find('#rptContractStatus tbody[role=body]').yRowspan(0);
+                var cells = $('#popReport').find('#rptContractStatus tbody[role=body] td, #rptContractStatus tbody[role=body] th');
+                $.each(cells, function(pIndex, pValue){
+                    let value = $(pValue).html();
+                    if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+
+                        $(pValue).html('');
+                    }
+                });
+				// ============================================================
+				// 공조사업부 공무 집행현황
+				var html = '';
+				var e_amt1 = 0, e_amt1 = 0, e_amt1 = 0, e_amt1 = 0;
+				var total1 = 0, total2 = 0, total3 = 0, total4 = 0;
+                var total_cnt = 0;
+				$('#popReport').find('#rptExecutStatus_m').html(month+'월');
+                console.log(pResult.executStatusList);
+				$.each(pResult.executStatusList, function(pIndex, pValue){
+					e_amt1 = parseInt(pValue.m_contract_amount);
+					e_amt2 = parseInt(pValue.m_excut_amount);
+					e_amt3 = parseInt(pValue.y_contract_amount);
+					e_amt4 = parseInt(pValue.y_excut_amount);
+					var rt1 = (e_amt2/e_amt1)*100; if (isNaN(rt1)) rt1 = 0.0;
+					var rt2 = (e_amt4/e_amt3)*100; if (isNaN(rt2)) rt2 = 0.0;
+					html += '<tr>';
+					html += '    <td class="text-center colorSky">집행</td>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.mber_nm+'</td>';
+					html += '    <td class="text-number">'+e_amt1.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+e_amt2.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-number">'+e_amt3.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+e_amt4.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-center">'+pValue.spt_cnt.toString().toFormat('NUMBER')+'개</td>';
+					html += '</tr>';
+					// 합계처리
+					total1 += parseInt(e_amt1);
+					total2 += parseInt(e_amt2);
+					total3 += parseInt(e_amt3);
+					total4 += parseInt(e_amt4);
+                    total_cnt += parseInt(pValue.spt_cnt);
+					if ((pIndex+1) == pResult.executStatusList.length) {
+						var rt1 = (total2/total1)*100; if (isNaN(rt1)) rt1 = 0.0;
+						var rt2 = (total4/total3)*100; if (isNaN(rt2)) rt2 = 0.0;
+						html += '<tr>';
+						html += '    <td class="text-center">집행</td>';
+						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
+						html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+						html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+						html += '    <td class="text-center colorSky">'+total_cnt+'개</td>';
+						html += '</tr>';
+						total1 = 0, total2 = 0, total3 = 0, total4 = 0;
+					}
+				});
+				$('#popReport').find('#rptExecutStatus tbody[role=body]').html(html);
+				$('#popReport').find('#rptExecutStatus tbody[role=body]').yRowspan(0);
+                var cells = $('#popReport').find('#rptExecutStatus tbody[role=body] td, #rptExecutStatus tbody[role=body] th');
+                $.each(cells, function(pIndex, pValue){
+                    let value = $(pValue).clone().children().remove().end().text();
+                    if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+                        $(pValue).html('');
+                    }
+                });
+				// ============================================================
+				// 거래처 현장별 기성현황
+                var spt_names = {};
+                $.each(pResult.lastDate, function(pIndex, pValue){
+                    let dpt_code = pValue.bsn_dept_code;
+                    if(!spt_names.hasOwnProperty(dpt_code)){
+                        spt_names[dpt_code] = [];
+                    }
+                    spt_names[dpt_code].push(pValue.spt_nm);
+                });
+
+                var purchsofc_nms = {};
+                $.each(pResult.lastDate, function(pIndex, pValue){
+                    let dpt_code = pValue.bsn_dept_code;
+                    if(!purchsofc_nms.hasOwnProperty(dpt_code)){
+                        purchsofc_nms[dpt_code] = {};
+                    }
+                    if(!purchsofc_nms[dpt_code].hasOwnProperty(pValue.spt_nm)){
+                        purchsofc_nms[dpt_code][pValue.spt_nm] = [];
+                    }
+                    purchsofc_nms[dpt_code][pValue.spt_nm].push(pValue.purchsofc_nm);
+                });
+
+                var prices = {};
+                $.each(pResult.lastDate, function(pIndex, pValue){
+                    let dpt_code = pValue.bsn_dept_code;
+                    if(!prices.hasOwnProperty(dpt_code)){
+                        prices[dpt_code] = {};
+                    }
+                    if(!prices[dpt_code].hasOwnProperty(pValue.spt_nm)){
+                        prices[dpt_code][pValue.spt_nm] = {};
+                    }
+                    if(!prices[dpt_code][pValue.spt_nm].hasOwnProperty(pValue.purchsofc_sn)){
+                        prices[dpt_code][pValue.spt_nm][pValue.purchsofc_sn] = pValue.cntrct_amount.toString().toFormat('NUMBER');
+                    }
+                });
+				var html = '';
+				var before = '';
+                var before_bsn_dept_code = '';
+				var c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+				var e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
+                var rrr = 100.0;
+
+                var data = {};
+                var member = {};
+                var amt = {};
+                var amt_rt = {};
+                $.each(pResult.completedList, function(pIndex, pValue){
+                    var sum = parseInt(pValue.complete_amount)+(
+                    parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+                    if(!amt.hasOwnProperty(pValue.cntrct_sn)){
+
+                        amt[pValue.cntrct_sn] = {};
+                        amt[pValue.cntrct_sn]['C'] = 0;
+                        amt[pValue.cntrct_sn]['E'] = 0;
+
+                    }
+                    amt[pValue.cntrct_sn][pValue.cntrct_execut_code] += sum;
+                });
+				$.each(pResult.completedList, function(pIndex, pValue){
+                    if(pValue.cntrct_execut_code == 'E' && pValue.ct_se_code == 8){
+                        return true;
+                    }
+
+					if (before != '' && before != pValue.bsn_dept_nm) {
+
+                        var temp_month = month<10? '0'+month : ''+month;
+                        var temp_day = day<10? '0'+day : ''+day;
+
+                        ///////////////spt_names.hasOwnProperty(dpt_code)
+
+
+
+                        var m_c_cntrct_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('C'))?parseInt(pResult.modelList[before_bsn_dept_code]['C']['cntrct_amount']) : 0);
+                        var m_c_complete_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('C'))?parseInt(pResult.modelList[before_bsn_dept_code]['C']['complete_amount']) : 0);
+                        var m_c_excut_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('C'))?parseInt(pResult.modelList[before_bsn_dept_code]['C']['tax_amount']) : 0);
+                        var m_c_sum = m_c_complete_amount + m_c_excut_amount;
+						var m_c_rt1 = (m_c_complete_amount/m_c_cntrct_amount)*100;if(isNaN(m_c_rt1)){m_c_rt1 = 0.0};
+						var m_c_rt2 = (m_c_excut_amount/m_c_cntrct_amount)*100;if(isNaN(m_c_rt2)){m_c_rt2 = 0.0};
+						var m_c_rt3 = (m_c_sum/m_c_cntrct_amount)*100;if(isNaN(m_c_rt3)){m_c_rt3 = 0.0};
+
+
+                        c_cntrct_amount += m_c_cntrct_amount;
+						c_complete_amount += m_c_complete_amount;
+						c_excut_amount += m_c_excut_amount;
+						c_sum_amount += m_c_sum;
+
+
+                        html += '<tr>';
+                        html += '    <td class="text-center">'+before+'</td>';
+                        html += '    <td class="text-center">'+year+'년 M/H</td>';
+                        html += '    <td class="text-left font13">M/H 공사</td>';
+                        var cntrwk_bgnde = (year+'').substring(2,(year+'').length)+'-01-01';
+                        var cntrwk_endde = (year+'').substring(2,(year+'').length)+'-'+temp_month+'-'+temp_day;
+                        html += '    <td class="text-center" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'</td>';
+                        html += '    <td class="text-center colorSky">M/H 매출</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky">'+m_c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorSky" style="">'+m_c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorSky">'+m_c_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-center" style="color:#333;">'+'왕한선 대리'.replaceAll(' ', '<br>')+'</td>';
+                        html += '    <td class="text-number colorSky"><div style="display:none;">C</div></td>';
+                        html += '    <td class="text-number colorSky"><div style="display:none;">C</div></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '</tr>';
+
+
+                        var m_e_cntrct_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('E'))?parseInt(pResult.modelList[before_bsn_dept_code]['E']['cntrct_amount']) : 0);
+                        var m_e_complete_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('E'))?parseInt(pResult.modelList[before_bsn_dept_code]['E']['complete_amount']) : 0);
+                        var m_e_excut_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('E'))?parseInt(pResult.modelList[before_bsn_dept_code]['E']['tax_amount']) : 0);
+                        var m_e_sum = m_e_complete_amount + m_e_excut_amount;
+						var m_e_rt1 = (m_e_complete_amount/m_e_cntrct_amount)*100;if(isNaN(m_e_rt1)){m_e_rt1 = 0.0};
+						var m_e_rt2 = (m_e_excut_amount/m_e_cntrct_amount)*100;if(isNaN(m_e_rt2)){m_e_rt2 = 0.0};
+						var m_e_rt3 = (m_e_sum/m_e_cntrct_amount)*100;if(isNaN(m_e_rt3)){m_e_rt3 = 0.0};
+
+                        e_cntrct_amount += m_e_cntrct_amount;
+						e_complete_amount += m_e_complete_amount;
+						e_excut_amount += m_e_excut_amount;
+						e_sum_amount += m_e_sum;
+
+
+                        html += '<tr>';
+                        html += '    <td class="text-center">'+before+'</td>';
+                        html += '    <td class="text-center">'+year+'년 M/H</td>';
+                        html += '    <td class="text-left font13">M/H 공사</td>';
+                        var cntrwk_bgnde = (year+'').substring(2,(year+'').length)+'-01-01';
+                        var cntrwk_endde = (year+'').substring(2,(year+'').length)+'-'+temp_month+'-'+temp_day;
+                        html += '    <td class="text-center" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'</td>';
+                        html += '    <td class="text-center ">M/H 집행</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+m_e_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number" style="">'+m_e_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+m_e_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-center" style="color:#333;">'+'왕한선 대리'.replaceAll(' ', '<br>')+'</td>';
+                        html += '    <td class="text-number "><div style="display:none;">E</div></td>';
+                        html += '    <td class="text-number "><div style="display:none;">E</div></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '</tr>';
+                        if(!member.hasOwnProperty('왕한선 대리')){
+                            member['왕한선 대리'] = {'C' : 0, 'E' : 0};
+                        }
+                        member['왕한선 대리']['C'] += parseInt(m_c_excut_amount);
+                        member['왕한선 대리']['E'] += parseInt(m_e_excut_amount);
+                        ///////////////
+
+                        var c_sum = parseInt(c_complete_amount)+parseInt(c_excut_amount);
+						var c_rt1 = (c_complete_amount/c_cntrct_amount)*100;
+						var c_rt2 = (c_excut_amount/c_cntrct_amount)*100;
+						var c_rt3 = (c_sum/c_cntrct_amount)*100;
+
+                        html += '</tbody>';
+						html += '<tbody role="footer">';
+						html += '	<tr>';
+						html += '		<th class="colorZ" colspan="4" rowspan="2" style="border-right:2px solid black!important;">'+before+' 계</th>';
+						html += '		<th class="colorZ">당사분</th>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+c_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorZ" colspan="4" rowspan="1">매출차액</th>';
+						var p_sub_amt = parseInt(c_excut_amount) - parseInt(e_excut_amount)
+						html += '       <td class="text-number" colspan="1" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+						html += '	</tr>';
+
+						var e_sum = parseInt(e_complete_amount)+parseInt(e_excut_amount);
+						var e_rt1 = (e_complete_amount/e_cntrct_amount)*100;
+						var e_rt2 = (e_excut_amount/e_cntrct_amount)*100;
+						var e_rt3 = (e_sum/e_cntrct_amount)*100;
+						html += '	<tr>';
+						html += '		<th class="colorZ">업체분</th>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number">'+e_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+e_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+e_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorZ" colspan="4" rowspan="1">수주잔고</th>';
+						var p_sub_amt = parseInt(c_cntrct_amount) - parseInt(c_sum_amount)
+						html += '       <td class="text-number" colspan="1" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+						html += '	</tr>';
+						html += '</tbody>';
+						html += '</table>';
+
+                        data[before] = {};
+                        data[before]['C'] = parseInt(c_excut_amount);
+                        data[before]['E'] = parseInt(e_excut_amount);
+
+						c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+						e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
+					}
+					// header
+					if (before != pValue.bsn_dept_nm) {
+						html += '<table id="rptCompletedList'+pValue.bsn_dept_code+'">';
+						html += '<colgroup>';
+						html += '    <col width="50">';
+						html += '    <col width="180">';
+						html += '    <col width="220">';
+						html += '    <col width="82">';
+						html += '    <col width="160">';
+						html += '    <col width="110">';
+						html += '    <col width="110">';
+						html += '    <col width="65">';
+						html += '    <col width="110">';
+						html += '    <col width="65">';
+						html += '    <col width="110">';
+						html += '    <col width="65">';
+						html += '    <col width="70">';
+						html += '    <col width="110">';
+						html += '    <col width="58">';
+						html += '    <col width="60">';
+						html += '    <col width="*">';
+						html += '</colgroup>';
+						html += '<tbody role="header">';
+						html += '	<tr>';
+						html += '		<th class="colorZ">팀</th>';
+						html += '		<th class="colorZ">건설사</th>';
+						html += '		<th class="colorZ">현장명</th>';
+						html += '		<th class="colorZ" style="border-right:2px solid black!important;">공사<br>기간</th>';
+						html += '		<th class="colorZ" colspan="2" style="border-right:2px solid black!important;">계약금액</th>';
+						html += '		<th class="colorZ">전회까지</th>';
+						html += '		<th class="colorZ" style="border-right:2px solid black!important;">기성율</th>';
+						html += '		<th class="colorZ">금회</th>';
+						html += '		<th class="colorZ" style="border-right:2px solid black!important;">기성율</th>';
+						html += '		<th class="colorZ">누계</th>';
+						html += '		<th class="colorZ" style="border-right:2px solid black!important;">기성율</th>';
+						html += '		<th class="colorZ">현장<br>관리</th>';
+						html += '		<th class="colorZ" colspan="2">기성누계</th>';
+						html += '		<th class="colorZ">공정률</th>';
+						html += '		<th class="colorZ">비고</th>';
+						html += '	</tr>';
+						html += '</tbody>';
+						html += '<tbody role="body">';
+					}
+					// body
+					var sum = parseInt(pValue.complete_amount)+(
+                    parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+
+					var rt1 = (pValue.complete_amount/pValue.cntrct_amount)*100; if (isNaN(rt1)) { rt1 = 0.0; }
+					var rt2 = ((parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount))/pValue.cntrct_amount)*100; if (isNaN(rt2)) { rt2 = 0.0; }
+					var rt3 = (sum/pValue.cntrct_amount)*100; if (isNaN(rt3)) { rt3 = 0.0; }
+					var cbg = pValue.cntrct_execut_code == 'C' ? ' colorSky' : '';
+					var cbg2 = parseInt(pValue.tax_amount) == 0? cbg : (parseInt(pValue.excut_amount)==parseInt(pValue.tax_amount)? cbg : ' colorP');
+                    var y1 = spt_names.hasOwnProperty(pValue.bsn_dept_code) && spt_names[pValue.bsn_dept_code].includes(pValue.spt_nm) ? '' : ' colorY';
+
+
+
+                    var y2 = purchsofc_nms.hasOwnProperty(pValue.bsn_dept_code) && purchsofc_nms[pValue.bsn_dept_code].hasOwnProperty(pValue.spt_nm) && purchsofc_nms[pValue.bsn_dept_code][pValue.spt_nm].includes(pValue.purchsofc_nm) ? '' : ' colorY';
+
+                    var y3 = prices.hasOwnProperty(pValue.bsn_dept_code) && prices[pValue.bsn_dept_code].hasOwnProperty(pValue.spt_nm) && prices[pValue.bsn_dept_code][pValue.spt_nm].hasOwnProperty(pValue.purchsofc_sn) && prices[pValue.bsn_dept_code][pValue.spt_nm][pValue.purchsofc_sn] == pValue.cntrct_amount.toString().toFormat('NUMBER') ? '' : ' colorY';
+
+                    var progrs_sttus_code = pValue.progrs_sttus_code;
+                    var red = ' ';
+                    var gray = pValue.prjct_creat_at == 'N' ? ' style="background:#eee!important;"' : '';
+
+                    var show = $('#popReport').find('input:checkbox[name=progrs_sttus_code]').is(":checked");
+                    var show2 = $('#popReport').find('input:checkbox[name=progrs_sttus_code_n]').is(":checked");
+
+                    if(progrs_sttus_code == 'C' && !show){
+
+                    }
+                    else{
+                        if(progrs_sttus_code == 'N' && !show2){
+
+                        }
+                        else{
+                            if(progrs_sttus_code == 'C'){
+                                red = ' style="color:red;"';
+                            }
+                            if(progrs_sttus_code == 'N'){
+                                red = ' style="color:blue;"';
+                            }
+
+                            if(parseInt(pValue.cntrct_amount) == 0 && parseInt(pValue.tax_amount) == 0 && parseInt(pValue.excut_amount) == 0 && parseInt(pValue.complete_amount) == 0){
+
+                            }
+                            else{
+
+
+                                html += '<tr '+red+'>';
+                                html += '    <td class="text-center">'+pValue.bsn_dept_nm+'</td>';
+                                html += '    <td class="text-center">'+pValue.cntrct_bcnc_nm+'</td>';
+                                html += '    <td class="text-left font13'+y1+'" title="'+pValue.cntrct_de+'" '+gray+'>'+pValue.spt_nm+'</td>';
+                                var cntrwk_bgnde = pValue.cntrwk_bgnde.substring(2,pValue.cntrwk_bgnde.length);
+                                var cntrwk_endde = pValue.cntrwk_endde.substring(2,pValue.cntrwk_endde.length);
+                                html += '    <td class="text-center'+y1+'" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
+                                html += '    <td class="text-center'+cbg+y1+y2+'">'+pValue.purchsofc_nm+'</td>';
+                                html += '    <td class="text-number'+cbg+y1+y2+y3+'" style="border-right:2px solid black!important;">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="text-number'+cbg+'">'+(parseInt(pValue.complete_amount) == 0 ? '' : pValue.complete_amount).toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="text-number'+cbg+'" style="border-right:2px solid black!important;">'+(rt1==0.0?'' : (rt1.toFixed(1)+'%'))+'</td>';
+                                html += '    <td class="text-number'+cbg2+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount)==0?'':parseInt(pValue.excut_amount):parseInt(pValue.tax_amount)).toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="text-number'+cbg2+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'border-right:2px solid black!important;">'+(rt2==0.0?'':(rt2.toFixed(1)+'%'))+'</td>';
+                                html += '    <td class="text-number'+cbg+'">'+(sum==0?'':sum).toString().toFormat('NUMBER')+'</td>';
+                                var red1 = rt3>100.0 ? ' style="background:red!important;"' : '';
+                                var pink = rt3>100.0 ? ' colorP' : '';
+                                html += '    <td class="text-number'+cbg+pink+'" style="border-right:2px solid black!important;">'+(rt3==0.0?'':(rt3.toFixed(1)+'%'))+'</td>';
+                                html += '    <td class="text-center" style="color:#333;">'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
+                                var p_amt_sum_rt = (parseInt(amt[pValue.cntrct_sn][pValue.cntrct_execut_code])/parseInt(pValue.c_amt_sum))*100;
+
+                                var cb = '';
+                                if(cbg == ' colorN3'){
+                                    rrr = parseFloat(p_amt_sum_rt);
+                                }
+                                else{
+                                    cb = (rrr < parseFloat(p_amt_sum_rt)) ? ' colorP' : '';
+                                }
+
+                                if(pValue.cntrct_execut_code == 'C'){
+                                    if(!amt_rt.hasOwnProperty(pValue.cntrct_sn)){
+
+                                        amt_rt[pValue.cntrct_sn] = {};
+                                        amt_rt[pValue.cntrct_sn]['C'] = p_amt_sum_rt;
+
+                                    }
+                                }
+
+                                var red2 = ' ';
+                                if(pValue.cntrct_execut_code == 'E' && amt[pValue.cntrct_sn]['C'] < amt[pValue.cntrct_sn][pValue.cntrct_execut_code]){
+                                    red2 = ' colorP';
+                                }
+
+                                var red3 = ' ';
+                                if(!amt_rt.hasOwnProperty(pValue.cntrct_sn)){
+                                        amt_rt[pValue.cntrct_sn] = {};
+                                        amt_rt[pValue.cntrct_sn]['C'] = 0;
+
+                                }
+
+//                                if(pValue.cntrct_execut_code == 'E' && amt_rt[pValue.cntrct_sn]['C'] < p_amt_sum_rt){
+//                                    red3 = ' colorP';
+//                                }
+
+                                html += '    <td class="text-number'+cbg+red2+'">'+amt[pValue.cntrct_sn][pValue.cntrct_execut_code].toString().toFormat('NUMBER')+'<div style="display:none;">'+pValue.cntrct_sn+':'+pValue.cntrct_execut_code+'</div></td>';
+                                html += '    <td class="text-number'+cbg+cb+red3+'">'+p_amt_sum_rt.toFixed(1)+'%<div style="display:none;">'+pValue.cntrct_sn+':'+pValue.cntrct_execut_code+'</div></td>';
+                                var rate = pValue.rate == '' ? '' : parseFloat(pValue.rate).toFixed(1)+'%';
+                                html += '    <td class="text-right">'+rate+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
+                                html += '    <td class="text-left">'+pValue.rm+'</td>';
+                                html += '</tr>';
+                            }
+                        }
+                    }
+
+					if (pValue.cntrct_execut_code == 'C') {
+						c_cntrct_amount += parseInt(pValue.cntrct_amount);
+						c_complete_amount += parseInt(pValue.complete_amount);
+						c_excut_amount += (parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+						c_sum_amount += parseInt(sum);
+                        if(!member.hasOwnProperty(pValue.spt_chrg_nm)){
+                            member[pValue.spt_chrg_nm] = {'C' : 0, 'E' : 0};
+                        }
+                        member[pValue.spt_chrg_nm]['C'] += (parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+					}
+					if (pValue.cntrct_execut_code == 'E') {
+						e_cntrct_amount += parseInt(pValue.cntrct_amount);
+						e_complete_amount += parseInt(pValue.complete_amount);
+						e_excut_amount += (parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+						e_sum_amount += parseInt(sum);
+                        if(!member.hasOwnProperty(pValue.spt_chrg_nm)){
+                            member[pValue.spt_chrg_nm] = {'C' : 0, 'E' : 0};
+                        }
+                        member[pValue.spt_chrg_nm]['E'] += (parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
+					}
+
+					if (pIndex == (pResult.completedList.length-1)) {
+						var temp_month = month<10? '0'+month : ''+month;
+                        var temp_day = day<10? '0'+day : ''+day;
+
+                        ///////////////spt_names.hasOwnProperty(dpt_code)
+
+
+
+                        var m_c_cntrct_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('C'))?parseInt(pResult.modelList[before_bsn_dept_code]['C']['cntrct_amount']) : 0);
+                        var m_c_complete_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('C'))?parseInt(pResult.modelList[before_bsn_dept_code]['C']['complete_amount']) : 0);
+                        var m_c_excut_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('C'))?parseInt(pResult.modelList[before_bsn_dept_code]['C']['tax_amount']) : 0);
+                        var m_c_sum = m_c_complete_amount + m_c_excut_amount;
+						var m_c_rt1 = (m_c_complete_amount/m_c_cntrct_amount)*100;if(isNaN(m_c_rt1)){m_c_rt1 = 0.0};
+						var m_c_rt2 = (m_c_excut_amount/m_c_cntrct_amount)*100;if(isNaN(m_c_rt2)){m_c_rt2 = 0.0};
+						var m_c_rt3 = (m_c_sum/m_c_cntrct_amount)*100;if(isNaN(m_c_rt3)){m_c_rt3 = 0.0};
+
+
+                        c_cntrct_amount += m_c_cntrct_amount;
+						c_complete_amount += m_c_complete_amount;
+						c_excut_amount += m_c_excut_amount;
+						c_sum_amount += m_c_sum;
+
+
+                        html += '<tr>';
+                        html += '    <td class="text-center">'+before+'</td>';
+                        html += '    <td class="text-center">'+year+'년 M/H</td>';
+                        html += '    <td class="text-left font13">M/H 공사</td>';
+                        var cntrwk_bgnde = (year+'').substring(2,(year+'').length)+'-01-01';
+                        var cntrwk_endde = (year+'').substring(2,(year+'').length)+'-'+temp_month+'-'+temp_day;
+                        html += '    <td class="text-center" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'</td>';
+                        html += '    <td class="text-center colorSky">M/H 매출</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky">'+m_c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorSky" style="">'+m_c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorSky">'+m_c_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+m_c_rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-center" style="color:#333;">'+'왕한선 대리'.replaceAll(' ', '<br>')+'</td>';
+                        html += '    <td class="text-number colorSky"><div style="display:none;">C</div></td>';
+                        html += '    <td class="text-number colorSky"><div style="display:none;">C</div></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '</tr>';
+
+                        var m_e_cntrct_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('E'))?parseInt(pResult.modelList[before_bsn_dept_code]['E']['cntrct_amount']) : 0);
+                        var m_e_complete_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('E'))?parseInt(pResult.modelList[before_bsn_dept_code]['E']['complete_amount']) : 0);
+                        var m_e_excut_amount = ((pResult.modelList.hasOwnProperty(before_bsn_dept_code) && pResult.modelList[before_bsn_dept_code].hasOwnProperty('E'))?parseInt(pResult.modelList[before_bsn_dept_code]['E']['tax_amount']) : 0);
+                        var m_e_sum = m_e_complete_amount + m_e_excut_amount;
+						var m_e_rt1 = (m_e_complete_amount/m_e_cntrct_amount)*100;if(isNaN(m_e_rt1)){m_e_rt1 = 0.0};
+						var m_e_rt2 = (m_e_excut_amount/m_e_cntrct_amount)*100;if(isNaN(m_e_rt2)){m_e_rt2 = 0.0};
+						var m_e_rt3 = (m_e_sum/m_e_cntrct_amount)*100;if(isNaN(m_e_rt3)){m_e_rt3 = 0.0};
+
+                        e_cntrct_amount += m_e_cntrct_amount;
+						e_complete_amount += m_e_complete_amount;
+						e_excut_amount += m_e_excut_amount;
+						e_sum_amount += m_e_sum;
+
+
+                        html += '<tr>';
+                        html += '    <td class="text-center">'+before+'</td>';
+                        html += '    <td class="text-center">'+year+'년 M/H</td>';
+                        html += '    <td class="text-left font13">M/H 공사</td>';
+                        var cntrwk_bgnde = (year+'').substring(2,(year+'').length)+'-01-01';
+                        var cntrwk_endde = (year+'').substring(2,(year+'').length)+'-'+temp_month+'-'+temp_day;
+                        html += '    <td class="text-center" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'</td>';
+                        html += '    <td class="text-center ">M/H 집행</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+m_e_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number" style="">'+m_e_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+m_e_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" style="border-right:2px solid black!important;">'+m_e_rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-center" style="color:#333;">'+'왕한선 대리'.replaceAll(' ', '<br>')+'</td>';
+                        html += '    <td class="text-number "><div style="display:none;">E</div></td>';
+                        html += '    <td class="text-number "><div style="display:none;">E</div></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '    <td class="text-left"></td>';
+                        html += '</tr>';
+                        if(!member.hasOwnProperty('왕한선 대리')){
+                            member['왕한선 대리'] = {'C' : 0, 'E' : 0};
+                        }
+                        member['왕한선 대리']['C'] += parseInt(m_c_excut_amount);
+                        member['왕한선 대리']['E'] += parseInt(m_e_excut_amount);
+                        ///////////////
+
+                        var c_sum = parseInt(c_complete_amount)+parseInt(c_excut_amount);
+						var c_rt1 = (c_complete_amount/c_cntrct_amount)*100;
+						var c_rt2 = (c_excut_amount/c_cntrct_amount)*100;
+						var c_rt3 = (c_sum/c_cntrct_amount)*100;
+
+						html += '</tbody>';
+						html += '<tbody role="footer" style="border-bottom:3px solid #000!important;">';
+						html += '	<tr>';
+						html += '		<th class="colorZ" colspan="4" rowspan="2" style="border-right:2px solid black!important;">'+pValue.bsn_dept_nm+' 계</th>';
+						html += '		<th class="colorZ">당사분</th>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;" >'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+c_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt3.toFixed(1)+'%</td>';
+						html += '       <th class="colorZ" colspan="4" rowspan="1">매출차액</th>';
+						var p_sub_amt = parseInt(c_excut_amount) - parseInt(e_excut_amount)
+						html += '       <td class="text-number" colspan="1" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+						html += '	</tr>';
+
+						var e_sum = parseInt(e_complete_amount)+parseInt(e_excut_amount);
+						var e_rt1 = (e_complete_amount/e_cntrct_amount)*100;
+						var e_rt2 = (e_excut_amount/e_cntrct_amount)*100;
+						var e_rt3 = (e_sum/e_cntrct_amount)*100;
+						html += '	<tr style="border-bottom:3px solid #000!important;">';
+						html += '		<th class="colorZ">업체분</th>';
+
+
+
+
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number">'+e_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt1.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+e_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt2.toFixed(1)+'%</td>';
+						html += '       <td class="text-number">'+e_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt3.toFixed(1)+'%</td>';
+
+						html += '       <th class="colorZ" colspan="4" rowspan="1">수주잔고</th>';
+						var p_sub_amt = parseInt(c_cntrct_amount) - parseInt(c_sum_amount);
+						html += '       <td class="text-number" colspan="1" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+						html += '	</tr>';
+						html += '</tbody>';
+						html += '</table>';
+                        data[before] = {};
+                        data[before]['C'] = parseInt(c_excut_amount);
+                        data[before]['E'] = parseInt(e_excut_amount);
+                        c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+						e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
+					}
+
+					// 테이블 행 처리용
+					before = pValue.bsn_dept_nm;
+                    before_bsn_dept_code = pValue.bsn_dept_code;
+				});
+				$('#popReport').find('#rptCompletedArea').html(html);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(0);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(1);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(2);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(3);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(12);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(13);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(14);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(15);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(0);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(1);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(2);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(3);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(12);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(13);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(14);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(15);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(0);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(1);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(2);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(3);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(12);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(13);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(14);
+				// $('#popReport').find('#rptCompletedListTS3 tbody[role=body]').yRowspan(15);
+
+
+
+
+				// ============================================================
+				// 거래처 현장별 기성현황 총계
+				var c_cntrct_amount_total = 0, c_complete_amount_total = 0, c_excut_amount_total = 0, c_sum_amount_total = 0;
+				c_cntrct_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(0) td').eq(0).html().replaceAll(',',''));
+				c_cntrct_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(0) td').eq(0).html().replaceAll(',',''));
+				// c_cntrct_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(0) td').eq(0).html().replaceAll(',',''));
+				c_complete_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(0) td').eq(1).html().replaceAll(',',''));
+				c_complete_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(0) td').eq(1).html().replaceAll(',',''));
+				// c_complete_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(0) td').eq(1).html().replaceAll(',',''));
+				c_excut_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(0) td').eq(3).html().replaceAll(',',''));
+				c_excut_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(0) td').eq(3).html().replaceAll(',',''));
+				// c_excut_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(0) td').eq(3).html().replaceAll(',',''));
+				c_sum_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(0) td').eq(5).html().replaceAll(',',''));
+				c_sum_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(0) td').eq(5).html().replaceAll(',',''));
+				// c_sum_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(0) td').eq(5).html().replaceAll(',',''));
+				var e_cntrct_amount_total = 0, e_complete_amount_total = 0, e_excut_amount_total = 0, e_sum_amount_total = 0;
+				e_cntrct_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(1) td').eq(0).html().replaceAll(',',''));
+				e_cntrct_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(1) td').eq(0).html().replaceAll(',',''));
+				// e_cntrct_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(1) td').eq(0).html().replaceAll(',',''));
+				e_complete_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(1) td').eq(1).html().replaceAll(',',''));
+				e_complete_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(1) td').eq(1).html().replaceAll(',',''));
+				// e_complete_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(1) td').eq(1).html().replaceAll(',',''));
+				e_excut_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(1) td').eq(3).html().replaceAll(',',''));
+				e_excut_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(1) td').eq(3).html().replaceAll(',',''));
+				// e_excut_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(1) td').eq(3).html().replaceAll(',',''));
+				e_sum_amount_total += parseInt($('#popReport').find('#rptCompletedListTS1 tbody[role=footer] tr:eq(1) td').eq(5).html().replaceAll(',',''));
+				e_sum_amount_total += parseInt($('#popReport').find('#rptCompletedListTS2 tbody[role=footer] tr:eq(1) td').eq(5).html().replaceAll(',',''));
+				// e_sum_amount_total += parseInt($('#popReport').find('#rptCompletedListTS3 tbody[role=footer] tr:eq(1) td').eq(5).html().replaceAll(',',''));
+
+				var c_sum = parseInt(c_complete_amount_total)+parseInt(c_excut_amount_total);
+				var c_rt1 = (c_complete_amount_total/c_cntrct_amount_total)*100;
+				var c_rt2 = (c_excut_amount_total/c_cntrct_amount_total)*100;
+				var c_rt3 = (c_sum/c_cntrct_amount_total)*100;
+
+//
+//                						html += '    <col width="50">';
+//						html += '    <col width="130">';
+//						html += '    <col width="180">';
+//						html += '    <col width="82">';
+//						html += '    <col width="130">';
+//						html += '    <col width="110">';
+//						html += '    <col width="110">';
+//						html += '    <col width="58">';
+//						html += '    <col width="110">';
+//						html += '    <col width="58">';
+//						html += '    <col width="110">';
+//						html += '    <col width="58">';
+//						html += '    <col width="70">';
+//						html += '    <col width="110">';
+//						html += '    <col width="58">';
+//						html += '    <col width="360">';
+                html = '';
+//				html += '<table>';
+//				html += '<colgroup>';
+//						html += '    <col width="50">';
+//						html += '    <col width="180">';
+//						html += '    <col width="220">';
+//						html += '    <col width="82">';
+//						html += '    <col width="160">';
+//						html += '    <col width="110">';
+//						html += '    <col width="110">';
+//						html += '    <col width="65">';
+//						html += '    <col width="110">';
+//						html += '    <col width="65">';
+//						html += '    <col width="110">';
+//						html += '    <col width="65">';
+//						html += '    <col width="70">';
+//						html += '    <col width="110">';
+//						html += '    <col width="58">';
+//						html += '    <col width="*">';
+//                html += '</colgroup>';
+				html += '<tbody role="footer_tot" style="border:3px solid #fff!important;">';
+                html += '   <tr>';
+                html += '       <td style="border:none!important;">&nbsp;</td>';
+                html += '   </tr>';
+                html += '</tbody>';
+                html += '<tbody role="footer_tot" style="border-top:3px solid #000!important;">';
+				html += '	<tr style="border-top:3px solid #000!important;">';
+				html += '		<th class="colorZ" rowspan="2" colspan="4"  style="border-right:2px solid black!important;">총&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계</th>';
+				html += '		<th class="colorZ">당사분</th>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_cntrct_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number">'+c_complete_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt1.toFixed(1)+'%</td>';
+				html += '       <td class="text-number">'+c_excut_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt2.toFixed(1)+'%</td>';
+				html += '       <td class="text-number">'+c_sum_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt3.toFixed(1)+'%</td>';
+				html += '       <th class="colorZ" rowspan="1" colspan="4">매출차액</th>';
+				var p_sub_amt = parseInt(c_excut_amount_total) - parseInt(e_excut_amount_total)
+				html += '       <td class="text-number" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+				html += '	</tr>';
+
+				var e_sum = parseInt(e_complete_amount_total)+parseInt(e_excut_amount_total);
+				var e_rt1 = (e_complete_amount_total/e_cntrct_amount_total)*100;
+				var e_rt2 = (e_excut_amount_total/e_cntrct_amount_total)*100;
+				var e_rt3 = (e_sum/e_cntrct_amount_total)*100;
+				html += '	<tr>';
+				html += '		<th class="colorZ">업체분</th>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_cntrct_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number">'+e_complete_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt1.toFixed(1)+'%</td>';
+				html += '       <td class="text-number">'+e_excut_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt2.toFixed(1)+'%</td>';
+				html += '       <td class="text-number">'+e_sum_amount_total.toString().toFormat('NUMBER')+'</td>';
+				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt3.toFixed(1)+'%</td>';
+                html += '       <th class="colorZ" rowspan="1" colspan="4">수주잔고</th>';
+				var p_sub_amt = parseInt(c_cntrct_amount_total) - parseInt(c_sum_amount_total)
+				html += '       <td class="text-number" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
+
+				html += '	</tr>';
+				html += '</tbody>';
+//				html += '</table>';
+//                $('#popReport').find('#rptCompletedArea').find('table:last-child').find('tbody:last-child').find('tr:last-child').css('border-bottom-style', '3px solid #000!important');
+                $('#popReport').find('#rptCompletedArea').find('table:last-child').append(html);
+//				$('#popReport').find('#rptCompletedArea').append(html);
+//				$('#popReport').find('#rptCompletedTotal').html(html);
+
+				// ============================================================
+				// 건설사별 실적현황
+				var html = '';
+				var before = '';
+                var before_code = '';
+				var c_rt1 = 0, c_rt2 = 0, c_rt2 = 0;
+                var c_y_complete_amount = 0, c_y_complete_amount_total = 0, extra_y_complete_amount = 0;
+                var c_y_sum_amount = 0, c_y_sum_amount_total = 0, extra_y_sum = 0;
+				var c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
+				var c_cntrct_amount_total = 0, c_complete_amount_total = 0, c_excut_amount_total = 0, c_sum_amount_total = 0;
+
+                var extra_cntrct_amount = 0, extra_complete_amount = 0, extra_excut_amount = 0, extra_sum = 0;
+
+
+                var extra_html;
+                var extra_count = 0;
+				$.each(pResult.completedList2, function(pIndex, pValue){
+					if (before != '' && before != pValue.bsn_dept_nm) { // 중간소계처리
+
+                        //모델하우스
+                        if(pResult.modelList.hasOwnProperty(before_code) && pResult.modelList[before_code].hasOwnProperty('C')){
+                            var pV = pResult.modelList[before_code]['C'];
+                            if(parseInt(pV.cntrct_amount) != 0 || parseInt(pV.complete_amount)  != 0 || parseInt(pV.tax_amount) != 0){
+                                var sum = parseInt(pV.complete_amount)+parseInt(pV.tax_amount);
+                                var y_sum = parseInt(pV.complete_amount)+parseInt(pV.tax_amount);
+                                var rt1 = (pV.complete_amount/pV.cntrct_amount)*100;
+                                var rt2 = (pV.tax_amount/pV.cntrct_amount)*100;
+                                var rt3 = (sum/pV.cntrct_amount)*100;
+
+                                if(parseInt(pV.cntrct_amount) >= 200000000){
+                                    html += '<tr>';
+                                    html += '    <td class="text-center row'+pV.bsn_dept_nm+'" data-first="0">'+pV.bsn_dept_nm+'</td>';
+                                    html += '    <td class="text-center">'+year+'년 M/H</td>';
+                                    html += '    <td class="text-number">'+pV.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+pV.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                                    html += '    <td class="text-number">'+pV.tax_amount.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                                    html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                                    html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    html += '</tr>';
+                                }
+                                else{
+                                    extra_count += 1;
+                                    extra_html += '<tr class="etc '+pV.bsn_dept_nm+'">';
+                                    extra_html += '    <td class="text-center">'+pV.bsn_dept_nm+'</td>';
+                                    extra_html += '    <td class="text-center">'+year+'년 M/H</td>';
+                                    extra_html += '    <td class="text-number">'+pV.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+pV.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                                    extra_html += '    <td class="text-number">'+pV.tax_amount.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                                    extra_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                                    extra_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '</tr>';
+
+                                    extra_cntrct_amount += parseInt(pV.cntrct_amount);
+                                    extra_complete_amount += parseInt(pV.complete_amount);
+                                    extra_excut_amount += parseInt(pV.tax_amount);
+                                    extra_sum += sum;
+                                    extra_y_complete_amount += parseInt(pV.complete_amount);
+                                    extra_y_sum += sum;
+                                }
+
+                                c_cntrct_amount += parseInt(pV.cntrct_amount);
+                                c_complete_amount += parseInt(pV.complete_amount);
+                                c_y_complete_amount += parseInt(pV.complete_amount);
+                                c_excut_amount += parseInt(pV.tax_amount);
+                            }
+
+                        }
+
+
+
+                        extra_rt1 = (extra_complete_amount/extra_cntrct_amount)*100;
+				        extra_rt2 = (extra_excut_amount/extra_cntrct_amount)*100;
+						extra_rt3 = (extra_sum/extra_cntrct_amount)*100;
+
+
+                        html += '<tr class="myETC" data-item="'+before+'" data-count="'+extra_count+'">';
+                        html += '    <td class="text-center colorN3">'+before+'</td>';
+                        html += '    <td class="text-center colorN3">기타</td>';
+                        html += '    <td class="text-number colorN3">'+extra_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorN3">'+extra_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorN3">'+extra_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorN3">'+extra_y_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+
+                        html += extra_html;
+                        extra_html = '';
+                        extra_count = 0;
+                        c_sum_amount = parseInt(c_complete_amount)+parseInt(c_excut_amount);
+                        c_y_sum_amount = parseInt(c_y_complete_amount)+parseInt(c_excut_amount);
+						c_rt1 = (c_complete_amount/c_cntrct_amount)*100;
+						c_rt2 = (c_excut_amount/c_cntrct_amount)*100;
+						c_rt3 = (c_sum_amount/c_cntrct_amount)*100;
+
+						html += '<tr>';
+						html += '    <td class="text-center colorSky">'+before+'</td>';
+						html += '    <td class="text-center colorSky">소계</td>';
+						html += '    <td class="text-number colorSky">'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_rt1.toFixed(1)+'%</td>';
+						html += '    <td class="text-number colorSky">'+c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_rt2.toFixed(1)+'%</td>';
+						html += '    <td class="text-number colorSky">'+c_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_rt3.toFixed(1)+'%</td>';
+						html += '    <td class="text-number colorSky">'+c_y_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '</tr>';
+						c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0, c_y_complete_amount = 0, c_y_sum_amount = 0;
+                        extra_cntrct_amount = 0, extra_complete_amount = 0, extra_excut_amount = 0, extra_sum = 0, extra_y_complete_amount = 0, extra_y_sum = 0;
+					}
+
+					var sum = parseInt(pValue.complete_amount)+parseInt(pValue.excut_amount);
+					var y_sum = parseInt(pValue.y_complete_amount)+parseInt(pValue.excut_amount);
+					var rt1 = (pValue.complete_amount/pValue.cntrct_amount)*100;
+					var rt2 = (pValue.excut_amount/pValue.cntrct_amount)*100;
+					var rt3 = (sum/pValue.cntrct_amount)*100;
+
+
+
+                    if(parseInt(pValue.cntrct_amount) >= 200000000){
+                        html += '<tr>';
+                        html += '    <td class="text-center row'+pValue.bsn_dept_nm+'" data-first="0">'+pValue.bsn_dept_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.cntrct_bcnc_nm+'</td>';
+                        html += '    <td class="text-number">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+pValue.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+pValue.excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                    }
+                    else{
+                        extra_count += 1;
+                        extra_html += '<tr class="etc '+pValue.bsn_dept_nm+'">';
+                        extra_html += '    <td class="text-center">'+pValue.bsn_dept_nm+'</td>';
+                        extra_html += '    <td class="text-center">'+pValue.cntrct_bcnc_nm+'</td>';
+                        extra_html += '    <td class="text-number">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        extra_html += '    <td class="text-number">'+pValue.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        extra_html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                        extra_html += '    <td class="text-number">'+pValue.excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        extra_html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                        extra_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                        extra_html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                        extra_html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                        extra_html += '</tr>';
+
+                        extra_cntrct_amount += parseInt(pValue.cntrct_amount);
+                        extra_complete_amount += parseInt(pValue.complete_amount);
+                        extra_excut_amount += parseInt(pValue.excut_amount);
+                        extra_sum += sum;
+                        extra_y_complete_amount += parseInt(pValue.y_complete_amount);
+                        extra_y_sum += y_sum;
+                    }
+
+					c_cntrct_amount += parseInt(pValue.cntrct_amount);
+					c_complete_amount += parseInt(pValue.complete_amount);
+					c_y_complete_amount += parseInt(pValue.y_complete_amount);
+					c_excut_amount += parseInt(pValue.excut_amount);
+					before = pValue.bsn_dept_nm;
+                    before_code = pValue.bsn_dept_code;
+
+					if (pIndex == pResult.completedList2.length-1) { // 마지막소계처리
+
+                        //모델하우스
+                        if(pResult.modelList.hasOwnProperty(before_code) && pResult.modelList[before_code].hasOwnProperty('C')){
+                            var pV = pResult.modelList[before_code]['C'];
+                            if(parseInt(pV.cntrct_amount) != 0 || parseInt(pV.complete_amount)  != 0 || parseInt(pV.tax_amount) != 0){
+                                var sum = parseInt(pV.complete_amount)+parseInt(pV.tax_amount);
+                                var y_sum = parseInt(pV.complete_amount)+parseInt(pV.tax_amount);
+                                var rt1 = (pV.complete_amount/pV.cntrct_amount)*100;
+                                var rt2 = (pV.tax_amount/pV.cntrct_amount)*100;
+                                var rt3 = (sum/pV.cntrct_amount)*100;
+
+                                if(parseInt(pV.cntrct_amount) >= 200000000){
+                                    html += '<tr>';
+                                    html += '    <td class="text-center row'+pV.bsn_dept_nm+'" data-first="0">'+pV.bsn_dept_nm+'</td>';
+                                    html += '    <td class="text-center">'+year+'년 M/H</td>';
+                                    html += '    <td class="text-number">'+pV.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+pV.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                                    html += '    <td class="text-number">'+pV.tax_amount.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                                    html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                                    html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    html += '</tr>';
+                                }
+                                else{
+                                    extra_count += 1;
+                                    extra_html += '<tr class="etc '+pV.bsn_dept_nm+'">';
+                                    extra_html += '    <td class="text-center">'+pV.bsn_dept_nm+'</td>';
+                                    extra_html += '    <td class="text-center">'+year+'년 M/H</td>';
+                                    extra_html += '    <td class="text-number">'+pV.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+pV.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                                    extra_html += '    <td class="text-number">'+pV.tax_amount.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                                    extra_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                                    extra_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                                    extra_html += '</tr>';
+
+                                    extra_cntrct_amount += parseInt(pV.cntrct_amount);
+                                    extra_complete_amount += parseInt(pV.complete_amount);
+                                    extra_excut_amount += parseInt(pV.tax_amount);
+                                    extra_sum += sum;
+                                    extra_y_complete_amount += parseInt(pV.complete_amount);
+                                    extra_y_sum += sum;
+                                }
+
+                                c_cntrct_amount += parseInt(pV.cntrct_amount);
+                                c_complete_amount += parseInt(pV.complete_amount);
+                                c_y_complete_amount += parseInt(pV.complete_amount);
+                                c_excut_amount += parseInt(pV.tax_amount);
+                            }
+
+                        }
+
+
+                        extra_rt1 = (extra_complete_amount/extra_cntrct_amount)*100;
+				        extra_rt2 = (extra_excut_amount/extra_cntrct_amount)*100;
+						extra_rt3 = (extra_sum/extra_cntrct_amount)*100;
+
+
+                        html += '<tr class="myETC" data-item="'+before+'" data-count="'+extra_count+'">';
+                        html += '    <td class="text-center colorN3">'+before+'</td>';
+                        html += '    <td class="text-center colorN3">기타</td>';
+                        html += '    <td class="text-number colorN3">'+extra_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorN3">'+extra_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorN3">'+extra_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number colorN3">'+extra_rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number colorN3">'+extra_y_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+
+                        html += extra_html;
+                        extra_html = '';
+                        extra_count = 0;
+
+						c_sum_amount = parseInt(c_complete_amount)+parseInt(c_excut_amount);
+						c_y_sum_amount = parseInt(c_y_complete_amount)+parseInt(c_excut_amount);
+						c_rt1 = (c_complete_amount/c_cntrct_amount)*100;
+						c_rt2 = (c_excut_amount/c_cntrct_amount)*100;
+						c_rt3 = (c_sum_amount/c_cntrct_amount)*100;
+						html += '<tr>';
+						html += '    <td class="text-center colorSky">'+before+'</td>';
+						html += '    <td class="text-center colorSky">소계</td>';
+						html += '    <td class="text-number colorSky">'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_rt1.toFixed(1)+'%</td>';
+						html += '    <td class="text-number colorSky">'+c_excut_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_rt2.toFixed(1)+'%</td>';
+						html += '    <td class="text-number colorSky">'+c_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number colorSky">'+c_rt3.toFixed(1)+'%</td>';
+						html += '    <td class="text-number colorSky">'+c_y_sum_amount.toString().toFormat('NUMBER')+'</td>';
+						html += '</tr>';
+						c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0, c_y_complete_amount = 0, c_y_sum_amount = 0;
+					}
+
+					// 총계용
+					c_cntrct_amount_total += parseInt(pValue.cntrct_amount);
+					c_complete_amount_total += parseInt(pValue.complete_amount);
+					c_y_complete_amount_total += parseInt(pValue.y_complete_amount);
+					c_excut_amount_total += parseInt(pValue.excut_amount);
+				});
+
+				c_sum_amount_total = parseInt(c_complete_amount_total)+parseInt(c_excut_amount_total);
+				c_y_sum_amount_total = parseInt(c_y_complete_amount_total)+parseInt(c_excut_amount_total);
+				c_rt1 = (c_complete_amount_total/c_cntrct_amount_total)*100;
+				c_rt2 = (c_excut_amount_total/c_cntrct_amount_total)*100;
+				c_rt3 = (c_sum_amount_total/c_cntrct_amount_total)*100;
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(0).html(c_cntrct_amount_total.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(1).html(c_complete_amount_total.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(2).html(c_rt1.toFixed(1)+'%');
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(3).html(c_excut_amount_total.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(4).html(c_rt2.toFixed(1)+'%');
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(5).html(c_sum_amount_total.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(6).html(c_rt3.toFixed(1)+'%');
+				$('#popReport').find('#rptParnterStatus1 tbody[role=footer] td').eq(7).html(c_y_sum_amount_total.toString().toFormat('NUMBER'));
+
+				$('#popReport').find('#rptParnterStatus1 tbody[role=body]').html(html);
+				$('#popReport').find('#rptParnterStatus1 tbody[role=body]').yRowspan(0);
+				$('#popReport').find('#rptParnterStatus1 tbody[role=body]').yRowspan(1);
+
+				// ============================================================
+				// 협력업체별 집행금액
+				var html = '';
+				var before = '';
+				var e_cntrct_cnt = 0, e_rt1 = 0, e_rt2 = 0, e_rt2 = 0;
+				var e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0, e_y_complete_amount = 0, e_y_sum_amount = 0;
+				var etc_cntrct_amount = 0, etc_complete_amount = 0, etc_excut_amount = 0, etc_spt_cnt = 0, etc_y_complete_amount = 0;
+                var etc_html = '';
+				$.each(pResult.completedList3, function(pIndex, pValue){
+					var sum = parseInt(pValue.complete_amount)+parseInt(pValue.excut_amount);
+                    var y_sum = parseInt(pValue.y_complete_amount)+parseInt(pValue.excut_amount);
+					var rt1 = (pValue.complete_amount/pValue.cntrct_amount)*100;
+					var rt2 = (pValue.excut_amount/pValue.cntrct_amount)*100;
+					var rt3 = (sum/pValue.cntrct_amount)*100;
+
+                    var etc = " ";
+                    if(parseInt(pValue.cntrct_amount) <= 100000000){
+                        etc = " eETC";
+                        etc_cntrct_amount += parseInt(pValue.cntrct_amount);
+                        etc_complete_amount += parseInt(pValue.complete_amount);
+                        etc_y_complete_amount += parseInt(pValue.y_complete_amount);
+                        etc_excut_amount += parseInt(pValue.excut_amount);
+                        etc_spt_cnt += parseInt(pValue.spt_cnt);
+
+                        etc_html += '<tr class="'+etc+'">';
+                        etc_html += '    <td class="text-center" data-purchsofc_sn="'+pValue.purchsofc_sn+'">'+pValue.purchsofc_nm+'</td>';
+                        etc_html += '    <td class="text-center" title="'+pValue.ct_se_nm+'">'+pValue.spt_cnt+'</td>';
+                        etc_html += '    <td class="text-number">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        etc_html += '    <td class="text-number">'+pValue.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        etc_html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                        etc_html += '    <td class="text-number">'+pValue.excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        etc_html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                        etc_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                        etc_html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                        etc_html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                        etc_html += '</tr>';
+                    }
+                    else{
+                        html += '<tr class="'+etc+'">';
+                        html += '    <td class="text-center" data-purchsofc_sn="'+pValue.purchsofc_sn+'">'+pValue.purchsofc_nm+'</td>';
+                        html += '    <td class="text-center" title="'+pValue.ct_se_nm+'">'+pValue.spt_cnt+'</td>';
+                        html += '    <td class="text-number">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+pValue.complete_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+pValue.excut_amount.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                        html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                    }
+
+					// 총계용
+					e_cntrct_cnt += parseInt(pValue.spt_cnt);
+					e_cntrct_amount += parseInt(pValue.cntrct_amount);
+					e_complete_amount += parseInt(pValue.complete_amount);
+					e_excut_amount += parseInt(pValue.excut_amount);
+					e_y_complete_amount += parseInt(pValue.y_complete_amount);
+				});
+                //모델하우스
+                var sum = 0;
+                var y_sum = 0;
+                var complete_amount = 0;
+                var tax_amount = 0;
+                var cntrct_amount = 0;
+                $.each(pResult.modelList, function(pIndex, pV){
+                    if(pV.hasOwnProperty('E')){
+                        var pValue = pV['E'];
+
+                        sum += parseInt(pValue.complete_amount)+parseInt(pValue.tax_amount);
+                        y_sum += parseInt(pValue.complete_amount)+parseInt(pValue.tax_amount);
+                        complete_amount += parseInt(pValue.complete_amount);
+                        tax_amount += parseInt(pValue.tax_amount);
+                        cntrct_amount += parseInt(pValue.cntrct_amount);
+                    }
+                });
+                var rt1 = (complete_amount/cntrct_amount)*100;
+                var rt2 = (tax_amount/cntrct_amount)*100;
+                var rt3 = (sum/cntrct_amount)*100;
+
+                var etc = " ";
+                if(parseInt(cntrct_amount) <= 100000000){
+                    etc = " eETC";
+                    etc_cntrct_amount += parseInt(cntrct_amount);
+                    etc_complete_amount += parseInt(complete_amount);
+                    etc_y_complete_amount += parseInt(complete_amount);
+                    etc_excut_amount += parseInt(tax_amount);
+                    etc_spt_cnt += 1;
+
+                    etc_html += '<tr class="'+etc+'">';
+                    etc_html += '    <td class="text-center" data-purchsofc_sn="-1">'+year+'년 M/H</td>';
+                    etc_html += '    <td class="text-center" title="M/H 집행">1</td>';
+                    etc_html += '    <td class="text-number">'+cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                    etc_html += '    <td class="text-number">'+complete_amount.toString().toFormat('NUMBER')+'</td>';
+                    etc_html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                    etc_html += '    <td class="text-number">'+tax_amount.toString().toFormat('NUMBER')+'</td>';
+                    etc_html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                    etc_html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                    etc_html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                    etc_html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                    etc_html += '</tr>';
+                }
+                else{
+                    html += '<tr class="'+etc+'">';
+                    html += '    <td class="text-center" data-purchsofc_sn="-1">'+year+'년 M/H</td>';
+                    html += '    <td class="text-center" title="M/H 집행">1</td>';
+                    html += '    <td class="text-number">'+cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number">'+complete_amount.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                    html += '    <td class="text-number">'+tax_amount.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                    html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                    html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+                }
+
+                // 총계용
+                e_cntrct_cnt += 1;
+                e_cntrct_amount += parseInt(cntrct_amount);
+                e_complete_amount += parseInt(complete_amount);
+                e_excut_amount += parseInt(tax_amount);
+                e_y_complete_amount += parseInt(complete_amount);
+
+                var sum = parseInt(etc_complete_amount)+parseInt(etc_excut_amount);
+                var y_sum = parseInt(etc_y_complete_amount)+parseInt(etc_excut_amount);
+                var rt1 = (etc_complete_amount/etc_cntrct_amount)*100;
+                var rt2 = (etc_excut_amount/etc_cntrct_amount)*100;
+                var rt3 = (sum/etc_cntrct_amount)*100;
+
+                html += '<tr id="eETC" class="colorN3">';
+                html += '    <td class="text-center" data-purchsofc_sn="기타">기타</td>';
+                html += '    <td class="text-center" title="기타">'+etc_spt_cnt+'</td>';
+                html += '    <td class="text-number">'+etc_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+etc_complete_amount.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+rt1.toFixed(1)+'%</td>';
+                html += '    <td class="text-number">'+etc_excut_amount.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+rt2.toFixed(1)+'%</td>';
+                html += '    <td class="text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+rt3.toFixed(1)+'%</td>';
+                html += '    <td class="text-number">'+y_sum.toString().toFormat('NUMBER')+'</td>';
+                html += '</tr>';
+
+                html += etc_html;
+				e_sum_amount = parseInt(e_complete_amount)+parseInt(e_excut_amount);
+				e_y_sum_amount = parseInt(e_y_complete_amount)+parseInt(e_excut_amount);
+				e_rt1 = (e_complete_amount/e_cntrct_amount)*100;
+				e_rt2 = (e_excut_amount/e_cntrct_amount)*100;
+				e_rt3 = (e_sum_amount/e_cntrct_amount)*100;
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(0).html(e_cntrct_cnt.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(1).html(e_cntrct_amount.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(2).html(e_complete_amount.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(3).html(e_rt1.toFixed(1)+'%');
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(4).html(e_excut_amount.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(5).html(e_rt2.toFixed(1)+'%');
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(6).html(e_sum_amount.toString().toFormat('NUMBER'));
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(7).html(e_rt3.toFixed(1)+'%');
+				$('#popReport').find('#rptParnterStatus2 tbody[role=footer] td').eq(8).html(e_y_sum_amount.toString().toFormat('NUMBER'));
+
+				$('#popReport').find('#rptParnterStatus2 tbody[role=body]').html(html);
+				$('#popReport').find('#rptParnterStatus2 tbody[role=body]').yRowspan(0);
+				$('#popReport').find('#rptParnterStatus2 tbody[role=body] .eETC').hide();
+
+
+                $.each(data, function(idx, val){
+                    var trs = $('#popReport').find('#rptContractStatus tbody[role=body]').find('tr[class=amt'+idx+']');
+
+                    $.each(trs, function(i, tr){
+                        var goal_tr = $(tr).next();
+                        var tot_tr = $(goal_tr).next();
+
+                        var before_b_amt1 = $(tr).find('td').eq(3).html().replaceAll(',', '');
+                        before_b_amt1 = before_b_amt1 == '' ? 0 : parseInt(before_b_amt1);
+                        var before_b_amt3 = $(tr).find('td').eq(6).html().replaceAll(',', '');
+                        before_b_amt3 = before_b_amt3 == '' ? 0 : parseInt(before_b_amt3);
+
+                        var b_amt1 = 0;
+                        if($(tr).data('ty') == '3'){
+                            b_amt1 = val['C'];
+                        }
+                        else{
+                            b_amt1 = val['C']-val['E'];
+                        }
+
+                        var b_amt3 = before_b_amt3 - before_b_amt1 + b_amt1;
+
+
+                        $(tr).find('td').eq(3).html(b_amt1.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(6).html(b_amt3.toString().toFormat('NUMBER'));
+
+
+
+                        var before_t_amt1 = $(goal_tr).find('td').eq(3).html().replaceAll(',', '');
+                        before_t_amt1 = before_t_amt1 == '' ? 0 : parseInt(before_t_amt1);
+                        var before_t_amt3 = $(goal_tr).find('td').eq(6).html().replaceAll(',', '');
+                        before_t_amt3 = before_t_amt3 == '' ? 0 : parseInt(before_t_amt3);
+                        var t_amt1 = (b_amt1 + before_t_amt1);
+                        var t_amt2 = parseInt($(tot_tr).find('td').eq(2).html().replaceAll(',', ''));
+                        var t_amt3 = (b_amt3 + before_t_amt3);
+                        var t_amt4 = parseInt($(tot_tr).find('td').eq(5).html().replaceAll(',', ''));
+                        var t_amt5 = parseInt($(tot_tr).find('td').eq(8).html().replaceAll(',', ''));
+
+                        var rt1 = (t_amt2 < 0) ? 100.0 + (t_amt2 - t_amt1)*100/t_amt2 : (t_amt1/t_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+                        rt1 = (rt1 == Infinity)? '' : (rt1.toFixed(1)+'%');
+                        var rt2 = (t_amt4 < 0) ? 100.0 + (t_amt4 - t_amt3)*100/t_amt4 : (t_amt3/t_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+                        rt2 = (rt2 == Infinity)? '' : (rt2.toFixed(1)+'%');
+                        var rt3 = (t_amt3/t_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+                        rt3 = (rt3 == Infinity)? '' : (rt3.toFixed(1)+'%');
+                        $(tot_tr).find('td').eq(3).html(t_amt1.toString().toFormat('NUMBER'));
+                        $(tot_tr).find('td').eq(4).html(rt1);
+                        $(tot_tr).find('td').eq(6).html(t_amt3.toString().toFormat('NUMBER'));
+                        $(tot_tr).find('td').eq(7).html(rt2);
+                        $(tot_tr).find('td').eq(9).html(rt3);
+                        //$(tr).find('td').eq(4).html(val['C']);
+                    });
+                });
+                var trs = $('#popReport').find('#rptContractStatus tbody[role=body]').find('tr[class=dept_total]');
+                $.each(trs, function(i, tr){
+                    var tr1 = $(tr).prev();
+                    var tr2 = $(tr1).prev().prev().prev();
+                    var tr3 = $(tr2).prev().prev().prev();
+
+                    var amt1_1 = $(tr1).find('td').eq(3).html().replaceAll(',', '');
+                    amt1_1 = amt1_1 == '' ? 0 : parseInt(amt1_1);
+                    var amt1_2 = $(tr2).find('td').eq(3).html().replaceAll(',', '');
+                    amt1_2 = amt1_2 == '' ? 0 : parseInt(amt1_2);
+                    var amt1_3 = $(tr3).find('td').eq(3).html().replaceAll(',', '');
+                    amt1_3 = amt1_3 == '' ? 0 : parseInt(amt1_3);
+
+                    var amt3_1 = $(tr1).find('td').eq(6).html().replaceAll(',', '');
+                    amt3_1 = amt3_1 == '' ? 0 : parseInt(amt3_1);
+                    var amt3_2 = $(tr2).find('td').eq(6).html().replaceAll(',', '');
+                    amt3_2 = amt3_2 == '' ? 0 : parseInt(amt3_2);
+                    var amt3_3 = $(tr3).find('td').eq(6).html().replaceAll(',', '');
+                    amt3_3 = amt3_3 == '' ? 0 : parseInt(amt3_3);
+
+                    var amt2 = $(tr).find('td').eq(2).html().replaceAll(',', '');
+                    amt2 = amt2 == '' ? 0 : parseInt(amt2);
+                    var amt1 = (amt1_1 + amt1_2 + amt1_3);
+                    var amt4 = $(tr).find('td').eq(5).html().replaceAll(',', '');
+                    amt4 = amt4 == '' ? 0 : parseInt(amt4);
+                    var amt3 = (amt3_1 + amt3_2 + amt3_3);
+                    var amt5 = $(tr).find('td').eq(8).html().replaceAll(',', '');
+                    amt5 = amt5 == '' ? 0 : parseInt(amt5);
+
+
+                    var rt1 = (amt2 < 0) ? 100.0 + (amt2 - amt1)*100/amt2 : (amt1/amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+                    rt1 = (rt1 == Infinity)? '' : (rt1.toFixed(1)+'%');
+                    var rt2 = (amt4 < 0) ? 100.0 + (amt4 - amt3)*100/amt4 : (amt3/amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+                    rt2 = (rt2 == Infinity)? '' : (rt2.toFixed(1)+'%');
+                    var rt3 = (amt3/amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+                    rt3 = (rt3 == Infinity)? '' : (rt3.toFixed(1)+'%');
+
+                    $(tr).find('td').eq(3).html( amt1.toString().toFormat('NUMBER') );
+                    $(tr).find('td').eq(4).html( rt1 );
+                    $(tr).find('td').eq(6).html( amt3.toString().toFormat('NUMBER') );
+                    $(tr).find('td').eq(7).html( rt2 );
+                    $(tr).find('td').eq(9).html( rt3 );
+
+                });
+                var cells = $('#popReport').find('#rptContractStatus tbody[role=body] td, #rptContractStatus tbody[role=body] th');
+                $.each(cells, function(pIndex, pValue){
+                    let value = $(pValue).html();
+                    if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+
+                        $(pValue).html('');
+                    }
+                });
+
+                var trs = $('#popReport').find('#rptExecutStatus tbody[role=body]').find('tr');
+                var t_total1 = 0, t_total2 = 0, t_total3 = 0, t_total4 = 0;
+                $.each(trs, function(i, tr){
+                    var mber_nm = $(tr).find('td').eq(1).html();
+                    if(mber_nm != '계'){
+                        var total3 = $(tr).find('td').eq(5).html().replaceAll(',', '');
+                        total3 = total3 == '' ? 0 : parseInt(total3);
+                        var total4 = $(tr).find('td').eq(6).html().replaceAll(',', '');
+                        total4 = total4 == '' ? 0 : parseInt(total4);
+                        var before_total1 = $(tr).find('td').eq(2).html().replaceAll(',', '');
+                        before_total1 = before_total1 == '' ? 0 : parseInt(before_total1);
+                        var before_total2 = $(tr).find('td').eq(3).html().replaceAll(',', '');
+                        before_total2 = before_total2 == '' ? 0 : parseInt(before_total2);
+
+                        var total1 = before_total1;
+                        var total2 = before_total2;
+                        if(member.hasOwnProperty(mber_nm)){
+                            total1 = member[mber_nm]['C'];
+                            total2 = member[mber_nm]['E'];
+                        }
+
+                        total3 = total3 - before_total1 + total1;
+                        total4 = total4 - before_total2 + total2;
+                        var rt1 = (total1 < 0) ? 100.0 + (total1 - total2)*100/total1 :  (total2/total1)*100; if (isNaN(rt1)) rt1 = 0.0;
+                        rt1 = (rt1 == Infinity)? '' : (rt1.toFixed(1)+'%');
+						var rt2 = (total3 < 0) ? 100.0 + (total3 - total4)*100/total3 :  (total4/total3)*100; if (isNaN(rt2)) rt2 = 0.0;
+                        rt2 = (rt2 == Infinity)? '' : (rt2.toFixed(1)+'%');
+                        $(tr).find('td').eq(2).html(total1.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(3).html(total2.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(4).html(rt1);
+                        $(tr).find('td').eq(5).html(total3.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(6).html(total4.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(7).html(rt2);
+
+
+                        t_total1 += total1;
+                        t_total2 += total2;
+                        t_total3 += total3;
+                        t_total4 += total4;
+                    }
+                    else{
+                        var rt1 =  (t_total1 < 0) ? 100.0 + (t_total1 - t_total2)*100/t_total1 : (t_total2/t_total1)*100; if (isNaN(rt1)) rt1 = 0.0;
+                        rt1 = (rt1 == Infinity)? '' : (rt1.toFixed(1)+'%');
+						var rt2 =  (t_total3 < 0) ? 100.0 + (t_total3 - t_total4)*100/t_total3 : (t_total4/t_total3)*100; if (isNaN(rt2)) rt2 = 0.0;
+                        rt2 = (rt2 == Infinity)? '' : (rt2.toFixed(1)+'%');
+                        $(tr).find('td').eq(2).html(t_total1.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(3).html(t_total2.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(4).html(rt1);
+                        $(tr).find('td').eq(5).html(t_total3.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(6).html(t_total4.toString().toFormat('NUMBER'));
+                        $(tr).find('td').eq(7).html(rt2);
+
+                    }
+                });
+                var cells = $('#popReport').find('#rptExecutStatus tbody[role=body] td, #rptExecutStatus tbody[role=body] th');
+                $.each(cells, function(pIndex, pValue){
+                    let value = $(pValue).clone().children().remove().end().text();
+                    if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+                        $(pValue).html('');
+                    }
+                });
+			}
+            $('tr.myETC').trigger('click');
+            $('tr.myETC').trigger('click');
+		}
+	});
+}
+
+$(document).on('click', 'tr.myETC', function(){
+    var target = $("."+$(this).data('item'));
+    target.toggle();
+    var count = $(this).data('count');
+
+    $.each($(".row"+$(this).data('item')), function(pI, pV){
+        let rowspan = $(pV).attr("rowspan");
+        if(rowspan > 1){
+            if(target.is(":hidden"))
+                $(pV).attr("rowspan", parseInt(rowspan) - parseInt(count));
+            else if($(pV).data('first') != '0')
+                $(pV).attr("rowspan", parseInt(rowspan) + parseInt(count));
+            else
+                $(pV).data('first', '1');
+        }
+        else{
+
+        }
+    });
+
+});
+$(document).on('click', '#eETC', function(){
+   $('.eETC').toggle();
+});
+
+$(document).on('change', 'input:checkbox[name=progrs_sttus_code], input:checkbox[name=progrs_sttus_code_n]', function(pEvent) {
+    var progrs_sttus_code = $(this).val();
+    getReportNR($('#popReport').find('#s_pxcond_mt').val());
+});
+</script>
+
+<script>
+
+	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
+		getReportNR($(this).val());
+	});
+    $(document).ready(function(){
+		if ($(document).find('#s_pxcond_mt').val() == '') {
+			$(document).find('#s_pxcond_mt').datepicker('setDate', 'today');
+		}
+        getReportNR($(document).find('#s_pxcond_mt').val());
+
+    });
+
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+	});
+
+</script>
+{% endblock %}

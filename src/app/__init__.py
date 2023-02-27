@@ -11,6 +11,7 @@ from .controllers.work_view import bp as work_bp
 from .controllers.tax_view import bp as tax_bp
 from .controllers.fund_view import bp as fund_bp
 from .controllers.card_view import bp as card_bp
+from .controllers.completed_view import bp as completed_bp
 from .controllers.common_view import bp as common_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
@@ -24,6 +25,7 @@ from .controllers.api.work import bp as work_api_bp
 from .controllers.api.tax import bp as tax_api_bp
 from .controllers.api.fund import bp as fund_api_bp
 from .controllers.api.card import bp as card_api_bp
+from .controllers.api.completed import bp as completed_api_bp
 from .controllers.api.common import bp as common_api_bp
 from .controllers.api.services import *
 # from .controllers.ajax_controller import bp as ajax
@@ -55,6 +57,8 @@ app.register_blueprint(fund_bp)
 app.register_blueprint(fund_api_bp)
 app.register_blueprint(card_bp)
 app.register_blueprint(card_api_bp)
+app.register_blueprint(completed_bp)
+app.register_blueprint(completed_api_bp)
 app.register_blueprint(common_bp)
 app.register_blueprint(common_api_bp)
 app.register_blueprint(dev_api)
@@ -80,6 +84,8 @@ app.jinja_env.globals.update(
     acntctgr_code_list=get_code_list('acntctgr_code'.upper()),
     rcppay_se_code_list=get_code_list('rcppay_se_code'.upper()),
     acnut_code_list=get_code_list('acnut_code'.upper()),
+    bsnm_se_code_list=get_code_list('bsnm_se_code'.upper()),
+    bcnc_se_code_list=get_code_list('bcnc_se_code'.upper()),
     author_list=get_author_list(),
     bcnc_list=get_bcnc_list(),
     member_list=get_member_list(),

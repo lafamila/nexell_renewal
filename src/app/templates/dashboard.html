@@ -70,9 +70,9 @@
 			<tr>
 				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" rowspan="2">구분</th>
 				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" rowspan="2">팀</th>
-				<th class="colorB" colspan="3" id="rptContractStatus_m" style="border-right:2px solid black!important;">월</th>
-				<th class="colorB" colspan="3" style="border-right:2px solid black!important;">누계</th>
-				<th class="colorB" colspan="2" style="border-right:2px solid black!important;">
+				<th class="colorB" colspan="3" id="rptContractStatus_m" style="border-right:2px solid black!important;border-bottom:1px solid black!important;">월</th>
+				<th class="colorB" colspan="3" style="border-right:2px solid black!important;border-bottom:1px solid black!important;">누계</th>
+				<th class="colorB" colspan="2" style="border-right:2px solid black!important;border-bottom:1px solid black!important;">
 
                     연간
 
@@ -80,13 +80,13 @@
                 <th class="colorB" style="vertical-align:middle;" rowspan="2">팀점유율</th>
 			</tr>
 			<tr>
-				<th class="colorB">목표</th>
-				<th class="colorB">실적</th>
+				<th class="colorB" style="border-right:1px solid black!important;">목표</th>
+				<th class="colorB" style="border-right:1px solid black!important;">실적</th>
 				<th class="colorB" style="border-right:2px solid black!important;">%</th>
-				<th class="colorB">목표</th>
-				<th class="colorB">실적</th>
+				<th class="colorB" style="border-right:1px solid black!important;">목표</th>
+				<th class="colorB" style="border-right:1px solid black!important;">실적</th>
 				<th class="colorB" style="border-right:2px solid black!important;">%</th>
-				<th class="colorB">목표</th>
+				<th class="colorB" style="border-right:1px solid black!important;">목표</th>
 				<th class="colorB" style="border-right:2px solid black!important;">%</th>
 			</tr>
 		</tbody>
@@ -388,7 +388,7 @@ getCompletedSummary = function(s_pxcond_mt)
 					rt3 = (b_amt3/b_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
 
 					html += '<tr>';
-					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
+					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;border-bottom:1px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
                     html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
                     html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';

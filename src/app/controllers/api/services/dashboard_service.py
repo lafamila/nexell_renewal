@@ -125,7 +125,8 @@ def get_sales_summery(params):
 def get_sales_one_summery(params):
     ymd = params['s_pxcond_mt']
     y, m, d = ymd.split("-")
-    f, l = calendar.monthrange(int(y), int(m))
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
     query = """SELECT IF(b.bcnc_sn IN (3, 74, 79, 100), bcnc_nm, '타사자재') AS label
@@ -166,7 +167,8 @@ def get_sales_one_summery(params):
 
 def get_completed_suju(params):
     y, m, d = params['s_pxcond_mt'].split("-")
-    f, l = calendar.monthrange(int(y), int(m))
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
 
@@ -199,7 +201,8 @@ def get_completed_suju(params):
 
 def get_completed_sales(params):
     y, m, d = params['s_pxcond_mt'].split("-")
-    f, l = calendar.monthrange(int(y), int(m))
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
     query = """(SELECT SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)) AS amount
@@ -604,7 +607,8 @@ def get_projects_by_dept_member(params):
 
 def get_goal_contract(params):
     y, m, d = params['s_pxcond_mt'].split("-")
-    f, l = calendar.monthrange(int(y), int(m))
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
 

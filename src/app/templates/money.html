@@ -1,0 +1,400 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<style type="text/css">
+    tbody .btnUpdate, tbody .btn{
+        line-height: 0.3!important;
+    }
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.95!important;
+    }
+</style>
+
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">자금 계획서 </li><li><span> 종합관리</span></li>
+	</ol>
+</div>
+
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+
+		</div>
+
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+                    <script>
+
+
+                    </script>
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2><span id="year">2020</span>년 자금 계획서</h2>
+						<div class="widget-toolbar">
+                            <h2>VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <input type="text" style="color:#333!important" class="datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_year" name="s_year"><button type="button" class="btn btn-info" id="s_submit">검색</button>
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+
+
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+                            .right_border{
+                                border-right: 2px solid #666!important;
+                            }
+                            .no-padding>table tr th:last-child {
+                                border-right: 2px solid #666!important;
+                            }
+                            .no-padding>.table-bordered thead tr th:last-child{
+                                border-right-width: 2px!important;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+
+                            #dtList1 tbody, #dtList1 thead tr{
+                                font-size: 11px!important;
+                            }
+                            .colorEG{
+                                background:rgb(255,204,153)!important;
+                                font-weight: bold;
+                            }
+                            .colorJ{
+                                background:#3d8b40!important;
+                                font-weight: bold;
+                                color:white;
+                            }
+                            .colorB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:8px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:11px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+/*
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+*/
+                            .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .table>thead+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            .middle{
+                                vertical-align: middle!important;
+                            }
+                            @media (min-width: 100px) and (max-width: 1024px) {
+
+
+                                body.smart-style-6 #content{
+                                        margin-left: 0px;
+                                        padding:30px 0px;
+                                }
+                            }
+                            .jarviswidget>div{
+                                font-size:12px!important;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+
+                            .colored{
+                                background: rgb(146, 205, 220)!important   ;
+                            }
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p floating-thead" id="dtList1">
+								<colgroup>
+									<col width="100">
+									<col width="80">
+									<col width="80">
+									<col width="60">
+									<col width="90">
+									<col width="60">
+									<col width="90">
+									<col width="90">
+									<col width="140">
+									<col width="100">
+									<col width="60">
+									<col width="90">
+									<col width="60">
+									<col width="90">
+									<col width="90">
+									<col width="140">
+<!--									<col width="130">-->
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+
+                                    <tr>
+                                        <th class="colorG middle right_border bottom_border" style="text-align:center!important;" colspan="10">입금</th>
+                                        <th class="color-contract bottom_border middle" style="text-align:center!important;" colspan="7">지급</th>
+                                    </tr>
+									<tr>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
+										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="2">부서</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">내역</th>
+										<th class="colorG right_border middle" style="text-align:center;" colspan="2">계획</th>
+										<th class="colorG right_border middle" style="text-align:center;" colspan="3">입금</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
+
+                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처</th>
+										<th class="color-contract right_border middle" style="text-align:center;" colspan="2">계획</th>
+										<th class="color-contract right_border middle" style="text-align:center;" colspan="3">지급</th>
+										<th class="color-contract right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
+<!--										<th style="text-align:center!important;">합계</th>-->
+									</tr>
+                                    <tr>
+                                        <th class="colorG bottom_border" style="text-align:center;">일자</th>
+                                        <th class="colorG right_border bottom_border" style="text-align:center;">계산서 금액</th>
+                                        <th class="colorG bottom_border" style="text-align:center;">일자</th>
+                                        <th class="colorG bottom_border" style="text-align:center;">현금</th>
+                                        <th class="colorG right_border bottom_border" style="text-align:center;">채권</th>
+
+                                        <th class="color-contract bottom_border" style="text-align:center;">일자</th>
+                                        <th class="color-contract right_border bottom_border" style="text-align:center;">계산서 금액</th>
+                                        <th class="color-contract bottom_border" style="text-align:center;">일자</th>
+                                        <th class="color-contract bottom_border" style="text-align:center;">현금</th>
+                                        <th class="color-contract right_border bottom_border" style="text-align:center;">채권</th>
+
+                                    </tr>
+
+								</thead>
+                                <tbody role='exec'>
+
+
+                                </tbody>
+                                <tfoot>
+                                    <tr id="total">
+                                        <th class="tot right_border" style="text-align:center;" colspan="4">합계</th>
+                                        <td class="text-number tot"></td>
+                                        <td class="text-number tot right_border" id="tot5"></td>
+                                        <td class="text-number tot"></td>
+                                        <td class="text-number tot" id="tot7"></td>
+                                        <td class="text-number tot right_border" id="tot8"></td>
+                                        <td class="text-number tot right_border"></td>
+                                        <th class="tot right_border" style="text-align:center;">합계</th>
+                                        <td class="text-number tot"></td>
+                                        <td class="text-number tot right_border" id="tot12"></td>
+                                        <td class="text-number tot"></td>
+                                        <td class="text-number tot" id="tot14"></td>
+                                        <td class="text-number tot right_border"></td>
+                                        <td class="text-number tot right_border"></td>
+                                    </tr>
+
+                                </tfoot>
+                            </table>
+
+							<table class="table table-bordered w100p floating-thead" id="dtList2">
+								<colgroup>
+									<col width="250">
+									<col width="250">
+									<col width="250">
+									<col width="250">
+								</colgroup>
+								<tbody>
+                                    <tr>
+                                        <th class="colorG">①현재자금흐름(입금-지급)</th>
+                                        <td class="" id="final1"></td>
+                                        <th class="color-contract">②예정자금흐름(입금계획-지급계획)</th>
+                                        <td class="" id="final2"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="tot">③총자금흐름(①+②)</th>
+                                        <td class="" id="final3"></td>
+                                        <td class=""></td>
+                                        <td class=""></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script>
+getMoneyData = function(s_mt){
+	var params = "";
+	params += "&s_mt="+s_mt;
+	$.ajax({
+		url : '/api/money/ajax_get_money_data',
+		type : 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+			var html = '';
+            $.each(pResult.contract, function(pIndex, pValue){
+				var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
+				var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de;
+				html += `<tr data-cntrct="${pValue.cntrct_sn}" data-bcnc="${pValue.bcnc_sn}">
+							<td>${pValue.bcnc_nm}</td>
+							<td>${pValue.cntrct_nm}</td>
+							<td>${pValue.dept_nm}</td>
+							<td>${pValue.delng_se_nm}</td>
+							<td>${pValue.collct_de}</td>
+							<td>${tax_amount == 0 ? '' : tax_amount.toFormat('NUMBER')}</td>
+							<td>${rcppay_de}</td>
+							<td>${pValue.price_1 == 0 ? '' : pValue.price_1.toFormat('NUMBER')}</td>
+							<td>${pValue.price_2 == 0 ? '' : pValue.price_2.toFormat('NUMBER')}</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						 </tr>`;
+			});
+			$(document).find("#dtList1 tbody").html(html);
+		}
+	});
+	$("#s_year").data("before", s_mt);
+}
+$(document).on('click', "#s_submit", function(pEvent){
+
+    var year = $("#s_year").val();
+    year = year.substring(0, 7);
+	if($("#s_year").data("before") != year){
+		getMoneyData(year);
+	}
+});
+
+</script>
+<script type="text/javascript">
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+$(function(){
+
+	/**************************************************************************
+	* 계약일자 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+		},
+	});
+
+	var end = $('.datepicker').val();
+	if (end == '') {
+		$('.datepicker').datepicker('setDate', 'today');
+	}
+
+    var year = $("#s_year").val();
+    year = year.substring(0, 7);
+
+	if($("#s_year").data("before") != year){
+		getMoneyData(year);
+	}
+});
+</script>
+{% endblock %}

@@ -232,6 +232,6 @@ def get_taxbil_list(params):
         data.append(params['s_prvent_sn'])
 
     query += " ORDER BY t.pblicte_de ASC "
-    g.curs.execute(query)
+    g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result

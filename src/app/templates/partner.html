@@ -1,0 +1,652 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">거래처 관리</li><li><span> 운영 관리</span></li>
+	</ol>
+
+
+
+</div>
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					거래처 관리 <span>> 운영관리</span>
+			</h1>
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info">
+		<p><i class="fa-fw fa fa-info"></i>
+			거래처 정보를 관리합니다.
+		</p>
+	</div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>거래처 목록</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="200">
+									<col width="150">
+									<col width="100">
+									<col width="140">
+									<col width="110">
+									<col width="*">
+									<col width="120">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_bcnc_nm" name="s_bcnc_nm">
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_bizrno" name="s_bizrno">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bsnm_se_code" name="s_bsnm_se_code">
+												<option value="">[전체]</option>
+												{% for code in bsnm_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bcnc_se_code" name="s_bcnc_se_code">
+												<option value="">[전체]</option>
+												{% for code in bcnc_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_rprsntv_nm" name="s_rprsntv_nm">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>사업자명</th>
+										<th>사업자번호</th>
+										<th>사업자구분</th>
+										<th>거래구분</th>
+										<th>대표자명</th>
+										<th>사업장주소</th>
+										<th>전화번호</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+getPartnerList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 15,
+        ajax: {
+            url: '/api/partner/ajax_get_partner_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_bcnc_nm': $('#dtList1').find('#s_bcnc_nm').val(),
+					's_bizrno': $('#dtList1').find('#s_bizrno').val(),
+					's_bsnm_se_code': $('#dtList1').find('#s_bsnm_se_code').val(),
+					's_bcnc_se_code': $('#dtList1').find('#s_bcnc_se_code').val(),
+					's_rprsntv_nm': $('#dtList1').find('#s_rprsntv_nm').val()
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'asc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'bcnc_nm' },
+            { data: 'bizrno' },
+			{ data: 'bsnm_se_nm' },
+            { data: 'bcnc_se_nm' },
+            { data: 'rprsntv_nm' },
+            { data: 'bcnc_adres' },
+            { data: 'bcnc_telno' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-bcnc_sn="'+row.bcnc_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+		initComplete: function(settings, json) {
+
+			var myList = $(this);
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var bcnc_sn = $(this).data('bcnc_sn');
+				getPartner(bcnc_sn);
+			});
+
+			$(myList).on('keypress', 'thead input', function(pEvent) {
+				if (pEvent.keyCode === 13) {
+					$(myList).parent().find('#btnSearch').trigger('click');
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent) {
+				$(myList).find('#btnSearch').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     *
+     */
+	$('#btnExcel').on('click', function(pEvent)
+	{
+		$('.dt-button.buttons-excel.buttons-html5').click();
+	});
+
+	getPartnerList();
+});
+</script>
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <div class="modal-dialog modal-w900x">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>거래처 정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button class="btn btn-primary" id="btnSave"><i class="fa fa-save"> 저장</i></button>
+						<button class="btn btn-danger" id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<input type="hidden" id="bcnc_sn" name="bcnc_sn">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="150">
+										<col width="*">
+									</colgroup>
+									<tbody>
+										<tr data-col="3"><th>사업자 구분<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<div class="btn-group btn-group-justified" data-toggle="buttons">
+													{% for code in bsnm_se_code_list %}
+													<label class="btn btn-default">
+														<input type="radio" name="bsnm_se_code" value="{{code.value}}" data-bv-field="bsnm_se_code">{{code.label}}
+													</label>
+													{% endfor %}
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th>거래 구분<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<div class="btn-group btn-group-justified" data-toggle="buttons">
+													{% for code in bcnc_se_code_list %}
+													<label class="btn btn-default">
+														<input type="radio" name="bcnc_se_code" value="{{code.value}}" data-bv-field="bcnc_se_code">{{code.label}}
+													</label>
+													{% endfor %}
+												</div>
+											</td>
+										</tr>
+										<tr><th>사업자 번호<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="bizrno" name="bizrno">
+											</td>
+										</tr>
+										<tr data-col="3"><th id="th_bcnc_nm">사업자명<em>*</em></th>
+											<td class="hasinput">
+												<input type="text" class="form-control" id="bcnc_nm" name="bcnc_nm">
+											</td>
+										</tr>
+										<tr><th>대표자명</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="rprsntv_nm" name="rprsntv_nm">
+											</td>
+										</tr>
+										<tr data-col="3"><th>연락처<em style="display:none;">*</em></th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="bcnc_telno" name="bcnc_telno">
+											</td>
+										</tr>
+										<tr><th>주소</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="bcnc_adres" name="bcnc_adres">
+											</td>
+										</tr>
+										<tr><th>고유거래번호</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="esntl_delng_no" name="esntl_delng_no">
+											</td>
+										</tr>
+										<tr><th>첨부</th>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<div class="icon-addon">
+														<input type="text" class="form-control" id="orginl_file_nm" readonly style="background:#fff!important;">
+													</div>
+													<span class="input-group-btn">
+														<button class="btn btn-default" type="button" id="btnUpload"><i class="fa fa-folder-o"></i></button>
+													</span>
+													<input type="file" id="upload_file_nm" name="upload_file_nm" style="position:absolute;width:0px;height:0px;">
+													<script>
+														$('#btnUpload').on('click', function(){
+															$('#upload_file_nm').click();
+														});
+														$('#upload_file_nm').on('change', function(){
+															var filename = $(this).val().split('\\');
+															$('#orginl_file_nm').val(filename[2]);
+														});
+													</script>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	if (pMode === 'insert' || pMode === 'init') {
+		$('#popBox1').find('#bcnc_sn').val('');
+		$('#popBox1').find('input:radio[name=bsnm_se_code]').yVal('');
+		$('#popBox1').find('input:radio[name=bcnc_se_code]').yVal('');
+		$('#popBox1').find('#bizrno').val('');
+		$('#popBox1').find('#bcnc_nm').val('');
+		$('#popBox1').find('#rprsntv_nm').val('');
+		$('#popBox1').find('#bcnc_telno').val('');
+		$('#popBox1').find('#bcnc_adres').val('');
+		$('#popBox1').find('#esntl_delng_no').val('');
+		$('#popBox1').find('#orginl_file_nm').val('');
+		$('#popBox1').find('#upload_file_nm').val('');
+		$('#popBox1').find('#btnDelete').hide();
+		$('#popBox1').find('input:radio[name=bsnm_se_code]').eq(0).trigger('change');
+	} else if (pMode === 'update') {
+		$('#popBox1').find('#btnDelete').show();
+	}
+}
+
+/******************************************************************************
+ *
+ */
+getPartner = function(s_bcnc_sn)
+{
+	var params = '';
+	params += '&s_bcnc_sn=' + s_bcnc_sn;
+
+	$.ajax({
+		url: '/api/partner/ajax_get_partner',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				console.log(data);
+				$('#popBox1').find('#bcnc_sn').val(data.bcnc_sn.toString());
+				$('#popBox1').find('input:radio[name=bsnm_se_code]').yVal(data.bsnm_se_code);
+				$('#popBox1').find('input:radio[name=bcnc_se_code]').yVal(data.bcnc_se_code);
+				$('#popBox1').find('#bizrno').val(data.bizrno);
+				$('#popBox1').find('#bcnc_nm').val(data.bcnc_nm);
+				$('#popBox1').find('#rprsntv_nm').val(data.rprsntv_nm);
+				$('#popBox1').find('#bcnc_telno').val(data.bcnc_telno);
+				$('#popBox1').find('#bcnc_adres').val(data.bcnc_adres);
+				$('#popBox1').find('#esntl_delng_no').val(data.esntl_delng_no);
+				$('#popBox1').find('#orginl_file_nm').val(data.orginl_file_nm);
+				$('#popBox1').data('action', 'update');
+				$('#popBox1').modal('show');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 사업자구분
+	var bsnm_se_code = $('#popBox1').find('input[name=bsnm_se_code]').is(':checked');
+	if (result == true && fnIsEmpty(bsnm_se_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		result = false;
+	}
+
+	if($('#popBox1').find('input[name=bsnm_se_code]:checked').val() == '3'){
+
+		// 사업자명
+		var bcnc_nm = $('#popBox1').find('#bcnc_nm').val();
+		if (result == true && fnIsEmpty(bcnc_nm)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#popBox1').find('#bcnc_nm').focus();
+			result = false;
+		}
+
+		// 연락처
+		var bcnc_telno = $('#popBox1').find('#bcnc_telno').val();
+		if (result == true && fnIsEmpty(bcnc_telno)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#popBox1').find('#bcnc_telno').focus();
+			result = false;
+		}
+
+	}
+	else{
+		// 거래구분bcnc_se_code
+		var bcnc_se_code = $('#popBox1').find('input[name=bcnc_se_code]').is(':checked');
+		if (result == true && fnIsEmpty(bcnc_se_code)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			result = false;
+		}
+
+		// 사업자번호
+		var bizrno = $('#popBox1').find('#bizrno').val();
+		if (result == true && fnIsEmpty(bizrno)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#popBox1').find('#bizrno').focus();
+			result = false;
+		}
+
+		// 사업자명
+		var bcnc_nm = $('#popBox1').find('#bcnc_nm').val();
+		if (result == true && fnIsEmpty(bcnc_nm)) {
+			alert('필수 입력 항목을 입력하시기 바랍니다.');
+			$('#popBox1').find('#bcnc_nm').focus();
+			result = false;
+		}
+
+	}
+
+	return result;
+}
+$('#popBox1').on('change', 'input:radio[name=bsnm_se_code]', function(pEvent) {
+	if($(this).val() == '3'){
+		$("#frmBox1").find(`tbody tr`).hide();
+		$("#frmBox1").find(`[data-col='3']`).show();
+		$("#frmBox1").find(`[data-col='3'] em`).show();
+		$("#frmBox1").find(`#th_bcnc_nm`).html('이름<em>*</em>');
+		$('#popBox1').find('input:radio[name=bcnc_se_code]').yVal('4');
+		$('#popBox1').find('#bizrno').val('0');
+	}
+	else{
+		$("#frmBox1").find(`tbody tr`).show();
+		$("#frmBox1").find(`#th_bcnc_nm`).html('사업자명<em>*</em>');
+		$('#popBox1').find('input:radio[name=bcnc_se_code]').yVal('');
+		$('#popBox1').find('#bizrno').val('');
+	}
+});
+
+/******************************************************************************
+ *
+ */
+insertPartner = function()
+{
+	$.ajax({
+		url: '/api/partner/ajax_insert_partner',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				formReset('insert');
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updatePartner = function()
+{
+	$.ajax({
+		url: '/api/partner/ajax_update_partner',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				formReset('update');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deletePartner = function()
+{
+	$.ajax({
+		url: '/api/partner/ajax_delete_partner',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				$.datatable1.ajax.reload();
+				fnAlert(pResult.message);
+				$('#popBox1').modal('hide');
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+			$(this).data('action', action);
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === null || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		} else {
+			formReset(action);
+		}
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		if (action === 'insert') {
+			modal.find('#mber_id').focus();
+		} else if (action === 'update') {
+			modal.find('#mber_nm').focus();
+		}
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		formReset('init');
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSave', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertPartner();
+		} else if (action === 'update') {
+			updatePartner();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnDelete', function(pEvent) {
+		if (confirm('삭제하시겠습니까?')) {
+			deletePartner();
+		}
+	});
+});
+</script>
+
+{% endblock %}

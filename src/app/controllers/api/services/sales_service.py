@@ -2,7 +2,7 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import datetime
-
+import calendar
 def get_sales_datatable(params):
     query = """SELECT a.ctmmny_sn
 				, a.cntrct_sn
@@ -390,3 +390,155 @@ def get_s_account_list(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+
+def get_expect_s_list(params):
+
+    query = """SELECT GROUP_CONCAT(s.delng_sn) AS delng_sn
+            , DATE_FORMAT(s.dlivy_de, '%%y-%%m') AS dlivy_de
+            , s.bcnc_sn AS bcnc_sn
+            , s.cntrct_sn AS cntrct_sn
+            , s.expect_de AS expect_de
+            , (SELECT spt_nm FROM contract WHERE cntrct_sn=s.cntrct_sn) AS cntrct_nm
+            , (SELECT m.dept_code FROM contract c LEFT OUTER JOIN member m ON m.mber_sn = c.bsn_chrg_sn WHERE c.cntrct_sn=s.cntrct_sn) AS dept_code
+            , (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=dept_code) AS dept_nm
+            , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=s.bcnc_sn) AS bcnc_nm
+            , SUM(IFNULL(IF(p.delng_ty_code IN ('1', '2'), s.dlnt*s.dlamt, 0), 0)) AS price_1
+            , SUM(IFNULL(IF(p.delng_ty_code IN ('3', '4'), s.dlnt*s.dlamt, 0), 0)) AS price_2"""
+    if "expect_de" in params:
+        ymd = params['expect_de']
+        y, m, d = ymd.split("-")
+        _, l = calendar.monthrange(int(y), int(m))
+        f = 1
+        first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+        last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+        query += " FROM (SELECT * FROM account WHERE delng_se_code='S' AND delng_ty_code='12' AND expect_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') s ".format(first_day, last_day)
+
+    else:
+        query += " FROM (SELECT * FROM account WHERE delng_se_code='S' AND delng_ty_code='12' AND expect_de > '0000-00-00') s "
+    query += """ LEFT JOIN (SELECT * FROM account WHERE delng_se_code='P') p 
+            ON s.cnnc_sn=p.delng_sn
+            WHERE 1=1
+            GROUP BY DATE_FORMAT(s.dlivy_de, '%%y-%%m'), s.bcnc_sn, s.cntrct_sn
+            ORDER BY dlivy_de ASC
+            """
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_expect_t_list(params):
+
+    query = """SELECT GROUP_CONCAT(t.taxbil_sn) AS taxbil_sn
+            , t.taxbil_yn AS taxbil_yn
+            , t.pblicte_trget_sn AS bcnc_sn
+            , DATE_FORMAT(t.pblicte_de, '%%y-%%m') AS dlivy_de
+            , t.collct_de AS expect_de
+            , t.cntrct_sn AS cntrct_sn
+            , (SELECT spt_nm FROM contract WHERE cntrct_sn=t.cntrct_sn) AS cntrct_nm
+            , (SELECT m.dept_code FROM contract c LEFT OUTER JOIN member m ON m.mber_sn = c.bsn_chrg_sn WHERE c.cntrct_sn=t.cntrct_sn) AS dept_code
+            , (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=dept_code) AS dept_nm
+            , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
+            , (SELECT code_nm FROM code WHERE parnts_code='DELNG_SE_CODE' AND code=t.delng_se_code) AS delng_se_nm
+            , SUM(t.splpc_am + IFNULL(t.vat, 0)) AS price_total
+            FROM taxbil t
+            WHERE 1=1
+            AND t.delng_se_code LIKE 'S%%' """
+    if "expect_de" in params:
+        ymd = params['expect_de']
+        y, m, d = ymd.split("-")
+        _, l = calendar.monthrange(int(y), int(m))
+        f = 1
+        first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+        last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
+        query += " AND t.collct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' ".format(first_day, last_day)
+    else:
+        query += " AND t.collct_de > '0000-00-00' "
+
+
+    query += """ GROUP BY t.cntrct_sn, t.pblicte_trget_sn, t.collct_de
+            """
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_expect_r_list(params):
+    query = """SELECT t.taxbil_sn AS taxbil_sn
+            , r.rcppay_de AS rcppay_de
+            , r.amount AS amount
+            FROM (SELECT * FROM rcppay WHERE acntctgr_code IN ('108', '110', '501') AND rcppay_se_code IN ('I', 'I1', 'I2', 'I3')) r """
+    if "expect_de" in params:
+        ymd = params['expect_de']
+        y, m, d = ymd.split("-")
+        _, l = calendar.monthrange(int(y), int(m))
+        f = 1
+        first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+        last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
+        query += " LEFT JOIN (SELECT * FROM taxbil WHERE delng_se_code LIKE 'S%%' AND collct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') t ".format(first_day, last_day)
+    else:
+        query += " LEFT JOIN (SELECT * FROM taxbil WHERE delng_se_code LIKE 'S%%' AND collct_de > '0000-00-00') t "
+
+    query += """ ON r.cntrct_sn = t.cntrct_sn AND r.prvent_sn = t.pblicte_trget_sn AND t.taxbil_sn = r.cnnc_sn
+            WHERE 1=1
+            AND t.collct_de > '0000-00-00'
+            UNION
+            SELECT taxbil_sn AS taxbil_sn
+            , rcppay_de AS rcppay_de
+            , amount
+            FROM direct
+            WHERE 1=1
+            """
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_expect_p_t_list(params):
+    ymd = params['expect_de']
+    y, m, d = ymd.split("-")
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
+    query = """SELECT GROUP_CONCAT(t.taxbil_sn) AS taxbil_sn
+            , t.taxbil_yn AS taxbil_yn
+            , t.pblicte_trget_sn AS bcnc_sn
+            , DATE_FORMAT(t.pblicte_de, '%%y-%%m') AS dlivy_de
+            , t.collct_de AS expect_de
+            , t.cntrct_sn AS cntrct_sn
+            , (SELECT spt_nm FROM contract WHERE cntrct_sn=t.cntrct_sn) AS cntrct_nm
+            , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
+            , SUM(t.splpc_am + IFNULL(t.vat, 0)) AS price_total
+            FROM taxbil t
+            WHERE 1=1
+            AND t.delng_se_code LIKE 'P%%'
+            AND t.collct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+            GROUP BY t.cntrct_sn, t.pblicte_trget_sn, t.collct_de
+            """.format(first_day, last_day)
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_expect_p_r_list(params):
+    ymd = params['expect_de']
+    y, m, d = ymd.split("-")
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
+    query = """SELECT t.taxbil_sn AS taxbil_sn
+            , r.rcppay_de AS rcppay_de
+            , r.amount AS amount
+            FROM (SELECT * FROM rcppay WHERE acntctgr_code IN ('638', '146', '624', '501') AND rcppay_se_code IN ('O')) r
+            LEFT JOIN (SELECT * FROM taxbil WHERE delng_se_code LIKE 'P%%' AND collct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') t
+            ON r.cntrct_sn = t.cntrct_sn AND r.prvent_sn = t.pblicte_trget_sn AND t.taxbil_sn = r.cnnc_sn
+            WHERE 1=1
+            AND t.collct_de >= '{0} 00:00:00'
+            """.format(first_day, last_day)
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+

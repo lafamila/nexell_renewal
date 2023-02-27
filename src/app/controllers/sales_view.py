@@ -6,3 +6,8 @@ bp = Blueprint('sales', __name__, url_prefix='/sales')
 @session_helper.session_check
 def index_page():
     return render_template('sales.html')
+
+@bp.route('/report')
+@session_helper.session_check
+def report_page():
+    return render_template('sales_report.html')

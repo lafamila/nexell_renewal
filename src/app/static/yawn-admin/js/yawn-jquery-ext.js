@@ -149,12 +149,59 @@ $.fn.calculation = function(colStart, colEnd) {
     this.each(function() {
 		var i = 0;
 		for(let idx=colStart;idx <= colEnd;idx++){
-			var count =  $(this).find("td").eq(idx).text().replaceAll(",", "");
-			result[i] += (count == "" ? 0 : parseInt(count));
+            if($(this).find("td").eq(idx).css("display") !== "none"){
+                var count =  $(this).find("td").eq(idx).text().replaceAll(",", "");
+                result[i] += (count == "" ? 0 : parseInt(count));
+
+            }
             i++;
 		}
+
     });
 	return result;
+};
+
+$.fn.widthMatch = function() {
+    var maxWidth = 0;
+    this.each(function() {
+        let width = parseInt($(this).css("width").replace("px", "")) | 0;
+        if(maxWidth < width){
+            maxWidth = width;
+        }
+    });
+    this.each(function() {
+        let style = $(this).attr("style");
+        $(this).attr("style", style+`width:${maxWidth}px!important;`);
+    });
+};
+
+$.fn.yRowspanConditional = function(stIdx, colIdx, isStats) {
+    return this.each(function() {
+        var that;
+        $('tr', this).each(function(row) {
+            // visible 속성이 부모 태그의 속성을 따라가기 때문에 레이어 팝업에서 호출할 경우
+            // 전처리 이벤트가 아닌 후처리 이벤트에서 호출해야 함
+            $('td', this).eq(colIdx).attr("rowspan", $('td', this).eq(stIdx).attr("rowspan"));
+            $('td', this).eq(colIdx).css("display", $('td', this).eq(stIdx).css("display"));
+
+            // $('td', this).eq(colIdx).each(function(col) {
+            //     $(that).attr("rowspan");
+            // });
+            // $('td', this).eq(colIdx).each(function(col) {
+            //     $(that).attr("rowspan");
+            // });
+        });
+    });
+};
+
+$.dateDiff = function(daystring) {
+    let now = new Date();
+    now.setHours(0,0,0,0);
+    let day = new Date(daystring);
+    day.setHours(0,0,0,0);
+    let Difference_In_Time = now.getTime() - day.getTime();
+    let Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+    return Difference_In_Days;
 };
 /******************************************************************************
  * 같은 값이 있는 열을 병합함  

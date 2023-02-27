@@ -102,7 +102,7 @@ tbody .btnUpdate, tbody .btnPrint{
 						<h2>매입/매출 목록</h2>
 						<div class="widget-toolbar">
 							<button type="button" class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 매입/매출 보고서</i></button>
-							<button type="button" class="btn btn-info colorP" data-toggle="modal" href="#popReport3"><i class="fa fa-print"> 외상 채권</i></button>
+							<button type="button" class="btn btn-info colorP" id="popReport"><i class="fa fa-print"> 외상 채권</i></button>
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
 					</header>
@@ -511,6 +511,9 @@ getSalesList = function()
 }
 </script>
 <script type="text/javascript">
+$(document).on("click", "#popReport", function(){
+	window.open("/sales/report", "_blank");
+});
 $(function(){
 
 	/**************************************************************************
