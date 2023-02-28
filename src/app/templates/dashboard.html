@@ -6,7 +6,7 @@
         line-height: 0.5 !important;
     }
 
-    #rcppay_status_result{
+    #rcppay_status_summary{
         line-height: 0.5 !important;
 
     }
@@ -199,10 +199,9 @@
 <!-- CS 발생현황 끝 -->
 
 <!-- 미수금현황 시작 -->
-<!--
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<h5 class="sub-title underline">외상미수금</h5>
-		<table id="rcppay_status_result">
+		<table id="rcppay_status_summary">
 			<colgroup>
                         <col width="60">
                         <col width="120">
@@ -211,15 +210,17 @@
                         <col width="100">
                         <col width="100">
                         <col width="100">
+                        <col width="100">
                         <col width="120">
                         <col width="80">
                         <col width="60">
                         <col width="80">
                         <col width="100">
+                        <col width="100">
             </colgroup>
             <thead>
                 <tr>
-                    <th class="colorG" colspan="12">입금</th>
+                    <th class="colorG" colspan="14">입금</th>
                 </tr>
                 <tr>
                     <th class="colorG">출고월</th>
@@ -229,11 +230,13 @@
                     <th class="colorG">장비대</th>
                     <th class="colorG">로지텍</th>
                     <th class="colorG">설치비</th>
+                    <th class="colorG">합계</th>
                     <th class="colorG">세금계산서금액</th>
                     <td class="colorG">거래구분</td>
                     <th class="colorG">예정일</th>
                     <th class="colorButton">입금일</th>
                     <th class="colorButton">입금액</th>
+                    <th class="colorButton">미입금액</th>
 
                 </tr>
             </thead>
@@ -246,7 +249,9 @@
                     <th class="colorG text-number"></th>
                     <th class="colorG text-number"></th>
                     <th class="colorG text-number"></th>
+                    <th class="colorG text-number"></th>
                     <th class="colorP text-number" colspan="2"></th>
+                    <th class="colorButton"></th>
                     <th class="colorButton"></th>
                     <th class="colorButton"></th>
                 </tr>
@@ -254,7 +259,6 @@
 		</table>
 	<br>
 </div>
--->
 <!-- 미수금현황 끝 -->
 
 <!-- 매입/매출 현황 시작 -->
@@ -332,7 +336,7 @@ $(function(){
 	}
     end = $('#s_pxcond_mt').val();
 	getCompletedSummary(end);
-    // getReportExpectSales(end);
+    getSalesExpectReport();
 	getBissSummery();
     end = $('#s_pxcond_mt_last').val();
 	getSalesSummary(end);
@@ -674,6 +678,76 @@ getBissSummery = function()
 		}
 	});
 };
+
+/******************************************************************************
+ * 외상미수금
+ */
+getSalesExpectReport = function(){
+	var params = '';
+	$.ajax({
+		url: '/api/sales/ajax_get_sales_expect_report',
+		type: 'GET',
+		data: params,
+		timeout: 7200000,
+		async: false,
+		dataType: 'json',
+		success: function (pTable) {
+			console.log(pTable.longTermData);
+			var keys = [-1, 0, 1, 2];
+			var pkeys = [-1, 0];
+			/* summary start */
+			var html = '';
+			var _class = "colorW";
+			$.each(pTable.longTermData, function(pIndex, pValue){
+				var color3 = $.dateDiff(pValue.rcppay_de) <= 3.0 ? ' colorButton' : ' ';
+				html += `<tr class="${_class}">`;
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dlivy_de+'</td>';
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.bcnc_nm+'</td>';
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.cntrct_nm+'</td>';
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dept_nm+'</td>';
+				html += '    <td class="text-number">'+pValue.price_1.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number">'+pValue.price_2.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_3.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_sum.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_4.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+ ((pValue.taxbil_sn == '') ? '' : (pValue.delng_se_nm.match(/\(([^)]+)\)/g) == null ? '매출' : pValue.delng_se_nm.match(/\(([^)]+)\)/g)[0].replaceAll("(", "").replaceAll(")", "")))+'</td>';
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.expect_de.substr(2,5)+'</td>';
+				html += '    <td class="'+color3+'">'+pValue.rcppay_de.substr(2,8)+'</td>';
+				html += '    <td class="text-number '+color3+'">'+pValue.rcppay_amount.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'">'+pValue.diff.toString().toFormat('NUMBER')+'</td>';
+				html += '</tr>';
+			});
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").html(html);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(0);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(1);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(2);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(3);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(7);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(8);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(9);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(10);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(13);
+			var prices = $(document).find(`#rcppay_status_summary`).find("tbody[role='body']").find("tr").calculation(4, 8);
+			var rPrices = $(document).find(`#rcppay_status_summary`).find("tbody[role='body']").find("tr").calculation(12, 13);
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(1).html(prices[0].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(2).html(prices[1].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(3).html(prices[2].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(4).html(prices[3].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(5).html(prices[4].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(8).html(rPrices[0].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(9).html(rPrices[1].toFormat('NUMBER'));
+			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(6).html((prices[3]-rPrices[0]).toFormat('NUMBER'));
+			$("#myContentSummary").show();
+
+			/* summary end */
+
+
+		}
+	});
+
+}
+
+
 
 /******************************************************************************
  * 장비/자재 매입 현황

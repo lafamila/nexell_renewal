@@ -17,7 +17,7 @@
 
 		<!-- SmartAdmin Styles : Caution! DO NOT change the order -->
 		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production-plugins.min.css">
-		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production.min.css?v=0.1">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production.min.css?v=0.15">
 		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-skins.min.css">
 
 		<!-- We recommend you use "your_style.css" to override SmartAdmin
@@ -157,8 +157,8 @@
 				<ul><!-- 이후부터 -->
 					{% if not menus %}
 					<script>
-						// alert("로그인이 만료되었습니다.");
-						// location.replace("/login");
+						alert("로그인이 만료되었습니다.");
+						location.replace("/login");
 					</script>
 					{% endif %}
 

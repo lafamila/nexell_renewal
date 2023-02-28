@@ -197,7 +197,7 @@
 				$(document).find(`#rcppay_status_summary .sData`).find("tfoot").find("th").eq(5).html(prices[4].toFormat('NUMBER'));
 				$(document).find(`#rcppay_status_summary .sData`).find("tfoot").find("th").eq(8).html(rPrices[0].toFormat('NUMBER'));
 				$(document).find(`#rcppay_status_summary .sData`).find("tfoot").find("th").eq(9).html(rPrices[1].toFormat('NUMBER'));
-				$(document).find(`#rcppay_status_summary .sData`).find("tfoot").find("th").eq(6).html((prices[4]-rPrices[0]).toFormat('NUMBER'));
+				$(document).find(`#rcppay_status_summary .sData`).find("tfoot").find("th").eq(6).html((prices[3]-rPrices[0]).toFormat('NUMBER'));
 				$("#myContentSummary").show();
 				
 				/* summary end */
@@ -372,7 +372,7 @@
 					$(document).find(`#rcppay_status${_} .sData`).find("tfoot").find("th").eq(5).html(prices[4].toFormat('NUMBER'));
 					$(document).find(`#rcppay_status${_} .sData`).find("tfoot").find("th").eq(8).html(rPrices[0].toFormat('NUMBER'));
 					$(document).find(`#rcppay_status${_} .sData`).find("tfoot").find("th").eq(9).html(rPrices[1].toFormat('NUMBER'));
-					$(document).find(`#rcppay_status${_} .sData`).find("tfoot").find("th").eq(6).html((prices[4]-rPrices[0]).toFormat('NUMBER'));
+					$(document).find(`#rcppay_status${_} .sData`).find("tfoot").find("th").eq(6).html((prices[3]-rPrices[0]).toFormat('NUMBER'));
 
                     var html = '';
                     $.each(pkeys, function(pIndex, pStatus){

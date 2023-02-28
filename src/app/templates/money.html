@@ -316,6 +316,11 @@ getMoneyData = function(s_mt){
 						 </tr>`;
 			});
 			$(document).find("#dtList1 tbody").html(html);
+			var tot5 = $(document).find("#dtList1 tbody").find("tr").calculation(5,5);
+			var tot78 = $(document).find("#dtList1 tbody").find("tr").calculation(7,8);
+			$(document).find("#dtList1 tfoot").find("#tot5").html(tot5[0].toFormat('NUMBER'));
+			$(document).find("#dtList1 tfoot").find("#tot7").html(tot78[0].toFormat('NUMBER'));
+			$(document).find("#dtList1 tfoot").find("#tot8").html(tot78[1].toFormat('NUMBER'));
 		}
 	});
 	$("#s_year").data("before", s_mt);
