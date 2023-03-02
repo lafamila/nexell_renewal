@@ -1,0 +1,251 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<style type="text/css">
+    .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+        border: 1px solid #111;
+    }
+    tbody .btnUpdate, tbody .btn{
+        line-height: 0.3!important;
+    }
+    tbody{
+        font-size:12px!important;
+    }
+
+    #summery{
+        z-index: 902;
+        top:13px;
+        left:252px;
+        width:300px;
+    }
+    .table.table-summery thead th {
+        font-size:12px!important;
+    }
+    #temp{
+        display:none;
+    }
+    @media (min-width: 100px) and (max-width: 1024px) {
+
+        #summery{
+            z-index: 902;
+            top:13px;
+            left:252px;
+            width:300px;
+        }
+        .table.table-summery thead th {
+            font-size:12px!important;
+        }
+        #temp{
+            display:block;
+        }
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 1.0;
+    }
+	.colorSky{
+		background:rgb(146, 205, 220)!important;
+		font-weight: bold;
+	}
+
+</style>
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">설치비 관리 </li><li><span> 종합관리</span></li>
+	</ol>
+</div>
+
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>협력업체 대당 설치비 현황</h2>
+						<div class="widget-toolbar">
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+                            <h2>VAT 포함 (단위 : 원)</h2>&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button type="button" class="btn btn-info" id="btnScreen"><i class="fa fa-print"> 출력 </i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .colorB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                                vertical-align: middle!important;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+                            .table>thead+tbody, .table>tbody+tbody, .table>tbody+tfoot {
+                                border-top: 2px solid #666;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+                            .button{
+                                padding:0px!important;
+                            }
+
+                        </style>
+                        <input type="hidden" id="s_cowrk_bcnc" value="-1"/>
+                        <input type="hidden" id="s_spt_nm" value="-1"/>
+                        <input type="hidden" id="s_dept_nm" value="-1"/>
+                        <input type="hidden" id="s_bsn_nm" value="-1"/>
+                        <input type="hidden" id="s_prdct_nm" value="-1"/>
+                        <input type="hidden" id="s_cowrk_nm" value="-1"/>
+                        <input type="hidden" id="s_cowrk_tb" value=""/>
+                        <!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p floating-thead" id="dtList1">
+                                <colgroup>
+									<col width="80">
+									<col width="92">
+									<col width="120">
+									<col width="40">
+									<col width="40">
+									<col width="140">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="110">
+									<col width="245">
+									<col width="25">
+								</colgroup>
+                                <thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="hasinput button">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yyyy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de" name="s_start_de" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yyyy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de" name="s_end_de" placeholder="[종료일자]">
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_cowrk_bcnc" name="s_cowrk_bcnc">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_spt_nm" name="s_spt_nm">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_dept_nm" name="s_dept_nm">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_bsn_nm" name="s_bsn_nm">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_prdct_nm" name="s_prdct_nm">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">수량</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">단가/대</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">금액</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_cowrk_tb" name="s_cowrk_tb">
+												<option value="">[전체]</option>
+												<option value="적용">적용</option>
+												<option value="미적용">미적용</option>
+											</select>
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_cowrk_nm" name="s_cowrk_nm">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2">비고</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2">-</th>
+									</tr>
+									<tr>
+										<th class="colorB" style="text-align:center;">일자</th>
+										<th class="colorB" style="text-align:center;">건설사</th>
+										<th class="colorB" style="text-align:center;">현장명</th>
+										<th class="colorB" style="text-align:center;">부서</th>
+										<th class="colorB" style="text-align:center;">담당</th>
+										<th class="colorB" style="text-align:center;">품목</th>
+										<th class="colorB" style="text-align:center;">기준표</th>
+										<th class="colorB" style="text-align:center;">협력업체명</th>
+									</tr>
+								</thead>
+                                <tbody>
+
+                                </tbody>
+								<tfoot>
+								</tfoot>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+
+{% endblock %}

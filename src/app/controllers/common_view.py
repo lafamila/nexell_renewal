@@ -29,3 +29,11 @@ def partner_page():
 def money_page():
     return render_template("money.html")
 
+@bp.route('/cowork')
+@session_helper.session_check
+def cowork_page():
+    return render_template("cowork.html")
+
+
+
+
