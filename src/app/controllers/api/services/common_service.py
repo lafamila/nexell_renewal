@@ -745,6 +745,53 @@ def get_money_data(params):
     result = g.curs.fetchall()
     return result
 
+def get_cowork_data(params):
+    query = """SELECT c.cntrct_sn
+                    , p.prjct_sn
+                    , c.bcnc_sn
+                    , o.outsrc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+                    , c.spt_nm AS spt_nm
+                    , m.dept_code
+                    , (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+                    , c.bsn_chrg_sn AS bsn_chrg_sn
+                    , GET_MEMBER_NAME(c.bsn_chrg_sn, 'S') AS bsn_chrg_nm
+                    , (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=1 AND bcnc_sn=o.outsrc_fo_sn) AS outsrc_fo_nm
+                    , CASE co.cntrct_execut_code
+                    WHEN 'E' THEN co.puchas_amount
+                    WHEN 'C' THEN co.salamt
+                    END AS amount
+                    , co.qy AS qy
+                    , co.model_no AS model_no  
+                    , o.cntrct_de AS cntrct_de         
+    				FROM (SELECT * FROM cost WHERE cntrct_execut_code = 'E' AND ct_se_code IN ('5')) co
+    				LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_fo_sn AND co.prjct_sn=o.prjct_sn
+    				LEFT JOIN contract c ON o.cntrct_sn=c.cntrct_sn
+                    LEFT JOIN member m ON m.mber_sn=c.bsn_chrg_sn
+                    LEFT JOIN project p ON p.cntrct_sn=c.cntrct_sn
+                    WHERE 1=1
+                    AND o.cntrct_de BETWEEN '{0}' AND '{1}'
+                    """.format(params['s_start_de'], params['s_end_de'])
+    #                    AND c.progrs_sttus_code IN ('P', 'B')
+
+    data = []
+    if "s_bcnc_sn" in params and params["s_bcnc_sn"]:
+        query += " AND c.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
+    if "s_spt_nm" in params and params["s_spt_nm"]:
+        query += " AND c.spt_nm LIKE %s"
+        data.append("%{}%".format(params["s_spt_nm"]))
+    if "s_dept_code" in params and params["s_dept_code"]:
+        query += " AND m.dept_code=%s"
+        data.append(params["s_dept_code"])
+    if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
+        query += " AND c.bsn_chrg_sn=%s"
+        data.append(params["s_bsn_chrg_sn"])
+    query += " ORDER BY o.cntrct_de, c.cntrct_sn"
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):
 #     s_pxcond_mt = params['s_pxcond_mt']

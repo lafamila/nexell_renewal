@@ -1,0 +1,128 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style>
+	.red{
+		color: red!important;
+	}
+</style>
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+                <style>
+                @media (min-width: 100px) and (max-width: 1024px) {
+
+                    #popReport1 div.report table th,
+                    #popReport1 div.report table td {
+                        font-size: 8px!important;
+                        padding: 7px 5px!important;
+                        line-height: 1.0!important;
+                    }
+                }
+                </style>
+                <div class="title"><h2 class="colorLS">5년간 종합현황</h2></div>
+                <!------------------------------------------------------------------------------------------->
+				<table id="amountTable" class="table table-bordered w100p">
+					<tbody role="header">
+						<tr>
+							<th class="colorB" colspan="3">구분</th>
+							<th class="colorB" colspan="1" data-column="0"></th>
+							<th class="colorB" colspan="1" data-column="1"></th>
+							<th class="colorB" colspan="1" data-column="2"></th>
+							<th class="colorB" colspan="1" data-column="3"></th>
+							<th class="colorB" colspan="1" data-column="4"></th>
+							<th class="colorB" colspan="1" style="border-left:2px solid #333!important;">비고</th>
+						</tr>
+					</tbody>
+					<tbody role="body">
+					</tbody>
+					<tbody role="va">
+					</tbody>
+				</table>
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<!-- 레포트1 레이어 팝업 끝 -->
+<script type="text/javascript">
+/**************************************************************************
+ *
+ */
+getReport = function(s_pxcond_mt)
+{
+	var params = '';
+    params += '&s_year='+(s_pxcond_mt.split("-")[0]);
+	console.log('getReport', params);
+
+	$.ajax({
+		url: '/api/five/ajax_get_five',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReport', pResult); //rptCompletedArea
+            var html = '';
+            $.each(pResult.amt_ty_code_order, function(pIndex, amt_ty_code){
+              var first_row = true;
+              $.each(pResult.dept_code_order, function(pI, dept_code){
+
+              });
+            });
+		}
+
+
+	});
+}
+
+</script>
+
+<script>
+
+	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
+		getReport($(this).val());
+	});
+    $(document).ready(function(){
+		if ($(document).find('#s_pxcond_mt').val() == '') {
+			$(document).find('#s_pxcond_mt').datepicker('setDate', 'today');
+		}
+        getReport($(document).find('#s_pxcond_mt').val());
+
+    });
+
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+	});
+
+</script>
+{% endblock %}

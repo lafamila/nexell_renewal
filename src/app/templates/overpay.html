@@ -1,0 +1,289 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style>
+	.red{
+		color: red!important;
+	}
+</style>
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+                <style>
+                @media (min-width: 100px) and (max-width: 1024px) {
+
+                    #popReport1 div.report table th,
+                    #popReport1 div.report table td {
+                        font-size: 8px!important;
+                        padding: 7px 5px!important;
+                        line-height: 1.0!important;
+                    }
+                }
+                </style>
+                <div class="title"><h2 class="colorLS"><span id="rptTitle"></span>년 공조사업부 월별 집행현황</h2></div>
+                <!------------------------------------------------------------------------------------------->
+				<table id="amountTable" class="table table-bordered w100p">
+					<tbody role="header">
+						<tr>
+							<th class="colorB" colspan="2">구분</th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="0">1월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="1">2월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="2">3월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="3">4월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="4">5월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="5">6월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="6">7월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="7">8월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="8">9월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="9">10월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="10">11월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="11">12월</a></th>
+							<th class="colorB" colspan="1" style="border-left:2px solid #333!important;">계</th>
+						</tr>
+					</tbody>
+					<tbody role="body">
+					</tbody>
+					<tbody role="va">
+					</tbody>
+				</table>
+				<br>
+                <div class="title"><h2 class="colorLS">공조사업부 과집형 현장 건수</h2></div>
+                <!------------------------------------------------------------------------------------------->
+				<table id="countTable" class="table table-bordered w100p">
+					<tbody role="header">
+						<tr>
+							<th class="colorB" colspan="2">구분</th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="0">1월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="1">2월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="2">3월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="3">4월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="4">5월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="5">6월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="6">7월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="7">8월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="8">9월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="9">10월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="10">11월</a></th>
+							<th class="colorB" colspan="1"><a style="color:inherit;" class="btnSearch" data-code="11">12월</a></th>
+							<th class="colorB" colspan="1" style="border-left:2px solid #333!important;">계</th>
+						</tr>
+					</tbody>
+					<tbody role="body">
+					</tbody>
+					<tbody role="foot">
+					</tbody>
+				</table>
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<!-- 레포트1 레이어 팝업 끝 -->
+<script type="text/javascript">
+/**************************************************************************
+ *
+ */
+getReport = function(s_pxcond_mt)
+{
+	var params = '';
+    params += '&s_year='+(s_pxcond_mt.split("-")[0]);
+    params += '&s_dept_code=TS';
+	console.log('getReport', params);
+
+	$.ajax({
+		url: '/api/overpay/ajax_get_overpay',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReport', pResult); //rptCompletedArea
+			$("#rptTitle").text((s_pxcond_mt.split("-")[0]));
+			var count_dept_month = {};
+			var dept_order = [];
+			var s_list = {};
+			var p_list = {};
+			for(let i=1;i<=12;i++){
+				s_list[i.toString()] = 0;
+				p_list[i.toString()] = 0;
+			}
+			$.each(pResult.contract, function(pIndex, pValue){
+				if(!count_dept_month.hasOwnProperty(pValue.dept_nm)){
+					dept_order.push(pValue.dept_nm);
+					count_dept_month[pValue.dept_nm] = {};
+					for(let i=1;i<=12;i++){
+						count_dept_month[pValue.dept_nm][i.toString()] = 0;
+						count_dept_month[pValue.dept_nm][i.toString()] = 0;
+					}
+				}
+					let cntrct_sn = pValue.cntrct_sn;
+					let s_total = {}, p_total = {};
+					for(let i=1;i<=12;i++){
+						p_total[i.toString()] = 0;
+						s_total[i.toString()] = 0;
+					}
+					if(pResult.taxbill.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							s_total[month] += pResult.taxbill[cntrct_sn][month];
+						}
+
+					}
+					if(pResult.s12_account.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							p_total[month] += pResult.s12_account[cntrct_sn][month];
+						}
+					}
+					if(pResult.s34_account.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							p_total[month] += pResult.s34_account[cntrct_sn][month];
+						}
+					}
+					if(pResult.outsrc_taxbill.hasOwnProperty(cntrct_sn)){
+						for(let i=1;i<=12;i++){
+							let month = i.toString();
+							p_total[month] += pResult.outsrc_taxbill[cntrct_sn][month];
+						}
+					}
+					var tot_p = 0, tot_s = 0;
+					$.each(p_total, function(_, p){
+						tot_p += p;
+					});
+					$.each(s_total, function(_, s){
+						tot_s += s;
+					});
+					for(let i=1;i<=12;i++){
+						if(p_total[i.toString()] > s_total[i.toString()])
+							count_dept_month[pValue.dept_nm][i.toString()]++;
+					}
+					for(let i=1;i<=12;i++){
+						s_list[i.toString()] += s_total[i.toString()];
+						p_list[i.toString()] += p_total[i.toString()];
+					}
+
+			});
+			var s_list_total = Object.values(s_list).reduce((a, b) => a + b, 0);
+			var p_list_total = Object.values(p_list).reduce((a, b) => a + b, 0);
+			var html = '';
+			html += `<tr>`;
+			html += `    <td class="colorSky" colspan="2">매출금액</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = s_list[month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(s_list[month]/10000).toFormat('NUMBER')}</td>`;
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(s_list_total/10000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			html += `<tr>`;
+			html += `    <td class="colorSky" colspan="2">집행금액</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_list[month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_list[month]/10000).toFormat('NUMBER')}</td>`;
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_list_total/10000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			$(document).find("#amountTable tbody[role='body']").html(html);
+
+			var html = '';
+			html += `<tr>`;
+			html += `    <td class="colorG" colspan="2">VA</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_list[month] > s_list[month] ? " red" : "";
+				html += `<td class="colorG text-right ${_class}">${Math.round((s_list[month]- p_list[month])/10000).toFormat('NUMBER')}</td>`;
+			}
+			html += `    <td class="colorG text-right" style="border-left:2px solid #333!important;">${Math.round((s_list_total-p_list_total)/10000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			$(document).find("#amountTable tbody[role='va']").html(html);
+
+			var html = '';
+			var total_count = {};
+			for(let i=1;i<=12;i++) {
+				let month = i.toString();
+				total_count[month] = 0;
+			}
+			$.each(dept_order, function(pIndex, dept){
+				html += `<tr>`;
+				html += `    <td class="colorSky" colspan="2">${dept}</td>`;
+				var total = 0;
+				for(let i=1;i<=12;i++){
+					let month = i.toString();
+					html += `<td class="text-center">${count_dept_month[dept][month].toFormat('NUMBER')}건</td>`;
+					total += count_dept_month[dept][month];
+					total_count[month] += count_dept_month[dept][month];
+				}
+				html += `    <td class="text-center" style="border-left:2px solid #333!important;">${total.toFormat('NUMBER')}건</td>`;
+				html += `</tr>`;
+			});
+			$(document).find("#countTable tbody[role='body']").html(html);
+			var html = '';
+			html += `<tr>`;
+			html += `    <td class="colorG" colspan="2">소계</td>`;
+			var total = 0;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				html += `<td class="colorG text-center">${total_count[month].toFormat('NUMBER')}건</td>`;
+				total += total_count[month];
+			}
+			html += `    <td class="colorG text-center" style="border-left:2px solid #333!important;">${total.toFormat('NUMBER')}건</td>`;
+			html += `</tr>`;
+			$(document).find("#countTable tbody[role='foot']").html(html);
+		}
+
+
+	});
+}
+
+</script>
+
+<script>
+
+	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
+		getReport($(this).val());
+	});
+    $(document).ready(function(){
+		if ($(document).find('#s_pxcond_mt').val() == '') {
+			$(document).find('#s_pxcond_mt').datepicker('setDate', 'today');
+		}
+        getReport($(document).find('#s_pxcond_mt').val());
+
+    });
+
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+	});
+
+</script>
+{% endblock %}

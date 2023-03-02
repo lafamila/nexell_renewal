@@ -1,0 +1,556 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    line-height: 1.2!important;
+    }
+</style>
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">재무상태관리 </li><li><span> 종합관리</span></li>
+	</ol>
+</div>
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			재무상태현황을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>재무상태현황 (<span id="year">2020</span>년)</h2>
+						<div class="widget-toolbar">
+                            <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button type="button" class="btn btn-info" id="btnScreen"><i class="fa fa-print"> 출력 </i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .colorB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+                            .table>thead+tbody, .table>tbody+tbody {
+                                border-top: 2px solid #666;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+                            .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+                                border: 1px solid #111;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+                        </style>
+                        <script>
+
+                        </script>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p" id="dtList1">
+								<colgroup>
+									<col width="80">
+									<col width="92">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+<!--									<col width="130">-->
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorB" style="text-align:center;" colspan="2">내역</th>
+										<th class="colorB" style="text-align:center;">기준</th>
+										<th class="colorB" style="text-align:center!important;">1월</th>
+										<th class="colorB" style="text-align:center!important;">2월</th>
+										<th class="colorB" style="text-align:center!important;">3월</th>
+										<th class="colorB" style="text-align:center!important;">4월</th>
+										<th class="colorB" style="text-align:center!important;">5월</th>
+										<th class="colorB" style="text-align:center!important;">6월</th>
+										<th class="colorB" style="text-align:center!important;">7월</th>
+										<th class="colorB" style="text-align:center!important;">8월</th>
+										<th class="colorB" style="text-align:center!important;">9월</th>
+										<th class="colorB" style="text-align:center!important;">10월</th>
+										<th class="colorB" style="text-align:center!important;">11월</th>
+										<th class="colorB" style="text-align:center!important;">12월</th>
+<!--										<th style="text-align:center!important;">합계</th>-->
+									</tr>
+								</thead>
+                                <tbody role='plan'>
+
+                                    <tr id="rowa" data-name="a">
+                                        <td class="colorG bold" style="text-align:center;vertical-align : middle;" colspan="2">매입</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                    </tr>
+                                    <tr id="rowb" data-name="b">
+                                        <td class="colorG bold" style="text-align:center;vertical-align : middle;" colspan="2">매출</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                    </tr>
+                                </tbody>
+                                <tbody role='exec'>
+                                    <tr id="row1" data-name="1">
+                                        <td class="colorG bold" style="text-align:center;vertical-align : middle;" rowspan="11">자산</td>
+                                        <td class="colorG bold" style="text-align:center;">현금</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row2" data-name="2">
+                                        <td class="colorG bold" style="text-align:center;">가지급금</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row3" data-name="3">
+                                        <td class="colorG bold" style="text-align:center;">받은어음</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row4" data-name="4">
+                                        <td class="colorG bold" style="text-align:center;">카드매출</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row5" data-name="5">
+                                        <td class="colorG bold" style="text-align:center;">외상채권</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row6" data-name="6">
+                                        <td class="colorG bold" style="text-align:center;">재고</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row7" data-name="7">
+                                        <td class="colorG bold" style="text-align:center;">고정자산</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row8" data-name="8">
+                                        <td class="colorG bold" style="text-align:center;" name="name">&nbsp;</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row9" data-name="9">
+                                        <td class="colorG bold" style="text-align:center;" name="name">&nbsp;</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row10" data-name="10">
+                                        <td class="colorG bold" style="text-align:center;" name="name">&nbsp;</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="tot1">
+                                        <td class="sub_tot" style="text-align:center;">소계</td>
+                                        <td class="sub_tot" style="text-align:center;"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr id="row12" data-name="12">
+                                        <td class="colorG bold" style="text-align:center;vertical-align : middle;" rowspan="6">부채</td>
+                                        <td class="colorG bold" style="text-align:center;">삼성전자</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row13" data-name="13">
+                                        <td class="colorG bold" style="text-align:center;">로지텍</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row14" data-name="14">
+                                        <td class="colorG bold" style="text-align:center;">기성금액</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row15" data-name="15">
+                                        <td class="colorG bold" style="text-align:center;" name="name">&nbsp;</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+                                    <tr id="row16" data-name="16">
+                                        <td class="colorG bold" style="text-align:center;" name="name">&nbsp;</td>
+                                        <td class="colorY bold" style="text-align:center;" name="name2"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+<!--                                        <td class="text-number" name="total"></td>-->
+                                    </tr>
+
+                                    <tr id="tot2">
+                                        <td class="sub_tot" style="text-align:center;">소계</td>
+                                        <td class="sub_tot" style="text-align:center;"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+									<tr class="tot">
+										<th style="text-align:center;" colspan="2">변동차액</th>
+                                        <td class="bold" style="text-align:center;"></td>
+										<th class="text-number" id="1m">0</th>
+										<th class="text-number" id="2m">0</th>
+										<th class="text-number" id="3m">0</th>
+										<th class="text-number" id="4m">0</th>
+										<th class="text-number" id="5m">0</th>
+										<th class="text-number" id="6m">0</th>
+										<th class="text-number" id="7m">0</th>
+										<th class="text-number" id="8m">0</th>
+										<th class="text-number" id="9m">0</th>
+										<th class="text-number" id="10m">0</th>
+										<th class="text-number" id="11m">0</th>
+										<th class="text-number" id="12m">0</th>
+									</tr>
+                                </tbody>
+                                <tbody role='extra'>
+
+                                    <tr id="rowc" data-name="a">
+                                        <td class="colorY bold" style="text-align:center;vertical-align : middle;" colspan="3" rowspan="2">참고사항</td>
+                                        <td class="bold" name="1m">&nbsp;</td>
+                                        <td class="bold" name="2m"></td>
+                                        <td class="bold" name="3m"></td>
+                                        <td class="bold" name="4m"></td>
+                                        <td class="bold" name="5m"></td>
+                                        <td class="bold" name="6m"></td>
+                                        <td class="bold" name="7m"></td>
+                                        <td class="bold" name="8m"></td>
+                                        <td class="bold" name="9m"></td>
+                                        <td class="bold" name="10m"></td>
+                                        <td class="bold" name="11m"></td>
+                                        <td class="bold" name="12m"></td>
+                                    </tr>
+                                    <tr id="rowd" data-name="b">
+                                        <td class="bold" name="1m">&nbsp;</td>
+                                        <td class="bold" name="2m"></td>
+                                        <td class="bold" name="3m"></td>
+                                        <td class="bold" name="4m"></td>
+                                        <td class="bold" name="5m"></td>
+                                        <td class="bold" name="6m"></td>
+                                        <td class="bold" name="7m"></td>
+                                        <td class="bold" name="8m"></td>
+                                        <td class="bold" name="9m"></td>
+                                        <td class="bold" name="10m"></td>
+                                        <td class="bold" name="11m"></td>
+                                        <td class="bold" name="12m"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,1085 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<style type="text/css">
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        line-height: 0.95!important;
+    }
+
+</style>
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">영업외 이익현황 관리 </li><li><span> 종합관리</span></li>
+	</ol>
+</div>
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			영업외 이익현황을 관리합니다.
+		</p>
+	</div>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken" style="margin-bottom:10px!important;">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>영업외 이익현황 (<span id="year">2020</span>년)</h2>
+						<div class="widget-toolbar">
+                            <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button type="button" class="btn btn-info" id="btnScreen"><i class="fa fa-print"> 출력 </i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .colorB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+                            .table>thead+tbody, .table>tbody+tbody, .table>tbody+tfoot {
+                                border-top: 2px solid #666;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+
+                            .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+                                border: 1px solid #111;
+                            }
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p" id="dtList1">
+								<colgroup>
+									<col width="80">
+<!--									<col width="92">-->
+									<col width="127">
+									<col width="100">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="130">
+									<col width="100">
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorB" style="text-align:center;" colspan="3">내역</th>
+<!--										<th>구분</th>-->
+										<th class="colorB" style="text-align:center;">목표</th>
+										<th class="colorB" style="text-align:center!important;">1월</th>
+										<th class="colorB" style="text-align:center!important;">2월</th>
+										<th class="colorB" style="text-align:center!important;">3월</th>
+										<th class="colorB" style="text-align:center!important;">4월</th>
+										<th class="colorB" style="text-align:center!important;">5월</th>
+										<th class="colorB" style="text-align:center!important;">6월</th>
+										<th class="colorB" style="text-align:center!important;">7월</th>
+										<th class="colorB" style="text-align:center!important;">8월</th>
+										<th class="colorB" style="text-align:center!important;">9월</th>
+										<th class="colorB" style="text-align:center!important;">10월</th>
+										<th class="colorB" style="text-align:center!important;">11월</th>
+										<th class="colorB" style="text-align:center!important;">12월</th>
+										<th class="colorB" style="text-align:center!important;">합계</th>
+										<th class="colorB" style="text-align:center!important;">달성</th>
+									</tr>
+								</thead>
+                                <tbody>
+                                    <tr id="row1" data-name="1">
+                                        <td class="colorG bold" style="text-align:center;vertical-align : middle;" rowspan="7">삼성전자</td>
+                                        <td class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">분기관 (수시)</td>
+                                        <td class="colorG bold" style="text-align:center;">매입금액</td>
+                                        <td class="text-number color-contract bottom_border" name="goal"></td>
+                                        <td class="text-number color-contract bottom_border" name="1m"></td>
+                                        <td class="text-number color-contract bottom_border" name="2m"></td>
+                                        <td class="text-number color-contract bottom_border" name="3m"></td>
+                                        <td class="text-number color-contract bottom_border" name="4m"></td>
+                                        <td class="text-number color-contract bottom_border" name="5m"></td>
+                                        <td class="text-number color-contract bottom_border" name="6m"></td>
+                                        <td class="text-number color-contract bottom_border" name="7m"></td>
+                                        <td class="text-number color-contract bottom_border" name="8m"></td>
+                                        <td class="text-number color-contract bottom_border" name="9m"></td>
+                                        <td class="text-number color-contract bottom_border" name="10m"></td>
+                                        <td class="text-number color-contract bottom_border" name="11m"></td>
+                                        <td class="text-number color-contract bottom_border" name="12m"></td>
+                                        <td class="text-number color-contract bottom_border" name="total"></td>
+                                        <td class="text-number color-contract bottom_border" name="rate"></td>
+                                    </tr>
+                                    <tr id="row2" data-name="2">
+                                        <td class="colorG bold" style="text-align:center;">할인금액</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="row3" data-name="3">
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">매입할인 (월)</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="rowz" data-name="z">
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">이자비용</td>
+                                        <td style="color:red;" class="text-number colorY" name="goal"></td>
+                                        <td style="color:red;" class="text-number" name="1m"></td>
+                                        <td style="color:red;" class="text-number" name="2m"></td>
+                                        <td style="color:red;" class="text-number" name="3m"></td>
+                                        <td style="color:red;" class="text-number" name="4m"></td>
+                                        <td style="color:red;" class="text-number" name="5m"></td>
+                                        <td style="color:red;" class="text-number" name="6m"></td>
+                                        <td style="color:red;" class="text-number" name="7m"></td>
+                                        <td style="color:red;" class="text-number" name="8m"></td>
+                                        <td style="color:red;" class="text-number" name="9m"></td>
+                                        <td style="color:red;" class="text-number" name="10m"></td>
+                                        <td style="color:red;" class="text-number" name="11m"></td>
+                                        <td style="color:red;" class="text-number" name="12m"></td>
+                                        <td style="color:red;" class="text-number" name="total"></td>
+                                        <td style="color:red;" class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="row4" data-name="4">
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">성장장려금 (년)</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="row5" data-name="5">
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">기타/스타장려금(입,출금)</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="tot1">
+                                        <td class="sub_tot bold" class="sub_tot" style="text-align:center;" colspan="2">소계</td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number colorB"></td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+
+                                    <tr id="row6" data-name="6">
+                                        <td class="colorG bold" style="text-align:center;vertical-align : middle;" rowspan="5">자재</td>
+                                        <td class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">협력업체 (월)</td>
+                                        <td class="colorG bold" style="text-align:center;">매입금액</td>
+                                        <td class="text-number color-contract bottom_border" name="goal"></td>
+                                        <td class="text-number color-contract bottom_border" name="1m"></td>
+                                        <td class="text-number color-contract bottom_border" name="2m"></td>
+                                        <td class="text-number color-contract bottom_border" name="3m"></td>
+                                        <td class="text-number color-contract bottom_border" name="4m"></td>
+                                        <td class="text-number color-contract bottom_border" name="5m"></td>
+                                        <td class="text-number color-contract bottom_border" name="6m"></td>
+                                        <td class="text-number color-contract bottom_border" name="7m"></td>
+                                        <td class="text-number color-contract bottom_border" name="8m"></td>
+                                        <td class="text-number color-contract bottom_border" name="9m"></td>
+                                        <td class="text-number color-contract bottom_border" name="10m"></td>
+                                        <td class="text-number color-contract bottom_border" name="11m"></td>
+                                        <td class="text-number color-contract bottom_border" name="12m"></td>
+                                        <td class="text-number color-contract bottom_border" name="total"></td>
+                                        <td class="text-number color-contract bottom_border" name="rate"></td>
+                                    </tr>
+                                    <tr id="row7" data-name="7">
+                                        <td class="colorG bold" style="text-align:center;">차액</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="row8" data-name="8">
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">장려금 (년)</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="row9" data-name="9">
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">기타수익금 (월)</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr id="tot2">
+                                        <td class="sub_tot bold" class="sub_tot" style="text-align:center;" colspan="2">소계</td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number sub_tot"></td>
+                                        <td class="text-number colorB"></td>
+                                    </tr>
+                                </tbody>
+								<tfoot>
+									<tr class="tot">
+										<th style="text-align:center;" colspan="3">계</th>
+										<th class="text-number" id="goal">0</th>
+										<th class="text-number" id="1m">0</th>
+										<th class="text-number" id="2m">0</th>
+										<th class="text-number" id="3m">0</th>
+										<th class="text-number" id="4m">0</th>
+										<th class="text-number" id="5m">0</th>
+										<th class="text-number" id="6m">0</th>
+										<th class="text-number" id="7m">0</th>
+										<th class="text-number" id="8m">0</th>
+										<th class="text-number" id="9m">0</th>
+										<th class="text-number" id="10m">0</th>
+										<th class="text-number" id="11m">0</th>
+										<th class="text-number" id="12m">0</th>
+										<th class="text-number" id="total">0</th>
+										<th class="text-number colorB" id="rate">0.0%</th>
+									</tr>
+								</tfoot>
+							</table>
+
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>종합현황 (<span id="year2">2020</span>년)</h2>
+						<div class="widget-toolbar">
+							<button type="button" class="btn btn-success" id="btnExcel2"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .colorB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+                            .table>thead+tbody, .table>tbody+tbody, .table>tbody+tfoot {
+                                border-top: 2px solid #666;
+                            }
+                            #dtList2{
+								border: 2px solid #666!important;
+							}
+                            .bottom_border{
+
+                                border-bottom: 2px solid #666!important;
+                            }
+
+                            .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+                                border: 1px solid #111;
+                            }
+                            .jarviswidget>div {
+                                border-right-color: transparent!important;
+                            }
+
+                        </style>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p" id="dtList2">
+								<colgroup>
+									<col width="80">
+<!--									<col width="92">-->
+									<col width="127">
+									<col width="100">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="110">
+									<col width="130">
+									<col width="100">
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="colorB" style="text-align:center;" colspan="3">내역</th>
+										<th class="colorB" style="text-align:center!important;">1월</th>
+										<th class="colorB" style="text-align:center!important;">2월</th>
+										<th class="colorB" style="text-align:center!important;">3월</th>
+										<th class="colorB" style="text-align:center!important;">4월</th>
+										<th class="colorB" style="text-align:center!important;">5월</th>
+										<th class="colorB" style="text-align:center!important;">6월</th>
+										<th class="colorB" style="text-align:center!important;">7월</th>
+										<th class="colorB" style="text-align:center!important;">8월</th>
+										<th class="colorB" style="text-align:center!important;">9월</th>
+										<th class="colorB" style="text-align:center!important;">10월</th>
+										<th class="colorB" style="text-align:center!important;">11월</th>
+										<th class="colorB" style="text-align:center!important;">12월</th>
+										<th class="colorB" style="text-align:center!important;">합계</th>
+										<th class="colorB" style="text-align:center!important;">달성</th>
+									</tr>
+								</thead>
+                                <tbody>
+                                    <tr role="row">
+                                        <th class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="9">종합현황 (자동)</th>
+                                        <th class="colorG bold" style="text-align:center;vertical-align:middle;" colspan="2">삼성전자매입계</th>
+                                        <td class="color-contract text-number" name="1m"></td>
+                                        <td class="color-contract text-number" name="2m"></td>
+                                        <td class="color-contract text-number" name="3m"></td>
+                                        <td class="color-contract text-number" name="4m"></td>
+                                        <td class="color-contract text-number" name="5m"></td>
+                                        <td class="color-contract text-number" name="6m"></td>
+                                        <td class="color-contract text-number" name="7m"></td>
+                                        <td class="color-contract text-number" name="8m"></td>
+                                        <td class="color-contract text-number" name="9m"></td>
+                                        <td class="color-contract text-number" name="10m"></td>
+                                        <td class="color-contract text-number" name="11m"></td>
+                                        <td class="color-contract text-number" name="12m"></td>
+                                        <td class="color-contract text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
+                                    </tr>
+                                    <tr role="goal">
+                                        <th class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">수주총계</th>
+                                        <th class="text-center colorY">목표</th>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate" rowspan="2" style="text-align:center!important;vertical-align:middle!important;"></td>
+                                    </tr>
+                                    <tr role="row">
+                                        <th class="text-center colorY">실적</th>
+                                        <td class="sub_tot text-number" name="1m"></td>
+                                        <td class="sub_tot text-number" name="2m"></td>
+                                        <td class="sub_tot text-number" name="3m"></td>
+                                        <td class="sub_tot text-number" name="4m"></td>
+                                        <td class="sub_tot text-number" name="5m"></td>
+                                        <td class="sub_tot text-number" name="6m"></td>
+                                        <td class="sub_tot text-number" name="7m"></td>
+                                        <td class="sub_tot text-number" name="8m"></td>
+                                        <td class="sub_tot text-number" name="9m"></td>
+                                        <td class="sub_tot text-number" name="10m"></td>
+                                        <td class="sub_tot text-number" name="11m"></td>
+                                        <td class="sub_tot text-number" name="12m"></td>
+                                        <td class="sub_tot text-number" name="total"></td>
+                                    </tr>
+                                    <tr role="goal">
+                                        <th class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">매출총계</th>
+                                        <th class="text-center colorY">목표</th>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate" rowspan="2" style="text-align:center!important;vertical-align:middle!important;"></td>
+                                    </tr>
+                                    <tr role="row">
+                                        <th class="text-center colorY">실적</th>
+                                        <td class="sub_tot text-number" name="1m"></td>
+                                        <td class="sub_tot text-number" name="2m"></td>
+                                        <td class="sub_tot text-number" name="3m"></td>
+                                        <td class="sub_tot text-number" name="4m"></td>
+                                        <td class="sub_tot text-number" name="5m"></td>
+                                        <td class="sub_tot text-number" name="6m"></td>
+                                        <td class="sub_tot text-number" name="7m"></td>
+                                        <td class="sub_tot text-number" name="8m"></td>
+                                        <td class="sub_tot text-number" name="9m"></td>
+                                        <td class="sub_tot text-number" name="10m"></td>
+                                        <td class="sub_tot text-number" name="11m"></td>
+                                        <td class="sub_tot text-number" name="12m"></td>
+                                        <td class="sub_tot text-number" name="total"></td>
+                                    </tr>
+                                    <tr role="goal">
+                                        <th class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">VA총계</th>
+                                        <th class="text-center colorY">목표</th>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate" rowspan="2" style="text-align:center!important;vertical-align:middle!important;"></td>
+                                    </tr>
+                                    <tr role="row">
+                                        <th class="text-center colorY">실적</th>
+                                        <td class="sub_tot text-number" name="1m"></td>
+                                        <td class="sub_tot text-number" name="2m"></td>
+                                        <td class="sub_tot text-number" name="3m"></td>
+                                        <td class="sub_tot text-number" name="4m"></td>
+                                        <td class="sub_tot text-number" name="5m"></td>
+                                        <td class="sub_tot text-number" name="6m"></td>
+                                        <td class="sub_tot text-number" name="7m"></td>
+                                        <td class="sub_tot text-number" name="8m"></td>
+                                        <td class="sub_tot text-number" name="9m"></td>
+                                        <td class="sub_tot text-number" name="10m"></td>
+                                        <td class="sub_tot text-number" name="11m"></td>
+                                        <td class="sub_tot text-number" name="12m"></td>
+                                        <td class="sub_tot text-number" name="total"></td>
+                                    </tr>
+                                    <tr role="goal">
+                                        <th class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">장려금총계</th>
+                                        <th class="text-center colorY">목표</th>
+                                        <td class="text-number" name="1m"></td>
+                                        <td class="text-number" name="2m"></td>
+                                        <td class="text-number" name="3m"></td>
+                                        <td class="text-number" name="4m"></td>
+                                        <td class="text-number" name="5m"></td>
+                                        <td class="text-number" name="6m"></td>
+                                        <td class="text-number" name="7m"></td>
+                                        <td class="text-number" name="8m"></td>
+                                        <td class="text-number" name="9m"></td>
+                                        <td class="text-number" name="10m"></td>
+                                        <td class="text-number" name="11m"></td>
+                                        <td class="text-number" name="12m"></td>
+                                        <td class="text-number" name="total"></td>
+                                        <td class="text-number colorB" name="rate" rowspan="2" style="text-align:center!important;vertical-align:middle!important;"></td>
+                                    </tr>
+                                    <tr role="row">
+                                        <th class="text-center colorY">실적</th>
+                                        <td class="sub_tot text-number" name="1m"></td>
+                                        <td class="sub_tot text-number" name="2m"></td>
+                                        <td class="sub_tot text-number" name="3m"></td>
+                                        <td class="sub_tot text-number" name="4m"></td>
+                                        <td class="sub_tot text-number" name="5m"></td>
+                                        <td class="sub_tot text-number" name="6m"></td>
+                                        <td class="sub_tot text-number" name="7m"></td>
+                                        <td class="sub_tot text-number" name="8m"></td>
+                                        <td class="sub_tot text-number" name="9m"></td>
+                                        <td class="sub_tot text-number" name="10m"></td>
+                                        <td class="sub_tot text-number" name="11m"></td>
+                                        <td class="sub_tot text-number" name="12m"></td>
+                                        <td class="sub_tot text-number" name="total"></td>
+                                    </tr>
+
+                                </tbody>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+
+getComp = function(comp_year)
+{
+	var params = '';
+	params += '&comp_year='+comp_year;
+	$.ajax({
+		url: '/api/comp/ajax_get_comp',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+            var pGoal = pResult.goal;
+
+            $.each(pGoal, function(pIndex, pValue){
+                if(pIndex != 3 && pIndex != 0)
+                    for(let month=1;month<=12;month++){
+                        $("#dtList2").find("tr[role=goal]").eq(pIndex).find("td[name="+month+"m]").html((parseInt(pGoal[3][month+'m'])+parseInt(pValue[month+'m'])).toString().toFormat('NUMBER'));
+                    }
+                else
+                    for(let month=1;month<=12;month++){
+                        $("#dtList2").find("tr[role=goal]").eq(pIndex).find("td[name="+month+"m]").html(pValue[month+'m'].toString().toFormat('NUMBER'));
+                    }
+            });
+            for(var idx=1;idx<6;idx++){
+                if(pResult['row'+idx].length > 0)
+                    var row = pResult['row'+idx][0];
+                else
+                    var row = {};
+                for(let month=1;month<=12;month++){
+                    var data = '0';
+                    if(!row.hasOwnProperty(month+'m')){
+                        data = '-';
+                    }
+                    else{
+                        data = row[month+'m'].toString().toFormat('NUMBER');
+                    }
+
+                    $("#dtList2").find("tr[role=row]").eq(idx-1).find("td[name="+month+"m]").html(data);
+                }
+            }
+            var totals = $("#dtList2").find("td[name=total]");
+            $.each(totals, function(pI, td){
+                var total = 0;
+                for(let month=1;month<=12;month++){
+                    var value = $(td).parent().find("td[name="+month+"m]").html().replaceAll(",", "");
+                    value = parseInt(value); if(isNaN(value)) value = 0;
+                    total += value;
+                }
+                $(td).html(total.toString().toFormat('NUMBER'));
+            });
+
+            for(var idx=2;idx<6;idx++){
+                var goal = $("#dtList2").find("tr[role=goal]").eq(idx-2).find("td[name=total]").html().replaceAll(",", "");
+                var value = $("#dtList2").find("tr[role=row]").eq(idx-1).find("td[name=total]").html().replaceAll(",", "");
+                goal = parseInt(goal);
+                value = parseInt(value); if(isNaN(value)) value = 0;
+                $("#dtList2").find("tr[role=goal]").eq(idx-2).find("td[name=rate]").html((value*100.0/goal).toFixed(1)+'%');
+
+            }
+
+            $("#year").html(comp_year);
+            $("#year2").html(comp_year);
+		}
+	});
+}
+getExtra = function(extra_year)
+{
+	var params = '';
+	params += '&extra_year='+extra_year;
+	$.ajax({
+		url: '/api/extra/ajax_get_extra',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+            var pData = pResult.data;
+            $.each(pData, function(pIndex, pValue){
+                var data = parseInt(pValue.extra_data);
+                if(data == 0){
+                    data = '';
+                }
+                else{
+                    data = data + '';
+                }
+                $("#"+pValue.extra_row).find("td[name="+pValue.extra_month+"]").html(data.toFormat('NUMBER'));
+            });
+
+            calcTotal();
+            $("#year").html(extra_year);
+            $("#year2").html(extra_year);
+		}
+	});
+}
+calcTotal = function()
+{
+
+    var val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var val_goal = 0;
+    var val_total = 0;
+    var val_idx = 1;
+
+
+
+    var indices = [1, 2, 3, 'z', 4, 5, 6, 7, 8, 9];
+    for(let ix=0;ix<indices.length;ix++){
+        var idx = indices[ix];
+        let rt = 0.0;
+        let total = 0;
+        let goal = $("#dtList1").find("#row"+idx).find("td[name=goal]").html().toString().replaceAll(',', '');
+        goal = (goal == '') ? 0 : parseInt(goal);
+        for(let month=1;month<=12;month++){
+            let data = $("#dtList1").find("#row"+idx).find("td[name="+month+"m]").html().toString().replaceAll(',', '');
+            data = (data == '') ? 0 : parseInt(data);
+            total += data;
+            if(idx != 1 && idx != 6)
+                val_month[month-1] += data;
+        }
+
+        if(goal > 0){
+            rt = total * 100.0 / goal;
+        }
+        $("#dtList1").find("#row"+idx).find("td[name=total]").html(total.toString().toFormat('NUMBER'));
+        $("#dtList1").find("#row"+idx).find("td[name=rate]").html(rt.toFixed(1)+'%');
+
+
+        if(idx != 1 && idx != 6){
+            val_goal += goal;
+            val_total += total;
+
+        }
+        console.log(idx, val_month);
+        if(idx == 5 || idx == 9){
+
+            $("#dtList1").find("#tot"+val_idx).find("td").eq(1).html(val_goal.toString().toFormat('NUMBER'));
+            for(let month=1;month<=12;month++){
+                $("#dtList1").find("#tot"+val_idx).find("td").eq(month+1).html(val_month[month-1].toString().toFormat('NUMBER'));
+            }
+            var val_rt = 0.0;
+            if(val_goal > 0){
+                val_rt = val_total * 100.0 / val_goal;
+            }
+            $("#dtList1").find("#tot"+val_idx).find("td").eq(14).html(val_total.toString().toFormat('NUMBER'));
+            $("#dtList1").find("#tot"+val_idx).find("td").eq(15).html(val_rt.toFixed(1)+'%');
+            val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            val_goal = 0;
+            val_total = 0;
+            val_idx += 1;
+        }
+    }
+
+    for(let month=1;month<=12;month++){
+        let tot = 0;
+        let cols = $("#dtList1").find("td[name="+month+"m]");
+        $.each(cols, function(pIndex, pValue){
+            if(pIndex == 0 || pIndex == 6)
+                return;
+            let data = $(pValue).html().replaceAll(',', '');
+            data = (data == '') ? 0 : parseInt(data);
+            tot += data;
+        });
+        $("#dtList1").find("#"+month+'m').html(tot.toString().toFormat('NUMBER'));
+    }
+
+    let goal = 0;
+    var cols = $("#dtList1").find("td[name=goal]");
+    $.each(cols, function(pIndex, pValue){
+        if(pIndex == 0 || pIndex == 6)
+            return;
+        let data = $(pValue).html().replaceAll(',', '');
+        data = (data == '') ? 0 : parseInt(data);
+        goal += data;
+    });
+    $("#dtList1").find("#goal").html(goal.toString().toFormat('NUMBER'));
+
+    let total = 0;
+    let rt = 0.0;
+    var cols = $("#dtList1").find("td[name=total]");
+    $.each(cols, function(pIndex, pValue){
+        if(pIndex == 0 || pIndex == 6)
+            return;
+        let data = $(pValue).html().replaceAll(',', '');
+        data = (data == '') ? 0 : parseInt(data);
+        total += data;
+    });
+    $("#dtList1").find("#total").html(total.toString().toFormat('NUMBER'));
+    if(goal > 0){
+        rt = (total*100.0/goal);
+    }
+    $("#dtList1").find("#rate").html(rt.toFixed(1)+'%');
+}
+
+resetTable = function()
+{
+    var val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var val_idx = 1;
+    for(let idx=1;idx<10;idx++){
+        for(let month=1;month<=12;month++){
+            $("#dtList1").find("#row"+idx).find("td[name="+month+"m]").html('');
+        }
+
+        $("#dtList1").find("#row"+idx).find("td[name=total]").html('0');
+
+        if(idx == 5 || idx == 9){
+            for(let month=1;month<=12;month++){
+                $("#dtList1").find("#tot"+val_idx).find("td").eq(month).html('0');
+            }
+            $("#dtList1").find("#tot"+val_idx).find("td").eq(14).html('0');
+            val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            val_idx += 1;
+        }
+    }
+    for(let month=1;month<=12;month++){
+        $("#dtList1").find("#rowz").find("td[name="+month+"m]").html('');
+    }
+
+    $("#dtList1").find("#rowz").find("td[name=total]").html('0');
+
+
+    var cols = $("#dtList1").find("td[name=goal]");
+    $.each(cols, function(pIndex, pValue){
+        $(pValue).html('');
+    });
+
+    for(let month=1;month<=12;month++){
+        $("#dtList1").find("#"+month+'m').html('0');
+    }
+
+    $("#dtList2").find("tbody td").html('');
+    calcTotal();
+}
+
+insertExtra = function(extra_year, extra_row, extra_month, extra_data)
+{
+	var params = '';
+	params += '&extra_year='+extra_year;
+	params += '&extra_row='+extra_row;
+	params += '&extra_month='+extra_month;
+	params += '&extra_data='+extra_data;
+    console.log(params);
+	$.ajax({
+		url: '/api/extra/ajax_insert_extra',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            calcTotal();
+		}
+	});
+}
+
+
+$(document).on('dblclick', "td[name=goal], td[name=1m], td[name=2m], td[name=3m], td[name=4m], td[name=5m], td[name=6m], td[name=7m], td[name=8m], td[name=9m], td[name=10m], td[name=11m], td[name=12m]", function(pEvent){
+    var year =  $("#s_year").val();
+    var row = $(this).parent().attr('id');
+    var month = $(this).attr('name');
+    var data = $(this).html().replaceAll(',', '');
+    var loginid = $('#loginID').val();
+
+    if(loginid == 'rachel' || loginid == 'ma_keunmi'){
+        var inputValue = prompt('값을 입력하세요.', data);
+        if (inputValue != null && inputValue != data) {
+            if(parseInt(data) != 0)
+                $(this).html(inputValue.toString().toFormat('NUMBER'));
+            else
+                $(this).html('');
+
+            insertExtra(year, row, month, inputValue);
+
+        }
+    }
+    else{
+        alert("권한이 없습니다.");
+    }
+
+
+//    var de = prompt('날짜를 입력하세요');
+//    if(de==null){
+//        return;
+//    }
+
+//    if( == "de"){
+//        var td_de = $(this);
+//        var td_am = $(this).next();
+//    }else{
+//        var td_de = $(this).prev();
+//        var td_am = $(this);
+//    }
+//
+//    var before = td_de.html();
+//    before = "20"+before;
+//ount = prompt('금액을 입력하세요');
+//    if(amount==null){
+//        return;
+//    }
+//    td_de.html(de);
+//    td_am.html(amount.toFormat('NUMBER'));
+//    if(before !== de){
+//        insertDirect(td_am.data("sn"), de, amount);
+//    }
+//    else{
+//        updateDirect(td_am.data("sn"), de, amount);
+//    }
+});
+$(document).on('click', "#s_submit", function(pEvent){
+
+    var year = $("#s_year").val();
+    resetTable();
+	getExtra(year);
+    getComp(year);
+
+});
+$(document).on('click', '#btnScreen', function(e) {
+	window.print();
+});
+
+$(document).on('click', '#btnExcel', function(e) {
+    var postfix = $("#s_year").val();
+    var fileName = "영업외이익현황_"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList1';
+    var table_div = document.getElementById(tbl);
+
+    table_html += table_div.outerHTML.replace(/ /g, '%20');
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+	getExtra(postfix);
+
+    e.preventDefault();
+
+});
+
+$(document).on('click', '#btnExcel2', function(e) {
+    var postfix = $("#s_year").val();
+    var fileName = "종합현황_"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList2';
+    var table_div = document.getElementById(tbl);
+
+    table_html += table_div.outerHTML.replace(/ /g, '%20');
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+	getComp(postfix);
+
+    e.preventDefault();
+
+});
+
+</script>
+<script type="text/javascript">
+$(function() {
+	/**************************************************************************
+     *
+     */
+    //$('#dtList1 tbody').yRowspan(0);
+    var year = new Date().getFullYear();
+    $("#s_year").val(year);
+	getExtra(year);
+    getComp(year);
+});
+</script>
+
+{% endblock %}

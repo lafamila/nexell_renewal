@@ -34,6 +34,30 @@ def money_page():
 def cowork_page():
     return render_template("cowork.html")
 
+@bp.route('/overpay')
+@session_helper.session_check
+def overpay_page():
+    return render_template("overpay.html")
 
+@bp.route('/extra')
+@session_helper.session_check
+def extra_page():
+    return render_template("extra.html")
+
+@bp.route('/finance')
+@session_helper.session_check
+def finance_page():
+    return render_template("finance.html")
+
+@bp.route('/reserve')
+@session_helper.session_check
+def reserve_page():
+    return render_template("reserve.html")
+
+
+@bp.route('/five')
+@session_helper.session_check
+def five_page():
+    return render_template("five.html")
 
 

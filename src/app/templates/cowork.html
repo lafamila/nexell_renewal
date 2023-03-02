@@ -140,13 +140,6 @@
                             }
 
                         </style>
-                        <input type="hidden" id="s_cowrk_bcnc" value="-1"/>
-                        <input type="hidden" id="s_spt_nm" value="-1"/>
-                        <input type="hidden" id="s_dept_nm" value="-1"/>
-                        <input type="hidden" id="s_bsn_nm" value="-1"/>
-                        <input type="hidden" id="s_prdct_nm" value="-1"/>
-                        <input type="hidden" id="s_cowrk_nm" value="-1"/>
-                        <input type="hidden" id="s_cowrk_tb" value=""/>
                         <!-- widget content -->
 						<div class="widget-body no-padding">
 							<table class="table table-bordered w100p floating-thead" id="dtList1">
@@ -156,13 +149,15 @@
 									<col width="120">
 									<col width="40">
 									<col width="40">
+									<col width="50">
+									<col width="50">
 									<col width="140">
 									<col width="60">
 									<col width="60">
-									<col width="60">
-									<col width="60">
+									<col width="80">
+									<col width="80">
+									<col width="80">
 									<col width="110">
-									<col width="245">
 									<col width="25">
 								</colgroup>
                                 <thead>
@@ -174,25 +169,34 @@
 											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yyyy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de" name="s_end_de" placeholder="[종료일자]">
 										</th>
 										<th class="hasinput button">
-											<select class="form-control select2 w100p s_cowrk_bcnc" name="s_cowrk_bcnc">
-												<option value="-1">[전체]</option>
+											<select class="form-control select2 w100p s_cowrk_bcnc" name="s_bcnc_sn" id="s_bcnc_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput button">
-											<select class="form-control select2 w100p s_spt_nm" name="s_spt_nm">
-												<option value="-1">[전체]</option>
+											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
+										</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput button">
-											<select class="form-control select2 w100p s_dept_nm" name="s_dept_nm">
-												<option value="-1">[전체]</option>
+											<select class="form-control select2 w100p" id="s_bsn_chrg_sn" name="s_bsn_chrg_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
 											</select>
 										</th>
-										<th class="hasinput button">
-											<select class="form-control select2 w100p s_bsn_nm" name="s_bsn_nm">
-												<option value="-1">[전체]</option>
-											</select>
-										</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">총세대수</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">지역</th>
 										<th class="hasinput button">
 											<select class="form-control select2 w100p s_prdct_nm" name="s_prdct_nm">
 												<option value="-1">[전체]</option>
@@ -200,20 +204,12 @@
 										</th>
 										<th class="colorB" style="text-align:center;" rowspan="2">수량</th>
 										<th class="colorB" style="text-align:center;" rowspan="2">단가/대</th>
-										<th class="colorB" style="text-align:center;" rowspan="2">금액</th>
-										<th class="hasinput button">
-											<select class="form-control select2 w100p s_cowrk_tb" name="s_cowrk_tb">
-												<option value="">[전체]</option>
-												<option value="적용">적용</option>
-												<option value="미적용">미적용</option>
-											</select>
-										</th>
+										<th class="colorB" style="text-align:center;" colspan="3">금액</th>
 										<th class="hasinput button">
 											<select class="form-control select2 w100p s_cowrk_nm" name="s_cowrk_nm">
 												<option value="-1">[전체]</option>
 											</select>
 										</th>
-										<th class="colorB" style="text-align:center!important;" rowspan="2">비고</th>
 										<th class="colorB" style="text-align:center!important;" rowspan="2">-</th>
 									</tr>
 									<tr>
@@ -223,7 +219,9 @@
 										<th class="colorB" style="text-align:center;">부서</th>
 										<th class="colorB" style="text-align:center;">담당</th>
 										<th class="colorB" style="text-align:center;">품목</th>
-										<th class="colorB" style="text-align:center;">기준표</th>
+										<th class="colorB" style="text-align:center;">인건비</th>
+										<th class="colorB" style="text-align:center;">자재비</th>
+										<th class="colorB" style="text-align:center;">소계</th>
 										<th class="colorB" style="text-align:center;">협력업체명</th>
 									</tr>
 								</thead>
@@ -247,5 +245,119 @@
 
 </div>
 
+<script>
+getCowork = function(){
+	var params = "";
+	params += "&s_start_de="+$("#s_start_de").val();
+	params += "&s_end_de="+$("#s_end_de").val();
+	params += "&s_bcnc_sn="+$("#s_bcnc_sn").val();
+	params += "&s_spt_nm="+$("#s_spt_nm").val();
+	params += "&s_dept_code="+$("#s_dept_code").val();
+	params += "&s_bsn_chrg_sn="+$("#s_bsn_chrg_sn").val();
+	$.ajax({
+		url: '/api/cowork/ajax_get_cowork_data',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function () {
+			return true;
+		},
+		success: function (pResult) {
+			var html = '';
+			$.each(pResult.contract, function(pIndex, pValue){
+				html += `<tr data-row="${pValue.outsrc_sn}">
+						 	<td>${pValue.cntrct_de}</td>
+						 	<td>${pValue.bcnc_nm}</td>
+						 	<td>${pValue.spt_nm}</td>
+						 	<td>${pValue.dept_nm}</td>
+						 	<td>${pValue.bsn_chrg_nm}</td>
+						 	<td></td>
+						 	<td></td>
+						 	<td>${pValue.model_no}</td>
+						 	<td>${pValue.qy.toFormat('NUMBER')}</td>
+						 	<td>${Math.round(pValue.amount/1.1).toFormat('NUMBER')}</td>
+						 	<td>${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
+						 	<td>0</td>
+						 	<td>${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
+						 	<td>${pValue.outsrc_fo_nm}</td>
+						 	<td></td>
+						 </tr>`;
+			});
+			$(document).find("#dtList1 tbody").html(html);
+		}
+	});
 
+}
+</script>
+
+<script type="text/javascript">
+$(function(){
+
+	/**************************************************************************
+	* 계약일자 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		}
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(0);
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+	getCowork();
+});
+$(document).on('change', 'thead input.form-control', function(pEvent){
+	if ($(this).data('before')) {
+		if ($(this).data('before') != $(this).val()) {
+			getCowork();
+		}
+	} else {
+		getCowork();
+	}
+});
+$(document).on('change', 'thead select', function(pEvent){
+	if ($(this).data('before')) {
+		if ($(this).data('before') != $(this).val()) {
+			getCowork();
+		}
+	} else {
+		getCowork();
+	}
+});
+</script>
 {% endblock %}

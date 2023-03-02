@@ -1,0 +1,246 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style type="text/css">
+                            .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+                                border: 1px solid #111;
+                            }
+tbody .btnUpdate, tbody .btn{
+    line-height: 0.3!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+
+    #summery{
+        z-index: 902;
+        top:13px;
+        left:252px;
+        width:300px;
+    }
+    .table.table-summery thead th {
+        font-size:12px!important;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summery{
+        z-index: 902;
+        top:13px;
+        left:252px;
+        width:300px;
+    }
+    .table.table-summery thead th {
+        font-size:12px!important;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">계약/하자이행 유보현황 </li><li><span> 종합관리</span></li>
+	</ol>
+</div>
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					목표 관리 <span>> 기성</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+<!--
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			영업외 이익현황을 관리합니다.
+		</p>
+	</div>
+-->
+<!--
+	<table class="table table-bordered table-summery" id="summery">
+		<thead>
+			<tr>
+                <th colspan="3">
+					유&nbsp;보&nbsp;현&nbsp;황&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+			<tr>
+                <th>&nbsp;</th>
+                <th>건수</th>
+                <th>금액</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style="background:#fff;width:60px;text-align:center;">하자</th>
+				<td style="background:#fff;text-align:center;width:60px!important;">0</td>
+				<td style="background:#fff;text-align:center;">0</td>
+            </tr>
+            <tr>
+				<th style="background:#fff;width:80px;text-align:center;">계약</th>
+				<td style="background:#fff;text-align:center;width:60px!important;">0</td>
+				<td style="background:#fff;text-align:center;">0</td>
+			</tr>
+		</tbody>
+	</table>
+    <p>&nbsp;</p>
+-->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+                        <h2>계약/하자이행 유보현황</h2>
+						<div class="widget-toolbar">
+							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button type="button" class="btn btn-info" id="btnScreen"><i class="fa fa-print"> 출력 </i></button>
+						</div>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+						<style>
+                            .colorB{
+                                background:rgb(146, 205, 220);
+                                font-weight: bold;
+                                vertical-align: middle!important;
+                            }
+                            .tot{
+                                background:rgb(255,153,204);
+                                font-weight: bold;
+                            }
+                            .sub_tot{
+                                background:#e6faff!important;
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .bold{
+                                font-size:12px!important;
+                                font-weight: 600!important;
+                            }
+                            .colorG {
+                                background: rgb(204,255,204)!important;
+                            }
+                            .colorY {
+                                background: #FDFD96!important;
+                            }
+                            .table>thead+tbody, .table>tbody+tbody, .table>tbody+tfoot {
+                                border-top: 2px solid #666;
+                            }
+                            #dtList1{
+								border: 2px solid #666!important;
+							}
+                            .button{
+                                padding:0px!important;
+                            }
+
+                        </style>
+                        <input type="hidden" id="s_resrv_bcnc" value="-1"/>
+                        <input type="hidden" id="s_resrv_type" value="-1"/>
+                        <!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="table table-bordered w100p floating-thead" id="dtList1">
+								<colgroup>
+									<col width="200">
+									<col width="350">
+									<col width="120">
+									<col width="180">
+									<col width="100">
+									<col width="180">
+									<col width="140">
+									<col width="140">
+									<col width="120">
+									<col width="250">
+									<col width="50">
+
+								</colgroup>
+								<thead>
+									<!-- 헤더 -->
+									<tr>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">현장명</th>
+										<th class="hasinput button">
+											<select class="form-control select2 w100p s_resrv_type" name="s_resrv_type">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">계약금액</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">율</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2">유보금액</th>
+										<th class="colorB" style="text-align:center!important;" colspan="2">기간</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2">지급일자</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2">비고</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2">-</th>
+									</tr>
+									<tr>
+										<th class="colorB" style="text-align:center;">업체명</th>
+										<th class="colorB" style="text-align:center;">내역</th>
+										<th class="colorB" style="text-align:center;">시작</th>
+										<th class="colorB" style="text-align:center;">종료</th>
+									</tr>
+								</thead>
+                                <tbody>
+
+                                </tbody>
+								<tfoot>
+									<tr class="tot">
+										<th style="text-align:center;" colspan="5">합계</th>
+										<th class="text-number" id="total">0</th>
+										<th class="text-number" colspan="5"></th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+{% endblock %}
