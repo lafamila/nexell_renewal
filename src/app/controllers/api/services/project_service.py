@@ -1,6 +1,7 @@
 from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
+from datetime import datetime
 
 def get_project_datatable(params):
     query = """SELECT c.ctmmny_sn
@@ -1574,3 +1575,14 @@ def update_finals(params):
 def delete_finals(params):
     query = """UPDATE finals SET finals_done='F' WHERE finals_sn=%(finals_sn)s"""
     g.curs.execute(query, params)
+
+def get_contract_no(params):
+    query = """SELECT * FROM contract WHERE cntrct_no LIKE %s"""
+    data = []
+    data.append("{}-{}-%".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m%d"), session['member']['dept_nm'].replace("팀", "")))
+    row = g.curs.execute(query, data)
+    return "{}-{}-{}".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m%d"), session['member']['dept_nm'].replace("팀", ""), row)
+
+
+
+

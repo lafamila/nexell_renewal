@@ -26,6 +26,9 @@ def get_approval_ty_list(params):
         result[parent_code].append(r)
     return result
 
+def insert_approval(params):
+    pass
+
 def get_approval_datatable(params):
 #     query = """SELECT c.ctmmny_sn
 # 				, c.cntrct_sn

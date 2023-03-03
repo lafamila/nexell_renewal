@@ -162,4 +162,9 @@ def ajax_delete_finals():
     prj.delete_finals(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
+@bp.route('/get_contract_no', methods=['GET'])
+def get_contract_no():
+    params = request.args.to_dict()
+    result = prj.get_contract_no(params)
+    return jsonify(result)
 

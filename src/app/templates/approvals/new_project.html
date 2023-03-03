@@ -19,16 +19,11 @@
 
         <tr class="required"><th class="color-contract">프로젝트 번호</th>
             <td class="hasinput" colspan="3">
-                <input type="text" class="form-control" placeholder="" id="cntrct_no" name="cntrct_no">
+                <input type="text" class="form-control" placeholder="" id="cntrct_no" name="cntrct_no" readonly>
             </td>
-<!--
-            <td class="hasinput" colspan="2" style="padding:0 !important;">
-                <table>
-                <tbody>
--->
             <th class="color-contract">작성일(자동)</th>
             <td class="hasinput">
-                2023.2.1
+                <input type="text" class="form-control" placeholder="" id="reg_dtm" name="reg_dtm" readonly>
             </td>
             <th class="color-contract">계약일</th>
             <td class="hasinput">
@@ -37,11 +32,6 @@
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>
-<!--
-                </tbody>
-                </table>
-            </td>
--->
         </tr>
         <tr class="required"><th class="color-contract">거래처명</th>
             <td class="hasinput" colspan="3">
@@ -187,133 +177,242 @@
     </tbody>
 </table>
 <table class="table table-bordered table-form">
-									<colgroup>
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-										<col width="175">
-										<col width="150">
-									</colgroup>
-									<tbody>
+    <colgroup>
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+    </colgroup>
+    <tbody>
+        <tr><th rowspan="2">본사담당</th>
+            <th>담당자명</th>
+            <th colspan="2">휴대폰</th>
+            <th rowspan="2">거래처담당</th>
+            <th>담당자명</th>
+            <th colspan="2">휴대폰</th>
+        </tr>
+        <tr>
+            <td class="hasinput" colspan="1">
+                <input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
+                <input type="hidden" id="charger_sn1" name="charger_sn1">
+            </td>
+            <td class="hasinput" colspan="2">
+                <input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
+            </td>
+            <td class="hasinput" colspan="1">
+                <input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
+                <input type="hidden" id="charger_sn2" name="charger_sn2">
+            </td>
+            <td class="hasinput" colspan="2">
+                <input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
+            </td>
+        </tr>
 
-                                        <tr><th rowspan="2">본사담당</th>
-											<th>담당자명</th>
-											<th colspan="2">휴대폰</th>
-											<th rowspan="2">거래처담당</th>
-											<th>담당자명</th>
-											<th colspan="2">휴대폰</th>
-										</tr>
-										<tr>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_nm1" name="charger_nm1">
-												<input type="hidden" id="charger_sn1" name="charger_sn1">
-											</td>
-											<td class="hasinput" colspan="2">
-												<input type="text" class="form-control" id="charger_moblphon1" name="charger_moblphon1">
-											</td>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="charger_nm2" name="charger_nm2">
-												<input type="hidden" id="charger_sn2" name="charger_sn2">
-											</td>
-											<td class="hasinput" colspan="2">
-												<input type="text" class="form-control" id="charger_moblphon2" name="charger_moblphon2">
-											</td>
-										</tr>
 
+        <tr>
+            <th>장비/공사내역</th>
+            <td class="hasinput" colspan="3">
+                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
+                <input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
+            </td>
+            <th>계약DC(%)</th>
+            <td class="hasinput" colspan="1">
+                <input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
+            </td>
+            <th>품의DC(%)</th>
+            <td class="hasinput" colspan="1">
+                <input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
+            </td>
+        </tr>
+        <tr name="charger2">
+            <th>도면작업자</th>
+            <td class="hasinput" colspan="3">
+                <select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
+                    <option value=""></option>
+                    {% for code in member_list %}
+                    <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <th>실적신고</th>
+            <td class="hasinput" colspan="1">
+                <input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
+            </td>
+            <th>건설공사대장</th>
+            <td class="hasinput" colspan="1">
+                <input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
+            </td>
+        </tr>
+        <tr>
+            <th>결제방법(1)</th>
+            <td class="hasinput" colspan="7">
+                <input type="text" class="form-control" id="setle_mth" name="setle_mth">
+            </td>
+        </tr>
+        <tr>
+            <th>결제방법(2)</th>
+            <th colspan="2">금액</th>
+            <th colspan="1">일자</th>
+            <th colspan="4">비고(특이사항)</th>
+        </tr>
+        <tr>
+            <th>계약금</th>
+            <td class="hasinput" colspan="2">
+                <input type="number" class="form-control" id="enty" name="enty">
+            </td>
+            <td class="hasinput" colspan="1">
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </td>
+            <td class="hasinput" colspan="4">
+                <input type="text" class="form-control" id="enty_rm" name="enty_rm">
+            </td>
+        </tr>
+        <tr>
+            <th>중도금</th>
+            <td class="hasinput" colspan="2">
+                <input type="number" class="form-control" id="prtpay" name="prtpay">
+            </td>
+            <td class="hasinput" colspan="1">
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </td>
+            <td class="hasinput" colspan="4">
+                <input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
+            </td>
+        </tr>
+        <tr>
+            <th>잔금</th>
+            <td class="hasinput" colspan="2">
+                <input type="number" class="form-control" id="surlus" name="surlus">
+            </td>
+            <td class="hasinput" colspan="1">
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </td>
+            <td class="hasinput" colspan="4">
+                <input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-										<tr>
-											<th>장비/공사내역</th>
-											<td class="hasinput" colspan="3">
-                                                <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
-												<input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
-											</td>
-											<th>계약DC(%)</th>
-											<td class="hasinput" colspan="1">
-												<input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
-											</td>
-											<th>품의DC(%)</th>
-											<td class="hasinput" colspan="1">
-												<input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
-											</td>
-										</tr>
-                                        <tr name="charger2">
-											<th>도면작업자</th>
-											<td class="hasinput" colspan="3">
-												<select class="form-control select2 w100p" id="drw_opertor_sn" name="drw_opertor_sn">
-													<option value=""></option>
-													{% for code in member_list %}
-													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<th>실적신고</th>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
-											</td>
-											<th>건설공사대장</th>
-											<td class="hasinput" colspan="1">
-												<input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
-											</td>
-										</tr>
-										<tr>
-											<th>결제방법(1)</th>
-											<td class="hasinput" colspan="7">
-												<input type="text" class="form-control" id="setle_mth" name="setle_mth">
-											</td>
-										</tr>
-										<tr>
-											<th>결제방법(2)</th>
-											<th colspan="2">금액</th>
-											<th colspan="1">일자</th>
-											<th colspan="4">비고(특이사항)</th>
-										</tr>
-										<tr>
-											<th>계약금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="enty" name="enty">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="enty_rm" name="enty_rm">
-											</td>
-										</tr>
-										<tr>
-											<th>중도금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="prtpay" name="prtpay">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="prtpay_rm" name="prtpay_rm">
-											</td>
-										</tr>
-										<tr>
-											<th>잔금</th>
-											<td class="hasinput" colspan="2">
-												<input type="number" class="form-control" id="surlus" name="surlus">
-											</td>
-											<td class="hasinput" colspan="1">
-												<div class="input-group">
-													<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
-													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-												</div>
-											</td>
-											<td class="hasinput" colspan="4">
-												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
-											</td>
-										</tr>
-									</tbody>
-								</table>
+<script>
+    fnValidate = function(){
+                 	var result = true;
+                    var cntrct_de = $("#cntrct_de").val();
+                    if (result == true && fnIsEmpty(cntrct_de)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#cntrct_de').trigger('focus');
+                        result = false;
+                    }
+
+                    var bcnc_sn = $("#bcnc_sn").val();
+                    if (result == true && fnIsEmpty(bcnc_sn)) {
+                        alert('필수 입력 항목을 선택하시기 바랍니다.');
+                        $(document).find('#bcnc_sn').trigger('focus');
+                        result = false;
+                    }
+
+                    var cntrwk_bgnde = $("#cntrwk_bgnde").val();
+                    if (result == true && fnIsEmpty(cntrwk_bgnde)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#cntrwk_bgnde').trigger('focus');
+                        result = false;
+                    }
+
+                    var cntrwk_endde = $("#cntrwk_endde").val();
+                    if (result == true && fnIsEmpty(cntrwk_endde)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#cntrwk_endde').trigger('focus');
+                        result = false;
+                    }
+
+                    var cntrct_nm = $("#cntrct_nm").val();
+                    if (result == true && fnIsEmpty(cntrct_nm)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#cntrct_nm').trigger('focus');
+                        result = false;
+                    }
+
+                    var spt_adres = $("#spt_adres").val();
+                    if (result == true && fnIsEmpty(spt_adres)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#spt_adres').trigger('focus');
+                        result = false;
+                    }
+
+                    var home_count = $("#home_count").val();
+                    if (result == true && fnIsEmpty(home_count)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#home_count').trigger('focus');
+                        result = false;
+                    }
+
+                    var home_region = $("#home_region").val();
+                    if (result == true && fnIsEmpty(home_region)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find('#home_region').trigger('focus');
+                        result = false;
+                    }
+
+                    var spt_chrg_sn = $("#spt_chrg_sn").val();
+                    if (result == true && fnIsEmpty(spt_chrg_sn)) {
+                        alert('필수 입력 항목을 선택하시기 바랍니다.');
+                        $(document).find('#spt_chrg_sn').trigger('focus');
+                        result = false;
+                    }
+
+                    var bsn_chrg_sn = $("#bsn_chrg_sn").val();
+                    if (result == true && fnIsEmpty(bsn_chrg_sn)) {
+                        alert('필수 입력 항목을 선택하시기 바랍니다.');
+                        $(document).find('#bsn_chrg_sn').trigger('focus');
+                        result = false;
+                    }
+
+                    var prjct_ty_code = $('input[name=prjct_ty_code]:checked').val();
+                    if (result == true && fnIsEmpty(prjct_ty_code)) {
+                        alert('필수 입력 항목을 선택하시기 바랍니다.');
+                        result = false;
+                    }
+
+                    var prjct_creat_at = $('input[name=prjct_creat_at]:checked').val();
+                    if (result == true && fnIsEmpty(prjct_creat_at)) {
+                        alert('필수 입력 항목을 선택하시기 바랍니다.');
+                        result = false;
+                    }
+
+                    var progrs_sttus_code = $('input[name=progrs_sttus_code]:checked').val();
+                    if (result == true && fnIsEmpty(progrs_sttus_code)) {
+                        alert('필수 입력 항목을 선택하시기 바랍니다.');
+                        result = false;
+                    }
+
+                    if(prjct_creat_at == 'Y'){
+
+                    }
+                    return result;
+               }
+    $(document).ready(function(){
+        var today = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+        $.ajax({
+            url : '/api/project/get_contract_no',
+            method : 'GET',
+            data : {"today" : today},
+            success: function(pResult){
+                $("#cntrct_no").val(pResult);
+                $("#reg_dtm").val((new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0]);
+            }
+        });
+    });
+</script>

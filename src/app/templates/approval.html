@@ -661,13 +661,13 @@ $(function(){
 
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
+							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;">
+								<div style="display:inline-block;width: calc(100% - 56px);">
+									<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
+								</div>
+								<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
+							</span>
 							<form id="frmBox3">
-								<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;">
-									<div style="display:inline-block;width: calc(100% - 56px);">
-										<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
-									</div>
-									<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
-								</span>
 								<div id="formContent">
 
 								</div>
@@ -682,8 +682,28 @@ $(function(){
 </div><!--modal-->
 <script>
 	$(document).on('click', '#btnSave', function(){
-		var data = $("#frmBox3").formSerialize();
-		console.log(data);
+		var data = $("#frmBox3").serializeObject();
+		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_list" : []}
+		$(".approval-left .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
+		});
+		$.ajax({
+			url: '/api/approval/ajax_insert_approval',
+			type: 'POST',
+			data: JSON.stringify(params),
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			processData: false,
+			validate: function() {
+				return fnValidate();
+			},
+			success: function(pResult){
+
+			}
+		});
+
 	});
 	init = function(){
 		$('#popEditTabs').find("a[data-action='tab1']").trigger('click');
@@ -787,7 +807,7 @@ $(function(){
 				target = ".approval-right";
 			}
 			let idx = $(target).find("div.badge").length+1;
-			let html = `<div data-sn="${mber_sn}" class="badge badge-pill badge-dark">
+			let html = `<div data-sn="${mber_sn}" data-type="${apvl_type}" class="badge badge-pill badge-dark">
 							<div>${idx}</div>
 							<div>${mber_nm}</div>
 							<div>${apvl_nm}</div>

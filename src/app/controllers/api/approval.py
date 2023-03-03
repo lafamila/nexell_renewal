@@ -41,3 +41,13 @@ def get_approval_template():
     params = request.args.to_dict()
     html = apvl.get_approval_template(params['url'])
     return jsonify({"html" : html})
+
+@bp.route('/ajax_insert_approval', methods=['POST'])
+def ajax_insert_approval():
+    params = request.get_json()
+    json_data = params['data']
+    params['data'] = json.dumps(json_data)
+    apvl_sn = apvl.insert_approval(params)
+    params['apvl_sn'] = apvl_sn
+    apvl.insert_approval_member(params)
+    print(params)
