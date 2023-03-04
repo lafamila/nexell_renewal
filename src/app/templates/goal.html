@@ -201,6 +201,7 @@ tbody .btnUpdate, tbody .btn{
 									<col width="3.2%">
 									<col width="5.5%">
 									<col width="5.5%">
+									<col width="5.5%">
 									<col width="*">
 									<col width="5.5%">
 									<col width="5.5%">
@@ -220,7 +221,7 @@ tbody .btnUpdate, tbody .btn{
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th colspan="19">
+										<th colspan="20">
                                             <ul class="nav nav-tabs" id="popEditTabs">
                                                 <input type="hidden" name="s_amt_ty_code" id="s_amt_ty_code"/>
                                                 {% for i, code in enumerate(amt_ty_code_list) %}
@@ -255,6 +256,14 @@ tbody .btnUpdate, tbody .btn{
 											</select>
 										</th>
 										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
 										</th>
 										<th class="" style="color:red!important;" colspan="13">
@@ -271,6 +280,7 @@ tbody .btnUpdate, tbody .btn{
 										<th style="text-align:center!important;">년도</th>
 										<th style="text-align:center!important;">부서</th>
 										<th style="text-align:center!important;">사원</th>
+										<th style="text-align:center!important;">건설사</th>
 										<th style="text-align:center!important;">현장명</th>
 										<th style="text-align:center!important;">1월</th>
 										<th style="text-align:center!important;">2월</th>
@@ -330,6 +340,7 @@ getGoals = function(){
 					's_year': $('#dtList1').find('#s_year').val(),
 					's_amt_ty_code': $('#dtList1').find('#s_amt_ty_code').val(),
 					's_dept_code': $('#dtList1').find('#s_dept_code').val(),
+					's_bcnc_sn': $('#dtList1').find('#s_bcnc_sn').val(),
 					's_mber_sn': $('#dtList1').find('#s_mber_sn').val(),
 					's_spt_nm': $('#dtList1').find('#s_spt_nm').val(),
 				});
@@ -357,6 +368,7 @@ getGoals = function(){
 			{ data: 'stdyy' },
 			{ data: 'dept_nm' },
 			{ data: 'mber_nm' },
+			{ data: 'bcnc_nm' },
 			{ data: 'spt_nm' },
 			{ data: '1m', className: 'text-right input-available',
 				render: function(data, type, row, meta) {

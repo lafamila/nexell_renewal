@@ -1583,6 +1583,32 @@ def get_contract_no(params):
     row = g.curs.execute(query, data)
     return "{}-{}-{}".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m%d"), session['member']['dept_nm'].replace("팀", ""), row)
 
+def insert_project(params):
+    data = OrderedDict()
+    g.curs.execute("SELECT * FROM project WHERE 1=1")
+    result = g.curs.fetchone()
+    for key in params:
+        if key not in [k.lower() for k in result.keys() if k.lower() not in ('prjct_ty_code')] + ["reg_dtm", "acmslt_sttemnt_at", "charger_moblphon1", "charger_moblphon2", "charger_nm1", 'charger_nm2', 'charger_sn1', 'charger_sn2', 'cnsul_dscnt_rt']:
+            data[key] = params[key]
+    print(data)
+    if "ctmmny_sn" not in data:
+        data["ctmmny_sn"] = 1
+
+    if "regist_dtm" not in data:
+        data["regist_dtm"] = datetime.now()
+
+    if "spt_nm" not in data:
+        data["spt_nm"] = params['cntrct_nm']
+
+    if "register_id" not in data:
+        data["register_id"] = session["member"]["member_id"]
+
+    sub_query = [key for key in data]
+    params_query = ["%({})s".format(key) for key in data]
+
+    query = """INSERT INTO contract({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data)
+
 
 
 

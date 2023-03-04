@@ -266,7 +266,7 @@ tbody .btnUpdate, tbody .btnPrint{
 											</select>
 										</th>
 										<th class="hasinput">
-											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_approval_title" name="s_approval_title">
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">
@@ -361,7 +361,7 @@ getApprovalList = function()
 				return $.extend({}, params, {
 					's_approval_se_code': $('#dtList1').find('#s_approval_se_code').val(),
 					's_approval_ty_code': $('#dtList1').find('#s_approval_ty_code').val(),
-					's_cntrct_nm': $('#dtList1').find('#s_cntrct_nm').val(),
+					's_approval_title': $('#dtList1').find('#s_approval_title').val(),
 					's_approval_status': $('#dtList1').find('#s_approval_status').val(),
                     's_start_de_start': $('#dtList1').find('#s_start_de_start').val(),
 					's_start_de_end': $('#dtList1').find('#s_start_de_end').val(),
@@ -386,7 +386,7 @@ getApprovalList = function()
             },
             { data: 'approval_se_nm' },
             { data: 'approval_ty_nm' },
-            { data: 'cntrct_nm' },
+            { data: 'approval_title' },
             { data: 'approval_status' },
             { data: 'start_de' },
             { data: 'end_de' },
@@ -396,7 +396,7 @@ getApprovalList = function()
 					var html = '';
 
 					html += '<div class="btn-group">';
-					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-sn="'+row.approval_sn+'">';
 					html += '		<i class="fa fa-edit"></i>';
 					html += '	</button>';
 					html += '</div>';
@@ -430,7 +430,8 @@ getApprovalList = function()
 			});
 
 			$(myList).on('click', '.btnUpdate', function(pEvent) {
-
+				var approval_sn = $(this).data("sn")
+				getApproval(approval_sn);
 			});
 
 			$(myList).on('change', 'thead input.form-control', function(pEvent){
@@ -683,7 +684,7 @@ $(function(){
 <script>
 	$(document).on('click', '#btnSave', function(){
 		var data = $("#frmBox3").serializeObject();
-		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_list" : []}
+		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code":$(document).find(".approval-se-list .active").data("code"),"approval_list" : []}
 		$(".approval-left .badge").each(function(pIndex, pTag){
 			var mber_sn = $(pTag).data("sn");
 			var approval_type = $(pTag).data("type");
@@ -700,7 +701,9 @@ $(function(){
 				return fnValidate();
 			},
 			success: function(pResult){
-
+				$("#popBox1").modal('hide');
+				$.datatable1.ajax.reload();
+				getApproval(pResult.approval_sn);
 			}
 		});
 
@@ -806,6 +809,16 @@ $(function(){
 			if(apvl_type == "2"){
 				target = ".approval-right";
 			}
+			var duplicated = false;
+			$(document).find("div.badge").each(function(pIndex, pTag){
+				if(mber_sn == $(pTag).data("sn")){
+					duplicated = true;
+					return false;
+				}
+			});
+			if(duplicated){
+				$(document).find(`div.badge[data-sn='${mber_sn}'] .close`).trigger("click");
+			}
 			let idx = $(target).find("div.badge").length+1;
 			let html = `<div data-sn="${mber_sn}" data-type="${apvl_type}" class="badge badge-pill badge-dark">
 							<div>${idx}</div>
@@ -828,4 +841,205 @@ $(function(){
 	});
 </script>
 
+
+<div class="modal fade" data-backdrop="static" id="popBox2">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="width:100vw!important" id="approval-check-tab-container">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popCheckEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>결재</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:700px;height:700px;overflow-y:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabCheckBox1">
+							<span class="widget-toolbar" id="popCheckEditToolbar" style="width:100%;padding:0px!important;">
+								<div style="display:inline-block;width: calc(100% - 112px);">
+									<input type="text" name="approval_title" id="approval_title_readonly" class="form-control" placeholder="제목" readonly/>
+								</div>
+								<button type="button" class="btn btn-primary" id="btnApprove" title="결재 처리합니다." data-value="1" disabled><i class="fa fa-save"> 결재</i></button>
+								<button type="button" class="btn btn-danger" id="btnNotApprove" title="반려 처리합니다." data-value="-1" disabled><i class="fa fa-trash-o"> 반려</i></button>
+								<input type="hidden" id="s_approval_sn" value=""/>
+							</span>
+							<span class="widget-toolbar" style="width:100%;padding:0px!important;text-align:left!important;border-bottom:1px solid #333;">
+								<div style="display:inline-block;width: 120px; padding-left:10px;border-right:1px solid #333;">
+									결재/협조
+								</div>
+								<div style="display:inline-block;" id="approval_member_01"></div>
+							</span>
+							<span class="widget-toolbar" style="width:100%;padding:0px!important;text-align:left!important;">
+								<div style="display:inline-block;width: 120px; padding-left:10px;border-right:1px solid #333;">
+									수신
+								</div>
+								<div style="display:inline-block;" id="approval_member_2"></div>
+							</span>
+							<form id="frmCheckBox3">
+								<div id="formCheckContent">
+
+								</div>
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+getApproval = function(approval_sn){
+	$("#popBox2").find("#s_approval_sn").val(approval_sn);
+	$.ajax({
+		url : '/api/approval/get_approval',
+		method : 'GET',
+		data : {"approval_sn" : approval_sn},
+		success: function(pResult){
+			console.log(pResult);
+			$("#formCheckContent").html(pResult.html);
+			var app = pResult.approval;
+			$("#approval_title_readonly").val(app.approval_title);
+			$.each(app.approval_data, function(key, value){
+				var pTag = $("#popBox2").find(`#${key}`);
+				var tagName = '';
+				var tagType = '';
+				if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+					pTag = $("#popBox2").find(`[name='${key}']`);
+					tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+					tagType = $(pTag).eq(0).attr("type");
+				}
+				else{
+					tagName = $(pTag).prop("tagName").toUpperCase();
+					tagType = '';
+				}
+				if(tagName == "SELECT"){
+					$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+					$(pTag).prop("disabled", true);
+				}
+				else if(tagName == "INPUT"){
+					if($(pTag).attr("type") == "radio"){
+						$(pTag).yVal(`${value}`);
+						$(pTag).yReadonly(true);
+					}
+					else{
+						$(pTag).val(`${value}`);
+						$(pTag).attr("readonly", true);
+					}
+				}
+			});
+			var html01 = '';
+			var html2 = '';
+			var loginSN = $("#loginSN").val();
+			$.each(pResult.member_list, function(pIndex, pMember){
+				if(pMember.reg_type == 0 || pMember.reg_type == 1){
+					var status = pMember.approval_status_code;
+					var status_nm = '';
+					if(status == 0){
+						status_nm = '';
+					}
+					else if(status == 1){
+						status_nm = '(승인)';
+					}
+					else{
+						status_nm = '(반려)';
+					}
+					html01 += `<span style="${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}">${pMember.mber_nm}${status_nm}</span>`;
+				}
+				else{
+					html2 += `<span>${pMember.mber_nm}</span>`;
+				}
+			});
+			$('#popBox2').find("#approval_member_01").html(html01);
+			$('#popBox2').find("#approval_member_2").html(html2);
+			if(pResult.myTurn){
+				$("#popBox2").find("#btnApprove").attr("disabled", false);
+				$("#popBox2").find("#btnNotApprove").attr("disabled", false);
+			}
+			else{
+				$("#popBox2").find("#btnApprove").attr("disabled", true);
+				$("#popBox2").find("#btnNotApprove").attr("disabled", true);
+			}
+			$('#popBox2').modal('show');
+		}
+	});
+}
+$("#popBox2").on("click", "#btnApprove, #btnNotApprove", function(){
+	var value = $(this).data("value");
+	var password = prompt("비밀번호를 입력해주세요.");
+	if(password == null || password == undefined){
+		return false;
+	}
+	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : $("#popBox2").find("#s_approval_sn").val()};
+	if(value == '-1'){
+		var memo = prompt("반려 사유를 입력해주세요.");
+		if(memo != null && memo != undefined){
+			params['memo'] = memo;
+		}
+		else{
+			return false;
+		}
+	}
+	$.ajax({
+		url : '/api/approval/update_approval',
+		method : 'POST',
+		data : params,
+		success : function(pResult){
+			if(pResult.status){
+				if(pResult.isEnd){
+					console.log(pResult.approval);
+					$.ajax({
+						url : pResult.approval.api_url,
+						method : 'POST',
+						data : JSON.stringify(pResult.approval.approval_data),
+						contentType: 'application/json;charset=utf-8',
+						success : function(pResult){
+							if(pResult.status){
+								alert("성공적으로 처리되었습니다.");
+								$.datatable1.ajax.reload();
+								$("#popBox2").modal("hide");
+
+							}
+						},
+						error : function(pResult){
+							alert("오류가 발생했습니다.");
+						}
+					})
+
+				}
+				else{
+					alert("성공적으로 처리되었습니다.");
+					$.datatable1.ajax.reload();
+					$("#popBox2").modal("hide");
+
+				}
+			}
+			else{
+				alert(pResult.message);
+			}
+
+		}
+	});
+});
+</script>
 {% endblock %}

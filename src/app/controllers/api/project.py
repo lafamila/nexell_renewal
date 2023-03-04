@@ -168,3 +168,8 @@ def get_contract_no():
     result = prj.get_contract_no(params)
     return jsonify(result)
 
+@bp.route('/insert_project', methods=['POST'])
+def insert_project():
+    params = request.get_json()
+    prj.insert_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})

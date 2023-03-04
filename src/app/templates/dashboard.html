@@ -1311,14 +1311,16 @@ getMonthReport = function(pxcond_mt){
 							<tbody>
 								<tr>
 									<td class="color-contract middle text-center" colspan="2">수주</td>
-									<td class="colorB middle text-center" colspan="2">현장명</td>
+									<td class="colorB middle text-center">건설사</td>
+									<td class="colorB middle text-center">현장명</td>
 									<td class="colorB middle text-center">경영수주목표</td>
 									<td class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</td>
 									<td class="colorB middle text-center">확정</td>
 									<td class="colorB middle text-center">차이</td>
 									<td class="colorB middle text-center" colspan="4">세부내역(+,- 1천만원 이상 차이시 작성)</td>
 									<td class="color-contract middle text-center" colspan="2">매출</td>
-									<td class="colorB middle text-center" colspan="2">현장명</td>
+									<td class="colorB middle text-center">건설사</td>
+									<td class="colorB middle text-center">현장명</td>
 									<td class="colorB middle text-center">경영매출목표</td>
 									<td class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</td>
 									<td class="colorB middle text-center">확정</td>
@@ -1336,7 +1338,8 @@ getMonthReport = function(pxcond_mt){
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
 						html += `	<td class="color-contract middle text-center" colspan="2">수주</td>
-								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm}</td>
+								 	<td class="middle text-left">${pR.bcnc_nm}</td>
+								 	<td class="middle text-left">${pR.cntrct_nm}</td>
 								 	<td class="middle text-right">${Math.round(pR.value/10000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right">${Math.round(amount/10000).toFormat('NUMBER')}</td>
@@ -1350,7 +1353,8 @@ getMonthReport = function(pxcond_mt){
 					}
 					else{
 						html += `	<td class="color-contract middle text-center" colspan="2">수주</td>
-								 	<td class="middle text-left" colspan="2"></td>
+								 	<td class="middle text-left"></td>
+								 	<td class="middle text-left"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
@@ -1365,7 +1369,8 @@ getMonthReport = function(pxcond_mt){
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
 						html += `	<td class="color-contract middle text-center" colspan="2">매출</td>
-								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm}</td>
+								 	<td class="middle text-left">${pR.bcnc_nm}</td>
+								 	<td class="middle text-left">${pR.cntrct_nm}</td>
 								 	<td class="middle text-right">${Math.round(pR.value/10000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right">${Math.round(amount/10000).toFormat('NUMBER')}</td>
@@ -1380,7 +1385,8 @@ getMonthReport = function(pxcond_mt){
 					}
 					else{
 						html += `	<td class="color-contract middle text-center" colspan="2">매출</td>
-								 	<td class="middle text-left" colspan="2"></td>
+								 	<td class="middle text-left"></td>
+								 	<td class="middle text-left"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>

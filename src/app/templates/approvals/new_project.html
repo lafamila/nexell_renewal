@@ -403,6 +403,7 @@
                     }
                     return result;
                }
+    {% if init %}
     $(document).ready(function(){
         var today = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
         $.ajax({
@@ -415,4 +416,5 @@
             }
         });
     });
+    {% endif %}
 </script>

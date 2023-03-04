@@ -75,6 +75,8 @@ def get_goals(params):
                 , g.amt_ty_code
                 , g.mber_sn
                 , GET_MEMBER_NAME(g.mber_sn, 'M') AS mber_nm
+                , c.bcnc_sn
+                , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                 , m.dept_code
                 , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
                 , g.cntrct_sn
@@ -111,6 +113,10 @@ def get_goals(params):
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " and m.dept_code=%s"
         data.append(params["s_dept_code"])
+
+    if "s_bcnc_sn" in params and params["s_bcnc_sn"]:
+        query += " and c.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
 
     if "s_mber_sn" in params and params["s_mber_sn"]:
         query += " and g.mber_sn=%s"

@@ -618,6 +618,8 @@ def get_goal_contract(params):
                     , `{0}m` AS value
                     , g.cntrct_sn AS cntrct_sn
                     , c.spt_nm AS cntrct_nm
+                    , c.bcnc_sn AS bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_value
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_rm
                     , CASE WHEN c.prjct_ty_code IN ('NR') THEN

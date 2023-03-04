@@ -1,8 +1,9 @@
 from flask import session, jsonify, g, render_template
 from app.helpers.datatable_helper import dt_query
+import json
 
-def get_approval_template(url):
-    return render_template("approvals/{}.html".format(url))
+def get_approval_template(url, init=True):
+    return render_template("approvals/{}.html".format(url), init=init)
 
 def get_approval_ty_list(params):
     query = """SELECT code
@@ -27,99 +28,77 @@ def get_approval_ty_list(params):
     return result
 
 def insert_approval(params):
-    pass
+    params['approval_data'] = json.dumps(params['data'])
+    query = "INSERT INTO approval(approval_ty_code, approval_data, approval_title) VALUES (%s, %s, %s)"
+    g.curs.execute(query, (params['approval_ty_code'], params['approval_data'], params['approval_title']))
+    return g.curs.lastrowid
+
+def insert_approval_member(params):
+    approval_list = params['approval_list']
+    for row in approval_list:
+        row['approval_sn'] = params['approval_sn']
+    g.curs.executemany("INSERT INTO approval_member(approval_sn, mber_sn, reg_type, approval_status_code) VALUES (%(approval_sn)s, %(mber_sn)s, %(reg_type)s, 0)", approval_list)
+
+def get_approval(params):
+    query = """SELECT a.approval_sn
+                , (SELECT estn_code_b FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS template_url
+                , (SELECT estn_code_c FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS api_url
+                , a.approval_data
+                , a.approval_title
+                FROM approval a
+                WHERE 1=1
+                AND a.approval_sn=%(approval_sn)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+def get_approval_member(params):
+    query = """SELECT am.mber_sn
+                , (SELECT mber_nm FROM member WHERE mber_sn=am.mber_sn) AS mber_nm
+                , am.reg_type
+                , IFNULL(am.update_dtm, '') AS update_dtm
+                , am.approval_status_code
+                FROM approval_member am
+                WHERE 1=1
+                AND am.approval_sn=%(approval_sn)s
+                ORDER BY am_sn"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+
+def update_approval(params):
+    data = [params['approval_status_code']]
+    query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=NOW() """
+    if "memo" in params and params["memo"]:
+        query += ", memo=%s"
+        data.append(params['memo'])
+    query += " WHERE mber_sn=%s AND approval_sn=%s"
+    data.append(session['member']['member_sn'])
+    data.append(params['approval_sn'])
+    g.curs.execute(query, data)
 
 def get_approval_datatable(params):
-#     query = """SELECT c.ctmmny_sn
-# 				, c.cntrct_sn
-# 				, c.cntrct_nm
-# 				, p.prjct_sn
-# 				, p.prjct_ty_code
-# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=p.prjct_ty_code) AS prjct_ty_nm
-# 				, cntrct_se_code
-# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='CNTRCT_SE_CODE' AND code=p.cntrct_se_code) AS cntrct_se_nm
-# 				, mngr_sn
-# 				, (SELECT mber_nm FROM member WHERE mber_sn=p.mngr_sn) AS mngr_nm
-# 				, manage_no
-# 				, eqpmn_dtls
-# 				, cntrwk_dtls
-# 				, cntrct_dscnt_rt
-# 				, cnsul_dscnt_rt
-# 				, drw_opertor_sn
-# 				, (SELECT mber_nm FROM member WHERE mber_sn=p.drw_opertor_sn) AS drw_opertor_nm
-# 				, acmslt_sttemnt_at
-# 				, cntwrk_regstr_ennc
-# 				, p.partclr_matter
-# 				, enty
-# 				, enty_de
-# 				, enty_rm
-# 				, prtpay
-# 				, prtpay_de
-# 				, prtpay_rm
-# 				, surlus
-# 				, surlus_de
-# 				, surlus_rm
-# 				, setle_mth
-# 				, p.register_id
-# 				, p.update_dtm
-# 				, p.updater_id
-# 				, c.cntrct_no
-# 				, c.cntrct_de
-# 				, c.cntrct_nm
-# 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
-# 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
-# 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
-# 				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
-# 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
-# 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
-# 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
-# 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
-# 				ELSE 0
-# 				END AS cntrct_amount
-# 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
-# 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
-# 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
-# 				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
-# 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
-# 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
-# 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
-# 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
-# 				ELSE 0
-# 				END AS amount
-# 				, c.bcnc_sn
-# 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
-# 				, c.spt_nm
-# 				, c.spt_adres
-# 				, c.cntrwk_bgnde
-# 				, c.cntrwk_endde
-# 				, c.etc_sttus
-# 				, m.dept_code
-# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
-# 				, c.bsn_chrg_sn
-# 				, GET_MEMBER_NAME(c.bsn_chrg_sn, 'M') AS bsn_chrg_nm
-# 				, c.spt_chrg_sn
-# 				, GET_MEMBER_NAME(c.spt_chrg_sn, 'M') AS spt_chrg_nm
-# 				, c.prjct_creat_at
-# 				, c.progrs_sttus_code
-# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PROGRS_STTUS_CODE' AND code=c.progrs_sttus_code) AS progrs_sttus_nm
-# 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_CREAT_AT' AND code=c.prjct_creat_at) AS prjct_sttus_nm
-# 				, c.flaw_co
-# 				, c.regist_dtm
-# 				, c.register_id
-# 				, c.update_dtm
-# 				, c.updater_id
-# 				FROM contract c
-# 				LEFT OUTER JOIN member m
-# 				ON m.mber_sn=c.bsn_chrg_sn
-# 				LEFT OUTER JOIN project p
-# 				ON p.cntrct_sn=c.cntrct_sn
-# 				WHERE 1=1
-# 				AND ((c.cntrct_de BETWEEN '{0} 00:00:00'
-# 				AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))
-# """.format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
-#
-#     data = []
-#
+    query = """SELECT a.approval_sn
+				, a.approval_ty_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS approval_ty_nm
+				, (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS approval_se_code
+				, (SELECT c.code_nm FROM code c WHERE c.parnts_code='APPROVAL_SE_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_se_nm
+				, a.approval_title
+				, '' AS approval_status
+				, DATE_FORMAT(a.reg_dtm, '%%Y-%%m-%%d') AS start_de
+				, '' AS end_de
+				, '' AS final_mber_nm
+				FROM (SELECT * FROM approval_member WHERE mber_sn=%s ) am
+				LEFT JOIN approval a 
+				ON am.approval_sn=a.approval_sn
+				WHERE 1=1
+				AND a.reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+""".format(params['s_start_de_start'], params['s_start_de_end'])
+
+    data = [session['member']['member_sn']]
+    return dt_query(query, data, params)
+
 #
 #     if "s_cntrct_no" in params and params['s_cntrct_no']:
 #         query += " AND c.cntrct_no LIKE %s"
@@ -185,8 +164,3 @@ def get_approval_datatable(params):
 
 
     # return dt_query(query, data, params)
-    result = dict()
-    result['recordsTotal'] = 1
-    result['recordsFiltered'] = result['recordsTotal']
-    result['data'] = [{"approval_se_nm" : "공사", "approval_ty_nm" : "수주계약서", "cntrct_nm" : "현장명현장명 현장명", "approval_status" : "완료", "start_de" : "2023-01-01", "end_de" : "2023-01-15", "final_mber_nm" : "이경민"}]
-    return result
