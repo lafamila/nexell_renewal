@@ -29,8 +29,9 @@ def get_approval_ty_list(params):
 
 def insert_approval(params):
     params['approval_data'] = json.dumps(params['data'])
-    query = "INSERT INTO approval(approval_ty_code, approval_data, approval_title) VALUES (%s, %s, %s)"
-    g.curs.execute(query, (params['approval_ty_code'], params['approval_data'], params['approval_title']))
+    mber_sn = session['member']['member_sn']
+    query = "INSERT INTO approval(approval_ty_code, approval_data, approval_title, reg_mber) VALUES (%s, %s, %s, %s)"
+    g.curs.execute(query, (params['approval_ty_code'], params['approval_data'], params['approval_title'], mber_sn))
     return g.curs.lastrowid
 
 def insert_approval_member(params):

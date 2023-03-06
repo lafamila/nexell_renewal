@@ -173,3 +173,9 @@ def insert_project():
     params = request.get_json()
     prj.insert_project(params)
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
+
+@bp.route('/get_b_projects', methods=['GET'])
+def get_b_projects():
+    params = request.args.to_dict()
+    result = prj.get_b_projects(params)
+    return jsonify(result)

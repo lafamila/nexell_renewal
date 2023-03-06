@@ -1,0 +1,218 @@
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+</style>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="75%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+        </tr>
+        <tr>
+            <td class="colorSky">계약번호</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">현장명</td>
+            <td class="text-center hasinput">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">공사기간</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="15">공사 현황 (영업) - VAT포함</th>
+        </tr>
+        <tr>
+            <th class="colorB text-center">구분</th>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">삼성장비</th>
+            <th class="color-contract text-center">타사장비</th>
+            <th class="color-contract text-center">설치비</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">로지텍자재</th>
+            <th class="color-contract text-center">타사자재</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="color-contract text-center">M,S/H(기준표)</th>
+            <th class="color-contract text-center">옵션행사비(기준표)</th>
+            <th class="color-contract text-center">설계변경</th>
+            <th class="color-contract text-center">총액</th>
+            <th class="color-contract text-center">이익금(VA)</th>
+            <th class="color-contract text-center">VA율</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-row="B">
+            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center" data-column="row_total" onchange="sub(this, ['row_total'], '#va')"></td>
+            <td class="text-center" id="va" rowspan="2" onchange="rate(this, ['#va', 'row_total'], '#va_rate', true)"></td>
+            <td class="text-center" id="va_rate" rowspan="2"></td>
+        </tr>
+        <tr data-row="D">
+            <th class="colorSky text-center">실행가</th>
+            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center" data-column="row_total" onchange="sub(this, ['row_total'], '#va')" style="border-right: 1px solid #ddd!important;"></td>
+        </tr>
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">수주계약</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center" data-column="row_total2" onchange="sub(this, ['row_total2'], '#va2')"></td>
+            <td class="text-center" id="va2" rowspan="2" onchange="rate(this, ['#va2', 'row_total'], '#va_rate2', true)"></td>
+            <td class="text-center" id="va_rate2" rowspan="2"></td>
+        </tr>
+        <tr data-row="E">
+            <th class="colorSky text-center">실행가</th>
+            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center" data-column="row_total2" onchange="sub(this, ['row_total2'], '#va2')" style="border-right: 1px solid #ddd!important;"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+  <tbody>
+    <tr>
+        <th class="colorN text-center" colspan="4">옵션현황</th>
+    </tr>
+    <tr>
+        <td class="colorSky text-center">옵션율</td>
+        <td class="text-center"></td>
+        <td class="colorSky text-center">예상 옵션 세대수</td>
+        <td class="text-center"></td>
+    </tr>
+    <tr>
+        <th class="colorN text-center" colspan="4">특이사항</th>
+    </tr>
+    <tr>
+        <td class="text-center" colspan="4"></td>
+    </tr>
+  </tbody>
+</table>
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+    window.projects = {};
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_b_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+        }
+    });
+    {% endif %}
+</script>

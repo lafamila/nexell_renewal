@@ -1610,5 +1610,17 @@ def insert_project(params):
     g.curs.execute(query, data)
 
 
+def get_b_projects(params):
+    query = """SELECT cntrct_sn
+                    , cntrct_no
+                    , spt_nm
+                    , CONCAT(cntrwk_bgnde,' ~ ',cntrwk_endde) AS cntrwk_period
+                    , home_count
+                    , home_region
+                FROM contract
+                WHERE progrs_sttus_code='B'
+                """
 
-
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result

@@ -11,6 +11,14 @@ tbody .btnUpdate, tbody .btnPrint{
     tbody{
         font-size:12px!important;
     }
+	.colorSky{
+		background:rgb(146, 205, 220)!important;
+		font-weight: bold;
+	}
+	.middle{
+		vertical-align:middle!important;
+	}
+
 </style>
 
 <style>
@@ -590,7 +598,7 @@ $(function(){
 					</div>
 
 				</header>
-				<div role="content" style="min-height:620px;height:620px;">
+				<div role="content" style="min-height:700px;height:700px;overflow-y:auto;">
 					<div class="widget-body no-padding" style="height:100%;">
 						<div class="tab-content" style="height:100%;">
 
@@ -662,8 +670,8 @@ $(function(){
 
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
-							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;">
-								<div style="display:inline-block;width: calc(100% - 56px);">
+							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr 62px!important">
+								<div style="display:inline-block;">
 									<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
 								</div>
 								<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
@@ -684,11 +692,24 @@ $(function(){
 <script>
 	$(document).on('click', '#btnSave', function(){
 		var data = $("#frmBox3").serializeObject();
-		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code":$(document).find(".approval-se-list .active").data("code"),"approval_list" : []}
+		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code":$(document).find(".approval-ty-list .active").data("code"),"approval_list" : []}
 		$(".approval-left .badge").each(function(pIndex, pTag){
 			var mber_sn = $(pTag).data("sn");
 			var approval_type = $(pTag).data("type");
 			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
+		});
+		params["data"]["input_data"] = {};
+		$("#frmBox3").find(".input-available").each(function(pIndex, pTag){
+			var row = $(pTag).parent().data("row");
+			var column = $(pTag).data("column");
+			var value = $(pTag).html();
+			if($(pTag).data("type") == "number"){
+				value = parseInt($(pTag).html().replaceAll(",", ""));
+			}
+			if(!params["data"]["input_data"].hasOwnProperty(row)){
+				params["data"]["input_data"][row] = {};
+			}
+			params["data"]["input_data"][row][column] = value;
 		});
 		$.ajax({
 			url: '/api/approval/ajax_insert_approval',
@@ -751,6 +772,7 @@ $(function(){
 		}
 		else{
 			$("#approval-tab-container").attr("style", "width:100vw!important");
+			$("#frmBox3").find(".select2").select2();
 		}
 	});
 
@@ -874,8 +896,8 @@ $(function(){
 
 							<!-- 프로젝트 -->
 							<div class="tab-pane fade active in" id="tabCheckBox1">
-							<span class="widget-toolbar" id="popCheckEditToolbar" style="width:100%;padding:0px!important;">
-								<div style="display:inline-block;width: calc(100% - 112px);">
+							<span class="widget-toolbar" id="popCheckEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr 62px 62px;">
+								<div style="display:inline-block;">
 									<input type="text" name="approval_title" id="approval_title_readonly" class="form-control" placeholder="제목" readonly/>
 								</div>
 								<button type="button" class="btn btn-primary" id="btnApprove" title="결재 처리합니다." data-value="1" disabled><i class="fa fa-save"> 결재</i></button>
@@ -909,6 +931,32 @@ $(function(){
 </div><!--modal-->
 
 <script>
+$(document).on("dblclick", ".input-available", function(){
+	var data = prompt("값을 입력하세요.");
+	if($(this).data("type") == "number"){
+		try{
+			if(/^\d+$/.test(data)){
+				data = parseInt(data);
+			}
+			else{
+				throw new Error(`Parameter is not a number : ${data}`);
+			}
+		}catch(e){
+			alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+			return false;
+		}
+	}
+	if($(this).data("type") == "number"){
+		$(this).html(data.toFormat('NUMBER'));
+		$(this).trigger("change");
+	}
+	else{
+		$(this).html(data);
+		$(this).trigger("change");
+	}
+
+});
+
 getApproval = function(approval_sn){
 	$("#popBox2").find("#s_approval_sn").val(approval_sn);
 	$.ajax({
@@ -921,31 +969,70 @@ getApproval = function(approval_sn){
 			var app = pResult.approval;
 			$("#approval_title_readonly").val(app.approval_title);
 			$.each(app.approval_data, function(key, value){
-				var pTag = $("#popBox2").find(`#${key}`);
-				var tagName = '';
-				var tagType = '';
-				if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
-					pTag = $("#popBox2").find(`[name='${key}']`);
-					tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
-					tagType = $(pTag).eq(0).attr("type");
+				if(key == 'input_data'){
+					$.each(value, function(row, pV){
+						$.each(pV, function(column, source){
+							var pTag = $("#popBox2").find(`[data-row='${row}'] [data-column='${column}']`);
+							if($(pTag).length == 0){
+								var pRow = $("#popBox2").find(`[data-row='1']`);
+								var origin = pRow.eq(0).clone(true);
+								$(origin).find("td").html("0");
+								$(origin).find("td.input-available").html("");
+								$(origin).attr("data-row", row);
+								$(origin).find(".no-clone").remove();
+								$(pRow).parent().append($(origin));
+								var cells = $(pRow).parent().find("tr").eq(0).find(".no-clone");
+								$.each(cells, function(_, cell){
+									let rowspan = $(cell).attr("rowspan") ? parseInt($(cell).attr("rowspan")) : 1;
+									$(cell).attr("rowspan", rowspan+1);
+								});
+
+								pTag = $("#popBox2").find(`[data-row='${row}'] [data-column='${column}']`);
+							}
+							if(source == null){
+								$(pTag).html("");
+							}
+							else if($(pTag).data("type") == "number"){
+								$(pTag).html(source.toFormat('NUMBER'));
+							}
+							else{
+								$(pTag).html(source);
+							}
+							$(pTag).trigger("change");
+
+						});
+					});
 				}
 				else{
-					tagName = $(pTag).prop("tagName").toUpperCase();
-					tagType = '';
-				}
-				if(tagName == "SELECT"){
-					$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
-					$(pTag).prop("disabled", true);
-				}
-				else if(tagName == "INPUT"){
-					if($(pTag).attr("type") == "radio"){
-						$(pTag).yVal(`${value}`);
-						$(pTag).yReadonly(true);
+
+					var pTag = $("#popBox2").find(`#${key}`);
+					var tagName = '';
+					var tagType = '';
+					if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+						console.log(key, value);
+						pTag = $("#popBox2").find(`[name='${key}']`);
+						tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+						tagType = $(pTag).eq(0).attr("type");
 					}
 					else{
-						$(pTag).val(`${value}`);
-						$(pTag).attr("readonly", true);
+						tagName = $(pTag).prop("tagName").toUpperCase();
+						tagType = '';
 					}
+					if(tagName == "SELECT"){
+						$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+						$(pTag).prop("disabled", true);
+					}
+					else if(tagName == "INPUT"){
+						if($(pTag).attr("type") == "radio"){
+							$(pTag).yVal(`${value}`);
+							$(pTag).yReadonly(true);
+						}
+						else{
+							$(pTag).val(`${value}`);
+							$(pTag).attr("readonly", true);
+						}
+					}
+
 				}
 			});
 			var html01 = '';
