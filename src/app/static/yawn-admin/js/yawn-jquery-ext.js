@@ -183,7 +183,14 @@ $.fn.serializeObject = function() {
             if (arr) {
                 obj = {};
                 jQuery.each(arr, function() {
-                    obj[this.name] = this.value;
+                    if(this.name.endsWith("[]")){
+                        if(!obj.hasOwnProperty(this.name))
+                            obj[this.name] = [];
+                        obj[this.name].push(this.value);
+                    }
+                    else{
+                        obj[this.name] = this.value;
+                    }
                 });
             }//if ( arr ) {
         }

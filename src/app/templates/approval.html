@@ -698,19 +698,7 @@ $(function(){
 			var approval_type = $(pTag).data("type");
 			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
 		});
-		params["data"]["input_data"] = {};
-		$("#frmBox3").find(".input-available").each(function(pIndex, pTag){
-			var row = $(pTag).parent().data("row");
-			var column = $(pTag).data("column");
-			var value = $(pTag).html();
-			if($(pTag).data("type") == "number"){
-				value = parseInt($(pTag).html().replaceAll(",", ""));
-			}
-			if(!params["data"]["input_data"].hasOwnProperty(row)){
-				params["data"]["input_data"][row] = {};
-			}
-			params["data"]["input_data"][row][column] = value;
-		});
+
 		$.ajax({
 			url: '/api/approval/ajax_insert_approval',
 			type: 'POST',
@@ -724,7 +712,7 @@ $(function(){
 			success: function(pResult){
 				$("#popBox1").modal('hide');
 				$.datatable1.ajax.reload();
-				getApproval(pResult.approval_sn);
+				// getApproval(pResult.approval_sn);
 			}
 		});
 
@@ -856,7 +844,6 @@ $(function(){
 		let container = $(this).parent().parent();
 		$(this).parent().remove();
 		let badges = $(container).find("div.badge");
-		console.log(badges);
 		$.each(badges, function(pIndex, pValue){
 			$(pValue).find("div").eq(0).text(pIndex+1);
 		});
@@ -969,47 +956,24 @@ getApproval = function(approval_sn){
 			var app = pResult.approval;
 			$("#approval_title_readonly").val(app.approval_title);
 			$.each(app.approval_data, function(key, value){
-				if(key == 'input_data'){
-					$.each(value, function(row, pV){
-						$.each(pV, function(column, source){
-							var pTag = $("#popBox2").find(`[data-row='${row}'] [data-column='${column}']`);
-							if($(pTag).length == 0){
-								var pRow = $("#popBox2").find(`[data-row='1']`);
-								var origin = pRow.eq(0).clone(true);
-								$(origin).find("td").html("0");
-								$(origin).find("td.input-available").html("");
-								$(origin).attr("data-row", row);
-								$(origin).find(".no-clone").remove();
-								$(pRow).parent().append($(origin));
-								var cells = $(pRow).parent().find("tr").eq(0).find(".no-clone");
-								$.each(cells, function(_, cell){
-									let rowspan = $(cell).attr("rowspan") ? parseInt($(cell).attr("rowspan")) : 1;
-									$(cell).attr("rowspan", rowspan+1);
-								});
-
-								pTag = $("#popBox2").find(`[data-row='${row}'] [data-column='${column}']`);
-							}
-							if(source == null){
-								$(pTag).html("");
-							}
-							else if($(pTag).data("type") == "number"){
-								$(pTag).html(source.toFormat('NUMBER'));
-							}
-							else{
-								$(pTag).html(source);
-							}
-							$(pTag).trigger("change");
-
-						});
+				if(key.endsWith("[]")){
+					var pTag = $("#popBox2").find(`[name='${key}']`);
+					if(pTag.length != value.length){
+						if ($.isFunction(cloneRow)) {
+							cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+						}
+					}
+					$.each(value, function(pIndex, pValue){
+						$("#popBox2").find(`[name='${key}']`).eq(pIndex).val(pValue);
+						$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
 					});
 				}
 				else{
-
 					var pTag = $("#popBox2").find(`#${key}`);
 					var tagName = '';
 					var tagType = '';
 					if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
-						console.log(key, value);
+
 						pTag = $("#popBox2").find(`[name='${key}']`);
 						tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
 						tagType = $(pTag).eq(0).attr("type");
@@ -1033,6 +997,10 @@ getApproval = function(approval_sn){
 						}
 					}
 
+				}
+				$("#popBox2").find("tbody").trigger("change");
+				if ($.isFunction(afterLoad)) {
+					afterLoad();
 				}
 			});
 			var html01 = '';

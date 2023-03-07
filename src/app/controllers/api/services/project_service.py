@@ -1588,7 +1588,7 @@ def insert_project(params):
     g.curs.execute("SELECT * FROM project WHERE 1=1")
     result = g.curs.fetchone()
     for key in params:
-        if key not in [k.lower() for k in result.keys() if k.lower() not in ('prjct_ty_code')] + ["reg_dtm", "acmslt_sttemnt_at", "charger_moblphon1", "charger_moblphon2", "charger_nm1", 'charger_nm2', 'charger_sn1', 'charger_sn2', 'cnsul_dscnt_rt']:
+        if key not in [k.lower() for k in result.keys() if k.lower() not in ('prjct_ty_code')] + ["input_data", "reg_dtm", "acmslt_sttemnt_at", "charger_moblphon1", "charger_moblphon2", "charger_nm1", 'charger_nm2', 'charger_sn1', 'charger_sn2', 'cnsul_dscnt_rt']:
             data[key] = params[key]
     print(data)
     if "ctmmny_sn" not in data:
