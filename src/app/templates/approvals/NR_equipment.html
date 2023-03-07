@@ -1,0 +1,399 @@
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+</style>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="75%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+        </tr>
+        <tr>
+            <td class="colorSky">계약번호</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">현장명</td>
+            <td class="text-center hasinput">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">공사기간</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="15">공사 현황 (영업) - VAT포함</th>
+        </tr>
+        <tr>
+            <th class="colorB text-center">구분</th>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">삼성장비</th>
+            <th class="color-contract text-center">타사장비</th>
+            <th class="color-contract text-center">설치비</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">로지텍자재</th>
+            <th class="color-contract text-center">타사자재</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="color-contract text-center">M,S/H(기준표)</th>
+            <th class="color-contract text-center">옵션행사비(기준표)</th>
+            <th class="color-contract text-center">설계변경</th>
+            <th class="color-contract text-center">총액</th>
+            <th class="color-contract text-center">이익금(VA)</th>
+            <th class="color-contract text-center">VA율</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">수주계약</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center" data-column="row_total2" onchange="sub(this, ['row_total2'], '#va2')"></td>
+            <td class="text-center" id="va2" rowspan="2" onchange="rate(this, ['#va2', 'row_total'], '#va_rate2', true)"></td>
+            <td class="text-center" id="va_rate2" rowspan="2"></td>
+        </tr>
+        <tr data-row="E">
+            <th class="colorSky text-center">실행가</th>
+            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
+            <td class="text-center" data-column="row_total2" onchange="sub(this, ['row_total2'], '#va2')" style="border-right: 1px solid #ddd!important;"></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="10" style="border-right:0px!important;">① 삼성장비매입금액 (관리/자동) - VAT포함</th>
+            <th class="sub-title colorN text-right" style="border-left:0px!important;">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">출고일</th>
+            <th class="color-contract text-center">상품명</th>
+            <th class="color-contract text-center">모델명</th>
+            <th class="color-contract text-center">계약수량</th>
+            <th class="color-contract text-center">매입단가</th>
+            <th class="color-contract text-center">출고수량</th>
+            <th class="color-contract text-center">매입금액</th>
+            <th class="color-contract text-center">매출금액</th>
+            <th class="color-contract text-center">VA</th>
+            <th class="color-contract text-center">매입처</th>
+            <th class="color-contract text-center">비고</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="colorG text-center" colspan="3">합계</td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+            <td class="colorP"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+        </tr>
+    </tfoot>
+</table>
+<table class="table table-bordered table-form">
+	<colgroup>
+		<col width="100">
+		<col width="200">
+		<col width="100">
+		<col width="200">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="4">③ 설치비 산출 및 지급내역 (영업,관리/자동) - VAT포함</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+        <tr>
+            <th class="color-contract text-center">도급계약사</th>
+            <td class="text-center"></td>
+            <th class="color-contract text-center">도급계약일</th>
+            <td class="text-center"></td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">대표</th>
+            <td class="text-center"></td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="text-center"></td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">현장관리자</th>
+            <td class="text-center"></td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="text-center"></td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <table style="width:100%;border:0px!important;">
+                    <colgroup>
+                        <col width="50"/>
+                        <col width="50"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                    </colgroup>
+                    <tbody role="list">
+                        <tr>
+                            <th class="color-contract text-center" colspan="2">내역</th>
+                            <th class="color-contract text-center">실내기대수</th>
+                            <th class="color-contract text-center">대당단가</th>
+                            <th class="color-contract text-center">공급가액</th>
+                            <th class="color-contract text-center">세액</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center">공사비총액</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="colorP"></td>
+                        </tr>
+                    </tbody>
+                    <tbody role="detail">
+                        <tr>
+                            <th class="color-contract text-center middle" rowspan="5">분류</th>
+                            <th class="color-contract text-center">내역</th>
+                            <th class="color-contract text-center">인건비</th>
+                            <th class="color-contract text-center">착불</th>
+                            <th class="color-contract text-center">일용직</th>
+                            <th class="color-contract text-center">로지텍/타사</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" rowspan="5">집행률</th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약내역</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="colorP"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약변경</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="colorP"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">집행</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="colorP"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">잔액</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="colorP"></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="6">업체선정위원회 선정결과</th>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">선정위원</th>
+            <th class="color-contract text-center">이점수</th>
+            <th class="color-contract text-center">박사무엘</th>
+            <th class="color-contract text-center">황병찬</th>
+            <th class="color-contract text-center">최종선정</th>
+            <th class="color-contract text-center">비고</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th class="color-contract text-center">선정업체명</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+  <tbody>
+    <tr>
+        <th class="colorN text-center" colspan="4">특이사항</th>
+    </tr>
+    <tr>
+        <td class="text-center" colspan="4"></td>
+    </tr>
+  </tbody>
+</table>
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+    window.projects = {};
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_b_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+        }
+    });
+    {% endif %}
+</script>

@@ -1,0 +1,232 @@
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+.drop-zone {
+  max-width: 100%;
+  height: 100%;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  cursor: pointer;
+  color: #cccccc;
+  border: 4px dashed #cecece;
+  border-radius: 10px;
+}
+
+.drop-zone--over {
+  border-style: solid;
+}
+
+.drop-zone__input {
+  display: none!important;
+}
+
+.drop-zone__thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #cccccc;
+  background-size: cover;
+  position: relative;
+}
+
+.drop-zone__thumb::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 0;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.75);
+  font-size: 14px;
+  text-align: center;
+}
+
+</style>
+<script>
+document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+  const dropZoneElement = inputElement.closest(".drop-zone");
+
+  dropZoneElement.addEventListener("click", (e) => {
+    inputElement.click();
+  });
+
+  inputElement.addEventListener("change", (e) => {
+    if (inputElement.files.length) {
+      updateThumbnail(dropZoneElement, inputElement.files[0]);
+    }
+  });
+
+  dropZoneElement.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZoneElement.classList.add("drop-zone--over");
+  });
+
+  ["dragleave", "dragend"].forEach((type) => {
+    dropZoneElement.addEventListener(type, (e) => {
+      dropZoneElement.classList.remove("drop-zone--over");
+    });
+  });
+
+  dropZoneElement.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    if (e.dataTransfer.files.length) {
+      inputElement.files = e.dataTransfer.files;
+      updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+    }
+
+    dropZoneElement.classList.remove("drop-zone--over");
+  });
+});
+
+/**
+ * Updates the thumbnail on a drop zone element.
+ *
+ * @param {HTMLElement} dropZoneElement
+ * @param {File} file
+ */
+function updateThumbnail(dropZoneElement, file) {
+  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+  // First time - remove the prompt
+  if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+    dropZoneElement.querySelector(".drop-zone__prompt").remove();
+  }
+
+  // First time - there is no thumbnail element, so lets create it
+  if (!thumbnailElement) {
+    thumbnailElement = document.createElement("div");
+    thumbnailElement.classList.add("drop-zone__thumb");
+    dropZoneElement.appendChild(thumbnailElement);
+  }
+
+  thumbnailElement.dataset.label = file.name;
+
+  // Show thumbnail for image files
+  if (file.type.startsWith("image/")) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+    };
+  } else {
+    thumbnailElement.style.backgroundImage = null;
+  }
+}
+
+</script>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="75%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+        </tr>
+        <tr>
+            <td class="colorSky">계약번호</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">현장명</td>
+            <td class="text-center hasinput">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">공사기간</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="*"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center">도급계약서 (업로드)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center" style="height:200px!important;">
+              <div class="drop-zone">
+                <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                <input type="file" name="myFile" class="drop-zone__input">
+              </div>
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+    window.projects = {};
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_b_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+        }
+    });
+    {% endif %}
+</script>
