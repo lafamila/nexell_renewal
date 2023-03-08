@@ -598,7 +598,7 @@ $(function(){
 					</div>
 
 				</header>
-				<div role="content" style="min-height:700px;height:700px;overflow-y:auto;">
+				<div role="content" style="max-height:90vh;height:auto;overflow-y:auto;">
 					<div class="widget-body no-padding" style="height:100%;">
 						<div class="tab-content" style="height:100%;">
 
@@ -964,8 +964,17 @@ getApproval = function(approval_sn){
 						}
 					}
 					$.each(value, function(pIndex, pValue){
-						$("#popBox2").find(`[name='${key}']`).eq(pIndex).val(pValue);
-						$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+						var tagName = $("#popBox2").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+						console.log(tagName, pIndex, pValue, key);
+						if(tagName == "INPUT"){
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).val(pValue);
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+						}
+						else if(tagName == "SELECT"){
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).prop("disabled", true);
+
+						}
 					});
 				}
 				else{
@@ -998,11 +1007,11 @@ getApproval = function(approval_sn){
 					}
 
 				}
-				$("#popBox2").find("tbody").trigger("change");
-				if ($.isFunction(afterLoad)) {
-					afterLoad();
-				}
 			});
+			$("#popBox2").find("tbody").trigger("change");
+			if ($.isFunction($.fn.afterLoadApproval)) {
+				$("#popBox2").afterLoadApproval();
+			}
 			var html01 = '';
 			var html2 = '';
 			var loginSN = $("#loginSN").val();

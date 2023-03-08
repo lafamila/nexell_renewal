@@ -424,3 +424,9 @@ def ajax_get_sales_expect_report():
     table_data["longTermData"] = finals
 
     return jsonify(table_data)
+
+@bp.route('/insert_ms_equip', methods=['POST'])
+def insert_ms_equip():
+    params = request.get_json()
+    sales.insert_ms_equip(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})

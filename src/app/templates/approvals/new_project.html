@@ -176,7 +176,7 @@
 -->
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form" id="table-project">
     <colgroup>
         <col width="175">
         <col width="150">
@@ -420,5 +420,24 @@
             }
         });
     });
+    $(document).on("change", "[name='prjct_creat_at']", function(){
+        var prjct_creat_at = $('input[name=prjct_creat_at]:checked').val();
+        if(prjct_creat_at == 'N'){
+            $("#table-project").hide();
+        }
+        else{
+            $("#table-project").show();
+        }
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var prjct_creat_at = $('input[name=prjct_creat_at]:checked').val();
+        if(prjct_creat_at == 'N'){
+            $("#table-project").hide();
+        }
+        else{
+            $("#table-project").show();
+        }
+    }
     {% endif %}
 </script>

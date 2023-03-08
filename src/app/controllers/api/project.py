@@ -44,6 +44,8 @@ def ajax_get_reportNR():
     result['project'] = prj.get_project(params)
     result['charger'] = chrg.get_charger_list(params)
 
+    result['construct'] = prj.get_construct(params)
+
     result['aCostList'] = prj.get_a_cost_list(params)
     result['bCostList'] = prj.get_b_cost_list(params)
     result['extraCostList'] = prj.get_extra_cost_list(params)
@@ -58,6 +60,7 @@ def ajax_get_reportNR():
     result['s3AccountList'] = prj.get_s3_account_report_list(params)
     result['s4AccountList'] = prj.get_s4_account_report_list(params)
     result['s61AccountList'] = prj.get_s61_account_report_list(params)
+    result['sModelCostList'] = prj.get_model_cost_list(params)
     result['outsrcList'] = prj.get_outsrc_report_list(params)
 
     #TODO : modelList api
@@ -179,3 +182,30 @@ def get_b_projects():
     params = request.args.to_dict()
     result = prj.get_b_projects(params)
     return jsonify(result)
+
+@bp.route('/insert_b_project', methods=['POST'])
+def insert_b_project():
+    params = request.get_json()
+    prj.insert_b_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/get_costs_bd', methods=['GET'])
+def get_costs_bd():
+    params = request.args.to_dict()
+    result = dict()
+    prjct = prj.get_project_by_cntrct_nm(params["s_cntrct_sn"])
+    params["s_prjct_sn"] = prjct["prjct_sn"]
+    result['costList'] = prj.get_b_cost_list(params)
+    return jsonify(result)
+
+@bp.route('/insert_option_cost', methods=['POST'])
+def insert_option_cost():
+    params = request.get_json()
+    prj.insert_option_cost(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_c_project', methods=['POST'])
+def insert_c_project():
+    params = request.get_json()
+    prj.insert_c_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})

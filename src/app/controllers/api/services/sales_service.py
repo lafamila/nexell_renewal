@@ -1,5 +1,6 @@
 from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
+from .project_service import get_project_by_cntrct_nm
 from collections import OrderedDict
 import datetime
 import calendar
@@ -263,7 +264,7 @@ def insert_account(params):
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
-
+    print(data)
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]
 
@@ -542,3 +543,45 @@ def get_expect_p_r_list(params):
     return result
 
 
+def insert_ms_equip(params):
+    if params['msh_approval_type'] == 'S':
+        cntrct_sn = params["cntrct_sn"]
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        prjct_sn = prjct['prjct_sn']
+        ddt_man = datetime.datetime.now()
+        data = OrderedDict()
+        for key in params:
+            if key.endswith("[]"):
+                if key in ("dlamt[]", "dlnt[]"):
+                    data[key.replace("[]", "")] = [int(d.replace(",", "")) for d in params[key]]
+                elif key in ("expect_de[]", ):
+                    data["wrhousng_de"] = params[key]
+                else:
+                    data[key.replace("[]", "")] = params[key]
+        input_data = []
+        for i, key in enumerate(data):
+            if i == 0:
+                for row in data[key]:
+                    input_data.append({key : row})
+            else:
+                for j, row in enumerate(data[key]):
+                    input_data[j][key] = row
+        for row in input_data:
+            row['cntrct_sn'] = cntrct_sn
+            row['prjct_sn'] = prjct_sn
+            row['ctmmny_sn'] = 1
+            row['regist_dtm'] = datetime.datetime.now()
+            row['register_id'] = session['member']['member_id']
+            row['delng_se_code'] = 'P'
+            row['ddt_man'] = datetime.datetime.now()
+
+        sub_query = [key for key in input_data[0]]
+        params_query = ["%({})s".format(key) for key in input_data[0]]
+
+        query = """INSERT INTO account({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.executemany(query, input_data)
+
+
+
+        # sub_query = [key for key in data]
+        # params_query = ["%({})s".format(key) for key in data]

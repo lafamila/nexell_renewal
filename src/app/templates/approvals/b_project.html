@@ -320,7 +320,9 @@
             <td data-region="서울권" data-rate="100" data-column="2000" class="text-center" style="display:none;">2000</td>
         </tr>
         <tr data-row="option_row">
-            <td class="text-center input-available border_right" colspan="4" rowspan="8" data-type="string" data-column="option_bigo"></td>
+            <td class="hasinput" colspan="4" rowspan="8">
+                <input type="text" class="form-control text-left" name="option_bigo">
+            </td>
             <td class="text-center" rowspan="4">수도권</td>
             <td data-col="1TYPE" data-row="수도권" class="text-center" rowspan="4">800</td>
             <td data-col="2TYPE" data-row="수도권" class="text-center" rowspan="4">1400</td>
@@ -639,7 +641,7 @@
     $(document).on("change", "#option_rate", function(){
         var option_rate = $("#option_rate").find(":selected").val();
         if(option_rate != ''){
-            if($("home_count").val() != ''){
+            if($("#home_count").val() != ''){
                 $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt($("#home_count").val().replaceAll(",", ""))/100).toFormat('NUMBER'));
             }
             var home_region = $("#home_region").val();
@@ -704,9 +706,60 @@
         $(this).data("before", option_model);
     });
     {% else %}
-    afterLoad = function(){
+    $.fn.afterLoadApproval = function(){
         var option_model = $("#option_model").find(":selected").val();
         var home_region = $("#home_region").val();
+        var home_count = $("#home_count").val().replaceAll(",", "");
+        var home_count_col = '';
+        for(let i=0;i<7;i++){
+            if(parseInt(home_count) < 500+i*250){
+                home_count_col = 500+i*250;
+                break;
+            }
+        }
+        $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
+            if($(pTag).html() == home_count_col.toFormat('NUMBER')+"세대"){
+                $(pTag).addClass("colorY");
+            }
+        });
+
+
+        var option_rate = $("#option_rate").find(":selected").val();
+        if(home_region == "서울권"){
+            $("#option_rate").find("option[value='70']").attr("disabled", true);
+            $("#option_rate").find("option[value='80']").attr("disabled", true);
+            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                if($(pTag).html()==home_region){
+                    $(pTag).addClass("colorY");
+                }
+            });
+        }
+        else if(home_region == "수도권" || home_region == "지방권"){
+            $("#option_rate").find("option[value='70']").attr("disabled", false);
+            $("#option_rate").find("option[value='80']").attr("disabled", false);
+            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                if($(pTag).html()==home_region){
+                    $(pTag).addClass("colorY");
+                }
+            });
+        }
+        if(option_rate != ''){
+            if($("#home_count").val() != ''){
+                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt(home_count)/100).toFormat('NUMBER'));
+            }
+           $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
+            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${home_count_col}"]`);
+            $(target).addClass("colorY");
+        }
+        if(option_model != ''){
+            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                if($(pTag).html()==option_model){
+                    $(pTag).addClass("colorY");
+                }
+            });
+            var target = $(document).find(`[data-col="${option_model}"][data-row="${home_region}"]`);
+            $(target).addClass("colorY");
+        }
     }
     {% endif %}
 </script>

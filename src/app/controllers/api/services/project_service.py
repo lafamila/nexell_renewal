@@ -347,6 +347,20 @@ def get_contract_count_summary(params):
     result = g.curs.fetchone()
     return result
 
+def get_construct(params):
+    query = """SELECT construct_sn
+    				, construct_name
+    				, construct_count
+    				, construct_amt
+    				, construct_tax
+    				, cntrct_sn
+    				FROM construct
+    				WHERE 1=1
+    				AND cntrct_sn = %s
+    """
+    g.curs.execute(query, params['s_cntrct_sn'])
+    result = g.curs.fetchall()
+    return result
 
 def get_contract(params):
     query = """SELECT ctmmny_sn
@@ -387,6 +401,8 @@ def get_contract(params):
 				, biss_g
 				, biss_h
 				, biss_i
+				, home_count
+				, home_region
 				FROM contract c
 				WHERE 1=1
 				AND ctmmny_sn = 1
@@ -1028,6 +1044,27 @@ def get_s4_account_report_list(params):
     result = g.curs.fetchall()
     return result
 
+def get_model_cost_list(params):
+    query = """SELECT IFNULL(s.dlivy_de, '') AS dlivy_de
+                    , p.model_no AS model_no
+                    , p.prdlst_se_code AS prdlst_se_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=p.prdlst_se_code) AS prdlst_se_nm
+                    , p.dlamt AS dlamt
+                    , p.dlnt AS dlnt
+                    , p.bcnc_sn AS bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS bcnc_nm
+                    , p.wrhousng_de AS expect_de
+                FROM (SELECT * FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('61', '62')) p
+                LEFT OUTER JOIN account s
+                ON s.cnnc_sn=p.delng_sn
+                WHERE 1=1
+				AND p.cntrct_sn = %(s_cntrct_sn)s
+				AND p.prjct_sn = %(s_prjct_sn)s
+            """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 def get_s61_account_report_list(params):
     query = """SELECT s.dlivy_de AS s_dlivy_de
 				, s.model_no AS s_model_no
@@ -1584,31 +1621,99 @@ def get_contract_no(params):
     return "{}-{}-{}".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m%d"), session['member']['dept_nm'].replace("팀", ""), row)
 
 def insert_project(params):
+    g.curs.execute("SHOW COLUMNS FROM contract")
+    result = g.curs.fetchall()
+    total_columns = []
+    required = []
+    for r in result:
+        key = r['Field'].lower()
+        if r['Null'] == 'NO' and r['Default'] is None and r['Extra'] != 'auto_increment':
+            required.append(key)
+        if r['Extra'] != 'auto_increment':
+            total_columns.append(key)
+
     data = OrderedDict()
-    g.curs.execute("SELECT * FROM project WHERE 1=1")
-    result = g.curs.fetchone()
-    for key in params:
-        if key not in [k.lower() for k in result.keys() if k.lower() not in ('prjct_ty_code')] + ["input_data", "reg_dtm", "acmslt_sttemnt_at", "charger_moblphon1", "charger_moblphon2", "charger_nm1", 'charger_nm2', 'charger_sn1', 'charger_sn2', 'cnsul_dscnt_rt']:
-            data[key] = params[key]
-    print(data)
+    for key, value in params.items():
+        if value != '' and key in total_columns:
+            data[key] = value
+        elif value != '':
+            # 다른 테이블에 저장해야할 값
+            continue
+        elif key in required:
+            raise AssertionError(key)
+
     if "ctmmny_sn" not in data:
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.now()
-
+        if "reg_dtm" not in params:
+            data["regist_dtm"] = datetime.now()
+        else:
+            data["regist_dtm"] = datetime.strptime(params["reg_dtm"], "%Y-%m-%d")
     if "spt_nm" not in data:
         data["spt_nm"] = params['cntrct_nm']
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
 
+    assert len(set(required) - set(data.keys())) == 0, str(set(required) - set(data.keys()))
+
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]
 
     query = """INSERT INTO contract({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
     g.curs.execute(query, data)
+    cntrct_sn = g.curs.lastrowid
+    if data["prjct_creat_at"] == 'Y':
+        g.curs.execute("SHOW COLUMNS FROM project")
+        result = g.curs.fetchall()
+        total_columns = []
+        required = []
+        for r in result:
+            key = r['Field'].lower()
+            if r['Null'] == 'NO' and r['Default'] is None and r['Extra'] != 'auto_increment':
+                required.append(key)
+            if r['Extra'] != 'auto_increment':
+                total_columns.append(key)
 
+        data = OrderedDict()
+        for key, value in params.items():
+            if value != '' and key in total_columns:
+                data[key] = value
+            elif value != '':
+                # 다른 테이블에 저장해야할 값
+                continue
+            elif key in required:
+                raise AssertionError(key)
+
+        if "ctmmny_sn" not in data:
+            data["ctmmny_sn"] = 1
+
+        if "register_id" not in data:
+            data["register_id"] = session["member"]["member_id"]
+
+        if "regist_dtm" not in data:
+            if "reg_dtm" not in params:
+                data["regist_dtm"] = datetime.now()
+            else:
+                data["regist_dtm"] = datetime.strptime(params["reg_dtm"], "%Y-%m-%d")
+
+        if "cntrct_sn" not in data:
+            data["cntrct_sn"] = cntrct_sn
+
+
+        assert len(set(required) - set(data.keys())) == 0, str(set(required) - set(data.keys()))
+
+        sub_query = [key for key in data]
+        params_query = ["%({})s".format(key) for key in data]
+
+        query = """INSERT INTO project({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.execute(query, data)
+        prjct_sn = g.curs.lastrowid
+
+        query = """INSERT INTO charger(cntrct_sn, prjct_sn, charger_se_code, charger_nm, charger_moblphon, charger_telno, regist_dtm, register_id) VALUES (%s, %s, %s, %s, %s, '', NOW(), %s)"""
+        g.curs.execute(query, (cntrct_sn, prjct_sn, 1, params["charger_nm1"], params["charger_moblphon1"], session["member"]["member_id"]))
+        g.curs.execute(query, (cntrct_sn, prjct_sn, 2, params["charger_nm2"], params["charger_moblphon2"], session["member"]["member_id"]))
 
 def get_b_projects(params):
     query = """SELECT cntrct_sn
@@ -1617,10 +1722,130 @@ def get_b_projects(params):
                     , CONCAT(cntrwk_bgnde,' ~ ',cntrwk_endde) AS cntrwk_period
                     , home_count
                     , home_region
-                FROM contract
+                FROM contract 
                 WHERE progrs_sttus_code='B'
+                AND prjct_creat_at='Y'
                 """
 
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+
+def get_project_by_cntrct_nm(cntrct_sn):
+    g.curs.execute("SELECT prjct_sn FROM project WHERE cntrct_sn=%s", (cntrct_sn, ))
+    prjct = g.curs.fetchone()
+    return prjct
+
+def insert_c_project(params):
+    cost_data = []
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    for key in params:
+        if key.endswith("[]"):
+            continue
+        elif key.startswith("C_"):
+            cntrct_execut_code, ct_se_code  = key.split("_")
+            value = params[key].replace(",", "")
+            if value == '':
+                continue
+            column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+
+    for data in cost_data:
+        sub_query = [key for key in data]
+        params_query = ["%({})s".format(key) for key in data]
+
+        query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.execute(query, data)
+
+
+def insert_b_project(params):
+    n_params = {}
+    cost_data = []
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    for key in params:
+        if key.endswith("[]"):
+            if key == "construct_name[]":
+                n_params[key.replace("[]", "")] = params[key]
+            else:
+                n_params[key.replace("[]", "")] = [int(d.replace(",", "")) for d in params[key]]
+        elif key.startswith("B_") or key.startswith("D_"):
+            cntrct_execut_code, ct_se_code  = key.split("_")
+            value = params[key].replace(",", "")
+            if value == '':
+                continue
+            column = "puchas_amount" if cntrct_execut_code == 'D' else "salamt"
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+
+    construct_data = []
+    for n, c, a, t in zip(n_params["construct_name"], n_params["construct_count"], n_params["construct_amt"], n_params["construct_tax"]):
+        construct_data.append({"cntrct_sn" : params["cntrct_sn"], "construct_name" : n, "construct_count" : c, "construct_amt" : a, "construct_tax" : t})
+
+    if construct_data:
+        sub_query = [key for key in construct_data[0]]
+        params_query = ["%({})s".format(key) for key in construct_data[0]]
+
+        query = """INSERT INTO construct({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.executemany(query, construct_data)
+
+    for data in cost_data:
+        sub_query = [key for key in data]
+        params_query = ["%({})s".format(key) for key in data]
+
+        query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.execute(query, data)
+
+
+def insert_option_cost(params):
+    data_e = OrderedDict()
+    data_c = OrderedDict()
+    g.curs.execute("SHOW COLUMNS FROM dspy_option")
+    result = g.curs.fetchall()
+    total_columns = []
+    required = []
+    for r in result:
+        key = r['Field'].lower()
+        if r['Null'] == 'NO' and r['Default'] is None and r['Extra'] != 'auto_increment':
+            required.append(key)
+        if r['Extra'] != 'auto_increment':
+            total_columns.append(key)
+
+    for key in params:
+        if key.startswith("e_"):
+            data_e[key.replace("e_", "")] = params[key]
+        elif key.startswith("c_"):
+            data_e[key.replace("c_", "")] = params[key]
+        elif key in required:
+            data_e[key] = params[key]
+            data_c[key] = params[key]
+        elif key in total_columns and params[key]:
+            data_e[key] = params[key]
+            data_c[key] = params[key]
+
+    data_e["opt_type"] = "E"
+    data_c["opt_type"] = "C"
+
+    for key in data_e:
+        if key in ("opt_amount", "opt_helper"):
+            data_e[key] = data_e[key].replace(",", "")
+            if data_e[key] == '':
+                data_e[key] = 0
+            else:
+                data_e[key] = int(data_e[key])
+    for key in data_c:
+        if key in ("opt_amount", "opt_helper"):
+            data_c[key] = data_c[key].replace(",", "")
+            if data_c[key] == '':
+                data_c[key] = 0
+            else:
+                data_c[key] = int(data_c[key])
+
+    sub_query = [key for key in data_e]
+    params_query = ["%({})s".format(key) for key in data_e]
+
+    query = """INSERT INTO dspy_option({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data_e)
+    sub_query = [key for key in data_c]
+    params_query = ["%({})s".format(key) for key in data_c]
+
+    query = """INSERT INTO dspy_option({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data_c)

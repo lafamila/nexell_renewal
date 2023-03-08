@@ -74,96 +74,116 @@ div.report table th, div.report table td {
 
 <table id="report_contract">
 	<colgroup>
-		<col width="150">
-		<col width="600">
-		<col width="150">
-		<col width="225">
-		<col width="150">
-		<col width="225">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="6">계약관리 보고서 (영업/자동)</th>
+			<th class="sub-title colorN text-center" colspan="8">기본정보 - VAT포함</th>
 		</tr>
 
 	</thead>
 	<tbody>
         <tr>
-			<th class="color-contract">계약번호</th>
-			<td id="manage_no"></td>
-			<th class="color-contract">작성일</th>
+			<th class="color-contract">프로젝트 번호</th>
+			<td id="manage_no" colspan="3"></td>
+			<th class="color-contract">작성일(자동)</th>
 			<td id="regist_dtm"></td>
 			<th class="color-contract">계약일</th>
 			<td id="cntrct_de"></td>
 		</tr>
         <tr>
 			<th class="color-contract">거래처명</th>
-			<td id="bcnc_nm"></td>
+			<td id="bcnc_nm" colspan="3"></td>
 			<th class="color-contract">공사기간</th>
 			<td id="cntrwk_period" colspan="3"></td>
 		</tr>
         <tr>
 			<th class="color-contract">현장명</th>
-			<td id="spt_nm"></td>
+			<td id="spt_nm" colspan="3"></td>
 			<th class="color-contract">현장주소</th>
 			<td id="spt_adres" colspan="3"></td>
 		</tr>
-        <tr>
-			<th class="color-contract">넥셀영업담당</th>
-			<td id="bsn_chrg_nm"></td>
+		<tr>
+			<th class="color-contract">세대수</th>
+			<td id="home_count"></td>
+			<th class="color-contract">지역</th>
+			<td id="home_region"></td>
 			<th class="color-contract">넥셀현장담당</th>
 			<td id="spt_chrg_nm" colspan="3"></td>
 		</tr>
-<!--
         <tr>
-			<th class="color-contract">프로젝트 유형</th>
-			<td></td>
-			<th class="color-contract">프로젝트 생성여부</th>
-			<td colspan="3"></td>
+            <th class="color-contract">프로젝트 유형</th>
+            <th class="hasinput" colspan="3" style="padding:0px!important;">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    {% for code in prjct_ty_code_list %}
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_ty_code" value="{{code.value}}">{{code.label}}
+                    </label>
+                    {% endfor %}
+                </div>
+            </th>
+			<th class="color-contract">넥셀영업담당</th>
+			<td id="bsn_chrg_nm" colspan="3"></td>
 		</tr>
--->
+		<tr>
+            <th class="color-contract">프로젝트 생성여부</th>
+            <th class="hasinput" colspan="3" style="padding:0px!important;">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_creat_at" value="Y">생성
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_creat_at" value="N">단납건
+                    </label>
+                </div>
+            </th>
+            <th class="color-contract">진행상태</th>
+            <th class="hasinput" colspan="3" style="padding:0px!important;">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    {% for code in progrs_sttus_code_list %}
+                    <label class="btn btn-default">
+                        <input type="radio" name="progrs_sttus_code" value="{{code.value}}">{{code.label}}
+                    </label>
+                    {% endfor %}
+                </div>
+            </th>
+		</tr>
 	</tbody>
 	<tfoot>
 	</tfoot>
 </table>
 <table id="report_project">
 	<colgroup>
-		<col width="150">
-		<col width="200">
-		<col width="200">
-		<col width="200">
-		<col width="150">
-
-		<col width="200">
-		<col width="25">
-		<col width="150">
-		<col width="25">
-		<col width="200">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
 	</colgroup>
-    <thead>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="10">프로젝트 진행 예정 보고서 (영업/자동)</th>
-		</tr>
-
-	</thead>
 	<tbody>
 		<tr>
 			<th class="colorSky" rowspan="2">본사담당</th>
 			<th class="colorSky">담당자명</th>
-			<th class="colorSky">휴대폰</th>
-			<th class="colorSky">유선전화</th>
+			<th class="colorSky" colspan="2">휴대폰</th>
 			<th class="colorSky" rowspan="2">거래처담당</th>
 			<th class="colorSky">담당자명</th>
-			<th class="colorSky" colspan="3">휴대폰</th>
-			<th class="colorSky">유선전화</th>
+			<th class="colorSky" colspan="2">휴대폰</th>
 		</tr>
 		<tr>
 			<td id="charger_nm1">-</td>
-			<td id="charger_moblphon1"></td>
-			<td id="charger_telno1"></td>
+			<td id="charger_moblphon1" colspan="2"></td>
 			<td id="charger_nm2">-</td>
-			<td id="charger_moblphon2" colspan="3"></td>
-			<td id="charger_telno2"></td>
+			<td id="charger_moblphon2" colspan="2"></td>
 		</tr>
 <!--
 		<tr>
@@ -175,49 +195,19 @@ div.report table th, div.report table td {
 			<th class="colorSky">장비/공사내역</th>
 			<td colspan="3" id="cntrwk_dtls"></td>
 			<th class="colorSky">계약DC(%)</th>
-            <td id="cntrct_dscnt_rt" colspan="2"></td>
+            <td id="cntrct_dscnt_rt" colspan=""></td>
 			<th class="colorSky">품의DC(%)</th>
-            <td id="cnsul_dscnt_rt" colspan="2"></td>
+            <td id="cnsul_dscnt_rt" colspan="1"></td>
 		</tr>
         <tr>
             <th class="colorSky">도면작업자</th>
 			<td id="drw_opertor_nm" colspan="3"></td>
 			<th class="colorSky">실적신고</th>
-            <td id="acmslt_sttemnt_at" colspan="2"></td>
+            <td id="acmslt_sttemnt_at" colspan="1"></td>
 			<th class="colorSky">건설공사대장</th>
-            <td id="cntwrk_regstr_ennc" colspan="2"></td>
+            <td id="cntwrk_regstr_ennc" colspan="1"></td>
         </tr>
-        <tr>
-			<th class="colorSky">관리사</th>
-			<th class="colorSky">담당자명</th>
-			<th class="colorSky">휴대폰</th>
-			<th class="colorSky">유선전화</th>
-			<th class="colorSky">관리사</th>
-			<th class="colorSky">담당자명</th>
-			<th class="colorSky" colspan="3">휴대폰</th>
-			<th class="colorSky">유선전화</th>
-		</tr>
 
-		<tr>
-			<th class="colorSky">도면품질지도사</th>
-			<td id="charger_nm3"></td>
-			<td id="charger_moblphon3"></td>
-			<td id="charger_telno3"></td>
-			<th class="colorSky">현장품질관리사</th>
-			<td id="charger_nm4"></td>
-			<td id="charger_moblphon4" colspan="3"></td>
-			<td id="charger_telno4"></td>
-		</tr>
-		<tr>
-			<th class="colorSky">현장관리자</th>
-			<td id="charger_nm5"></td>
-			<td id="charger_moblphon5"></td>
-			<td id="charger_telno5"></td>
-			<th class="colorSky">설치팀장</th>
-			<td id="charger_nm6"></td>
-			<td id="charger_moblphon6" colspan="3"></td>
-			<td id="charger_telno6"></td>
-		</tr>
 	</tbody>
 </table>
 <!-- ---------------------------------------------------------------------- -->
@@ -225,19 +215,16 @@ div.report table th, div.report table td {
 <!-- ---------------------------------------------------------------------- -->
 <table id="rptTable3">
 	<colgroup>
-		<col width="145">
-		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="*">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
 	</colgroup>
-	<thead>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="7">공사비 산출 및 대금 입금방법 (영업/자동) - VAT 포함</th>
-		</tr>
-	</thead>
+	<!--
 	<tbody id="cCostList">
 		<tr>
 			<th class="colorSky">설치공사금액산출</th>
@@ -258,116 +245,174 @@ div.report table th, div.report table td {
 			<td class="text-number" id="cCost5_total"></td>
 		</tr>
 	</tbody>
+	-->
 	<tbody>
 		<tr>
 			<th class="colorSky" colspan="1">결제방법(1)</th>
-			<td class="text-left" colspan="6" id="setle_mth"></td>
+			<td class="text-left" colspan="7" id="setle_mth"></td>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">결제방법(2)</th>
-			<th class="colorSky" colspan="3">금액</th>
-			<th class="colorSky" colspan="2">일자</th>
-			<th class="colorSky">비고(특이사항)</th>
+			<th class="colorSky" colspan="2">금액</th>
+			<th class="colorSky" colspan="1">일자</th>
+			<th class="colorSky" colspan="4">비고(특이사항)</th>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">계약금</th>
-			<td class="text-number" colspan="3" id="enty"></td>
-			<td colspan="2" id="enty_de"></td>
-			<td id="enty_rm"></td>
+			<td class="text-number" colspan="2" id="enty"></td>
+			<td colspan="1" id="enty_de"></td>
+			<td id="enty_rm" colspan="4"></td>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">중도금</th>
-			<td class="text-number" colspan="3" id="prtpay"></td>
-			<td colspan="2" id="prtpay_de"></td>
-			<td id="prtpay_rm"></td>
+			<td class="text-number" colspan="2" id="prtpay"></td>
+			<td colspan="1" id="prtpay_de"></td>
+			<td id="prtpay_rm" colspan="4"></td>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">잔금</th>
-			<td class="text-number" colspan="3" id="surlus"></td>
-			<td colspan="2" id="surlus_de"></td>
-			<td id="surlus_rm"></td>
+			<td class="text-number" colspan="2" id="surlus"></td>
+			<td colspan="1" id="surlus_de"></td>
+			<td id="surlus_rm" colspan="4"></td>
 		</tr>
 	</tbody>
 </table>
+<table id="construct">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="7" style="border-right:0px!important;">공사비 산출 (영업/자동)</th>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">실내기대수</th>
+            <th class="color-contract text-center">대당단가</th>
+            <th class="color-contract text-center">공급가액</th>
+            <th class="color-contract text-center">세액</th>
+            <th class="color-contract text-center">합계</th>
+            <th class="color-contract text-center">공사비총액</th>
+        </tr>
+    </thead>
+    <tbody role="construct_row">
+
+    </tbody>
+</table>
 <table id="report_patrol">
 	<colgroup>
-		<col width="150">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="110">
-		<col width="120">
-		<col width="70">
-		<col width="70">
-		<col width="140">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorN text-center">투찰(사전입찰)</th>
-			<th class="colorSky">삼성장비매입금액</th>
-			<th class="colorSky">타사매입</th>
-			<th class="colorSky">설치비</th>
-			<th class="colorSky">로지텍자재</th>
-			<th class="colorSky">기타자재</th>
-			<th class="colorSky">옵션행사비</th>
-			<th class="colorSky">간접비</th>
-			<th class="colorSky">기타</th>
-			<th class="colorSky">M,S/H</th>
-			<th class="colorSky" colspan="3">총액</th>
+			<th class="colorN text-center">구분</th>
+			<th class="color-contract text-center">내역</th>
+			<th class="color-contract text-center">삼성장비</th>
+			<th class="color-contract text-center">타사장비</th>
+			<th class="color-contract text-center">설치비</th>
+			<th class="color-contract text-center">간접비</th>
+			<th class="color-contract text-center">로지텍자재</th>
+			<th class="color-contract text-center">타사자재</th>
+			<th class="color-contract text-center">기타(총액 0.5%)</th>
+			<th class="color-contract text-center">M,S/H(기준표)</th>
+			<th class="color-contract text-center">옵션행사비(기준표)</th>
+			<th class="color-contract text-center">설계변경</th>
+			<th class="color-contract text-center">총액</th>
+			<th class="colorLP text-center">이익금(VA)</th>
+			<th class="colorLP text-center">VA율</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody role="patrol">
 		<tr>
-			<th class="colorSky">㉠ 예정가</th>
+			<th class="colorN text-center" rowspan="2">사전입찰</th>
+			<th class="colorSky">예정가</th>
 			<td class="text-number" id="aCost1"></td>
 			<td class="text-number" id="aCost2"></td>
 			<td class="text-number" id="aCost5"></td>
+			<td class="text-number" id="aCost8"></td>
 			<td class="text-number" id="aCost3"></td>
 			<td class="text-number" id="aCost4"></td>
-			<td class="text-number" id="aCost7"></td>
-			<td class="text-number" id="aCost8"></td>
 			<td class="text-number" id="aCost10"></td>
 			<td class="text-number" id="aCost61"></td>
-			<th class="text-number colorY" id="aCostTotal" colspan="3"></th>
+			<td class="text-number" id="aCost7"></td>
+			<td class="text-number" id="aCost99"></td>
+			<td class="text-number" id="aCostTotal"></td>
+			<td class="text-number" id="sCostTotal" rowspan="2"></td>
+			<td class="text-number" id="sCost11" rowspan="2"></td>
 		</tr>
 		<tr>
 			<th class="colorSky">실행가</th>
 			<td class="text-number" id="bCost1"></td>
 			<td class="text-number" id="bCost2"></td>
 			<td class="text-number" id="bCost5"></td>
+			<td class="text-number" id="bCost8"></td>
 			<td class="text-number" id="bCost3"></td>
 			<td class="text-number" id="bCost4"></td>
-			<td class="text-number" id="bCost7"></td>
-			<td class="text-number" id="bCost8"></td>
 			<td class="text-number" id="bCost10"></td>
 			<td class="text-number" id="bCost61"></td>
-			<td class="text-number color0" id="bCostTotal" colspan="3"></td>
+			<td class="text-number" id="bCost7"></td>
+			<td class="text-number" id="bCost99"></td>
+			<td class="text-number" id="bCostTotal"></td>
 		</tr>
 	</tbody>
-	<tfoot>
+	<tbody role="plan">
 		<tr>
-			<th class="colorSky">차액</th>
-			<td class="text-number" id="sCost1"></td>
-			<td class="text-number" id="sCost2"></td>
-			<td class="text-number" id="sCost5"></td>
-			<td class="text-number" id="sCost3"></td>
-			<td class="text-number" id="sCost4"></td>
-			<td class="text-number" id="sCost7"></td>
-			<td class="text-number footer" id="sCost8"></td>
-			<td class="text-number" id="sCost10"></td>
-			<td class="text-number" id="sCost61"></td>
-			<th class="colorLP">VA</th>
-			<td class="text-number" id="sCost11"></td>
-			<th class="text-number colorY" id="sCostTotal"></th>
+			<th class="colorN text-center" rowspan="2">수주계약</th>
+			<th class="colorSky">계약가</th>
+			<td class="text-number" id="cCost1"></td>
+			<td class="text-number" id="cCost2"></td>
+			<td class="text-number" id="cCost5"></td>
+			<td class="text-number" id="cCost8"></td>
+			<td class="text-number" id="cCost3"></td>
+			<td class="text-number" id="cCost4"></td>
+			<td class="text-number" id="cCost10"></td>
+			<td class="text-number" id="cCost61"></td>
+			<td class="text-number" id="cCost7"></td>
+			<td class="text-number" id="cCost99"></td>
+			<td class="text-number" id="cCostTotal"></td>
+			<td class="text-number" id="tCostTotal" rowspan="2"></td>
+			<td class="text-number" id="tCost11" rowspan="2"></td>
 		</tr>
-	</tfoot>
+		<tr>
+			<th class="colorSky">실행가</th>
+			<td class="text-number" id="eCost1"></td>
+			<td class="text-number" id="eCost2"></td>
+			<td class="text-number" id="eCost5"></td>
+			<td class="text-number" id="eCost8"></td>
+			<td class="text-number" id="eCost3"></td>
+			<td class="text-number" id="eCost4"></td>
+			<td class="text-number" id="eCost10"></td>
+			<td class="text-number" id="eCost61"></td>
+			<td class="text-number" id="eCost7"></td>
+			<td class="text-number" id="eCost99"></td>
+			<td class="text-number" id="eCostTotal"></td>
+		</tr>
+	</tbody>
 </table>
 
 <!-- ---------------------------------------------------------------------- -->
+				<!--
 <table id="report_plan">
 	<colgroup>
 		<col width="150">
@@ -449,7 +494,8 @@ div.report table th, div.report table td {
 			<th class="text-number colorY" id="tCostTotal"></th>
 		</tr>
 	</tfoot>
-</table><!-- ---------------------------------------------------------------------- -->
+</table>
+-->
 <table id="report_exec">
 	<colgroup>
 		<col width="145">
@@ -756,53 +802,58 @@ div.report table th, div.report table td {
 <table>
 	<tbody role="header">
 		<tr>
-			<th class="sub-title colorN text-center" colspan="10">⑦ M,S/H 비용 (자동) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="10">⑦ M/H, S/H 비용</th>
 		</tr>
 	</tbody>
 	<tbody role="body1">
 
 		<table id="rptTable14"><!--모델하우스-->
 			<colgroup>
-				<col width="145">
-				<col width="*">
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
+				<col width="100"/>
 			</colgroup>
 			<tbody class="">
-				<tr>
-					<th class="colorG" colspan="1" rowspan="3">출고일</th>
-					<th class="colorG" colspan="1" rowspan="3">모델명</th>
-					<th class="colorG" colspan="7">본사견적가(장비)</th>
-					<th class="colorG" colspan="1" rowspan="3">매입처</th>
-					<th class="color-contract" colspan="1" rowspan="3">회수일</th>
-					<th class="color-contract" colspan="1" rowspan="3">수량</th>
-					<th class="colorG" colspan="1" rowspan="3">비고</th>
-				</tr>
-				<tr>
-					<th class="colorG" colspan="5">수량</th>
-					<th class="colorG" colspan="1" rowspan="2">매입단가</th>
-					<th class="colorG" colspan="1" rowspan="2">매입금액</th>
-				</tr>
-				<tr>
-					<th class="colorG" colspan="1">실내기</th>
-					<th class="colorG" colspan="1">실외기</th>
-					<th class="colorG" colspan="1">분기관</th>
-					<th class="colorG" colspan="1">판넬</th>
-					<th class="colorG" colspan="1">기타</th>
-				</tr>
+				<th class="color-contract text-center">출고일</th>
+				<th class="color-contract text-center">상품명</th>
+				<th class="color-contract text-center">모델명</th>
+				<th class="color-contract text-center">매입단가</th>
+				<th class="color-contract text-center">수량</th>
+				<th class="color-contract text-center">매입금액</th>
+				<th class="color-contract text-center">매입처</th>
+				<th class="color-contract text-center">회수 예정일</th>
+				<th class="colorP text-center">회수일</th>
+				<th class="colorP text-center">회수수량</th>
+				<th class="colorP text-center">차이수량</th>
+				<th class="colorP text-center">회수창고</th>
+				<th class="colorP text-center">비고</th>
 			</tbody>
-			<tbody role="body"></tbody>
-			<tfoot>
-				<th class="colorG" colspan="2">합계</th>
-				<th class="text-number colorG"></th>
-				<th class="text-number colorG"></th>
-				<th class="text-number colorG"></th>
-				<th class="text-number colorG"></th>
-				<th class="text-number colorG"></th>
-				<th class="text-number colorG"></th>
-				<th class="text-number colorP"></th>
-				<th class="colorG"></th>
-				<th class="color-contract"></th>
-				<th class="text-number color-contract"></th>
-				<th class="colorG"></th>
+			<tbody role="body">
+
+			</tbody>
+		    <tfoot>
+				<tr>
+					<th class="colorG text-center" colspan="4">합계</th>
+					<th class="colorG text-center" data-column="total_dlnt"></th>
+					<th class="colorP text-right" data-column="total_amount"></th>
+					<th class="colorG"></th>
+					<th class="colorG"></th>
+					<th class="colorG"></th>
+					<th class="colorG"></th>
+					<th class="colorG text-center" data-column="total_diff"></th>
+					<th class="colorG"></th>
+					<th class="colorG"></th>
+				</tr>
 			</tfoot>
 		</table>
 
@@ -870,6 +921,7 @@ div.report table th, div.report table td {
 				var contract = pResult.contract;
 				var project = pResult.project;
 				var charger = pResult.charger;
+				var construct = pResult.construct;
 
 				$('#popReportNR').find('td').html('');
 
@@ -883,6 +935,14 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#bcnc_nm').html(contract.bcnc_nm); //거래처
 				$('#popReportNR').find('#spt_nm').html(contract.spt_nm); //현장명
 				$('#popReportNR').find('#cntrwk_period').html(contract.cntrwk_period); //공사기간
+				$('#popReportNR').find('#home_count').html(contract.home_count); //세대수
+				$('#popReportNR').find('#home_region').html(contract.home_region); //지역
+				$('#popReportNR').find('[name=prjct_ty_code]').yVal(contract.prjct_ty_code); //프로젝트 유형
+				$('#popReportNR').find('[name=prjct_ty_code]').yReadonly(true); //프로젝트 유형
+				$('#popReportNR').find('[name=prjct_creat_at]').yVal(contract.prjct_creat_at); //프로젝트 생성
+				$('#popReportNR').find('[name=prjct_creat_at]').yReadonly(true); //프로젝트 생성
+				$('#popReportNR').find('[name=progrs_sttus_code]').yVal(contract.progrs_sttus_code); //프로젝트 진행
+				$('#popReportNR').find('[name=progrs_sttus_code]').yReadonly(true); //프로젝트 진행
 
                 $('#popReportNR').find('#biss_a').html(biss2text(contract.biss_a));
                 $('#popReportNR').find('#biss_b').html(biss2text(contract.biss_b));
@@ -903,11 +963,28 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#cntwrk_regstr_ennc').html(project.cntwrk_regstr_ennc); //건설공사대장
 
 				$.each(charger, function(pIndex, pValue) { //담당자정보
-					$('#popReportNR').find('#charger_sn'+pValue.charger_se_code).html(pValue.charger_sn);
 					$('#popReportNR').find('#charger_nm'+pValue.charger_se_code).html(pValue.charger_nm);
-					$('#popReportNR').find('#charger_telno'+pValue.charger_se_code).html(pValue.charger_telno);
 					$('#popReportNR').find('#charger_moblphon'+pValue.charger_se_code).html(pValue.charger_moblphon);
 				});
+
+				var html = ``;
+				var construct_total = 0;
+				$.each(construct, function(pIndex, pValue){
+					construct_total += (pValue.construct_count*pValue.construct_amt + pValue.construct_tax);
+					html += `<tr>
+								<td class="text-center">${pValue.construct_name}</td>
+								<td class="text-center">${pValue.construct_count.toFormat('NUMBER')}</td>
+								<td class="text-right">${pValue.construct_amt.toFormat('NUMBER')}</td>
+								<td class="text-right">${(pValue.construct_count*pValue.construct_amt).toFormat('NUMBER')}</td>
+								<td class="text-right">${pValue.construct_tax.toFormat('NUMBER')}</td>
+								<td class="text-right">${(pValue.construct_count*pValue.construct_amt + pValue.construct_tax).toFormat('NUMBER')}</td>
+								<td class="text-right colorP"></td>
+							 </tr>`;
+				});
+				$("#popReportNR").find('tbody[role="construct_row"]').html(html);
+				$("#popReportNR").find('tbody[role="construct_row"]').find(".colorP").html(construct_total.toFormat('NUMBER'));
+				$("#popReportNR").find('tbody[role="construct_row"]').yRowspan(6);
+
 				/* ********************************************************* */
 
                 /* 프로젝트 진행 투찰 예정 보고서(영업) */
@@ -978,12 +1055,12 @@ div.report table th, div.report table td {
 				var tCostTotal = cCostTotal - eCostTotal;
 				$('#popReportNR').find('#sCostTotal').html(tCostTotal.toString().toFormat('NUMBER'));
                 $('#popReportNR').find('#sCost11').html((tCostTotal*100.0/cCostTotal).toFixed(1)+'%')
-                if(cCostTotal == 0 && eCostTotal == 0){
-                    $('#report_patrol').hide();
-                }
-                else{
+                // if(cCostTotal == 0 && eCostTotal == 0){
+                //     $('#report_patrol').hide();
+                // }
+                // else{
                     $('#report_patrol').show();
-                }
+                // }
 
 				/* 프로젝트 진행 예정 보고서(영업) */
 				/* ********************************************************* */
@@ -1658,6 +1735,40 @@ div.report table th, div.report table td {
 
 				/* 모델하우스 */
 				/* ********************************************************* */
+				var model_cost_list = pResult.sModelCostList;
+				var html = '';
+				var total_dlnt = 0;
+				var total_amount = 0;
+				var total_diff = 0;
+				$.each(model_cost_list, function(pIndex, pValue){
+					var dlamt = parseInt(pValue.dlamt); if(isNaN(dlamt)) dlamt = 0;
+					var dlnt = parseInt(pValue.dlnt); if(isNaN(dlnt)) dlnt = 0;
+					var amount = dlamt*dlnt;
+					var diff = dlnt - 0;
+					total_dlnt += dlnt;
+					total_amount += amount;
+					total_diff += diff;
+					html += `<tr>
+								<td class="text-center">${pValue.dlivy_de}</td>
+								<td class="text-center">${pValue.prdlst_se_nm}</td>
+								<td class="text-center">${pValue.model_no}</td>
+								<td class="text-right">${dlamt.toFormat('NUMBER')}</td>
+								<td class="text-center">${dlnt.toFormat('NUMBER')}</td>
+								<td class="text-right">${amount.toFormat('NUMBER')}</td>
+								<td class="text-center">${pValue.bcnc_nm}</td>
+								<td class="text-center">${pValue.expect_de}</td>
+								<td class="text-center"></td>
+								<td class="text-center"></td>
+								<td class="text-center">${diff.toFormat('NUMBER')}</td>
+								<td class="text-center"></td>
+								<td class="text-center"></td>
+							</tr>`
+				});
+				$('#popReportNR').find('#rptTable14 tbody[role=body]').html(html);
+				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
+				/*
 				var html = '';
 				var s61AccountList = pResult.s61AccountList;
 				var dlnt1_total = 0, dlnt2_total = 0, dlnt3_total = 0, dlnt4_total = 0, dlnt9_total = 0;
@@ -1737,8 +1848,7 @@ div.report table th, div.report table td {
 //				$('#popReportNR').find('#rptTable14 tfoot th:eq(8)').html(va_total.toString().toFormat('NUMBER'));
 //				$('#popReportNR').find('#rptTable14 tfoot th:eq(9)').html(va_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(7)').html(p_sum_total.toString().toFormat('NUMBER'));
-				/* ********************************************************* */
-
+				*/
 				/* M/SH, 옵션 */
 				/* ********************************************************* */
 				var html = '';
