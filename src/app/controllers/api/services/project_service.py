@@ -1813,7 +1813,7 @@ def insert_option_cost(params):
         if key.startswith("e_"):
             data_e[key.replace("e_", "")] = params[key]
         elif key.startswith("c_"):
-            data_e[key.replace("c_", "")] = params[key]
+            data_c[key.replace("c_", "")] = params[key]
         elif key in required:
             data_e[key] = params[key]
             data_c[key] = params[key]
@@ -1831,6 +1831,9 @@ def insert_option_cost(params):
                 data_e[key] = 0
             else:
                 data_e[key] = int(data_e[key])
+        elif key in ('opt_dtm', 'opt_pay_dtm'):
+            if data_e[key] == '':
+                data_e[key] = None
     for key in data_c:
         if key in ("opt_amount", "opt_helper"):
             data_c[key] = data_c[key].replace(",", "")
@@ -1838,6 +1841,9 @@ def insert_option_cost(params):
                 data_c[key] = 0
             else:
                 data_c[key] = int(data_c[key])
+        elif key in ('opt_dtm', 'opt_pay_dtm'):
+            if data_c[key] == '':
+                data_c[key] = None
 
     sub_query = [key for key in data_e]
     params_query = ["%({})s".format(key) for key in data_e]
@@ -1849,3 +1855,28 @@ def insert_option_cost(params):
 
     query = """INSERT INTO dspy_option({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
     g.curs.execute(query, data_c)
+
+
+def get_option_cost_list(params):
+    query = """SELECT c.opt_period AS c_opt_period
+                    , c.opt_dtm AS c_opt_dtm
+                    , c.opt_helper AS c_opt_helper
+                    , c.opt_rate AS c_opt_rate
+                    , c.opt_amount AS c_opt_amount
+                    , c.opt_pay_dtm AS c_opt_pay_dtm
+                    , c.opt_rm AS c_opt_rm
+                    , e.opt_period AS e_opt_period
+                    , e.opt_dtm AS e_opt_dtm
+                    , e.opt_helper AS e_opt_helper
+                    , e.opt_rate AS e_opt_rate
+                    , e.opt_amount AS e_opt_amount
+                    , e.opt_pay_dtm AS e_opt_pay_dtm
+                    , e.opt_rm AS e_opt_rm
+                FROM (SELECT * FROM dspy_option WHERE opt_type='C') c 
+                LEFT OUTER JOIN (SELECT * FROM dspy_option WHERE opt_type='E') e
+                ON c.cntrct_sn=e.cntrct_sn
+                WHERE 1=1
+                AND c.cntrct_sn=%(s_cntrct_sn)s """
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result

@@ -498,28 +498,44 @@ div.report table th, div.report table td {
 -->
 <table id="report_exec">
 	<colgroup>
-		<col width="145">
-		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="120">
+		<col width="120">
 	</colgroup>
-	<tbody>
+	<thead>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="11">결산내역 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="14">결산내역 (관리) - VAT포함</th>
 		</tr>
-		<tr>
-			<th class="colorP">공사비(계약)총액</th>
-			<th class="colorP">입금합계</th>
-			<th class="colorP">① 삼성장비매입금액</th>
-			<th class="colorP">② 타사매입</th>
-			<th class="colorP">③ 설치비</th>
-			<th class="colorP">④ 로지텍자재</th>
-			<th class="colorP">⑤ 기타자재</th>
-			<th class="colorP">⑥ 기타비용(0.5% 이상), 옵션행사비</th>
-			<th class="colorP">⑦ M,S/H</th>
-			<th class="colorP" colspan="2">VA(%)</th>
-		</tr>
-	</tbody>
+	</thead>
 	<tbody role="body">
 		<tr>
+			<th class="colorN" rowspan="2">결산내역</th>
+			<th class="colorP">공사비(계약)총액</th>
+			<th class="colorP">입금합계</th>
+			<th class="colorP">①삼성장비</th>
+			<th class="colorP">②타사장비</th>
+			<th class="colorP">③설치비</th>
+			<th class="colorP">④간접비</th>
+			<th class="colorP">⑤로지텍자재</th>
+			<th class="colorP">⑥타사자재</th>
+			<th class="colorP">⑦M,S/H</th>
+			<th class="colorP">⑧옵션행사비</th>
+			<th class="colorP">⑨기타(총액 0.5%)</th>
+			<th class="colorLP">이익금(VA)</th>
+			<th class="colorLP">VA율</th>
+		</tr>
+		<tr data-row="result">
 			<td class="text-number colorP"></td>
 			<th class="text-number colorP"></th>
 			<td class="text-number"></td>
@@ -531,6 +547,8 @@ div.report table th, div.report table td {
 			<td class="text-number"></td>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-center"></td>
 		</tr>
 	</tbody>
 </table>
@@ -640,7 +658,7 @@ div.report table th, div.report table td {
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="9">② 타사매입 (관리/자동) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="9">② 타사장비 (관리/자동) - VAT포함</th>
 		</tr>
 		<tr>
 			<th class="colorG" colspan="1" rowspan="2">출고일</th>
@@ -703,7 +721,7 @@ div.report table th, div.report table td {
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="8">④ 로지텍 자재 (관리/자동) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="8">⑤ 로지텍자재 (관리)</th>
 		</tr>
 		<tr>
 			<th class="colorG">날짜</th>
@@ -743,7 +761,7 @@ div.report table th, div.report table td {
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="7">⑤ 기타 자재 (관리/자동) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="7">⑥ 타사자재</th>
 		</tr>
 		<tr>
 			<th class="colorG">날짜</th>
@@ -765,36 +783,6 @@ div.report table th, div.report table td {
 			<th class="text-number colorG"></th>
 			<th class="text-number colorP"></th>
 			<th class="colorG"></th>
-		</tr>
-	</tfoot>
-</table>
-<!-- ---------------------------------------------------------------------- -->
-<table id="rptTable12">
-	<colgroup>
-		<col width="145">
-		<col width="150">
-		<col width="*">
-	</colgroup>
-	<tbody>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="5">⑥ 기타비용(0.5% 이상), 옵션행사비 (자동) - VAT포함</th>
-		</tr>
-		<tr>
-			<th class="colorY">일자</th>
-			<th class="colorY">계정과목</th>
-			<th class="colorY">내역</th>
-			<th class="colorY">지출자</th>
-			<th class="colorY">금액</th>
-		</tr>
-	</tbody>
-	<tbody role="body"></tbody>
-	<tfoot>
-		<tr>
-			<th class="colorY">합계</th>
-			<th class="colorY"></th>
-			<th class="colorY"></th>
-			<th class="colorY"></th>
-			<th class="colorP text-number"></th>
 		</tr>
 	</tfoot>
 </table>
@@ -899,6 +887,98 @@ div.report table th, div.report table td {
 		</table>
 
 	</tbody>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTableOpt">
+	<colgroup>
+		<col width="80"/>
+		<col width="100"/>
+		<col width="100"/>
+		<col width="100"/>
+		<col width="100"/>
+		<col width="160"/>
+		<col width="100"/>
+		<col width="140"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8">⑧ 옵션행사비</th>
+		</tr>
+		<tr>
+			<th class="color-contract text-center">구분</th>
+			<th class="color-contract text-center">행사기간</th>
+			<th class="color-contract text-center">행사일(일)</th>
+			<th class="color-contract text-center">도우미(명)</th>
+			<th class="color-contract text-center">옵션율</th>
+			<th class="color-contract text-center">옵션행사비</th>
+			<th class="color-contract text-center">행사비 지급일</th>
+			<th class="color-contract text-center">비고</th>
+		</tr>
+	</thead>
+	<tbody role="body">
+		<tr>
+			<th class="colorSky text-center">예상</th>
+			<td class="text-center" data-column="e_opt_period"></td>
+			<td class="text-center" data-column="e_opt_dtm"></td>
+			<td class="text-center" data-type="number" data-column="e_opt_helper"></td>
+			<td class="text-center" data-column="e_opt_rate"></td>
+			<td class="text-right" data-type="number" data-column="e_opt_amount"></td>
+			<td class="text-center" data-column="e_opt_pay_dtm"></td>
+			<td class="text-center" data-column="e_opt_rm"></td>
+		</tr>
+		<tr>
+			<th class="colorSky text-center">정산</th>
+			<td class="text-center" data-column="c_opt_period"></td>
+			<td class="text-center" data-column="c_opt_dtm"></td>
+			<td class="text-center" data-type="number" data-column="c_opt_helper"></td>
+			<td class="text-center" data-column="c_opt_rate"></td>
+			<td class="colorP text-right" data-type="number" data-column="c_opt_amount"></td>
+			<td class="text-center" data-column="c_opt_pay_dtm"></td>
+			<td class="text-center" data-column="c_opt_rm"></td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<th class="colorG text-center">차이</th>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-right" data-column="diff"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+		</tr>
+	</tfoot>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable12">
+	<colgroup>
+		<col width="145">
+		<col width="150">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="5">⑨ 기타비용(관리)</th>
+		</tr>
+		<tr>
+			<th class="colorY">일자</th>
+			<th class="colorY">계정과목</th>
+			<th class="colorY">내역</th>
+			<th class="colorY">지출자</th>
+			<th class="colorY">금액</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+	<tfoot>
+		<tr>
+			<th class="colorY">합계</th>
+			<th class="colorY"></th>
+			<th class="colorY"></th>
+			<th class="colorY"></th>
+			<th class="colorP text-number"></th>
+		</tr>
+	</tfoot>
 </table>
 
 <!-- <div id="img-out"></div> -->
@@ -1100,7 +1180,7 @@ div.report table th, div.report table td {
 
 //				if (cCostTotal != 0) {
 					$('#popReportNR').find('#cCostTotal').html(cCostTotal.toString().toFormat('NUMBER'));
-					$('#popReportNR').find('#report_exec tbody[role=body] td:eq(0)').html(cCostTotal.toString().toFormat('NUMBER'));
+					$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(0)').html(cCostTotal.toString().toFormat('NUMBER'));
 //				}
 //				if (eCostTotal != 0) {
 					$('#popReportNR').find('#eCostTotal').html(eCostTotal.toString().toFormat('NUMBER'));
@@ -1353,7 +1433,7 @@ div.report table th, div.report table td {
 					html += '</tr>';
                     amt_tot += amount_total;
 				});
-                $('#popReportNR').find('#report_exec tbody[role=body] th:eq(0)').html(amt_tot.toString().toFormat('NUMBER'));
+                $('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(0)').html(amt_tot.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rcppay_status tbody[role=body]').html(html);
 				/* ********************************************************* */
 
@@ -1397,7 +1477,7 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#rptTable7 tfoot th:eq(7)').html(p_sum_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable7 tfoot th:eq(8)').html(s_sum_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable7 tfoot th:eq(9)').html(va_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 장비매입금액(타사) */
@@ -1428,7 +1508,7 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#rptTable8 tfoot th:eq(4)').html(p_sum_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable8 tfoot th:eq(5)').html(s_sum_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable8 tfoot th:eq(6)').html(va_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(2)').html(p_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(2)').html(p_sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 설치비 산출 및 지급내역 */
@@ -1633,7 +1713,7 @@ div.report table th, div.report table td {
 					all_amt_total += amount_total;
 				});
 				$('#popReportNR').find('#rptTable9 tbody[role=body]').html(html);
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(3)').html(all_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(3)').html(all_sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 로지텍자재 */
@@ -1667,7 +1747,7 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(4)').html(amt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(5)').html(vat_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(6)').html(sum_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 기타자재 */
@@ -1696,7 +1776,7 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(3)').html(amt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(4)').html(vat_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(6)').html(sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 기타 */
@@ -1730,7 +1810,7 @@ div.report table th, div.report table td {
 //				});
 				$('#popReportNR').find('#rptTable12 tbody[role=body]').html(html);
 				$('#popReportNR').find('#rptTable12 tfoot th:eq(4)').html(amt_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(6)').html(amt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(9)').html(amt_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 모델하우스 */
@@ -1767,6 +1847,8 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#rptTable14 tbody[role=body]').html(html);
 				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(7)').html(total_amount.toFormat('NUMBER'));
+
 				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
 				/*
 				var html = '';
@@ -1850,6 +1932,27 @@ div.report table th, div.report table td {
 				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(7)').html(p_sum_total.toString().toFormat('NUMBER'));
 				*/
 				/* M/SH, 옵션 */
+				var html = '';
+				var dspyOptionList = pResult.sOptionCostList;
+				console.log(dspyOptionList);
+				if(dspyOptionList != null){
+					$.each(dspyOptionList, function(pKey, pValue){
+						var target = $(document).find(`#rptTableOpt tbody[role=body] [data-column='${pKey}']`);
+						if($(target).data("type") != 'number'){
+							$(target).html(pValue);
+						}
+						else{
+							$(target).html(pValue.toFormat('NUMBER'));
+						}
+					});
+					var c_opt_amount = parseInt(dspyOptionList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
+					var e_opt_amount = parseInt(dspyOptionList.e_opt_amount); if(isNaN(e_opt_amount)) e_opt_amount = 0;
+
+					var diff = e_opt_amount - c_opt_amount;
+					$(document).find(`#rptTableOpt tfoot [data-column='diff']`).html(diff.toFormat('NUMBER'));
+					$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(8)').html(c_opt_amount.toFormat('NUMBER'));
+				}
+
 				/* ********************************************************* */
 				var html = '';
 				var dspyCostList = pResult.dspyCostList;
@@ -1885,7 +1988,7 @@ div.report table th, div.report table td {
 
 				/* 결산내역 (관리) */
 				/* ********************************************************* */
-				var execData = $('#popReportNR').find('#report_exec tbody[role=body] td');
+				var execData = $('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td');
 				var execAmt0 = $(execData[0]).html().replaceAll(',', '');
 				if (execAmt0 != '') {
 					execAmt0 = parseInt(execAmt0);
@@ -1940,10 +2043,16 @@ div.report table th, div.report table td {
 				} else {
 					execAmt8 = 0;
 				}
-				var vaTotal = execAmt0 - execAmt1 - execAmt2 - execAmt3 - execAmt4 - execAmt5 - execAmt6 - execAmt7 - execAmt8;
+				var execAmt9 = $(execData[9]).html().replaceAll(',', '');
+				if (execAmt9 != '') {
+					execAmt9 = parseInt(execAmt9);
+				} else {
+					execAmt9 = 0;
+				}
+				var vaTotal = execAmt0 - execAmt1 - execAmt2 - execAmt3 - execAmt4 - execAmt5 - execAmt6 - execAmt7 - execAmt8 - execAmt9;
 				var vaRate = (vaTotal/execAmt0)*100;
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(8)').html(vaTotal.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] td:eq(9)').html(vaRate.toFixed(1)+'%');
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(10)').html(vaTotal.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(11)').html(vaRate.toFixed(1)+'%');
 				/* ********************************************************* */
 
 				/* 특이사항 */

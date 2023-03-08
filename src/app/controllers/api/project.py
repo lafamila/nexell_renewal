@@ -61,6 +61,7 @@ def ajax_get_reportNR():
     result['s4AccountList'] = prj.get_s4_account_report_list(params)
     result['s61AccountList'] = prj.get_s61_account_report_list(params)
     result['sModelCostList'] = prj.get_model_cost_list(params)
+    result['sOptionCostList'] = prj.get_option_cost_list(params)
     result['outsrcList'] = prj.get_outsrc_report_list(params)
 
     #TODO : modelList api
