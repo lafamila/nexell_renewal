@@ -88,7 +88,7 @@ tbody .btnUpdate, tbody .btn{
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
                         <h2>빌트인 현장현황</h2>
 						<div class="widget-toolbar">
-                            <h2>VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <h2>VAT 포함 (단위 : 천원)</h2>&nbsp;&nbsp;&nbsp;
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
 <!--                            <button type="button" class="btn btn-info" id="s_submit">검색</button>-->
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
@@ -496,7 +496,7 @@ tbody .btnUpdate, tbody .btn{
               if(before != pValue.progrs_order && before != -1){
                 html += `<tr class="total">
                             <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>
-                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
                             <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
@@ -534,7 +534,7 @@ tbody .btnUpdate, tbody .btn{
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.prjct_ty_nm}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.bsn_chrg_nm}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.chrg_nm}</td>
-                            <td class="bold colorBtn top_border middle right_border ${_class}" style="text-align:right;">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+                            <td class="bold colorBtn top_border middle right_border ${_class}" style="text-align:right;">${Math.round(pValue.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
                             <td class="bold colorBtn top_border text-center ${_class} m-date" style="text-align:left;"></td>
                             <td class="bold colorBtn top_border text-center ${_class} m-t-date" style="text-align:left;"></td>
                             <td class="bold colorBtn top_border text-right ${_class} m-t-date" style="text-align:left;"></td>
@@ -569,7 +569,7 @@ tbody .btnUpdate, tbody .btn{
               if(pIndex == pResult.data.length - 1){
                 html += `<tr class="total">
                             <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>
-                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
                             <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
                             <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
@@ -654,21 +654,21 @@ tbody .btnUpdate, tbody .btn{
 
             	$.each(pRow.M, function(pIndex, pValue){
 	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(0).text(pValue[0]);
-	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(1).text(Math.round(pValue[1]/10000));
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(1).text(Math.round(pValue[1]/1000));
 	            	mTotal += pValue[1];
 				});
             	$.each(pRow.S, function(pIndex, pValue){
 	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(0).text(pValue[0]);
-	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(1).text(Math.round(pValue[1]/10000));
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(1).text(Math.round(pValue[1]/1000));
 	            	sTotal += pValue[1];
 				});
             	$.each(pRow.T, function(pIndex, pValue){
 	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(0).text(pValue[0]);
-	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(1).text(Math.round(pValue[1]/10000));
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(1).text(Math.round(pValue[1]/1000));
 	            	tTotal += pValue[1];
 				});
             	if(rcppay.hasOwnProperty(cntrct_sn)){
-					var remain = Math.round((mTotal - rcppay[cntrct_sn].M)/10000);
+					var remain = Math.round((mTotal - rcppay[cntrct_sn].M)/1000);
             		if(mTotal > 0) {
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain);
 					}
@@ -677,7 +677,7 @@ tbody .btnUpdate, tbody .btn{
             			$(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
 					}
-					var remain = Math.round((sTotal - rcppay[cntrct_sn].S)/10000);
+					var remain = Math.round((sTotal - rcppay[cntrct_sn].S)/1000);
             		if(sTotal > 0) {
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain);
 					}
@@ -686,7 +686,7 @@ tbody .btnUpdate, tbody .btn{
             			$(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".s-remain").addClass("colorY");
 					}
-					var remain = Math.round((tTotal - rcppay[cntrct_sn].T)/10000);
+					var remain = Math.round((tTotal - rcppay[cntrct_sn].T)/1000);
             		if(tTotal > 0) {
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain);
 					}

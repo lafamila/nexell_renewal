@@ -670,6 +670,9 @@ $(function(){
 
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
+							<div style="position:relative;height:45px!important;background-color:#002060!important;color:white;">
+								<h1 style="position: absolute; left: 50%;transform:translateX(-50%); top: 0;overflow: hidden;font-weight:500!important;" class="sub-title underline" id="approval-html-title">매입처별 매입 현황 (장비, 자재)</h1>
+							</div>
 							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr 62px!important">
 								<div style="display:inline-block;">
 									<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
@@ -771,7 +774,7 @@ $(function(){
 		let approval_ty_list = window.approval_ty_list[parseInt(code)];
 		let html = '';
 		$.each(approval_ty_list, function(pIndex, pRow){
-			html += `<div class="selectable" data-code="${pRow.code}" data-url="${pRow.template_url}">
+			html += `<div class="selectable" data-code="${pRow.code}" data-url="${pRow.template_url}" data-title="${pRow.code_nm}">
 						<div>${pIndex+1}</div>
 						<div>${pRow.code_nm}</div>
 						<div>${pRow.code_dc}</div>
@@ -790,12 +793,14 @@ $(function(){
 		}
 		else{
 			var url = $(this).data("url");
+			var title = $(this).data("title");
 			$.ajax({
 				url : '/api/approval/ajax_get_approval_template',
 				method : 'GET',
 				data : {"url" : url},
 				success: function(pResult){
 					$("#formContent").html(pResult.html);
+					$("#tabBox3").find("#approval-html-title").html(title);
 					$("#popEditTabs").find("li[data-action='3']").show();
 				},
 				error: function(){
@@ -1086,7 +1091,19 @@ $("#popBox2").on("click", "#btnApprove, #btnNotApprove", function(){
 							}
 						},
 						error : function(pResult){
-							alert("오류가 발생했습니다.");
+							$.ajax({
+								url : '/api/approval/cancel_approval',
+								method: 'POST',
+								data : params,
+								success: function(pResult){
+									alert("오류가 발생했습니다.");
+									$.datatable1.ajax.reload();
+									$("#popBox2").modal("hide");
+								},
+								error: function(pResult){
+									alert("심각한 오류가 발생했습니다.");
+								}
+							});
 						}
 					})
 

@@ -199,29 +199,28 @@ tbody .btnUpdate, tbody .btn{
 								<colgroup>
 									<col width="2.5%">
 									<col width="3.2%">
-									<col width="5.5%">
-									<col width="5.5%">
+									<col width="4.5%">
+									<col width="3.6%">
 									<col width="5.5%">
 									<col width="*">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
+									<col width="4.5%">
 									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="5.5%">
-									<col width="3.5%">
 								</colgroup>
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th colspan="20">
+										<th colspan="18">
                                             <ul class="nav nav-tabs" id="popEditTabs">
                                                 <input type="hidden" name="s_amt_ty_code" id="s_amt_ty_code"/>
                                                 {% for i, code in enumerate(amt_ty_code_list) %}
@@ -232,6 +231,11 @@ tbody .btnUpdate, tbody .btn{
 												{% endfor %}
 
                                             </ul>
+										</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" id="buttonAdd" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
+											</div>
 										</th>
 									</tr>
                                     <tr>
@@ -269,11 +273,6 @@ tbody .btnUpdate, tbody .btn{
 										<th class="" style="color:red!important;" colspan="13">
 											&nbsp;※ 목표 금액은 VAT가 포함된 원 단위 금액입니다.
 										</th>
-										<th class="text-right">
-											<div class="btn-group">
-												<button type="button" id="buttonAdd" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
-											</div>
-										</th>
 									</tr>
 									<tr>
 										<th style="text-align:center!important;">No.</th>
@@ -295,7 +294,6 @@ tbody .btnUpdate, tbody .btn{
 										<th style="text-align:center!important;">11월</th>
 										<th style="text-align:center!important;">12월</th>
 										<th style="text-align:center!important;">계</th>
-										<th></th>
 <!--										<th style="text-align:center!important;">합계</th>-->
 									</tr>
 								</thead>
@@ -433,11 +431,6 @@ getGoals = function(){
             { data: 'tot', className: 'text-right tot text-number',
 				render: function(data, type, row, meta) {
 					return data.toString().toFormat('NUMBER');
-				}
-			},
-			{ data: 'tot', className: 'text-right',
-				render: function(data, type, row, meta){
-					return '';
 				}
 			}
 		],

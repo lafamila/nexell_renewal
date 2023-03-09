@@ -88,7 +88,7 @@ tbody .btnUpdate, tbody .btn{
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
                         <h2><span id="year">2020</span>년 월별 매출 현황</h2>
 						<div class="widget-toolbar">
-                            <h2>매월 12일까지 입력완료 / 미완료시 기성지급 보류&nbsp;&nbsp; VAT 포함 (단위 : 만원)</h2>&nbsp;&nbsp;&nbsp;
+                            <h2>매월 12일까지 입력완료 / 미완료시 기성지급 보류&nbsp;&nbsp; VAT 포함 (단위 : 천원)</h2>&nbsp;&nbsp;&nbsp;
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
@@ -377,7 +377,7 @@ tbody .btnUpdate, tbody .btn{
 					});
 					if(pValue.cntrct_amount <= 50000000){
 
-						var a_cost = pResult.a_cost.hasOwnProperty(cntrct_sn) ? pResult.a_cost[cntrct_sn]/10000 : 0;
+						var a_cost = pResult.a_cost.hasOwnProperty(cntrct_sn) ? pResult.a_cost[cntrct_sn]/1000 : 0;
 						if(isNaN(a_cost)) a_cost = 0;
 
 						for(let i=1;i<=12;i++){
@@ -399,35 +399,35 @@ tbody .btnUpdate, tbody .btn{
 								<td class="bold right_border text-center middle">${pValue.spt_chrg_nm}</td>
 								<td class="bold right_border text-center middle">${pValue.bcnc_nm}</td>
 								<td class="bold right_border colorBtn text-left middle" data-column="spt_nm">${pValue.spt_nm}</td>
-								<td class="bold right_border colorBtn text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s1m">${Math.round(s_total["1"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s2m">${Math.round(s_total["2"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s3m">${Math.round(s_total["3"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s4m">${Math.round(s_total["4"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s5m">${Math.round(s_total["5"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s6m">${Math.round(s_total["6"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s7m">${Math.round(s_total["7"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s8m">${Math.round(s_total["8"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s9m">${Math.round(s_total["9"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s10m">${Math.round(s_total["10"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s11m">${Math.round(s_total["11"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s12m">${Math.round(s_total["12"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(tot_s/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold right_border colorBtn text-right middle nozero no-padding-3 input-available" data-column="p_amount">${Math.round(a_cost/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p1m">${Math.round(p_total["1"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p2m">${Math.round(p_total["2"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p3m">${Math.round(p_total["3"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p4m">${Math.round(p_total["4"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p5m">${Math.round(p_total["5"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p6m">${Math.round(p_total["6"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p7m">${Math.round(p_total["7"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p8m">${Math.round(p_total["8"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p9m">${Math.round(p_total["9"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p10m">${Math.round(p_total["10"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p11m">${Math.round(p_total["11"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p12m">${Math.round(p_total["12"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(tot_p/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold right_border text-right middle no-padding-3">${Math.round((tot_s - tot_p)/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border colorBtn text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(pValue.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s1m">${Math.round(s_total["1"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s2m">${Math.round(s_total["2"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s3m">${Math.round(s_total["3"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s4m">${Math.round(s_total["4"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s5m">${Math.round(s_total["5"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s6m">${Math.round(s_total["6"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s7m">${Math.round(s_total["7"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s8m">${Math.round(s_total["8"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s9m">${Math.round(s_total["9"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s10m">${Math.round(s_total["10"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s11m">${Math.round(s_total["11"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s12m">${Math.round(s_total["12"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(tot_s/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border colorBtn text-right middle nozero no-padding-3 input-available" data-column="p_amount">${Math.round(a_cost/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p1m">${Math.round(p_total["1"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p2m">${Math.round(p_total["2"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p3m">${Math.round(p_total["3"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p4m">${Math.round(p_total["4"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p5m">${Math.round(p_total["5"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p6m">${Math.round(p_total["6"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p7m">${Math.round(p_total["7"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p8m">${Math.round(p_total["8"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p9m">${Math.round(p_total["9"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p10m">${Math.round(p_total["10"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p11m">${Math.round(p_total["11"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p12m">${Math.round(p_total["12"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(tot_p/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border text-right middle no-padding-3">${Math.round((tot_s - tot_p)/1000).toString().toFormat('NUMBER')}</td>
 							 </tr>`;
 				});
 				$(document).find("#dtList1").find("tbody[role='exec']").html(html);
@@ -438,35 +438,35 @@ tbody .btnUpdate, tbody .btn{
 								<td class="bold right_border text-center middle">${pValue.spt_chrg_nm}</td>
 								<td class="bold right_border text-center middle">${pValue.bcnc_nm}</td>
 								<td class="bold right_border colorBtn text-left middle" data-column="spt_nm">${pValue.spt_nm}</td>
-								<td class="bold right_border colorBtn text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(pValue.cntrct_amount/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s1m">${Math.round(pValue.s_total["1"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s2m">${Math.round(pValue.s_total["2"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s3m">${Math.round(pValue.s_total["3"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s4m">${Math.round(pValue.s_total["4"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s5m">${Math.round(pValue.s_total["5"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s6m">${Math.round(pValue.s_total["6"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s7m">${Math.round(pValue.s_total["7"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s8m">${Math.round(pValue.s_total["8"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s9m">${Math.round(pValue.s_total["9"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s10m">${Math.round(pValue.s_total["10"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s11m">${Math.round(pValue.s_total["11"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s12m">${Math.round(pValue.s_total["12"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(pValue.tot_s/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold right_border colorBtn text-right middle nozero no-padding-3 input-available" data-column="p_amount">${Math.round(pValue.a_cost/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p1m">${Math.round(pValue.p_total["1"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p2m">${Math.round(pValue.p_total["2"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p3m">${Math.round(pValue.p_total["3"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p4m">${Math.round(pValue.p_total["4"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p5m">${Math.round(pValue.p_total["5"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p6m">${Math.round(pValue.p_total["6"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p7m">${Math.round(pValue.p_total["7"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p8m">${Math.round(pValue.p_total["8"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p9m">${Math.round(pValue.p_total["9"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p10m">${Math.round(pValue.p_total["10"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p11m">${Math.round(pValue.p_total["11"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p12m">${Math.round(pValue.p_total["12"]/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(pValue.tot_p/10000).toString().toFormat('NUMBER')}</td>
-								<td class="bold right_border text-right middle no-padding-3">${Math.round((pValue.tot_s - pValue.tot_p)/10000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border colorBtn text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(pValue.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s1m">${Math.round(pValue.s_total["1"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s2m">${Math.round(pValue.s_total["2"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s3m">${Math.round(pValue.s_total["3"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s4m">${Math.round(pValue.s_total["4"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s5m">${Math.round(pValue.s_total["5"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s6m">${Math.round(pValue.s_total["6"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s7m">${Math.round(pValue.s_total["7"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s8m">${Math.round(pValue.s_total["8"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s9m">${Math.round(pValue.s_total["9"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s10m">${Math.round(pValue.s_total["10"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s11m">${Math.round(pValue.s_total["11"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="s12m">${Math.round(pValue.s_total["12"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(pValue.tot_s/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border colorBtn text-right middle nozero no-padding-3 input-available" data-column="p_amount">${Math.round(pValue.a_cost/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p1m">${Math.round(pValue.p_total["1"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p2m">${Math.round(pValue.p_total["2"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p3m">${Math.round(pValue.p_total["3"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p4m">${Math.round(pValue.p_total["4"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p5m">${Math.round(pValue.p_total["5"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p6m">${Math.round(pValue.p_total["6"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p7m">${Math.round(pValue.p_total["7"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p8m">${Math.round(pValue.p_total["8"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p9m">${Math.round(pValue.p_total["9"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p10m">${Math.round(pValue.p_total["10"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p11m">${Math.round(pValue.p_total["11"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold text-right colorBtn middle nozero no-padding-3" data-column="p12m">${Math.round(pValue.p_total["12"]/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(pValue.tot_p/1000).toString().toFormat('NUMBER')}</td>
+								<td class="bold right_border text-right middle no-padding-3">${Math.round((pValue.tot_s - pValue.tot_p)/1000).toString().toFormat('NUMBER')}</td>
 							 </tr>`;
 					$(html).insertAfter($(trs).eq(trs.length-1));
 				});

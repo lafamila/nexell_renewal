@@ -184,6 +184,12 @@ def get_b_projects():
     result = prj.get_b_projects(params)
     return jsonify(result)
 
+@bp.route('/get_p_projects', methods=['GET'])
+def get_p_projects():
+    params = request.args.to_dict()
+    result = prj.get_p_projects(params)
+    return jsonify(result)
+
 @bp.route('/insert_b_project', methods=['POST'])
 def insert_b_project():
     params = request.get_json()
@@ -196,7 +202,14 @@ def get_costs_bd():
     result = dict()
     prjct = prj.get_project_by_cntrct_nm(params["s_cntrct_sn"])
     params["s_prjct_sn"] = prjct["prjct_sn"]
-    result['costList'] = prj.get_b_cost_list(params)
+    result['aCostList'] = prj.get_a_cost_list(params)
+    result['bCostList'] = prj.get_b_cost_list(params)
+    return jsonify(result)
+
+@bp.route('/get_option_cost', methods=['GET'])
+def get_option_cost():
+    params = request.args.to_dict()
+    result = prj.get_option_cost_list(params)
     return jsonify(result)
 
 @bp.route('/insert_option_cost', methods=['POST'])

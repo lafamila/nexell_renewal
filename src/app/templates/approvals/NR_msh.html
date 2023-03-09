@@ -329,7 +329,7 @@
                 method : 'GET',
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
-                    $.each(pResult.costList, function(pIndex, pValue){
+                    $.each(pResult.bCostList, function(pIndex, pValue){
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                     });
                     var totals = [];

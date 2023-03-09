@@ -74,7 +74,7 @@ def get_goals(params):
     query = """SELECT g.stdyy
                 , g.amt_ty_code
                 , g.mber_sn
-                , GET_MEMBER_NAME(g.mber_sn, 'M') AS mber_nm
+                , GET_MEMBER_NAME(g.mber_sn, 'S') AS mber_nm
                 , c.bcnc_sn
                 , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                 , m.dept_code

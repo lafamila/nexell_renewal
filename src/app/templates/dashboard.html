@@ -1118,7 +1118,7 @@ getMonthReport = function(pxcond_mt){
 				rt1 = (b_amt2 < 0) ? 100.0 + (b_amt2 - b_amt1) * 100 / b_amt2 : (b_amt1 / b_amt2) * 100; if (isNaN(rt1)) rt1 = 0.0;
 				rt2 = (b_amt4 < 0) ? 100.0 + (b_amt4 - b_amt3) * 100 / b_amt4 : (b_amt3 / b_amt4) * 100; if (isNaN(rt2)) rt2 = 0.0;
 				rt3 = (b_amt3 / b_amt5) * 100; if (isNaN(rt3)) rt3 = 0.0;
-				diff = Math.round((b_amt3 - b_amt4)/10000);
+				diff = Math.round((b_amt3 - b_amt4)/1000);
 				total11 += b_amt1;
 				total12 += b_amt2;
 				total13 += b_amt3;
@@ -1126,15 +1126,15 @@ getMonthReport = function(pxcond_mt){
 				total15 += b_amt5;
 				html += `	<td class="colorSky text-center middle">${pValue1.amt_ty_nm}</td>
 							<td class="colorSky text-center middle">${pValue1.dept_nm.replaceAll("팀", "")}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt2/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary" data-value="valueS"></td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/10000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
 							<td class="colorLY text-right middle ${diff < 0 ? 'color-red' : ''}" data-column="summary">${diff.toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>`;
 
 				var pValue2 = pData[dept_code]['3'];
@@ -1163,15 +1163,15 @@ getMonthReport = function(pxcond_mt){
 				total25 += b_amt5;
 				html += `	<td class="colorSky text-center middle">${pValue2.amt_ty_nm}</td>
 							<td class="colorSky text-center middle">${pValue2.dept_nm.replaceAll("팀", "")}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt2/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary" data-value="valueT"></td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/10000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
 							<td class="colorLY text-right middle ${diff < 0 ? 'color-red' : ''} data-column="summary"">${diff.toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/10000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>`;
 				html += `</tr>`;
 
@@ -1188,27 +1188,27 @@ getMonthReport = function(pxcond_mt){
 			html += `<tr data-dept="total">
 						<td class="colorSky text-center middle">수주</td>
 						<td class="colorLG text-center middle">소계</td>
-						<td class="colorLG text-right middle">${Math.round(total12 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total12 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle" data-value="valueStot"></td>
-						<td class="colorLG text-right middle">${Math.round(total11 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total11 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
-						<td class="colorLG text-right middle">${Math.round(total14 / 10000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${Math.round(total13 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total14 /1000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total13 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt12 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle ${diff < 0 ? 'color-red' : ''}">${diff.toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${Math.round(total15 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total15 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>;
 						<td class="colorSky text-center middle">매출</td>
 						<td class="colorLG text-center middle">소계</td>
-						<td class="colorLG text-right middle">${Math.round(total22 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total22 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle" data-value="valueTtot"></td>
-						<td class="colorLG text-right middle">${Math.round(total21 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total21 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
-						<td class="colorLG text-right middle">${Math.round(total24 / 10000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${Math.round(total23 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total24 /1000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total23 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt22 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle ${diff < 0 ? 'color-red' : ''}">${diff.toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${Math.round(total25 / 10000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle">${Math.round(total25 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt23 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>
 					 </tr>`;
 
@@ -1340,10 +1340,10 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center" colspan="2">수주</td>
 								 	<td class="middle text-left">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left">${pR.cntrct_nm}</td>
-								 	<td class="middle text-right">${Math.round(pR.value/10000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
-								 	<td class="middle text-right">${Math.round(amount/10000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/10000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmS" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
 						tot11 += pR.value;
@@ -1371,10 +1371,10 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center" colspan="2">매출</td>
 								 	<td class="middle text-left">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left">${pR.cntrct_nm}</td>
-								 	<td class="middle text-right">${Math.round(pR.value/10000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
-								 	<td class="middle text-right">${Math.round(amount/10000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/10000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmT" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
 						tot21 += pR.value;
@@ -1399,17 +1399,17 @@ getMonthReport = function(pxcond_mt){
 				html += `		<tr>
 									<td class="color-contract middle text-center" colspan="2">수주</td>
 									<td class="colorSky middle text-center" colspan="2">합 계</td>
-									<td class="colorSky middle text-right">${Math.round(tot11/10000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right">${Math.round(tot11/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueStot">${Math.round(tot12).toFormat('NUMBER')}</td>
-									<td class="colorSky middle text-right">${Math.round(tot13/10000).toFormat('NUMBER')}</td>
-									<td class="colorSky middle text-right ${tot14 < 0 ? 'color-red' : ''}">${Math.round(tot14/10000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right">${Math.round(tot13/1000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right ${tot14 < 0 ? 'color-red' : ''}">${Math.round(tot14/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
 									<td class="color-contract middle text-center" colspan="2">매출</td>
 									<td class="colorSky middle text-center" colspan="2">합 계</td>
-									<td class="colorSky middle text-right">${Math.round(tot21/10000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right">${Math.round(tot21/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueTtot">${Math.round(tot22).toFormat('NUMBER')}</td>
-									<td class="colorSky middle text-right">${Math.round(tot23/10000).toFormat('NUMBER')}</td>
-									<td class="colorSky middle text-right ${tot24 < 0 ? 'color-red' : ''}">${Math.round(tot24/10000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right">${Math.round(tot23/1000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right ${tot24 < 0 ? 'color-red' : ''}">${Math.round(tot24/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
 								</tr>`;
 				html += `   </tbody>

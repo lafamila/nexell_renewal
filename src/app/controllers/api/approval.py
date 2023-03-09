@@ -94,3 +94,10 @@ def update_approval():
     else:
         return jsonify({"status" : False, "message" : "비밀번호가 일치하지 않습니다."})
     return jsonify({"status" : True, "isEnd" : False, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/cancel_approval', methods=['POST'])
+def cancel_approval():
+    params = request.form.to_dict()
+    params["approval_status_code"] = 0
+    apvl.update_approval(params)
+    return jsonify({"status": True, "message": "성공적으로 취소되었습니다."})

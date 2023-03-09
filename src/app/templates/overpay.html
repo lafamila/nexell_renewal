@@ -191,18 +191,18 @@ getReport = function(s_pxcond_mt)
 			for(let i=1;i<=12;i++){
 				let month = i.toString();
 				let _class = s_list[month] < 0 ? " red" : "";
-				html += `<td class="text-right ${_class}">${Math.round(s_list[month]/10000).toFormat('NUMBER')}</td>`;
+				html += `<td class="text-right ${_class}">${Math.round(s_list[month]/1000).toFormat('NUMBER')}</td>`;
 			}
-			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(s_list_total/10000).toFormat('NUMBER')}</td>`;
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(s_list_total/1000).toFormat('NUMBER')}</td>`;
 			html += `</tr>`;
 			html += `<tr>`;
 			html += `    <td class="colorSky" colspan="2">집행금액</td>`;
 			for(let i=1;i<=12;i++){
 				let month = i.toString();
 				let _class = p_list[month] < 0 ? " red" : "";
-				html += `<td class="text-right ${_class}">${Math.round(p_list[month]/10000).toFormat('NUMBER')}</td>`;
+				html += `<td class="text-right ${_class}">${Math.round(p_list[month]/1000).toFormat('NUMBER')}</td>`;
 			}
-			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_list_total/10000).toFormat('NUMBER')}</td>`;
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_list_total/1000).toFormat('NUMBER')}</td>`;
 			html += `</tr>`;
 			$(document).find("#amountTable tbody[role='body']").html(html);
 
@@ -212,9 +212,9 @@ getReport = function(s_pxcond_mt)
 			for(let i=1;i<=12;i++){
 				let month = i.toString();
 				let _class = p_list[month] > s_list[month] ? " red" : "";
-				html += `<td class="colorG text-right ${_class}">${Math.round((s_list[month]- p_list[month])/10000).toFormat('NUMBER')}</td>`;
+				html += `<td class="colorG text-right ${_class}">${Math.round((s_list[month]- p_list[month])/1000).toFormat('NUMBER')}</td>`;
 			}
-			html += `    <td class="colorG text-right" style="border-left:2px solid #333!important;">${Math.round((s_list_total-p_list_total)/10000).toFormat('NUMBER')}</td>`;
+			html += `    <td class="colorG text-right" style="border-left:2px solid #333!important;">${Math.round((s_list_total-p_list_total)/1000).toFormat('NUMBER')}</td>`;
 			html += `</tr>`;
 			$(document).find("#amountTable tbody[role='va']").html(html);
 

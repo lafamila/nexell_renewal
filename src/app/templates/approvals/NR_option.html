@@ -50,6 +50,20 @@
         </tr>
 
     </tbody>
+    <tbody role="option_approval">
+        <tr>
+            <td class="hasinput" colspan="2">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="radio" name="opt_approval_type" value="S">설치
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="opt_approval_type" value="H">회수
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </tbody>
     <tbody role="option_house">
         <tr>
             <td class="colorSky">옵션 행사장소</td>
@@ -166,7 +180,7 @@
         </tr>
     </thead>
     <tbody role="option_row">
-        <tr>
+        <tr row="E">
             <th class="colorSky text-center">예상</th>
             <td class="hasinput"><input type="text" class="form-control text-left" name="e_opt_period" id="e_opt_period"></td>
             <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="e_opt_dtm" id="e_opt_dtm"></td>
@@ -176,7 +190,7 @@
             <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="e_opt_pay_dtm" id="e_opt_pay_dtm"></td>
             <td class="hasinput"><input type="text" class="form-control text-left" name="e_opt_rm" id="e_opt_rm"></td>
         </tr>
-        <tr>
+        <tr row="C">
             <th class="colorSky text-center">정산</th>
             <td class="hasinput"><input type="text" class="form-control text-left" name="c_opt_period" id="c_opt_period"></td>
             <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="c_opt_dtm" id="c_opt_dtm"></td>
@@ -344,9 +358,9 @@
             method : 'GET',
             data : {"s_cntrct_sn" : cntrct_sn},
             success: function(pResult){
+                $(document).find("input[name=opt_approval_type]").yReadonly(false);
                 $(document).find("tbody[role='option_house'] input").attr("disabled", false);
-                $(document).find("tbody[role='option_row'] input").attr("disabled", false);
-                $.each(pResult.costList, function(pIndex, pValue){
+                $.each(pResult.bCostList, function(pIndex, pValue){
                     $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                 });
                 var totals = [];
@@ -389,10 +403,44 @@
         var c_amount = parseInt($(this).find("input[name='c_opt_amount']").val().replaceAll(",", "")); if(isNaN(c_amount)) c_amount = 0;
         $(this).parent().find("[data-column='diff']").html((e_amount - c_amount).toFormat('NUMBER'));
     });
+    $(document).find("input[name=opt_approval_type]").on("change", function(){
+        var checked = $(document).find("input[name=opt_approval_type]:checked").val();
+        if(checked == 'S'){
+            $(document).find("tbody[role='option_row'] tr[row='E'] input").attr("disabled", false);
+            $(document).find("tbody[role='option_row'] tr[row='C'] input").attr("disabled", true);
+        }
+        else{
+            var params = {"s_cntrct_sn" : $("#cntrct_sn").find(":selected").val()};
+            $.ajax({
+                url : '/api/project/get_option_cost',
+                method: 'GET',
+                data : params,
+                success: function(pResult){
+                    if(pResult != null){
+                        $.each(pResult, function(pKey, pValue){
+                            if(pKey.startsWith("e_")){
+                                var target = $(document).find(`tbody[role='option_row'] tr[row='E'] input[name='${pKey}']`);
+                                if($(target).data("type") == "number"){
+                                    $(target).val(pValue.toFormat('NUMBER'));
+                                }
+                                else{
+                                    $(target).val(pValue);
+                                }
 
+                            }
+                        });
+                    }
+                    $(document).find("tbody[role='option_row'] tr[row='E'] input").attr("disabled", true);
+                    $(document).find("tbody[role='option_row'] tr[row='C'] input").attr("disabled", false);
+
+                }
+            })
+        }
+    });
     {% if init %}
     window.projects = {};
     $(document).ready(function(){
+        $(document).find("input[name=opt_approval_type]").yReadonly(true);
         $(document).find("tbody[role='option_house'] input").attr("disabled", true);
         $(document).find("tbody[role='option_row'] input").attr("disabled", true);
         $.ajax({

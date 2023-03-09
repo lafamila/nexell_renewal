@@ -1730,6 +1730,21 @@ def get_b_projects(params):
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+def get_p_projects(params):
+    query = """SELECT cntrct_sn
+                    , cntrct_no
+                    , spt_nm
+                    , CONCAT(cntrwk_bgnde,' ~ ',cntrwk_endde) AS cntrwk_period
+                    , home_count
+                    , home_region
+                FROM contract 
+                WHERE progrs_sttus_code='P'
+                AND prjct_creat_at='Y'
+                """
+
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
 
 def get_project_by_cntrct_nm(cntrct_sn):
     g.curs.execute("SELECT prjct_sn FROM project WHERE cntrct_sn=%s", (cntrct_sn, ))
@@ -1749,6 +1764,44 @@ def insert_c_project(params):
                 continue
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+            # 간접비 실행
+            if ct_se_code == '8':
+                cntrct_execut_code = 'E'
+                column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
+                cost_data.append({"cntrct_sn": params["cntrct_sn"], "prjct_sn": prjct["prjct_sn"],
+                                  "cntrct_execut_code": cntrct_execut_code, "ct_se_code": ct_se_code, "qy": 1,
+                                  column: int(value), "extra_sn": 0, "regist_dtm": datetime.now(),
+                                  "register_id": session["member"]["member_id"]})
+
+    # M,S/H 와 옵션행사비 사전입찰 내역
+    g.curs.execute("SELECT * FROM cost WHERE cntrct_execut_code='D' AND ct_se_code IN ('7', '61') AND cntrct_sn=%s AND prjct_sn=%s", (params['cntrct_sn'], prjct['prjct_sn']))
+    costs = g.curs.fetchall(transform=False)
+    g.curs.execute("SHOW COLUMNS FROM cost")
+    result = g.curs.fetchall()
+    no_required = []
+    for r in result:
+        key = r['Field'].lower()
+        if r['Extra'] == 'auto_increment':
+            no_required.append(key)
+
+    for cost in costs:
+        raw_data = {}
+        for key in cost:
+            if key.lower() not in no_required:
+                raw_data[key.lower()] = cost[key]
+        raw_data['cntrct_execut_code'] = 'E'
+        cost_data.append(raw_data)
+
+    # 기타 실행
+    total = 0
+    for data in cost_data:
+        if data['cntrct_execut_code'] == 'C':
+            total += data["salamt"]
+    cost_data.append({"cntrct_sn": params["cntrct_sn"], "prjct_sn": prjct["prjct_sn"],
+                                  "cntrct_execut_code": 'E', "ct_se_code": '10', "qy": 1,
+                                  "puchas_amount": int(total*0.005), "extra_sn": 0, "regist_dtm": datetime.now(),
+                                  "register_id": session["member"]["member_id"]})
+
 
     for data in cost_data:
         sub_query = [key for key in data]
@@ -1757,6 +1810,7 @@ def insert_c_project(params):
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
 
+    g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P' WHERE cntrct_sn=%(cntrct_sn)s", params)
 
 def insert_b_project(params):
     n_params = {}
@@ -1796,8 +1850,10 @@ def insert_b_project(params):
 
 
 def insert_option_cost(params):
-    data_e = OrderedDict()
-    data_c = OrderedDict()
+    prefix = "e_" if params['opt_approval_type'] == 'S' else "c_"
+    opt_type = "E" if params["opt_approval_type"] == "S" else "C"
+
+    data = OrderedDict()
     g.curs.execute("SHOW COLUMNS FROM dspy_option")
     result = g.curs.fetchall()
     total_columns = []
@@ -1810,51 +1866,40 @@ def insert_option_cost(params):
             total_columns.append(key)
 
     for key in params:
-        if key.startswith("e_"):
-            data_e[key.replace("e_", "")] = params[key]
-        elif key.startswith("c_"):
-            data_c[key.replace("c_", "")] = params[key]
+        if key.startswith(prefix):
+            data[key.replace(prefix, "")] = params[key]
         elif key in required:
-            data_e[key] = params[key]
-            data_c[key] = params[key]
+            data[key] = params[key]
         elif key in total_columns and params[key]:
-            data_e[key] = params[key]
-            data_c[key] = params[key]
+            data[key] = params[key]
 
-    data_e["opt_type"] = "E"
-    data_c["opt_type"] = "C"
+    data["opt_type"] = opt_type
 
-    for key in data_e:
+    for key in data:
         if key in ("opt_amount", "opt_helper"):
-            data_e[key] = data_e[key].replace(",", "")
-            if data_e[key] == '':
-                data_e[key] = 0
+            data[key] = data[key].replace(",", "")
+            if data[key] == '':
+                data[key] = 0
             else:
-                data_e[key] = int(data_e[key])
+                data[key] = int(data[key])
         elif key in ('opt_dtm', 'opt_pay_dtm'):
-            if data_e[key] == '':
-                data_e[key] = None
-    for key in data_c:
-        if key in ("opt_amount", "opt_helper"):
-            data_c[key] = data_c[key].replace(",", "")
-            if data_c[key] == '':
-                data_c[key] = 0
-            else:
-                data_c[key] = int(data_c[key])
-        elif key in ('opt_dtm', 'opt_pay_dtm'):
-            if data_c[key] == '':
-                data_c[key] = None
+            if data[key] == '':
+                data[key] = None
 
-    sub_query = [key for key in data_e]
-    params_query = ["%({})s".format(key) for key in data_e]
+    row = g.curs.execute("SELECT opt_sn FROM dspy_option WHERE cntrct_sn=%s AND opt_type=%s", (params["cntrct_sn"], opt_type))
+    if row:
+        opt_sn = g.curs.fetchone()['opt_sn']
+        sub_query = ["{0}=%({0})s".format(key) for key in data]
+        query = """UPDATE dspy_option SET {} WHERE opt_sn=%(opt_sn)s""".format(",".join(sub_query))
+        data["opt_sn"] = opt_sn
+        g.curs.execute(query, data)
 
-    query = """INSERT INTO dspy_option({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
-    g.curs.execute(query, data_e)
-    sub_query = [key for key in data_c]
-    params_query = ["%({})s".format(key) for key in data_c]
+    else:
+        sub_query = [key for key in data]
+        params_query = ["%({})s".format(key) for key in data]
 
-    query = """INSERT INTO dspy_option({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
-    g.curs.execute(query, data_c)
+        query = """INSERT INTO dspy_option({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.execute(query, data)
 
 
 def get_option_cost_list(params):
@@ -1876,7 +1921,29 @@ def get_option_cost_list(params):
                 LEFT OUTER JOIN (SELECT * FROM dspy_option WHERE opt_type='E') e
                 ON c.cntrct_sn=e.cntrct_sn
                 WHERE 1=1
-                AND c.cntrct_sn=%(s_cntrct_sn)s """
+                AND c.cntrct_sn=%(s_cntrct_sn)s
+                 
+                 UNION
+                SELECT c.opt_period AS c_opt_period
+                    , c.opt_dtm AS c_opt_dtm
+                    , c.opt_helper AS c_opt_helper
+                    , c.opt_rate AS c_opt_rate
+                    , c.opt_amount AS c_opt_amount
+                    , c.opt_pay_dtm AS c_opt_pay_dtm
+                    , c.opt_rm AS c_opt_rm
+                    , e.opt_period AS e_opt_period
+                    , e.opt_dtm AS e_opt_dtm
+                    , e.opt_helper AS e_opt_helper
+                    , e.opt_rate AS e_opt_rate
+                    , e.opt_amount AS e_opt_amount
+                    , e.opt_pay_dtm AS e_opt_pay_dtm
+                    , e.opt_rm AS e_opt_rm
+                FROM (SELECT * FROM dspy_option WHERE opt_type='C') c 
+                RIGHT OUTER JOIN (SELECT * FROM dspy_option WHERE opt_type='E') e
+                ON c.cntrct_sn=e.cntrct_sn
+                WHERE 1=1
+                AND e.cntrct_sn=%(s_cntrct_sn)s
+                 """
     g.curs.execute(query, params)
     result = g.curs.fetchone()
     return result

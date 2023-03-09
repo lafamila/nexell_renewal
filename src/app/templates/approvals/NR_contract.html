@@ -225,7 +225,7 @@
             success: function(pResult){
                 $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                 $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
-                $.each(pResult.costList, function(pIndex, pValue){
+                $.each(pResult.bCostList, function(pIndex, pValue){
                     $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                 });
                 var totals = [];
@@ -244,6 +244,8 @@
 
                 $("tbody[role='ct_se_code']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
                 $("tbody[role='ct_se_code']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+                $("tbody[role='ct_se_code_contract']").find("[name='E_61']").html($("tbody[role='ct_se_code']").parent().find("[name='D_61']").html());
+                $("tbody[role='ct_se_code_contract']").find("[name='E_7']").html($("tbody[role='ct_se_code']").parent().find("[name='D_7']").html());
 
             }
         });
@@ -258,16 +260,28 @@
         var totals = [];
         $(this).find("tr").each(function(pIndex, pRow){
             var total = 0;
-            $(pRow).find("input[data-type='number']").each(function(pI, pTag){
-                var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
-                total += value;
-            });
-            $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
-            totals.push(total);
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("input[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                $("tbody[role='ct_se_code_contract']").find("[name='E_8']").html($(this).find("[name='C_8']").val());
+                $("tbody[role='ct_se_code_contract']").find("[name='E_10']").html(Math.round(total*0.005).toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
         });
 
-        $(this).find("[data-column='va']").html((totals[0] - 0).toFormat('NUMBER'));
-        $(this).find("[data-column='va_rate']").html(((totals[0] - 0)*100.0/totals[0]).toFixed(1)+"%");
+        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
     });
     {% if init %}
     window.projects = {};

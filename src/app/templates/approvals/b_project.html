@@ -95,7 +95,7 @@
             </td>
             <td class="text-right" data-column="construct_camt">0</td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="construct_tax[]">
+                <input type="text" class="form-control text-right" data-type="number" name="construct_tax[]" readonly>
             </td>
             <td class="text-right" data-column="construct_sum">0</td>
             <td class="text-right" data-column="construct_total">0</td>
@@ -525,8 +525,9 @@
         $(this).find("tr").each(function(pIndex, pRow){
             var count = parseInt($(pRow).find("input[name='construct_count[]']").eq(0).val().replaceAll(",", "")); if(isNaN(count)) count = 0;
             var amt = parseInt($(pRow).find("input[name='construct_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(amt)) amt = 0;
-            var tax = parseInt($(pRow).find("input[name='construct_tax[]']").eq(0).val().replaceAll(",", "")); if(isNaN(tax)) tax = 0;
             var camt = count * amt;
+            var tax = Math.round(camt*0.1)
+            $(pRow).find("input[name='construct_tax[]']").eq(0).val(tax.toFormat('NUMBER'));
             $(pRow).find("[data-column='construct_camt']").html(camt.toFormat('NUMBER'));
             $(pRow).find("[data-column='construct_sum']").html((camt+tax).toFormat('NUMBER'));
             total += camt+tax;
