@@ -74,7 +74,62 @@ def get_contract_list_by_amt_regist(params):
     result = g.curs.fetchall()
     return result
 
+def get_goals_summary(params):
+    query = """SELECT g.stdyy
+                , g.amt_ty_code
+                , (SELECT code_nm FROM code WHERE parnts_code='AMT_TY_CODE' AND code=g.amt_ty_code) AS amt_ty_nm
+                , m.dept_code
+                , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+                , SUM(IFNULL(g.1m, 0)) AS 1m
+                , SUM(IFNULL(g.2m, 0)) AS 2m
+                , SUM(IFNULL(g.3m, 0)) AS 3m
+                , SUM(IFNULL(g.4m, 0)) AS 4m
+                , SUM(IFNULL(g.5m, 0)) AS 5m
+                , SUM(IFNULL(g.6m, 0)) AS 6m
+                , SUM(IFNULL(g.7m, 0)) AS 7m
+                , SUM(IFNULL(g.8m, 0)) AS 8m
+                , SUM(IFNULL(g.9m, 0)) AS 9m
+                , SUM(IFNULL(g.10m, 0)) AS 10m
+                , SUM(IFNULL(g.11m, 0)) AS 11m
+                , SUM(IFNULL(g.12m, 0)) AS 12m
+                , SUM((IFNULL(g.1m, 0) + IFNULL(g.2m, 0) + IFNULL(g.3m, 0)+ IFNULL(g.4m, 0)+ IFNULL(g.5m, 0)+ IFNULL(g.6m, 0)+ IFNULL(g.7m, 0)+ IFNULL(g.8m, 0)+ IFNULL(g.9m, 0)+ IFNULL(g.10m, 0)+ IFNULL(g.11m, 0)+ IFNULL(g.12m, 0))) AS tot
+				, (SELECT code_ordr FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
+                FROM goal g
+                LEFT JOIN member m ON g.mber_sn=m.mber_sn
+                LEFT OUTER JOIN contract c ON g.cntrct_sn=c.cntrct_sn
+                WHERE 1=1
+                AND m.mber_sttus_code='H'
+                AND c.cntrct_sn <> 0                
+    """
+    data = []
+    if "s_amt_ty_code" in params and params["s_amt_ty_code"]:
+        query += " and g.amt_ty_code=%s"
+        data.append(params["s_amt_ty_code"])
 
+    if "s_year" in params and params["s_year"]:
+        query += " and g.stdyy=%s"
+        data.append(params["s_year"])
+
+    if "s_dept_code" in params and params["s_dept_code"]:
+        query += " and m.dept_code=%s"
+        data.append(params["s_dept_code"])
+
+    if "s_bcnc_sn" in params and params["s_bcnc_sn"]:
+        query += " and c.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
+
+    if "s_mber_sn" in params and params["s_mber_sn"]:
+        query += " and g.mber_sn=%s"
+        data.append(params["s_mber_sn"])
+
+    if "s_spt_nm" in params and params["s_spt_nm"]:
+        query += " and c.spt_nm LIKE %s"
+        data.append("%{}%".format(params["s_spt_nm"]))
+    query += " GROUP BY stdyy, amt_ty_code, dept_code"
+    query += " ORDER BY code_ordr ASC"
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
 def get_goals(params):
     query = """SELECT g.stdyy
                 , g.amt_ty_code
@@ -99,6 +154,7 @@ def get_goals(params):
                 , g.11m
                 , g.12m
                 , (IFNULL(g.1m, 0) + IFNULL(g.2m, 0) + IFNULL(g.3m, 0)+ IFNULL(g.4m, 0)+ IFNULL(g.5m, 0)+ IFNULL(g.6m, 0)+ IFNULL(g.7m, 0)+ IFNULL(g.8m, 0)+ IFNULL(g.9m, 0)+ IFNULL(g.10m, 0)+ IFNULL(g.11m, 0)+ IFNULL(g.12m, 0)) AS tot
+				, (SELECT code_ordr FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
                 FROM goal g
                 LEFT JOIN member m ON g.mber_sn=m.mber_sn
                 LEFT OUTER JOIN contract c ON g.cntrct_sn=c.cntrct_sn
@@ -131,6 +187,10 @@ def get_goals(params):
         query += " and c.spt_nm LIKE %s"
         data.append("%{}%".format(params["s_spt_nm"]))
 
+    params["order[0][column]"] = 'code_ordr'
+    params["columns[code_ordr][data]"] = 'code_ordr'
+    params["columns[code_ordr][data]"] = 'code_ordr'
+    params["order[0][dir]"] = 'ASC'
     return dt_query(query, data, params)
 
 def get_goals_by_member(params):

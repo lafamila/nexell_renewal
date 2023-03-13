@@ -18,7 +18,9 @@ tbody .btnUpdate, tbody .btnPrint{
 	.middle{
 		vertical-align:middle!important;
 	}
-
+.select2-dropdown{
+	line-height: 1.42857143!important;
+}
 </style>
 
 <style>
@@ -578,7 +580,7 @@ $(function(){
 }
 
     </style>
-    <div class="modal-dialog modal-w900" style="width:800px!important" id="approval-tab-container">
+    <div class="modal-dialog modal-w900" style="width:800px!important;max-height:90vh;overflow-y:auto;" id="approval-tab-container">
         <div class="modal-content">
 			<div class="jarviswidget jarviswidget-color-greenDark">
 				<header>
@@ -598,7 +600,7 @@ $(function(){
 					</div>
 
 				</header>
-				<div role="content" style="max-height:90vh;height:auto;overflow-y:auto;">
+				<div role="content" style="height:100%;">
 					<div class="widget-body no-padding" style="height:100%;">
 						<div class="tab-content" style="height:100%;">
 
@@ -762,8 +764,10 @@ $(function(){
 			$("#approval-tab-container").attr("style", "width:800px!important");
 		}
 		else{
-			$("#approval-tab-container").attr("style", "width:100vw!important");
-			$("#frmBox3").find(".select2").select2();
+			$("#approval-tab-container").attr("style", "width:100vw!important;max-height:90vh;overflow-y:auto;");
+			$("#frmBox3").find(".select2").select2({
+				dropdownParent: $(this).parent().parent()
+			});
 		}
 	});
 
@@ -965,6 +969,7 @@ getApproval = function(approval_sn){
 					var pTag = $("#popBox2").find(`[name='${key}']`);
 					if(pTag.length != value.length){
 						if ($.isFunction(cloneRow)) {
+							console.log(key, $(pTag).closest("tr").data("row"))
 							cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
 						}
 					}
