@@ -216,11 +216,12 @@ tbody .btnUpdate, tbody .btn{
 									<col width="4.5%">
 									<col width="4.5%">
 									<col width="5.5%">
+									<col width="2%">
 								</colgroup>
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th colspan="18">
+										<th colspan="19">
                                             <ul class="nav nav-tabs" id="popEditTabs">
                                                 <input type="hidden" name="s_amt_ty_code" id="s_amt_ty_code"/>
                                                 {% for i, code in enumerate(amt_ty_code_list) %}
@@ -270,7 +271,7 @@ tbody .btnUpdate, tbody .btn{
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
 										</th>
-										<th class="" style="color:red!important;" colspan="13">
+										<th class="" style="color:red!important;" colspan="14">
 											&nbsp;※ 목표 금액은 VAT가 포함된 원 단위 금액입니다.
 										</th>
 									</tr>
@@ -294,6 +295,7 @@ tbody .btnUpdate, tbody .btn{
 										<th style="text-align:center!important;">11월</th>
 										<th style="text-align:center!important;">12월</th>
 										<th style="text-align:center!important;">계</th>
+										<th style="text-align:center!important;">-</th>
 <!--										<th style="text-align:center!important;">합계</th>-->
 									</tr>
 								</thead>
@@ -432,6 +434,14 @@ getGoals = function(){
 				render: function(data, type, row, meta) {
 					return data.toString().toFormat('NUMBER');
 				}
+			},
+            { data: 'stdyy', className: 'hasinput text-right',
+				render: function(data, type, row, meta) {
+            		var html = `<div class="btn-group">
+									<button class="btn btn-table btn-danger text-center w100p btnDelete" title="삭제" data-mber="${row.mber_sn}" data-cntrct="${row.cntrct_sn}" data-stdyy="${row.stdyy}" data-amt="${row.amt_ty_code}"><i class="fa fa-trash-o"></i></button>
+								</div>`;
+					return html;
+				}
 			}
 		],
 		footerCallback: function ( row, data, start, end, display ) {
@@ -471,6 +481,25 @@ getGoals = function(){
 
 			$(myList).on('click', '#btnSearch', function(pEvent) {
 				$.datatable1.ajax.reload();
+			});
+			$(myList).on('click', '.btnDelete', function(pEvent) {
+				var params = {"stdyy" : $(this).data("stdyy"), "amt_ty_code" : $(this).data("amt"), "mber_sn" : $(this).data("mber"), "cntrct_sn" : $(this).data("cntrct")}
+				if(confirm("삭제하시겠습니까?")){
+					$.ajax({
+						url: "/api/goal/delete_goal",
+						method: 'POST',
+						data : params,
+						success: function(pResult){
+							if(pResult.status){
+								alert(pResult.message);
+								$.datatable1.ajax.reload();
+							}
+							else{
+								alert("오류가 발생했습니다.");
+							}
+						}
+					});
+				}
 			});
 
 
@@ -703,7 +732,7 @@ $(function() {
 					</div>
 
 				</header>
-				<div role="content" style="min-height:110px;height:110px;">
+				<div role="content" style="min-height:110px;height:auto;">
 					<div class="widget-body no-padding" style="height:100%;">
 						<div class="tab-content" style="height:100%;">
 
@@ -731,6 +760,17 @@ $(function() {
 											<td class="hasinput" colspan="2">
 												<select class="form-control select2" id="s_bsn_chrg_sn" name="s_bsn_chrg_sn" >
 													<option value="">[영업담당을 선택해주세요.]</option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">현장담당</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_spt_chrg_sn" name="s_spt_chrg_sn" >
+													<option value="">[현장담당을 선택해주세요.]</option>
 													{% for code in member_list %}
 													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
 													{% endfor %}
@@ -798,15 +838,16 @@ $(function() {
 	{
 		init();
 	});
-	$(document).on("change", "#s_bsn_chrg_sn", function(){
-		var s_bsn_chrg_sn = $(this).val();
+	$(document).on("change", "#s_bsn_chrg_sn, #s_spt_chrg_sn", function(){
+		var s_bsn_chrg_sn = $("#s_bsn_chrg_sn").val();
+		var s_spt_chrg_sn = $("#s_spt_chrg_sn").val();
 		var s_year = $('#dtList1').find('#s_year').val();
 		var s_amt_ty_code = $('#dtList1').find('#s_amt_ty_code').val();
-		if(s_bsn_chrg_sn != ''){
+		if(s_bsn_chrg_sn != '' && s_spt_chrg_sn){
 			$.ajax({
 				url:'/api/goal/ajax_get_contracts_by_member',
 				method: 'POST',
-				data : {"s_bsn_chrg_sn" : s_bsn_chrg_sn, 's_year': s_year, 's_amt_ty_code': s_amt_ty_code},
+				data : {"s_bsn_chrg_sn" : s_bsn_chrg_sn, 's_spt_chrg_sn': s_spt_chrg_sn, 's_year': s_year, 's_amt_ty_code': s_amt_ty_code},
 				success : function(pResult){
 					var html = '<option value="">[계약을 선택해주세요.]</option>';
 					$.each(pResult, function(pIndex, pValue){

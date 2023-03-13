@@ -45,8 +45,8 @@ def ajax_get_goals_datatable():
         r_cs = gl.get_goals_by_member(params)
         reg_cntrct_sns = set([r["cntrct_sn"] for r in r_cs])
         remain = list(cntrct_sns - reg_cntrct_sns)
-        if remain:
-            gl.insert_goals(params, remain)
+        # if remain and params['s_amt_ty_code'] != '2':
+            # gl.insert_goals(params, remain)
     result = gl.get_goals(params)
     return result
 
@@ -55,7 +55,7 @@ def ajax_get_contracts_by_member():
     params = request.form.to_dict()
     contracts = gl.get_contract_list_by_amt_regist(params)
     cntrct_sns = set([c["value"] for c in contracts])
-    params["chrg_sn"] = params["s_bsn_chrg_sn"]
+    params["chrg_sn"] = params["s_spt_chrg_sn"]
     r_cs = gl.get_goals_by_member(params)
     reg_cntrct_sns = set([r["cntrct_sn"] for r in r_cs])
     remain = list(cntrct_sns - reg_cntrct_sns)
@@ -65,7 +65,7 @@ def ajax_get_contracts_by_member():
 @bp.route('/ajax_add_goal_member', methods=['GET'])
 def ajax_add_goal_member():
     params = request.args.to_dict()
-    params["chrg_sn"] = params["s_bsn_chrg_sn"]
+    params["chrg_sn"] = params["s_spt_chrg_sn"]
     gl.insert_goals(params, [params["cntrct_sn"]])
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
@@ -75,3 +75,9 @@ def set_goal():
     params = request.args.to_dict()
     gl.set_goals(params)
     return {"status" : True, "message" : "성공적으로 변경되었습니다."}
+
+@bp.route('/delete_goal', methods=['POST'])
+def delete_goal():
+    params = request.form.to_dict()
+    gl.delete_goal(params)
+    return {"status" : True, "message" : "성공적으로 삭제되었습니다."}

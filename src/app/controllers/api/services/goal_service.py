@@ -65,6 +65,11 @@ def get_contract_list_by_amt_regist(params):
     if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
         query += " AND c.bsn_chrg_sn=%s"
         data.append(params["s_bsn_chrg_sn"])
+
+    if "s_spt_chrg_sn" in params and params["s_spt_chrg_sn"]:
+        query += " AND c.spt_chrg_sn=%s"
+        data.append(params["s_spt_chrg_sn"])
+
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -152,4 +157,8 @@ def insert_goals(params, cntrct_sns):
 
 def set_goals(params):
     query = """UPDATE goal SET {}=%(data)s WHERE stdyy=%(s_year)s AND amt_ty_code=%(s_amt_ty_code)s AND cntrct_sn=%(s_cntrct_sn)s AND mber_sn=%(s_mber_sn)s""".format(params["column"])
+    g.curs.execute(query, params)
+
+def delete_goal(params):
+    query = "DELETE FROM goal WHERE stdyy=%(stdyy)s AND amt_ty_code=%(amt_ty_code)s AND mber_sn=%(mber_sn)s AND cntrct_sn=%(cntrct_sn)s"
     g.curs.execute(query, params)
