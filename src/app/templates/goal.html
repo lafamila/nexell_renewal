@@ -129,6 +129,7 @@ tbody .btnUpdate, tbody .btn{
 				<th style="padding:0px!important;text-align: left;">
 					<select class="form-control select2" id="summary_dept_code" name="summary_dept_code" style="padding-top:0px!important;padding-bottom:0px!important;width:150px!important;">
 						<option value="">[부서]</option>
+						<option value="all">전체</option>
 						<option value=""></option>
 					</select>
 				</th>
@@ -280,7 +281,7 @@ tbody .btnUpdate, tbody .btn{
 									<col width="3.2%">
 									<col width="4.5%">
 									<col width="3.6%">
-									<col width="5.5%">
+									<col width="8.8%">
 									<col width="*">
 									<col width="4.5%">
 									<col width="4.5%">
@@ -526,21 +527,39 @@ getGoals = function(){
 		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
 			var summary = pSettings.json.summary;
 			var html = `<option value=''>[부서]</option>`;
+			html += `<option value='all'>전체</option>`;
 			var pData = {};
+			var tot_data = {'tot' : 0};
 			$.each(summary, function(pIndex, pValue){
 				html += `<option value='${pValue.dept_code}'>${pValue.dept_nm}</option>`;
 				pData[pValue.dept_code] = pValue;
+				for(let i=1;i<=12;i++){
+					if(!tot_data.hasOwnProperty(`${i}m`)){
+						tot_data[`${i}m`] = 0;
+					}
+					tot_data[`${i}m`] += pValue[`${i}m`];
+				}
+				tot_data['tot'] += pValue['tot'];
 			});
 			$("#summary_dept_code").html(html);
 			$("#summary_dept_code").val(null).trigger("change");
 			$(document).find("#summary_stdyy").html($("#s_year").val()+"년");
 			$("#summary_dept_code").on("change", function(){
 				var dept_code = $(this).val();
-				if(dept_code != '' && dept_code != null){
+				if(dept_code != '' && dept_code != null && dept_code != 'all'){
 					for(let i=1;i<=12;i++){
 						$(document).find("tbody[role=body]").find("td").eq(i-1).html(pData[dept_code][`${i}m`].toFormat('NUMBER'));
 					}
 					$(document).find("tbody[role=body]").find("td").eq(12).html(pData[dept_code][`tot`].toFormat('NUMBER'));
+				}
+				else if(dept_code == 'all'){
+					$(document).find("tbody[role=body]").find("td").html('');
+					for(let i=1;i<=12;i++){
+						if(tot_data.hasOwnProperty(`${i}m`)){
+							$(document).find("tbody[role=body]").find("td").eq(i-1).html(tot_data[`${i}m`].toFormat('NUMBER'));
+						}
+					}
+					$(document).find("tbody[role=body]").find("td").eq(12).html(tot_data['tot'].toFormat('NUMBER'));
 				}
 				else{
 					$(document).find("tbody[role=body]").find("td").html('');
