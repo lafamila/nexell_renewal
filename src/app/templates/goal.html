@@ -15,6 +15,17 @@ tbody .btnUpdate, tbody .btn{
     .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
         line-height: 0.95!important;
     }
+    #summery{
+        top:12px;
+        right:2px;
+        width:auto;
+		z-index:901;
+    }
+	#summery tbody td, #summery tbody th{
+		background-color: white;
+		vertical-align: middle;
+		text-align: center;
+	}
 </style>
 <!--########################################################################-->
 <!--# RIBBON area start                                                    #-->
@@ -71,9 +82,77 @@ tbody .btnUpdate, tbody .btn{
 		</p>
 	</div>
 -->
+	<table class="table table-bordered table-summery" id="summery">
+		<colgroup>
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+			<col width="100px">
+		</colgroup>
+		<thead>
+			<tr><th colspan="14">
+					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
+					<span id="summary_stdyy"></span>&nbsp;&nbsp;&nbsp;&nbsp;목 표 관 리&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+		</thead>
+		<tbody role="header">
+			<tr>
+				<th id="summary_amt_ty_nm">수주</th>
+				<th>1월</th>
+				<th>2월</th>
+				<th>3월</th>
+				<th>4월</th>
+				<th>5월</th>
+				<th>6월</th>
+				<th>7월</th>
+				<th>8월</th>
+				<th>9월</th>
+				<th>10월</th>
+				<th>11월</th>
+				<th>12월</th>
+				<th class="colorP">계</th>
+			</tr>
+		</tbody>
+		<tbody role="body">
+			<tr>
+				<th style="padding:0px!important;text-align: left;">
+					<select class="form-control select2" id="summary_dept_code" name="summary_dept_code" style="padding-top:0px!important;padding-bottom:0px!important;width:150px!important;">
+						<option value="">[부서]</option>
+						<option value=""></option>
+					</select>
+				</th>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right"></td>
+				<td class="text-right colorP"></td>
+
+			</tr>
+
+		</tbody>
+	</table>
 
 	<!-- 화면 내용 -->
-	<section id="widget-grid">
+	<section id="widget-grid" style="margin-top:60px;">
 
 		<div class="row">
 			<article class="">
@@ -226,7 +305,7 @@ tbody .btnUpdate, tbody .btn{
                                                 {% for i, code in enumerate(amt_ty_code_list) %}
 
                                                 <li data-action="{{code.value}}">
-                                                    <a data-toggle="tab" href="#tabBox{{code.value}}" data-action="tab{{code.value}}"><i class="fa fa-lg fa-list"></i>&nbsp;<span>{{code.label}}</span></a>
+                                                    <a data-toggle="tab" href="#tabBox{{code.value}}" data-action="tab{{code.value}}" data-nm="{{code.label}}"><i class="fa fa-lg fa-list"></i>&nbsp;<span>{{code.label}}</span></a>
                                                 </li>
 												{% endfor %}
 
@@ -434,6 +513,31 @@ getGoals = function(){
 				}
 			}
 		],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			var summary = pSettings.json.summary;
+			var html = `<option value=''>[부서]</option>`;
+			var pData = {};
+			$.each(summary, function(pIndex, pValue){
+				html += `<option value='${pValue.dept_code}'>${pValue.dept_nm}</option>`;
+				pData[pValue.dept_code] = pValue;
+			});
+			$("#summary_dept_code").html(html);
+			$("#summary_dept_code").val(null).trigger("change");
+			$(document).find("#summary_stdyy").html($("#s_year").val()+"년");
+			$("#summary_dept_code").on("change", function(){
+				var dept_code = $(this).val();
+				if(dept_code != '' && dept_code != null){
+					for(let i=1;i<=12;i++){
+						$(document).find("tbody[role=body]").find("td").eq(i-1).html(pData[dept_code][`${i}m`].toFormat('NUMBER'));
+					}
+					$(document).find("tbody[role=body]").find("td").eq(12).html(pData[dept_code][`tot`].toFormat('NUMBER'));
+				}
+				else{
+					$(document).find("tbody[role=body]").find("td").html('');
+				}
+			});
+
+        },
 		footerCallback: function ( row, data, start, end, display ) {
 			var api = this.api(), data;
 			var intVal = function ( i ) {
@@ -491,6 +595,9 @@ getGoals = function(){
 
             $('[data-toggle="tab"]').on('click', function(pEvent){
                var s_amt_ty_code = $(this).parent().data('action');
+               var s_amt_ty_nm = $(this).data('nm');
+			   console.log(s_amt_ty_code, s_amt_ty_nm);
+			    $("#summary_amt_ty_nm").html(s_amt_ty_nm);
                 $("#s_amt_ty_code").val(s_amt_ty_code);
 				$.datatable1.ajax.reload();
             });

@@ -48,6 +48,7 @@ def ajax_get_goals_datatable():
         if remain:
             gl.insert_goals(params, remain)
     result = gl.get_goals(params)
+    result['summary'] = gl.get_goals_summary(params)
     return result
 
 @bp.route('/ajax_get_contracts_by_member', methods=['POST'])
