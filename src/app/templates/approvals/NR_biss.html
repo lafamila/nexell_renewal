@@ -1,0 +1,359 @@
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+</style>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="75%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+        </tr>
+        <tr>
+            <td class="colorSky">계약번호</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">현장명</td>
+            <td class="text-center hasinput">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky">공사기간</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="15">공사 현황 (영업) - VAT포함</th>
+        </tr>
+        <tr>
+            <th class="colorB text-center">구분</th>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">삼성장비</th>
+            <th class="color-contract text-center">타사장비</th>
+            <th class="color-contract text-center">설치비</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">로지텍자재</th>
+            <th class="color-contract text-center">타사자재</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="color-contract text-center">M,S/H(기준표)</th>
+            <th class="color-contract text-center">옵션행사비(기준표)</th>
+            <th class="color-contract text-center">설계변경</th>
+            <th class="color-contract text-center">총액</th>
+            <th class="color-contract text-center">이익금(VA)</th>
+            <th class="color-contract text-center">VA율</th>
+        </tr>
+    </thead>
+    <tbody role="ct_se_code_contract">
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">수주계약</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="text-right" data-type='number' name="C_1"></td>
+            <td class="text-right" data-type='number' name="C_2"></td>
+            <td class="text-right" data-type='number' name="C_5"></td>
+            <td class="text-right" data-type='number' name="C_8"></td>
+            <td class="text-right" data-type='number' name="C_3"></td>
+            <td class="text-right" data-type='number' name="C_4"></td>
+            <td class="text-right" data-type='number' name="C_10"></td>
+            <td class="text-right" data-type='number' name="C_61"></td>
+            <td class="text-right" data-type='number' name="C_7"></td>
+            <td class="text-right" data-type='number' name="C_99"></td>
+            <td class="text-center" data-column="row_total"></td>
+            <td class="text-center" data-column="va" rowspan="2"></td>
+            <td class="text-center" data-column="va_rate" rowspan="2"></td>
+        </tr>
+        <tr data-row="E">
+            <th class="colorSky text-center">실행가</th>
+            <td class="text-right" data-type='number' name="E_1"></td>
+            <td class="text-right" data-type='number' name="E_2"></td>
+            <td class="text-right" data-type="number" name="E_5"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
+            <td class="text-right" data-type="number" name="E_3"></td>
+            <td class="text-right" data-type="number" name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_10"></td>
+            <td class="text-right" data-type='number' name="E_61"></td>
+            <td class="text-right" data-type='number' name="E_7"></td>
+            <td class="text-right" data-type="number" name="E_99"></td>
+            <td class="text-center" data-column="row_total"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form" id="report_exec">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="120">
+		<col width="120">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="14">결산내역 (관리) - VAT포함</th>
+		</tr>
+	</thead>
+	<tbody role="body">
+		<tr>
+			<th class="colorN" rowspan="2">결산내역</th>
+			<th class="colorP">공사비(계약)총액</th>
+			<th class="colorP">입금합계</th>
+			<th class="colorP">①삼성장비</th>
+			<th class="colorP">②타사장비</th>
+			<th class="colorP">③설치비</th>
+			<th class="colorP">④간접비</th>
+			<th class="colorP">⑤로지텍자재</th>
+			<th class="colorP">⑥타사자재</th>
+			<th class="colorP">⑦M,S/H</th>
+			<th class="colorP">⑧옵션행사비</th>
+			<th class="colorP">⑨기타(총액 0.5%)</th>
+			<th class="colorLP">이익금(VA)</th>
+			<th class="colorLP">VA율</th>
+		</tr>
+		<tr data-row="result">
+			<td class="text-number colorP"></td>
+			<th class="text-number colorP"></th>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-number"></td>
+			<td class="text-center"></td>
+		</tr>
+	</tbody>
+</table>
+<table class="table table-bordered table-form" id="report_biss">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tbody>
+		<tr>
+            <th class="color-contract text-center" rowspan="2" style="vertical-align: middle;">업체 및 BISS 확인사항</th>
+			<th class="color-contract text-center">계약이행증권</th>
+			<th class="color-contract text-center">국세,지방세</th>
+			<th class="color-contract text-center">직불적용(2억이상)</th>
+			<th class="color-contract text-center">하자이행증권</th>
+			<th class="color-contract text-center">실명제라벨</th>
+			<th class="color-contract text-center">준공도면</th>
+			<th class="color-contract text-center">S-NET</th>
+			<th class="color-contract text-center">준공현장정보</th>
+			<th class="color-contract text-center">마지막기성</th>
+			<th class="color-contract text-center">BISS지적사항</th>
+		</tr>
+		<tr>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_a"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_b"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_c"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_d"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_e"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_f"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_g"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_h"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_i"/>
+            </td>
+			<td class="hasinput">
+                <input type="text" class="form-control text-center" name="biss_j"/>
+            </td>
+		</tr>
+	</tbody>
+</table>
+<table class="table table-bordered table-form">
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center">특이사항</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="biss_rm"/>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script>
+    get_cost = function(cntrct_sn){
+        $.ajax({
+                url : '/api/project/get_costs_bd',
+                method : 'GET',
+                data : {"s_cntrct_sn" : cntrct_sn},
+                success: function(pResult){
+                    $(document).find("#report_biss input").attr("disabled", false);
+                    $.each(pResult.aCostList, function(pIndex, pValue){
+                        $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                    });
+                    var totals = [];
+                    $("tbody[role='ct_se_code_contract']").find("tr").each(function(pIndex, pRow){
+                        var total = 0;
+                        $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                            var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                            total += value;
+                        });
+                        $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                        totals.push(total);
+                    });
+
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+
+                }
+            });
+
+    }
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+    window.projects = {};
+    $(document).ready(function(){
+        $(document).find("#report_biss input").attr("disabled", true);
+        $.ajax({
+            url : '/api/project/get_p_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+        var input = document.querySelector('input[data-type="number"]');
+        if(input){
+            input.addEventListener('input', function() {
+              this.value = this.value.replace(/[^0-9 \,]/, '');
+            });
+        }
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+            get_cost(cntrct_sn);
+        }
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        get_cost(cntrct_sn);
+    }
+    {% endif %}
+</script>

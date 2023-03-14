@@ -1,0 +1,103 @@
+<table class="table table-bordered table-form">
+    <colgroup>
+      <col width="20%">
+      <col width="80%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th class="color-contract">신청일자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="reg_date" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">부서</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="dept_nm" value="{{session['member']['dept_nm']}}" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">이름</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="name" value="{{session['member']['member_nm']}}" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">근무일자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
+                <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                <input type="text" class="form-control datepicker-e" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_end" name="s_de_end" placeholder="[종료일자]">
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">사유</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm"/>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+$(function() {
+	/**************************************************************************
+     *
+     */
+	var now = new Date();
+	let offset = (new Date()).getTimezoneOffset() * 60000;
+	$(document).find("input[name='reg_date']").val((new Date(now.getTime()-offset)).toISOString().split("T")[0]);
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear()-1);
+        endDate.setMonth(0);
+        endDate.setDate(1);
+
+//		endDate.setDate(endDate.getDate() - (365*maxYears));
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+});
+    {% endif %}
+
+</script>

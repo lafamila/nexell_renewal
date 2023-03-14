@@ -1,0 +1,244 @@
+<table class="table table-bordered table-form" id="dtList0">
+  <colgroup>
+    <col width="12.5%">
+    <col width="12.5%">
+    <col width="12.5%">
+    <col width="12.5%">
+    <col width="12.5%">
+    <col width="12.5%">
+    <col width="12.5%">
+    <col width="12.5%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th colspan="4" class="text-center">직전 연차일수</th>
+      <th colspan="4" class="text-center">현 연차일수</th>
+    </tr>
+    <tr>
+      <th class="text-center">발생일수</th>
+      <th class="text-center">조정일수</th>
+      <th class="text-center">사용일수</th>
+      <th class="text-center">잔여일수</th>
+      <th class="text-center">발생일수</th>
+      <th class="text-center">조정일수</th>
+      <th class="text-center">사용일수</th>
+      <th class="text-center">잔여일수</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d1" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d2" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d3" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d4" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d5" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d6" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d7" readonly/>
+        </td>
+        <td class="hasinput">
+            <input type="text" class="form-control text-center" name="d8" readonly/>
+        </td>
+    </tr>
+  </tbody>
+</table>
+<table class="table table-bordered table-form">
+    <colgroup>
+      <col width="20%">
+      <col width="80%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th class="color-contract">신청일자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="reg_date" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">부서</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="dept_nm" value="{{session['member']['dept_nm']}}" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">이름</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="name" value="{{session['member']['member_nm']}}" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">휴가중연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="tel_no"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">기타연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="etc_tel_no"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">행선지</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="to_go"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">사유</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">휴가구분</th>
+            <td class="hasinput">
+                <select class="form-control w50p" id="vacation_type" name="vacation_type" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="">[전체]</option>
+                    <option value="y">연차</option>
+                    <option value="b">병가</option>
+                    <option value="t">특별휴가</option>
+                </select>
+            </td>
+        </tr>
+        <tr id="vacation_type_detail_tr" style="display:none;">
+            <th class="color-contract">-</th>
+            <td class="hasinput">
+                <select class="form-control w50p" id="vacation_type_detail" name="vacation_type_detail" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="t"></option>
+                    <option value="h1">오전반차</option>
+                    <option value="h2">오후반차</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">일자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
+                <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                <input type="text" class="form-control datepicker-e" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_end" name="s_de_end" placeholder="[종료일자]">
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+
+getWorkPersonal = function(){
+
+	var now = new Date();
+
+	var params = '';
+	let offset = (new Date()).getTimezoneOffset() * 60000;
+	var calendar = (new Date(now.getTime()-offset)).toISOString().split("T")[0];
+	params += '&s_stdyy='+(new Date(now.getTime()-offset)).toISOString().split("T")[0];
+	params += '&calendar='+calendar;
+	$.ajax({
+		url: '/api/work/ajax_get_personal',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function (pResult) {
+		  console.log(pResult);
+		  if(pResult.data.length > 0){
+
+			var pData = pResult.data[0];
+			$(document).find("#dtList0 tbody").find("td").eq(0).find("input").val(parseInt(pData.last_tot).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(1).find("input").val(parseInt(pData.last_mod).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(2).find("input").val(parseInt(pData.last_use).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(3).find("input").val((parseInt(pData.last_tot) + parseInt(pData.last_mod) - parseInt(pData.last_use)).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(4).find("input").val(parseInt(pData.tot).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(5).find("input").val(parseInt(pData.mod).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(6).find("input").val(parseInt(pData.use).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(7).find("input").val((parseInt(pData.tot) + parseInt(pData.mod) - parseInt(pData.use)).toFormat('NUMBER'));
+          }
+
+		}
+	});
+
+
+}
+$(function() {
+	/**************************************************************************
+     *
+     */
+	var now = new Date();
+	let offset = (new Date()).getTimezoneOffset() * 60000;
+	$(document).find("input[name='reg_date']").val((new Date(now.getTime()-offset)).toISOString().split("T")[0]);
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear()-1);
+        endDate.setMonth(0);
+        endDate.setDate(1);
+
+//		endDate.setDate(endDate.getDate() - (365*maxYears));
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+	getWorkPersonal();
+});
+    {% endif %}
+$(document).on("change", "#vacation_type", function(){
+    var value = $("#vacation_type option:selected").val();
+    if(['y', 'b'].includes(value)){
+        $("#vacation_type_detail_tr").show();
+    }
+    else{
+        $("#vacation_type_detail_tr").hide();
+    }
+});
+</script>

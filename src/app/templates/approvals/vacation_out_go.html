@@ -1,0 +1,162 @@
+<table class="table table-bordered table-form">
+    <colgroup>
+      <col width="20%">
+      <col width="80%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th class="color-contract">신청일자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="reg_date" readonly/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">출장지</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="to_go"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">출장일자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
+                <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                <input type="text" class="form-control datepicker-e" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_end" name="s_de_end" placeholder="[종료일자]">
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">출장구분</th>
+            <td class="hasinput">
+                <select class="form-control select2" name="vacation_type" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    <option value="in">국내</option>
+                    <option value="out">해외</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+			<th class="color-contract text-center" style="border-right:0px!important;position:relative;height:40px;" colspan="2"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">사원</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+        </tr>
+    </tbody>
+    <tbody role="member_row">
+        <tr data-row="member_tr">
+            <td class="hasinput" colspan="2">
+                <select class="form-control select2" name="member_sn[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in member_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        if(selector == "member_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='member_row'] tr");
+                var origin = `<tr data-row="member_tr">
+                                  <td class="hasinput" colspan="2">
+                                      <select class="form-control select2" name="member_sn[]" style="width:100%!important;">
+                                          <option value="">[전체]</option>
+                                          {% for code in member_list %}
+                                          <option value="{{code.value}}">{{code.label}}</option>
+                                          {% endfor %}
+                                      </select>
+                                  </td>
+                              </tr>`;
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="member_sn[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in member_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    }
+                });
+                $(document).find("tbody[role='member_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='member_row']").trigger("change");
+        }
+    }
+    {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("member_tr", 1);
+    });
+
+$(function() {
+	/**************************************************************************
+     *
+     */
+	$(document).find("tbody[role='member_row']").html("");
+	var now = new Date();
+	let offset = (new Date()).getTimezoneOffset() * 60000;
+	$(document).find("input[name='reg_date']").val((new Date(now.getTime()-offset)).toISOString().split("T")[0]);
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear()-1);
+        endDate.setMonth(0);
+        endDate.setDate(1);
+
+//		endDate.setDate(endDate.getDate() - (365*maxYears));
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+});
+    {% endif %}
+
+</script>
