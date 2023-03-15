@@ -22,7 +22,9 @@
 	.colorLY{
 		background-color:#FAFAD2!important;
 	}
-
+	.table-dashboard>tbody>tr>td, .table-dashboard>tbody>tr>th, .table-dashboard>tfoot>tr>td, .table-dashboard>tfoot>tr>th, .table-dashboard>thead>tr>td, .table-dashboard>thead>tr>th {
+		line-height: 0.5 !important;
+	}
 </style>
 
 <div id="ribbon" style="background:#B3E5FC!important;">
@@ -1057,8 +1059,16 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					</tbody>
 				</table>
 				</div><!-- 기성 현황 끝 -->
+				<style>
+					::-webkit-scrollbar { height:6.2px; } /* 스크롤 바 */
+					::-webkit-scrollbar-track { background-color:#fff; } /* 스크롤 바 밑의 배경 */
+					::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; } /* 실질적 스크롤 바 */
+					::-webkit-scrollbar-thumb:hover { background: #404040; } /* 실질적 스크롤 바 위에 마우스를 올려다 둘 때 */
+					::-webkit-scrollbar-thumb:active { background: #808080; } /* 실질적 스크롤 바를 클릭할 때 */
+					::-webkit-scrollbar-button { display: none; } /* 스크롤 바 상 하단 버튼 */
+				</style>
 
-				<div id="rpt99detail">
+				<div id="rpt99detail" style="overflow-x:auto;display:inline-block;max-width:100%;">
 
 				</div>
 
@@ -1226,7 +1236,7 @@ getMonthReport = function(pxcond_mt){
 				var length = Math.max(sLength, tLength);
 				var html = '';
 				html += `<h5 class="sub-title underline arrow-up" data-usage="toggle" data-target="${dept_code}">${nameMap[dept_code].replaceAll("팀", "")}</h5>`;
-				html += `<table id="detail-${dept_code}" class="table table-bordered w100p">
+				html += `<table id="detail-${dept_code}" class="table-dashboard table-bordered">
 							<colgroup>
 							<col width="25">
 							<col width="25">
@@ -1399,6 +1409,7 @@ getMonthReport = function(pxcond_mt){
 				html += `		<tr>
 									<td class="color-contract middle text-center" colspan="2">수주</td>
 									<td class="colorSky middle text-center" colspan="2">합 계</td>
+									<td class="colorSky middle text-center" colspan="1" style="display:none;">합 계</td>
 									<td class="colorSky middle text-right">${Math.round(tot11/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueStot">${Math.round(tot12).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right">${Math.round(tot13/1000).toFormat('NUMBER')}</td>
@@ -1426,7 +1437,7 @@ getMonthReport = function(pxcond_mt){
 						$(pValue).addClass("color-red");
 				});
 				$("#rpt99detail").find(`#detail-${dept_code}`).find("tbody").yRowspan(0);
-				$("#rpt99detail").find(`#detail-${dept_code}`).find("tbody").yRowspan(7);
+				$("#rpt99detail").find(`#detail-${dept_code}`).find("tbody").yRowspan(8);
 			});
 			var summary_total = 0;
 			$("#rpt99").find(`td[data-value="valueS"]`).each(function(pIndex, pTag){
@@ -1446,6 +1457,9 @@ getMonthReport = function(pxcond_mt){
 			$("#popReport99").find(".two-now-year").html(now_year);
 			$("#popReport99").find(".one-now-month").html(now_month);
 			$("#popReport99").find(".one-now-day").html(now_day);
+			for(let _=1;_<=$(document).find("#rpt99detail table thead tr:nth-child(3)").eq(0).find("td").length;_++){
+				$(document).find(`#rpt99detail table thead tr:nth-child(3) td:nth-child(${_})`).widthMatch();
+			}
 
 
 		}

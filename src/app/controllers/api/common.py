@@ -366,4 +366,20 @@ def five_ajax_get_five():
     result['status'] = True
     return jsonify(result)
 
+@bp.route('/vacation/insert_vacation', methods=['POST'])
+def insert_vacation():
+    params = request.get_json()
+    cm.insert_vacation(params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
+
+@bp.route('/vacation/insert_vacation_out', methods=['POST'])
+def insert_vacation_out():
+    params = request.get_json()
+    cm.insert_vacation_out(params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
+@bp.route('/vacation/insert_vacation_out_go', methods=['POST'])
+def insert_vacation_out_go():
+    params = request.get_json()
+    cm.insert_vacation_out_go(params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 

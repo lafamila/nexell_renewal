@@ -3,6 +3,7 @@ from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import datetime
 import calendar
+import dateutil
 
 def get_bcncs():
     query = """SELECT DISTINCT c.bcnc_sn AS num
@@ -791,6 +792,55 @@ def get_cowork_data(params):
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
+
+def insert_vacation_out_go(params):
+    data = OrderedDict()
+    data['mber_sn'] = session['member']['member_sn']
+    st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
+    ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
+    print(params)
+    raise Exception
+
+def insert_vacation_out(params):
+    data = OrderedDict()
+    data['mber_sn'] = session['member']['member_sn']
+    st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
+    ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
+    data['rm'] = params['to_go']
+    data['vacation_type'] = 8
+    for d in range((ed_de - st_de).days + 1):
+        for mber_sn in params['member_sn[]']:
+            data['mber_sn'] = mber_sn
+            data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
+            g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
+
+def insert_vacation(params):
+    data = OrderedDict()
+    data['mber_sn'] = session['member']['member_sn']
+    st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
+    ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
+    if params['vacation_type'] == 'y':
+        if params['vacation_type_detail'] == 't':
+            data['vacation_type'] = 1
+        elif params['vacation_type_detail'] == 'h1':
+            data['vacation_type'] = 2
+        elif params['vacation_type_detail'] == 'h2':
+            data['vacation_type'] = 3
+    elif params['vacation_type'] == 'b':
+        if params['vacation_type_detail'] == 't':
+            data['vacation_type'] = 4
+        elif params['vacation_type_detail'] == 'h1':
+            data['vacation_type'] = 5
+        elif params['vacation_type_detail'] == 'h2':
+            data['vacation_type'] = 6
+    else:
+        data['vacation_type'] = 7
+    data['rm'] = params['to_go']
+    data['etc1'] = params['rm']
+    data['etc2'] = params['tel_no']
+    for d in range((ed_de - st_de).days + 1):
+        data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
+        g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):

@@ -580,7 +580,7 @@ $(function(){
 }
 
     </style>
-    <div class="modal-dialog modal-w900" style="width:800px!important;max-height:90vh;overflow-y:auto;" id="approval-tab-container">
+    <div class="modal-dialog modal-w900" style="width:100vw!important;max-height:100vh;overflow-y:auto;" id="approval-tab-container">
         <div class="modal-content">
 			<div class="jarviswidget jarviswidget-color-greenDark">
 				<header>
@@ -672,14 +672,14 @@ $(function(){
 
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
-							<div style="position:relative;height:45px!important;background-color:#002060!important;color:white;">
-								<h1 style="position: absolute; left: 50%;transform:translateX(-50%); top: 0;overflow: hidden;font-weight:500!important;" class="sub-title underline" id="approval-html-title">매입처별 매입 현황 (장비, 자재)</h1>
+							<div style="position:relative;height:20px!important;background-color:#002060!important;color:white;">
+								<h1 style="position: absolute; left: 50%;transform:translateX(-50%); top: -35px;overflow: hidden;font-weight:500!important;" class="sub-title underline" id="approval-html-title">매입처별 매입 현황 (장비, 자재)</h1>
+								<button style="position:absolute; right:30px; top:-30px;" type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
 							</div>
-							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr 62px!important">
+							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr!important">
 								<div style="display:inline-block;">
 									<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
 								</div>
-								<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
 							</span>
 							<form id="frmBox3">
 								<div id="formContent">
@@ -764,7 +764,7 @@ $(function(){
 			$("#approval-tab-container").attr("style", "width:800px!important");
 		}
 		else{
-			$("#approval-tab-container").attr("style", "width:100vw!important;max-height:90vh;overflow-y:auto;");
+			$("#approval-tab-container").attr("style", "width:100vw!important;max-height:100vh;overflow-y:auto;");
 			$("#frmBox3").find(".select2").select2({
 				dropdownParent: $(this).parent().parent()
 			});
@@ -804,7 +804,7 @@ $(function(){
 				data : {"url" : url},
 				success: function(pResult){
 					$("#formContent").html(pResult.html);
-					$("#tabBox3").find("#approval-html-title").html(title);
+					$("#tabBox3").find("#approval-html-title").html(title.split('').join('&nbsp;&nbsp;&nbsp;'));
 					$("#popEditTabs").find("li[data-action='3']").show();
 				},
 				error: function(){

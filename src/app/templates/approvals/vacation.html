@@ -231,6 +231,16 @@ $(function() {
 	}
 	getWorkPersonal();
 });
+    {% else %}
+    $.fn.afterLoadApproval = function(){
+        var value = $("#vacation_type option:selected").val();
+        if(['y', 'b'].includes(value)){
+            $("#vacation_type_detail_tr").show();
+        }
+        else{
+            $("#vacation_type_detail_tr").hide();
+        }
+    }
     {% endif %}
 $(document).on("change", "#vacation_type", function(){
     var value = $("#vacation_type option:selected").val();

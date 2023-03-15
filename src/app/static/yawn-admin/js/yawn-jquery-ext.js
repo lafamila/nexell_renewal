@@ -171,7 +171,10 @@ $.fn.widthMatch = function() {
     });
     this.each(function() {
         let style = $(this).attr("style");
-        $(this).attr("style", style+`width:${maxWidth}px!important;`);
+        if(style == undefined){
+            style = '';
+        }
+        $(this).attr("style", style+`min-width:${maxWidth}px!important;`);
     });
 };
 
