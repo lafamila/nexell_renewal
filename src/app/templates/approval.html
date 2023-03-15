@@ -580,7 +580,7 @@ $(function(){
 }
 
     </style>
-    <div class="modal-dialog modal-w900" style="width:100vw!important;max-height:100vh;overflow-y:auto;" id="approval-tab-container">
+    <div class="modal-dialog modal-w900" style="margin: 0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;" id="approval-tab-container">
         <div class="modal-content">
 			<div class="jarviswidget jarviswidget-color-greenDark">
 				<header>
@@ -672,9 +672,9 @@ $(function(){
 
 							</div><!--tab-pane-->
 							<div class="tab-pane fade" id="tabBox3">
-							<div style="position:relative;height:20px!important;background-color:#002060!important;color:white;">
+							<div style="position:relative;height:6px!important;background-color:#002060!important;color:white;">
 								<h1 style="position: absolute; left: 50%;transform:translateX(-50%); top: -35px;overflow: hidden;font-weight:500!important;" class="sub-title underline" id="approval-html-title">매입처별 매입 현황 (장비, 자재)</h1>
-								<button style="position:absolute; right:30px; top:-30px;" type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
+								<button style="position:absolute; right:30px; top:-36px;" type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
 							</div>
 							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr!important">
 								<div style="display:inline-block;">
@@ -758,13 +758,13 @@ $(function(){
 		let tab = $(e.target).data("action");
 		console.log(tab);
 		if(tab == "tab1"){
-			$("#approval-tab-container").attr("style", "width:800px!important");
+			$("#approval-tab-container").attr("style", "margin:0px!important;width:800px!important");
 		}
 		else if(tab == "tab2"){
-			$("#approval-tab-container").attr("style", "width:800px!important");
+			$("#approval-tab-container").attr("style", "margin:0px!important;width:800px!important");
 		}
 		else{
-			$("#approval-tab-container").attr("style", "width:100vw!important;max-height:100vh;overflow-y:auto;");
+			$("#approval-tab-container").attr("style", "margin:0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;");
 			$("#frmBox3").find(".select2").select2({
 				dropdownParent: $(this).parent().parent()
 			});

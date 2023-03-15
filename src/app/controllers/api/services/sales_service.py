@@ -81,6 +81,43 @@ def get_sales_datatable(params):
 
     return dt_query(query, data, params)
 
+def get_sales_approval_datatable(params):
+    query = """SELECT IFNULL(dlivy_de, '') AS dlivy_de
+                    , eq_sn
+                    , order_de
+                    , prdlst_se_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm
+                    , model_no
+                    , cntrct_sn
+                    , (SELECT spt_nm FROM contract WHERE cntrct_sn=e.cntrct_sn) AS spt_nm
+                    , dlnt
+                    , pamt
+                    , bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
+                    FROM equipment e
+                    WHERE 1=1
+                    AND ((e.dlivy_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or e.dlivy_de IS NULL)
+                    """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
+    data = []
+    if "s_bcnc_sn" in params and params['s_bcnc_sn']:
+        query += " AND a.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
+
+    if "s_prdlst_se_code" in params and params['s_prdlst_se_code']:
+        query += " AND a.prdlst_se_code=%s"
+        data.append(params["s_prdlst_se_code"])
+
+    if "s_model_no" in params and params['s_model_no']:
+        query += " AND a.model_no=%s"
+        data.append(params["s_model_no"])
+
+    if "s_spt_nm" in params and params['s_spt_nm']:
+        query += " AND c.spt_nm LIKE %s"
+        data.append('%{}%'.format(params["s_spt_nm"]))
+
+    return dt_query(query, data, params)
+
+
 def get_sales_summary(params):
     query = """SELECT IFNULL(COUNT(a.delng_sn),0) AS total_count
 				, IFNULL(SUM(IFNULL(a.dlnt, 0)*IFNULL(a.dlamt, 0)),0) AS total_amount
@@ -585,3 +622,22 @@ def insert_ms_equip(params):
 
         # sub_query = [key for key in data]
         # params_query = ["%({})s".format(key) for key in data]
+
+def insert_equipment_sub(params):
+    data = OrderedDict()
+    data['cntrct_sn'] = params['cntrct_sn']
+    order_des = params['order_de[]']
+    prdlst_se_codes = params['prdlst_se_code[]']
+    damts = params['damt[]']
+    damt2s = params['damt2[]']
+    bcnc_sns = params['bcnc_sn[]']
+    for order_de, prdlst_se_code, pamt, samt, bcnc_sn in zip(order_des, prdlst_se_codes, damts, damt2s, bcnc_sns):
+        data['order_de'] = order_de
+        data['prdlst_se_code'] = prdlst_se_code
+        data['model_no'] = '자재'
+        data['dlnt'] = 1
+        data['pamt'] = int(pamt.replace(",", "")) if pamt != '' else None
+        data['samt'] = int(samt.replace(",", "")) if samt != '' else None
+        data['bcnc_sn'] = bcnc_sn
+        g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
+

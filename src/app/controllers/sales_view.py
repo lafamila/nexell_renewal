@@ -11,3 +11,8 @@ def index_page():
 @session_helper.session_check
 def report_page():
     return render_template('sales_report.html')
+
+@bp.route('/approval')
+@session_helper.session_check
+def sales_approval_page():
+    return render_template("sales_approval.html")

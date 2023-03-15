@@ -52,6 +52,11 @@ def ajax_get_sales_datatable():
     result = sales.get_sales_datatable(params)
     result['summary'] = sales.get_sales_summary(params)
     return jsonify(result)
+@bp.route('/ajax_get_sales_approval_datatable', methods=['POST'])
+def ajax_get_sales_approval_datatable():
+    params = request.form.to_dict()
+    result = sales.get_sales_approval_datatable(params)
+    return jsonify(result)
 
 @bp.route('/ajax_get_inventory', methods=['GET'])
 def ajax_get_inventory():
@@ -429,4 +434,10 @@ def ajax_get_sales_expect_report():
 def insert_ms_equip():
     params = request.get_json()
     sales.insert_ms_equip(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_equipment_sub', methods=['POST'])
+def insert_equipment_sub():
+    params = request.get_json()
+    sales.insert_equipment_sub(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})

@@ -1,0 +1,436 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+</style>
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+    <ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">주문 내역 관리 </li><li><span> 매입 / 매출</span></li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					매입/매출 관리 <span>> 매입/매출</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			품의 기반 주문 내역을 관리합니다.
+		</p>
+		<p></p>
+		<p></p>
+	</div>
+
+    <br/>
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>매입/매출 목록</h2>
+						<div class="widget-toolbar">
+							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="202">
+									<col width="110">
+									<col width="*">
+									<col width="100">
+									<col width="250">
+									<col width="110">
+									<col width="110">
+									<col width="100">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_start" name="s_ddt_man_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_end" name="s_ddt_man_end" placeholder="[종료일자]">
+										</th>
+                                        <th class="hasinput"></th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_prdlst_se_code" name="s_prdlst_se_code">
+												<option value="">[전체]</option>
+												{prdlst_se_code_list}
+												<option value="{value}">{value}.{label}</option>
+												{/prdlst_se_code_list}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_model_no" name="s_model_no">
+										</th>
+                                        <th class="hasinput"></th>
+                                        <th class="hasinput"></th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
+												<option value="">[전체]</option>
+												{bcnc_list}
+												<option value="{value}">{value}.{label}</option>
+												{/bcnc_list}
+											</select>
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>매입일</th>
+										<th>주문일</th>
+										<th>현장명</th>
+										<th>매입품목</th>
+										<th>모델명</th>
+										<th style="text-align:left!important;">수량</th>
+										<th style="text-align:left!important;">단가</th>
+										<th>매입처</th>
+										<th class="text-right">
+										</th>
+									</tr>
+								</thead>
+								<tfoot>
+								</tfoot>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+		</div>
+
+		<!-- <div class="well well-sm1 well-light1">
+		<div class="row">
+			<article class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+
+					<legend>
+						매입처별
+					</legend>
+					<table class="table table-bordered" id="pList">
+						<thead>
+							<tr>
+								<th width="300px">매입처코드</th>
+								<th class="text-right">금액</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+						<tfoot>
+							<tr style="background:#eee;">
+								<th>매입 월 누계</th>
+								<td class="text-right">0</td>
+							</tr>
+						</tfoot>
+					</table>
+
+			</article>
+			<article class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+
+				<legend>
+					매출유형별(월)
+				</legend>
+				<table class="table table-bordered" id="sList">
+					<thead>
+						<tr>
+							<th width="300px">매출구분</th>
+							<th class="text-right">금액</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+					<tfoot>
+						<tr style="background:#eee;">
+							<th>매출 월 누계</th>
+							<td class="text-right">0</td>
+						</tr>
+					</tfoot>
+				</table>
+
+			</article>
+		</div>
+		</div> -->
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+var bf_s_ddt_man = '0000-00-00';
+
+/******************************************************************************
+ * 매입/매출 목록을 조회한다.
+ */
+getSalesApprovalList = function()
+{
+	var s_ddt_man = $('#dtList1').find('#s_ddt_man').val();
+	if (s_ddt_man == '') {
+		alert('거래일은 필수 검색조건입니다.');
+		return false;
+	}
+
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		pageLength: 15,
+		buttons: [
+            'excelHtml5',
+		],
+        ajax: {
+            url: '/api/sales/ajax_get_sales_approval_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					// 's_ddt_man': $('#dtList1').find('#s_ddt_man').val(),
+					's_ddt_man_start': $('#dtList1').find('#s_ddt_man_start').val(),
+					's_ddt_man_end': $('#dtList1').find('#s_ddt_man_end').val(),
+					's_bcnc_sn': $('#dtList1').find('#s_bcnc_sn').val(),
+					's_prdlst_se_code': $('#dtList1').find('#s_prdlst_se_code').val(),
+					's_model_no': $('#dtList1').find('#s_model_no').val(),
+					's_spt_nm': $('#dtList1').find('#s_spt_nm').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'desc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'dlivy_de' },
+            { data: 'order_de' },
+            { data: 'spt_nm' },
+            { data: 'prdlst_se_nm' },
+            { data: 'model_no' },
+            { data: 'dlnt' },
+            { data: 'pamt' },
+            { data: 'bcnc_nm' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+                    if(row.dlivy_de == ''){
+                      html += '<div class="btn-group">';
+                      html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-eq_sn="'+row.eq_sn+'">';
+                      html += '		<i class="fa fa-edit"></i>';
+                      html += '	</button>';
+                      html += '</div>';
+                    }
+					return html;
+				}
+			},
+        ],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+
+			var data = pSettings.json;
+
+		},
+		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
+
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				// var s_ddt_man = $('#dtList1').find('#s_ddt_man').val();
+				// var s_spt_nm = $('#dtList1').find('#s_spt_nm').val();
+				// if (bf_s_ddt_man == s_ddt_man) {
+				// 	return false;
+				// } else {
+				// 	bf_s_ddt_man = s_ddt_man;
+				// }
+				// if (s_ddt_man == '' && s_spt_nm == '') {
+				// 	alert('거래일 또는 현장명은 필수 검색조건입니다.');
+				// 	return false;
+				// }
+				// console.log('reload');
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var eq_sn = $(this).data('eq_sn');
+                var dlivy_de = prompt("매입일을 입력하세요.");
+                //TODO : 날짜형식 확인하고 업데이트 ajax 실행 ==> 그 컨트롤러에서 매입매출장 만들기
+				$.datatable1.ajax.reload();
+			});
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+
+	/**************************************************************************
+	* 거래일 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 3;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear());
+        endDate.setMonth(endDate.getMonth());
+        endDate.setDate(1);
+		endDate.setDate(endDate.getDate());
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/**************************************************************************
+     *
+     */
+	// $('#dtList1').find('#s_ddt_man').datepicker('setDate', 'today');
+
+	/**************************************************************************
+     *
+     */
+	getSalesApprovalList();
+});
+</script>
+
+{% endblock %}
