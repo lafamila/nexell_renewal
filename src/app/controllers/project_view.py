@@ -5,12 +5,12 @@ bp = Blueprint('project', __name__, url_prefix='/project')
 @bp.route('/')
 @session_helper.session_check
 def index_page():
-    return render_template('project.html')
+    return render_template('project.html', title="계약/프로젝트 관리 | 넥셀시스템")
 
 @bp.route('/finals')
 @session_helper.session_check
 def finals_page():
-    return render_template('project_finals.html')
+    return render_template('project_finals.html', title="프로젝트 종합현황 | 넥셀시스템")
 
 @bp.route('/report/NR')
 @session_helper.session_check

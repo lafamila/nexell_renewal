@@ -397,43 +397,43 @@ getWorkYear = function(){
 			{ data: 'out_dtm' },
 			{ data: 'last_tot', className: 'text-center input-available',
 				render: function(data, type, row, meta) {
-					return data.toString().toFormat('NUMBER');
+					return data;
 				}
 			},
 			{ data: 'last_mod', className: 'text-center input-available',
 				render: function(data, type, row, meta) {
-					return data.toString().toFormat('NUMBER');
+					return data;
 				}
 			},
 			{ data: 'last_use', className: 'text-center input-available',
 				render: function(data, type, row, meta) {
-					return data.toString().toFormat('NUMBER');
+					return data;
 				}
 			},
 			{ data: 'mber_sn', className: 'text-center rem',
 				render: function(data, type, row, meta) {
 
-					return (parseInt(row.last_tot) + parseInt(row.last_mod) - parseInt(row.last_use)).toString().toFormat('NUMBER');
+					return (parseFloat(row.last_tot) + parseFloat(row.last_mod) - parseFloat(row.last_use)).toFixed(1);
 				}
 			},
 			{ data: 'tot', className: 'text-center input-available',
 				render: function(data, type, row, meta) {
-					return data.toString().toFormat('NUMBER');
+					return data;
 				}
 			},
 			{ data: 'mod', className: 'text-center input-available',
 				render: function(data, type, row, meta) {
-					return data.toString().toFormat('NUMBER');
+					return data;
 				}
 			},
 			{ data: 'use', className: 'text-center input-available',
 				render: function(data, type, row, meta) {
-					return data.toString().toFormat('NUMBER');
+					return data;
 				}
 			},
 			{ data: 'mber_sn', className: 'text-center rem',
 				render: function(data, type, row, meta) {
-					return (parseInt(row.tot) + parseInt(row.mod) - parseInt(row.use)).toString().toFormat('NUMBER');
+					return (parseFloat(row.tot) + parseFloat(row.mod) - parseFloat(row.use)).toFixed(1);
 				}
 			},
 			{ data: 'out', className: 'text-center',

@@ -89,6 +89,7 @@ tbody .btnUpdate, tbody .btn{
                         <h2>빌트인 현장현황</h2>
 						<div class="widget-toolbar">
                             <h2>VAT 포함 (단위 : 천원)</h2>&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 빌트인 종합관리</i></button>
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
 <!--                            <button type="button" class="btn btn-info" id="s_submit">검색</button>-->
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
@@ -862,5 +863,151 @@ $(function() {
     getBndList(year);
 });
 </script>
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:82%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r1_s_ddt_man" name="r1_s_ddt_man">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+<style>
+@media only screen and (min-width:320px) and (max-width:800px)  {
+    #popReport1{
+        font-size: 9px !important;
+        line-height: 1.0 !important;
+    }
+    #temp.table>tbody>tr>td, #temp.table>tbody>tr>th, #temp.table>tfoot>tr>td, #temp.table>tfoot>tr>th, #temp.table>thead>tr>td, #temp.table>thead>tr>th {
+        font-size: 9px !important;
+        line-height: 1.0 !important;
+    }
 
+}
+
+@media (min-width:1281px) { /* hi-res laptops and desktops */
+
+    #popReport1{
+        font-size: 11px !important;
+        line-height: 0.5 !important;
+    }
+    #temp.table>tbody>tr>td, #temp.table>tbody>tr>th, #temp.table>tfoot>tr>td, #temp.table>tfoot>tr>th, #temp.table>thead>tr>td, #temp.table>thead>tr>th {
+        font-size: 13px !important;
+        line-height: 0.5 !important;
+    }
+
+}
+
+
+</style>
+
+
+<div class="title"><h2 class="colorLS">빌트인 종합관리</h2></div>
+
+<br>
+<table id="rptTable1">
+	<colgroup>
+		<col width="100">
+		<col width="50">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+		<col width="150">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="colorG" rowspan="2">년</th>
+			<th class="colorG" rowspan="2">월</th>
+			<th class="colorG" colspan="2">제품전시</th>
+			<th class="colorG" colspan="3">전시차감</th>
+			<th class="colorG" colspan="3">판매수수료(영업)</th>
+		</tr>
+		<tr>
+			<th class="colorG">신규전시</th>
+			<th class="colorG">총전시현장</th>
+			<th class="colorG">입금</th>
+			<th class="colorG">미입금</th>
+			<th class="colorG">잔액</th>
+			<th class="colorG">입금</th>
+			<th class="colorG">잔량</th>
+			<th class="colorG">잔액</th>
+		</tr>
+	</thead>
+	<tbody role="body">
+	</tbody>
+</table>
+<!------------------------------------------------------------------------------------------->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+getBuiltInMonth = function(s_ddt_man)
+{
+	var params = '';
+	params += '&s_ddt_man=' + s_ddt_man;
+
+	// $.ajax({
+	// 	url: '/api/stock/ajax_get_built_month',
+	// 	type: 'GET',
+	// 	data: params,
+	// 	dataType: 'json',
+	// 	contentType: false,
+	// 	processData: false,
+	// 	success: function(pResult) {
+	// 		console.log('getBuiltInMonth', pResult);
+	// 		if (pResult.status) {
+	//
+	//
+	// 		}
+	// 	}
+	// });
+}
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#r1_s_ddt_man').val() == '') {
+			modal.find('#r1_s_ddt_man').datepicker('setDate', 'today');
+		}
+		getBuiltInMonth(modal.find('#r1_s_ddt_man').val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('change', '#r1_s_ddt_man', function(pEvent) {
+		getBuiltInMonth($(this).val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport1').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+</script>
 {% endblock %}

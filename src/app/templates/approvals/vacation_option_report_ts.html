@@ -1,0 +1,432 @@
+<style>
+  .colorGray{
+    background-color:#eee!important;
+  }
+  .bold{
+    font-weight:bold!important;
+  }
+  .normal{
+    font-weight:normal!important;
+  }
+  .no-outline{
+      border:none!important;
+      outline: none!important;
+  }
+  {% if init %}
+  .bottom-outline{
+      border-left:none!important;
+      border-top:none!important;
+      border-right:none!important;
+      border-bottom:groove!important;
+      width:100%;
+  }
+  {% else %}
+  .bottom-outline{
+      border:none!important;
+      width:100%;
+  }
+  {% endif %}
+  .bottom-outline:focus{
+      outline: none!important;
+  }
+  .no-outline:focus{
+      outline: none!important;
+  }
+  .no-highlight:read-only{
+    background:transparent!important;
+  }
+  #report{
+    display:grid;
+    grid-template-rows: 80px 1fr;
+  }
+  #title{
+    display:grid;
+    border-bottom: 4px solid black;
+    grid-column-gap: 5px;
+    grid-template-columns: 1fr;
+  }
+  .title-row{
+    display:grid;
+    grid-template-rows: 1fr 1fr;
+  }
+  .title-row div{
+    font-weight:bold;
+    font-size:15px;
+  }
+  .content{
+    position:relative;
+  }
+  .date{
+    position:absolute;
+    right:0px;
+    top:20px;
+  }
+  .table-textarea{
+    width:100%;
+    height:100%;
+    border:none;
+    resize:none;
+  }
+  #report table td, #report table th{
+    height: 35px!important;
+  }
+  {% if init %}
+  /*textarea{*/
+  /*  background-color:rgba(245, 245, 245, 0.9);*/
+  /*}*/
+  {% else %}
+  /*textarea{*/
+  /*  background-color:transparent;*/
+  /*}*/
+  {% endif %}
+
+</style>
+<div id="report" style="width:1080px;background-color:white; padding:20px;">
+  <div id="title">
+    <div class="title-row">
+      <div><input type="text" class="text-left bottom-outline no-highlight" id="report_title" name="report_title" placeholder="현장명"/></div>
+      <div>상기 제목과 관련하여 아래와 같이 품의드리오니 검토하시어 재가 바랍니다.</div>
+    </div>
+  </div>
+  <h2 class="text-center">- 아&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;래 -</h2>
+  <h6>1. 출장현황</h6>
+  <table class="table table-bordered">
+    <colgroup>
+      <col width="100"/>
+      <col width="940"/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <th class="colorGray text-center bold">출장위치</th>
+        <td class="hasinput">
+            <input type="text" class="text-center form-control" id="addr1" name="addr1"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold">출장기간</th>
+        <td class="hasinput">
+            <input type="text" class="text-center form-control" id="period" name="period"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h6 style="position:relative;">2. 활동내역표
+      <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+          <button type="button" class="btn btn-table" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+      </div>
+  </h6>
+  <table class="table table-bordered">
+    <colgroup>
+      <col width="100"/>
+      <col width="540"/>
+      <col width="100"/>
+      <col width="100"/>
+      <col width="50"/>
+      <col width="150"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="colorGray text-center bold middle" rowspan="2">일자</th>
+        <th class="colorGray text-center bold middle" rowspan="2">활동 내역</th>
+        <th class="colorGray text-center bold" colspan="3">옵션 현황</th>
+        <th class="colorGray text-center bold middle" rowspan="2">비고</th>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold">방문</th>
+        <th class="colorGray text-center bold">계약</th>
+        <th class="colorGray text-center bold">채택율</th>
+      </tr>
+    </thead>
+    <tbody role="schedule_row">
+      <tr data-row="schedule_tr" data-target="calculate">
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" data-type="date" name="date1[]"/>
+        </td>
+        <td class="hasinput" rowspan="2">
+          <textarea class="table-textarea" name="content[]"></textarea>
+        </td>
+        <td class="hasinput" rowspan="2">
+          <textarea class="table-textarea text-right" name="cnt1[]" data-type="number"></textarea>
+        </td>
+        <td class="hasinput" rowspan="2">
+          <textarea class="table-textarea text-right" name="cnt2[]" data-type="number"></textarea>
+        </td>
+        <td class="text-center" rowspan="2" data-column="rate[]">
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea" name="rm[]"></textarea>
+        </td>
+      </tr>
+      <tr data-row="schedule_tr">
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="date2[]"/>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th class="colorGray text-center bold middle" colspan="2">합계</th>
+        <th class="colorGray text-right" data-column="total_cnt1"></th>
+        <th class="colorGray text-right" data-column="total_cnt2" rowspan="2"></th>
+        <th class="colorGray text-center" data-column="total_rate" rowspan="2"></th>
+        <th class="colorGray" rowspan="2"></th>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold middle" colspan="2">총 세대 수</th>
+        <th class="hasinput">
+          <input type="text" class="form-control text-right" name="visit_count" data-type="number"/>
+        </th>
+        <th></th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+  <table class="table table-bordered" style="margin-top:20px!important;">
+    <colgroup>
+      <col width="100"/>
+      <col width="540"/>
+      <col width="100"/>
+      <col width="100"/>
+      <col width="100"/>
+      <col width="100"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="colorGray text-center bold middle" rowspan="2">구분</th>
+        <th class="colorGray text-center bold middle" rowspan="2">계산근거</th>
+        <th class="colorGray text-center bold" colspan="3">금액</th>
+        <th class="colorGray text-center bold middle" rowspan="2">비고</th>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold">법인카드</th>
+        <th class="colorGray text-center bold">현금</th>
+        <th class="colorGray text-center bold">계</th>
+      </tr>
+    </thead>
+    <tbody role="cost_tbody">
+      <tr>
+        <th class="colorGray text-center bold">숙박비</th>
+        <td class="hasinput">
+          <textarea class="table-textarea middle" name="sleep_pay"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="card_sleep"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="money_sleep"></textarea>
+        </td>
+        <td data-column="total_sleep" class="bold text-right"></td>
+        <td class="hasinput">
+          <textarea class="table-textarea text-center" name="rm_sleep"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold">잡 비</th>
+        <td class="hasinput">
+          <textarea class="table-textarea middle" name="etc_pay"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="card_etc"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="money_etc"></textarea>
+        </td>
+        <td data-column="total_etc" class="bold text-right"></td>
+        <td class="hasinput">
+          <textarea class="table-textarea text-center" name="rm_etc"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold">교통비<br>(통행비)</th>
+        <td class="hasinput">
+          <textarea class="table-textarea middle" name="transfer_pay"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="card_transfer"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="money_transfer"></textarea>
+        </td>
+        <td data-column="total_transfer" class="bold text-right"></td>
+        <td class="hasinput">
+          <textarea class="table-textarea text-center" name="rm_transfer"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold">식사 및 기타</th>
+        <td class="hasinput">
+          <textarea class="table-textarea middle" name="eat_pay"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="card_eat"></textarea>
+        </td>
+        <td class="hasinput">
+          <textarea class="table-textarea middle text-right" data-type="number" name="money_eat"></textarea>
+        </td>
+        <td data-column="total_eat" class="bold text-right"></td>
+        <td class="hasinput">
+          <textarea class="table-textarea text-center" name="rm_eat"></textarea>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th class="colorGray text-center bold" colspan="2">총 출장 비용</th>
+        <th data-column="total_card" class="colorGray bold text-right"></th>
+        <th data-column="total_money" class="colorGray bold text-right"></th>
+        <th data-column="total" class="colorGray bold text-right"></th>
+        <th class="colorGray text-center bold"></th>
+      </tr>
+    </tfoot>
+  </table>
+  <table class="table table-bordered" style="margin-top:20px!important;">
+      <col width="150"/>
+      <col width="740"/>
+      <col width="150"/>
+    <thead>
+      <tr>
+        <th class="colorGray text-center bold">항목</th>
+        <th class="colorGray text-center bold">사진</th>
+        <th class="colorGray text-center bold">비고</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-center">일정 내</td>
+        <td class="hasinput"></td>
+        <td class="hasinput">
+          <textarea class="table-textarea text-left" name="last_rm"></textarea>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        if(selector == "schedule_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='schedule_row'] tr");
+                var origin1 = trs.eq(0).clone(true);
+                var origin2 = trs.eq(1).clone(true);
+                $(origin1).find("td:not(.hasinput)").html("");
+                $(origin1).find("td.hasinput input").val("");
+                $(origin1).find("td.hasinput textarea").val("");
+                $(origin2).find("td:not(.hasinput)").html("");
+                $(origin2).find("td.hasinput input").val("");
+                $(origin2).find("td.hasinput textarea").val("");
+                $(document).find("tbody[role='schedule_row']").append($(origin1));
+                $(document).find("tbody[role='schedule_row']").append($(origin2));
+            }
+        }
+
+    }
+    $(document).on("change", "tbody[role='schedule_row']", function(){
+        var total_cnt1 = 0;
+        $(this).find(`[name='cnt1[]']`).each(function(pIndex, pTag){
+          var value = parseInt($(pTag).val().replaceAll(",", ""));
+          if(isNaN(value)) value = 0;
+          total_cnt1 += value;
+        });
+        var total_cnt2 = 0;
+        $(this).find(`[name='cnt2[]']`).each(function(pIndex, pTag){
+          var value = parseInt($(pTag).val().replaceAll(",", ""));
+          if(isNaN(value)) value = 0;
+          total_cnt2 += value;
+        });
+        $(this).find('[data-target="calculate"]').each(function(pIndex, pTag){
+          var p1 = parseInt($(pTag).find(`[name='cnt1[]']`).val().replaceAll(",", "")); if(isNaN(p1)) p1 = 0;
+          var p2 = parseInt($(pTag).find(`[name='cnt2[]']`).val().replaceAll(",", "")); if(isNaN(p2)) p2 = 0;
+          if(p1 != 0){
+            $(pTag).find(`[data-column='rate[]']`).html((p2*100.0/p1).toFixed(1)+"%");
+          }
+        })
+        $(this).parent().find('[data-column="total_cnt1"]').html(total_cnt1.toFormat('NUMBER'));
+        $(this).parent().find('[data-column="total_cnt2"]').html(total_cnt2.toFormat('NUMBER'));
+        if(total_cnt1 != 0){
+          $(this).parent().find('[data-column="total_rate"]').html((total_cnt2*100.0/total_cnt1).toFixed(1)+"%");
+        }
+
+    });
+    $(document).on("change", "tbody[role='cost_tbody']", function(){
+        var card_sleep = parseInt($(this).find(`[name='card_sleep']`).val().replaceAll("," ,"")); if(isNaN(card_sleep)) card_sleep=0;
+        var money_sleep = parseInt($(this).find(`[name='money_sleep']`).val().replaceAll("," ,"")); if(isNaN(money_sleep)) money_sleep=0;
+        var card_etc = parseInt($(this).find(`[name='card_etc']`).val().replaceAll("," ,"")); if(isNaN(card_etc)) card_etc=0;
+        var money_etc = parseInt($(this).find(`[name='money_etc']`).val().replaceAll("," ,"")); if(isNaN(money_etc)) money_etc=0;
+        var card_transfer = parseInt($(this).find(`[name='card_transfer']`).val().replaceAll("," ,"")); if(isNaN(card_transfer)) card_transfer=0;
+        var money_transfer = parseInt($(this).find(`[name='money_transfer']`).val().replaceAll("," ,"")); if(isNaN(money_transfer)) money_transfer=0;
+        var card_eat = parseInt($(this).find(`[name='card_eat']`).val().replaceAll("," ,"")); if(isNaN(card_eat)) card_eat=0;
+        var money_eat = parseInt($(this).find(`[name='money_eat']`).val().replaceAll("," ,"")); if(isNaN(money_eat)) money_eat=0;
+
+        $(this).find(`[data-column='total_sleep']`).html((card_sleep+money_sleep).toFormat('NUMBER'));
+        $(this).find(`[data-column='total_etc']`).html((card_etc+money_etc).toFormat('NUMBER'));
+        $(this).find(`[data-column='total_transfer']`).html((card_transfer+money_transfer).toFormat('NUMBER'));
+        $(this).find(`[data-column='total_eat']`).html((card_eat+money_eat).toFormat('NUMBER'));
+        $(this).parent().find(`[data-column='total_card']`).html((card_sleep+card_etc+card_transfer+card_eat).toFormat('NUMBER'));
+        $(this).parent().find(`[data-column='total_money']`).html((money_sleep+money_etc+money_transfer+money_eat).toFormat('NUMBER'));
+        $(this).parent().find(`[data-column='total']`).html((card_sleep+card_etc+card_transfer+card_eat+money_sleep+money_etc+money_transfer+money_eat).toFormat('NUMBER'));
+    });
+    {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("schedule_tr", 1);
+    });
+    window.projects = {};
+    $(document).ready(function(){
+        var input = document.querySelector('input[data-type="number"]');
+        if(input){
+          input.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9 \,]/, '');
+          });
+        }
+
+        var textarea = document.querySelector('textarea[data-type="number"]');
+        if(textarea){
+          textarea.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9 \,]/, '');
+          });
+        }
+
+    });
+    $(document).on("focusout", "input[data-type='number'], textarea[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+    }
+    {% endif %}
+</script>

@@ -91,37 +91,37 @@
             <th class="color-contract text-center">VA율</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody role="ct_se_code_contract">
         <tr data-row="C">
             <th class="colorB text-center middle" rowspan="2">수주계약</th>
             <th class="colorSky text-center">예정가</th>
-            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center" data-column="row_total2" onchange="sub(this, ['row_total2'], '#va2')"></td>
-            <td class="text-center" id="va2" rowspan="2" onchange="rate(this, ['#va2', 'row_total'], '#va_rate2', true)"></td>
-            <td class="text-center" id="va_rate2" rowspan="2"></td>
+            <td class="text-right" data-type='number' name="C_1"></td>
+            <td class="text-right" data-type='number' name="C_2"></td>
+            <td class="text-right" data-type='number' name="C_5"></td>
+            <td class="text-right" data-type='number' name="C_8"></td>
+            <td class="text-right" data-type='number' name="C_3"></td>
+            <td class="text-right" data-type='number' name="C_4"></td>
+            <td class="text-right" data-type='number' name="C_10"></td>
+            <td class="text-right" data-type='number' name="C_61"></td>
+            <td class="text-right" data-type='number' name="C_7"></td>
+            <td class="text-right" data-type='number' name="C_99"></td>
+            <td class="text-center" data-column="row_total"></td>
+            <td class="text-center" data-column="va" rowspan="2"></td>
+            <td class="text-center" data-column="va_rate" rowspan="2"></td>
         </tr>
         <tr data-row="E">
             <th class="colorSky text-center">실행가</th>
-            <td class="text-center input-available" data-type="number" data-column="1" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="2" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="5" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="8" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="3" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="4" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="10" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="61" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="7" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center input-available" data-type="number" data-column="99" onchange="sum(this, ['1', '2', '5', '8', '3', '4', '10', '61', '7', '99'], 'row_total', true)"></td>
-            <td class="text-center" data-column="row_total2" onchange="sub(this, ['row_total2'], '#va2')" style="border-right: 1px solid #ddd!important;"></td>
+            <td class="text-right" data-type='number' name="E_1"></td>
+            <td class="text-right" data-type='number' name="E_2"></td>
+            <td class="text-right" data-type='number' name="E_5"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
+            <td class="text-right" data-type='number' name="E_3"></td>
+            <td class="text-right" data-type='number' name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_10"></td>
+            <td class="text-right" data-type='number' name="E_61"></td>
+            <td class="text-right" data-type='number' name="E_7"></td>
+            <td class="text-right" data-type='number' name="E_99"></td>
+            <td class="text-center" data-column="row_total"></td>
         </tr>
     </tbody>
 </table>
@@ -139,23 +139,21 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="12">② 타사장비 (관리/자동) - VAT포함</th>
+			<th class="sub-title colorN text-center" style="border-right:0px!important;position:relative;height:40px;" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 (관리/자동) - VAT포함</span>
+            </th>
+
         </tr>
         <tr>
             <th class="color-contract text-center">출고일</th>
-            <th class="color-contract text-center">지급일</th>
             <th class="color-contract text-center">상품명</th>
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">계약수량</th>
             <th class="color-contract text-center">매입단가</th>
-            <th class="color-contract text-center">수량</th>
+            <th class="color-contract text-center">기출고수량</th>
+            <th class="color-contract text-center">출고수량</th>
             <th class="color-contract text-center">매입금액</th>
             <th class="color-contract text-center">매출금액</th>
             <th class="color-contract text-center">VA</th>
@@ -163,38 +161,73 @@
             <th class="color-contract text-center">비고</th>
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+    <tbody role="equip_row">
+        <tr data-row="equip_tr">
+            <td class="text-center" name="dlivy_de[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no[]"/>
+                <input type="hidden" name="delng_ty_code[]" value="61"/>
+                <input type="hidden" name="equip_sn[]" value=""/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+            </td>
+            <td class="text-right" name="sdlnt[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
+            </td>
+            <td class="text-right" name="amount[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
+            </td>
+            <td class="text-right" name="va[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm[]"/>
+            </td>
         </tr>
     </tbody>
     <tfoot>
         <tr>
-            <td class="colorG text-center" colspan="4">합계</td>
+            <td class="colorG text-center" colspan="3">합계</td>
+            <td class="colorG text-right" data-column="total_cnt_dlnt"></td>
             <td class="colorG"></td>
-            <td class="colorG"></td>
-            <td class="colorG"></td>
-            <td class="colorP"></td>
-            <td class="colorG"></td>
-            <td class="colorG"></td>
+            <td class="colorG text-right" data-column="total_sdlnt"></td>
+            <td class="colorG text-right" data-column="total_dlnt"></td>
+            <td class="colorP text-right" data-column="total_amount"></td>
+            <td class="colorG text-right" data-column="total_samount"></td>
+            <td class="colorG text-right" data-column="total_va"></td>
             <td class="colorG"></td>
             <td class="colorG"></td>
         </tr>
     </tfoot>
 </table>
-
-
+<style>
+    .table td.hasinput{
+        padding:2px!important;
+    }
+    .hasinput .table td.hasinput{
+        padding:2px!important;
+    }
+</style>
 <table class="table table-bordered table-form" style="width:35%!important;">
     <colgroup>
         <col width="100"/>
@@ -211,16 +244,191 @@
     </tr>
   </tbody>
 </table>
+
 <script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    get_cost = function(cntrct_sn){
+        $.ajax({
+                url : '/api/project/get_costs_bd',
+                method : 'GET',
+                data : {"s_cntrct_sn" : cntrct_sn},
+                success: function(pResult){
+                    $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
+                    $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
+                    $.each(pResult.aCostList, function(pIndex, pValue){
+                        $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                    });
+                    $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
+                    var totals = [];
+                    $("tbody[role='ct_se_code_contract']").find("tr").each(function(pIndex, pRow){
+                        var total = 0;
+                        $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                            var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                            total += value;
+                        });
+                        $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                        totals.push(total);
+                    });
+
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+
+                    {% if init %}
+                    cloneRow("equip_tr", pResult.otherList.length-1);
+                    {% endif %}
+
+                    $.each(pResult.otherList, function(pIndex, pRow){
+                        $.each(pRow, function(pName, pValue){
+                            var pTag = $("tbody[role='equip_row']").find(`[name='${pName}[]']`).eq(pIndex);
+                            var tagName = $(pTag).prop("tagName");
+                            if(tagName == "INPUT"){
+                                if($(pTag).data("type") == "number"){
+                                    $(pTag).val(pValue.toFormat('NUMBER'));
+                                }
+                                else{
+                                    $(pTag).val(pValue);
+                                }
+                                $(pTag).attr("readonly", true);
+                            }
+                            else if(tagName == "TD"){
+                                if($(pTag).data("type") == "number"){
+                                    $(pTag).html(pValue.toFormat('NUMBER'));
+                                }
+                                else{
+                                    $(pTag).html(pValue);
+                                }
+                            }
+                            else if(tagName == "SELECT"){
+                                $(pTag).yVal(pValue);
+                                $(pTag).attr("readonly", true);
+                            }
+
+                        })
+                    });
+                    $("tbody[role='equip_row']").trigger("change");
+
+                }
+            });
+
+    }
+
     fnValidate = function(){
                     var result = true;
                     return result;
                }
+    cloneRow = function(selector, count){
+        if(selector == "equip_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='equip_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                //재고장비는 62
+                $(origin).find("input[type='hidden'][name='delng_ty_code[]']").val('61');
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="prdlst_se_code[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    } else if (pIndex == 1) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
+                                                <option value="">[전체]</option>
+                                                {% for code in bcnc_list %}
+                                                <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endfor %}
+                                            </select>`);
+                    }
+                });
+                $(document).find("tbody[role='equip_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_row']").trigger("change");
+        }
+    }
+    $(document).on("change", "tbody[role='equip_row']", function(){
+        var total_amount = 0;
+        var total_samount = 0;
+        var total_cnt_dlnt = 0;
+        var total_dlnt = 0;
+        var total_sdlnt = 0;
+        var total_va = 0;
+        $(this).find("tr").each(function(pIndex, pRow){
+            var cnt_dlnt = parseInt($(pRow).find("[name='cnt_dlnt[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+            var dlamt = parseInt($(pRow).find("[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var amount = cnt_dlnt*dlamt;
+            var va = samount-amount;
+            total_amount += amount;
+            total_samount += samount;
+            total_cnt_dlnt += cnt_dlnt;
+            total_dlnt += dlnt;
+            total_sdlnt += sdlnt;
+            total_va += va;
+            $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
+        });
+        $(this).parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_sdlnt']").html(total_sdlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_cnt_dlnt']").html(total_cnt_dlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
+    });
+
+    $(document).on("change", "tbody[role='ct_se_code_contract']", function(){
+        var totals = [];
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                $("tbody[role='ct_se_code_contract']").find("[name='E_8']").html($(this).find("[name='C_8']").html());
+                $("tbody[role='ct_se_code_contract']").find("[name='E_10']").html(Math.round(total*0.005).toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+        });
+
+        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+    });
+
+
     {% if init %}
     window.projects = {};
     $(document).ready(function(){
+        $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_row'] select").attr("disabled", true);
         $.ajax({
-            url : '/api/project/get_b_projects',
+            url : '/api/project/get_p_projects',
             method: 'GET',
             success: function(pResult){
                 var html = `<option value="">[전체]</option>`;
@@ -233,6 +441,34 @@
 
             }
         });
+        var input = document.querySelector('input[data-type="number"]');
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9 \,]/, '');
+        });
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
     });
     $(document).on("change", "#cntrct_sn", function(){
         var cntrct_sn = $("#cntrct_sn").find(":selected").val();
@@ -242,7 +478,14 @@
             $("#home_count").val(pValue.home_count);
             $("#home_region").val(pValue.home_region);
             $("#cntrwk_period").val(pValue.cntrwk_period);
+            get_cost(cntrct_sn);
         }
     });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        get_cost(cntrct_sn);
+
+    }
     {% endif %}
 </script>

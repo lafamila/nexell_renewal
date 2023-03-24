@@ -49,11 +49,18 @@ def ajax_get_personal():
     result = wk.get_work_datatable(params)
     result['calendar'] = wk.get_work_calendar(params)
     timers = wk.get_work_time(params)
+    vacations = wk.get_vacation_member(params)
     result['timer'] = {}
+    result['vacation'] = {}
     for t in timers:
         work_date = t['work_date']
         y, m, d = work_date[:4], work_date[4:6], work_date[6:]
         result['timer'][int(d)] = (t['start_time'], t['end_time'])
+    for v in vacations:
+        vacation_de = v['vacation_de']
+        y, m, d = vacation_de.split("-")
+        result['vacation'][int(d)] = v['vacation_type_nm']
+
     for _ in result['calendar']['rows']:
         for i, d in enumerate(_):
             if d != '':
@@ -70,9 +77,10 @@ def ajax_get_personal():
                     else:
                         e = "{}:{}".format(end_time[-6:-4], end_time[-4:-2])
                         result['timer'][d] = "<span class='{0}'>{1}</span><br>출근 : {2}<br>퇴근 {3}".format(_class, status, s, e)
+                elif d in result['vacation']:
+                    result['timer'][d] = result['vacation'][d]
                 else:
                     result['timer'][d] = "출근 미등록<br>퇴근 미등록"
-    # TODO : 휴가 결재 내역에서 가져와서 덮어씌울 것
     return jsonify(result)
 
 
@@ -86,15 +94,18 @@ def ajax_set_work_data():
 def ajax_get_work_daily_datatable():
     params = request.form.to_dict()
     result = wk.get_work_daily_datatable(params)
+    vacation = wk.get_vacation(params)
+    vacation = {v['mber_sn'] : v for v in vacation}
     weekday = (datetime.strptime(params["s_calendar"], "%Y-%m-%d").weekday()+1)%7
     result['summary'] = wk.get_work_daily_summary(params, LIMIT_TIMER[weekday])
     for d in result['data']:
-        if d["start_time"] == '':
+        if d['mber_sn'] in vacation:
+            d["status"] = vacation[d['mber_sn']]['vacation_type_nm']
+        elif d["start_time"] == '':
             d["status"] = "미등록"
         elif int(d["start_time"][-6:-2]) > int(LIMIT_TIMER[weekday]):
             d["status"] = "지각"
             d["start_time"] = "{}:{}:{}".format(d["start_time"][-6:-4], d["start_time"][-4:-2], d["start_time"][-2:])
-        # TODO : 휴가 출장 추가
         else:
             d["start_time"] = "{}:{}:{}".format(d["start_time"][-6:-4], d["start_time"][-4:-2], d["start_time"][-2:])
             d["status"] = "근무"

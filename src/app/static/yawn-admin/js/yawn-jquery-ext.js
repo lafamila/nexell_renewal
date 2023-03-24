@@ -177,6 +177,28 @@ $.fn.widthMatch = function() {
         $(this).attr("style", style+`min-width:${maxWidth}px!important;`);
     });
 };
+$.fn.widthMatchTarget = function(target) {
+    var maxWidth = 0;
+    $.each(target, function(pIndex, pValue){
+        var width = parseInt($(pValue).css("width").replace("px", "")) | 0;
+        maxWidth += width;
+        let style = $(pValue).attr("style");
+        if(style == undefined){
+            style = '';
+        }
+        $(pValue).attr("style", style+`width:${width}px!important;`);
+    })
+    if(target.length > 1){
+        maxWidth -= 2;
+    }
+    this.each(function() {
+        let style = $(this).attr("style");
+        if(style == undefined){
+            style = '';
+        }
+        $(this).attr("style", style+`min-width:${maxWidth}px!important;max-width:${maxWidth}px!important;`);
+    });
+};
 
 $.fn.serializeObject = function() {
     var obj = null;

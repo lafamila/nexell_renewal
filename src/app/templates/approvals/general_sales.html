@@ -1,0 +1,277 @@
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+</style>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="75%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">공사현황</th>
+        </tr>
+        <tr>
+            <td class="colorSky">판매처</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_company" id="sale_company"></td>
+        </tr>
+        <tr>
+            <td class="colorSky">판매처담당자</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_charger" id="sale_charger"></td>
+        </tr>
+        <tr>
+            <td class="colorSky">납품기간</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_period" id="sale_period"></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">계약정보</th>
+        </tr>
+        <tr>
+            <td class="colorSky">계약일</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="cntrct_de" id="cntrct_de"></td>
+            <td class="colorSky">입금예정일</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="expect_de" id="expect_de"></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form">
+    <colgroup>
+        <col width="100">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+    </colgroup>
+    <thead>
+        <th class="sub-title colorN text-center" style="border-right:0px!important;position:relative;height:40px;" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
+            <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+            </div>
+        </th>
+       <tr>
+            <th class="color-contract">판매구분</th>
+            <th class="color-contract">매입일</th>
+            <th class="color-contract">매입처</th>
+            <th class="color-contract">상품명</th>
+            <th class="color-contract">모델명</th>
+            <th class="color-contract">수량</th>
+            <th class="color-contract">매입단가</th>
+            <th class="color-contract">매입금액</th>
+            <th class="colorLP">판매처</th>
+            <th class="colorLP">판매금액</th>
+            <th class="colorLP">기타비용(배송/설치비)</th>
+            <th class="colorLP">VA</th>
+            <th class="colorLP">비고</th>
+        </tr>
+    </thead>
+    <tbody role="equip_row">
+        <tr data-row="equip_tr">
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="sale_type[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="ddt_man[]"/>
+            </td>
+            <td class="hasinput">
+                <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="number" name="dlnt[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+            </td>
+            <td class="text-right" name="pamount[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" name="sale_target[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="etc[]"/>
+            </td>
+            <td class="text-right" name="va[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm[]"/>
+            </td>
+
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="colorG text-center">계</td>
+            <td class="colorG text-right"></td>
+            <td class="colorG text-right"></td>
+            <td class="colorG text-right"></td>
+            <td class="colorG text-right"></td>
+            <td class="colorG text-center" data-column="total_dlnt"></td>
+            <td class="colorG text-right"></td>
+            <td class="colorG text-right" data-column="total_pamount"></td>
+            <td class="colorG text-right"></td>
+            <td class="colorG text-right" data-column="total_samount"></td>
+            <td class="colorG text-right" data-column="total_etc"></td>
+            <td class="colorG text-right" data-column="total_va"></td>
+            <td class="colorG"></td>
+        </tr>
+    </tfoot>
+</table>
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        if(selector == "equip_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='equip_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+                  if (pIndex == 1) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
+                                                <option value="">[전체]</option>
+                                                {% for code in bcnc_list %}
+                                                <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endfor %}
+                                            </select>`);
+                    }
+                    else if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="prdlst_se_code[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    }
+                });
+                $(document).find("tbody[role='equip_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_row']").trigger("change");
+        }
+    }
+    $(document).on("change", "tbody[role='equip_row']", function(){
+        var total_dlnt = 0;
+        var total_samount = 0;
+        var total_pamount = 0;
+        var total_etc = 0;
+        var total_va = 0;
+        $(this).find("tr").each(function(pIndex, pRow){
+            var dlnt = parseInt($(pRow).find("input[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("input[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var etc = parseInt($(pRow).find("input[name='etc[]']").val().replaceAll(",", "")); if(isNaN(etc)) etc = 0;
+            var pamount = dlamt * dlnt;
+            var va = samount-pamount-etc;
+
+            total_dlnt += dlnt;
+            total_samount += samount;
+            total_pamount += pamount;
+            total_etc += etc;
+            total_va += va;
+            $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='pamount[]']").html(pamount.toFormat('NUMBER'));
+        });
+
+        $(this).parent().find("[data-column='total_pamount']").html(total_pamount.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_etc']").html(total_etc.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
+    });
+    {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("equip_tr", 1);
+    });
+    $(document).ready(function(){
+        var input = document.querySelector('input[data-type="number"]');
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9 \,]/, '');
+        });
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+    }
+    {% endif %}
+</script>

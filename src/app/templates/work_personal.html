@@ -323,14 +323,14 @@ getWorkPersonal = function(){
 		success: function (pResult) {
 			var pData = pResult.data[0];
 			var html = `<tr>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.last_tot).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.last_mod).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.last_use).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseInt(pData.last_tot) + parseInt(pData.last_mod) - parseInt(pData.last_use)).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.tot).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.mod).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseInt(pData.use).toString().toFormat('NUMBER')}</td>
-							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseInt(pData.tot) + parseInt(pData.mod) - parseInt(pData.use)).toString().toFormat('NUMBER')}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseFloat(pData.last_tot).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseFloat(pData.last_mod).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseFloat(pData.last_use).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseFloat(pData.last_tot) + parseFloat(pData.last_mod) - parseFloat(pData.last_use)).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseFloat(pData.tot).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseFloat(pData.mod).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${parseFloat(pData.use).toFixed(1)}</td>
+							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseFloat(pData.tot) + parseFloat(pData.mod) - parseFloat(pData.use)).toFixed(1)}</td>
 						</tr>`;
 			$(document).find("#dtList0").find("tbody").html(html);
 			console.log(pResult.calendar);

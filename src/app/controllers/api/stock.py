@@ -111,3 +111,9 @@ def ajax_insert_return():
     for item_sn in item_sns:
         st.insert_log(item_sn, 1, params['invn_sttus_code'], None, params['ddt_man'])
     return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
+
+@bp.route('/ajax_get_stock_report', methods=['GET'])
+def ajax_get_stock_report():
+    params = request.args.to_dict()
+    result = st.get_stock_report(params)
+    return result

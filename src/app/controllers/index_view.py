@@ -11,12 +11,12 @@ def index_page():
 @bp.route('/login', methods=['GET'])
 @session_helper.session_clear
 def login_page():
-    return render_template("login.html")
+    return render_template("login.html", title="로그인 | 넥셀시스템")
 
 
 @bp.route('/html/printNew.html', methods=['GET'])
 def printNew():
-    return render_template("common/printNew.html")
+    return render_template("common/printNew.html", title="출력 | 넥셀시스템")
 
 @bp.route('/dev_test', methods=['GET'])
 @session_helper.session_check
@@ -31,4 +31,4 @@ def dev_test2():
 @bp.route('/index/almost', methods=['GET'])
 @session_helper.session_check
 def index_almost():
-    return render_template("index_project_almost.html")
+    return render_template("index_project_almost.html", title="팝업 | 넥셀시스템")

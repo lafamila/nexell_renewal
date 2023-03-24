@@ -765,9 +765,7 @@ $(function(){
 		}
 		else{
 			$("#approval-tab-container").attr("style", "margin:0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;");
-			$("#frmBox3").find(".select2").select2({
-				dropdownParent: $(this).parent().parent()
-			});
+			$("#frmBox3").find(".select2").select2();
 		}
 	});
 
@@ -891,7 +889,7 @@ $(function(){
 						<div class="tab-content" style="height:100%;">
 
 							<!-- 프로젝트 -->
-							<div class="tab-pane fade active in" id="tabCheckBox1">
+							<div class="tab-pane fade active in" id="tabCheckBox1" style="position:relative;">
 							<span class="widget-toolbar" id="popCheckEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr 62px 62px;">
 								<div style="display:inline-block;">
 									<input type="text" name="approval_title" id="approval_title_readonly" class="form-control" placeholder="제목" readonly/>
@@ -900,18 +898,113 @@ $(function(){
 								<button type="button" class="btn btn-danger" id="btnNotApprove" title="반려 처리합니다." data-value="-1" disabled><i class="fa fa-trash-o"> 반려</i></button>
 								<input type="hidden" id="s_approval_sn" value=""/>
 							</span>
-							<span class="widget-toolbar" style="width:100%;padding:0px!important;text-align:left!important;border-bottom:1px solid #333;">
-								<div style="display:inline-block;width: 120px; padding-left:10px;border-right:1px solid #333;">
-									결재/협조
+							<style>
+								.approval-line-container.expanded{
+									width:50%!important;
+								}
+								.approval-line-container{
+									position:absolute;
+									right:0px;
+									top:32px;
+									width:15px;
+									height:245px;
+									padding:2px!important;
+									text-align:left!important;
+									box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+									display:grid;
+									grid-template-columns: 15px 1fr;
+									background-color:white;
+									z-index:9999;
+									border-radius: 5px;
+									transition: width 0.4s ease-in-out;
+
+								}
+								.approval-line{
+									display:grid;
+									grid-template-rows: 1fr 1fr;
+								}
+								.approval-line .approval-line-list{
+									display:grid;
+									grid-template-columns: 40px 1fr;
+									width:100%;
+									text-align:left!important;
+								}
+								.approval-line .approval-line-list:not(:last-child){
+									height:110px;
+									border-bottom:1px solid #aaa;
+								}
+								.approval-line .approval-line-list:last-child {
+									border-bottom:1px solid #aaa;
+								}
+								.approval-line .approval-line-list:first-child {
+									border-top:1px solid #aaa;
+								}
+								.approval-line .approval-line-list>div:nth-child(1){
+									display:flex;
+									justify-content: center;
+									align-items: center;
+									border-right:1px solid #aaa;
+									background-color:#eee;
+									color:#666;
+								}
+								.approval-line .approval-line-list>div:nth-child(2)>div{
+									display:inline-block;
+								}
+								.approval-member{
+									width:70px;
+									display:grid;
+									grid-template-rows: 16px 50px 16px 23px;
+									border:1px solid #666;
+								}
+								.approval-member>div{
+									padding-top:2px;
+									display:flex;
+									justify-content: center;
+									align-items: center;
+								}
+								.approval-member>div:last-child{
+									font-size:7px;
+									line-height:1!important;
+								}
+								.approval-member>div:not(:last-child){
+									font-size:11px;
+									width:100%;
+									border-bottom:1px solid #aaa;
+								}
+							</style>
+							<script>
+								$(document).on("click", "#approval-member-list-switcher", function(){
+									$(this).find("i").toggleClass("fa-chevron-right").toggleClass("fa-chevron-left");
+									$(this).parent().find("div:not(#approval-member-list-switcher)").toggle();
+									$(this).parent().toggleClass("expanded");
+								});
+							</script>
+							<div class="approval-line-container expanded">
+								<div style="border-right:1px solid #aaa!important;display:flex;justify-content: center;align-items: center;cursor:pointer;" id="approval-member-list-switcher">
+									<i class="fa fa-chevron-right"></i>
 								</div>
-								<div style="display:inline-block;" id="approval_member_01"></div>
-							</span>
-							<span class="widget-toolbar" style="width:100%;padding:0px!important;text-align:left!important;">
-								<div style="display:inline-block;width: 120px; padding-left:10px;border-right:1px solid #333;">
-									수신
+								<div class="approval-line">
+									<span class="approval-line-list">
+										<div>
+											결재
+										</div>
+										<div style="display:inline-block;" id="approval_member_1"></div>
+									</span>
+									<span class="approval-line-list">
+										<div>
+											협조
+										</div>
+										<div style="display:inline-block;" id="approval_member_0"></div>
+									</span>
+									<span class="approval-line-list">
+										<div>
+											수신
+										</div>
+										<div style="display:inline-block;" id="approval_member_2"></div>
+									</span>
+
 								</div>
-								<div style="display:inline-block;" id="approval_member_2"></div>
-							</span>
+							</div>
 							<form id="frmCheckBox3">
 								<div id="formCheckContent">
 
@@ -969,13 +1062,13 @@ getApproval = function(approval_sn){
 					var pTag = $("#popBox2").find(`[name='${key}']`);
 					if(pTag.length != value.length){
 						if ($.isFunction(cloneRow)) {
-							console.log(key, $(pTag).closest("tr").data("row"))
 							cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
 						}
 					}
 					$.each(value, function(pIndex, pValue){
+
 						var tagName = $("#popBox2").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
-						console.log(tagName, pIndex, pValue, key);
+						console.log(key, pValue, pIndex, tagName);
 						if(tagName == "INPUT"){
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).val(pValue);
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
@@ -983,6 +1076,11 @@ getApproval = function(approval_sn){
 						else if(tagName == "SELECT"){
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).prop("disabled", true);
+
+						}
+						else if(tagName == "TEXTAREA"){
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).html(pValue);
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
 
 						}
 					});
@@ -1015,6 +1113,12 @@ getApproval = function(approval_sn){
 							$(pTag).attr("readonly", true);
 						}
 					}
+					else if(tagName == "TEXTAREA"){
+						console.log("lafamila", value);
+						$(pTag).html(`${value}`);
+						$(pTag).attr("readonly", true);
+
+					}
 
 				}
 			});
@@ -1022,7 +1126,8 @@ getApproval = function(approval_sn){
 			if ($.isFunction($.fn.afterLoadApproval)) {
 				$("#popBox2").afterLoadApproval();
 			}
-			var html01 = '';
+			var html0 = '';
+			var html1 = '';
 			var html2 = '';
 			var loginSN = $("#loginSN").val();
 			$.each(pResult.member_list, function(pIndex, pMember){
@@ -1038,13 +1143,27 @@ getApproval = function(approval_sn){
 					else{
 						status_nm = '(반려)';
 					}
-					html01 += `<span style="${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}">${pMember.mber_nm}${status_nm}</span>`;
+					var html = `<div class="approval-member">
+									<div>${pMember.ofcps_nm}</div>
+									<div><img src="/static/temp/signature.jpg" width="46" height="46"/> </div>
+									<div>${pMember.mber_nm}</div>
+									<div>${pMember.update_dtm != '' ? pMember.update_dtm.replaceAll(" ", "<br>") : "&nbsp;<br>&nbsp;"}</div>
+								</div>`;
+					//${pMember.mber_nm}${status_nm}
+					if(pMember.reg_type == 0){
+						// ${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}
+						html0 += html;
+					}
+					else{
+						html1 += html;
+					}
 				}
 				else{
-					html2 += `<span>${pMember.mber_nm}</span>`;
+					html2 += `<span>${pMember.mber_nm};</span>`;
 				}
 			});
-			$('#popBox2').find("#approval_member_01").html(html01);
+			$('#popBox2').find("#approval_member_0").html(html0);
+			$('#popBox2').find("#approval_member_1").html(html1);
 			$('#popBox2').find("#approval_member_2").html(html2);
 			if(pResult.myTurn){
 				$("#popBox2").find("#btnApprove").attr("disabled", false);

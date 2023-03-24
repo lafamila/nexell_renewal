@@ -436,8 +436,34 @@ def insert_ms_equip():
     sales.insert_ms_equip(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
+@bp.route('/insert_equipment', methods=['POST'])
+def insert_equipment():
+    params = request.get_json()
+    sales.insert_equipment(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_equipment_samsung', methods=['POST'])
+def insert_equipment_samsung():
+    params = request.get_json()
+    sales.insert_equipment_samsung(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
 @bp.route('/insert_equipment_sub', methods=['POST'])
 def insert_equipment_sub():
     params = request.get_json()
     sales.insert_equipment_sub(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_equipment_other_sub', methods=['POST'])
+def insert_equipment_other_sub():
+    params = request.get_json()
+    sales.insert_equipment_other_sub(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/update_equipment', methods=['POST'])
+def update_equipment():
+    params = request.get_json()
+    prj.insert_c_extra_project(params)
+    sales.insert_equipment(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+

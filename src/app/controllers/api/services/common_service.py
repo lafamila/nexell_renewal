@@ -793,21 +793,12 @@ def get_cowork_data(params):
     result = g.curs.fetchall()
     return result
 
-def insert_vacation_out_go(params):
+def insert_vacation_out(params, vacation_type):
     data = OrderedDict()
-    data['mber_sn'] = session['member']['member_sn']
-    st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
-    ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
-    print(params)
-    raise Exception
-
-def insert_vacation_out(params):
-    data = OrderedDict()
-    data['mber_sn'] = session['member']['member_sn']
     st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
     ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
     data['rm'] = params['to_go']
-    data['vacation_type'] = 8
+    data['vacation_type'] = vacation_type
     for d in range((ed_de - st_de).days + 1):
         for mber_sn in params['member_sn[]']:
             data['mber_sn'] = mber_sn

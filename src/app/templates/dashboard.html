@@ -270,7 +270,7 @@
 
         <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline">매입처별 매입 현황 (장비, 자재)</h5>
         <div style="position: absolute; right: 0; top: -5px; text-align: right; max-width: 50%; overflow: hidden">
-<!--            <button class="btn btn-info" data-toggle="modal" href="#popReport9"><i class="fa fa-print"> 로지텍</i></button>-->
+            <button class="btn btn-info" data-toggle="modal" href="#popReport9"><i class="fa fa-print"> 지급자재현황</i></button>
             <button class="btn btn-info" data-toggle="modal" href="#popReport4"><i class="fa fa-print"> 연간현황</i></button>
             <input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;padding-top:5px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt_last" name="s_pxcond_mt_last" placeholder="[시작일자]">
             <button class="btn btn-info" id="last_search">이동</button>
@@ -962,8 +962,8 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 			<div class="modal-body report">
 				<style>
 					#rpt99detail{
-						max-height:640px!important;
-						overflow-y:auto;
+						/*max-height:640px!important;*/
+						/*overflow-y:auto;*/
 					}
 					h5[data-usage='toggle']{
 						position:relative;
@@ -1027,14 +1027,14 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span> 누계</th>
 							<th class="colorB middle text-center" rowspan="2">연간목표</th>
-							<th class="colorB middle text-center" rowspan="2">연 달성(%)</th>
+							<th class="colorB middle text-center" rowspan="2">연달성(%)</th>
 
 							<th class="colorB middle text-center" rowspan="2">구분</th>
 							<th class="colorB middle text-center" rowspan="2">부서</th>
 							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span> 누계</th>
 							<th class="colorB middle text-center" rowspan="2">연간목표</th>
-							<th class="colorB middle text-center" rowspan="2">연 달성(%)</th>
+							<th class="colorB middle text-center" rowspan="2">연달성(%)</th>
 						</tr>
 						<tr>
 							<th class="colorB middle text-center">경영목표</th>
@@ -1047,10 +1047,10 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 							<th class="colorB middle text-center">차질액</th>
 							<th class="colorB middle text-center">경영목표</th>
 							<th class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</th>
-							<th class="colorB middle text-center">수주실적</th>
+							<th class="colorB middle text-center">매출실적</th>
 							<th class="colorB middle text-center">달성(%)</th>
 							<th class="colorB middle text-center">경영목표</th>
-							<th class="colorB middle text-center">수주실적</th>
+							<th class="colorB middle text-center">매출실적</th>
 							<th class="colorB middle text-center">달성(%)</th>
 							<th class="colorB middle text-center">차질액</th>
 						</tr>
@@ -1068,7 +1068,7 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					::-webkit-scrollbar-button { display: none; } /* 스크롤 바 상 하단 버튼 */
 				</style>
 
-				<div id="rpt99detail" style="overflow-x:auto;display:inline-block;max-width:100%;">
+				<div id="rpt99detail" style="overflow-x:auto;display:inline-block;width: 100%;">
 
 				</div>
 
@@ -1180,7 +1180,7 @@ getMonthReport = function(pxcond_mt){
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
-							<td class="colorLY text-right middle ${diff < 0 ? 'color-red' : ''} data-column="summary"">${diff.toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle ${diff < 0 ? 'color-red' : ''}" data-column="summary"">${diff.toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>`;
 				html += `</tr>`;
@@ -1238,59 +1238,35 @@ getMonthReport = function(pxcond_mt){
 				html += `<h5 class="sub-title underline arrow-up" data-usage="toggle" data-target="${dept_code}">${nameMap[dept_code].replaceAll("팀", "")}</h5>`;
 				html += `<table id="detail-${dept_code}" class="table-dashboard table-bordered">
 							<colgroup>
-							<col width="25">
-							<col width="25">
-							<col width="145">
-							<col width="125">
-							<col width="120">
-							<col width="100">
-							<col width="145">
-							<col width="100">
-							<col width="100">
-							<col width="100">
-							<col width="100">
-							<col width="100">
 
-							<col width="25">
-							<col width="25">
-							<col width="145">
-							<col width="125">
-							<col width="120">
-							<col width="100">
-							<col width="145">
-							<col width="100">
-							<col width="100">
-							<col width="100">
-							<col width="100">
-							<col width="100">
 							</colgroup>
 							<thead>
 								<tr>
-									<th class="color-contract text-center middle" colspan="2" rowspan="3" style="font-size:24px;"><span class="two-now-year"></span>/<span class="one-now-month"></span></th>
+									<th class="color-contract text-center middle" rowspan="3" style="font-size:24px;"><span class="two-now-year"></span>/<span class="one-now-month"></span></th>
 									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.1~<span class="one-now-month"></span>월 누계</th>
 									<th class="colorB text-center middle" rowspan="2">연간목표</th>
-									<th class="colorB text-center middle" rowspan="2">연 달성(%)</th>
-									<th class="color-contract text-center middle" colspan="2" rowspan="3" style="font-size:24px;"><span class="two-now-year"></span>/<span class="one-now-month"></span></th>
+									<th class="colorB text-center middle" rowspan="2">연달성(%)</th>
+									<th class="color-contract text-center middle" rowspan="3" style="font-size:24px;"><span class="two-now-year"></span>/<span class="one-now-month"></span></th>
 									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.1~<span class="one-now-month"></span>월 누계</th>
 									<th class="colorB text-center middle" rowspan="2">연간목표</th>
-									<th class="colorB text-center middle" rowspan="2">연 달성(%)</th>
+									<th class="colorB text-center middle" rowspan="2">연달성(%)</th>
 								</tr>
 								<tr>
-									<th class="colorB text-center middle">경영수주목표</th>
-									<th class="colorB text-center middle">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</th>
+									<th class="colorB text-center middle">경영목표</th>
+									<th class="colorB text-center middle">점검</th>
 									<th class="colorB text-center middle">수주실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
-									<th class="colorB text-center middle">경영수주목표</th>
+									<th class="colorB text-center middle">경영목표</th>
 									<th class="colorB text-center middle">수주실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
 									<th class="colorB text-center middle">차질액</th>
-									<th class="colorB text-center middle">경영매출목표</th>
-									<th class="colorB text-center middle">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</th>
+									<th class="colorB text-center middle">경영목표</th>
+									<th class="colorB text-center middle">점검</th>
 									<th class="colorB text-center middle">매출실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
-									<th class="colorB text-center middle">경영매출목표</th>
+									<th class="colorB text-center middle">경영목표</th>
 									<th class="colorB text-center middle">매출실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
 									<th class="colorB text-center middle">차질액</th>
@@ -1320,19 +1296,19 @@ getMonthReport = function(pxcond_mt){
 							</thead>
 							<tbody>
 								<tr>
-									<td class="color-contract middle text-center" colspan="2">수주</td>
+									<td class="color-contract middle text-center">수주</td>
 									<td class="colorB middle text-center">건설사</td>
 									<td class="colorB middle text-center">현장명</td>
-									<td class="colorB middle text-center">경영수주목표</td>
-									<td class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</td>
+									<td class="colorB middle text-center">경영목표</td>
+									<td class="colorB middle text-center">점검</td>
 									<td class="colorB middle text-center">확정</td>
 									<td class="colorB middle text-center">차이</td>
 									<td class="colorB middle text-center" colspan="4">세부내역(+,- 1천만원 이상)</td>
-									<td class="color-contract middle text-center" colspan="2">매출</td>
+									<td class="color-contract middle text-center">매출</td>
 									<td class="colorB middle text-center">건설사</td>
 									<td class="colorB middle text-center">현장명</td>
-									<td class="colorB middle text-center">경영매출목표</td>
-									<td class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</td>
+									<td class="colorB middle text-center">경영목표</td>
+									<td class="colorB middle text-center">점검</td>
 									<td class="colorB middle text-center">확정</td>
 									<td class="colorB middle text-center">차이</td>
 									<td class="colorB middle text-center" colspan="4">세부내역(+,- 1천만원 이상)</td>
@@ -1347,7 +1323,7 @@ getMonthReport = function(pxcond_mt){
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
-						html += `	<td class="color-contract middle text-center" colspan="2">수주</td>
+						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
@@ -1362,7 +1338,7 @@ getMonthReport = function(pxcond_mt){
 						tot14 += diff;
 					}
 					else{
-						html += `	<td class="color-contract middle text-center" colspan="2">수주</td>
+						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left"></td>
 								 	<td class="middle text-left"></td>
 								 	<td class="middle text-right"></td>
@@ -1378,7 +1354,7 @@ getMonthReport = function(pxcond_mt){
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
-						html += `	<td class="color-contract middle text-center" colspan="2">매출</td>
+						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
@@ -1394,7 +1370,7 @@ getMonthReport = function(pxcond_mt){
 
 					}
 					else{
-						html += `	<td class="color-contract middle text-center" colspan="2">매출</td>
+						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left"></td>
 								 	<td class="middle text-left"></td>
 								 	<td class="middle text-right"></td>
@@ -1407,7 +1383,7 @@ getMonthReport = function(pxcond_mt){
 					html += `   </tr>`;
 				}
 				html += `		<tr>
-									<td class="color-contract middle text-center" colspan="2">수주</td>
+									<td class="color-contract middle text-center">수주</td>
 									<td class="colorSky middle text-center" colspan="2">합 계</td>
 									<td class="colorSky middle text-center" colspan="1" style="display:none;">합 계</td>
 									<td class="colorSky middle text-right">${Math.round(tot11/1000).toFormat('NUMBER')}</td>
@@ -1415,7 +1391,7 @@ getMonthReport = function(pxcond_mt){
 									<td class="colorSky middle text-right">${Math.round(tot13/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right ${tot14 < 0 ? 'color-red' : ''}">${Math.round(tot14/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
-									<td class="color-contract middle text-center" colspan="2">매출</td>
+									<td class="color-contract middle text-center">매출</td>
 									<td class="colorSky middle text-center" colspan="2">합 계</td>
 									<td class="colorSky middle text-right">${Math.round(tot21/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueTtot">${Math.round(tot22).toFormat('NUMBER')}</td>
@@ -1457,10 +1433,34 @@ getMonthReport = function(pxcond_mt){
 			$("#popReport99").find(".two-now-year").html(now_year);
 			$("#popReport99").find(".one-now-month").html(now_month);
 			$("#popReport99").find(".one-now-day").html(now_day);
-			for(let _=1;_<=$(document).find("#rpt99detail table thead tr:nth-child(3)").eq(0).find("td").length;_++){
-				$(document).find(`#rpt99detail table thead tr:nth-child(3) td:nth-child(${_})`).widthMatch();
-			}
+			// for(let _=1;_<=$(document).find("#rpt99detail table thead tr:nth-child(3)").eq(0).find("td").length;_++){
+			// 	$(document).find(`#rpt99detail table thead tr:nth-child(3) td:nth-child(${_})`).widthMatch();
+			// }
+			var target = $("#top-summary tbody[role='body'] tr:nth-child(1)");
+			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(0)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(2)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(2)").widthMatchTarget([$(target).find("td").eq(1), $(target).find("td").eq(3)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(3)").widthMatchTarget([$(target).find("td").eq(4)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(5)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(6)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(7)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(7)").widthMatchTarget([$(target).find("td").eq(8)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(8)").widthMatchTarget([$(target).find("td").eq(9)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(10)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(11)]);
 
+
+			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(12)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(14)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(13), $(target).find("td").eq(15)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(11)").widthMatchTarget([$(target).find("td").eq(16)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(12)").widthMatchTarget([$(target).find("td").eq(17)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(13)").widthMatchTarget([$(target).find("td").eq(18)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(14)").widthMatchTarget([$(target).find("td").eq(19)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(15)").widthMatchTarget([$(target).find("td").eq(20)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(16)").widthMatchTarget([$(target).find("td").eq(21)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(22)]);
+			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(23)]);
 
 		}
 	});
@@ -2937,6 +2937,344 @@ $(function() {
 });
 
 </script>
+
+<!-- popReport5 : 팀별 실적 현황 - VA -->
+<div class="modal fade" data-backdrop="static" id="popReport5">
+    <div class="modal-dialog modal-w1200" style="width:46%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint5"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+<!--
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card" name="s_ddt_card">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+-->
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt5">
+<div class="title"><h2 class="colorLS" id="title">팀별 VA 현황</h2></div>
+<style>
+
+    #rpt5 .table>tbody>tr>td, #rpt5 .table>tbody>tr>th, #rpt5 .table>tfoot>tr>td, #rpt5 .table>tfoot>tr>th, #rpt5 .table>thead>tr>td, #rpt5 .table>thead>tr>th {
+        line-height: 0.5 !important;
+    }
+
+</style>
+<style>
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #popReport5 div.report table th,
+    #popReport5 div.report table td {
+        font-size: 8px!important;
+        padding: 7px 5px!important;
+        line-height: 1.0!important;
+    }
+}
+</style>
+<!-- 기성 현황 시작 -->
+<table id="va" class="table table-bordered w100p">
+     <colgroup>
+        <col width="100">
+        <col width="200">
+        <col width="*">
+        <col width="100">
+    </colgroup>
+    <tbody role="header">
+        <tr>
+            <th class="colorB" colspan="1">부서</th>
+            <th class="colorB" colspan="1">건설사</th>
+            <th class="colorB" colspan="1">현장명</th>
+            <th class="colorB" colspan="1">금액</th>
+        </tr>
+    </tbody>
+    <tbody role="body_va">
+    </tbody>
+</table>
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script>
+getVA = function(s_pxcond_mt)
+{
+    var params = '';
+	params += '&s_pxcond_mt='+s_pxcond_mt;
+
+	$.ajax({
+		url: '/api/dashboard/ajax_get_completed_va',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			var html = '';
+            var before = "";
+            var before_price_1 = 0;
+			var total_price_1 = 0;
+			var suju1, suju2; // 목표, 실적
+            console.log(pResult.data);
+			$.each(pResult.data, function(pIndex, pValue){
+                var s1 = parseInt(pValue.s1); if(isNaN(s1)) s1 = 0;
+                var s2 = parseInt(pValue.s2); if(isNaN(s2)) s2 = 0;
+                var p1 = parseInt(pValue.p1); if(isNaN(p1)) p1 = 0;
+                var p2 = parseInt(pValue.p2); if(isNaN(p2)) p2 = 0;
+                var p3 = parseInt(pValue.p3); if(isNaN(p3)) p3 = 0;
+                var amount = s1 + s2 - p1 - p2 - p3;
+
+                if(amount != 0){
+                    if(before != "" && before != pValue.dept_nm){
+
+                        html += '<tr>';
+                        html += '    <td class="colorSky">'+before+'</td>';
+                        html += '    <td class="colorN3">소계</td>';
+                        html += '    <td class="colorN3"></td>';
+                        html += '    <td class="colorN3">'+before_price_1.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        total_price_1 += before_price_1;
+
+                        before_price_1 = 0;
+                    }
+                    html += '<tr>';
+                    html += '    <td class="colorSky">'+pValue.dept_nm+'</td>';
+                    html += '    <td>'+pValue.bcnc_nm+'</td>';
+                    html += '    <td>'+pValue.spt_nm+'</td>';
+                    html += '    <td>'+amount.toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+                    before = pValue.dept_nm;
+                    before_price_1 += amount;
+
+                }
+
+
+			});
+
+            html += '<tr>';
+            html += '    <td class="colorSky">'+before+'</td>';
+            html += '    <td class="colorN3">소계</td>';
+            html += '    <td class="colorN3"></td>';
+            html += '    <td class="colorN3">'+before_price_1.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            total_price_1 += before_price_1;
+
+
+            html += '<tr>';
+            html += '    <td class="colorSky">총계</td>';
+            html += '    <td class="colorSky"></td>';
+            html += '    <td class="colorSky"></td>';
+            html += '    <td class="colorSky">'+total_price_1.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            $("#rpt5").find("#va tbody[role=body_va]").html(html);
+            $('#rpt5').find('#va tbody[role=body_va]').yRowspan(0);
+            $('#rpt5').find('#va tbody[role=body_va]').yRowspan(1);
+            var cells = $('#rpt5').find('#va tbody[role=body_va] td, #va tbody[role=body_va] th');
+            $.each(cells, function(pIndex, pValue){
+                let value = $(pValue).html();
+                if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%'){
+
+                    $(pValue).html('');
+                }
+            });
+		}
+	});
+}
+$(function() {
+
+	$('#popReport5').on('show.bs.modal', function(pEvent) {
+		getVA($("#s_pxcond_mt").val());
+	});
+
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint5').on('click', function(pEvent) {
+		var html = $('#popReport5').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+</script>
+
+<!-- popReport9 : 지급자재 현황 - VA -->
+<div class="modal fade" data-backdrop="static" id="popReport9">
+    <div class="modal-dialog modal-w1200" style="width:85%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint9"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<style>
+
+    tbody td.colorN3{
+        background: #e6faff!important;
+    }
+</style>
+
+<div id="rpt9">
+<div class="title"><h2 class="colorLS" id="title">현장별 지급자재 현황</h2></div>
+<style>
+
+    #rpt9 .table>tbody>tr>td, #rpt9 .table>tbody>tr>th, #rpt9 .table>tfoot>tr>td, #rpt9 .table>tfoot>tr>th, #rpt9 .table>thead>tr>td, #rpt9 .table>thead>tr>th {
+        line-height: 0.5 !important;
+    }
+
+</style>
+
+<style>
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #popReport9 div.report table th,
+    #popReport9 div.report table td {
+        font-size: 8px!important;
+        padding: 7px 5px!important;
+        line-height: 1.0!important;
+    }
+}
+</style>
+<!-- 기성 현황 시작 -->
+<table id="logit" class="table table-bordered w100p">
+     <colgroup>
+        <col width="100">
+        <col width="200">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+        <col width="100">
+    </colgroup>
+    <tbody role="header">
+        <tr>
+            <th class="colorB middle" rowspan="2">부서</th>
+            <th class="colorB middle" rowspan="2">현장명</th>
+            <th class="colorB middle" rowspan="2">공사기간</th>
+            <th class="colorB middle" rowspan="2">지급자재비 계</th>
+            <th class="colorB middle" rowspan="2">분류</th>
+            <th class="colorB" colspan="5">진행현황</th>
+            <th class="colorB middle" rowspan="2">업체기성률</th>
+            <th class="colorB middle" rowspan="2">공정률</th>
+            <th class="colorB middle" rowspan="2">비고</th>
+        </tr>
+		<tr>
+			<th class="colorB">전월누계금액</th>
+			<th class="colorB">당월금액</th>
+			<th class="colorB">누계매입</th>
+			<th class="colorB">지급합계</th>
+			<th class="colorB">지급율</th>
+		</tr>
+    </tbody>
+    <tbody role="body_logit">
+
+    </tbody>
+</table>
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+getLogit = function(s_pxcond_mt)
+{
+    var params = '';
+	params += '&s_pxcond_mt='+s_pxcond_mt;
+
+	$.ajax({
+		url: '/api/dashboard/ajax_get_logit',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			var html = '';
+			$.each(pResult.data, function(pIndex, pValue){
+				var cntrct_amount = parseInt(pValue.cntrct_amount); if(isNaN(cntrct_amount)) cntrct_amount = 0;
+				var logi_before = parseInt(pValue.logi_before); if(isNaN(logi_before)) logi_before = 0;
+				var logi_now = parseInt(pValue.logi_now); if(isNaN(logi_now)) logi_now = 0;
+				var other_before = parseInt(pValue.other_before); if(isNaN(other_before)) other_before = 0;
+				var other_now = parseInt(pValue.other_now); if(isNaN(other_now)) other_now = 0;
+				html += `<tr>
+							<td class="colorSky text-center">${pValue.dept_nm.replace("팀", "")}</td>
+							<td class="text-left" rowspan="2"><a href="/dashboard/logitech?cntrct_sn=${pValue.cntrct_sn}" target="_blank">${pValue.spt_nm}</a></td>
+							<td class="text-center" rowspan="2">${pValue.cntrwk_period}</td>
+							<td class="text-center" rowspan="2">${cntrct_amount.toFormat('NUMBER')}</td>
+							<td class="text-center">로지텍</td>
+							<td class="text-right">${logi_before.toFormat('NUMBER')}</td>
+							<td class="text-right">${logi_now.toFormat('NUMBER')}</td>
+							<td class="text-right">${(logi_before+logi_now).toFormat('NUMBER')}</td>
+							<td class="text-right" rowspan="2">${(logi_before+logi_now+other_before+other_now).toFormat('NUMBER')}</td>
+							<td class="text-center" rowspan="2">${((logi_before+logi_now+other_before+other_now)*100.0/cntrct_amount).toFixed(1)}%</td>
+							<td class="" rowspan="2"></td>
+							<td class="" rowspan="2"></td>
+							<td class="" rowspan="2"></td>
+						</tr>
+						<tr>
+							<td class="colorSky text-center">${pValue.dept_nm.replace("팀", "")}</td>
+							<td class="text-center">타사</td>
+							<td class="text-right">${other_before.toFormat('NUMBER')}</td>
+							<td class="text-right">${other_now.toFormat('NUMBER')}</td>
+							<td class="text-right">${(other_before+other_now).toFormat('NUMBER')}</td>
+						</tr>`;
+			});
+			$("#logit tbody[role='body_logit']").html(html);
+			$("#logit tbody[role='body_logit']").yRowspan(0);
+		}
+
+	});
+}
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport9').on('show.bs.modal', function(pEvent) {
+		getLogit($("#s_pxcond_mt_last").val());
+	});
+
+
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint9').on('click', function(pEvent) {
+		var html = $('#popReport9').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+</script>
+
 <!-- popReport2 : 수주 클릭하면 나오는 팀별 수주 현황 -->
 <!-- popReport7 : 업무일지 -->
 <!-- popReport10 : popReport6 과 병합 -->

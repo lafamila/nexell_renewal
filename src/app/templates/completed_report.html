@@ -1,0 +1,191 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+                <style>
+                    div.report.report-completed1 table th,
+                    div.report.report-completed1 table td {
+                        font-size: 12px!important;
+                    }
+
+                    div.report.report-completed1 #rptCompletedArea table th,
+                    div.report.report-completed1 #rptCompletedArea table td {
+                        font-size: 12px!important;
+                        padding: 7px 5px!important;
+                    }
+                    div.report table tbody[role=header] tr:last-child th {
+                        border-bottom: black 1px solid !important;
+                    }
+
+                    div.report *{
+                        font-size:12px !important;
+                    }
+                    #popReport{
+                        font-size: 9px !important;
+                        line-height: 1.0 !important;
+                    }
+                    tr.etc{
+                        display:none;
+                    }
+                    tr.myETC, #eETC{
+                        cursor:pointer;
+                    }
+                </style>
+                <div class="title"><h2 class="colorLS">23년 2월 기성현황 집계표</h2></div>
+                <table id="rptParnterStatus1">
+                    <colgroup>
+                        <col width="50">
+                        <col width="100">
+                        <col width="150">
+                        <col width="50">
+
+                        <col width="100">
+                        <col width="100">
+                        <col width="80">
+                        <col width="100">
+                        <col width="80">
+                        <col width="100">
+                        <col width="80">
+
+                        <col width="100">
+                        <col width="100">
+                        <col width="80">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="80">
+                        <col width="100">
+                        <col width="80">
+
+                        <col width="80">
+                        <col width="100">
+                        <col width="100">
+                        <col width="80">
+
+                        <col width="150">
+                        <col width="150">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="color-contract" colspan="4">구분</th>
+                            <th class="color-contract" colspan="7">건설사 기성</th>
+                            <th class="color-contract" colspan="9">협력사 집행(제품+기성+자재)</th>
+                            <th class="color-contract text-right" colspan="6">VAT포함, 단위:천원, %</th>
+                        </tr>
+                        <tr>
+                            <th class="colorN text-center middle" rowspan="2">팀</th>
+                            <th class="colorN text-center middle" rowspan="2">거래처</th>
+                            <th class="colorN text-center middle" rowspan="2">현장명</th>
+                            <th class="colorN text-center middle" rowspan="2">현장<br/>관리</th>
+                            <th class="colorN text-center middle" rowspan="2">공사<br/>계약금액</th>
+                            <th class="colorN text-center middle" rowspan="2">전월누계</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">당월기성</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">기성누계</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">집행<br/>예상금액</th>
+                            <th class="colorN text-center middle" rowspan="2">전월누계</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" colspan="4">당월집행</th>
+                            <th class="colorN text-center middle" rowspan="2">집행누계</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">공정률</th>
+                            <th class="colorN text-center middle" rowspan="2">VA</th>
+                            <th class="colorN text-center middle" rowspan="2">청구비<br/>차이</th>
+                            <th class="colorN text-center middle" rowspan="2">신청서<br/>확인여부</th>
+                            <th class="colorN text-center middle" rowspan="2">비고(전월)</th>
+                            <th class="colorN text-center middle" rowspan="2">비고(당월)</th>
+                        </tr>
+                        <tr>
+                            <th class="colorN text-center middle">장비+기타</th>
+                            <th class="colorN text-center middle">도급비</th>
+                            <th class="colorN text-center middle">소계</th>
+                            <th class="colorN text-center middle">%</th>
+                        </tr>
+                    </thead>
+                    <tbody role="body">
+                    </tbody>
+                </table>
+                <!------------------------------------------------------------------------------------------->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+
+<script>
+    getReportTableNR = function(s_pxcond_mt){
+        var params = '';
+        params += '&s_pxcond_mt=' + s_pxcond_mt;
+        console.log('getReportNR', params);
+
+        $.ajax({
+            url: '/api/completed/ajax_get_completed_reportNR',
+            type: 'GET',
+            data: params,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (pResult) {
+                var ordered = [];
+                var data = {};
+                $.each(pResult.completedList, function(pIndex, pValue){
+                    var key = (pValue.bsn_dept_nm, pValue.cntrct_bcnc_nm, pValue.spt_nm, pValue.spt_chrg_nm);
+                    if(!data.hasOwnProperty(key)){
+                        data[key] = {"C" : [0, 0, 0], "E" : [0, 0, 0, 0], "rate" :  null};
+                    }
+
+                });
+            }
+        });
+    }
+	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
+		getReportTableNR($(this).val());
+	});
+    $(document).ready(function(){
+		if ($(document).find('#s_pxcond_mt').val() == '') {
+			$(document).find('#s_pxcond_mt').datepicker('setDate', 'today');
+		}
+        getReportTableNR($(document).find('#s_pxcond_mt').val());
+
+    });
+
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+	});
+
+</script>
+{% endblock %}

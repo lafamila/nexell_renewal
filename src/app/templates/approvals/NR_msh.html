@@ -12,19 +12,21 @@
 <table class="table table-bordered table-form" style="width:35%!important;">
     <colgroup>
         <col width="25%">
-        <col width="75%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
     </colgroup>
     <tbody>
         <tr>
-            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
         </tr>
         <tr>
             <td class="colorSky">계약번호</td>
-            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
         </tr>
         <tr>
             <td class="colorSky">현장명</td>
-            <td class="text-center hasinput">
+            <td class="text-center hasinput" colspan="3">
                 <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
                     {% if not init %}
                         <option value=""></option>
@@ -39,20 +41,18 @@
         <tr>
             <td class="colorSky">세대수</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
-        </tr>
-        <tr>
             <td class="colorSky">지역</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
         </tr>
         <tr>
             <td class="colorSky">공사기간</td>
-            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
         </tr>
 
     </tbody>
     <tbody role="model_approval">
         <tr>
-            <td class="hasinput" colspan="2">
+            <td class="hasinput" colspan="4">
                 <div class="btn-group btn-group-justified" data-toggle="buttons">
                     <label class="btn btn-default">
                         <input type="radio" name="msh_approval_type" value="S">설치
@@ -70,19 +70,19 @@
     <tbody role="model_house">
         <tr>
             <td class="colorSky">MH 설치장소</td>
-            <td class="hasinput">
+            <td class="hasinput" colspan="3">
                 <input type="text" class="form-control text-left" name="mh_place" id="mh_place"/>
             </td>
         </tr>
         <tr>
             <td class="colorSky">MH 설치세대</td>
-            <td class="hasinput">
+            <td class="hasinput" colspan="3">
                 <input type="text" class="form-control text-left" name="mh_count" id="mh_count"/>
             </td>
         </tr>
         <tr>
             <td class="colorSky">공사일정</td>
-            <td class="hasinput">
+            <td class="hasinput" colspan="3">
                 <input type="text" class="form-control text-left" name="mh_period" id="mh_period"/>
             </td>
 
@@ -182,9 +182,8 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="12" style="border-right:0px!important;">⑦ M/H, S/H 비용</th>
-			<th class="sub-title colorN text-right" style="border-left:0px!important;">
-                <div class="btn-group">
+			<th class="sub-title colorN text-center" colspan="13" style="border-right:0px!important;position:relative;height:40px;"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">⑦ M/H, S/H 비용</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
             </th>

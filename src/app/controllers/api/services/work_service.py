@@ -7,7 +7,6 @@ import calendar
 def get_work_datatable(params):
     last_years = int(params["s_stdyy"].split("-")[0])-1
     last = "{}-{}-{}".format(last_years, params["s_stdyy"].split("-")[1], params["s_stdyy"].split("-")[2])
-    # TODO : use, last_use를 휴가 결재 내역에서 가져올것
     query = """SELECT '{0}' AS stdyy
                     , m.mber_sn
                     , m.mber_nm
@@ -21,11 +20,11 @@ def get_work_datatable(params):
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='tot'), (15 + FLOOR(DATEDIFF('{0}', m.enter_de)/730))) AS tot
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{3}' AND work_row=m.mber_sn AND work_month='mod'), 0) AS last_mod
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='mod'), 0) AS `mod`
-                    , IFNULL((SELECT work_data FROM work WHERE work_year='{3}' AND work_row=m.mber_sn AND work_month='use'), 0) AS last_use
-                    , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='use'), 0) AS `use`
+                    , IFNULL((SELECT work_data FROM work WHERE work_year='{3}' AND work_row=m.mber_sn AND work_month='use'), IFNULL((SELECT SUM(IF(vacation_type IN (2, 3, 5, 6), 0.5, 1)) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{3}' AND vacation_type IN (1, 2, 3, 4, 5, 6, 7)), 0)) AS last_use
+                    , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='use'), IFNULL((SELECT SUM(IF(vacation_type IN (2, 3, 5, 6), 0.5, 1)) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{2}' AND vacation_type IN (1, 2, 3, 4, 5, 6, 7)), 0)) AS `use`
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{2}' AND work_row=m.mber_sn AND work_month='rm'), '') AS rm
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
-    				, 10 AS `out`
+    				, IFNULL((SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{2}' AND vacation_type IN (8, 9)), 0) AS `out`
                     FROM member m
                     WHERE m.enter_de <= '{0}'
                     AND m.dept_code <> ''
@@ -62,19 +61,32 @@ def get_work_time(params):
     result = g.curs.fetchall()
     return result
 
+def get_vacation_member(params):
+    query = """SELECT mber_sn
+                , vacation_type
+                , vacation_de
+                , (SELECT code_nm FROM code WHERE parnts_code='VACATION_TYPE_CODE' AND code=vacation_type) AS vacation_type_nm
+                , rm
+                FROM vacation WHERE mber_sn=%(s_mber_sn)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 def get_work_daily_summary(params, limit):
     query = """SELECT COUNT(*) AS total_count
                     , SUM(IF((w.WSTime IS NOT NULL AND w.WSTime > %s),1, 0)) AS rate_count
-                    , 0 AS off_count
-                    , 0 AS out_count
+                    , SUM(IF((v.vacation_type IN (1,4,7)), 1, 0)) AS off_count
+                    , SUM(IF((v.vacation_type IN (8, 9)), 1, 0)) AS out_count
                 FROM member m
                 LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
                 ON m.mber_nm=w.Name
+                LEFT OUTER JOIN (SELECT * FROM vacation WHERE vacation_de=%s AND vacation_type In (1, 4, 7, 8, 9)) v
+                ON m.mber_sn=v.mber_sn
                 WHERE 1=1
                 AND m.mber_sttus_code='H'
                 AND m.dept_code <> ''
             """
-    data = [params['s_calendar'].replace("-", "")+limit+"00", params['s_calendar'].replace("-", "")]
+    data = [params['s_calendar'].replace("-", "")+limit+"00", params['s_calendar'].replace("-", ""), params['s_calendar']]
     if "s_mber_nm" in params and params["s_mber_nm"]:
         query += " AND m.mber_nm LIKE %s"
         data.append("%{}%".format(params['s_mber_nm']))
@@ -91,6 +103,15 @@ def get_work_daily_summary(params, limit):
     result = g.curs.fetchone()
     return result
 
+def get_vacation(params):
+    query = """SELECT mber_sn
+                , vacation_type
+                , (SELECT code_nm FROM code WHERE parnts_code='VACATION_TYPE_CODE' AND code=vacation_type) AS vacation_type_nm
+                , rm
+                FROM vacation WHERE vacation_de=%(s_calendar)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
 def get_work_daily_datatable(params):
     query = """SELECT '1' AS ctmmny_sn
                     , m.mber_sn
@@ -163,8 +184,8 @@ def get_work(params):
                     , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
                     , IFNULL(wt.rate_tot, 0) AS rate_count
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='tot2'), (15 + FLOOR(DATEDIFF('{0}', m.enter_de)/730))) AS tot
-                    , 0 AS `use`
-                    , 0 AS `half`
+                    , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS `use`
+                    , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2, 3, 5, 6)) AS `half`
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='rm2'), '') AS rm
                     , IF(w.WSTime IS NULL OR w.WSTime='', 0,
                     CASE DAYOFWEEK(STR_TO_DATE(w.WorkDate, %s))-1
@@ -173,6 +194,8 @@ def get_work(params):
                         WHEN 1 THEN IF(SUBSTRING(w.WSTime, 9, 4) > '0900', 1, 0)
                         ELSE IF(SUBSTRING(w.WSTime, 9, 4) > '0840', 1, 0)
                     END) AS today_rate
+                    , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%m/%%d')) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS use_dates
+                    , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%m/%%d')) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2,3,5,6)) AS half_dates
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
                 FROM member m
                 LEFT OUTER JOIN 

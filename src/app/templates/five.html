@@ -4,6 +4,13 @@
 	.red{
 		color: red!important;
 	}
+	.middle{
+		vertical-align: middle!important;
+		text-overflow: ellipsis!important;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
 </style>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 
@@ -41,6 +48,17 @@
                 <div class="title"><h2 class="colorLS">5년간 종합현황</h2></div>
                 <!------------------------------------------------------------------------------------------->
 				<table id="amountTable" class="table table-bordered w100p">
+					<colgroup>
+						<col width="50">
+						<col width="50">
+						<col width="75">
+						<col width="150">
+						<col width="150">
+						<col width="150">
+						<col width="150">
+						<col width="150">
+						<col width="150">
+					</colgroup>
 					<tbody role="header">
 						<tr>
 							<th class="colorB" colspan="3">구분</th>
@@ -70,7 +88,7 @@
 getReport = function(s_pxcond_mt)
 {
 	var params = '';
-    params += '&s_year='+(s_pxcond_mt.split("-")[0]);
+    params += '&s_pxcond_mt='+s_pxcond_mt;
 	console.log('getReport', params);
 
 	$.ajax({
@@ -83,12 +101,115 @@ getReport = function(s_pxcond_mt)
 		success: function(pResult) {
 			console.log('getReport', pResult); //rptCompletedArea
             var html = '';
-            $.each(pResult.amt_ty_code_order, function(pIndex, amt_ty_code){
-              var first_row = true;
-              $.each(pResult.dept_code_order, function(pI, dept_code){
+            $.each(pResult.amt_ty_code_order, function(pIndex, amt_ty_code_int){
+   			  var amt_ty_code = amt_ty_code_int+"";
+              var total_goals = [0, 0, 0, 0, 0];
+			  var total_done = [0, 0, 0, 0, 0];
+			 $.each(pResult.dept_code_order, function(pI, dept_code){
+				html += '<tr>';
+				html += `	<td class="colorSky text-center middle">${pResult.amt_ty_nm[amt_ty_code]}</td>`;
+				html += `	<td class="colorSky text-center middle">${pResult.dept_nm[dept_code]}</td>`;
+				html += `	<th class="colorW text-center middle">목표</th>`;
+				var goals = [];
+				for(let i=0;i<5;i++){
+					var row = pResult.contractStatusList[i][amt_ty_code][dept_code];
+					var total=0;
+					for(let _=1;_<=12;_++) {
+						try{
+							total += isNaN(parseInt(row['m'+_]))?0:parseInt(row['m'+_]);
+						}
+						catch(e){
+							total += 0;
+						}
+					}
+					if(amt_ty_code_int != 2){
+						try{
+							total += isNaN(parseInt(row.ty8_goal_amount_total))?0:parseInt(row.ty8_goal_amount_total);
+						}
+						catch(e){
 
+						}
+
+					}
+					html += `<th class="colorW text-right middle">${total.toFormat('NUMBER')}</th>`;
+					goals.push(total);
+					total_goals[i] += total;
+				}
+				html += `	<th class="colorW"></th>`;
+				html += '</tr>';
+				html += '<tr>';
+				html += `	<td class="colorSky text-center middle">${pResult.amt_ty_nm[amt_ty_code]}</td>`;
+				html += `	<td class="colorSky text-center middle">${pResult.dept_nm[dept_code]}</td>`;
+				html += `	<th class="colorW text-center middle">실적</th>`;
+				var done = [];
+				for(let i=0;i<5;i++){
+					var row = pResult.contractStatusList[i][amt_ty_code][dept_code];
+					try{
+						var amount = isNaN(parseInt(row.y_contract_amount))?0:parseInt(row.y_contract_amount);
+					}
+					catch(e){
+						var amount=0;
+					}
+					if(amt_ty_code_int != 2){
+						try{
+							amount += isNaN(parseInt(row.ty9_goal_amount_sum))?0:parseInt(row.ty9_goal_amount_sum);
+						}catch(e){
+							amount += 0;
+						}
+					}
+					html += `<th class="colorW text-right middle">${amount.toFormat('NUMBER')}</th>`;
+					done.push(amount);
+					total_done[i] += amount;
+				}
+				html += `	<th class="colorW"></th>`;
+				html += '</tr>';
+				html += '<tr>';
+				html += `	<td class="colorSky text-center middle">${pResult.amt_ty_nm[amt_ty_code]}</td>`;
+				html += `	<td class="colorSky text-center middle">${pResult.dept_nm[dept_code]}</td>`;
+				html += `	<th class="text-center middle">달성률</th>`;
+				for(let i=0;i<5;i++){
+					html += `<th class="text-right middle">${(goals[i] != 0) ? (done[i] * 100.0 / goals[i]).toFixed(2)+"%" : ''}</th>`;
+				}
+				html += `	<th class="colorW"></th>`;
+				html += '</tr>';
               });
+				html += `<tr>
+							<td class="colorG text-center middle" colspan="2">계</td>
+							<td class="colorG text-center">목표</td>
+							<td class="colorG text-right">${total_goals[0].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_goals[1].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_goals[2].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_goals[3].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_goals[4].toFormat('NUMBER')}</td>
+							<td class="colorG text-right"></td>
+						</tr>`;
+				html += `<tr>
+							<td class="colorG text-center middle" colspan="2">계</td>
+							<td class="colorG text-center">실적</td>
+							<td class="colorG text-right">${total_done[0].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_done[1].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_done[2].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_done[3].toFormat('NUMBER')}</td>
+							<td class="colorG text-right">${total_done[4].toFormat('NUMBER')}</td>
+							<td class="colorG text-right"></td>
+						</tr>`;
+				html += `<tr>
+							<td class="colorG text-center middle" colspan="2">계</td>
+							<td class="colorG text-center">달성률</td>
+							<td class="colorG text-right">${(total_goals[0] != 0)?(total_done[0] * 100.0 / total_goals[0]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[1] != 0)?(total_done[1] * 100.0 / total_goals[1]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[2] != 0)?(total_done[2] * 100.0 / total_goals[2]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[3] != 0)?(total_done[3] * 100.0 / total_goals[3]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[4] != 0)?(total_done[4] * 100.0 / total_goals[4]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right"></td>
+						</tr>`;
             });
+			$.each(pResult.years, function(pIndex, pValue){
+				$(document).find(`[data-column="${pIndex}"]`).html(pValue);
+			});
+			$(document).find("#amountTable tbody[role='body']").html(html);
+			$(document).find("#amountTable tbody[role='body']").yRowspan(0);
+			$(document).find("#amountTable tbody[role='body']").yRowspan(1);
 		}
 
 

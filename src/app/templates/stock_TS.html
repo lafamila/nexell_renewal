@@ -161,7 +161,7 @@ body.smart-style-6 .table thead tr {
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
 						<h2>재고 현황</h2>
 						<div class="widget-toolbar">
-<!--							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 종합재고현황</i></button>-->
+							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 종합재고현황</i></button>
 <!--							<button class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 재고 등록</i></button>-->
 							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
@@ -1609,4 +1609,5 @@ $(function() {
 
 
 </script>
+{% include './stock_report.html' %}
 {% endblock %}

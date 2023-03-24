@@ -342,12 +342,16 @@ def five_ajax_get_five():
     result = dict()
     result['contractStatusList'] = list()
     if "s_pxcond_mt" not in params:
-        params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+        params['s_pxcond_mt'] = datetime.now().strftime("%Y-12-31")
+    else:
+        params['s_pxcond_mt'] = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d").strftime("%Y-12-31")
     s_pxcond_mt = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d")
     dept_codes = ['TS1', 'TS2', 'BI', 'ST']
     amt_ty_codes = [2, 3, 5]
-    for i in range(5):
-        params['s_pxcond_mt'] = (s_pxcond_mt - relativedelta.relativedelta(months=i)).strftime("%Y-%m-%d")
+    years = []
+    for i in range(4, -1, -1):
+        params['s_pxcond_mt'] = (s_pxcond_mt - relativedelta.relativedelta(years=i)).strftime("%Y-%m-%d")
+        years.append(params['s_pxcond_mt'].split("-")[0])
         row = cp.get_completed_summary(params)
         data = dict()
         for r in row:
@@ -362,8 +366,11 @@ def five_ajax_get_five():
         result['contractStatusList'].append(data)
     result['dept_code_order'] = dept_codes
     result['amt_ty_code_order'] = amt_ty_codes
+    result['amt_ty_nm'] = {"2" : "수주", "3": "매출", "5" : "VA"}
+    result['dept_nm'] = {"TS1" : "공조1", "TS2": "공조2", "BI" : "빌트인", "ST" : "영업"}
     result['s_pxcond_mt'] = params['s_pxcond_mt']
     result['status'] = True
+    result['years'] = years
     return jsonify(result)
 
 @bp.route('/vacation/insert_vacation', methods=['POST'])
@@ -375,11 +382,14 @@ def insert_vacation():
 @bp.route('/vacation/insert_vacation_out', methods=['POST'])
 def insert_vacation_out():
     params = request.get_json()
-    cm.insert_vacation_out(params)
+    cm.insert_vacation_out(params, 8)
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 @bp.route('/vacation/insert_vacation_out_go', methods=['POST'])
 def insert_vacation_out_go():
     params = request.get_json()
-    cm.insert_vacation_out_go(params)
+    cm.insert_vacation_out(params, 9)
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
+@bp.route('/common/do_nothing', methods=['POST'])
+def do_nothing():
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})

@@ -1,0 +1,262 @@
+<style>
+  .colorGray{
+    background-color:#eee!important;
+  }
+  .bold{
+    font-weight:bold!important;
+  }
+  .normal{
+    font-weight:normal!important;
+  }
+</style>
+<div style="width:1080px;background-color:white; padding:20px;">
+
+  <h1>□ 견적중단 예외품의 양식(단일현장)</h1>
+  <p>아래와 같이 견적중단 예외를 요청하오니, 검토 후 재가 바랍니다.</p>
+
+  <h3>1. 현장정보</h3>
+  <table class="table-bordered">
+    <colgroup>
+      <col width="200"/>
+      <col width="200"/>
+      <col width="320"/>
+      <col width="160"/>
+      <col width="160"/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <th class="colorGray text-center bold">프로젝트코드</th>
+        <th class="colorGray text-center bold" colspan="2">프로젝트명(현장명)</th>
+        <th class="colorGray text-center bold">준공일자</th>
+        <th class="colorGray text-center bold">*ESI(품질지도사)</th>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly/>
+        </td>
+        <td class="text-center hasinput" colspan="2">
+            <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+              <option value=""></option>
+              {% for code in contract_list %}
+              <option value="{{code.value}}">{{code.label}}</option>
+              {% endfor %}
+            </select>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="cntrct_de" id="cntrct_de" data-type="date"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="esi_name" id="esi_name"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="colorGray text-center"><span class="bold">①수요처명</span><br><span style="font-weight:normal!important;">(파트너사와 계약처)</span></th>
+        <th class="colorGray text-center bold">실설치처명</th>
+        <th class="colorGray text-center bold" colspan="3">실설치처 주소</th>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="company_name" id="company_name"/>
+        </td>
+        <td class="text-center hasinput">
+          <input type="text" class="form-control text-center" name="company_bcnc" id="company_bcnc"/>
+        </td>
+        <td class="hasinput" colspan="3">
+          <input type="text" class="form-control text-left" name="company_addr" id="company_addr"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2. 파트너사 설치정보</h3>
+  <table class="table-bordered">
+    <colgroup>
+      <col width="200"/>
+      <col width="200"/>
+      <col width="160"/>
+      <col width="160"/>
+      <col width="160"/>
+      <col width="160"/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <th class="colorGray text-center bold">파트너사명</th>
+        <th class="colorGray text-center bold">시공유형</th>
+        <th class="colorGray text-center bold" colspan="2">②하도급업체명</th>
+        <th class="colorGray text-center bold">설치팀장명</th>
+        <th class="colorGray text-center bold">설치자격번호</th>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="partner_nm" id="partner_nm"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="partner_type" id="partner_type"/>
+        </td>
+        <td class="hasinput" colspan="2">
+          <input type="text" class="form-control text-center" name="partner_company" id="partner_company"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="partner_charger" id="partner_charger"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="partner_no" id="partner_no"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="colorGray text-center bold middle" rowspan="2">*시운전 완료여부</th>
+        <th class="colorGray text-center bold" rowspan="2">미완료 사유</th>
+        <th class="colorGray text-center bold" colspan="4">*완료보고서(준공서류)</th>
+      </tr>
+      <tr>
+        <th class="colorGray text-center normal">실명제라벨</th>
+        <th class="colorGray text-center normal">준공도면</th>
+        <th class="colorGray text-center normal">S-net</th>
+        <th class="colorGray text-center normal">준공정보입력</th>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="test_done" id="test_done"/>
+        </td>
+        <td class="text-center hasinput">
+          <input type="text" class="form-control text-center" name="test_reason" id="test_reason"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="no_1" id="no_1"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="no_2" id="no_2"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="no_3" id="no_3"/>
+        </td>
+        <td class="hasinput">
+          <input type="text" class="form-control text-center" name="no_4" id="no_4"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h3>3. 지적사항(부적합사항)</h3>
+  <table class="table-bordered">
+    <colgroup>
+      <col width="1040"/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-left" name="text_1" id="text_1"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-left" name="text_2" id="text_2"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-left" name="text_3" id="text_3"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-left" name="text_4" id="text_4"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hasinput">
+          <input type="text" class="form-control text-left" name="text_5" id="text_5"/>
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+
+  <h3>4. 예외요청 사유 및 대책</h3>
+  <p> - 품질지적 건 개선이 불가하여 미개선에 따른 문제는 파트너사 책임 확약서로 대체합니다.</p>
+
+  <h3>5. 첨부파일</h3>
+  <p> - 파트너사 책임 확약서 및 고객 확인서</p>
+
+  <div class="bold" style="margin-top:150px;margin-left:980px;">
+    - 이 상 -
+  </div>
+
+</div>
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+    window.projects = {};
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_p_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+
+        var input = document.querySelector('input[data-type="number"]');
+        if(input){
+          input.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9 \,]/, '');
+          });
+
+        }
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+        }
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+    }
+    {% endif %}
+</script>

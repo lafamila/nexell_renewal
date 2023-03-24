@@ -199,6 +199,34 @@ def get_completed_suju(params):
     result = g.curs.fetchall()
     return result
 
+def get_completed_va(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+
+    query = """SELECT c.cntrct_sn
+				, m.dept_code AS dept_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+				, c.spt_nm
+				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
+				, (SELECT SUM(IFNULL(p.dlamt * p.dlnt, 0)) FROM account p LEFT JOIN account s ON p.delng_sn=s.cnnc_sn WHERE s.delng_ty_code NOT IN ('14') AND p.delng_se_code IN ('P', 'P1') AND p.ddt_man BETWEEN '{0}' AND '{1}' AND p.cntrct_sn=c.cntrct_sn) AS p1
+				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS p3
+				, 0 AS s2
+				, (SELECT (IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) - IFNULL(SUM(p.dlnt*p.dlamt),0)) FROM account p LEFT OUTER JOIN account s ON s.cnnc_sn=p.delng_sn WHERE p.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND p.delng_se_code = 'P' AND p.cntrct_sn IS NOT NULL AND p.bcnc_sn = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
+				FROM contract c
+				LEFT OUTER JOIN member m
+				ON c.bsn_chrg_sn=m.mber_sn
+				WHERE 1=1
+				ORDER BY dept_nm, bcnc_nm, spt_nm
+""".format(first_day, last_day)
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+
 def get_completed_sales(params):
     y, m, d = params['s_pxcond_mt'].split("-")
     _, l = calendar.monthrange(int(y), int(m))
@@ -666,3 +694,40 @@ def set_dashboard_data(params):
 
     else:
         g.curs.execute("INSERT INTO dashboard(dashboard_date, dashboard_row, dashboard_column, dashboard_data) VALUES(%(dashboard_date)s, %(dashboard_row)s, %(dashboard_column)s, %(dashboard_data)s)", params)
+
+def get_logitech_report(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    dtm = "{}-{}".format(y.zfill(4), m.zfill(2))
+    query = """SELECT c.cntrct_sn
+    , c.spt_nm
+    , m.dept_code
+    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+    , CONCAT(DATE_FORMAT(c.cntrwk_bgnde, '%%y.%%m.%%d'),'<br> ~ <br>',DATE_FORMAT(c.cntrwk_endde, '%%y.%%m.%%d')) AS cntrwk_period
+    , IFNULL((SELECT SUM(IFNULL(co.qy, 1)*IFNULL(co.puchas_amount, 0)) FROM cost co WHERE co.cntrct_execut_code='E' AND co.ct_se_code IN (3, 4) AND co.cntrct_sn=c.cntrct_sn), 0) AS cntrct_amount
+    , (SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p LEFT JOIN (SELECT * FROM account WHERE delng_se_code='S') s ON s.cnnc_sn=p.delng_sn WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn=3 AND DATE_FORMAT(s.ddt_man, '%%Y-%%m')='{0}') AS logi_now
+    , (SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p LEFT JOIN (SELECT * FROM account WHERE delng_se_code='S') s ON s.cnnc_sn=p.delng_sn WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn=3 AND DATE_FORMAT(s.ddt_man, '%%Y-%%m') < '{0}') AS logi_before
+    , (SELECT SUM(IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn NOT IN (3, 74, 79, 100) AND DATE_FORMAT(p.ddt_man, '%%Y-%%m') = '{0}') AS other_now
+    , (SELECT SUM(IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn NOT IN (3, 74, 79, 100) AND DATE_FORMAT(p.ddt_man, '%%Y-%%m') < '{0}') AS other_before
+    , (SELECT code_ordr FROM code WHERE code=m.dept_code AND parnts_code='DEPT_CODE') AS ordr
+    FROM contract c
+    LEFT JOIN member m ON c.bsn_chrg_sn = m.mber_sn
+    WHERE 1=1
+    AND c.progrs_sttus_code <> 'C'
+    ORDER BY ordr""".format(dtm)
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_logitech_detail(params):
+    query = """SELECT IF(p.bcnc_sn=3, 'logitech', 'other') AS p_type
+                    , IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0) AS logitech_value
+                    , IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0) AS other_value
+                    , p.ddt_man as ddt_man
+                    FROM (SELECT * FROM account WHERE delng_se_code='P' and cntrct_sn=%(s_cntrct_sn)s) p
+                    LEFT OUTER JOIN (SELECT * FROM account WHERE delng_se_code='S' and cntrct_sn=%(s_cntrct_sn)s) s
+                    ON s.cnnc_sn=p.delng_sn
+                    WHERE p.bcnc_sn NOT IN (74, 79, 100)
+                    ORDER BY ddt_man ASC"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result

@@ -5,4 +5,4 @@ bp = Blueprint('tax', __name__, url_prefix='/tax')
 @bp.route('/')
 @session_helper.session_check
 def index_page():
-    return render_template('tax.html')
+    return render_template('tax.html', title="세금계산서 관리 | 넥셀시스템")

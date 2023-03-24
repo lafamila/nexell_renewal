@@ -1,4 +1,5 @@
 from flask import Blueprint, g, current_app, render_template, redirect, request, make_response, jsonify, send_file, Response, url_for, session
+from .services import project_service as prj
 from .services import completed_service as cp
 from .services import dashboard_service as db
 from .services import approval_service as apvl
@@ -125,3 +126,36 @@ def ajax_set_dashboard_data():
     params = request.args.to_dict()
     db.set_dashboard_data(params)
     return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
+
+@bp.route('/ajax_get_completed_va', methods=['GET'])
+def ajax_get_completed_va():
+    params = request.args.to_dict()
+    if "s_pxcond_mt" not in params:
+        params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+    result = dict()
+    result['data'] = db.get_completed_va(params)
+    return jsonify(result)
+
+
+@bp.route('/ajax_get_logit', methods=['GET'])
+def ajax_get_logit():
+    params = request.args.to_dict()
+    if "s_pxcond_mt" not in params:
+        params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+    result = dict()
+    logitechs = db.get_logitech_report(params)
+    result['data'] = list()
+    for l in logitechs:
+        if l['logi_now'] != '' or l['other_now'] != '':
+            result['data'].append(l)
+    return jsonify(result)
+
+@bp.route('/ajax_get_logitech_detail', methods=['GET'])
+def ajax_get_logitech_detail():
+    params = request.args.to_dict()
+
+    detail = db.get_logitech_detail(params)
+    result = {"logitech" : list(), "other" : list(), "contract" : prj.get_contract(params)}
+    for d in detail:
+        result[d['p_type']].append(d)
+    return jsonify(result)

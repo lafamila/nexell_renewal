@@ -55,11 +55,14 @@ def get_approval(params):
 
 def get_approval_member(params):
     query = """SELECT am.mber_sn
-                , (SELECT mber_nm FROM member WHERE mber_sn=am.mber_sn) AS mber_nm
+                , m.mber_nm AS mber_nm
+                , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm                
                 , am.reg_type
                 , IFNULL(am.update_dtm, '') AS update_dtm
                 , am.approval_status_code
                 FROM approval_member am
+                LEFT JOIN member m
+                ON m.mber_sn=am.mber_sn
                 WHERE 1=1
                 AND am.approval_sn=%(approval_sn)s
                 ORDER BY am_sn"""

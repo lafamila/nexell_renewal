@@ -204,6 +204,24 @@ def get_costs_bd():
     params["s_prjct_sn"] = prjct["prjct_sn"]
     result['aCostList'] = prj.get_a_cost_list(params)
     result['bCostList'] = prj.get_b_cost_list(params)
+    extra_cost_list = prj.get_max_extra_cost_list(params)
+    result['extraCostList'] = dict()
+    for extra_cost in extra_cost_list:
+        if extra_cost['extra_sn'] not in result['extraCostList']:
+            result['extraCostList'][extra_cost['extra_sn']] = list()
+        result['extraCostList'][extra_cost['extra_sn']].append(extra_cost)
+    result['samsungList'] = prj.get_expect_equip_list(params)
+    result['otherList'] = prj.get_expect_equip_other_list(params)
+    result['etcRcppayList'] = prj.get_etc_rcppay_report_list(params)
+    result['outsrcList'] = prj.get_outsrc_list(params)
+    return jsonify(result)
+
+@bp.route('/get_outsrc_detail', methods=['GET'])
+def get_outsrc_detail():
+    params = request.args.to_dict()
+    prjct = prj.get_project_by_cntrct_nm(params['s_cntrct_sn'])
+    params['s_prjct_sn'] = prjct['prjct_sn']
+    result = prj.get_outsrc_detail(params)
     return jsonify(result)
 
 @bp.route('/get_option_cost', methods=['GET'])
@@ -223,3 +241,14 @@ def insert_c_project():
     params = request.get_json()
     prj.insert_c_project(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_biss', methods=['POST'])
+def insert_biss():
+    params = request.get_json()
+    raise Exception
+
+@bp.route('/update_c_project', methods=['POST'])
+def update_c_project():
+    params = request.get_json()
+    prj.update_c_project(params)
+    return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})

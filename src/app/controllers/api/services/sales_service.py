@@ -641,3 +641,155 @@ def insert_equipment_sub(params):
         data['bcnc_sn'] = bcnc_sn
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
+def insert_equipment_other_sub(params):
+    data = OrderedDict()
+    data['cntrct_sn'] = params['cntrct_sn']
+    order_des = params['order_de[]']
+    model_nos = params['model_no[]']
+    prdlst_se_codes = params['prdlst_se_code[]']
+    dlnts = params['dlnt[]']
+    damts = params['damt[]']
+    bcnc_sns = params['bcnc_sn[]']
+    for order_de, model_no, prdlst_se_code, damt, dlnt, bcnc_sn in zip(order_des, model_nos, prdlst_se_codes, damts, dlnts, bcnc_sns):
+        data['order_de'] = order_de
+        data['prdlst_se_code'] = prdlst_se_code
+        data['model_no'] = '자재'
+        data['dlnt'] = dlnt
+        data['pamt'] = int(damt.replace(",", ""))*dlnt if damt != '' else None
+        data['samt'] = data['pamt']
+        data['bcnc_sn'] = bcnc_sn
+        g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
+
+
+def insert_equipment(params):
+    cost_data = []
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    for key in params:
+        if key.endswith("[]"):
+            continue
+
+        elif key.startswith("E_") and not key.endswith("_alpha"):
+            cntrct_execut_code, ct_se_code  = key.split("_")
+            value = params[key].replace(",", "")
+            if value == '':
+                continue
+            column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(), "register_id" : session["member"]["member_id"]})
+
+
+    for data in cost_data:
+        sub_query = [key for key in data]
+        params_query = ["%({})s".format(key) for key in data]
+
+        query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        g.curs.execute(query, data)
+
+
+    company = {}
+    for key in params:
+        if key.startswith("company"):
+            if key.split("_")[0] not in company:
+                company[key.split("_")[0]] = dict()
+            company[key.split("_")[0]]["_".join(key.split("_")[1:])] = params[key]
+
+    for idx, c in company.items():
+        if idx.replace("company", "") == '':
+            continue
+        if c['name'] == '':
+            continue
+
+        if c['date'] == '':
+            c['date'] = None
+        c['cntrct_sn'] = params['cntrct_sn']
+        c['prjct_sn'] = prjct['prjct_sn']
+        human = c['human'].replace(",", "")
+        direct = c['direct'].replace(",", "")
+        daily = c['daily'].replace(",", "")
+        human = int(human) if human != '' else 0
+        direct = int(direct) if direct != '' else 0
+        daily = int(daily) if daily != '' else 0
+
+        c['pymnt_mth'] = "{}-{}-{}".format(human, direct, daily)
+        c['register_id'] = session['member']['member_id']
+        query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
+                    VALUES(%(cntrct_sn)s, %(prjct_sn)s, %(name)s, %(date)s, %(pymnt_mth)s, %(owner)s, %(owner_telno)s, %(dam)s, %(dam_telno)s, NOW(), %(register_id)s)"""
+        g.curs.execute(query, c)
+        outsrc_sn = g.curs.lastrowid
+
+        for item_nm, item_dlnt, item_damt in zip(c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+            if item_nm != '':
+                dlnt = int(item_dlnt.replace(",", ""))
+                damt = int(item_damt.replace(",", ""))
+                query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
+                g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
+
+    equipments_dict = {}
+    equipments_other_dict = {}
+    row_length = 0
+    row_length_other = 0
+    for key in params:
+        if key.endswith("[]") and not key.startswith("company") and not key.endswith("other[]"):
+            equipments_dict[key] = params[key]
+            row_length = len(params[key])
+        elif key.endswith("other[]") and not key.startswith('company'):
+            equipments_other_dict[key] = params[key]
+            row_length_other = len(params[key])
+
+    equipments = []
+    for _ in range(row_length):
+        equipments.append({"cntrct_sn" : params["cntrct_sn"]})
+    equipments_other = []
+    for _ in range(row_length_other):
+        equipments_other.append({"cntrct_sn" : params["cntrct_sn"]})
+    for key, value in equipments_dict.items():
+        for i, v in enumerate(value):
+            if not key.endswith("other[]"):
+                k = key.replace("[]", "")
+                if k in ("cnt_dlnt", "dlamt"):
+                    equipments[i][k] = 0 if v.replace(",", "") == '' else int(v.replace(",", ""))
+                elif k == 'samount':
+                    equipments[i][k] = None if v.replace(",", "") == '' else int(v.replace(",", ""))
+                else:
+                    equipments[i][k] = v
+    for key, value in equipments_other_dict.items():
+        for i, v in enumerate(value):
+            if key.endswith("other[]"):
+                k = key.replace("_other[]", "")
+                if k in ("cnt_dlnt", "dlamt"):
+                    equipments_other[i][k] = 0 if v.replace(",", "") == '' else int(v.replace(",", ""))
+                elif k == 'samount':
+                    equipments_other[i][k] = None if v.replace(",", "") == '' else int(v.replace(",", ""))
+                else:
+                    equipments_other[i][k] = v
+
+    query = """INSERT INTO expect_equipment(cntrct_sn, model_no, prdlst_se_code, bcnc_sn, delng_ty_code, cnt_dlnt, dlamt, samt, rm)
+                VALUES (%(cntrct_sn)s, %(model_no)s, %(prdlst_se_code)s, %(bcnc_sn)s, %(delng_ty_code)s, %(cnt_dlnt)s, %(dlamt)s, %(samount)s, %(rm)s)"""
+    g.curs.executemany(query, equipments)
+    g.curs.executemany(query, equipments_other)
+
+
+def insert_equipment_samsung(params):
+    row_length = len(params['equip_sn[]'])
+    order_de = datetime.datetime.now().strftime("%Y-%m-%d")
+    data = []
+    for _ in range(row_length):
+        data.append({"cntrct_sn" : params["cntrct_sn"], "order_de" : order_de})
+
+    for key in params:
+        if key.endswith("[]"):
+            for i, v in enumerate(params[key]):
+                k = key.replace("[]", "")
+                if k in ("dlnt", "dlamt", "samount"):
+                    value = None if v.replace(",", "") == "" else int(v.replace(",", ""))
+                else:
+                    value = v
+                data[i][k] = value
+
+    real_data = []
+    for d in data:
+        if d['dlnt'] is not None:
+            real_data.append(d)
+    query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code) 
+    VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """
+    g.curs.executemany(query, real_data)
+

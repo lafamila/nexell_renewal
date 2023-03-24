@@ -1,0 +1,175 @@
+{% extends 'common/report_base.html' %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport" style="width:50vw;margin:0 auto;">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+				</div>
+			</div>
+			<div class="modal-body report">
+
+                <style>
+                    div.report.report-completed1 table th,
+                    div.report.report-completed1 table td {
+                        font-size: 12px!important;
+                    }
+
+                    div.report.report-completed1 #rptCompletedArea table th,
+                    div.report.report-completed1 #rptCompletedArea table td {
+                        font-size: 12px!important;
+                        padding: 7px 5px!important;
+                    }
+                    div.report table tbody[role=header] tr:last-child th {
+                        border-bottom: black 1px solid !important;
+                    }
+
+                    div.report *{
+                        font-size:12px !important;
+                    }
+                    #popReport{
+                        font-size: 9px !important;
+                        line-height: 1.0 !important;
+                    }
+                </style>
+                <div class="title"><h2 class="colorLS">일별 지급자재 매입현황</h2></div>
+                <h5 class="sub-title underline" id="cntrct_nm"></h5>
+                <table>
+                    <colgroup>
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                          <th class="colorB" colspan="3">로지텍</th>
+                          <th class="colorB" colspan="3">타사자재</th>
+                        </tr>
+                        <tr>
+                          <th class="colorB">일자</th>
+                          <th class="colorB">매입금액</th>
+                          <th class="colorB">비고</th>
+                          <th class="colorB">일자</th>
+                          <th class="colorB">매입금액</th>
+                          <th class="colorB">비고</th>
+                        </tr>
+                    </thead>
+                    <tbody role="body">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="colorG">합계</th>
+                            <th class="colorG text-right" data-column="total_logitech"></th>
+                            <th class="colorG"></th>
+                            <th class="colorG">합계</th>
+                            <th class="colorG text-right" data-column="total_other"></th>
+                            <th class="colorG"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<!-- 레포트1 레이어 팝업 끝 -->
+<script type="text/javascript">
+/**************************************************************************
+ *
+ */
+getReport = function()
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + {{cntrct_sn}};
+
+	$.ajax({
+		url: '/api/dashboard/ajax_get_logitech_detail',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log(pResult.contract);
+            $(document).find("#cntrct_nm").html(pResult.contract.spt_nm);
+            var lo = pResult.logitech;
+            var ot = pResult.other;
+            var lo_length = lo.length;
+            var ot_length = ot.length;
+            var lo_total = 0;
+            var ot_total = 0;
+            var html = '';
+            for(let i=0;i<Math.min(lo_length, ot_length);i++){
+                html += `<tr>
+                            <td class="text-center">${lo[i].ddt_man}</td>
+                            <td class="text-right">${lo[i].logitech_value.toFormat('NUMBER')}</td>
+                            <td></td>
+                            <td class="text-center">${ot[i].ddt_man}</td>
+                            <td class="text-right">${ot[i].other_value.toFormat('NUMBER')}</td>
+                            <td></td>
+                        </tr>`;
+                lo_total += lo[i].logitech_value;
+                ot_total += ot[i].other_value;
+            }
+            for(let i=Math.min(lo_length, ot_length);i<ot_length;i++){
+                html += `<tr>
+                            <td class="text-center"></td>
+                            <td class="text-right"></td>
+                            <td></td>
+                            <td class="text-center">${ot[i].ddt_man}</td>
+                            <td class="text-right">${ot[i].other_value.toFormat('NUMBER')}</td>
+                            <td></td>
+                        </tr>`;
+                ot_total += ot[i].other_value;
+            }
+            for(let i=Math.min(lo_length, ot_length);i<lo_length;i++){
+                html += `<tr>
+                            <td class="text-center">${lo[i].ddt_man}</td>
+                            <td class="text-right">${lo[i].logitech_value.toFormat('NUMBER')}</td>
+                            <td></td>
+                            <td class="text-center"></td>
+                            <td class="text-right"></td>
+                            <td></td>
+                        </tr>`;
+                lo_total += lo[i].logitech_value;
+            }
+            $(document).find(`tbody[role="body"]`).html(html);
+            $(document).find(`[data-column="total_logitech"]`).html(lo_total.toFormat('NUMBER'));
+            $(document).find(`[data-column="total_other"]`).html(ot_total.toFormat('NUMBER'));
+		}
+	});
+}
+
+</script>
+
+<script>
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+        getReport();
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+	});
+
+</script>
+{% endblock %}

@@ -239,9 +239,9 @@ getWork = function(work_date)
 							<td class="input-available" data-column="tot2">${pValue.tot}</td>
 							<td data-column="use">${pValue.use}</td>
 							<td data-column="half">${pValue.half}</td>
-							<td data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - parseFloat(pValue.half)).toFixed(1)}</td>
-							<td></td>
-							<td></td>
+							<td data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
+							<td>${pValue.use_dates}</td>
+							<td>${pValue.half_dates}</td>
 							<td class="colorBtn input-available" data-column="rm2">${pValue.rm}</td>
 						 </tr>`;
 			});

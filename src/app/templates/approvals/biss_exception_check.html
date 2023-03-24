@@ -1,0 +1,195 @@
+<style>
+  .colorGray{
+    background-color:#eee!important;
+  }
+  .bold{
+    font-weight:bold!important;
+  }
+  .normal{
+    font-weight:normal!important;
+  }
+  .no-outline{
+      border:none!important;
+      outline: none!important;
+  }
+  .bottom-outline{
+      border-left:none!important;
+      border-top:none!important;
+      border-right:none!important;
+      border-bottom:groove!important;
+      width:100%;
+  }
+  .bottom-outline:focus{
+      outline: none!important;
+  }
+  .no-outline:focus{
+      outline: none!important;
+  }
+  .no-highlight:read-only{
+    background:transparent!important;
+  }
+</style>
+<div style="width:1080px;background-color:white; padding:20px;">
+
+  <h1 class="text-center">확 인 서</h1>
+
+  <table style="border:none;">
+    <colgroup>
+      <col width="200"/>
+      <col width="840"/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <th class="text-right bold">공 사 명 :</th>
+        <td class="hasinput">
+            <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+              <option value=""></option>
+              {% for code in contract_list %}
+              <option value="{{code.value}}">{{code.label}}</option>
+              {% endfor %}
+            </select>
+        </td>
+      </tr>
+      <tr>
+        <th class="text-right bold">프로젝트코드 :</th>
+        <td class="hasinput">
+            <input type="text" class="form-control text-left bottom-outline" style="border-top:none!important;border-left:none!important;border-right:none!important;" id="cntrct_no" name="cntrct_no" readonly/>
+        </td>
+      </tr>
+      <tr>
+        <th class="text-right bold">수 신 :</th>
+        <td class="hasinput">
+            <input type="text" class="form-control text-left bottom-outline" style="border-top:none!important;border-left:none!important;border-right:none!important;" id="target_nm" name="target_nm"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="text-right bold">참 조 :</th>
+        <td class="hasinput">
+            <input type="text" class="form-control text-left bottom-outline" style="border-top:none!important;border-left:none!important;border-right:none!important;" id="help_nm" name="help_nm"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="text-right bold">발 신 :</th>
+        <td class="hasinput">
+            <input type="text" class="form-control text-left bottom-outline" style="border-top:none!important;border-left:none!important;border-right:none!important;" id="send_nm" name="send_nm"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="text-right bold">담 당 :</th>
+        <td class="hasinput">
+            <input type="text" class="form-control text-left bottom-outline" style="border-top:none!important;border-left:none!important;border-right:none!important;" id="charger_nm" name="charger_nm"/>
+        </td>
+      </tr>
+      <tr>
+        <th class="text-right bold">현 장 주 소 :</th>
+        <td class="hasinput">
+            <input type="text" class="form-control text-left bottom-outline" style="border-top:none!important;border-left:none!important;border-right:none!important;" id="addr1" name="addr1"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>1. 귀사의 무궁한 발전을 기원합니다.</h3>
+  <h3>2. 귀사와 계약 체결하여 진행중인 <span name="spt_nm"></span> 현장과 관련된 사항입니다.</h3>
+  <h3>3. 품질지도 부적합 건</h3>
+    <input type="text" class="bottom-outline no-highlight text-left" id="detail" name="detail"/>
+  <h3>4. 예외 품의 사유</h3>
+  <p>- 단위세대 입주완료되어 진행할수 없음을 통보하여 충분히 숙지시켰으며, 그 에 따른 지적사항의 예외품의 요청함.</p>
+  <h3>5. 상기 4항에 대한 추후 문제시 시공사인 넥셀시스템(주) 측에서 책임질 것을 확인하오니 업무에 참조하여주시기 바랍니다.</h3>
+
+
+
+  <div class="bold" style="margin-top:150px;margin-left:980px;">
+    - 끝 -
+  </div>
+
+  <h2 class="text-center">
+      <input type="text" class="no-outline no-highlight" name="date" id="date" readonly/>
+  </h2>
+  <div class="bold" style="margin-top:20px;margin-left:900px;">
+      <p style="font-size:16px!important;">넥셀시스템(주)</p>
+      <p>대표이사 황 영 구 (인)</p>
+  </div>
+
+</div>
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    {% if init %}
+    window.projects = {};
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_p_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+
+        var input = document.querySelector('input[data-type="number"]');
+        if(input){
+          input.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9 \,]/, '');
+          });
+
+        }
+        var now = (new Date((new Date()).getTime()-(new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+        var year = now.split("-")[0];
+        var month = now.split("-")[1];
+        var day = now.split("-")[2];
+        $(document).find("#date").val(`${year}년 ${month}월 ${day}일`);
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+        }
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+    }
+    {% endif %}
+</script>
