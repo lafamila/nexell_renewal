@@ -4,8 +4,6 @@ from collections import OrderedDict
 
 def get_stock_datatable(params, prduct_se_code):
     query = """SELECT '1' AS ctmmny_sn
-				# , GROUP_CONCAT(s.stock_sn) AS stock_sn
-				# , COUNT(*) AS qy
 				, s.stock_sn AS stock_sn				
 				, prduct_se_code AS prduct_se_code
 				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
@@ -334,3 +332,71 @@ def insert_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man):
 
 def update_stock_rm(stock_sn, rm):
     g.curs.execute("UPDATE stock SET rm=%s WHERE stock_sn=%s", (rm, stock_sn))
+
+def get_stock_report_list(params):
+    query = """SELECT prduct_se_code
+                    , prduct_se_nm
+                    , prduct_ty_code
+                    , prduct_ty_nm
+                    , SUM(IF(invn_sttus_nm='전시', 1, 0)) AS cnt1
+                    , SUM(IF(invn_sttus_nm='이현창고', 1, 0)) AS cnt2
+                    , SUM(IF(invn_sttus_nm='기타창고', 1, 0)) AS cnt3
+                    FROM
+                    (SELECT prduct_se_code AS prduct_se_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
+    				, prduct_ty_code AS prduct_ty_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_TY_CODE' AND code=s.prduct_ty_code) AS prduct_ty_nm
+    				, CASE WHEN m.stock_sttus=1 THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.cntrct_sn)
+    				WHEN m.stock_sttus IN (2,3) THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=(m.stock_sttus-2))
+    				ELSE (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.stock_sttus)
+    				END AS invn_sttus_nm
+    				FROM (SELECT * FROM stock WHERE 1=1) s 
+    				INNER JOIN 
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+    				INNER JOIN
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
+    				WHERE 1=1) t
+    				GROUP BY prduct_se_code, prduct_ty_code
+    				ORDER BY prduct_se_code, prduct_ty_code
+    				"""
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+def get_stock_report(params):
+    query = """SELECT prduct_se_code
+                    , prduct_se_nm
+                    , SUM(puchas_amount_one) AS puchas_amount
+                    , SUM(qy) AS qy_total
+                    , invn_sttus_nm
+                    FROM
+                    (SELECT prduct_se_code AS prduct_se_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
+    				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                        WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                        ELSE 0
+                        END AS puchas_amount_one
+                    , 1 AS qy
+    				, CASE WHEN m.stock_sttus=1 THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.cntrct_sn)
+    				WHEN m.stock_sttus IN (2,3) THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=(m.stock_sttus-2))
+    				ELSE (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.stock_sttus)
+    				END AS invn_sttus_nm
+    				FROM (SELECT * FROM stock WHERE 1=1) s 
+    				INNER JOIN 
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+    				INNER JOIN
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
+    				WHERE 1=1) t
+    				WHERE t.invn_sttus_nm IN ('전시', '이현창고', '기타창고')
+    				GROUP BY prduct_se_code, prduct_se_nm, invn_sttus_nm
+    				"""
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result

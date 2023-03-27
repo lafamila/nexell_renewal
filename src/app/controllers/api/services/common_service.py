@@ -833,6 +833,87 @@ def insert_vacation(params):
         data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
         g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
+def get_blueprint(params):
+    query = """
+                SELECT b.b_sn
+                    , b.mber_sn
+                    , (SELECT mber_nm FROM member WHERE mber_sn=b.mber_sn) AS mber_nm
+                    , b.b_type
+                    , IF(b_type = 0, '신규현장', '변경현장') AS b_type_nm
+                    , c.spt_nm
+                    , c.cntrct_sn
+                    , c.bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+                    , m.dept_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+                    , (SELECT mber_nm FROM member WHERE mber_sn=m.mber_sn) AS bsn_mber_nm
+            """
+    for i in range(1, 15):
+        query += ", b.b_{0} AS b_{0}".format(i)
+    query += """ FROM blueprint b
+                LEFT JOIN contract c ON b.cntrct_sn=c.cntrct_sn
+                LEFT JOIN member m ON c.bsn_chrg_sn=m.mber_sn
+                ORDER BY mber_nm, b.b_type, b.b_sn"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def insert_blueprint(params):
+    g.curs.execute("INSERT INTO blueprint(mber_sn, b_type, cntrct_sn) VALUES (%(s_mber_sn)s, %(s_b_type)s, %(s_cntrct_sn)s)", params)
+def update_blueprint(params):
+    g.curs.execute("UPDATE blueprint SET {0}=%(data)s WHERE b_sn=%(b_sn)s".format(params['column']), params)
+
+def get_research(params):
+    query = """SELECT e.research_row
+				, e.research_month
+				, e.research_data
+				FROM research e
+				WHERE 1=1
+				AND e.research_year = %(research_year)s
+				AND e.research_sn IN (SELECT MAX(ex.research_sn) FROM research ex WHERE ex.research_year=%(research_year)s GROUP BY ex.research_row, ex.research_month)"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def insert_research(params):
+    data = OrderedDict()
+
+    if "research_year" in params and params["research_year"]:
+        data["research_year"] = params["research_year"]
+
+    if "research_row" in params and params["research_row"]:
+        data["research_row"] = params["research_row"]
+
+    if "research_month" in params and params["research_month"]:
+        data["research_month"] = params["research_month"]
+
+    if "research_data" in params and params["research_data"]:
+        data["research_data"] = params["research_data"]
+
+    query = "INSERT INTO research({}) VALUES ({})".format(",".join(data.keys()), ",".join(["%({})s".format(key) for key in data]))
+    g.curs.execute(query, params)
+
+def insert_file(filename):
+    query = "INSERT INTO files(file_path, original_nm) VALUES (%s, null)"
+    g.curs.execute(query, filename)
+    return g.curs.lastrowid
+
+def get_file(f_sn):
+    query = "SELECT file_path FROM files WHERE f_sn=%s"
+    g.curs.execute(query, f_sn)
+    result = g.curs.fetchone()
+    return result
+
+def set_reserve_data(params):
+    row = g.curs.execute("SELECT r_sn FROM reserved WHERE cntrct_sn=%(s_cntrct_sn)s AND outsrc_fo_sn=%(s_outsrc_fo_sn)s", params)
+    if row == 0:
+        g.curs.execute("INSERT INTO reserved(cntrct_sn, outsrc_fo_sn) VALUES(%(s_cntrct_sn)s, %(s_outsrc_fo_sn)s)", params)
+        params['r_sn'] = g.curs.lastrowid
+    else:
+        result = g.curs.fetchone()
+        params['r_sn'] = result['r_sn']
+    g.curs.execute("UPDATE reserved SET {}=%(data)s WHERE r_sn=%(r_sn)s".format(params['column']), params)
+
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):
 #     s_pxcond_mt = params['s_pxcond_mt']

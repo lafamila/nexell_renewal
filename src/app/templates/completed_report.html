@@ -141,24 +141,71 @@
         var params = '';
         params += '&s_pxcond_mt=' + s_pxcond_mt;
         console.log('getReportNR', params);
-
+        var temp = {"C" : {}, "E" : {}};
         $.ajax({
-            url: '/api/completed/ajax_get_completed_reportNR',
+            url: '/api/completed/ajax_get_completed_report_data',
             type: 'GET',
             data: params,
             dataType: 'json',
             contentType: false,
             processData: false,
             success: function (pResult) {
-                var ordered = [];
-                var data = {};
-                $.each(pResult.completedList, function(pIndex, pValue){
-                    var key = (pValue.bsn_dept_nm, pValue.cntrct_bcnc_nm, pValue.spt_nm, pValue.spt_chrg_nm);
-                    if(!data.hasOwnProperty(key)){
-                        data[key] = {"C" : [0, 0, 0], "E" : [0, 0, 0, 0], "rate" :  null};
-                    }
+                var html = '';
+                $.each(pResult, function(pIndex, pValue){
+                    var divider = 10000;
+                    var c_cntrct_amount = Math.round(pValue.c_cntrct_amount/divider);
+                    var c_completed_amount = Math.round(pValue.c_completed_amount/divider);
+                    var c_now_amount = Math.round(pValue.c_now_amount/divider);
+                    var c_total = c_completed_amount + c_now_amount;
+                    var c_rate1 = c_completed_amount*100.0/c_cntrct_amount;
+                    var c_rate2 = c_now_amount*100.0/c_cntrct_amount;
+                    var c_rate3 = c_total*100.0/c_cntrct_amount;
+                    var e_cntrct_amount = Math.round(pValue.e_cntrct_amount/divider);
+                    var e_completed_amount = Math.round(pValue.e_completed_amount/divider);
+                    var e_now_amount1 = Math.round(pValue.e_now_amount1/divider);
+                    var e_now_amount2 = Math.round(pValue.e_now_amount2/divider);
+                    var e_now_amount = e_now_amount1 + e_now_amount2;
+                    var e_total = e_completed_amount + e_now_amount;
+                    var e_rate1 = e_completed_amount*100.0/e_cntrct_amount;
+                    var e_rate2 = e_now_amount*100.0/e_cntrct_amount;
+                    var e_rate3 = e_total*100.0/e_cntrct_amount;
 
+
+                    html += `<tr>
+                                <td class="text-center middle">${pValue.bsn_dept_nm}</td>
+                                <td class="text-center middle">${pValue.cntrct_bcnc_nm}</td>
+                                <td class="text-left middle">${pValue.spt_nm}</td>
+                                <td class="text-center middle">${pValue.spt_chrg_nm}</td>
+                                <td class="text-right middle">${c_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${c_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${c_rate1.toFixed(1)+"%"}</td>
+                                <td class="text-right middle">${c_now_amount.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${c_rate2.toFixed(1)+"%"}</td>
+                                <td class="text-right middle">${c_total.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${c_rate3.toFixed(1)+"%"}</td>
+                                <td class="text-right middle">${e_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${e_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${e_rate1.toFixed(1)+"%"}</td>
+                                <td class="text-right middle">${e_now_amount1.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${e_now_amount2.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${e_now_amount.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${e_rate2.toFixed(1)+"%"}</td>
+                                <td class="text-right middle">${e_total.toFormat('NUMBER')}</td>
+                                <td class="text-right middle">${e_rate3.toFixed(1)+"%"}</td>
+                                <td class="text-right middle">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
+                                <td class="text-right middle"></td>
+                                <td class="text-right middle">${(c_total-e_total).toFormat('NUMBER')}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                             </tr>`;
                 });
+                $("#rptParnterStatus1").find("tbody[role='body']").html(html);
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(0);
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(1);
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(2);
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(3);
+
             }
         });
     }
@@ -188,4 +235,5 @@
 	});
 
 </script>
+
 {% endblock %}

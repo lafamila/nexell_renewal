@@ -51,7 +51,7 @@ tbody .btnUpdate, tbody .btn{
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">계약/하자이행 유보현황 </li><li><span> 종합관리</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">하자이행 유보현황 </li><li><span> 종합관리</span></li>
 	</ol>
 </div>
 <div id="content">
@@ -119,7 +119,7 @@ tbody .btnUpdate, tbody .btn{
 				<div class="jarviswidget jarviswidget-color-darken">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
-                        <h2>계약/하자이행 유보현황</h2>
+                        <h2>하자이행 유보현황</h2>
 						<div class="widget-toolbar">
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
@@ -170,15 +170,13 @@ tbody .btnUpdate, tbody .btn{
                             }
 
                         </style>
-                        <input type="hidden" id="s_resrv_bcnc" value="-1"/>
-                        <input type="hidden" id="s_resrv_type" value="-1"/>
                         <!-- widget content -->
 						<div class="widget-body no-padding">
 							<table class="table table-bordered w100p floating-thead" id="dtList1">
 								<colgroup>
 									<col width="200">
-									<col width="350">
 									<col width="120">
+									<col width="350">
 									<col width="180">
 									<col width="100">
 									<col width="180">
@@ -186,34 +184,30 @@ tbody .btnUpdate, tbody .btn{
 									<col width="140">
 									<col width="120">
 									<col width="250">
-									<col width="50">
 
 								</colgroup>
 								<thead>
 									<!-- 헤더 -->
 									<tr>
 										<th class="hasinput button">
-											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc">
-												<option value="-1">[전체]</option>
+											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc" id="s_resrv_bcnc">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">건설사</th>
 										<th class="colorB" style="text-align:center;" rowspan="2">현장명</th>
-										<th class="hasinput button">
-											<select class="form-control select2 w100p s_resrv_type" name="s_resrv_type">
-												<option value="-1">[전체]</option>
-											</select>
-										</th>
 										<th class="colorB" style="text-align:center;" rowspan="2">계약금액</th>
 										<th class="colorB" style="text-align:center;" rowspan="2">율</th>
 										<th class="colorB" style="text-align:center!important;" rowspan="2">유보금액</th>
 										<th class="colorB" style="text-align:center!important;" colspan="2">기간</th>
 										<th class="colorB" style="text-align:center!important;" rowspan="2">지급일자</th>
 										<th class="colorB" style="text-align:center!important;" rowspan="2">비고</th>
-										<th class="colorB" style="text-align:center!important;" rowspan="2">-</th>
 									</tr>
 									<tr>
 										<th class="colorB" style="text-align:center;">업체명</th>
-										<th class="colorB" style="text-align:center;">내역</th>
 										<th class="colorB" style="text-align:center;">시작</th>
 										<th class="colorB" style="text-align:center;">종료</th>
 									</tr>
@@ -225,7 +219,7 @@ tbody .btnUpdate, tbody .btn{
 									<tr class="tot">
 										<th style="text-align:center;" colspan="5">합계</th>
 										<th class="text-number" id="total">0</th>
-										<th class="text-number" colspan="5"></th>
+										<th class="text-number" colspan="4"></th>
 									</tr>
 								</tfoot>
 							</table>
@@ -242,5 +236,83 @@ tbody .btnUpdate, tbody .btn{
 	</section>
 
 </div>
+<script>
+	getReserveProject = function(){
+		var params = '';
+		var s_resrv_bcnc = $("#s_resrv_bcnc").val();
+		if(s_resrv_bcnc != '')
+			params += '&s_resrv_bcnc='+s_resrv_bcnc;
+		$.ajax({
+			url: '/api/reserve/get_reserve_list',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			validate: function() {
+				return true;
+			},
+			success: function(pResult) {
+				var html = '';
+				var total_diff = 0;
+				$.each(pResult.data, function(pIndex, pValue){
+					total_diff += pValue.diff;
+					html += `<tr data-sn="${pValue.cntrct_sn}" data-out="${pValue.outsrc_fo_sn}">
+								<td class="text-center">${pValue.outsrc_fo_nm}</td>
+								<td class="text-center">${pValue.bcnc_nm}</td>
+								<td class="text-left">${pValue.spt_nm}</td>
+								<td class="text-right">${pValue.cntrct_amount.toFormat('NUMBER')}</td>
+								<td class="text-right">${(pValue.diff*100.0/pValue.cntrct_amount).toFixed(1)}%</td>
+								<td class="text-right">${pValue.diff.toFormat('NUMBER')}</td>
+								<td class="input-available text-center" data-column="r_dt_bg">${pValue.r_dt_bg}</td>
+								<td class="input-available text-center" data-column="r_dt_ed">${pValue.r_dt_ed}</td>
+								<td class="input-available text-center" data-column="r_dt_reg">${pValue.r_dt_reg}</td>
+								<td class="input-available text-left" data-column="rm">${pValue.rm}</td>
+							 </tr>`;
+				});
+				$("#dtList1").find("tbody").html(html);
+				$("#dtList1").find("tfoot #total").html(total_diff.toFormat('NUMBER'));
+			}
+	});
 
+	}
+	$(document).ready(function(){
+		getReserveProject();
+	});
+	$(document).on("change", "#s_resrv_bcnc", function(){
+		getReserveProject();
+
+	});
+	$(document).on("dblclick", ".input-available", function(){
+		var authors = ["*"];
+		var loginId = $("#loginID").val();
+		if(!authors.includes("*") && !authors.includes(loginId)){
+			alert("권한이 없습니다.");
+			return false;
+		}
+
+		var data = prompt("값을 입력하세요.");
+		var td = $(this);
+		var cntrct_sn = $(this).parent().data("sn");
+		var outsrc_fo_sn = $(this).parent().data("out");
+		var column = $(this).data("column");
+		var params = '';
+		params += '&s_cntrct_sn='+cntrct_sn;
+		params += '&s_outsrc_fo_sn='+outsrc_fo_sn;
+		params += '&column='+column;
+		params += '&data='+data;
+		$.ajax({
+			url: '/api/common/set_reserve_data',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				$(td).text(data);
+			}
+		});
+
+	});
+</script>
 {% endblock %}

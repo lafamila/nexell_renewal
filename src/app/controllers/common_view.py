@@ -52,12 +52,23 @@ def finance_page():
 @bp.route('/reserve')
 @session_helper.session_check
 def reserve_page():
-    return render_template("reserve.html", title="계약/하자이행 유보현황 | 넥셀시스템")
+    return render_template("reserve.html", title="하자이행 유보현황 | 넥셀시스템")
 
 
 @bp.route('/five')
 @session_helper.session_check
 def five_page():
     return render_template("five.html", title="5년간종합현황 | 넥셀시스템")
+
+@bp.route('/blueprint')
+@session_helper.session_check
+def blueprint_page():
+    return render_template("blueprint.html", title="설계진행현황 | 넥셀시스템")
+
+
+@bp.route('/research')
+@session_helper.session_check
+def research_page():
+    return render_template("research.html", title="연구소현황관리 | 넥셀시스템")
 
 

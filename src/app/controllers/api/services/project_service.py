@@ -1243,7 +1243,13 @@ def get_outsrc_report_list(params):
 				, charger_telno
 				, pymnt_mth
 				, outsrc_dtls
+			    , r.r_dt_bg
+			    , r.r_dt_ed
+			    , r.r_dt_reg
+			    , r.rm
 				FROM outsrc o
+				LEFT OUTER JOIN reserved r
+				ON o.outsrc_fo_sn=r.outsrc_fo_sn AND o.cntrct_sn=r.cntrct_sn
 				WHERE o.cntrct_sn = %(s_cntrct_sn)s
 				AND o.prjct_sn = %(s_prjct_sn)s
 """
@@ -2158,3 +2164,46 @@ def update_c_project(params):
 
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
+
+def get_reserved_project_list(params):
+    query = """SELECT c.cntrct_sn
+                    , p.prjct_sn
+                    , c.bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+                    , c.spt_nm
+                    FROM contract c
+                    LEFT OUTER JOIN project p ON c.cntrct_sn=p.cntrct_sn
+                    WHERE c.progrs_sttus_code IN ('C', 'N')"""
+    data = []
+    if "s_bcnc_sn" in params and params['s_bcnc_sn']:
+        query += " AND c.bcnc_sn=%s"
+        data.append(params["s_bcnc_sn"])
+    g.curs.execute(query, data)
+    projects = g.curs.fetchall()
+    result = []
+    for r in projects:
+
+        pParams = {"s_cntrct_sn" : r['cntrct_sn'], "s_prjct_sn" : r["prjct_sn"]}
+        outsrcs = get_outsrc_report_list(pParams)
+        for outsrc in outsrcs:
+            if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+                if int(params["s_resrv_bcnc"]) != int(outsrc['outsrc_fo_sn']):
+                    continue
+            row = dict()
+            row['r_dt_bg'] = outsrc['r_dt_bg']
+            row['r_dt_ed'] = outsrc['r_dt_ed']
+            row['r_dt_reg'] = outsrc['r_dt_reg']
+            row['rm'] = outsrc['rm']
+            row['cntrct_sn'] = r['cntrct_sn']
+            row['bcnc_nm'] = r['bcnc_nm']
+            row['spt_nm'] = r['spt_nm']
+            row['outsrc_fo_sn'] = outsrc['outsrc_fo_sn']
+            row['outsrc_fo_nm'] = outsrc['outsrc_fo_nm']
+            taxbilList = outsrc['taxbilList']
+            row['cntrct_amount'] = sum([t['splpc_am']+(t['vat'] if t['vat'] != '' else 0) for t in taxbilList])
+            rcppayList = outsrc['rcppayList']
+            row['rcppay_amount'] = sum([t['amount'] for t in rcppayList])
+            if row['cntrct_amount'] > row['rcppay_amount']:
+                row['diff'] = row['cntrct_amount'] - row['rcppay_amount']
+                result.append(row)
+    return result

@@ -1,0 +1,3120 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+.hidden { display:none!important; }
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+<style type="text/css">
+#dtList1 tbody .btnUpdate, #dtList1 tbody .btnPrint{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+</style>
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh"  rel="tooltip" data-placement="bottom" data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings." data-html="true">
+			<i class="fa fa-refresh"></i>
+		</span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">프로젝트 관리 </li><li><span> 부설연구소</span></li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					카드 관리 <span>> 관리</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<!-- <a class="close" data-dismiss="alert" href="#">×</a> -->
+		<p><i class="fa-fw fa fa-info"></i>
+			연구소 프로젝트를 관리합니다.
+		</p>
+	</div>
+
+    <!-- 집계표 -->
+	<table class="table table-bordered table-summery" style="top:50px;left:385px;" id="summary">
+		<thead>
+			<tr><th colspan="4">
+					프&nbsp;로&nbsp;젝&nbsp;트&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th style="background:#fff;width:60px;text-align:center;">건수</th>
+				<td style="background:#fff;text-align:center;">0</td>
+				<th style="background:#fff;width:120px;text-align:center;">수주금액</th>
+				<td style="background:#fff;width:121px;text-align:right;">0</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- 등록/수정 -->
+	<!-- <div class="well">
+	</div> -->
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>프로젝트 목록</h2>
+						<div class="widget-toolbar">
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<!-- <col width="110"> -->
+									<col width="100">
+									<col width="120">
+									<col width="202">
+									<col width="120">
+									<col width="202">
+									<col width="120">
+									<col width="100">
+									<col width="100">
+									<col width="*">
+									<col width="100">
+									<col width="100">
+									<col width="100">
+									<col width="80">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput" colspan="2">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_year_start" name="s_year_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_year_end" name="s_year_end" placeholder="[종료일자]">
+                                        </th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+                                        <th class="hasinput">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_eng_state" name="s_eng_state">
+												<option value="">[전체]</option>
+												<option value="P">진행중</option>
+												<option value="C">종료</option>
+											</select>
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<th style="vertical-align:middle;">No.</th>
+                                        <th style="vertical-align:middle;">사업년도</th>
+                                        <th style="vertical-align:middle;">사업주체</th>
+										<th style="vertical-align:middle;">과제명</th>
+										<th style="vertical-align:middle;">주관기관</th>
+										<th style="vertical-align:middle;">수행기간</th>
+										<th style="vertical-align:middle;">보고서</th>
+										<th style="vertical-align:middle;text-align:left!important;">총 사업비</th>
+										<th style="vertical-align:middle;text-align:left!important;">당사 사업비</th>
+                                        <th style="vertical-align:middle;">당사 R&amp;R</th>
+										<th style="vertical-align:middle;">담당자</th>
+										<th style="vertical-align:middle;text-align:left!important;">예산</th>
+										<th style="vertical-align:middle;text-align:left!important;">집행</th>
+                                        <th style="vertical-align:middle;">상태</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+function dateDiff(_date1, _date2) {
+    var diffDate_1 = new Date(_date1);
+    var diffDate_2 = new Date(_date2);
+
+    diffDate_1 =new Date(diffDate_1.getFullYear(), diffDate_1.getMonth()+1, 1);
+    diffDate_2 =new Date(diffDate_2.getFullYear(), diffDate_2.getMonth()+1, 1);
+
+    var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
+    diff = Math.ceil(diff / (1000 * 3600 * 24 * 30));
+
+    return diff;
+}
+
+
+
+getEnergyList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+        serverSide: true,
+		pageLength: 15,
+        ajax: {
+            url: '/api/energy/ajax_get_energy_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_year_start': $('#dtList1').find('#s_year_start').val(),
+					's_year_end': $('#dtList1').find('#s_year_end').val(),
+					's_eng_state': $('#dtList1').find('#s_eng_state').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'desc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'eng_year' },
+            { data: 'cp_nm' },
+            { data: 'eng_nm' },
+            { data: 'np_nm',
+                render: function(data, type, row, meta) {
+					return data;
+                }
+            },
+            { data: 'cntrwk_bgnde' , className: '',
+				render: function(pData, pType, pRow, pMeta) {
+					var html = '';
+                    if(pRow.cntrwk_bgnde != '' && pRow.cntrwk_endde != ''){
+                        html += pRow.cntrwk_bgnde;
+                        html += ' ~<br>';
+                        html += pRow.cntrwk_endde;
+                        html += '<br>';
+                        html += '('+dateDiff(pRow.cntrwk_bgnde, pRow.cntrwk_endde)+'개월)';
+                        return html;
+
+                    }
+                    else{
+                        return '';
+                    }
+                }
+			},
+
+            { data: 'prjct_ty_nm', className: 'hasinput',
+				render: function(pData, pType, pRow, pMeta) {
+					var html = '';
+                    html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-eng_sn="'+pRow.eng_sn+'" data-cp_nm="'+pRow.cp_nm+'">';
+                    html += '	<i class="fa fa-print"></i>'+pData;
+                    html += '</button>';
+                    return html;
+                }
+			},
+            { data: 'eng_cost', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    return data.toFormat('NUMBER');
+                }
+            },
+            { data: 'ex_cost', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    return data.toFormat('NUMBER');
+                }
+            },
+			{ data: 'rnr' },
+			{ data: 'mber' },
+            { data: 'tot_cost', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    return data.toFormat('NUMBER');
+                }
+            },
+            { data: 'use_cost', className: 'text-number', //계약금액
+                render: function(data, type, row, meta) {
+                    return data.toFormat('NUMBER');
+                }
+            },
+            { data: 'eng_state',
+                render: function(data, type, row, meta) {
+                    if(row.eng_state == 'P')
+                        return '진행중';
+                    else
+                        return '종료';
+                }
+            },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-eng_sn="'+row.eng_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+        drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			var summary = pSettings.json.summary[0];
+			$('#summary').find('tbody td').eq(0).html(summary.total_count.toFormat('NUMBER'));
+			$('#summary').find('tbody td').eq(1).html(summary.total_amount.toFormat('NUMBER'));
+		},
+		initComplete: function(settings, json) { //console.log('initComplete', json);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var eng_sn = $(this).data('eng_sn');
+				getEnergy(eng_sn);
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+            $(myList).on('click', '.btnPrint', function(pEvent) {
+				var eng_sn = $(this).data('eng_sn');
+                var cp_nm = $(this).data('cp_nm');
+                if(cp_nm == '산업통상자원부' || cp_nm == '과학기술정보통신부'){
+                    getReport1(eng_sn);
+                }
+                else if(cp_nm == '국토교통부'){
+                    getReport2(eng_sn);
+                }
+                else if(cp_nm == '넥셀시스템'){
+                    getReport4(eng_sn);
+                }
+                else{
+                    getReport3(eng_sn);
+                }
+			});
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+	/**************************************************************************
+	* 입/출금일 캘린더 셋팅
+	*/
+	var minYears = 1;
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+        endDate.setFullYear(endDate.getFullYear()-5);
+        endDate.setMonth(0);
+        endDate.setDate(1);
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+	/**************************************************************************
+     *
+     */
+	getEnergyList();
+});
+
+function between_date(date1, date2)
+{
+    var y1970 = new Date(1970, 0, 1).getTime();
+    var time1 = null;
+    var time2 = null;
+
+    time1 = date1.getTime() - y1970;
+    time2 = date2.getTime() - y1970;
+
+    var per_day = 1000 * 60 * 60 * 24;              // 1일 밀리초
+
+    return Math.floor(time1/per_day) - Math.floor(time2/per_day);
+}
+$.fn.yRowspanExp = function(colIdx, isStats) {
+    return this.each(function() {
+        var that;
+        $('tr:visible', this).each(function(row) {
+            // visible 속성이 부모 태그의 속성을 따라가기 때문에 레이어 팝업에서 호출할 경우
+            // 전처리 이벤트가 아닌 후처리 이벤트에서 호출해야 함
+            // $('td', this).eq(colIdx).filter(':visible').each(function(col) {
+            $('td', this).eq(colIdx).each(function(col) {
+                if ( $(this).html() != '' && $(this).html() == $(that).html() && (!isStats || isStats && $(this).prev().html() == $(that).prev().html()) ) {
+                    rowspan = $(that).attr("rowspan") || 1;
+                    rowspan = Number(rowspan)+1;
+                    $(that).attr("rowspan",rowspan);
+
+                    // do your action for the colspan cell here
+                    $(this).hide();
+                    //$(this).remove();
+                    // do your action for the old cell here
+                } else {
+                    that = this;
+                }
+                // set the that if not already set
+                that = (that == null) ? this : that;
+            });
+        });
+    });
+};
+</script>
+<style>
+    .clickable, .clickable2{
+        cursor:pointer!important;
+        color:navy!important;
+        text-decoration: underline!important;
+        text-underline-offset: 1px!important;
+    }
+</style>
+
+<style>
+.color-contract, .color-project {
+    background: rgb(255,204,153)!important;
+}
+</style>
+
+<!-- 등록/수정 레이어 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" data-action="" id="popBox1">
+    <div class="modal-dialog modal-w1200">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>프로젝트 정보</span></a>
+						</li>
+                        <li data-action="2">
+							<a data-toggle="tab" href="#tabBox2" data-action="tab2"><i class="fa fa-lg fa-list"></i>&nbsp;<span>연도별</span></a>
+						</li>
+						<li data-action="4">
+							<a data-toggle="tab" href="#tabBox4" data-action="tab4"><i class="fa fa-lg fa-list"></i>&nbsp;<span>예산</span></a>
+						</li>
+                        <li data-action="6">
+							<a data-toggle="tab" href="#tabBox6" data-action="tab6"><i class="fa fa-lg fa-list"></i>&nbsp;<span>세부예산</span></a>
+						</li>
+						<li data-action="5">
+							<a data-toggle="tab" href="#tabBox5" data-action="tab5"><i class="fa fa-lg fa-list"></i>&nbsp;<span>기타예산</span></a>
+						</li>
+						<li data-action="3">
+							<a data-toggle="tab" href="#tabBox3" data-action="tab3"><i class="fa fa-lg fa-list"></i>&nbsp;<span>비용</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button type="button" class="btn btn-primary" id="btnSaveKeep" accesskey="s" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장 후 계속(<u>s</u>)</i></button>
+						<button type="button" class="btn btn-primary" id="btnSaveNew" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+						<button type="button" class="btn btn-danger"  id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					</div>
+				</header>
+				<div role="content">
+                    <div class="jarviswidget-editbox no-padding" style="display:block;">
+                        <div class="tab-pane fade active in" id="tabBoxProject1">
+							<form id="frmBox1">
+								<input type="hidden" id="s_eng_sn" name="s_eng_sn">
+								<table class="table table-bordered table-form">
+                                    <colgroup>
+                                        <col width="18.75%">
+                                        <col width="27.08%">
+                                        <col width="4.16%">
+                                        <col width="18.75%">
+                                        <col width="4.16%">
+                                        <col width="27.08%">
+									</colgroup>
+									<tbody>
+                                        <tr>
+                                            <th class="color-contract">사업년도</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="eng_year" name="eng_year">
+											</td>
+                                            <th class="color-contract">과제번호</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="cp_code" name="cp_code">
+											</td>
+
+										</tr>
+                                        <tr>
+                                            <th class="color-contract">사업주체</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="cp_nm" name="cp_nm">
+											</td>
+                                            <th class="color-contract">과제명</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="eng_nm" name="eng_nm">
+											</td>
+										</tr>
+                                        <tr>
+                                            <th class="color-contract">주관기관</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="np_nm" name="np_nm">
+											</td>
+                                            <th class="color-contract">실무자</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="np_mber" name="np_mber">
+											</td>
+										</tr>
+                                        <tr>
+                                            <th class="color-contract">참여기관</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="xp_nm" name="xp_nm">
+											</td>
+                                            <th class="color-contract">총 사업비</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" class="form-control" id="eng_cost" name="eng_cost">
+											</td>
+										</tr>                                        <tr>
+                                            <th class="color-contract">책임자</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="own_mber" name="own_mber">
+											</td>
+                                            <th class="color-contract">담당자</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="mber" name="mber">
+											</td>
+										</tr>
+                                        <tr>
+                                            <th class="color-contract">상태</th>
+                                            <td class="hasinput" colspan="5">
+                                                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="eng_state" value="P">진행중
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="eng_state" value="C">종료
+                                                    </label>
+                                                </div>
+                                            </td>
+										</tr>
+                                        <tr>
+                                            <th class="color-contract">당사 R&amp;R</th>
+											<td class="hasinput" colspan="5">
+												<input type="text" class="form-control" id="rnr" name="rnr">
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+							</form>
+                        </div><!--tab-pane-->
+                    </div>
+					<div class="widget-body no-padding" style="min-height:0px!important;">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox2">
+							<form id="frmBox2">
+								<table class="table table-bordered table-hover" id="dtList2">
+									<colgroup>
+										<col width="50">
+										<col width="*">
+										<col width="*">
+										<col width="150">
+										<col width="150">
+										<col width="150">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="10">
+												연도별
+												<input type="hidden" id="eng_sn" name="eng_sn">
+												<input type="hidden" id="s_plan_sn" name="s_plan_sn">
+												<input type="hidden" id="todo" name="todo">
+												<input type="hidden" id="result" name="result">
+											</th>
+										</tr>
+										<!-- <tr><th class="hasinput" colspan="13">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;">
+													<p><i class="fa-fw fa fa-info"></i>
+														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
+													</p>
+												</div>
+											</th>
+										</tr> -->
+
+										<tr>
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+											<td class="hasinput" colspan="2">
+                                                <div class="input-group">
+                                                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_bgnde" name="cntrwk_bgnde">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_endde" name="cntrwk_endde">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                            </td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cp_a_cost" name="cp_a_cost" placeholder="현물">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cp_b_cost" name="cp_b_cost" placeholder="현금">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cp_c_cost" name="cp_c_cost" placeholder="정부출연금">
+											</td>
+											<td class="hasinput">
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSavePlan"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushPlan" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="text-center">No.</th>
+                                            <th colspan="2">수행기간</th>
+                                            <th>현물</th>
+                                            <th>현금</th>
+                                            <th>정부출연금</th>
+											<th>-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox3">
+							<form id="frmBox3">
+								<table class="table table-bordered table-hover" id="dtList3">
+									<colgroup>
+										<col width="50">
+										<col width="80">
+										<col width="100">
+										<col width="90">
+										<col width="140">
+										<col width="160">
+										<col width="*">
+										<col width="120">
+										<col width="90">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="hasinput" style="background:#0070C0;border-color:#0070C0;color:white;padding-left:10px!important;" colspan="4">
+												<div style="display:inline-grid;grid-template-columns: 1fr 1px 200px;width:100%;">
+												<span style="display:flex;align-items:center;">
+												비용 [검색]
+												<input type="hidden" id="eng_sn" name="eng_sn">
+												<input type="hidden" id="s_exp_sn" name="s_exp_sn">
+												</span>
+												<span>&nbsp;</span>
+												<span>
+												<input type="text" class="form-control datepicker-s" style="display:inline-block;width:90px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start" name="s_start" placeholder="[시작일자]">
+												<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;background:inherit;">~</span>
+												<input type="text" class="form-control datepicker-e" style="display:inline-block;width:90px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end" name="s_end" placeholder="[종료일자]">
+												</span>
+												</div>
+											</th>
+                                            <td style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
+                                                <input type="text" class="form-control" id="s_exp_bcnc_code" name="s_exp_bcnc_code" placeholder="[전체]">
+											</td>
+											<td style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
+												<select class="form-control select2" id="s_exp_se_code" name="s_exp_se_code">
+													<option value="">[전체]</option>
+													{exp_se_code_list}
+													<option value="{value}">{label}</option>
+													{/exp_se_code_list}
+												</select>
+											</td>
+											<td style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="s_exp_content" name="s_exp_content" placeholder="[전체]">
+											</td>
+                                            <th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="1">
+											</th>
+                                            <th style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
+												<select class="form-control select2" id="s_exp_ty_code" name="s_exp_ty_code">
+													<option value="">[전체]</option>
+													{exp_ty_code_list}
+													<option value="{value}">{label}</option>
+													{/exp_ty_code_list}
+												</select>
+											</th>
+                                            <th class="hasinput text-right" style="background:#0070C0;border-color:#0070C0;">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-table btn-primary" title="검색" id="btnSearchPopup"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            </th>
+										</tr>
+										<!-- <tr><th class="hasinput" colspan="13">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;">
+													<p><i class="fa-fw fa fa-info"></i>
+														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
+													</p>
+												</div>
+											</th>
+										</tr> -->
+
+										<tr>
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+                                            <td class="hasinput">
+                                                <select class="form-control select2" id="plan_order" name="plan_order">
+													<option value=""></option>
+												</select>
+                                            </td>
+											<td class="hasinput">
+                                                <div class="input-group">
+                                                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="exp_de" name="exp_de">
+<!--                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
+                                                </div>
+                                            </td>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="exp_ty_code" name="exp_ty_code">
+													<option value="">[필수]</option>
+													{exp_ty_code_list}
+													<option value="{value}">{label}</option>
+													{/exp_ty_code_list}
+												</select>
+											</td>
+                                            <td class="hasinput" colspan="1">
+                                                <input type="text" class="form-control" id="exp_bcnc_code" name="exp_bcnc_code" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="exp_se_code" name="exp_se_code">
+													<option value="">[필수]</option>
+													{exp_se_code_list}
+													<option value="{value}">{label}</option>
+													{/exp_se_code_list}
+												</select>
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="exp_content" name="exp_content" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost" name="exp_cost" placeholder="">
+											</td>
+                                            <td class="hasinput" colspan="1">
+												<select class="form-control select2" id="exp_io_type" name="exp_io_type">
+													<option value="">[필수]</option>
+
+													<option value="0">현금</option>
+													<option value="1">카드</option>
+
+												</select>
+											</td>
+											<td class="hasinput">
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSaveExp"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushExp" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="text-center">No.</th>
+                                            <th>연차</th>
+                                            <th>날짜</th>
+                                            <th>거래구분</th>
+                                            <th>거래처</th>
+                                            <th>세목</th>
+                                            <th>내용</th>
+                                            <th>금액</th>
+                                            <th>거래방법</th>
+											<th>-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+									<tfoot>
+										<tr>
+											<th class="text-center">합계</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th class="text-right" id="costSum"></th>
+                                            <th></th>
+											<th>-</th>
+										</tr>
+									</tfoot>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox4">
+							<form id="frmBox4">
+								<table class="table table-bordered table-hover" id="dtList4">
+									<colgroup>
+										<col width="50">
+										<col width="100">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="11">
+												예산
+												<input type="hidden" id="eng_sn" name="eng_sn">
+												<input type="hidden" id="s_regist_dtm" name="s_regist_dtm">
+												<input type="hidden" id="exp_ty_code" name="exp_ty_code" value="P">
+												<input type="hidden" id="exp_bcnc_code" name="exp_bcnc_code" value="0">
+												<input type="hidden" id="exp_content" name="exp_content" value=" ">
+												<input type="hidden" id="exp_io_type" name="exp_io_type" value="0">
+											</th>
+										</tr>
+										<!-- <tr><th class="hasinput" colspan="13">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;">
+													<p><i class="fa-fw fa fa-info"></i>
+														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
+													</p>
+												</div>
+											</th>
+										</tr> -->
+
+										<tr>
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+                                            <td class="hasinput">
+                                                <select class="form-control select2" id="plan_order" name="plan_order">
+													<option value=""></option>
+												</select>
+                                            </td>
+
+
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_1" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_2" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_7" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_3" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_4" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_5" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_8" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_6" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput">
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSaveExp"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushExp" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="text-center">No.</th>
+                                            <th>연차</th>
+                                            <th>인건비</th>
+                                            <th>시설,장비,재료비</th>
+                                            <th>연구재료비</th>
+                                            <th>연구활동비</th>
+                                            <th>연구과제추진비</th>
+                                            <th>연구수당</th>
+                                            <th>위탁연구비</th>
+                                            <th>간접비</th>
+											<th>-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox5">
+							<form id="frmBox5">
+								<table class="table table-bordered table-hover" id="dtList5">
+									<colgroup>
+										<col width="50">
+										<col width="100">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="11">
+												예산
+												<input type="hidden" id="eng_sn" name="eng_sn">
+												<input type="hidden" id="s_regist_dtm" name="s_regist_dtm">
+												<input type="hidden" id="exp_ty_code" name="exp_ty_code" value="P">
+												<input type="hidden" id="exp_bcnc_code" name="exp_bcnc_code" value="0">
+												<input type="hidden" id="exp_content" name="exp_content" value=" ">
+												<input type="hidden" id="exp_io_type" name="exp_io_type" value="0">
+											</th>
+										</tr>
+										<!-- <tr><th class="hasinput" colspan="13">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;">
+													<p><i class="fa-fw fa fa-info"></i>
+														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
+													</p>
+												</div>
+											</th>
+										</tr> -->
+
+										<tr>
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+                                            <td class="hasinput">
+                                                <select class="form-control select2" id="plan_order" name="plan_order">
+													<option value=""></option>
+												</select>
+                                            </td>
+
+
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_1" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_2" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_3" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_4" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_5" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_6" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_7" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="exp_cost_8" name="exp_cost[]" placeholder="">
+											</td>
+											<td class="hasinput">
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSaveExp"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushExp" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="text-center">No.</th>
+                                            <th>연차</th>
+                                            <th>인건비</th>
+                                            <th>여비</th>
+                                            <th>인쇄비</th>
+                                            <th>전산처리비</th>
+                                            <th>회의 자문비</th>
+                                            <th>회의비</th>
+                                            <th>전문가 자문비</th>
+                                            <th>기타</th>
+											<th>-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox6">
+							<form id="frmBox6">
+								<table class="table table-bordered table-hover" id="dtList6">
+									<colgroup>
+										<col width="50">
+										<col width="100">
+										<col width="100">
+										<col width="*">
+										<col width="*">
+										<col width="*">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="7">
+												세부예산
+												<input type="hidden" id="eng_sn" name="eng_sn">
+												<input type="hidden" id="d_sn" name="d_sn">
+												<input type="hidden" id="exp_ty_code" name="exp_ty_code" value="P">
+												<input type="hidden" id="exp_bcnc_code" name="exp_bcnc_code" value="0">
+												<input type="hidden" id="exp_content" name="exp_content" value=" ">
+												<input type="hidden" id="exp_io_type" name="exp_io_type" value="0">
+											</th>
+										</tr>
+										<!-- <tr><th class="hasinput" colspan="13">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;">
+													<p><i class="fa-fw fa fa-info"></i>
+														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
+													</p>
+												</div>
+											</th>
+										</tr> -->
+
+										<tr>
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+                                            <td class="hasinput">
+                                                <select class="form-control select2" id="plan_order" name="plan_order">
+													<option value=""></option>
+												</select>
+                                            </td>
+                                            <td class="hasinput">
+                                                <select class="form-control select2" id="exp_cost_num" name="exp_cost_num">
+													<option value=""></option>
+													<option value="1">인건비</option>
+													<option value="2">시설,장비,재료비</option>
+													<option value="9">연구시설 장비비</option>
+													<option value="7">연구재료비</option>
+													<option value="3">연구활동비</option>
+													<option value="4">연구과제추진비</option>
+													<option value="5">연구수당</option>
+													<option value="8">위탁연구비</option>
+													<option value="6">간접비</option>
+												</select>
+                                            </td>
+
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="cost_content" name="cost_content" placeholder="">
+											</td>
+
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cost_1" name="cost_1" placeholder="">
+											</td>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control" id="cost_2" name="cost_2" placeholder="">
+											</td>
+											<td class="hasinput">
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSaveExp"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushExp" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="text-center">No.</th>
+                                            <th>연차</th>
+                                            <th>세목</th>
+                                            <th>내용</th>
+                                            <th>현물</th>
+                                            <th>현금+정부출연금</th>
+											<th>-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	if (pMode === 'insert' || pMode === 'init') {
+        $('#popBox1').find('#s_eng_sn').val('');
+        $('#popBox1').find('#eng_year').val('');
+        $('#popBox1').find('#eng_nm').val('');
+        $('#popBox1').find('#cp_nm').val('');
+        $('#popBox1').find('#cp_code').val('');
+        $('#popBox1').find('#np_nm').val('');
+        $('#popBox1').find('#np_mber').val('');
+        $('#popBox1').find('input:radio[name=eng_state]').yVal('');
+        $('#popBox1').find('#own_mber').val('');
+        $('#popBox1').find('#mber').val('');
+        $('#popBox1').find('#rnr').val('');
+        $('#popBox1').find('#xp_nm').val('');
+        $('#popBox1').find('#eng_cost').val('');
+
+        $('#popBox1').find('#s_plan_sn').val('');
+        $('#popBox1').find('#s_exp_sn').val('');
+        $('#popBox1').find('#s_regist_dtm').val('');
+
+//        $('#popBox1').find('#cost1').val('');
+//        $('#popBox1').find('#cntrwk_bgnde1').val('');
+//        $('#popBox1').find('#cntrwk_endde1').val('');
+//        $('#popBox1').find('#cp_a_cost1').val('');
+//        $('#popBox1').find('#cp_b_cost1').val('');
+//        $('#popBox1').find('#cp_c_cost1').val('');
+//        $('#popBox1').find('#todo1').val('');
+//        $('#popBox1').find('#result1').val('');
+
+
+		$('#popBox1').find('#btnSaveKeep').show();
+		$('#popBox1').find('#btnDelete').hide();
+
+
+        $('#popEditTabs').find('a[href=#tabBox1]').parent().show();
+        $('#popEditTabs').find('a[href=#tabBox2]').parent().hide();
+        $('#popEditTabs').find('a[href=#tabBox3]').parent().hide();
+        $('#popEditTabs').find('a[href=#tabBox4]').parent().hide();
+        $('#popEditTabs').find('a[href=#tabBox6]').parent().hide();
+        $('#popEditTabs').find('a[href=#tabBox5]').parent().hide();
+        $('#popEditTabs').find('a[href=#tabBox1]').trigger('click');
+
+	} else if (pMode === 'update') {
+		// $('#popBox1').find('#cntrct_sn').yReadonly(true);
+		// $('#popBox1').find('#prjct_sn').yReadonly(true);
+
+		$('#popBox1').find('#btnSaveKeep').hide();
+		$('#popBox1').find('#btnDelete').show();
+
+        var cp_nm = $('#popBox1').find('#cp_nm').val();
+        if(cp_nm == '산업통상자원부' || cp_nm == '국토교통부' || cp_nm == '과학기술정보통신부'){
+            $('#popEditTabs').find('a[href=#tabBox4]').parent().show();
+            $('#popEditTabs').find('a[href=#tabBox6]').parent().show();
+            $('#popEditTabs').find('a[href=#tabBox5]').parent().hide();
+        }
+        else if(cp_nm == '넥셀시스템'){
+            $('#popEditTabs').find('a[href=#tabBox4]').parent().hide();
+            $('#popEditTabs').find('a[href=#tabBox6]').parent().hide();
+            $('#popEditTabs').find('a[href=#tabBox5]').parent().hide();
+        }
+        else{
+            $('#popEditTabs').find('a[href=#tabBox4]').parent().hide();
+            $('#popEditTabs').find('a[href=#tabBox6]').parent().hide();
+            $('#popEditTabs').find('a[href=#tabBox5]').parent().show();
+        }
+        $('#popEditTabs').find('a[href=#tabBox1]').parent().show();
+        $('#popEditTabs').find('a[href=#tabBox2]').parent().show();
+        $('#popEditTabs').find('a[href=#tabBox3]').parent().show();
+        $('#popEditTabs').find('a[href=#tabBox1]').trigger('click');
+
+    }
+}
+
+/******************************************************************************
+ *
+ */
+getEnergy = function(s_eng_sn)
+{
+    console.log("getEnergy", s_eng_sn);
+	var params = '';
+	params += '&s_eng_sn=' + s_eng_sn;
+
+	$.ajax({
+		url: '/api/energy/ajax_get_energy',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#popBox1').find('#s_eng_sn').val(data.eng_sn);
+                $('#popBox1').find('input[name=eng_sn]').yVal(data.eng_sn);
+				$('#popBox1').find('#eng_year').val(data.eng_year);
+				$('#popBox1').find('#eng_nm').val(data.eng_nm);
+				$('#popBox1').find('#cp_nm').val(data.cp_nm);
+				$('#popBox1').find('#cp_code').val(data.cp_code);
+                $('#popBox1').find('#np_nm').val(data.np_nm);
+		        $('#popBox1').find('#np_mber').val(data.np_mber);
+                $('#popBox1').find('#xp_nm').val(data.xp_nm);
+		        $('#popBox1').find('#eng_cost').val(parseInt(data.eng_cost+''));
+                $('#popBox1').find('input:radio[name=eng_state]').yVal(data.eng_state);
+
+				$('#popBox1').find('#own_mber').val(data.own_mber);
+				$('#popBox1').find('#mber').val(data.mber);
+				$('#popBox1').find('#rnr').val(data.rnr);
+
+				$('#popBox1').data('action', 'update');
+				$('#popBox1').modal('show');
+			}
+		}
+	});
+}
+getPlanList = function(s_eng_sn)
+{
+	if (s_eng_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_eng_sn=' + s_eng_sn;
+
+	$.ajax({
+		url: '/api/energy/ajax_get_plan_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				var html = '';
+				$.each(pResult.data, function(pIndex, pValue) {
+					// console.log(pValue);
+                    $('#tabBox2').find('#action').html('입력');
+					$('#tabBox2').find('#s_plan_sn').yVal('');
+					$('#tabBox2').find('#cntrwk_bgnde').yVal('');
+					$('#tabBox2').find('#cntrwk_endde').yVal('');
+					$('#tabBox2').find('#cp_a_cost').yVal('');
+					$('#tabBox2').find('#cp_b_cost').yVal('');
+					$('#tabBox2').find('#cp_c_cost').yVal('');
+					$('#tabBox2').find('#todo').yVal('');
+					$('#tabBox2').find('#result').yVal('');
+
+                    html += '<tr>';
+					html += '    <td class="text-center" data-plan_sn="'+pValue.plan_sn+'">'+(pIndex+1)+'</td>';
+
+					html += '    <td colspan="2">'+(pValue.cntrwk_bgnde.toFormat('DATE'))+' ~ '+(pValue.cntrwk_endde.toFormat('DATE'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.cp_a_cost.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.cp_b_cost.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.cp_c_cost.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="hasinput text-right">';
+					html += '        <div class="btn-group">';
+					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-eng_sn="'+pValue.eng_sn+'" data-plan_sn="'+pValue.plan_sn+'">';
+					html += '		         <i class="fa fa-edit"></i>';
+					html += '            </button>';
+					html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-eng_sn="'+pValue.eng_sn+'" data-plan_sn="'+pValue.plan_sn+'">';
+					html += '		         <i class="fa fa-trash-o"></i>';
+					html += '            </button>';
+					html += '        </div>';
+					html += '    </td>';
+					html += '</tr>';
+				});
+				$('#dtList2 tbody').html(html);
+
+			}
+		}
+	});
+}
+
+getExpList = function(s_eng_sn, s_exp_bcnc_code = "", s_exp_se_code = "", s_exp_ty_code = "",s_exp_content = "", s_start="", s_end="")
+{
+	if (s_eng_sn == "") {
+		return;
+	}
+	var params = '';
+	params += '&s_eng_sn=' + s_eng_sn;
+    if (s_exp_bcnc_code != ""){
+        params += '&s_exp_bcnc_code=' + s_exp_bcnc_code;
+    }
+    if (s_exp_se_code != ""){
+        params += '&s_exp_se_code=' + s_exp_se_code;
+    }
+    if (s_exp_ty_code != ""){
+        params += '&s_exp_ty_code=' + s_exp_ty_code;
+    }
+    if (s_exp_content != ""){
+        params += '&s_exp_content=' + s_exp_content;
+    }
+    if (s_start != ""){
+        params += '&s_start=' + s_start;
+    }
+    if (s_end != ""){
+        params += '&s_end=' + s_end;
+    }
+    console.log(params);
+	$.ajax({
+		url: '/api/energy/ajax_get_exp_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				var html = '';
+				var costSum = 0;
+				$.each(pResult.data, function(pIndex, pValue) {
+					// console.log(pValue);
+                    $('#tabBox3').find('#action').html('입력');
+                    $('#tabBox3').find('#s_exp_sn').yVal('');
+					$('#tabBox3').find('#exp_de').yVal('');
+					$('#tabBox3').find('#plan_order').val('').trigger('change');
+					$('#tabBox3').find('#exp_se_code').val('').trigger('change');
+					$('#tabBox3').find('#exp_ty_code').val('').trigger('change');
+					$('#tabBox3').find('#exp_bcnc_code').yVal('');
+					$('#tabBox3').find('#exp_io_type').val('').trigger('change');
+					$('#tabBox3').find('#exp_content').yVal('');
+					$('#tabBox3').find('#exp_cost').yVal('');
+					$('#tabBox3').find('#s_exp_bcnc_code').yVal(s_exp_bcnc_code);
+					$('#tabBox3').find('#s_exp_se_code').val(s_exp_se_code).trigger('change');
+					$('#tabBox3').find('#s_exp_ty_code').val(s_exp_ty_code).trigger('change');
+					$('#tabBox3').find('#s_exp_content').yVal(s_exp_content);
+
+                    html += '<tr>';
+					html += '    <td class="text-center" data-exp_sn="'+pValue.exp_sn+'">'+(pIndex+1)+'</td>';
+					html += '    <td>'+(parseInt(pValue.plan_order)+1)+'차년도</td>';
+					html += '    <td>'+(pValue.exp_de.toFormat('DATE'))+'</td>';
+					html += '    <td>'+(pValue.exp_ty_nm)+'</td>';
+					html += '    <td>'+(pValue.exp_bcnc_nm)+'</td>';
+					html += '    <td>'+(pValue.exp_se_nm)+'</td>';
+					html += '    <td>'+(pValue.exp_content)+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost.toFormat('NUMBER'))+'</td>';
+					html += '    <td>'+(pValue.exp_io_nm)+'</td>';
+					html += '    <td class="hasinput text-right">';
+					html += '        <div class="btn-group">';
+					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-eng_sn="'+pValue.eng_sn+'" data-exp_sn="'+pValue.exp_sn+'">';
+					html += '		         <i class="fa fa-edit"></i>';
+					html += '            </button>';
+					html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-eng_sn="'+pValue.eng_sn+'" data-exp_sn="'+pValue.exp_sn+'">';
+					html += '		         <i class="fa fa-trash-o"></i>';
+					html += '            </button>';
+					html += '        </div>';
+					html += '    </td>';
+					html += '</tr>';
+					costSum += parseInt(pValue.exp_cost);
+				});
+				$('#tabBox3').find('#costSum').html(costSum.toString().toFormat('NUMBER'));
+				$('#dtList3 tbody').html(html);
+
+                var html = '';
+                html += '<option value="">[필수]</option>';
+                $.each(pResult.plan, function(pIndex, pValue){
+                    html += '<option value="'+pIndex+'">'+(pIndex+1)+'차년도</option>';
+
+                });
+                $('#tabBox3').find('#plan_order').html(html);
+			}
+		}
+	});
+}
+
+getExpPList = function(s_eng_sn)
+{
+	if (s_eng_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_eng_sn=' + s_eng_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_expP_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			 console.log(pResult);
+			if (pResult.status) {
+				var html = '';
+				$.each(pResult.data, function(pIndex, pValue) {
+//					 console.log(pValue);
+                    $('#tabBox4').find('#action').html('입력');
+                    $('#tabBox4').find('#s_regist_dtm').yVal('');
+					$('#tabBox4').find('#plan_order').val('').trigger('change');
+					$('#tabBox4').find('#exp_cost_1').yVal('');
+					$('#tabBox4').find('#exp_cost_2').yVal('');
+					$('#tabBox4').find('#exp_cost_3').yVal('');
+					$('#tabBox4').find('#exp_cost_4').yVal('');
+					$('#tabBox4').find('#exp_cost_5').yVal('');
+					$('#tabBox4').find('#exp_cost_6').yVal('');
+					$('#tabBox4').find('#exp_cost_7').yVal('');
+					$('#tabBox4').find('#exp_cost_8').yVal('');
+
+                    html += '<tr>';
+					html += '    <td class="text-center" data-regist_dtm="'+pValue.regist_dtm+'">'+(pIndex+1)+'</td>';
+					html += '    <td>'+(parseInt(pValue.plan_order)+1)+'차년도</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_1.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_2.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_7.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_3.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_4.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_5.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_8.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_6.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="hasinput text-right">';
+					html += '        <div class="btn-group">';
+					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-eng_sn="'+pValue.eng_sn+'" data-regist_dtm="'+pValue.regist_dtm+'">';
+					html += '		         <i class="fa fa-edit"></i>';
+					html += '            </button>';
+					html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-eng_sn="'+pValue.eng_sn+'" data-regist_dtm="'+pValue.regist_dtm+'">';
+					html += '		         <i class="fa fa-trash-o"></i>';
+					html += '            </button>';
+					html += '        </div>';
+					html += '    </td>';
+					html += '</tr>';
+				});
+				$('#dtList4 tbody').html(html);
+
+                var html = '';
+                html += '<option value="">[필수]</option>';
+                $.each(pResult.plan, function(pIndex, pValue){
+                    html += '<option value="'+pIndex+'">'+(pIndex+1)+'차년도</option>';
+
+                });
+                $('#tabBox4').find('#plan_order').html(html);
+			}
+		}
+	});
+}
+
+getDetailCostName = function(i){
+    if(i=='1')
+        return "인건비";
+    else if(i=='2')
+        return "시설,장비,재료비";
+    else if(i=='7')
+        return "연구재료비";
+    else if(i=='3')
+        return "연구활동비";
+    else if(i=='4')
+        return "연구과제추진비";
+    else if(i=='5')
+        return "연구수당";
+    else if(i=='8')
+        return "위탁연구비";
+    else if(i=='6')
+        return "간접비";
+    else if(i=='9')
+        return "연구시설 장비비";
+
+
+    else if(i=='95')
+        return "여비";
+    else if(i=='96')
+        return "인쇄비";
+    else if(i=='97')
+        return "전산처리비";
+    else if(i=='98')
+        return "회의 자문비";
+    else if(i=='99')
+        return "회의비";
+    else if(i=='100')
+        return "전문가 자문비";
+    else if(i=='101')
+        return "기타";
+
+}
+
+getExpDetailList = function(s_eng_sn)
+{
+	if (s_eng_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_eng_sn=' + s_eng_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_exp_detail_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			 console.log(pResult);
+			if (pResult.status) {
+				var html = '';
+				$.each(pResult.data, function(pIndex, pValue) {
+//					 console.log(pValue);
+                    $('#tabBox6').find('#action').html('입력');
+                    $('#tabBox6').find('#d_sn').yVal('');
+					$('#tabBox6').find('#plan_order').val('').trigger('change');
+					$('#tabBox6').find('#exp_cost_num').val('').trigger('change');
+					$('#tabBox6').find('#cost_content').yVal('');
+					$('#tabBox6').find('#cost_1').yVal('');
+					$('#tabBox6').find('#cost_2').yVal('');
+
+                    html += '<tr>';
+					html += '    <td class="text-center" data-sn="'+pValue.d_sn+'">'+(pIndex+1)+'</td>';
+					html += '    <td>'+(parseInt(pValue.plan_order)+1)+'차년도</td>';
+					html += '    <td>'+(getDetailCostName(pValue.exp_cost_num))+'</td>';
+					html += '    <td>'+pValue.cost_content+'</td>';
+					html += '    <td class="text-right">'+(pValue.cost_1.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.cost_2.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="hasinput text-right">';
+					html += '        <div class="btn-group">';
+					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-eng_sn="'+pValue.eng_sn+'" data-sn="'+pValue.d_sn+'">';
+					html += '		         <i class="fa fa-edit"></i>';
+					html += '            </button>';
+					html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-eng_sn="'+pValue.eng_sn+'" data-sn="'+pValue.d_sn+'">';
+					html += '		         <i class="fa fa-trash-o"></i>';
+					html += '            </button>';
+					html += '        </div>';
+					html += '    </td>';
+					html += '</tr>';
+				});
+				$('#dtList6 tbody').html(html);
+                var html = '';
+                html += '<option value="">[필수]</option>';
+                $.each(pResult.plan, function(pIndex, pValue){
+                    html += '<option value="'+pIndex+'">'+(pIndex+1)+'차년도</option>';
+
+                });
+                $('#tabBox6').find('#plan_order').html(html);
+
+			}
+		}
+	});
+}
+
+getExpPList2 = function(s_eng_sn)
+{
+	if (s_eng_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_eng_sn=' + s_eng_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_expP_list2',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			 console.log(pResult);
+			if (pResult.status) {
+				var html = '';
+				$.each(pResult.data, function(pIndex, pValue) {
+//					 console.log(pValue);
+                    $('#tabBox5').find('#action').html('입력');
+                    $('#tabBox5').find('#s_regist_dtm').yVal('');
+					$('#tabBox5').find('#plan_order').val('').trigger('change');
+					$('#tabBox5').find('#exp_cost_1').yVal('');
+					$('#tabBox5').find('#exp_cost_2').yVal('');
+					$('#tabBox5').find('#exp_cost_3').yVal('');
+					$('#tabBox5').find('#exp_cost_4').yVal('');
+					$('#tabBox5').find('#exp_cost_5').yVal('');
+					$('#tabBox5').find('#exp_cost_6').yVal('');
+					$('#tabBox5').find('#exp_cost_7').yVal('');
+					$('#tabBox5').find('#exp_cost_8').yVal('');
+
+                    html += '<tr>';
+					html += '    <td class="text-center" data-regist_dtm="'+pValue.regist_dtm+'">'+(pIndex+1)+'</td>';
+					html += '    <td>'+(parseInt(pValue.plan_order)+1)+'차년도</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_1.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_2.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_3.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_4.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_5.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_6.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_7.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.exp_cost_8.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="hasinput text-right">';
+					html += '        <div class="btn-group">';
+					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-eng_sn="'+pValue.eng_sn+'" data-regist_dtm="'+pValue.regist_dtm+'">';
+					html += '		         <i class="fa fa-edit"></i>';
+					html += '            </button>';
+					html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-eng_sn="'+pValue.eng_sn+'" data-regist_dtm="'+pValue.regist_dtm+'">';
+					html += '		         <i class="fa fa-trash-o"></i>';
+					html += '            </button>';
+					html += '        </div>';
+					html += '    </td>';
+					html += '</tr>';
+				});
+				$('#dtList5 tbody').html(html);
+
+                var html = '';
+                html += '<option value="">[필수]</option>';
+                $.each(pResult.plan, function(pIndex, pValue){
+                    html += '<option value="'+pIndex+'">'+(pIndex+1)+'차년도</option>';
+
+                });
+                $('#tabBox5').find('#plan_order').html(html);
+			}
+		}
+	});
+}
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 입/출금일
+	var cp_nm = $('#popBox1').find('#cp_nm').val();
+	if (result == true && fnIsEmpty(cp_nm)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#cp_nm').trigger('focus');
+		result = false;
+	}
+    var eng_year = $('#popBox1').find('#eng_year').val();
+	if (result == true && fnIsEmpty(eng_year)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#eng_year').trigger('focus');
+		result = false;
+	}
+    var eng_nm = $('#popBox1').find('#eng_nm').val();
+	if (result == true && fnIsEmpty(eng_nm)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#eng_nm').trigger('focus');
+		result = false;
+	}
+	var eng_state = $('#popBox1').find('input:radio[name=eng_state]').is(':checked');
+	if (result == true && fnIsEmpty(eng_state)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		result = false;
+	}
+
+	// 시간
+	var cp_code = $('#popBox1').find('#cp_code').val();
+	if (result == true && fnIsEmpty(cp_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#cp_code').trigger('focus');
+		result = false;
+	}
+
+
+	// 계정과목
+	var np_nm = $('#popBox1').find('#np_nm').val();
+	if (result == true && fnIsEmpty(np_nm)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#np_nm').trigger('focus');
+		result = false;
+	}
+
+
+
+	// 금액
+	var np_mber = $('#popBox1').find('#np_mber').val();
+	if (result == true && fnIsEmpty(np_mber)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#np_mber').trigger('focus');
+		result = false;
+	}
+
+    var xp_nm = $('#popBox1').find('#xp_nm').val();
+	if (result == true && fnIsEmpty(xp_nm)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#xp_nm').trigger('focus');
+		result = false;
+	}
+    var eng_cost = $('#popBox1').find('#eng_cost').val();
+	if (result == true && fnIsEmpty(eng_cost)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#eng_cost').trigger('focus');
+		result = false;
+	}
+
+
+	var own_mber = $('#popBox1').find('#own_mber').val();
+	if (result == true && fnIsEmpty(own_mber)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#own_mber').trigger('focus');
+		result = false;
+	}
+
+    var mber = $('#popBox1').find('#mber').val();
+	if (result == true && fnIsEmpty(mber)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#mber').trigger('focus');
+		result = false;
+	}
+
+    var rnr = $('#popBox1').find('#rnr').val();
+	if (result == true && fnIsEmpty(rnr)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#rnr').trigger('focus');
+		result = false;
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertEnergy = function(pIsReset = true)
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_insert_energy',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log('insertEnergy', pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+                    $('#popBox1').data('action', 'insert');
+					formReset('insert');
+				}
+                else{
+                    $('#popBox1').data('action', 'update');
+                    formReset('update');
+                    $('#s_eng_sn').yVal(pResult.status);
+                    $('#popBox1').find('input[name=eng_sn]').yVal(pResult.status);
+
+                }
+
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateEnergy = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_update_energy',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+                $('#popBox1').data('action', 'update');
+				formReset('update');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteEnergy = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_delete_energy',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				$.datatable1.ajax.reload();
+				fnAlert(pResult.message);
+				$('#popBox1').modal('hide');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+
+getPlan = function(s_plan_sn)
+{
+	var params = '';
+	params += '&s_plan_sn=' + s_plan_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_plan',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				var data = pResult.data;
+
+                $('#tabBox2').find('#s_plan_sn').yVal(data.plan_sn);
+                $('#tabBox2').find('#cntrwk_bgnde').yVal(data.cntrwk_bgnde);
+                $('#tabBox2').find('#cntrwk_endde').yVal(data.cntrwk_endde);
+                $('#tabBox2').find('#cp_a_cost').yVal(data.cp_a_cost);
+                $('#tabBox2').find('#cp_b_cost').yVal(data.cp_b_cost);
+                $('#tabBox2').find('#cp_c_cost').yVal(data.cp_c_cost);
+
+
+			}
+		}
+	});
+}
+insertPlan = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_insert_plan',
+		type: 'POST',
+		data: getFormData($('#frmBox2')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+
+
+
+			var cntrwk_bgnde = $('#tabBox2').find('#cntrwk_bgnde').val();
+			if (cntrwk_bgnde == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			var cntrwk_endde = $('#tabBox2').find('#cntrwk_endde').val();
+			if (cntrwk_endde == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+            var cp_a_cost = $('#tabBox2').find('#cp_a_cost').val();
+			if (cp_a_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+            var cp_b_cost = $('#tabBox2').find('#cp_b_cost').val();
+			if (cp_b_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+            var cp_c_cost = $('#tabBox2').find('#cp_c_cost').val();
+			if (cp_c_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+//            var todo = $('#tabBox2').find('#todo').val();
+//			if (todo == '') {
+//			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+//			 	return false;
+//			}
+//            var result = $('#tabBox2').find('#result').val();
+//			if (result == '') {
+//			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+//			 	return false;
+//			}
+
+
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				if (!confirm('계속 등록하시겠습니까?')) {
+					$('#tabBox2').find('#s_plan_sn').yVal('');
+					$('#tabBox2').find('#cntrwk_bgnde').yVal('');
+					$('#tabBox2').find('#cntrwk_endde').yVal('');
+					$('#tabBox2').find('#cp_a_cost').yVal('');
+					$('#tabBox2').find('#cp_b_cost').yVal('');
+					$('#tabBox2').find('#cp_c_cost').yVal('');
+					$('#tabBox2').find('#todo').yVal('');
+					$('#tabBox2').find('#result').yVal('');
+				}
+				var eng_sn = $('#tabBox2').find('#eng_sn').val();
+				getPlanList(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updatePlan = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_update_plan',
+		type: 'POST',
+		data: getFormData($('#frmBox2')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var cntrwk_bgnde = $('#tabBox2').find('#cntrwk_bgnde').val();
+			if (cntrwk_bgnde == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			var cntrwk_endde = $('#tabBox2').find('#cntrwk_endde').val();
+			if (cntrwk_endde == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+            var cp_a_cost = $('#tabBox2').find('#cp_a_cost').val();
+			if (cp_a_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+            var cp_b_cost = $('#tabBox2').find('#cp_b_cost').val();
+			if (cp_b_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+            var cp_c_cost = $('#tabBox2').find('#cp_c_cost').val();
+			if (cp_c_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			 	return false;
+			}
+//            var todo = $('#tabBox2').find('#todo').val();
+//			if (todo == '') {
+//			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+//			 	return false;
+//			}
+//            var result = $('#tabBox2').find('#result').val();
+//			if (result == '') {
+//			 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+//			 	return false;
+//			}
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var eng_sn = $('#tabBox2').find('#eng_sn').val();
+				getPlanList(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deletePlan = function(s_plan_sn)
+{
+	var params = '';
+	params += '&s_plan_sn=' + s_plan_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_delete_plan',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+                $('#tabBox2').find('#s_plan_sn').val('');
+                $('#tabBox2').find('#cntrwk_bgnde').val('');
+                $('#tabBox2').find('#cntrwk_endde').val('');
+                $('#tabBox2').find('#cp_a_cost').val('');
+                $('#tabBox2').find('#cp_b_cost').val('');
+                $('#tabBox2').find('#cp_c_cost').val('');
+                $('#tabBox2').find('#todo').val('');
+                $('#tabBox2').find('#result').val('');
+
+				var eng_sn = $('#tabBox2').find('#eng_sn').val();
+				getPlanList(eng_sn);
+			}
+		}
+	});
+}
+
+getExp = function(s_exp_sn)
+{
+	var params = '';
+	params += '&s_exp_sn=' + s_exp_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_exp',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				var data = pResult.data;
+
+                $('#tabBox3').find('#s_exp_sn').yVal(data.exp_sn);
+                $('#tabBox3').find('#exp_de').yVal(data.exp_de);
+                $('#tabBox3').find('#plan_order').val(data.plan_order).trigger('change');
+                $('#tabBox3').find('#exp_se_code').val(data.exp_se_code).trigger('change');
+                $('#tabBox3').find('#exp_ty_code').val(data.exp_ty_code).trigger('change');
+                $('#tabBox3').find('#exp_bcnc_code').yVal(data.exp_bcnc_code);
+                $('#tabBox3').find('#exp_io_type').val(data.exp_io_type).trigger('change');
+                $('#tabBox3').find('#exp_content').yVal(data.exp_content);
+                $('#tabBox3').find('#exp_cost').yVal(data.exp_cost);
+
+
+			}
+		}
+	});
+}
+insertExp = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_insert_exp',
+		type: 'POST',
+		data: getFormData($('#frmBox3')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+
+
+
+			var exp_de = $('#tabBox3').find('#exp_de').val();
+			if (exp_de == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+            var plan_order = $('#tabBox3').find('#plan_order').val();
+            if (plan_order == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            var exp_se_code = $('#tabBox3').find('#exp_se_code').val();
+            if (exp_se_code == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.2');
+                return false;
+            }
+            var exp_ty_code = $('#tabBox3').find('#exp_ty_code').val();
+            if (exp_ty_code == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.3');
+                return false;
+            }
+//            var exp_bcnc_code = $('#tabBox3').find('#exp_bcnc_code').val();
+//            if (exp_bcnc_code == '') {
+//                alert('필수 입력 항목을 입력하시기 바랍니다.4');
+//                return false;
+//            }
+            var exp_io_type = $('#tabBox3').find('#exp_io_type').val();
+            if (exp_io_type == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.5');
+                return false;
+            }
+			var exp_content = $('#tabBox3').find('#exp_content').val();
+			if (exp_content == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.6');
+			 	return false;
+			}
+            var exp_cost = $('#tabBox3').find('#exp_cost').val();
+			if (exp_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.7');
+			 	return false;
+			}
+
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				if (!confirm('계속 등록하시겠습니까?')) {
+					$('#tabBox3').find('#s_exp_sn').yVal('');
+					$('#tabBox3').find('#exp_de').yVal('');
+					$('#tabBox3').find('#plan_order').val('').trigger('change');
+					$('#tabBox3').find('#exp_se_code').val('').trigger('change');
+					$('#tabBox3').find('#exp_ty_code').val('').trigger('change');
+					$('#tabBox3').find('#exp_bcnc_code').yVal('');
+					$('#tabBox3').find('#exp_io_type').val('').trigger('change');
+					$('#tabBox3').find('#exp_content').yVal('');
+					$('#tabBox3').find('#exp_cost').yVal('');
+					$('#tabBox3').find('#s_exp_bcnc_code').yVal('');
+					$('#tabBox3').find('#s_exp_se_code').val('').trigger('change');
+					$('#tabBox3').find('#s_exp_ty_code').val('').trigger('change');
+					$('#tabBox3').find('#s_exp_content').yVal('');
+				}
+				var eng_sn = $('#tabBox3').find('#eng_sn').val();
+				getExpList(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+getExpP = function(s_regist_dtm)
+{
+	var params = '';
+	params += '&s_regist_dtm=' + s_regist_dtm;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_expP',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				var data = pResult.data;
+
+                $('#tabBox4').find('#s_regist_dtm').yVal(data.regist_dtm);
+                $('#tabBox4').find('#plan_order').val(data.plan_order).trigger('change');
+                $('#tabBox4').find('#exp_cost_1').yVal(data.exp_cost_1);
+                $('#tabBox4').find('#exp_cost_2').yVal(data.exp_cost_2);
+                $('#tabBox4').find('#exp_cost_3').yVal(data.exp_cost_3);
+                $('#tabBox4').find('#exp_cost_4').yVal(data.exp_cost_4);
+                $('#tabBox4').find('#exp_cost_5').yVal(data.exp_cost_5);
+                $('#tabBox4').find('#exp_cost_6').yVal(data.exp_cost_6);
+                $('#tabBox4').find('#exp_cost_7').yVal(data.exp_cost_7);
+                $('#tabBox4').find('#exp_cost_8').yVal(data.exp_cost_8);
+			}
+		}
+	});
+}
+insertExpP = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_insert_expP',
+		type: 'POST',
+		data: getFormData($('#frmBox4')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+
+
+
+            var plan_order = $('#tabBox4').find('#plan_order').val();
+            if (plan_order == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            for(var idx=1;idx<9;idx++){
+                var exp_cost = $('#tabBox4').find('#exp_cost_'+idx).val();
+                if (exp_cost == '') {
+                    $('#tabBox4').find('#exp_cost_'+idx).val(0);
+                }
+            }
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				if (!confirm('계속 등록하시겠습니까?')) {
+					$('#tabBox4').find('#plan_order').val('').trigger('change');
+					$('#tabBox4').find('#s_regist_dtm').yVal('');
+					$('#tabBox4').find('#exp_cost_1').yVal('');
+					$('#tabBox4').find('#exp_cost_2').yVal('');
+					$('#tabBox4').find('#exp_cost_3').yVal('');
+					$('#tabBox4').find('#exp_cost_4').yVal('');
+					$('#tabBox4').find('#exp_cost_5').yVal('');
+					$('#tabBox4').find('#exp_cost_6').yVal('');
+					$('#tabBox4').find('#exp_cost_7').yVal('');
+					$('#tabBox4').find('#exp_cost_8').yVal('');
+				}
+				var s_eng_sn = $('#tabBox4').find('#eng_sn').val();
+				getExpPList(s_eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+getExpP2 = function(s_regist_dtm)
+{
+	var params = '';
+	params += '&s_regist_dtm=' + s_regist_dtm;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_expP2',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				var data = pResult.data;
+
+                $('#tabBox5').find('#s_regist_dtm').yVal(data.regist_dtm);
+                $('#tabBox5').find('#plan_order').val(data.plan_order).trigger('change');
+                $('#tabBox5').find('#exp_cost_1').yVal(data.exp_cost_1);
+                $('#tabBox5').find('#exp_cost_2').yVal(data.exp_cost_2);
+                $('#tabBox5').find('#exp_cost_3').yVal(data.exp_cost_3);
+                $('#tabBox5').find('#exp_cost_4').yVal(data.exp_cost_4);
+                $('#tabBox5').find('#exp_cost_5').yVal(data.exp_cost_5);
+                $('#tabBox5').find('#exp_cost_6').yVal(data.exp_cost_6);
+                $('#tabBox5').find('#exp_cost_7').yVal(data.exp_cost_7);
+                $('#tabBox5').find('#exp_cost_8').yVal(data.exp_cost_8);
+			}
+		}
+	});
+}
+insertExpP2 = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_insert_expP2',
+		type: 'POST',
+		data: getFormData($('#frmBox5')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+
+
+
+            var plan_order = $('#tabBox5').find('#plan_order').val();
+            if (plan_order == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            for(var idx=1;idx<8;idx++){
+                var exp_cost = $('#tabBox4').find('#exp_cost_'+idx).val();
+                if (exp_cost == '') {
+                    $('#tabBox5').find('#exp_cost_'+idx).val(0);
+                }
+            }
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				if (!confirm('계속 등록하시겠습니까?')) {
+					$('#tabBox5').find('#plan_order').val('').trigger('change');
+					$('#tabBox5').find('#s_regist_dtm').yVal('');
+					$('#tabBox5').find('#exp_cost_1').yVal('');
+					$('#tabBox5').find('#exp_cost_2').yVal('');
+					$('#tabBox5').find('#exp_cost_3').yVal('');
+					$('#tabBox5').find('#exp_cost_4').yVal('');
+					$('#tabBox5').find('#exp_cost_5').yVal('');
+					$('#tabBox5').find('#exp_cost_6').yVal('');
+					$('#tabBox5').find('#exp_cost_7').yVal('');
+					$('#tabBox5').find('#exp_cost_8').yVal('');
+				}
+				var s_eng_sn = $('#tabBox5').find('#eng_sn').val();
+				getExpPList2(s_eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+/******************************************************************************
+ *
+ */
+
+updateExp = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_update_exp',
+		type: 'POST',
+		data: getFormData($('#frmBox3')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var exp_de = $('#tabBox3').find('#exp_de').val();
+			if (exp_de == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+            var plan_order = $('#tabBox3').find('#plan_order').val();
+            if (plan_order == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            var exp_se_code = $('#tabBox3').find('#exp_se_code').val();
+            if (exp_se_code == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.2');
+                return false;
+            }
+            var exp_ty_code = $('#tabBox3').find('#exp_ty_code').val();
+            if (exp_ty_code == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.3');
+                return false;
+            }
+//            var exp_bcnc_code = $('#tabBox3').find('#exp_bcnc_code').val();
+//            if (exp_bcnc_code == '') {
+//                alert('필수 입력 항목을 입력하시기 바랍니다.4');
+//                return false;
+//            }
+            var exp_io_type = $('#tabBox3').find('#exp_io_type').val();
+            if (exp_io_type == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.5');
+                return false;
+            }
+			var exp_content = $('#tabBox3').find('#exp_content').val();
+			if (exp_content == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.6');
+			 	return false;
+			}
+            var exp_cost = $('#tabBox3').find('#exp_cost').val();
+			if (exp_cost == '') {
+			 	alert('필수 입력 항목을 입력하시기 바랍니다.7');
+			 	return false;
+			}
+
+
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var eng_sn = $('#tabBox3').find('#eng_sn').val();
+				getExpList(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteExp = function(s_exp_sn)
+{
+	var params = '';
+	params += '&s_exp_sn=' + s_exp_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_delete_exp',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+                $('#tabBox3').find('#s_exp_sn').yVal('');
+                $('#tabBox3').find('#exp_de').yVal('');
+                $('#tabBox3').find('#plan_order').val('').trigger('change');
+                $('#tabBox3').find('#exp_se_code').val('').trigger('change');
+                $('#tabBox3').find('#exp_ty_code').val('').trigger('change');
+                $('#tabBox3').find('#exp_bcnc_code').yVal('');
+                $('#tabBox3').find('#exp_io_type').val('').trigger('change');
+                $('#tabBox3').find('#exp_content').yVal('');
+                $('#tabBox3').find('#exp_cost').yVal('');
+                $('#tabBox3').find('#s_exp_bcnc_code').yVal('');
+                $('#tabBox3').find('#s_exp_se_code').val('').trigger('change');
+                $('#tabBox3').find('#s_exp_ty_code').val('').trigger('change');
+                $('#tabBox3').find('#s_exp_content').yVal('');
+
+				var eng_sn = $('#tabBox3').find('#eng_sn').val();
+				getExpList(eng_sn);
+			}
+		}
+	});
+}
+
+updateExpP = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_update_expP',
+		type: 'POST',
+		data: getFormData($('#frmBox4')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+            var plan_order = $('#tabBox4').find('#plan_order').val();
+            if (plan_order == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var eng_sn = $('#tabBox4').find('#eng_sn').val();
+				getExpPList(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+updateExpP2 = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_update_expP2',
+		type: 'POST',
+		data: getFormData($('#frmBox5')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+            var plan_order = $('#tabBox5').find('#plan_order').val();
+            if (plan_order == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var eng_sn = $('#tabBox5').find('#eng_sn').val();
+				getExpPList2(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteExpP = function(s_regist_dtm)
+{
+	var params = '';
+	params += '&s_regist_dtm=' + s_regist_dtm;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_delete_expP',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+                $('#tabBox4').find('#plan_order').val('').trigger('change');
+                $('#tabBox4').find('#s_regist_dtm').yVal('');
+                $('#tabBox4').find('#exp_cost_1').yVal('');
+                $('#tabBox4').find('#exp_cost_2').yVal('');
+                $('#tabBox4').find('#exp_cost_3').yVal('');
+                $('#tabBox4').find('#exp_cost_4').yVal('');
+                $('#tabBox4').find('#exp_cost_5').yVal('');
+                $('#tabBox4').find('#exp_cost_6').yVal('');
+                $('#tabBox4').find('#exp_cost_7').yVal('');
+                $('#tabBox4').find('#exp_cost_8').yVal('');
+				var eng_sn = $('#tabBox4').find('#eng_sn').val();
+				getExpPList(eng_sn);
+			}
+		}
+	});
+}
+deleteExpP2 = function(s_regist_dtm)
+{
+	var params = '';
+	params += '&s_regist_dtm=' + s_regist_dtm;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_delete_expP2',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+                $('#tabBox5').find('#plan_order').val('').trigger('change');
+                $('#tabBox5').find('#s_regist_dtm').yVal('');
+                $('#tabBox5').find('#exp_cost_1').yVal('');
+                $('#tabBox5').find('#exp_cost_2').yVal('');
+                $('#tabBox5').find('#exp_cost_3').yVal('');
+                $('#tabBox5').find('#exp_cost_4').yVal('');
+                $('#tabBox5').find('#exp_cost_5').yVal('');
+                $('#tabBox5').find('#exp_cost_6').yVal('');
+                $('#tabBox5').find('#exp_cost_7').yVal('');
+                $('#tabBox5').find('#exp_cost_8').yVal('');
+				var eng_sn = $('#tabBox5').find('#eng_sn').val();
+				getExpPList2(eng_sn);
+			}
+		}
+	});
+}
+
+
+
+getDetail = function(d_sn)
+{
+	var params = '';
+	params += '&s_d_sn=' + d_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_get_exp_detail',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				var data = pResult.data;
+
+                $('#tabBox6').find('#d_sn').yVal(data.d_sn);
+                $('#tabBox6').find('#plan_order').val(data.plan_order).trigger('change');
+                $('#tabBox6').find('#exp_cost_num').val(data.exp_cost_num).trigger('change');
+                $('#tabBox6').find('#cost_content').yVal(data.cost_content);
+                $('#tabBox6').find('#cost_1').yVal(data.cost_1);
+                $('#tabBox6').find('#cost_2').yVal(data.cost_2);
+			}
+		}
+	});
+}
+insertDetail = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_insert_exp_detail',
+		type: 'POST',
+		data: getFormData($('#frmBox6')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+
+
+
+            var cost_content = $('#tabBox6').find('#cost_content').val();
+            if (cost_content == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            var exp_cost_num = $('#tabBox6').find('#exp_cost_num').val();
+            if (exp_cost_num == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            for(var idx=1;idx<3;idx++){
+                var cost = $('#tabBox6').find('#cost_'+idx).val();
+                if (cost == '') {
+                    $('#tabBox6').find('#cost_'+idx).val(0);
+                }
+            }
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				if (!confirm('계속 등록하시겠습니까?')) {
+					$('#tabBox6').find('#exp_cost_num').val('').trigger('change');
+                    $('#tabBox6').find('#plan_order').val('').trigger('change');
+					$('#tabBox6').find('#d_sn').yVal('');
+					$('#tabBox6').find('#cost_content').yVal('');
+					$('#tabBox6').find('#cost_1').yVal('');
+					$('#tabBox6').find('#cost_2').yVal('');
+				}
+				var s_eng_sn = $('#tabBox6').find('#eng_sn').val();
+				getExpDetailList(s_eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+updateDetail = function()
+{
+	$.ajax({
+		url: '{base_url}energy/ajax_update_exp_detail',
+		type: 'POST',
+		data: getFormData($('#frmBox6')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+            var cost_content = $('#tabBox6').find('#cost_content').val();
+            if (cost_content == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            var exp_cost_num = $('#tabBox6').find('#exp_cost_num').val();
+            if (exp_cost_num == '') {
+                alert('필수 입력 항목을 입력하시기 바랍니다.1');
+                return false;
+            }
+            for(var idx=1;idx<3;idx++){
+                var cost = $('#tabBox6').find('#cost_'+idx).val();
+                if (cost == '') {
+                    $('#tabBox6').find('#cost_'+idx).val(0);
+                }
+            }
+
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var eng_sn = $('#tabBox6').find('#eng_sn').val();
+				getExpDetailList(eng_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteDetail = function(d_sn)
+{
+	var params = '';
+	params += '&s_d_sn=' + d_sn;
+
+	$.ajax({
+		url: '{base_url}energy/ajax_delete_exp_detail',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+                $('#tabBox6').find('#exp_cost_num').val('').trigger('change');
+                $('#tabBox6').find('#plan_order').val('').trigger('change');
+                $('#tabBox6').find('#d_sn').yVal('');
+                $('#tabBox6').find('#cost_content').yVal('');
+                $('#tabBox6').find('#cost_1').yVal('');
+                $('#tabBox6').find('#cost_2').yVal('');
+				var eng_sn = $('#tabBox6').find('#eng_sn').val();
+				getExpDetailList(eng_sn);
+			}
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+			$(this).data('action', action);
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === null || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		} else {
+			formReset(action);
+		}
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		if (action === 'insert') {
+			modal.find('#cntrct_no').focus();
+		} else if (action === 'update') {
+			modal.find('#cntrct_no').focus();
+		}
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		$('#popBox1').data('action', '');
+		formReset('init');
+		if (isDataChange) {
+			$.datatable1.ajax.reload();
+			isDataChange = false;
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSaveKeep', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertEnergy(false);
+        }
+        else if(action === 'update'){
+            updateEnergy();
+        }
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSaveNew', function(pEvent) {
+		var action =  $('#popBox1').data('action');
+		if (action === 'insert') {
+			insertEnergy();
+		} else if (action === 'update') {
+			updateEnergy();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnDelete', function(pEvent) {
+		if (confirm('삭제하시겠습니까?')) {
+			deleteEnergy();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+
+
+    $('#tabBox2').on('click', '#btnSavePlan', function(pEvent) {
+		var plan_sn = $('#tabBox2').find('#s_plan_sn').val();
+		if (plan_sn === '') {
+			insertPlan();
+		} else {
+			updatePlan();
+		}
+	});
+    $('#tabBox3').on('click', '#btnSaveExp', function(pEvent) {
+		var exp_sn = $('#tabBox3').find('#s_exp_sn').val();
+		if (exp_sn === '') {
+			insertExp();
+		} else {
+			updateExp();
+		}
+	});
+    $('#tabBox4').on('click', '#btnSaveExp', function(pEvent) {
+		var regist_dtm = $('#tabBox4').find('#s_regist_dtm').val();
+		if (regist_dtm === '') {
+			insertExpP();
+		} else {
+			updateExpP();
+		}
+	});
+    $('#tabBox5').on('click', '#btnSaveExp', function(pEvent) {
+		var regist_dtm = $('#tabBox5').find('#s_regist_dtm').val();
+		if (regist_dtm === '') {
+			insertExpP2();
+		} else {
+			updateExpP2();
+		}
+	});
+    $('#tabBox6').on('click', '#btnSaveExp', function(pEvent) {
+		var d_sn = $('#tabBox6').find('#d_sn').val();
+		if (d_sn === '') {
+			insertDetail();
+		} else {
+			updateDetail();
+		}
+	});
+    /**************************************************************************
+     *
+     */
+	$('#tabBox2').on('click', '#btnRefrushPlan', function(pEvent) {
+		$('#tabBox2').find('#action').html('입력');
+		$('#tabBox2').find('#s_plan_sn').yVal('');
+        $('#tabBox2').find('#cntrwk_bgnde').val('');
+        $('#tabBox2').find('#cntrwk_endde').val('');
+        $('#tabBox2').find('#cp_a_cost').val('');
+        $('#tabBox2').find('#cp_b_cost').val('');
+        $('#tabBox2').find('#cp_c_cost').val('');
+        $('#tabBox2').find('#todo').val('');
+        $('#tabBox2').find('#result').val('');
+	});
+    $('#tabBox3').on('click', '#btnRefrushExp', function(pEvent) {
+		$('#tabBox3').find('#action').html('입력');
+        $('#tabBox3').find('#s_exp_sn').yVal('');
+        $('#tabBox3').find('#exp_de').yVal('');
+        $('#tabBox3').find('#plan_order').val('').trigger('change');
+        $('#tabBox3').find('#exp_se_code').val('').trigger('change');
+        $('#tabBox3').find('#exp_ty_code').val('').trigger('change');
+        $('#tabBox3').find('#exp_bcnc_code').yVal('');
+        $('#tabBox3').find('#exp_io_type').val('').trigger('change');
+        $('#tabBox3').find('#exp_content').yVal('');
+        $('#tabBox3').find('#exp_cost').yVal('');
+        $('#tabBox3').find('#s_exp_bcnc_code').yVal('');
+        $('#tabBox3').find('#s_exp_se_code').val('').trigger('change');
+        $('#tabBox3').find('#s_exp_ty_code').val('').trigger('change');
+        $('#tabBox3').find('#s_exp_content').yVal('');
+	});
+    $('#tabBox4').on('click', '#btnRefrushExp', function(pEvent) {
+		$('#tabBox4').find('#action').html('입력');
+        $('#tabBox4').find('#s_regist_dtm').yVal('');
+        $('#tabBox4').find('#plan_order').val('').trigger('change');
+        $('#tabBox4').find('#exp_cost_1').yVal('');
+        $('#tabBox4').find('#exp_cost_2').yVal('');
+        $('#tabBox4').find('#exp_cost_3').yVal('');
+        $('#tabBox4').find('#exp_cost_4').yVal('');
+        $('#tabBox4').find('#exp_cost_5').yVal('');
+        $('#tabBox4').find('#exp_cost_6').yVal('');
+        $('#tabBox4').find('#exp_cost_7').yVal('');
+        $('#tabBox4').find('#exp_cost_8').yVal('');
+	});
+    $('#tabBox5').on('click', '#btnRefrushExp', function(pEvent) {
+		$('#tabBox5').find('#action').html('입력');
+        $('#tabBox5').find('#s_regist_dtm').yVal('');
+        $('#tabBox5').find('#plan_order').val('').trigger('change');
+        $('#tabBox5').find('#exp_cost_1').yVal('');
+        $('#tabBox5').find('#exp_cost_2').yVal('');
+        $('#tabBox5').find('#exp_cost_3').yVal('');
+        $('#tabBox5').find('#exp_cost_4').yVal('');
+        $('#tabBox5').find('#exp_cost_5').yVal('');
+        $('#tabBox5').find('#exp_cost_6').yVal('');
+        $('#tabBox5').find('#exp_cost_7').yVal('');
+        $('#tabBox5').find('#exp_cost_8').yVal('');
+	});
+    $('#tabBox4').on('click', '#btnRefrushExp', function(pEvent) {
+		$('#tabBox6').find('#action').html('입력');
+        $('#tabBox6').find('#d_sn').yVal('');
+        $('#tabBox6').find('#plan_order').val('').trigger('change');
+        $('#tabBox6').find('#exp_cost_num').val('').trigger('change');
+        $('#tabBox6').find('#cost_content').yVal('');
+        $('#tabBox6').find('#cost_1').yVal('');
+        $('#tabBox6').find('#cost_2').yVal('');
+	});
+    /**************************************************************************
+     *
+     */
+	$('#dtList2').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+	$('#dtList3').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+    $('#dtList4').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+    $('#dtList5').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+    $('#dtList6').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+    /**************************************************************************
+     *
+     */
+	$('#tabBox2').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox2').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var plan_sn = $(target).data('plan_sn');
+		getPlan(plan_sn);
+	});
+	$('#tabBox3').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox3').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var exp_sn = $(target).data('exp_sn');
+		getExp(exp_sn);
+	});
+	$('#tabBox4').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox4').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var regist_dtm = $(target).data('regist_dtm');
+		getExpP(regist_dtm);
+	});
+	$('#tabBox5').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox5').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var regist_dtm = $(target).data('regist_dtm');
+		getExpP2(regist_dtm);
+	});
+    $('#tabBox6').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox6').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var sn = $(target).data('sn');
+		getDetail(sn);
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#tabBox2').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
+		var plan_sn = $(target).data('plan_sn');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deletePlan(plan_sn);
+		}
+	});
+	$('#tabBox3').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
+		var exp_sn = $(target).data('exp_sn');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deleteExp(exp_sn);
+		}
+	});
+	$('#tabBox3').on('click', '#btnSearchPopup', function(pEvent) {
+		var target = pEvent.currentTarget;
+        var eng_sn = $('#tabBox3').find('#eng_sn').val();
+        var s_exp_bcnc_code = $('#tabBox3').find('#s_exp_bcnc_code').val();
+        var s_exp_se_code = $('#tabBox3').find('#s_exp_se_code').val();
+        var s_exp_ty_code = $('#tabBox3').find('#s_exp_ty_code').val();
+        var s_exp_content = $('#tabBox3').find('#s_exp_content').val();
+        var s_start = $('#tabBox3').find('#s_start').val();
+        var s_end = $('#tabBox3').find('#s_end').val();
+        getExpList(eng_sn, s_exp_bcnc_code, s_exp_se_code, s_exp_ty_code, s_exp_content, s_start, s_end);
+        pEvent.preventDefault();
+	});
+    $('#tabBox4').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
+		var regist_dtm = $(target).data('regist_dtm');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deleteExpP(regist_dtm);
+		}
+	});
+    $('#tabBox5').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
+		var regist_dtm = $(target).data('regist_dtm');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deleteExpP2(regist_dtm);
+		}
+	});
+    $('#tabBox6').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
+		var sn = $(target).data('sn');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deleteDetail(sn);
+		}
+	});
+
+    $('#popEditTabs').on('click', 'a', function(pEvent) {
+		console.log('popEditTabs a click', pEvent);
+		var target = pEvent.currentTarget;
+		var action = $(target).data('action');
+		console.log('popEditTabs a click', action);
+		if (action !== 'tab1') {
+			var eng_sn = '';
+			if (action === 'tab2') {
+				eng_sn = $('#tabBox2').find('#eng_sn').val();
+			} else if (action === 'tab3') {
+				eng_sn = $('#tabBox3').find('#eng_sn').val();
+			} else if (action === 'tab4') {
+				eng_sn = $('#tabBox4').find('#eng_sn').val();
+			} else if (action === 'tab5') {
+				eng_sn = $('#tabBox5').find('#eng_sn').val();
+			} else if (action === 'tab6') {
+				eng_sn = $('#tabBox6').find('#eng_sn').val();
+			}
+            if (eng_sn === '') {
+				alert('프로젝트를 먼저 등록하시기 바랍니다.');
+				$('#popBox1').find('#cp_nm').focus();
+				return false;
+			}
+		}
+
+
+		if (action === 'tab2') {
+			var eng_sn = $('#tabBox2').find('#eng_sn').val();
+
+			getPlanList(eng_sn);
+		} else if (action === 'tab3') {
+			var eng_sn = $('#tabBox3').find('#eng_sn').val();
+			getExpList(eng_sn);
+		} else if (action === 'tab4') {
+			var eng_sn = $('#tabBox4').find('#eng_sn').val();
+            getExpPList(eng_sn);
+		} else if (action === 'tab5') {
+			var eng_sn = $('#tabBox5').find('#eng_sn').val();
+            getExpPList2(eng_sn);
+		} else if (action === 'tab6') {
+			var eng_sn = $('#tabBox6').find('#eng_sn').val();
+            getExpDetailList(eng_sn);
+		}
+	});
+
+
+});
+</script>
+
+{% endblock %}

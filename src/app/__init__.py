@@ -12,6 +12,7 @@ from .controllers.tax_view import bp as tax_bp
 from .controllers.fund_view import bp as fund_bp
 from .controllers.card_view import bp as card_bp
 from .controllers.completed_view import bp as completed_bp
+from .controllers.energy_view import bp as energy_bp
 from .controllers.common_view import bp as common_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
@@ -26,6 +27,7 @@ from .controllers.api.tax import bp as tax_api_bp
 from .controllers.api.fund import bp as fund_api_bp
 from .controllers.api.card import bp as card_api_bp
 from .controllers.api.completed import bp as completed_api_bp
+from .controllers.api.energy import bp as energy_api_bp
 from .controllers.api.common import bp as common_api_bp
 from .controllers.api.services import *
 # from .controllers.ajax_controller import bp as ajax
@@ -59,6 +61,8 @@ app.register_blueprint(card_bp)
 app.register_blueprint(card_api_bp)
 app.register_blueprint(completed_bp)
 app.register_blueprint(completed_api_bp)
+app.register_blueprint(energy_bp)
+app.register_blueprint(energy_api_bp)
 app.register_blueprint(common_bp)
 app.register_blueprint(common_api_bp)
 app.register_blueprint(dev_api)

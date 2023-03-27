@@ -115,5 +115,8 @@ def ajax_insert_return():
 @bp.route('/ajax_get_stock_report', methods=['GET'])
 def ajax_get_stock_report():
     params = request.args.to_dict()
-    result = st.get_stock_report(params)
+    result = dict()
+    result['summary'] = st.get_stock_report(params)
+    result['list'] = st.get_stock_report_list(params)
+
     return result

@@ -70,6 +70,10 @@
   #report table td, #report table th{
     height: 35px!important;
   }
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
   {% if init %}
   /*textarea{*/
   /*  background-color:rgba(245, 245, 245, 0.9);*/
@@ -280,7 +284,7 @@
       </tr>
     </tfoot>
   </table>
-  <table class="table table-bordered" style="margin-top:20px!important;">
+  <table class="table table-bordered" style="margin-top:20px!important;" id="last">
       <col width="150"/>
       <col width="740"/>
       <col width="150"/>
@@ -294,9 +298,20 @@
     <tbody>
       <tr>
         <td class="text-center">일정 내</td>
-        <td class="hasinput"></td>
+        <td class="hasinput">
+            <input class="upload-name" value="사진을 첨부해주세요." disabled="disabled">
+            <label for="ex_filename">첨부하기</label>
+            <input type="file" id="ex_filename" name="ex_filename" class="upload-hidden" accept="image/*" multiple="multiple">
+        </td>
         <td class="hasinput">
           <textarea class="table-textarea text-left" name="last_rm"></textarea>
+        </td>
+      </tr>
+    </tbody>
+    <tbody role="images_row" style="display:none;">
+      <tr data-row="images_tr">
+        <td colspan="3">
+          <input type="hidden" name="f_sn[]" value=""/>
         </td>
       </tr>
     </tbody>
@@ -333,7 +348,15 @@
                 $(document).find("tbody[role='schedule_row']").append($(origin2));
             }
         }
+        else if(selector == "images_tr"){
 
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='images_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='images_row']").append($(origin));
+            }
+        }
     }
     $(document).on("change", "tbody[role='schedule_row']", function(){
         var total_cnt1 = 0;
@@ -381,6 +404,77 @@
         $(this).parent().find(`[data-column='total']`).html((card_sleep+card_etc+card_transfer+card_eat+money_sleep+money_etc+money_transfer+money_eat).toFormat('NUMBER'));
     });
     {% if init %}
+    $(document).on("change", "#ex_filename", function(){
+      cloneRow("images_tr", document.querySelector("#ex_filename").files.length-1);
+      window.length = document.querySelector("#ex_filename").files.length;
+      $("#my-spinner").show();
+      for(let i=0;i<document.querySelector("#ex_filename").files.length;i++){
+        const file = document.querySelector("#ex_filename").files[i];
+        const filesize = file.size;
+        var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : i};
+        $.ajax({
+            url : '/api/common/get_upload_file_id',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                let name = pResult.filename;
+                let chunk_size = pResult.filesize;
+                let file_sn = pResult.file_sn;
+                let ord = pResult.order;
+                let start = 0;
+                create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+            },
+            error: function(){
+                alert("오류가 발생했습니다.");
+                location.reload();
+            },
+            beforeSend: function(){
+
+
+            }
+        });
+
+
+
+      }
+
+    });
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+              //cloneRow할자리
+              console.log(order);
+              console.log($(document).find("[name='f_sn[]']"));
+              console.log($(document).find("[name='f_sn[]']").eq(order));
+              $(document).find("[name='f_sn[]']").eq(order).val(file_sn);
+              window.length--;
+              if(window.length == 0){
+                $("#my-spinner").hide();
+              }
+            }
+        }
+        oReq.send(form);
+    }
+
     $(document).on("click", "#addRow", function(){
         cloneRow("schedule_tr", 1);
     });
@@ -427,6 +521,30 @@
     });
     {% else %}
     $.fn.afterLoadApproval = function() {
+      var params = {"f_sns" : []}
+      $(document).find("[name='f_sn[]']").each(function(pIndex, pTag){
+        var f_sn = $(pTag).val();
+        params.f_sns.push(f_sn);
+      });
+      $.ajax({
+        url : '/api/common/get_files_name',
+        method : 'POST',
+        data: JSON.stringify(params),
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+        success: function(pResult){
+          var html = '';
+          $.each(pResult, function(pIndex, path){
+            html += `<img src="/static/files/${path}" style="max-width:300px;max-height:300px;"/>`;
+          });
+          $("#last").find("tbody").eq(0).find("td").eq(1).html(html);
+
+        },
+        error: function(pResult){
+
+        }
+      });
     }
     {% endif %}
 </script>

@@ -1,6 +1,7 @@
 from flask import Blueprint, g, current_app, render_template, redirect, request, make_response, jsonify, send_file, Response, url_for, session
 from .services import common_service as cm
 from .services import completed_service as cp
+from .services import project_service as prj
 
 from app.connectors import DB
 from app.helpers import session_helper
@@ -11,7 +12,7 @@ from datetime import datetime
 from dateutil import relativedelta
 
 bp = Blueprint('api_common', __name__, url_prefix='/api')
-
+CHUNK_SIZE = 800000
 @bp.before_request
 def connect():
     g.db = DB()
@@ -393,3 +394,82 @@ def insert_vacation_out_go():
 @bp.route('/common/do_nothing', methods=['POST'])
 def do_nothing():
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
+
+@bp.route('/common/ajax_get_blueprint', methods=['GET'])
+def ajax_get_blueprint():
+    params = request.args.to_dict()
+    result = cm.get_blueprint(params)
+    return jsonify(result)
+@bp.route('/common/insert_blueprint', methods=['GET'])
+def insert_blueprint():
+    params = request.args.to_dict()
+    result = cm.insert_blueprint(params)
+    return jsonify(result)
+
+@bp.route('/common/set_reserve_data', methods=['GET'])
+def set_reserve_data():
+    params = request.args.to_dict()
+    cm.set_reserve_data(params)
+    return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
+
+@bp.route('/common/update_blueprint', methods=['GET'])
+def update_blueprint():
+    params = request.args.to_dict()
+    result = cm.update_blueprint(params)
+    return jsonify(result)
+
+@bp.route('/research/ajax_get_research', methods=['GET'])
+def ajax_get_research():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = cm.get_research(params)
+    result['status'] = True
+    return jsonify(result)
+
+@bp.route('/research/ajax_insert_research', methods=['GET'])
+def ajax_insert_research():
+    params = request.args.to_dict()
+    cm.insert_research(params)
+    return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
+
+@bp.route('/common/get_upload_file_id', methods=['POST'])
+def get_upload_file_id():
+    ext = request.form.get("ext")
+    order = request.form.get("order")
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = "{}_{}.{}".format(now, order, ext)
+    file_sn = cm.insert_file(filename)
+    os.makedirs("app/static/files/", exist_ok=True)
+    return jsonify({"filename": filename, "filesize": CHUNK_SIZE, "file_sn" : file_sn, "order" : order})
+
+@bp.route('/common/chunk_upload', methods=['POST'])
+def chunk_upload():
+    file = request.files['file']
+    filename = file.filename
+    try:
+        name, ext, idx = filename.split(".")
+        save_path = "app/static/files/{}".format("{}.{}".format(name, ext))
+        with open(save_path, 'ab') as f:
+            f.seek(CHUNK_SIZE*int(idx))
+            f.write(file.stream.read())
+        return jsonify({"status" : True})
+    except Exception as e:
+        return jsonify({"status" : False, "msg" : str(e)})
+
+@bp.route('/common/get_files_name', methods=['POST'])
+def get_files_name():
+    params = request.get_json()
+    f_sns = params['f_sns']
+    result = []
+    for f_sn in f_sns:
+        row = cm.get_file(f_sn)
+        if row:
+            result.append(row['file_path'])
+    return jsonify(result)
+
+@bp.route('/reserve/get_reserve_list', methods=['GET'])
+def get_reserve_list():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = prj.get_reserved_project_list(params)
+    return jsonify(result)

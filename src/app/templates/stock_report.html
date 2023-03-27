@@ -41,7 +41,7 @@
 }
 </style>
 <!-- 기성 현황 시작 -->
-<table id="summary" class="table table-bordered w100p">
+<table id="stock_report_summary" class="table table-bordered w100p">
      <colgroup>
         <col width="100">
         <col width="60">
@@ -60,7 +60,7 @@
         </tr>
     </tbody>
     <tbody role="body">
-        <tr>
+        <tr data-row="1">
             <th class="text-center" rowspan="2">가전</th>
             <th class="text-center">금액</th>
             <td class="text-number"></td>
@@ -68,14 +68,14 @@
             <td class="text-number"></td>
             <td class="text-number"></td>
         </tr>
-        <tr>
+        <tr data-row="1">
             <th class="text-center">수량</th>
             <td class="text-number"></td>
             <td class="text-number"></td>
             <td class="text-number"></td>
             <td class="text-number"></td>
         </tr>
-        <tr>
+        <tr data-row="2">
             <th class="text-center" rowspan="2">에어컨</th>
             <th class="text-center">금액</th>
             <td class="text-number"></td>
@@ -83,7 +83,7 @@
             <td class="text-number"></td>
             <td class="text-number"></td>
         </tr>
-        <tr>
+        <tr data-row="2">
             <th class="text-center">수량</th>
             <td class="text-number"></td>
             <td class="text-number"></td>
@@ -91,7 +91,7 @@
             <td class="text-number"></td>
         </tr>
     </tbody>
-    <tbody role="foot">
+    <tfoot>
         <tr class="amount">
             <th class="colorSky text-center" colspan="1" rowspan="2">총계</th>
             <th class="colorSky text-center" colspan="1">금액</th>
@@ -107,28 +107,39 @@
             <td class="colorSky text-number" colspan="1"></td>
             <td class="colorSky text-number" colspan="1"></td>
         </tr>
-    </tbody>
+    </tfoot>
 
 </table>
-<table id="va" class="table table-bordered w100p">
+<table id="stock_report_list" class="table table-bordered w100p">
      <colgroup>
-        <col width="100">
+        <col width="50">
+        <col width="50">
         <col width="60">
         <col width="60">
         <col width="60">
         <col width="60">
     </colgroup>
-    <tbody role="header">
+    <thead>
         <tr>
             <th class="colorB" colspan="1">품목</th>
+            <th class="colorB" colspan="1">구분</th>
             <th class="colorB" colspan="1">전시재고</th>
             <th class="colorB" colspan="1">이현창고</th>
             <th class="colorB" colspan="1">기타창고</th>
             <th class="colorB" colspan="1">합계</th>
         </tr>
-    </tbody>
+    </thead>
     <tbody role="body">
     </tbody>
+    <tfoot>
+        <tr>
+            <th class="colorSky text-center" colspan="2">합계</th>
+            <td class="colorSky text-right"></td>
+            <td class="colorSky text-right"></td>
+            <td class="colorSky text-right"></td>
+            <td class="colorSky text-right"></td>
+        </tr>
+    </tfoot>
 </table>
 </div><!-- 기성 현황 끝 -->
 
@@ -138,7 +149,7 @@
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script type="text/javascript">
-
+window.dict = {"전시" : 0, "이현창고" : 1, "기타창고" : 2};
 getStockReport = function()
 {
 
@@ -152,88 +163,146 @@ getStockReport = function()
 		processData: false,
 		success: function(pResult) {
 			console.log('getStockReport', pResult);
-			var html = '';
-            var s_cnt0 = 0, s_cnt1 = 0, s_cnt2 = 0, s_cnt3 = 0, s_sum = 0;
-            $.each(pResult.data, function(pIndex, pValue){
-
-                let sum = parseInt(pValue.cnt0) + parseInt(pValue.cnt1) +  parseInt(pValue.cnt2) ;
-                if(sum > 0){
-
-                    html += '<tr>';
-                    html += '    <td class="text-center">'+pValue.prduct_ty_nm+'</td>'
-                    html += '    <td class="text-right">'+pValue.cnt0.toString().toFormat('NUMBER')+'</td>'
-                    html += '    <td class="text-right">'+(parseInt(pValue.cnt1)).toString().toFormat('NUMBER')+'</td>'
-                    html += '    <td class="text-right">'+(parseInt(pValue.cnt2)).toString().toFormat('NUMBER')+'</td>'
-                    html += '    <td class="text-right">'+sum.toString().toFormat('NUMBER')+'</td>'
-                    html += '</tr>';
-                    s_cnt0 += parseInt(pValue.cnt0);
-                    s_cnt1 += parseInt(pValue.cnt1);
-                    s_cnt2 += parseInt(pValue.cnt2);
-                    s_cnt3 += parseInt(pValue.cnt3);
-                    s_sum += sum;
-                }
-
+            $.each(pResult.summary, function(pIndex, pValue){
+                $("#stock_report_summary").find(`tbody tr[data-row='${pValue.prduct_se_code}']`).eq(0).find("td").eq(window.dict[pValue.invn_sttus_nm]).html(pValue.puchas_amount.toFormat('NUMBER'));
+                $("#stock_report_summary").find(`tbody tr[data-row='${pValue.prduct_se_code}']`).eq(1).find("td").eq(window.dict[pValue.invn_sttus_nm]).html(pValue.qy_total.toFormat('NUMBER'));
             });
+            var total_total_price = 0;
+            var total_total_qy = 0;
+            var total_prices = [0, 0, 0];
+            var total_qys = [0, 0, 0];
+            for(let prduct_se_code=1;prduct_se_code<=2;prduct_se_code++){
+                var total_price = 0;
+                var total_qy = 0;
+                $("#stock_report_summary tbody").find(`tr[data-row="${prduct_se_code}"]`).eq(0).find("td").each(function(pIndex, pTag){
+                    var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total_prices[pIndex] += value;
+                    total_price += value;
+                })
+                $("#stock_report_summary tbody").find(`tr[data-row="${prduct_se_code}"]`).eq(0).find("td").eq(3).html(total_price.toFormat('NUMBER'));
+                $("#stock_report_summary tbody").find(`tr[data-row="${prduct_se_code}"]`).eq(1).find("td").each(function(pIndex, pTag){
+                    var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total_qys[pIndex] += value;
+                    total_qy += value;
+                })
+                $("#stock_report_summary tbody").find(`tr[data-row="${prduct_se_code}"]`).eq(1).find("td").eq(3).html(total_qy.toFormat('NUMBER'));
+                total_total_price += total_price;
+                total_total_qy += total_qy;
+            }
+            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(0).html(total_prices[0].toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(1).html(total_prices[1].toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(2).html(total_prices[2].toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(3).html(total_total_price.toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(0).html(total_qys[0].toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(1).html(total_qys[1].toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(2).html(total_qys[2].toFormat('NUMBER'));
+            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(3).html(total_total_qy.toFormat('NUMBER'));
 
-            html += '<tr>';
-            html += '    <td class="text-center colorSky">합계</td>';
-            html += '    <td class="text-right colorSky">'+s_cnt0.toString().toFormat('NUMBER')+'</td>';
-            html += '    <td class="text-right colorSky">'+s_cnt1.toString().toFormat('NUMBER')+'</td>';
-            html += '    <td class="text-right colorSky">'+s_cnt2.toString().toFormat('NUMBER')+'</td>';
-            html += '    <td class="text-right colorSky">'+s_sum.toString().toFormat('NUMBER')+'</td>';
-            html += '</tr>';
-            $("#rpt6").find("#va tbody[role=body]").html(html);
-
-            var html = "";
-
-
-            $.each(pResult.amount, function(pIndex, pValue){
-                html += "<tr class='amount'>";
-                html += "   <th class='text-center' rowspan='2'>"+pIndex+"</th>";
-                html += "   <th class='text-center'>금액</th>";
-                var row_total = 0;
-                $.each(pValue, function(pI, pV){
-                    html += "<td class='text-number'>"+pV[0].toString().toFormat('NUMBER')+"</td>";
-                    row_total += pV[0];
-                });
-                html += "   <td class='text-number'>"+row_total.toString().toFormat('NUMBER')+"</td>";
-                html += "</tr>";
-                html += "<tr class='dmt'>";
-                html += "   <th class='text-center'>수량</th>";
-                var row_total2 = 0;
-                $.each(pValue, function(pI, pV){
-                    html += "<td class='text-number'>"+pV[1].toString().toFormat('NUMBER')+"</td>";
-                    row_total2 += pV[1];
-                });
-                html += "   <td class='text-number'>"+row_total2.toString().toFormat('NUMBER')+"</td>";
-                html += "</tr>";
+            var html = '';
+            var cnt1 = 0;
+            var cnt2 = 0;
+            var cnt3 = 0;
+            var total = 0;
+            $.each(pResult.list, function(pIndex, pValue){
+                html += `<tr>
+                            <td class="text-center">${pValue.prduct_se_nm}</td>
+                            <td class="text-center">${pValue.prduct_ty_nm}</td>
+                            <td class="text-right">${pValue.cnt1.toFormat('NUMBER')}</td>
+                            <td class="text-right">${pValue.cnt2.toFormat('NUMBER')}</td>
+                            <td class="text-right">${pValue.cnt3.toFormat('NUMBER')}</td>
+                            <td class="text-right">${(pValue.cnt1 + pValue.cnt2 + pValue.cnt3).toFormat('NUMBER')}</td>
+                         </tr>`;
+                cnt1 += pValue.cnt1;
+                cnt2 += pValue.cnt2;
+                cnt3 += pValue.cnt3;
+                total += (pValue.cnt1 + pValue.cnt2 + pValue.cnt3);
             });
-
-            $("#rpt6").find("#summary tbody[role=body]").html(html);
-            var trs = $("#rpt6").find("#summary tbody[role=body] tr.amount");
-            var total1 = 0, total2 = 0, total3 = 0, total = 0;
-            $.each(trs, function(pI, tr){
-                total1 += parseInt($(tr).find("td").eq(0).html().replaceAll(",", ""));
-                total2 += parseInt($(tr).find("td").eq(1).html().replaceAll(",", ""));
-                total3 += parseInt($(tr).find("td").eq(2).html().replaceAll(",", ""));
-                total  += parseInt($(tr).find("td").eq(3).html().replaceAll(",", ""));
-            });
-            $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(0).html(total1.toString().toFormat('NUMBER'));
-            $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(1).html(total2.toString().toFormat('NUMBER'));
-            $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(2).html(total3.toString().toFormat('NUMBER'));
-            $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(3).html(total.toString().toFormat('NUMBER'));
-            var trs = $("#rpt6").find("#summary tbody[role=body] tr.dmt");
-            var total1 = 0, total2 = 0, total3 = 0, total = 0;
-            $.each(trs, function(pI, tr){
-                total1 += parseInt($(tr).find("td").eq(0).html().replaceAll(",", ""));
-                total2 += parseInt($(tr).find("td").eq(1).html().replaceAll(",", ""));
-                total3 += parseInt($(tr).find("td").eq(2).html().replaceAll(",", ""));
-                total  += parseInt($(tr).find("td").eq(3).html().replaceAll(",", ""));
-            });
-            $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(0).html(total1.toString().toFormat('NUMBER'));
-            $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(1).html(total2.toString().toFormat('NUMBER'));
-            $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(2).html(total3.toString().toFormat('NUMBER'));
-            $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(3).html(total.toString().toFormat('NUMBER'));
+            $("#stock_report_list tbody").html(html);
+            $("#stock_report_list tfoot").find("td").eq(0).html(cnt1.toFormat('NUMBER'));
+            $("#stock_report_list tfoot").find("td").eq(1).html(cnt2.toFormat('NUMBER'));
+            $("#stock_report_list tfoot").find("td").eq(2).html(cnt3.toFormat('NUMBER'));
+            $("#stock_report_list tfoot").find("td").eq(3).html(total.toFormat('NUMBER'));
+            // var s_cnt0 = 0, s_cnt1 = 0, s_cnt2 = 0, s_cnt3 = 0, s_sum = 0;
+            // $.each(pResult.data, function(pIndex, pValue){
+            //
+            //     let sum = parseInt(pValue.cnt0) + parseInt(pValue.cnt1) +  parseInt(pValue.cnt2) ;
+            //     if(sum > 0){
+            //
+            //         html += '<tr>';
+            //         html += '    <td class="text-center">'+pValue.prduct_ty_nm+'</td>'
+            //         html += '    <td class="text-right">'+pValue.cnt0.toString().toFormat('NUMBER')+'</td>'
+            //         html += '    <td class="text-right">'+(parseInt(pValue.cnt1)).toString().toFormat('NUMBER')+'</td>'
+            //         html += '    <td class="text-right">'+(parseInt(pValue.cnt2)).toString().toFormat('NUMBER')+'</td>'
+            //         html += '    <td class="text-right">'+sum.toString().toFormat('NUMBER')+'</td>'
+            //         html += '</tr>';
+            //         s_cnt0 += parseInt(pValue.cnt0);
+            //         s_cnt1 += parseInt(pValue.cnt1);
+            //         s_cnt2 += parseInt(pValue.cnt2);
+            //         s_cnt3 += parseInt(pValue.cnt3);
+            //         s_sum += sum;
+            //     }
+            //
+            // });
+            //
+            // html += '<tr>';
+            // html += '    <td class="text-center colorSky">합계</td>';
+            // html += '    <td class="text-right colorSky">'+s_cnt0.toString().toFormat('NUMBER')+'</td>';
+            // html += '    <td class="text-right colorSky">'+s_cnt1.toString().toFormat('NUMBER')+'</td>';
+            // html += '    <td class="text-right colorSky">'+s_cnt2.toString().toFormat('NUMBER')+'</td>';
+            // html += '    <td class="text-right colorSky">'+s_sum.toString().toFormat('NUMBER')+'</td>';
+            // html += '</tr>';
+            // $("#rpt6").find("#va tbody[role=body]").html(html);
+            //
+            // var html = "";
+            //
+            //
+            // $.each(pResult.amount, function(pIndex, pValue){
+            //     html += "<tr class='amount'>";
+            //     html += "   <th class='text-center' rowspan='2'>"+pIndex+"</th>";
+            //     html += "   <th class='text-center'>금액</th>";
+            //     var row_total = 0;
+            //     $.each(pValue, function(pI, pV){
+            //         html += "<td class='text-number'>"+pV[0].toString().toFormat('NUMBER')+"</td>";
+            //         row_total += pV[0];
+            //     });
+            //     html += "   <td class='text-number'>"+row_total.toString().toFormat('NUMBER')+"</td>";
+            //     html += "</tr>";
+            //     html += "<tr class='dmt'>";
+            //     html += "   <th class='text-center'>수량</th>";
+            //     var row_total2 = 0;
+            //     $.each(pValue, function(pI, pV){
+            //         html += "<td class='text-number'>"+pV[1].toString().toFormat('NUMBER')+"</td>";
+            //         row_total2 += pV[1];
+            //     });
+            //     html += "   <td class='text-number'>"+row_total2.toString().toFormat('NUMBER')+"</td>";
+            //     html += "</tr>";
+            // });
+            //
+            // $("#rpt6").find("#summary tbody[role=body]").html(html);
+            // var trs = $("#rpt6").find("#summary tbody[role=body] tr.amount");
+            // var total1 = 0, total2 = 0, total3 = 0, total = 0;
+            // $.each(trs, function(pI, tr){
+            //     total1 += parseInt($(tr).find("td").eq(0).html().replaceAll(",", ""));
+            //     total2 += parseInt($(tr).find("td").eq(1).html().replaceAll(",", ""));
+            //     total3 += parseInt($(tr).find("td").eq(2).html().replaceAll(",", ""));
+            //     total  += parseInt($(tr).find("td").eq(3).html().replaceAll(",", ""));
+            // });
+            // $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(0).html(total1.toString().toFormat('NUMBER'));
+            // $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(1).html(total2.toString().toFormat('NUMBER'));
+            // $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(2).html(total3.toString().toFormat('NUMBER'));
+            // $("#rpt6").find("#summary tbody[role=foot] tr.amount").find("td").eq(3).html(total.toString().toFormat('NUMBER'));
+            // var trs = $("#rpt6").find("#summary tbody[role=body] tr.dmt");
+            // var total1 = 0, total2 = 0, total3 = 0, total = 0;
+            // $.each(trs, function(pI, tr){
+            //     total1 += parseInt($(tr).find("td").eq(0).html().replaceAll(",", ""));
+            //     total2 += parseInt($(tr).find("td").eq(1).html().replaceAll(",", ""));
+            //     total3 += parseInt($(tr).find("td").eq(2).html().replaceAll(",", ""));
+            //     total  += parseInt($(tr).find("td").eq(3).html().replaceAll(",", ""));
+            // });
+            // $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(0).html(total1.toString().toFormat('NUMBER'));
+            // $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(1).html(total2.toString().toFormat('NUMBER'));
+            // $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(2).html(total3.toString().toFormat('NUMBER'));
+            // $("#rpt6").find("#summary tbody[role=foot] tr.dmt").find("td").eq(3).html(total.toString().toFormat('NUMBER'));
 
 		}
 	});

@@ -1068,7 +1068,7 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					::-webkit-scrollbar-button { display: none; } /* 스크롤 바 상 하단 버튼 */
 				</style>
 
-				<div id="rpt99detail" style="overflow-x:auto;display:inline-block;width: 100%;">
+				<div id="rpt99detail">
 
 				</div>
 
@@ -1437,34 +1437,71 @@ getMonthReport = function(pxcond_mt){
 			// 	$(document).find(`#rpt99detail table thead tr:nth-child(3) td:nth-child(${_})`).widthMatch();
 			// }
 			var target = $("#top-summary tbody[role='body'] tr:nth-child(1)");
-			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(0)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(2)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(2)").widthMatchTarget([$(target).find("td").eq(1), $(target).find("td").eq(3)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(3)").widthMatchTarget([$(target).find("td").eq(4)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(5)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(6)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(7)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(7)").widthMatchTarget([$(target).find("td").eq(8)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(8)").widthMatchTarget([$(target).find("td").eq(9)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(10)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(11)]);
-
-
-			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(12)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(14)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(13), $(target).find("td").eq(15)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(11)").widthMatchTarget([$(target).find("td").eq(16)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(12)").widthMatchTarget([$(target).find("td").eq(17)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(13)").widthMatchTarget([$(target).find("td").eq(18)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(14)").widthMatchTarget([$(target).find("td").eq(19)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(15)").widthMatchTarget([$(target).find("td").eq(20)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(2) th:nth-child(16)").widthMatchTarget([$(target).find("td").eq(21)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(22)]);
-			$(document).find("#rpt99detail table thead tr:nth-child(1) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(23)]);
+			var table_length = $(document).find("#rpt99detail table").length;
+			for(let i=0;i<table_length;i++){
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(0)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(2)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(2)").widthMatchTarget([$(target).find("td").eq(1), $(target).find("td").eq(3)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(3)").widthMatchTarget([$(target).find("td").eq(4)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(5)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(6)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(7)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(7)").widthMatchTarget([$(target).find("td").eq(8)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(8)").widthMatchTarget([$(target).find("td").eq(9)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(10)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(11)]);
+	
+	
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(12)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(14)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(13), $(target).find("td").eq(15)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(11)").widthMatchTarget([$(target).find("td").eq(16)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(12)").widthMatchTarget([$(target).find("td").eq(17)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(13)").widthMatchTarget([$(target).find("td").eq(18)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(14)").widthMatchTarget([$(target).find("td").eq(19)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(15)").widthMatchTarget([$(target).find("td").eq(20)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(16)").widthMatchTarget([$(target).find("td").eq(21)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(22)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(23)]);
+				
+			}
 
 		}
 	});
 }
+
+$(window).resize(function() {
+			var target = $("#top-summary tbody[role='body'] tr:nth-child(1)");
+			var table_length = $(document).find("#rpt99detail table").length;
+			for(let i=0;i<table_length;i++){
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(0)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(2)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(2)").widthMatchTarget([$(target).find("td").eq(1), $(target).find("td").eq(3)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(3)").widthMatchTarget([$(target).find("td").eq(4)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(5)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(6)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(7)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(7)").widthMatchTarget([$(target).find("td").eq(8)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(8)").widthMatchTarget([$(target).find("td").eq(9)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(10)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(11)]);
+
+
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(12)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(14)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(13), $(target).find("td").eq(15)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(11)").widthMatchTarget([$(target).find("td").eq(16)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(12)").widthMatchTarget([$(target).find("td").eq(17)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(13)").widthMatchTarget([$(target).find("td").eq(18)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(14)").widthMatchTarget([$(target).find("td").eq(19)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(15)").widthMatchTarget([$(target).find("td").eq(20)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(16)").widthMatchTarget([$(target).find("td").eq(21)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(22)]);
+				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(23)]);
+
+			}
+
+});
 $(document).on("click", "#popReport99 h5[data-usage='toggle']", function(){
 	var dept_code = $(this).data("target");
 	$(document).find(`#detail-${dept_code}`).toggle();
