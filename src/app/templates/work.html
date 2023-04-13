@@ -247,8 +247,7 @@ getWork = function(work_date)
 			});
 			$(document).find("#dtList1 tbody").html(html);
 			$(document).find("#dtList1 tbody").yRowspan(0);
-			$(document).find("#dtList1 tbody").yRowspan(1);
-			
+
 			$.each(pResult.work_data, function(pIndex, pValue){
 				var rowId = pValue.work_row;
 				var column = pValue.work_month;

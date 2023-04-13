@@ -104,3 +104,8 @@ def ajax_update_todo():
     mber.update_todo(params)
     return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
 
+@bp.route('/ajax_delete_member', methods=['POST'])
+def ajax_delete_member():
+    params = request.form.to_dict()
+    mber.delete_member(params)
+    return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})

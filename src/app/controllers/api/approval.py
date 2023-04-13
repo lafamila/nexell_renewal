@@ -33,6 +33,7 @@ def ajax_get_project_datatable():
 def ajax_get_approval_ty_list():
     params = request.args.to_dict()
     result = apvl.get_approval_ty_list(params)
+    print(result)
     return jsonify(result)
 
 
@@ -53,13 +54,19 @@ def ajax_insert_approval():
 @bp.route('/get_approval', methods=['GET'])
 def get_approval():
     params = request.args.to_dict()
+
     result = dict()
     result['approval'] = apvl.get_approval(params)
     result['html'] = apvl.get_approval_template(result['approval']['template_url'], init=False)
     result['member_list'] = apvl.get_approval_member(params)
     isMyTurn = False
+    last_member = None
+    isFirst = False
     for i, member in enumerate(result['member_list']):
+        if i == 0 and member['mber_sn'] == session['member']['member_sn']:
+            isFirst = True
         if member['approval_status_code'] == 1:
+            last_member = (member['mber_sn'], i)
             continue
         elif member['approval_status_code'] == -1:
             break
@@ -68,10 +75,38 @@ def get_approval():
             break
         else:
             break
+    if last_member is not None and last_member[0] == session['member']['member_sn'] and (last_member[1]+1) < len(result['member_list']):
+        isCancelable = True
+    else:
+        isCancelable = False
     result['approval']['approval_data'] = json.loads(result['approval']['approval_data'])
     result['myTurn'] = isMyTurn
+    result['isFirst'] = isFirst
+    result['cancelable'] = isCancelable
     return jsonify(result)
 
+@bp.route('/delete_approval', methods=['GET'])
+def delete_approval():
+    params = request.args.to_dict()
+    member_list = apvl.get_approval_member(params)
+    deletable = False
+    msg = "진행중인 결재자가 있어 삭제가 불가능합니다."
+    if not member_list:
+        deletable = True
+        msg = "성공적으로 삭제되었습니다."
+    else:
+        if member_list[-1]["approval_status_code"] == 1:
+            deletable = False
+            msg = "최종 결재가 완료되어 삭제가 불가능합니다."
+        elif member_list[0]["approval_status_code"] == 0:
+            deletable = True
+            msg = "성공적으로 삭제되었습니다."
+
+    if deletable:
+        apvl.delete_approval(params)
+
+
+    return jsonify({"status" : deletable, "message" : msg})
 @bp.route('/update_approval', methods=['POST'])
 def update_approval():
     params = request.form.to_dict()

@@ -441,24 +441,33 @@ getCompletedSummary = function(s_pxcond_mt)
                     var link_end = '</a>';
 
 					//장려금 합산
-					j_amt1 = parseInt(pValue.ty9_goal_amount); if(isNaN(j_amt1)) j_amt1 = 0;
-                    j_amt2 = parseInt(pValue.ty8_goal_amount); if(isNaN(j_amt2)) j_amt2 = 0;
-                    j_amt3 = parseInt(pValue.ty9_goal_amount_sum); if(isNaN(j_amt3)) j_amt3 = 0;
-                    j_amt4 = parseInt(pValue.ty8_goal_amount_sum); if(isNaN(j_amt4)) j_amt4 = 0;
-                    j_amt5 = parseInt(pValue.ty8_goal_amount_total); if(isNaN(j_amt5)) j_amt5 = 0;
+					var j_amt1 = parseInt(pValue.ty9_goal_amount); if(isNaN(j_amt1)) j_amt1 = 0;
+                    var j_amt2 = parseInt(pValue.ty8_goal_amount); if(isNaN(j_amt2)) j_amt2 = 0;
+                    var j_amt3 = parseInt(pValue.ty9_goal_amount_sum); if(isNaN(j_amt3)) j_amt3 = 0;
+                    var j_amt4 = parseInt(pValue.ty8_goal_amount_sum); if(isNaN(j_amt4)) j_amt4 = 0;
+                    var j_amt5 = parseInt(pValue.ty8_goal_amount_total); if(isNaN(j_amt5)) j_amt5 = 0;
 
+					var k_amt1 = b_amt1 + j_amt1;
+					var k_amt2 = b_amt2 + j_amt2;
+					var k_amt3 = b_amt3 + j_amt3;
+					var k_amt4 = b_amt4 + j_amt4;
+					var k_amt5 = b_amt5 + j_amt5;
+					rt1 = (k_amt2 < 0) ? 100.0 + (k_amt2 - k_amt1)*100/k_amt2 : (k_amt1/k_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+					rt2 = (k_amt4 < 0) ? 100.0 + (k_amt4 - k_amt3)*100/k_amt4 : (k_amt3/k_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+					rt3 = (k_amt3/k_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
+					
 					html += '<tr class="'+pValue.dept_code+'">';
 					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
 					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
 					html += '    <td class="text-number">'+(b_amt2 + j_amt2).toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+(b_amt1 + j_amt1).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
 					html += '    <td class="text-number">'+(b_amt4 + j_amt4).toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+(b_amt3 + j_amt3).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
 					html += '    <td class="text-number">'+(b_amt5 + j_amt5).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;"></td>';
-                    html += '    <td class="text-number '+pValue.dept_code+'"></td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number total-rates" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+k_amt5+'"></td>';
 					html += '</tr>';
 					// 장려금금
 					// html += '<tr>';
@@ -949,11 +958,183 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 </script>
 
 <!-- popReport99 : 영업점검 -->
+<div class="modal fade" data-backdrop="static" id="popReport99_inside" style="z-index:1051;top:20vh;">
+    <div class="modal-dialog modal-w1200" style="width:60%!important;">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs2">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>프로젝트 등록</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;height:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox1DashboardMonth" style="height:100%;">
+							<form id="frmBox1DashboardMonth" style="height:100%;">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbarContract">
+												<button type="button" class="btn btn-primary" id="btnSaveDashboardMonth" title="저장합니다."><i class="fa fa-save"> 저장</i></button>
+											</span>
+											</th>
+										</tr>
+
+										<tr class="required">
+											<th class="color-contract">부서</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_dept_code" name="s_dept_code" >
+													<option value="">[부서를 선택해주세요.]</option>
+													<option value="ST">영업</option>
+													<option value="TS1">공조1</option>
+													<option value="TS2">공조2</option>
+													<option value="BI">빌트인</option>
+													<option value="ETC">기타</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">구분</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_amt_ty_code" name="s_amt_ty_code" >
+													<option value="">[수주/매출을 선택해주세요.]</option>
+													<option value="2">수주</option>
+													<option value="3">매출</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_cntrct_sn" name="s_cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<div class="modal fade" data-backdrop="static" id="popReport99_inside_delete" style="z-index:1051;top:20vh;">
+    <div class="modal-dialog modal-w1200" style="width:60%!important;">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs2Delete">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>프로젝트 등록</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;height:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox2DashboardMonth" style="height:100%;">
+							<form id="frmBox2DashboardMonth" style="height:100%;">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbarContract2">
+												<button type="button" class="btn btn-primary" id="btnDeleteDashboardMonth" title="삭제합니다."><i class="fa fa-trash"> 삭제</i></button>
+											</span>
+											</th>
+										</tr>
+
+										<tr class="required">
+											<th class="color-contract">부서</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_s_dept_code" name="s_s_dept_code" >
+													<option value="">[부서를 선택해주세요.]</option>
+													<option value="ST">영업</option>
+													<option value="TS1">공조1</option>
+													<option value="TS2">공조2</option>
+													<option value="BI">빌트인</option>
+													<option value="ETC">기타</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">구분</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_s_amt_ty_code" name="s_s_amt_ty_code" >
+													<option value="">[수주/매출을 선택해주세요.]</option>
+													<option value="2">수주</option>
+													<option value="3">매출</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_s_cntrct_sn" name="s_s_cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+												</select>
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
 <div class="modal fade" data-backdrop="static" id="popReport99">
     <div class="modal-dialog modal-w1200" style="width:100%!important;">
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
+					<div class="btn-group">
+						<button type="button" class="btn btn-table btn-warning" title="추가" id="addContractDashboardMonth"><i class="fa fa-plus"></i></button>
+						<button type="button" class="btn btn-table btn-warning" title="추가" id="deleteContractDashboardMonth"><i class="fa fa-minus"></i></button>
+					</div>
+
 					<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;padding-top:5px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="report99_pxcond_mt" name="report99_pxcond_mt" placeholder="[기준일자]">
 					<button type="button" class="btn btn-primary" id="btnPrint99"><i class="fa fa-print">&nbsp;출력</i></button>
 					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
@@ -992,7 +1173,8 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					 <colgroup>
 						<col width="50">
 						<col width="75">
-						<col width="100">
+						<col width="25">
+						<col width="75">
 						<col width="100">
 						<col width="100">
 						<col width="100">
@@ -1005,7 +1187,8 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 
 						<col width="50">
 						<col width="75">
-						<col width="100">
+						<col width="25">
+						<col width="75">
 						<col width="100">
 						<col width="100">
 						<col width="100">
@@ -1018,26 +1201,26 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					</colgroup>
 					<tbody role="header">
 						<tr>
-							<th class="colorB" style="line-height: 1.0!important;font-size:15px!important;" colspan="12"><span class="two-now-year"></span>년 <span class="one-now-month"></span>월 수주 현황</th>
-							<th class="colorB" style="line-height: 1.0!important;font-size:15px!important;" colspan="12"><span class="two-now-year"></span>년 <span class="one-now-month"></span>월 매출 현황</th>
+							<th class="colorB" style="line-height: 1.0!important;font-size:15px!important;" colspan="13"><span class="two-now-year"></span>년 <span class="one-now-month"></span>월 수주 현황</th>
+							<th class="colorB" style="line-height: 1.0!important;font-size:15px!important;" colspan="13"><span class="two-now-year"></span>년 <span class="one-now-month"></span>월 매출 현황</th>
 						</tr>
 						<tr>
 							<th class="colorB middle text-center" rowspan="2">구분</th>
 							<th class="colorB middle text-center" rowspan="2">부서</th>
-							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
+							<th class="colorB middle text-center" colspan="5"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span> 누계</th>
 							<th class="colorB middle text-center" rowspan="2">연간목표</th>
 							<th class="colorB middle text-center" rowspan="2">연달성(%)</th>
 
 							<th class="colorB middle text-center" rowspan="2">구분</th>
 							<th class="colorB middle text-center" rowspan="2">부서</th>
-							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
+							<th class="colorB middle text-center" colspan="5"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 							<th class="colorB middle text-center" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span> 누계</th>
 							<th class="colorB middle text-center" rowspan="2">연간목표</th>
 							<th class="colorB middle text-center" rowspan="2">연달성(%)</th>
 						</tr>
 						<tr>
-							<th class="colorB middle text-center">경영목표</th>
+							<th class="colorB middle text-center" colspan="2">경영목표</th>
 							<th class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</th>
 							<th class="colorB middle text-center">수주실적</th>
 							<th class="colorB middle text-center">달성(%)</th>
@@ -1045,7 +1228,7 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 							<th class="colorB middle text-center">수주실적</th>
 							<th class="colorB middle text-center">달성(%)</th>
 							<th class="colorB middle text-center">차질액</th>
-							<th class="colorB middle text-center">경영목표</th>
+							<th class="colorB middle text-center" colspan="2">경영목표</th>
 							<th class="colorB middle text-center">점검(<span class="one-now-month"></span>/<span class="one-now-day"></span>)</th>
 							<th class="colorB middle text-center">매출실적</th>
 							<th class="colorB middle text-center">달성(%)</th>
@@ -1068,16 +1251,194 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					::-webkit-scrollbar-button { display: none; } /* 스크롤 바 상 하단 버튼 */
 				</style>
 
-				<div id="rpt99detail">
-
-				</div>
-
 
 			</div><!--modal-body-->
         </div><!--modal-content-->
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
+$(document).on("click", "#addContractDashboardMonth", function(){
+	$("#popReport99_inside").modal("show");
+});
+$(document).on("click", "#deleteContractDashboardMonth", function(){
+	$("#popReport99_inside_delete").modal("show");
+});
+initpopReport99_inside_delete = function(){
+	$("#popReport99_inside_delete").find("#s_s_dept_code").yVal('');
+	$("#popReport99_inside_delete").find("#s_s_amt_ty_code").yVal('');
+	// $(modal).find("#cntrct_sn").select2('destroy');
+	$("#popReport99_inside_delete").find("#s_s_cntrct_sn").html(`<option value="">[계약을 선택해주세요.]</option>`);
+	$("#popReport99_inside_delete").find("#s_s_cntrct_sn").yVal('');
+
+}
+initpopReport99_inside = function(){
+	$("#popReport99_inside").find("#s_dept_code").yVal('');
+	$("#popReport99_inside").find("#s_amt_ty_code").yVal('');
+	// $(modal).find("#cntrct_sn").select2('destroy');
+	$("#popReport99_inside").find("#s_cntrct_sn").yVal('');
+
+}
+$('#popReport99_inside').on('hidden.bs.modal', function(pEvent)
+{
+	initpopReport99_inside();
+	var end = $('#report99_pxcond_mt').val();
+	if (end == '') {
+		$('#report99_pxcond_mt').datepicker('setDate', 'today');
+		end = $('#report99_pxcond_mt').val();
+	}
+	getMonthReport(end);
+
+	// $("#popReport99").modal("hide");
+});
+$('#popReport99_inside_delete').on('hidden.bs.modal', function(pEvent)
+{
+	initpopReport99_inside_delete();
+	var end = $('#report99_pxcond_mt').val();
+	if (end == '') {
+		$('#report99_pxcond_mt').datepicker('setDate', 'today');
+		end = $('#report99_pxcond_mt').val();
+	}
+	getMonthReport(end);
+	// $("#popReport99").modal("hide");
+
+});
+$(document).on('change', "#s_s_dept_code, #s_s_amt_ty_code", function(pEvent)
+{
+	var params = $("#frmBox2DashboardMonth").formSerialize();
+	var end = $('#report99_pxcond_mt').val();
+	if (end == '') {
+		$('#report99_pxcond_mt').datepicker('setDate', 'today');
+		end = $('#report99_pxcond_mt').val();
+	}
+	params += '&s_pxcond_mt='+end;
+		$.ajax({
+			url: '/api/dashboard/ajax_get_extra_goal_contract',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				var html = '<option value="">[계약을 선택해주세요.]</option>';
+				$.each(pResult, function(pIndex, pValue){
+					html += `<option value="${pValue.d_sn}">${pValue.cntrct_nm}</option>`;
+				})
+				$("#s_s_cntrct_sn").html(html);
+			}
+		});
+
+});
+fnValidateDashboardMonthDelete = function(){
+	var result = true;
+
+	// 부서
+	var s_dept_code = $('#popReport99_inside_delete').find('#s_s_dept_code').val();
+	if (result == true && fnIsEmpty(s_dept_code)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		$('#popReport99_inside_delete').find('#s_s_dept_code').trigger('focus');
+		result = false;
+	}
+
+	// 구분
+	var s_amt_ty_code = $('#popReport99_inside_delete').find('#s_s_amt_ty_code').val();
+	if (result == true && fnIsEmpty(s_amt_ty_code)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		$('#popReport99_inside_delete').find('#s_s_amt_ty_code').trigger('focus');
+		result = false;
+	}
+
+	// 계약
+	var s_cntrct_sn = $('#popReport99_inside_delete').find('#s_s_cntrct_sn').val();
+	if (result == true && fnIsEmpty(s_cntrct_sn)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		$('#popReport99_inside_delete').find('#s_s_cntrct_sn').trigger('focus');
+		result = false;
+	}
+
+
+	return result;
+}
+fnValidateDashboardMonth = function(){
+	var result = true;
+
+	// 부서
+	var s_dept_code = $('#popReport99_inside').find('#s_dept_code').val();
+	if (result == true && fnIsEmpty(s_dept_code)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		$('#popReport99_inside').find('#s_dept_code').trigger('focus');
+		result = false;
+	}
+
+	// 구분
+	var s_amt_ty_code = $('#popReport99_inside').find('#s_amt_ty_code').val();
+	if (result == true && fnIsEmpty(s_amt_ty_code)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		$('#popReport99_inside').find('#s_amt_ty_code').trigger('focus');
+		result = false;
+	}
+
+	// 계약
+	var s_cntrct_sn = $('#popReport99_inside').find('#s_cntrct_sn').val();
+	if (result == true && fnIsEmpty(s_cntrct_sn)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		$('#popReport99_inside').find('#s_cntrct_sn').trigger('focus');
+		result = false;
+	}
+
+
+	return result;
+}
+$(document).on("click", "#btnSaveDashboardMonth", function(){
+	var params = $("#frmBox1DashboardMonth").formSerialize();
+	var end = $('#report99_pxcond_mt').val();
+	if (end == '') {
+		$('#report99_pxcond_mt').datepicker('setDate', 'today');
+		end = $('#report99_pxcond_mt').val();
+	}
+	params += '&stdyy='+end.split("-")[0];
+	params += '&d_month='+parseInt(end.split("-")[1]);
+	params += '&s_pxcond_mt='+end;
+	$.ajax({
+		url: '/api/dashboard/ajax_set_extra_goal_contract',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidateDashboardMonth();
+		},
+		success: function (pResult) {
+			alert("성공적으로 입력되었습니다.");
+			$("#popReport99_inside").modal("hide");
+		}
+	});
+});
+$(document).on("click", "#btnDeleteDashboardMonth", function(){
+	var params = $("#frmBox2DashboardMonth").formSerialize();
+	var end = $('#report99_pxcond_mt').val();
+	if (end == '') {
+		$('#report99_pxcond_mt').datepicker('setDate', 'today');
+		end = $('#report99_pxcond_mt').val();
+	}
+	params += '&stdyy='+end.split("-")[0];
+	params += '&d_month='+parseInt(end.split("-")[1]);
+	$.ajax({
+		url: '/api/dashboard/ajax_delete_extra_goal_contract',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidateDashboardMonthDelete();
+		},
+		success: function (pResult) {
+			alert("성공적으로 삭제되었습니다.");
+			$("#popReport99_inside_delete").modal("hide");
+		}
+	});
+});
 getMonthReport = function(pxcond_mt){
 	var now_year = pxcond_mt.split("-")[0].substring(2, 4);
 	var now_month = parseInt(pxcond_mt.split("-")[1]);
@@ -1093,6 +1454,7 @@ getMonthReport = function(pxcond_mt){
 		processData: false,
 		success: function (pResult) {
 			console.log("ajax_get_month_report", pResult);
+			$(document).find(`tbody[role="content"]`).remove();
 			// ============================================================
 			var html = '';
 			var pData = {};
@@ -1117,6 +1479,8 @@ getMonthReport = function(pxcond_mt){
 					nameMap[dept_code] = pValue.dept_nm;
 				}
 			});
+
+
 			$.each(pDataOrder, function(pIndex, dept_code){
 				html += `<tr data-dept="${dept_code}">`;
 				var pValue1 = pData[dept_code]['2'];
@@ -1136,7 +1500,7 @@ getMonthReport = function(pxcond_mt){
 				total15 += b_amt5;
 				html += `	<td class="colorSky text-center middle">${pValue1.amt_ty_nm}</td>
 							<td class="colorSky text-center middle">${pValue1.dept_nm.replaceAll("팀", "")}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary" colspan="2">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary" data-value="valueS"></td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
@@ -1173,7 +1537,7 @@ getMonthReport = function(pxcond_mt){
 				total25 += b_amt5;
 				html += `	<td class="colorSky text-center middle">${pValue2.amt_ty_nm}</td>
 							<td class="colorSky text-center middle">${pValue2.dept_nm.replaceAll("팀", "")}</td>
-							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
+							<td class="colorLY text-right middle" data-column="summary" colspan="2">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary" data-value="valueT"></td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
@@ -1198,7 +1562,7 @@ getMonthReport = function(pxcond_mt){
 			html += `<tr data-dept="total">
 						<td class="colorSky text-center middle">수주</td>
 						<td class="colorLG text-center middle">소계</td>
-						<td class="colorLG text-right middle">${Math.round(total12 /1000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle" colspan="2">${Math.round(total12 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle" data-value="valueStot"></td>
 						<td class="colorLG text-right middle">${Math.round(total11 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
@@ -1210,7 +1574,7 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>;
 						<td class="colorSky text-center middle">매출</td>
 						<td class="colorLG text-center middle">소계</td>
-						<td class="colorLG text-right middle">${Math.round(total22 /1000).toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle" colspan="2">${Math.round(total22 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle" data-value="valueTtot"></td>
 						<td class="colorLG text-right middle">${Math.round(total21 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
@@ -1227,7 +1591,6 @@ getMonthReport = function(pxcond_mt){
 			$("#rpt99").find("#top-summary").find("tbody[role='body']").yRowspan(12);
 
 
-			$("#rpt99detail").html("");
 			$.each(pDataOrder, function(pIndex, dept_code){
 				var pRow = pResult.contractList[dept_code];
 				var sLength = 0, tLength = 0;
@@ -1235,35 +1598,31 @@ getMonthReport = function(pxcond_mt){
 				if(pRow.hasOwnProperty('3')) tLength = pRow['3'].length;
 				var length = Math.max(sLength, tLength);
 				var html = '';
-				html += `<h5 class="sub-title underline arrow-up" data-usage="toggle" data-target="${dept_code}">${nameMap[dept_code].replaceAll("팀", "")}</h5>`;
-				html += `<table id="detail-${dept_code}" class="table-dashboard table-bordered">
-							<colgroup>
-
-							</colgroup>
-							<thead>
+				html += `<tbody role="content" id="detail-${dept_code}"><tr><td class="text-left" colspan="26">${nameMap[dept_code].replaceAll("팀", "")}</td></tr>`;
+				html += `
 								<tr>
 									<th class="color-contract text-center middle" rowspan="3" style="font-size:24px;"><span class="two-now-year"></span>/<span class="one-now-month"></span></th>
-									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
+									<th class="colorB text-center middle" colspan="6"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.1~<span class="one-now-month"></span>월 누계</th>
 									<th class="colorB text-center middle" rowspan="2">연간목표</th>
 									<th class="colorB text-center middle" rowspan="2">연달성(%)</th>
 									<th class="color-contract text-center middle" rowspan="3" style="font-size:24px;"><span class="two-now-year"></span>/<span class="one-now-month"></span></th>
-									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
+									<th class="colorB text-center middle" colspan="6"><span class="two-now-year"></span>.<span class="one-now-month"></span>월</th>
 									<th class="colorB text-center middle" colspan="4"><span class="two-now-year"></span>.1~<span class="one-now-month"></span>월 누계</th>
 									<th class="colorB text-center middle" rowspan="2">연간목표</th>
 									<th class="colorB text-center middle" rowspan="2">연달성(%)</th>
 								</tr>
 								<tr>
-									<th class="colorB text-center middle">경영목표</th>
-									<th class="colorB text-center middle">점검</th>
+									<th class="colorB text-center middle" colspan="2">경영목표</th>
+									<th class="colorB text-center middle" colspan="2">점검</th>
 									<th class="colorB text-center middle">수주실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
 									<th class="colorB text-center middle">경영목표</th>
 									<th class="colorB text-center middle">수주실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
 									<th class="colorB text-center middle">차질액</th>
-									<th class="colorB text-center middle">경영목표</th>
-									<th class="colorB text-center middle">점검</th>
+									<th class="colorB text-center middle" colspan="2">경영목표</th>
+									<th class="colorB text-center middle" colspan="2">점검</th>
 									<th class="colorB text-center middle">매출실적</th>
 									<th class="colorB text-center middle">달성(%)</th>
 									<th class="colorB text-center middle">경영목표</th>
@@ -1272,6 +1631,8 @@ getMonthReport = function(pxcond_mt){
 									<th class="colorB text-center middle">차질액</th>
 								</tr>
 								<tr data-row="summary">
+									<td class="colorLY text-right middle" colspan="2"></td>
+									<td class="colorLY text-right middle" colspan="2"></td>
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
@@ -1280,10 +1641,8 @@ getMonthReport = function(pxcond_mt){
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
-									<td class="colorLY text-right middle"></td>
-									<td class="colorLY text-right middle"></td>
-									<td class="colorLY text-right middle"></td>
-									<td class="colorLY text-right middle"></td>
+									<td class="colorLY text-right middle" colspan="2"></td>
+									<td class="colorLY text-right middle" colspan="2"></td>
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
@@ -1293,20 +1652,18 @@ getMonthReport = function(pxcond_mt){
 									<td class="colorLY text-right middle"></td>
 									<td class="colorLY text-right middle"></td>
 								</tr>
-							</thead>
-							<tbody>
 								<tr>
 									<td class="color-contract middle text-center">수주</td>
-									<td class="colorB middle text-center">건설사</td>
-									<td class="colorB middle text-center">현장명</td>
+									<td class="colorB middle text-center" colspan="2">건설사</td>
+									<td class="colorB middle text-center" colspan="2">현장명</td>
 									<td class="colorB middle text-center">경영목표</td>
 									<td class="colorB middle text-center">점검</td>
 									<td class="colorB middle text-center">확정</td>
 									<td class="colorB middle text-center">차이</td>
 									<td class="colorB middle text-center" colspan="4">세부내역(+,- 1천만원 이상)</td>
 									<td class="color-contract middle text-center">매출</td>
-									<td class="colorB middle text-center">건설사</td>
-									<td class="colorB middle text-center">현장명</td>
+									<td class="colorB middle text-center" colspan="2">건설사</td>
+									<td class="colorB middle text-center" colspan="2">현장명</td>
 									<td class="colorB middle text-center">경영목표</td>
 									<td class="colorB middle text-center">점검</td>
 									<td class="colorB middle text-center">확정</td>
@@ -1324,8 +1681,8 @@ getMonthReport = function(pxcond_mt){
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
 						html += `	<td class="color-contract middle text-center">수주</td>
-								 	<td class="middle text-left">${pR.bcnc_nm}</td>
-								 	<td class="middle text-left">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
+								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
@@ -1339,8 +1696,8 @@ getMonthReport = function(pxcond_mt){
 					}
 					else{
 						html += `	<td class="color-contract middle text-center">수주</td>
-								 	<td class="middle text-left"></td>
-								 	<td class="middle text-left"></td>
+								 	<td class="middle text-left" colspan="2"></td>
+								 	<td class="middle text-left" colspan="2"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
@@ -1355,8 +1712,8 @@ getMonthReport = function(pxcond_mt){
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
 						html += `	<td class="color-contract middle text-center">매출</td>
-								 	<td class="middle text-left">${pR.bcnc_nm}</td>
-								 	<td class="middle text-left">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
+								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
@@ -1371,8 +1728,8 @@ getMonthReport = function(pxcond_mt){
 					}
 					else{
 						html += `	<td class="color-contract middle text-center">매출</td>
-								 	<td class="middle text-left"></td>
-								 	<td class="middle text-left"></td>
+								 	<td class="middle text-left" colspan="2"></td>
+								 	<td class="middle text-left" colspan="2"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-right"></td>
@@ -1384,36 +1741,55 @@ getMonthReport = function(pxcond_mt){
 				}
 				html += `		<tr>
 									<td class="color-contract middle text-center">수주</td>
-									<td class="colorSky middle text-center" colspan="2">합 계</td>
-									<td class="colorSky middle text-center" colspan="1" style="display:none;">합 계</td>
+									<td class="colorSky middle text-center" colspan="4">합 계</td>
+									<td class="colorSky middle text-center" colspan="4" style="display:none;">합 계</td>
 									<td class="colorSky middle text-right">${Math.round(tot11/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueStot">${Math.round(tot12).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right">${Math.round(tot13/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right ${tot14 < 0 ? 'color-red' : ''}">${Math.round(tot14/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
 									<td class="color-contract middle text-center">매출</td>
-									<td class="colorSky middle text-center" colspan="2">합 계</td>
+									<td class="colorSky middle text-center" colspan="4">합 계</td>
 									<td class="colorSky middle text-right">${Math.round(tot21/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueTtot">${Math.round(tot22).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right">${Math.round(tot23/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right ${tot24 < 0 ? 'color-red' : ''}">${Math.round(tot24/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
 								</tr>`;
-				html += `   </tbody>
-						</table>`;
+				html += `   </tbody>`;
 
-				$("#rpt99detail").append(html);
+				$("#top-summary").append(html);
 				$("#rpt99").find(`tr[data-dept="${dept_code}"] td[data-value="valueS"]`).html(Math.round(tot12).toFormat('NUMBER'));
 				$("#rpt99").find(`tr[data-dept="${dept_code}"] td[data-value="valueT"]`).html(Math.round(tot22).toFormat('NUMBER'));
-				var summaries = $("#rpt99detail").find(`#detail-${dept_code}`).find("tr[data-row='summary'] td");
+
+				//now_day
+				if(now_day < 25){
+					var top_summaries = $("#top-summary").find(`tr[data-dept='${dept_code}']`).find("td[data-column='summary']");
+					var goal_2 = parseInt($(top_summaries).eq(0).html().replaceAll(",", ''));
+					var expect_2 = parseInt($(top_summaries).eq(1).html().replaceAll(",", ''));
+					var rate_2 = 0.0;
+					if(goal_2 != 0){
+						rate_2 = (expect_2*100.0/goal_2).toFixed(1);
+					}
+					$(top_summaries).eq(3).html(rate_2+"%");
+					var goal_3 = parseInt($(top_summaries).eq(10).html().replaceAll(",", ''));
+					var expect_3 = parseInt($(top_summaries).eq(11).html().replaceAll(",", ''));
+					var rate_3 = 0.0;
+					if(goal_3 != 0){
+						rate_3 = (expect_3*100.0/goal_3).toFixed(1);
+					}
+					$(top_summaries).eq(13).html(rate_3+"%");
+				}
+
+				var summaries = $("#rpt99").find(`#detail-${dept_code}`).find("tr[data-row='summary'] td");
 				var answers = $("#top-summary").find(`tr[data-dept='${dept_code}']`).find("td[data-column='summary']");
 				$.each(summaries, function(pIndex, pValue){
 					$(pValue).html(answers.eq(pIndex).html());
 					if(answers.eq(pIndex).hasClass("color-red"))
 						$(pValue).addClass("color-red");
 				});
-				$("#rpt99detail").find(`#detail-${dept_code}`).find("tbody").yRowspan(0);
-				$("#rpt99detail").find(`#detail-${dept_code}`).find("tbody").yRowspan(8);
+				$("#rpt99").find(`#detail-${dept_code}`).yRowspan(0);
+				$("#rpt99").find(`#detail-${dept_code}`).yRowspan(8);
 			});
 			var summary_total = 0;
 			$("#rpt99").find(`td[data-value="valueS"]`).each(function(pIndex, pTag){
@@ -1436,72 +1812,12 @@ getMonthReport = function(pxcond_mt){
 			// for(let _=1;_<=$(document).find("#rpt99detail table thead tr:nth-child(3)").eq(0).find("td").length;_++){
 			// 	$(document).find(`#rpt99detail table thead tr:nth-child(3) td:nth-child(${_})`).widthMatch();
 			// }
-			var target = $("#top-summary tbody[role='body'] tr:nth-child(1)");
-			var table_length = $(document).find("#rpt99detail table").length;
-			for(let i=0;i<table_length;i++){
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(0)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(2)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(2)").widthMatchTarget([$(target).find("td").eq(1), $(target).find("td").eq(3)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(3)").widthMatchTarget([$(target).find("td").eq(4)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(5)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(6)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(7)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(7)").widthMatchTarget([$(target).find("td").eq(8)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(8)").widthMatchTarget([$(target).find("td").eq(9)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(10)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(11)]);
-	
-	
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(12)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(14)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(13), $(target).find("td").eq(15)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(11)").widthMatchTarget([$(target).find("td").eq(16)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(12)").widthMatchTarget([$(target).find("td").eq(17)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(13)").widthMatchTarget([$(target).find("td").eq(18)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(14)").widthMatchTarget([$(target).find("td").eq(19)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(15)").widthMatchTarget([$(target).find("td").eq(20)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(16)").widthMatchTarget([$(target).find("td").eq(21)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(22)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(23)]);
-				
-			}
 
 		}
 	});
 }
 
-$(window).resize(function() {
-			var target = $("#top-summary tbody[role='body'] tr:nth-child(1)");
-			var table_length = $(document).find("#rpt99detail table").length;
-			for(let i=0;i<table_length;i++){
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(0)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(1)").widthMatchTarget([$(target).find("td").eq(2)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(2)").widthMatchTarget([$(target).find("td").eq(1), $(target).find("td").eq(3)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(3)").widthMatchTarget([$(target).find("td").eq(4)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(5)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(6)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(7)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(7)").widthMatchTarget([$(target).find("td").eq(8)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(8)").widthMatchTarget([$(target).find("td").eq(9)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(4)").widthMatchTarget([$(target).find("td").eq(10)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(5)").widthMatchTarget([$(target).find("td").eq(11)]);
 
-
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(6)").widthMatchTarget([$(target).find("td").eq(12)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(14)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(13), $(target).find("td").eq(15)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(11)").widthMatchTarget([$(target).find("td").eq(16)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(12)").widthMatchTarget([$(target).find("td").eq(17)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(13)").widthMatchTarget([$(target).find("td").eq(18)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(14)").widthMatchTarget([$(target).find("td").eq(19)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(15)").widthMatchTarget([$(target).find("td").eq(20)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(2) th:nth-child(16)").widthMatchTarget([$(target).find("td").eq(21)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(9)").widthMatchTarget([$(target).find("td").eq(22)]);
-				$(document).find("#rpt99detail table").eq(i).find("thead tr:nth-child(1) th:nth-child(10)").widthMatchTarget([$(target).find("td").eq(23)]);
-
-			}
-
-});
 $(document).on("click", "#popReport99 h5[data-usage='toggle']", function(){
 	var dept_code = $(this).data("target");
 	$(document).find(`#detail-${dept_code}`).toggle();
@@ -1666,10 +1982,10 @@ $(function() {
 						<col width="100">
 						<col width="100">
 						<col width="*">
-						<col width="100">
-						<col width="250">
+						<col width="140">
+						<col width="210">
 						<col width="80">
-						<col width="100">
+						<col width="140">
 					</colgroup>
 					<tbody role="header">
 						<tr>
@@ -1741,8 +2057,11 @@ getCompletedSujuB = function(s_pxcond_mt)
                     before_price_2 = 0;
                 }
 				var extracted_de = pValue.cntrct_nm.match(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g);
-				if(extracted_de == null || extracted_de.length == 0) extracted_de = '';
+				if(extracted_de == null || extracted_de.length == 0) extracted_de = pValue.b_de;
 				else extracted_de = `20${extracted_de[0].split("/")[0]}년 ${extracted_de[0].split("/")[1]}월`;
+				if(pValue.b_de != extracted_de){
+					console.log(pValue.cntrct_nm, pValue.b_de, extracted_de)
+				}
                 html += '<tr>';
                 html += '    <td class="colorSky">'+pValue.code_nm+'</td>';
                 html += '    <td>'+pValue.bcnc_nm+'</td>';
@@ -1751,7 +2070,7 @@ getCompletedSujuB = function(s_pxcond_mt)
                 html += '    <td>'+pValue.cntrwk_period+'</td>';
 				//
 
-                html += '    <td></td>';
+                html += '    <td>'+pValue.home_count+'</td>';
                 html += '    <td>'+pValue.price_2.toString().toFormat('NUMBER')+'</td>';
                 html += '</tr>';
                 before = pValue.code_nm;

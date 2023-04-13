@@ -1,3 +1,4 @@
+{% include "approvals/common_style.html" %}
 <style>
     .input-available{
         height:36px!important;
@@ -9,17 +10,19 @@
         border-right:1px solid #ddd;
     }
 </style>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
         <col width="25%">
         <col width="25%">
         <col width="25%">
     </colgroup>
-    <tbody>
+    <thead>
         <tr>
-            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td class="colorSky">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
@@ -48,10 +51,9 @@
             <td class="colorSky">공사기간</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
         </tr>
-
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -71,8 +73,10 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15">공사 현황 (영업) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
         </tr>
+    </thead>
+    <tbody role="header">
         <tr>
             <th class="colorB text-center">구분</th>
             <th class="color-contract text-center">내역</th>
@@ -90,7 +94,7 @@
             <th class="color-contract text-center">이익금(VA)</th>
             <th class="color-contract text-center">VA율</th>
         </tr>
-    </thead>
+    </tbody>
     <tbody role="ct_se_code">
         <tr data-row="B">
             <th class="colorB text-center middle" rowspan="2">사전입찰</th>
@@ -126,16 +130,18 @@
     </tbody>
 </table>
 
-<table class="table table-bordered table-form" id="rptTable12">
+<table class="table table-bordered table-form sub-table" id="rptTable12">
 	<colgroup>
 		<col width="145">
 		<col width="150">
 		<col width="*">
 	</colgroup>
-	<tbody>
+    <thead>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="6">⑨ 기타비용(관리)</th>
+			<th class="sub-title colorN text-center" colspan="6"><span>⑨ 기타비용</span></th>
 		</tr>
+    </thead>
+	<tbody>
 		<tr>
 			<th class="color-contract">일자</th>
 			<th class="color-contract">계정과목</th>
@@ -154,7 +160,7 @@
 		</tr>
 	</tfoot>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
 	<colgroup>
 		<col width="100">
 		<col width="100">
@@ -168,12 +174,14 @@
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="sub-title colorN text-center" style="border-right:0px!important;position:relative;height:40px;" colspan="9"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">지급현황</span>
+			<th class="sub-title colorN text-center" colspan="9"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">지급현황</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
             </th>
 		</tr>
+    </thead>
+    <tbody role="header">
 		<tr>
 			<th class="color-contract">A/S일자</th>
 			<th class="color-contract">동 호수</th>
@@ -185,7 +193,7 @@
 			<th class="color-contract">영수증 처리여부</th>
 			<th class="color-contract">비고</th>
 		</tr>
-	</thead>
+	</tbody>
     <tbody role="as_list_row">
         <tr data-row="as_list_tr">
             <td class="hasinput">

@@ -743,7 +743,12 @@ $(document).on("dblclick", ".input-available", function(){
 		processData: false,
 		success: function (pResult) {
 			if(pResult.status){
-				$(td).text(data.toString().toFormat("NUMBER"));
+				if(parseInt(data) == 0){
+					$(td).text('');
+				}
+				else{
+					$(td).text(data.toString().toFormat("NUMBER"));
+				}
 				var total = 0;
 				$(td).parent().find("td.input-available").each(function(pIndex, pTag){
 					let amount = parseInt($(pTag).text().replaceAll(",", ""));
@@ -969,19 +974,28 @@ $(function() {
 		var s_spt_chrg_sn = $("#s_spt_chrg_sn").val();
 		var s_year = $('#dtList1').find('#s_year').val();
 		var s_amt_ty_code = $('#dtList1').find('#s_amt_ty_code').val();
-		if(s_bsn_chrg_sn != '' && s_spt_chrg_sn){
-			$.ajax({
-				url:'/api/goal/ajax_get_contracts_by_member',
-				method: 'POST',
-				data : {"s_bsn_chrg_sn" : s_bsn_chrg_sn, 's_spt_chrg_sn': s_spt_chrg_sn, 's_year': s_year, 's_amt_ty_code': s_amt_ty_code},
-				success : function(pResult){
-					var html = '<option value="">[계약을 선택해주세요.]</option>';
-					$.each(pResult, function(pIndex, pValue){
-						html += `<option value="${pValue.value}">${pValue.label}</option>`
-					});
-					$("#popBox1").find("#cntrct_sn").html(html);
-				}
-			})
+		if(s_amt_ty_code != '8' && s_amt_ty_code != '9'){
+			if(s_bsn_chrg_sn != '' && s_spt_chrg_sn != ''){
+				$.ajax({
+					url:'/api/goal/ajax_get_contracts_by_member',
+					method: 'POST',
+					data : {"s_bsn_chrg_sn" : s_bsn_chrg_sn, 's_spt_chrg_sn': s_spt_chrg_sn, 's_year': s_year, 's_amt_ty_code': s_amt_ty_code},
+					success : function(pResult){
+						var html = '<option value="">[계약을 선택해주세요.]</option>';
+						$.each(pResult, function(pIndex, pValue){
+							html += `<option value="${pValue.value}">${pValue.label}</option>`
+						});
+						$("#popBox1").find("#cntrct_sn").html(html);
+					}
+				})
+			}
+		}
+		else{
+			if(s_bsn_chrg_sn != '' || s_spt_chrg_sn != ''){
+				var html = '<option value="">[계약을 선택해주세요.]</option>';
+				html += '<option value="-1">장려금</option>';
+				$("#popBox1").find("#cntrct_sn").html(html);
+			}
 		}
 	});
 	$('#popBox1').on('hidden.bs.modal', function(pEvent)

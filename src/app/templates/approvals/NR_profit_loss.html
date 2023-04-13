@@ -1,3 +1,4 @@
+{% include "approvals/common_style.html" %}
 <style>
     .input-available{
         height:36px!important;
@@ -9,7 +10,7 @@
         border-right:1px solid #ddd;
     }
 </style>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100">
         <col width="100">
@@ -28,12 +29,15 @@
         <col width="100">
         <col width="100">
     </colgroup>
-    <tbody role="ct_se_code_1">
+    <thead>
         <tr>
-            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">손익발생 현장현황</th>
-            <th colspan="5" style="background:#0070C0;border-color:#0070C0;color:white;">당초 현황</th>
-            <th colspan="7" style="background:#0070C0;border-color:#0070C0;color:white;">변경 현황</th>
+            <th colspan="4" class="sub-title colorN text-center"><span>손익발생 현장현황</span></th>
+            <th colspan="5" class="sub-title colorN text-center"><span>당초 현황</span></th>
+            <th colspan="7" class="sub-title colorN text-center"><span>변경 현황</span></th>
         </tr>
+
+    </thead>
+    <tbody role="ct_se_code_1">
         <tr>
             <td class="colorSky">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no_1" id="cntrct_no_1" readonly></td>
@@ -53,7 +57,7 @@
         <tr>
             <td class="colorSky">현장명</td>
             <td class="text-center hasinput" colspan="3">
-                <select class="form-control select2 w100p" id="cntrct_sn_1" name="cntrct_sn_1" style="padding-top:0px!important;padding-bottom:0px!important;">
+                <select class="form-control select2 w100p" id="cntrct_sn_1" name="cntrct_sn_1" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;">
                     {% if not init %}
                         <option value=""></option>
                         {% for code in contract_list %}
@@ -102,7 +106,7 @@
 
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100">
         <col width="100">
@@ -121,12 +125,14 @@
         <col width="100">
         <col width="100">
     </colgroup>
-    <tbody role="ct_se_code_2">
+    <thead>
         <tr>
-            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">손익발생 현장현황</th>
-            <th colspan="5" style="background:#0070C0;border-color:#0070C0;color:white;">당초 현황</th>
-            <th colspan="7" style="background:#0070C0;border-color:#0070C0;color:white;">변경 현황</th>
+            <th colspan="4" class="sub-title colorN text-center"><span>손익발생 현장현황</span></th>
+            <th colspan="5" class="sub-title colorN text-center"><span>당초 현황</span></th>
+            <th colspan="7" class="sub-title colorN text-center"><span>변경 현황</span></th>
         </tr>
+    </thead>
+    <tbody role="ct_se_code_2">
         <tr>
             <td class="colorSky">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no_2" id="cntrct_no_2" readonly></td>
@@ -146,7 +152,7 @@
         <tr>
             <td class="colorSky">현장명</td>
             <td class="text-center hasinput" colspan="3">
-                <select class="form-control select2 w100p" id="cntrct_sn_2" name="cntrct_sn_2" style="padding-top:0px!important;padding-bottom:0px!important;">
+                <select class="form-control select2 w100p" id="cntrct_sn_2" name="cntrct_sn_2" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;">
                     {% if not init %}
                         <option value=""></option>
                         {% for code in contract_list %}

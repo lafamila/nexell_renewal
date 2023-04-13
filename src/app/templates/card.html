@@ -723,6 +723,22 @@ fnValidate = function(pMode = '')
 		result = false;
 	}
 
+	// 부서
+	var dept_code = $('#popBox1').find('#dept_code').val();
+	if (result == true && fnIsEmpty(dept_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#dept_code').trigger('focus');
+		result = false;
+	}
+
+	// 계정과목
+	var acntctgr_code = $('#popBox1').find('#acntctgr_code').val();
+	if (result == true && fnIsEmpty(acntctgr_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#acntctgr_code').trigger('focus');
+		result = false;
+	}
+
 	return result;
 }
 
@@ -1255,7 +1271,6 @@ getReportCards = function(card_de)
                     $('#popReport1').find('#rptTable'+idx+' tbody[role=footer] td').eq(1).html(pValue.total[0].total.toString().toFormat('NUMBER'));
                     idx += 1;
                 });
-                console.log("order", order);
                 $.each(order, function(k, v){
                     if(v.length == 1){
                         v = "0"+v;

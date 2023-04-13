@@ -374,6 +374,10 @@ getWorkYear = function(){
 			{ data: 'enter_de' , className: 'text-center',
 				render: function(data, type, row, meta) {
 					let std = new Date(row.stdyy);
+					if(row.out_dtm != ''){
+						std = new Date(row.out_dtm);
+					}
+
 					let now = new Date(data);
 					let diff = std.getTime() - now.getTime();
 					let days = diff/1000/60/60/24;
@@ -388,6 +392,9 @@ getWorkYear = function(){
 			{ data: 'enter_de' , className: 'text-center',
 				render: function(data, type, row, meta) {
 					let std = new Date(row.stdyy);
+					if(row.out_dtm != ''){
+						std = new Date(row.out_dtm);
+					}
 					let now = new Date(data);
 					let diff = std.getTime() - now.getTime();
 					let days = diff/1000/60/60/24;
@@ -516,6 +523,7 @@ getWorkYear = function(){
 
 <script>
 $(document).on("dblclick", ".input-available", function(){
+	var before = $(this).html();
 	var column = $(this).data("col");
 
 	var authors = ["*"];
@@ -525,8 +533,8 @@ $(document).on("dblclick", ".input-available", function(){
 		return false;
 	}
 
-	var data = prompt("값을 입력하세요.");
 	if(column != 'rm'){
+		var data = prompt("값을 입력하세요.", before.replaceAll(",", ""));
 		try{
 			if(/^\d+$/.test(data)){
 				data = parseInt(data);
@@ -538,6 +546,10 @@ $(document).on("dblclick", ".input-available", function(){
 			alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
 			return false;
 		}
+
+	}
+	else{
+		var data = prompt("값을 입력하세요.", before);
 
 	}
 	var td = $(this);

@@ -1,0 +1,779 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+<div id="ribbon">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb">
+		<li>홈</li><li>시스템</li><li>코드 관리</li>
+	</ol>
+</div>
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					코드 관리 <span>> 시스템</span>
+			</h1>
+		</div>
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info">
+		<p><i class="fa-fw fa fa-info"></i>
+			시스템 공통 코드를 관리합니다.
+		</p>
+	</div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>그룹코드 목록</h2>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="*">
+									<col width="*">
+									<col width="106">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" id="s_code_nm" name="s_code_nm">
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" id="s_code" name="s_code">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_use_at" name="s_use_at">
+												<option value="">[전체]</option>
+												<option value="Y" selected>Y.사용</option>
+												<option value="N">N.미사용</option>
+											</select>
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>그룹코드명</th>
+										<th>그룹코드</th>
+										<th>사용여부</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insertGroupCode"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+			<article class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>코드 목록</h2>
+						<div class="widget-toolbar">
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover" id="dtList2">
+								<colgroup>
+									<col width="50">
+									<col width="*">
+									<col width="150">
+									<col width="200">
+									<col width="*">
+									<col width="*">
+									<col width="80">
+									<col width="106">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_code_nm" name="s_code_nm">
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="" id="s_code" name="s_code">
+											<input type="hidden" id="s_parnts_code">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_use_at" name="s_use_at">
+												<option value="">[전체]</option>
+												<option value="Y" selected>Y.사용</option>
+												<option value="N">N.미사용</option>
+											</select>
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>코드명</th>
+										<th>코드</th>
+										<th>예비필드1</th>
+										<th>예비필드2</th>
+										<th>예비필드3</th>
+										<th>정렬순서</th>
+										<th>사용여부</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insertCode"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+
+<script type="text/javascript">
+/******************************************************************************
+ * 그룹코드 목록을 조회한다.
+ */
+getGroupCodeList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+        ajax: {
+            url: '/api/code/ajax_get_groupCode_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_code_nm': $('#dtList1').find('#s_code_nm').val(),
+					's_code': $('#dtList1').find('#s_code').val(),
+					's_use_at': $('#dtList1').find('#s_use_at').val()
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+				toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'asc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'code_nm' },
+            { data: 'code' },
+            { data: 'use_at' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-parnts_code="'+row.parnts_code+'" data-code="'+row.code+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+		initComplete: function(settings, json) {
+
+			$(this).on('click', 'tbody tr', function(pEvent) {
+				// pEvent.stopPropagation();
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+
+				var s_parnts_code = $(this).find('td:eq(2)').text();
+				$('#dtList2').find('#s_parnts_code').val(s_parnts_code);
+				$.datatable2.ajax.reload();
+			});
+
+			$(this).on('click', '#btnSearch', function(pEvent) {
+				// pEvent.stopPropagation();
+				$.datatable1.ajax.reload();
+				$.datatable2.ajax.reload();
+			});
+
+			$(this).on('click', '.btnUpdate', function(pEvent) {
+				// pEvent.stopPropagation();
+				var current = pEvent.currentTarget;
+				var parnts_code = $(current).data('parnts_code');
+				var code = $(current).data('code');
+				getCode(parnts_code, code);
+			});
+
+			$(this).on('keypress', 'thead input', function(pEvent){
+				if (pEvent.keyCode === 13) {
+					$('#dtList1').find('#btnSearch').trigger('click');
+				}
+			});
+
+			$(this).on('change', 'thead select', function(pEvent){
+				$('#dtList1').find('#btnSearch').trigger('click');
+			});
+		},
+    });
+}
+
+/******************************************************************************
+ * 코드 목록을 조회한다.
+ */
+getCodeList = function()
+{
+    $.datatable2 = $('#dtList2').DataTable({
+        serverSide: true,
+        ajax: {
+            url: '/api/code/ajax_get_code_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_parnts_code': $('#dtList2').find('#s_parnts_code').val(),
+					's_code_nm': $('#dtList2').find('#s_code_nm').val(),
+					's_code': $('#dtList2').find('#s_code').val(),
+					's_use_at': $('#dtList2').find('#s_use_at').val()
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+				toastrError(pJqXHR);
+            }
+        },
+		order: [6, 'asc'],
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'code_nm' },
+            { data: 'code' },
+            { data: 'estn_code_a' },
+            { data: 'estn_code_b' },
+            { data: 'estn_code_c' },
+            { data: 'code_ordr' },
+            { data: 'use_at' },
+			{ data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-parnts_code="'+row.parnts_code+'" data-code="'+row.code+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+		initComplete: function(settings, json) {
+
+			$(this).on('click', 'tbody tr', function(pEvent) {
+				// pEvent.stopPropagation();
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(this).on('click', '#btnSearch', function(pEvent) {
+				// pEvent.stopPropagation();
+				var parnts_code = $('#dtList2').find('#s_parnts_code').val();
+				if (parnts_code == '') {
+					alert('그룹코드를 선택하세요.');
+					return false;
+				}
+				$.datatable2.ajax.reload();
+			});
+
+			$(this).on('click', '.btnUpdate', function(pEvent) {
+				// pEvent.stopPropagation();
+				var current = pEvent.currentTarget;
+				var parnts_code = $(current).data('parnts_code');
+				var code = $(current).data('code');
+				getCode(parnts_code, code);
+			});
+
+			$(this).on('keypress', 'thead input', function(pEvent){
+				if (pEvent.keyCode === 13) {
+					$('#dtList1').find('#btnSearch').trigger('click');
+				}
+			});
+
+			$(this).on('change', 'thead select', function(pEvent){
+				$('#dtList1').find('#btnSearch').trigger('click');
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function() {
+	getGroupCodeList();
+	getCodeList();
+});
+</script>
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>코드정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button class="btn btn-primary" id="btnSave"><i class="fa fa-save"> 저장</i></button>
+						<button class="btn btn-danger" id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<!-- <input type="hidden" id="" name=""> -->
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="120">
+										<col width="*">
+									</colgroup>
+									<tbody>
+										<tr><th>그룹코드<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="parnts_code" name="parnts_code" readonly>
+											</td>
+										</tr>
+										<tr><th>코드<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="code" name="code">
+											</td>
+										</tr>
+										<tr><th>코드명<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="code_nm" name="code_nm">
+											</td>
+										</tr>
+										<tr><th>예비필드1</th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="estn_code_a" name="estn_code_a">
+											</td>
+										</tr>
+										<tr><th>예비필드2</th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="estn_code_b" name="estn_code_b">
+											</td>
+										</tr>
+										<tr><th>예비필드3</th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="estn_code_c" name="estn_code_c">
+											</td>
+										</tr>
+										<tr><th>코드설명</th>
+											<td class="hasinput" colspan="1">
+												<textarea class="form-control resize-no" style="height:100px;" id="code_dc" name="code_dc"></textarea>
+											</td>
+										</tr>
+										<tr><th>코드순서<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<input class="form-control" type="text" id="code_ordr" name="code_ordr">
+											</td>
+										</tr>
+										<tr><th>사용여부<em>*</em></th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2" id="use_at" name="use_at">
+													<option value="Y">Y.사용</option>
+													<option value="N">N.미사용</option>
+												</select>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+	// $('#popBox1').find('#parnts_code').val('');
+	$('#popBox1').find('#code').val('');
+	$('#popBox1').find('#code_nm').val('');
+	$('#popBox1').find('#estn_code_a').val('');
+	$('#popBox1').find('#estn_code_b').val('');
+	$('#popBox1').find('#estn_code_c').val('');
+	$('#popBox1').find('#code_dc').val('');
+	var parnts_code = $('#popBox1').find('#parnts_code').val();
+	if (parnts_code == 'ROOT') {
+		$('#popBox1').find('#code_ordr').val('0');
+	} else {
+		var code_ordr = $('#popBox1').find('#code_ordr').val();
+		$('#popBox1').find('#code_ordr').val(parseInt(code_ordr)+1);
+	}
+	$('#popBox1').find('#use_at').val('Y').trigger('change');
+}
+
+/******************************************************************************
+ *
+ */
+getCode = function(s_parnts_code, s_code)
+{
+	var params = '';
+	params += '&s_parnts_code=' + s_parnts_code;
+	params += '&s_code=' + s_code;
+
+	$.ajax({
+		url: '/api/code/ajax_get_code',
+		type: 'GET',
+		data: params,
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult !== undefined && pResult !== '') {
+				$('#popBox1').find('#parnts_code').val(pResult.parnts_code);
+				$('#popBox1').find('#code').val(pResult.code);
+				$('#popBox1').find('#code_nm').val(pResult.code_nm);
+				$('#popBox1').find('#estn_code_a').val(pResult.estn_code_a);
+				$('#popBox1').find('#estn_code_b').val(pResult.estn_code_b);
+				$('#popBox1').find('#estn_code_c').val(pResult.estn_code_c);
+				$('#popBox1').find('#code_dc').val(pResult.code_dc);
+				$('#popBox1').find('#code_ordr').val(pResult.code_ordr);
+				$('#popBox1').find('#use_at').val(pResult.use_at).trigger('change');
+
+				$('#popBox1').find('#btnDelete').show();
+				if (pResult.parnts_code == 'ROOT') {
+					$('#popBox1').find('#code').attr('readonly', true);
+					$('#popBox1').find('#estn_code_a').attr('readonly', true);
+					$('#popBox1').find('#estn_code_b').attr('readonly', true);
+					$('#popBox1').find('#estn_code_c').attr('readonly', true);
+					$('#popBox1').find('#code_ordr').attr('readonly', true);
+				} else {
+					$('#popBox1').find('#code').attr('readonly', true);
+					$('#popBox1').find('#estn_code_a').attr('readonly', false);
+					$('#popBox1').find('#estn_code_b').attr('readonly', false);
+					$('#popBox1').find('#estn_code_c').attr('readonly', false);
+					$('#popBox1').find('#code_ordr').attr('readonly', false);
+				}
+				$('#popBox1').data('action', 'update');
+				$('#popBox1').modal('show');
+			}
+		},
+	});
+}
+
+/******************************************************************************
+ *
+ */
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 부모코드
+	var parnts_code = $('#popBox1').find('#parnts_code').val();
+	if (result == true && fnIsEmpty(parnts_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#parnts_code').focus();
+		result = false;
+	}
+
+	// 코드
+	var code = $('#popBox1').find('#code').val();
+	if (result == true && fnIsEmpty(code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#code').focus();
+		result = false;
+	}
+
+	// 코드명
+	var code_nm = $('#popBox1').find('#code_nm').val();
+	if (result == true && fnIsEmpty(code_nm)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#code_nm').focus();
+		result = false;
+	}
+
+	// 코드순서
+	var code_ordr = $('#popBox1').find('#code_ordr').val();
+	if (result == true && fnIsEmpty(code_ordr)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#code_ordr').focus();
+		result = false;
+	}
+
+	// 사용여부
+	var use_at = $('#popBox1').find('#use_at').val();
+	if (result == true && fnIsEmpty(use_at)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#use_at').focus();
+		result = false;
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insertCode = function()
+{
+	$.ajax({
+		url: '/api/code/ajax_insert_code',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(result) {
+			console.log('insertCode', result);
+			if (result.message) {
+				formReset();
+				$('#popBox1').find('#code').trigger('focus');
+				var parnts_code = $('#parnts_code').val();
+				if (parnts_code == 'ROOT') {
+					$.datatable1.ajax.reload();
+					$.datatable2.ajax.reload();
+				} else {
+					$.datatable2.ajax.reload();
+				}
+				fnAlert(result.message);
+			}
+		},
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateCode = function()
+{
+	$.ajax({
+		url: '/api/code/ajax_update_code',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('update');
+		},
+		success: function(result) {
+			// console.log(result);
+			if (result.message) {
+				var parnts_code = $('#parnts_code').val();
+				if (parnts_code == 'ROOT') {
+					$.datatable1.ajax.reload();
+					$.datatable2.ajax.reload();
+				} else {
+					$.datatable2.ajax.reload();
+				}
+				fnAlert(result.message);
+			}
+		},
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteCode = function()
+{
+	$.ajax({
+		url: '/api/code/ajax_delete_code',
+		type: 'POST',
+		data: getFormData($('#frmBox1')[0]),
+		contentType: false,
+		processData: false,
+		success: function(result) {
+			// console.log(result);
+			if (result.message) {
+				var parnts_code = $('#parnts_code').val();
+				if (parnts_code == 'ROOT') {
+					$.datatable1.ajax.reload();
+					$.datatable2.ajax.reload();
+				} else {
+					$.datatable2.ajax.reload();
+				}
+				fnAlert(result.message);
+				$('#popBox1').modal('hide');
+			}
+		},
+	});
+}
+</script>
+<script type="text/javascript">
+$(function() {
+
+    /**************************************************************************
+     * 등록/수정 팝업을 처리한다.
+     */
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		formReset();
+	});
+	$('#popBox1').on('show.bs.modal', function(pEvent)
+	{
+		var action = null;
+		if (pEvent.relatedTarget) {
+			target = $(pEvent.relatedTarget);
+			action = target.data('action');
+		} else {
+			action = $(this).data('action');
+		}
+
+		if (action === undefined || action === '') {
+			console.error('The data-action attribute is not defined.');
+			return false;
+		}
+
+		var modal = $(this); modal.data('action', action);
+		if (action === 'insertGroupCode') {
+			modal.find('#btnDelete').hide();
+			var parnts_code = 'ROOT';
+			modal.find('#parnts_code').val(parnts_code);
+			modal.find('#code_ordr').val('0');
+			modal.find('#code').attr('readonly', false);
+			modal.find('#estn_code_a').attr('readonly', true);
+			modal.find('#estn_code_b').attr('readonly', true);
+			modal.find('#estn_code_c').attr('readonly', true);
+			modal.find('#code_ordr').attr('readonly', true);
+		} else if (action === 'insertCode') {
+			modal.find('#btnDelete').hide();
+			var parnts_code = $('#dtList2').find('#s_parnts_code').val();
+			if (parnts_code == '') {
+				alert('그룹코드를 선택하세요.');
+				return false;
+			}
+			modal.find('#parnts_code').val(parnts_code);
+			var code_ordr = 0;
+			if ($('#dtList2').find('td.dataTables_empty').length == 0) {
+				code_ordr = $('#dtList2').find('tbody>tr').length;
+			}
+			modal.find('#code_ordr').val(code_ordr+1);
+			modal.find('#code').attr('readonly', false);
+			modal.find('#estn_code_a').attr('readonly', false);
+			modal.find('#estn_code_b').attr('readonly', false);
+			modal.find('#estn_code_c').attr('readonly', false);
+			modal.find('#code_ordr').attr('readonly', true);
+		} else if (action === 'update') {
+			modal.find('#btnDelete').show();
+		}
+	});
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		var modal = $(this);
+		var action = modal.data('action');
+		if (action === 'insertGroupCode') {
+			modal.find('#code').trigger('focus');
+		} else if (action === 'insertCode') {
+			modal.find('#code').trigger('focus');
+		} else if (action === 'update') {
+			modal.find('#code_nm').trigger('focus');
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnSave', function(pEvent)
+	{
+		// pEvent.stopPropagation();
+		var action =  $('#popBox1').data('action');
+		if (action === 'insertGroupCode') {
+			insertCode();
+		} else if (action === 'insertCode') {
+			insertCode();
+		} else if (action === 'update') {
+			updateCode();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popBox1').on('click', '#btnDelete', function(pEvent)
+	{
+		// pEvent.stopPropagation();
+		if (confirm('삭제하시겠습니까?')) {
+			deleteCode();
+		}
+	});
+});
+</script>
+
+{% endblock %}

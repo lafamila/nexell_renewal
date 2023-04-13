@@ -4,7 +4,7 @@
 <!--########################################################################-->
 <!--# contents style end                                                   #-->
 <!--########################################################################-->
-
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 <style type="text/css">
 tbody .btnUpdate, tbody .btn{
     line-height: 0.3!important;
@@ -93,7 +93,7 @@ tbody .btnUpdate, tbody .btn{
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
 <!--                            <button type="button" class="btn btn-info" id="s_submit">검색</button>-->
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
-							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button type="button" class="btn btn-success" id="btnExcel" onclick="htmlTableToExcel('xlsx')"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
 						<div class="widget-toolbar">
 						</div>
@@ -268,7 +268,7 @@ tbody .btnUpdate, tbody .btn{
                         <input type="hidden" id="s_resrv_chrg" value="-1"/>
                         <input type="hidden" id="s_resrv_c_chrg" value="-1"/>
 						<div class="widget-body no-padding">
-							<table class="table table-bordered w120p floating-thead" id="dtList1">
+							<table class="table table-bordered w120p" id="dtList1">
 								<colgroup>
 									<col width="65">
 									<col width="80">
@@ -805,6 +805,15 @@ $(document).on("dblclick", ".input-available", function(){
 });
 </script>
 <script type="text/javascript">
+function htmlTableToExcel(type){
+	$("#dtList1").find("tbody tr").each(function(pIndex, pTag){
+		$(pTag).find("td").eq(0).attr("rowspan", "1");
+	});
+ var data = document.getElementById('dtList1').getElementsByTagName("tbody")[0];
+ var excelFile = XLSX.utils.table_to_book(data, {sheet: "sheet1"});
+ XLSX.write(excelFile, { bookType: type, bookSST: true, type: 'base64' });
+ XLSX.writeFile(excelFile, 'ExportedFile:HTMLTableToExcel.' + type);
+}
 $(function () {
   $('table.floating-thead').each(function() {
     if( $(this).css('border-collapse') == 'collapse') {

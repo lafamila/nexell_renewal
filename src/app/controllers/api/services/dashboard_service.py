@@ -289,6 +289,8 @@ def get_completed_suju_b(params):
 				, m.dept_code
 				, (SELECT bcnc_nm FROM bcnc b WHERE b.bcnc_sn = c.bcnc_sn) AS bcnc_nm
 				, CONCAT(c.cntrwk_bgnde,' ~ ',c.cntrwk_endde) AS cntrwk_period
+				, c.home_count
+				, DATE_FORMAT(MIN(cst.regist_dtm), '%%Y년 %%m월') AS b_de
 				FROM cost cst
                     LEFT JOIN contract c
                     ON c.cntrct_sn = cst.cntrct_sn
@@ -632,6 +634,91 @@ def get_projects_by_dept_member(params):
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
+
+def set_extra_goal_contract(params):
+    query = """INSERT INTO dashboard_month(stdyy, d_month, cntrct_sn, dept_code, amt_ty_code) VALUES (%(stdyy)s, %(d_month)s, %(s_cntrct_sn)s, %(s_dept_code)s, %(s_amt_ty_code)s)"""
+    g.curs.execute(query, params)
+
+def delete_extra_goal_contract(params):
+    query = """DELETE FROM dashboard_month WHERE d_sn=%(s_s_cntrct_sn)s"""
+    g.curs.execute(query, params)
+
+
+def get_goal_89(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+    month = int(m)
+    query = """SELECT dashboard_row, dashboard_column, dashboard_data
+                FROM dashboard
+                WHERE dashboard_date='{0}' 
+                AND dashboard_column IN ('rmT', 'valueT')
+                AND dashboard_row < 0""".format(params['s_pxcond_m'])
+
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+
+def get_extra_goal_contract(params):
+    y, m, d = params['s_pxcond_mt'].split("-")
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+    month = int(m)
+    query = """SELECT d.d_sn
+                    , d.stdyy
+                    , d.amt_ty_code
+                    , d.dept_code
+                    , 0 AS value
+                    , d.cntrct_sn
+                    , c.spt_nm AS cntrct_nm
+                    , c.bcnc_sn AS bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+                    , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(d.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=d.cntrct_sn), '') AS dashboard_value
+                    , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(d.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=d.cntrct_sn), '') AS dashboard_rm
+                    , CASE WHEN c.prjct_ty_code IN ('NR') THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                    WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+                    (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+                    WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                    WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+                    (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+                    ELSE 0
+                    END AS cntrct_amount
+                    , CASE d.amt_ty_code
+                    WHEN '2' THEN 
+                    IFNULL((SELECT SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(co.cntrct_execut_code = 'B',0, IFNULL(co.salamt,0)*co.qy), 0),IF(co.cntrct_execut_code = 'C', IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01, 0)))
+                        FROM cost co 
+                       WHERE co.cost_date BETWEEN CONCAT(SUBSTRING('{3}',1,7),'-01') AND CONCAT(SUBSTRING('{3}',1,7),'-31')
+                         AND co.cntrct_execut_code IN ('A', 'B', 'C')
+                         AND co.cntrct_sn = c.cntrct_sn
+                        GROUP BY co.cntrct_sn
+                    ), 0)
+                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
+                    END AS amount
+                    FROM dashboard_month d
+                    LEFT JOIN contract c ON d.cntrct_sn=c.cntrct_sn   
+                    WHERE 1=1
+                    AND amt_ty_code IN ('2', '3')
+                    AND stdyy='{0}'
+                    AND d_month = {1}                 
+                    """.format(y, month, params['s_pxcond_m'], first_day, last_day)
+    data = []
+    if "s_s_dept_code" in params:
+        query += " AND d.dept_code=%s"
+        data.append(params['s_s_dept_code'])
+    if "s_s_amt_ty_code" in params:
+        query += " AND d.amt_ty_code=%s"
+        data.append(params['s_s_amt_ty_code'])
+    print(query)
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
 
 def get_goal_contract(params):
     y, m, d = params['s_pxcond_mt'].split("-")

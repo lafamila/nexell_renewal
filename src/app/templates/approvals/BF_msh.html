@@ -1,0 +1,507 @@
+{% include "approvals/common_style.html" %}
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+</style>
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="colorSky text-center">계약번호</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">현장명</td>
+            <td class="text-center hasinput" colspan="3">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+            <td class="colorSky text-center">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">공사기간</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="12"><span>수수료 보고서</span><span class="text-right">VAT포함</span> </th>
+        </tr>
+        <tr>
+            <th class="colorB text-center">구분</th>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">당사수주(수수료)총액</th>
+            <th class="color-contract text-center">수수료율(%)</th>
+            <th class="color-contract text-center">삼성전자 수주총액</th>
+            <th class="color-contract text-center">M,S/H 매입금액</th>
+            <th class="color-contract text-center">M,S/H 추가DC금액</th>
+            <th class="color-contract text-center">M,S/H 판매금액</th>
+            <th class="color-contract text-center">옵션행사비(기준표)</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="colorLP text-center">이익금(VA)</th>
+            <th class="colorLP text-center">VA율</th>
+        </tr>
+    </thead>
+    <tbody role="ct_se_code">
+        <tr data-row="B">
+            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_fee_amount">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="rate" name="total_rate">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_amount">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="B_61">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="B_61_DC">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="B_63">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="B_7">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="B_10">
+            </td>
+            <td class="text-center" data-column="va"></td>
+            <td class="text-center" data-column="va_rate"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="16"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② M,S/H 매입 현황</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="color-contract text-center">구분</th>
+            <th class="color-contract text-center">상품명</th>
+            <th class="color-contract text-center">출고일</th>
+            <th class="color-contract text-center">모델명</th>
+            <th class="color-contract text-center">수량</th>
+            <th class="color-contract text-center">출고가</th>
+            <th class="color-contract text-center">M,S/H 매입단가</th>
+            <th class="color-contract text-center">M,S/H 매입금액</th>
+            <th class="color-contract text-center">M,S/H 추가DC금액</th>
+            <th class="color-contract text-center">실전시비용</th>
+            <th class="color-contract text-center">매입형태</th>
+            <th class="color-contract text-center">회수예정일</th>
+            <th class="colorP text-center">회수일</th>
+            <th class="colorP text-center">회수수량</th>
+            <th class="colorP text-center">차이수량</th>
+            <th class="colorP text-center">회수창고</th>
+        </tr>
+    </tbody>
+    <tbody role="ms_house_row">
+        <tr data-row="ms_house_tr">
+            <td class="text-center" name="dlivy_de[]"></td>
+            <td class="hasinput" data-target="S">
+                <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput" data-target="S">
+                <input type="text" class="form-control text-left" name="model_no[]"/>
+                <input type="hidden" name="delng_ty_code[]" value="61"/>
+            </td>
+            <td class="hasinput" data-target="S">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+            </td>
+            <td class="hasinput" data-target="S">
+                <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
+            </td>
+            <td class="text-right" data-column="amount"></td>
+            <td class="hasinput" data-target="S">
+                <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput" data-target="S">
+                <input type="text" class="form-control text-center" name="expect_de[]"/>
+            </td>
+            <td class="hasinput" data-target="R">
+                <input type="text" class="form-control text-center" name="return_de[]"/>
+            </td>
+            <td class="hasinput" data-target="R">
+                <input type="text" class="form-control text-center" data-type="number" name="return_dlnt[]"/>
+            </td>
+            <td class="text-right" data-column="diff"></td>
+            <td class="hasinput" data-target="R">
+                <select class="form-control select2" name="stock_place[]" style="width:100%!important;">
+                    <option value=""></option>
+                    <option value="1">이현창고</option>
+                    <option value="2">기타창고</option>
+                </select>
+            </td>
+            <td></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th class="colorG text-center" colspan="4">합계</th>
+            <th class="colorG text-right" data-column="total_dlnt"></th>
+            <th class="colorP text-right" data-column="total_amount"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_diff"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+        </tr>
+    </tfoot>
+</table>
+
+<table class="table table-bordered table-form small-table">
+    <colgroup>
+        <col width="800"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+  <thead>
+    <tr>
+        <th class="sub-title colorN text-center"><span>특이사항</span></th>
+        <th class="sub-title color-contract text-center" colspan="6"><span>모델하우스 설치 기준표</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        <td rowspan="4"></td>
+        <td class="text-center">구분</td>
+        <td class="text-center">1TYPE</td>
+        <td class="text-center">2TYPE</td>
+        <td class="text-center">3TYPE</td>
+        <td class="text-center">4TYPE</td>
+        <td class="text-center">5TYPE</td>
+    </tr>
+    <tr>
+        <td class="text-center">서울권</td>
+        <td class="text-center">800</td>
+        <td class="text-center">1400</td>
+        <td class="text-center">2100</td>
+        <td class="text-center">2800</td>
+        <td class="text-center">3500</td>
+    </tr>
+    <tr>
+        <td class="text-center">수도권</td>
+        <td class="text-center">800</td>
+        <td class="text-center">1400</td>
+        <td class="text-center">2100</td>
+        <td class="text-center">2800</td>
+        <td class="text-center">3500</td>
+    </tr>
+    <tr>
+        <td class="text-center">지방권</td>
+        <td class="text-center">850</td>
+        <td class="text-center">1500</td>
+        <td class="text-center">2250</td>
+        <td class="text-center">3000</td>
+        <td class="text-center">3750</td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        if(selector == "construct_tr"){
+            for(let i=0;i<count;i++){
+                var trs = $(document).find("tbody[role='construct_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("0");
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='construct_row']").append($(origin));
+            }
+            $(document).find("tbody[role='construct_row']").trigger("change");
+            $(document).find("tbody[role='construct_row']").yRowspan(0);
+
+        }
+    }
+    $(document).on("change", "tbody[role='construct_row']", function(){
+        var total = 0;
+        $(this).find("tr").each(function(pIndex, pRow){
+            var count = parseInt($(pRow).find("input[name='construct_count[]']").eq(0).val().replaceAll(",", "")); if(isNaN(count)) count = 0;
+            var amt = parseInt($(pRow).find("input[name='construct_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(amt)) amt = 0;
+            var camt = count * amt;
+            var tax = Math.round(camt*0.1)
+            $(pRow).find("input[name='construct_tax[]']").eq(0).val(tax.toFormat('NUMBER'));
+            $(pRow).find("[data-column='construct_camt']").html(camt.toFormat('NUMBER'));
+            $(pRow).find("[data-column='construct_sum']").html((camt+tax).toFormat('NUMBER'));
+            total += camt+tax;
+        });
+        $(this).find("[data-column='construct_total']").html(total.toFormat('NUMBER'));
+    });
+    $(document).on("change", "tbody[role='ct_se_code']", function(){
+        var totals = [];
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            $(pRow).find("input[data-type='number']").each(function(pI, pTag){
+                var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                total += value;
+            });
+            $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+            totals.push(total);
+            if(pIndex == 0){
+                $(document).find("input[name='D_10']").val(Math.round(total*0.005).toFormat('NUMBER'));
+            }
+        });
+
+        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+    });
+
+    {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("construct_tr", 1);
+    });
+
+    window.projects = {};
+    $(document).ready(function(){
+        $(document).find("tbody[role='construct_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='ct_se_code'] input").attr("disabled", true);
+        $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", true);
+        $.ajax({
+            url : '/api/project/get_b_projects',
+            method: 'GET',
+            success: function(pResult){
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+        var input = document.querySelector('input[data-type="number"]');
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9 \,]/, '');
+        });
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        $(document).find(".colorY").removeClass("colorY");
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+            if(pValue.home_region == "서울권"){
+                $("#option_rate").find("option[value='70']").attr("disabled", true);
+                $("#option_rate").find("option[value='80']").attr("disabled", true);
+                $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                    if($(pTag).html()==pValue.home_region){
+                        $(pTag).addClass("colorY");
+                    }
+                });
+            }
+            else if(pValue.home_region == "수도권" || pValue.home_region == "지방권"){
+                $("#option_rate").find("option[value='70']").attr("disabled", false);
+                $("#option_rate").find("option[value='80']").attr("disabled", false);
+                $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                    if($(pTag).html()==pValue.home_region){
+                        $(pTag).addClass("colorY");
+                    }
+                });
+            }
+            $(document).find("tbody[role='construct_row'] input").attr("disabled", false);
+            $(document).find("tbody[role='ct_se_code'] input").attr("disabled", false);
+            $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
+            if(!isNaN(parseInt(pValue.home_count))){
+                for(let i=0;i<7;i++){
+                    if(parseInt(pValue.home_count) < 500+i*250){
+                        window.home_count = 500+i*250;
+                        break;
+                    }
+                }
+                $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
+                    if($(pTag).html() == window.home_count.toFormat('NUMBER')+"세대"){
+                        $(pTag).addClass("colorY");
+                    }
+                });
+            }
+        }
+    });
+    $(document).on("change", "#option_rate", function(){
+        var option_rate = $("#option_rate").find(":selected").val();
+        if(option_rate != ''){
+            if($("#home_count").val() != ''){
+                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt($("#home_count").val().replaceAll(",", ""))/100).toFormat('NUMBER'));
+            }
+            var home_region = $("#home_region").val();
+            $(document).find(`[data-region="${home_region}"][data-column="분양"]`).removeClass("colorY");
+            $(document).find(`[data-region="${home_region}"][data-rate="${$(this).data("before")}"][data-column="${window.home_count}"]`).removeClass("colorY");
+            $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
+            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${window.home_count}"]`);
+            $(target).addClass("colorY");
+            var done = false;
+            if(target.length > 0){
+                var rates = parseInt(target.html().replaceAll(",", ""));
+                if(!isNaN(rates)){
+                    $("input[name='B_7']").val((rates*10000).toFormat('NUMBER'));
+                    $("input[name='B_7']").focus();
+                    $("input[name='B_7']").focusout();
+                    done = true;
+                }
+            }
+            if(!done){
+                $("input[name='B_7']").attr("readonly", false);
+            }
+            else{
+                $("input[name='B_7']").attr("readonly", true);
+            }
+        }
+        $(this).data("before", option_rate);
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function(){
+        var home_region = $("#home_region").val();
+        var home_count = $("#home_count").val().replaceAll(",", "");
+        var home_count_col = '';
+        for(let i=0;i<7;i++){
+            if(parseInt(home_count) < 500+i*250){
+                home_count_col = 500+i*250;
+                break;
+            }
+        }
+        $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
+            if($(pTag).html() == home_count_col.toFormat('NUMBER')+"세대"){
+                $(pTag).addClass("colorY");
+            }
+        });
+
+
+        var option_rate = $("#option_rate").find(":selected").val();
+        if(home_region == "서울권"){
+            $("#option_rate").find("option[value='70']").attr("disabled", true);
+            $("#option_rate").find("option[value='80']").attr("disabled", true);
+            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                if($(pTag).html()==home_region){
+                    $(pTag).addClass("colorY");
+                }
+            });
+        }
+        else if(home_region == "수도권" || home_region == "지방권"){
+            $("#option_rate").find("option[value='70']").attr("disabled", false);
+            $("#option_rate").find("option[value='80']").attr("disabled", false);
+            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                if($(pTag).html()==home_region){
+                    $(pTag).addClass("colorY");
+                }
+            });
+        }
+        if(option_rate != ''){
+            if($("#home_count").val() != ''){
+                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt(home_count)/100).toFormat('NUMBER'));
+            }
+           $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
+            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${home_count_col}"]`);
+            $(target).addClass("colorY");
+        }
+    }
+    {% endif %}
+</script>

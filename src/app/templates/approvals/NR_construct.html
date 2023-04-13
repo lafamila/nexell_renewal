@@ -1,3 +1,4 @@
+{% include "approvals/common_style.html" %}
 <style>
     .input-available{
         height:36px!important;
@@ -9,17 +10,19 @@
         border-right:1px solid #ddd;
     }
 </style>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
         <col width="25%">
         <col width="25%">
         <col width="25%">
     </colgroup>
-    <tbody>
+    <thead>
         <tr>
-            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td class="colorSky">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
@@ -48,23 +51,9 @@
             <td class="colorSky">공사기간</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
         </tr>
-        <tr>
-            <td class="colorSky">도급사</td>
-            <td class="text-center hasinput" colspan="3">
-                <select class="form-control select2 w100p" id="outsrc_sn" name="outsrc_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
-                    {% if not init %}
-                        <option value=""></option>
-                        {% for code in bcnc_list %}
-                        <option value="{{code.value}}">{{code.label}}</option>
-                        {% endfor %}
-                    {% endif %}
-                </select>
-
-            </td>
-        </tr>
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -84,8 +73,10 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15">공사비 현황</th>
+			<th class="sub-title colorN text-center" colspan="15"><span>공사비 현황</span></th>
         </tr>
+    </thead>
+    <tbody role="header">
         <tr>
             <th class="color-contract text-center" colspan="4">계약현황</th>
             <th class="color-contract text-center" colspan="9">실행현황</th>
@@ -108,7 +99,7 @@
             <th class="color-contract text-center">이익금</th>
             <th class="color-contract text-center">VA율</th>
         </tr>
-    </thead>
+    </tbody>
     <tbody>
         <tr>
             <td class="text-right" data-type='number' name="C_1"></td>
@@ -129,7 +120,7 @@
         </tr>
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -148,7 +139,7 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="14" style="border-right:0px!important;">설치비 기성산출</th>
+			<th class="sub-title colorN text-center" colspan="14"><span>설치비 기성산출</span></th>
         </tr>
     </thead>
     <tbody role="body1">

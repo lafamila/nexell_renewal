@@ -1,6 +1,16 @@
 {% extends 'common/main_base.html' %}
 {% block content %}
-
+<style>
+    div.report table td.bottom_border, div.report table th.bottom_border{
+        border-bottom:2px solid #333!important;
+    }
+    div.report table td.right_border, div.report table th.right_border{
+        border-right:2px solid #333!important;
+    }
+    .colorLLG{
+        background-color:rgb(233,233,233)!important;
+    }
+</style>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 
 <!--########################################################################-->
@@ -97,20 +107,20 @@
                             <th class="colorN text-center middle" rowspan="2">팀</th>
                             <th class="colorN text-center middle" rowspan="2">거래처</th>
                             <th class="colorN text-center middle" rowspan="2">현장명</th>
-                            <th class="colorN text-center middle" rowspan="2">현장<br/>관리</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">현장<br/>관리</th>
                             <th class="colorN text-center middle" rowspan="2">공사<br/>계약금액</th>
                             <th class="colorN text-center middle" rowspan="2">전월누계</th>
                             <th class="colorN text-center middle" rowspan="2">%</th>
                             <th class="colorN text-center middle" rowspan="2">당월기성</th>
                             <th class="colorN text-center middle" rowspan="2">%</th>
                             <th class="colorN text-center middle" rowspan="2">기성누계</th>
-                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">%</th>
                             <th class="colorN text-center middle" rowspan="2">집행<br/>예상금액</th>
                             <th class="colorN text-center middle" rowspan="2">전월누계</th>
                             <th class="colorN text-center middle" rowspan="2">%</th>
                             <th class="colorN text-center middle" colspan="4">당월집행</th>
                             <th class="colorN text-center middle" rowspan="2">집행누계</th>
-                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">%</th>
                             <th class="colorN text-center middle" rowspan="2">공정률</th>
                             <th class="colorN text-center middle" rowspan="2">VA</th>
                             <th class="colorN text-center middle" rowspan="2">청구비<br/>차이</th>
@@ -151,6 +161,8 @@
             processData: false,
             success: function (pResult) {
                 var html = '';
+                var before = '';
+                var before_class = 1;
                 $.each(pResult, function(pIndex, pValue){
                     var divider = 10000;
                     var c_cntrct_amount = Math.round(pValue.c_cntrct_amount/divider);
@@ -169,42 +181,47 @@
                     var e_rate1 = e_completed_amount*100.0/e_cntrct_amount;
                     var e_rate2 = e_now_amount*100.0/e_cntrct_amount;
                     var e_rate3 = e_total*100.0/e_cntrct_amount;
-
-
+                    if(before != '' && before != pValue.bsn_dept_nm){
+                        before_class++;
+                    }
+                    before = pValue.bsn_dept_nm;
+                    var _class = (before_class%2 == 0) ? "colorLLG" : "";
                     html += `<tr>
-                                <td class="text-center middle">${pValue.bsn_dept_nm}</td>
-                                <td class="text-center middle">${pValue.cntrct_bcnc_nm}</td>
-                                <td class="text-left middle">${pValue.spt_nm}</td>
-                                <td class="text-center middle">${pValue.spt_chrg_nm}</td>
-                                <td class="text-right middle">${c_cntrct_amount.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${c_completed_amount.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${c_rate1.toFixed(1)+"%"}</td>
-                                <td class="text-right middle">${c_now_amount.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${c_rate2.toFixed(1)+"%"}</td>
-                                <td class="text-right middle">${c_total.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${c_rate3.toFixed(1)+"%"}</td>
-                                <td class="text-right middle">${e_cntrct_amount.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${e_completed_amount.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${e_rate1.toFixed(1)+"%"}</td>
-                                <td class="text-right middle">${e_now_amount1.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${e_now_amount2.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${e_now_amount.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${e_rate2.toFixed(1)+"%"}</td>
-                                <td class="text-right middle">${e_total.toFormat('NUMBER')}</td>
-                                <td class="text-right middle">${e_rate3.toFixed(1)+"%"}</td>
-                                <td class="text-right middle">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
-                                <td class="text-right middle"></td>
-                                <td class="text-right middle">${(c_total-e_total).toFormat('NUMBER')}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td class="${_class} text-center middle">${pValue.bsn_dept_nm}</td>
+                                <td class="${_class} text-center middle">${pValue.cntrct_bcnc_nm}</td>
+                                <td class="${_class} text-left middle">${pValue.spt_nm}</td>
+                                <td class="${_class} text-center middle right_border">${pValue.spt_chrg_nm}</td>
+                                <td class="${_class} text-right middle">${c_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${c_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${c_rate1.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${c_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${c_rate2.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${c_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border">${c_rate3.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${e_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_rate1.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${e_now_amount1.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_now_amount2.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_rate2.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${e_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border">${e_rate3.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
+                                <td class="${_class} text-right middle"></td>
+                                <td class="${_class} text-right middle">${(c_total-e_total).toFormat('NUMBER')}</td>
+                                <td class="${_class}"></td>
+                                <td class="${_class}"></td>
+                                <td class="${_class}"></td>
                              </tr>`;
                 });
                 $("#rptParnterStatus1").find("tbody[role='body']").html(html);
                 $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(0);
+
                 $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(1);
                 $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(2);
                 $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(3);
+
 
             }
         });

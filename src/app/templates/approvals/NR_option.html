@@ -1,3 +1,4 @@
+{% include "approvals/common_style.html" %}
 <style>
     .input-available{
         height:36px!important;
@@ -9,17 +10,19 @@
         border-right:1px solid #ddd;
     }
 </style>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
         <col width="25%">
         <col width="25%">
         <col width="25%">
     </colgroup>
-    <tbody>
+    <thead>
         <tr>
-            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td class="colorSky">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
@@ -79,7 +82,7 @@
         </tr>
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -99,8 +102,10 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15">공사 현황 (영업) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
         </tr>
+    </thead>
+    <tbody role="header">
         <tr>
             <th class="colorB text-center">구분</th>
             <th class="color-contract text-center">내역</th>
@@ -118,7 +123,7 @@
             <th class="color-contract text-center">이익금(VA)</th>
             <th class="color-contract text-center">VA율</th>
         </tr>
-    </thead>
+    </tbody>
     <tbody role="ct_se_code">
         <tr data-row="B">
             <th class="colorB text-center middle" rowspan="2">사전입찰</th>
@@ -153,7 +158,7 @@
         </tr>
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -166,7 +171,7 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="8" style="border-right:0px!important;">⑧ 옵션행사비</th>
+			<th class="sub-title colorN text-center" colspan="8"><span>⑧ 옵션행사비<span></span></th>
         </tr>
         <tr>
             <th class="color-contract text-center">구분</th>
@@ -214,9 +219,10 @@
         </tr>
     </tfoot>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form small-table">
     <colgroup>
-        <col width="1000"/>
+        <col width="900"/>
+        <col width="100"/>
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
@@ -229,8 +235,8 @@
     </colgroup>
   <thead>
     <tr>
-        <th class="colorN text-center">특이사항</th>
-        <th class="color-contract text-center" colspan="10">옵션행사비 기준표(4일기준)</th>
+        <th class="sub-title colorN text-center"><span>특이사항</span></th>
+        <th class="sub-title color-contract text-center" colspan="10"><span>옵션행사비 기준표(4일기준)</span></th>
     </tr>
   </thead>
   <tbody>

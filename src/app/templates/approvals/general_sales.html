@@ -1,3 +1,4 @@
+{% include "approvals/common_style.html" %}
 <style>
     .input-available{
         height:36px!important;
@@ -9,15 +10,17 @@
         border-right:1px solid #ddd;
     }
 </style>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
         <col width="75%">
     </colgroup>
-    <tbody>
+    <thead>
         <tr>
-            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">공사현황</th>
+            <th colspan="2" class="sub-title colorN text-center"><span>공사현황</span></th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td class="colorSky">판매처</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="sale_company" id="sale_company"></td>
@@ -33,17 +36,19 @@
 
     </tbody>
 </table>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
         <col width="25%">
         <col width="25%">
         <col width="25%">
     </colgroup>
-    <tbody>
+    <thead>
         <tr>
-            <th colspan="4" style="background:#0070C0;border-color:#0070C0;color:white;">계약정보</th>
+            <th colspan="4" class="sub-title colorN text-center"><span>계약정보</span></th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td class="colorSky">계약일</td>
             <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="cntrct_de" id="cntrct_de"></td>
@@ -53,7 +58,7 @@
 
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100">
         <col width="120">
@@ -70,11 +75,13 @@
         <col width="120">
     </colgroup>
     <thead>
-        <th class="sub-title colorN text-center" style="border-right:0px!important;position:relative;height:40px;" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
+        <th class="sub-title colorN text-center" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
             <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                 <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
             </div>
         </th>
+    </thead>
+    <tbody role="header">
        <tr>
             <th class="color-contract">판매구분</th>
             <th class="color-contract">매입일</th>
@@ -90,7 +97,7 @@
             <th class="colorLP">VA</th>
             <th class="colorLP">비고</th>
         </tr>
-    </thead>
+    </tbody>
     <tbody role="equip_row">
         <tr data-row="equip_tr">
             <td class="hasinput">

@@ -23,7 +23,11 @@ def update_member(params):
     data = OrderedDict()
     for key in params:
         if key not in ("mber_sn"):
-            if key in required:
+            if key in ("out_de",):
+                if params[key] == '':
+                    params[key] = None
+                data[key] = params[key]
+            elif key in required:
                 if params[key] != '':
                     data[key] = key
             else:
@@ -75,6 +79,8 @@ def get_member(member_sn):
                 , register_id
                 , update_dtm
                 , updater_id
+                , check_rate
+                , check_work
                 FROM member m
                 WHERE 1=1
                 AND ctmmny_sn = 1
@@ -84,7 +90,7 @@ def get_member(member_sn):
     member = g.curs.fetchone()
     return member
 def get_member_info(member_sn):
-    row = g.curs.execute("""SELECT m.mber_sn AS member_sn, m.mber_id AS member_id, m.mber_nm AS member_nm, m.author_sn AS auth_cd, m.ctmmny_sn AS client_sn, c.bizrno, (SELECT code_nm FROM code WHERE PARNTS_CODE='OFCPS_CODE' AND code=m.ofcps_code) AS member_level, (SELECT code_nm FROM code WHERE PARNTS_CODE='DEPT_CODE' AND code=m.dept_code) AS dept_nm 
+    row = g.curs.execute("""SELECT m.mber_sn AS member_sn, m.dept_code AS dept_code, m.mber_id AS member_id, m.mber_nm AS member_nm, m.author_sn AS auth_cd, m.ctmmny_sn AS client_sn, c.bizrno, (SELECT code_nm FROM code WHERE PARNTS_CODE='OFCPS_CODE' AND code=m.ofcps_code) AS member_level, (SELECT code_nm FROM code WHERE PARNTS_CODE='DEPT_CODE' AND code=m.dept_code) AS dept_nm 
     , (SELECT MAX(regist_dtm) as login_dtm FROM history WHERE member_sn=m.mber_sn AND view_title='로그인' GROUP BY mber_sn, view_title) AS login_dtm
     FROM member m LEFT JOIN ctmmny c ON m.ctmmny_sn = c.ctmmny_sn WHERE m.mber_sn=%s""", (member_sn, ))
     member = g.curs.fetchone()
@@ -244,4 +250,8 @@ def insert_todo(params):
 
 def update_todo(params):
     query = """UPDATE todo SET todo_text=%(todo_text)s WHERE todo_sn=%(todo_sn)s"""
+    g.curs.execute(query, params)
+
+def delete_member(params):
+    query = "DELETE FROM member WHERE mber_sn=%(mber_sn)s"
     g.curs.execute(query, params)

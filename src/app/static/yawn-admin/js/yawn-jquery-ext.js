@@ -126,7 +126,6 @@ $.fn.yRowClassNext = function(colIdx, _className, isStats) {
 				rowspans.push(row+parseInt(rowspan));
 			}
         });
-        console.log(rowspans);
 		var _ = 0;
         $('tr', this).each(function(row) {
 			if(row == (parseInt(rowspans[_])-1)){

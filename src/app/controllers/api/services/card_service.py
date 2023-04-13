@@ -149,7 +149,7 @@ def get_cardbil(params):
 def insert_cardbil(params):
     data = OrderedDict()
     for key in params:
-        if key not in ("cntrct_sn",):
+        if key not in ("cntrct_sn", "papr_invstmnt_sn", "dept_code"):
             if params[key] != '':
                 data[key] = params[key]
         else:
@@ -172,6 +172,10 @@ def insert_cardbil(params):
 
     if "updater_id" not in params:
         data["updater_id"] = session["member"]["member_id"]
+
+    if "card_dtls" not in data:
+        data["card_dtls"] = ""
+
 
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]

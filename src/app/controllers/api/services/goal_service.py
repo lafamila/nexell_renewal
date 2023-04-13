@@ -60,7 +60,7 @@ def get_contract_list_by_amt_regist(params):
     if params["s_amt_ty_code"] == "2":
         query += " AND (progrs_sttus_code IN ('B', 'P'))".format(params['s_year'])
     else:
-        query += " AND progrs_sttus_code = 'B' "
+        query += " AND (progrs_sttus_code IN ('B', 'P'))".format(params['s_year'])
 
     if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
         query += " AND c.bsn_chrg_sn=%s"
@@ -99,7 +99,7 @@ def get_goals_summary(params):
                 LEFT OUTER JOIN contract c ON g.cntrct_sn=c.cntrct_sn
                 WHERE 1=1
                 AND m.mber_sttus_code='H'
-                AND c.cntrct_sn <> 0                
+                AND (c.cntrct_sn <> 0 or g.cntrct_sn=-1)
     """
     data = []
     if "s_amt_ty_code" in params and params["s_amt_ty_code"]:
@@ -160,7 +160,7 @@ def get_goals(params):
                 LEFT OUTER JOIN contract c ON g.cntrct_sn=c.cntrct_sn
                 WHERE 1=1
                 AND m.mber_sttus_code='H'
-                AND c.cntrct_sn <> 0
+                AND (c.cntrct_sn <> 0 or g.cntrct_sn = -1)
     """
     data = []
     if "s_amt_ty_code" in params and params["s_amt_ty_code"]:
@@ -191,6 +191,7 @@ def get_goals(params):
     params["columns[code_ordr][data]"] = 'code_ordr'
     params["columns[code_ordr][data]"] = 'code_ordr'
     params["order[0][dir]"] = 'ASC'
+    print(query, data)
     return dt_query(query, data, params)
 
 def get_goals_by_member(params):
@@ -216,6 +217,8 @@ def insert_goals(params, cntrct_sns):
     g.curs.executemany(query, data)
 
 def set_goals(params):
+    if int(params['data']) == 0 :
+        params['data'] = None
     query = """UPDATE goal SET {}=%(data)s WHERE stdyy=%(s_year)s AND amt_ty_code=%(s_amt_ty_code)s AND cntrct_sn=%(s_cntrct_sn)s AND mber_sn=%(s_mber_sn)s""".format(params["column"])
     g.curs.execute(query, params)
 

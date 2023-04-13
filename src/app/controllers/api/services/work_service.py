@@ -47,6 +47,8 @@ def get_work_datatable(params):
         data.append(int(params["s_cal_year"])-1)
 
     query += " ORDER BY code_ordr, mber_sttus_code, mber_nm"
+    print(query)
+    print(data)
     return dt_query(query, data, params)
 
 def get_work_time(params):
@@ -182,7 +184,7 @@ def get_work(params):
                     , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm
                     , m.dept_code
                     , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
-                    , IFNULL(wt.rate_tot, 0) AS rate_count
+                    , IF(m.check_rate='1', IFNULL(wt.rate_tot, 0), 0) AS rate_count
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='tot2'), (15 + FLOOR(DATEDIFF('{0}', m.enter_de)/730))) AS tot
                     , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS `use`
                     , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2, 3, 5, 6)) AS `half`
@@ -197,7 +199,8 @@ def get_work(params):
                     , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%m/%%d')) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS use_dates
                     , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%m/%%d')) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2,3,5,6)) AS half_dates
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
-                FROM member m
+    				, (SELECT code_ordr FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_ordr
+                FROM (SELECT mber_sn, mber_nm, ofcps_code, dept_code, enter_de, check_rate FROM member WHERE check_work='1' AND mber_sttus_code='H' AND dept_code <> '') m
                 LEFT OUTER JOIN 
                 (SELECT SUM(IF(WSTime IS NULL OR WSTime='', 0,
                     CASE DAYOFWEEK(STR_TO_DATE(WorkDate, %s))-1
@@ -212,11 +215,11 @@ def get_work(params):
                 LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
                 ON m.mber_nm=w.Name
                 WHERE 1=1
-                AND m.mber_sttus_code='H'
-                AND m.dept_code <> ''
-                ORDER BY code_ordr ASC
+                ORDER BY code_ordr ASC, ofcps_ordr ASC
                     """.format(work_date, work_year)
+
     data = ['%Y%m%d', '%Y%m%d', '{}%'.format(work_year), work_date.replace("-", "")]
+    print(query, data)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result

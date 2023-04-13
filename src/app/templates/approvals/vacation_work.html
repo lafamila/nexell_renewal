@@ -52,7 +52,7 @@ $(function() {
 	let offset = (new Date()).getTimezoneOffset() * 60000;
 	$(document).find("input[name='reg_date']").val((new Date(now.getTime()-offset)).toISOString().split("T")[0]);
 	var maxYears = 5;
-	$('.datepicker-e').datepicker({
+	$('.datepicker-e').datepicker`({
 		beforeShow: function(dateText) {
 			$(this).data('before', $(this).val());
 		},
@@ -64,7 +64,7 @@ $(function() {
 			minDate.setDate(minDate.getDate() - (365*maxYears));
 			$(".datepicker-s").datepicker( "option", "minDate", minDate );
 		},
-	});
+	});`
 
 	var end = $('.datepicker-e').val();
 	if (end == '') {

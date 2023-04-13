@@ -26,6 +26,43 @@ def disconnect(response):
     g.db.close()
     return response
 
+@bp.route('/code/ajax_get_groupCode_datatable', methods=['POST'])
+def code_ajax_get_groupCode_datatable():
+    params = request.form.to_dict()
+    result = cm.get_groupCode_datatable(params)
+    return jsonify(result)
+
+@bp.route('/code/ajax_get_code_datatable', methods=['POST'])
+def code_ajax_get_code_datatable():
+    params = request.form.to_dict()
+    result = cm.get_code_datatable(params)
+    return jsonify(result)
+
+@bp.route('/code/ajax_get_code', methods=['GET'])
+def code_ajax_get_code():
+    params = request.args.to_dict()
+    result = cm.get_code(params)
+    return jsonify(result)
+
+@bp.route('/code/ajax_insert_code', methods=['POST'])
+def code_ajax_insert_code():
+    params = request.form.to_dict()
+    cm.insert_code(params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
+
+@bp.route('/code/ajax_update_code', methods=['POST'])
+def code_ajax_update_code():
+    params = request.form.to_dict()
+    cm.update_code(params)
+    return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+@bp.route('/code/ajax_delete_code', methods=['POST'])
+def code_ajax_delete_code():
+    params = request.form.to_dict()
+    cm.delete_code(params)
+    return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
+
+
+
 @bp.route('/bnd/ajax_get_bcnc_list', methods=['GET'])
 def ajax_get_bcnc_list():
     params = request.args.to_dict()
@@ -61,7 +98,7 @@ def ajax_get_bnd():
     result['account'] = dict()
     for acc in accounts:
         cntrct_sn = str(acc['cntrct_sn'])
-        delng_ty_code = 'M' if acc['p_delng_ty_code'] == '61' else 'S'
+        delng_ty_code = 'M' if acc['p_delng_ty_code'] in ('61', '62') else 'S'
         dlivy_de = acc['s_dlivy_de']
         if cntrct_sn not in result['account']:
             result['account'][cntrct_sn] = {"M" : [], "S" : []}
@@ -181,7 +218,6 @@ def ajax_set_bnd_data():
 def ajax_set_month_data():
     params = request.args.to_dict()
     cm.set_month_data(params)
-
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
 
 @bp.route('/memo/ajax_get_memo_list', methods=['GET'])

@@ -1,30 +1,51 @@
 from flask import session, jsonify, g, render_template
 from app.helpers.datatable_helper import dt_query
 import json
+from . import refresh_code_list
 
 def get_approval_template(url, init=True):
-    return render_template("approvals/{}.html".format(url), init=init)
+    return render_template("approvals/{}.html".format(url), init=init, **refresh_code_list())
 
 def get_approval_ty_list(params):
     query = """SELECT code
-    , code_nm
-    , code_dc
-    , estn_code_a as parent_code
-    , estn_code_b as template_url
-    , estn_code_c AS api_url 
-    FROM code
-    WHERE use_at='Y'
-    AND parnts_code='APPROVAL_TY_CODE'
-    ORDER BY code_ordr"""
+                    , code_nm
+                    , code_dc
+                    , estn_code_a AS parent_code
+                FROM code
+                WHERE use_at='Y'
+                AND parnts_code='APPROVAL_TTY_CODE'
+                ORDER BY estn_code_a, code_ordr"""
+
     g.curs.execute(query)
     rows = g.curs.fetchall()
+
+    query = """SELECT c.code
+    , c.code_nm
+    , c.code_dc
+    , (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=c.estn_code_a) AS top_parent_code
+    , c.estn_code_a as parent_code
+    , c.estn_code_b as template_url
+    , c.estn_code_c AS api_url 
+    , c.code_ordr
+    FROM code c
+    WHERE c.use_at='Y'
+    AND c.parnts_code='APPROVAL_TY_CODE'
+    ORDER BY c.code_ordr"""
+    g.curs.execute(query)
+    d_rows = g.curs.fetchall()
 
     result = {}
     for r in rows:
         parent_code = r['parent_code']
         if parent_code not in result:
-            result[parent_code] = list()
-        result[parent_code].append(r)
+            result[parent_code] = dict()
+        if r['code'] not in result[parent_code]:
+            result[parent_code][r['code']] = [(r['code_nm'], r['code_dc']), dict()]
+
+    for r in d_rows:
+        top_parent_code = r['top_parent_code']
+        parent_code = r['parent_code']
+        result[top_parent_code][parent_code][-1][r['code_ordr']] = r
     return result
 
 def insert_approval(params):
@@ -33,6 +54,13 @@ def insert_approval(params):
     query = "INSERT INTO approval(approval_ty_code, approval_data, approval_title, reg_mber) VALUES (%s, %s, %s, %s)"
     g.curs.execute(query, (params['approval_ty_code'], params['approval_data'], params['approval_title'], mber_sn))
     return g.curs.lastrowid
+
+def delete_approval(params):
+    query = "DELETE FROM approval_member WHERE approval_sn=%(approval_sn)s"
+    g.curs.execute(query, params)
+    query = "DELETE FROM approval WHERE approval_sn=%(approval_sn)s"
+    g.curs.execute(query, params)
+
 
 def insert_approval_member(params):
     approval_list = params['approval_list']
@@ -44,6 +72,8 @@ def get_approval(params):
     query = """SELECT a.approval_sn
                 , (SELECT estn_code_b FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS template_url
                 , (SELECT estn_code_c FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS api_url
+                , (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_se_code
+                , a.approval_ty_code
                 , a.approval_data
                 , a.approval_title
                 FROM approval a
@@ -73,7 +103,12 @@ def get_approval_member(params):
 
 def update_approval(params):
     data = [params['approval_status_code']]
-    query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=NOW() """
+    if int(data[0]) in (1, -1):
+        query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=NOW() """
+    else:
+        query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=%s """
+        data.append(None)
+
     if "memo" in params and params["memo"]:
         query += ", memo=%s"
         data.append(params['memo'])
@@ -86,16 +121,29 @@ def get_approval_datatable(params):
     query = """SELECT a.approval_sn
 				, a.approval_ty_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS approval_ty_nm
-				, (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS approval_se_code
-				, (SELECT c.code_nm FROM code c WHERE c.parnts_code='APPROVAL_SE_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_se_nm
+				, (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_se_code
+				, (SELECT c.code_nm FROM code c WHERE parnts_code='APPROVAL_SE_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code))) AS approval_se_nm
 				, a.approval_title
-				, '' AS approval_status
+				, CASE 
+				WHEN mi.approval_status_code='0' THEN '상신' 
+				WHEN m.approval_status_code='1' THEN '완결'
+				WHEN (SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1' THEN '반려'
+				WHEN n.mber_sn=am.mber_sn THEN '미결'
+				WHEN am.approval_status_code='1' THEN IF(am.reg_type='2', '수신', '완료')
+				END AS approval_status
 				, DATE_FORMAT(a.reg_dtm, '%%Y-%%m-%%d') AS start_de
-				, '' AS end_de
-				, '' AS final_mber_nm
+				, IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '') AS end_de
+				, (SELECT mber_nm FROM member WHERE mber_sn=m.mber_sn) AS final_mber_nm
+				, (SELECT mber_nm FROM member WHERE mber_sn=a.reg_mber) AS start_mber_nm
 				FROM (SELECT * FROM approval_member WHERE mber_sn=%s ) am
 				LEFT JOIN approval a 
 				ON am.approval_sn=a.approval_sn
+				INNER JOIN 
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) m ON a.approval_sn=m.approval_sn
+				INNER JOIN 
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) mi ON a.approval_sn=mi.approval_sn
+				LEFT OUTER JOIN 
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='0' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) n ON a.approval_sn=n.approval_sn
 				WHERE 1=1
 				AND a.reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
 """.format(params['s_start_de_start'], params['s_start_de_end'])

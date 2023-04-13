@@ -1,6 +1,38 @@
 from flask import current_app
 from app.connectors import DB
 
+def refresh_code_list():
+    def wrapper(**params):
+        return params
+
+    return wrapper(selng_ty_code_list=get_code_list('selng_ty_code'.upper()),
+                prdlst_se_code_list=get_code_list('prdlst_se_code'.upper()),
+                dept_code_list=get_code_list('dept_code'.upper()),
+                card_code_list=get_code_list('card_code'.upper()),
+                puchas_ty_code_list=get_code_list('ct_se_code'.upper()),
+                delng_se_code_list=get_code_list('delng_se_code'.upper()),
+                ofcps_code_list=get_code_list('ofcps_code'.upper()),
+                rspofc_code_list=get_code_list('rspofc_code'.upper()),
+                prjct_ty_code_list=get_code_list('prjct_ty_code'.upper()),
+                progrs_sttus_code_list=get_code_list('progrs_sttus_code'.upper()),
+                approval_se_code_list=get_code_list('approval_se_code'.upper()),
+                approval_ty_code_list=get_code_list('approval_ty_code'.upper()),
+                mber_sttus_code_list=get_code_list('mber_sttus_code'.upper()),
+                acntctgr_code_list=get_code_list('acntctgr_code'.upper()),
+                rcppay_se_code_list=get_code_list('rcppay_se_code'.upper()),
+                acnut_code_list=get_code_list('acnut_code'.upper()),
+                bsnm_se_code_list=get_code_list('bsnm_se_code'.upper()),
+                bcnc_se_code_list=get_code_list('bcnc_se_code'.upper()),
+                author_list=get_author_list(),
+                bcnc_list=get_bcnc_list(),
+                member_list=get_member_list(),
+                prduct_ty_code_list=get_code_list('prduct_ty_code'.upper()),
+                prduct_sse_code_list=get_code_list('prduct_sse_code'.upper()),
+                invn_sttus_code_list=get_code_list('invn_sttus_code'.upper()),
+                inventory_list=get_inventory_name_list(),
+                contract_list=get_contract_list(),
+                amt_ty_code_list=get_code_list('amt_ty_code'.upper()))
+
 def get_contract_list():
     db = DB()
     curs = db.cursor()

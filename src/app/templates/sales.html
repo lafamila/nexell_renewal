@@ -149,41 +149,41 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_delng_se_code" name="s_delng_se_code">
 												<option value="">[전체]</option>
-												{delng_se_code_list}
-												<option value="{value}">{value}.{label}</option>
-												{/delng_se_code_list}
+												{% for code in delng_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_delng_ty_code1" name="s_delng_ty_code1">
 												<option value="">[전체]</option>
-												{puchas_ty_code_list}
-												<option value="{value}">{value}.{label}</option>
-												{/puchas_ty_code_list}
+												{% for code in puchas_ty_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_delng_ty_code2" name="s_delng_ty_code2">
 												<option value="">[전체]</option>
-												{selng_ty_code_list}
-												<option value="{value}">{value}.{label}</option>
-												{/selng_ty_code_list}
+												{% for code in selng_ty_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
 												<option value="">[전체]</option>
-												{bcnc_list}
-												<option value="{value}">{value}.{label}</option>
-												{/bcnc_list}
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_prdlst_se_code" name="s_prdlst_se_code">
 												<option value="">[전체]</option>
-												{prdlst_se_code_list}
-												<option value="{value}">{value}.{label}</option>
-												{/prdlst_se_code_list}
+												{% for code in prdlst_se_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
@@ -195,9 +195,9 @@ tbody .btnUpdate, tbody .btnPrint{
                                         <th class="hasinput">
 											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
 												<option value="">[전체]</option>
-												{dept_code_list}
-												<option value="{value}">{label}</option>
-												{/dept_code_list}
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
@@ -1516,6 +1516,7 @@ $(function() {
 		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S1]').parent().hide();
 		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S2]').parent().hide();
 		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S3]').parent().hide();
+		$('#popBox1').find('input:radio[name=t_delng_se_code]:input[value=S4]').parent().hide();
         getInventoryDeleteList();
 	});
 	$('#popBox1').on('shown.bs.modal', function(pEvent)

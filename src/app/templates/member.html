@@ -51,6 +51,7 @@
 							<table class="datatable table table-bordered table-hover" id="dtList1">
 								<colgroup>
 									<col width="50">
+									<col width="50">
 									<col width="120">
 									<col width="*">
 									<col width="120">
@@ -69,6 +70,8 @@
 									<!-- 검색 -->
 									<tr>
 										<th class="search">검색</th>
+										<th class="hasinput">
+										</th>
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="" id="s_mber_id" name="s_mber_id">
 										</th>
@@ -134,6 +137,7 @@
 									<!-- 헤더 -->
 									<tr>
 										<th>No.</th>
+										<th>사번</th>
 										<th>아이디</th>
 										<th>이름</th>
 										<th>연락처</th>
@@ -203,6 +207,7 @@ getMemberList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
+            { data: 'mber_sn' },
             { data: 'mber_id' },
             { data: 'mber_nm' },
             { data: 'mber_telno' },
@@ -429,6 +434,30 @@ $(function() {
 												<input type="text" class="form-control datepicker-e" style="display:inline-block;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="out_de" name="out_de" placeholder="[퇴사일자]">
 											</td>
 										</tr>
+										<tr><th>지각표기여부</th>
+											<td class="hasinput" colspan="1">
+												<div class="btn-group btn-group-justified" data-toggle="buttons">
+													<label class="btn btn-default">
+														<input type="radio" name="check_rate" value="1">표기
+													</label>
+													<label class="btn btn-default">
+														<input type="radio" name="check_rate" value="0">미표기
+													</label>
+												</div>
+											</td>
+										</tr>
+										<tr><th>연차체크여부</th>
+											<td class="hasinput" colspan="1">
+												<div class="btn-group btn-group-justified" data-toggle="buttons">
+													<label class="btn btn-default">
+														<input type="radio" name="check_work" value="1">표기
+													</label>
+													<label class="btn btn-default">
+														<input type="radio" name="check_work" value="0">미표기
+													</label>
+												</div>
+											</td>
+										</tr>
 										<tr><th>현장관리 가능 수<em>*</em></th>
 											<td class="hasinput" colspan="1">
 												<input class="form-control" type="text" id="mber_size" name="mber_size">
@@ -468,6 +497,8 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#mber_size').val('');
 		$('#popBox1').find('#enter_de').val('');
 		$('#popBox1').find('#out_de').val('');
+		$('#popBox1').find('input[name="check_rate"]').yVal('');
+		$('#popBox1').find('input[name="check_work"]').yVal('');
 		$('#popBox1').find('#dept_code').val('').trigger('change');
 		$('#popBox1').find('#ofcps_code').val('').trigger('change');
 		$('#popBox1').find('#rspofc_code').val('').trigger('change');
@@ -499,6 +530,7 @@ getMember = function(s_mber_sn)
 		dataType: 'json',
 		success: function(result) {
 			// console.log(result);
+			console.log(result);
 			if (result !== undefined && result !== '') {
 				$('#popBox1').find('#mber_sn').val(result.mber_sn);
 				$('#popBox1').find('#mber_id').val(result.mber_id);
@@ -513,6 +545,8 @@ getMember = function(s_mber_sn)
 				$('#popBox1').find('#ofcps_code').val(result.ofcps_code).trigger('change');
 				$('#popBox1').find('#rspofc_code').val(result.rspofc_code).trigger('change');
 				$('#popBox1').find('#author_sn').val(result.author_sn).trigger('change');
+				$('#popBox1').find('input:radio[name=check_rate]').yVal(result.check_rate);
+				$('#popBox1').find('input:radio[name=check_work]').yVal(result.check_work);
 				$('#popBox1').find('#mber_sttus_code').val(result.mber_sttus_code).trigger('change');
 				$('#popBox1').data('action', 'update');
 				$('#popBox1').modal('show');
@@ -569,6 +603,19 @@ fnValidate = function(pMode = '')
 		$('#popBox1').find('#mber_sttus_code').focus();
 		result = false;
 	}
+
+	var check_rate = $('input[name=check_rate]:checked').val();
+	if (result == true && fnIsEmpty(check_rate)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		result = false;
+	}
+
+	var check_work = $('input[name=check_work]:checked').val();
+	if (result == true && fnIsEmpty(check_work)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		result = false;
+	}
+
 
 	return result;
 }
@@ -629,7 +676,7 @@ updateMember = function()
 deleteMember = function()
 {
 	$.ajax({
-		url: '{base_url}member/ajax_delete_member',
+		url: '/api/member/ajax_delete_member',
 		type: 'POST',
 		data: getFormData($('#frmBox1')[0]),
 		contentType: false,

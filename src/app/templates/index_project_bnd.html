@@ -1,0 +1,222 @@
+{% extends 'common/report_base.html' %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport6">
+<style>
+                            div.report table th.colorSkyB{
+                                background:rgb(146, 205, 220)!important;
+                                font-weight: bold;
+                            }
+
+</style>
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+				<div id="rpt6">
+				<!--<div class="title"><h2 class="colorLS" id="title">팀별 VA 현황</h2></div>-->
+				<style>
+
+					#rpt6 .table>tbody>tr>td, #rpt6 .table>tbody>tr>th, #rpt6 .table>tfoot>tr>td, #rpt6 .table>tfoot>tr>th, #rpt6 .table>thead>tr>td, #rpt6 .table>thead>tr>th {
+						line-height: 1.0 !important;
+					}
+					#rpt6 .colorEG{
+						background: rgb(255,204,153)!important;
+						font-weight: bold;
+						color: black;
+					}
+					#rpt6 .colorJ{
+						background: #3d8b40!important;
+						font-weight: bold;
+						color: white;
+					}
+					#rpt6 #dtList1{
+						font-size: 10px!important;
+					}
+
+				</style>
+				<style>
+				@media (min-width: 100px) and (max-width: 1024px) {
+
+					#popReport6 div.report table th,
+					#popReport6 div.report table td {
+						font-size: 8px!important;
+						padding: 7px 5px!important;
+						line-height: 1.0!important;
+					}
+				}
+				</style>
+				<!-- 기성 현황 시작 -->
+                <table class="table table-bordered w50p" style="width: 90%!important;margin: 0 auto;" id="dtList1">
+                    <colgroup>
+                        <col width="80">
+
+                        <col width="65">
+                        <col width="65">
+                        <col width="65">
+                        <col width="65">
+                        <col width="65">
+                        <col width="65">
+                        <col width="65">
+
+                    </colgroup>
+                    <thead>
+                        <!-- 헤더 -->
+                        <tr>
+                            <th class="colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="2">현장명</th>
+                            <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="2">담당</th>
+                            <th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="2">M/H</th>
+                            <th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="2">S/H</th>
+                            <th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="2">판매/수수료</th>
+                        </tr>
+                        <tr>
+                            <th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">잔액</th>
+                            <th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:65px;">회수예정일</th>
+                            <th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">잔액</th>
+                            <th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:65px;">회수예정일</th>
+                            <th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">잔액</th>
+                            <th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:65px;">준공예정일</th>
+                        </tr>
+                    </thead>
+                    <tbody role='exec'>
+                    </tbody>
+                    <tbody role='total'>
+
+                    </tbody>
+                </table>
+				<!-- 기성 현황 끝 -->
+				</div>
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<script>
+  var progrs = {1 : '진행', 2 : '사전<br>입찰', 3 : '유보'};
+  $(document).ready(function(){
+	var params = "";
+
+	params += '&bnd_year='+(new Date()).toISOString().split("-")[0];
+	$.ajax({
+		url: '/api/bnd/ajax_get_bnd',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+            var html = '';
+            let offset = (new Date()).getTimezoneOffset() * 60000;
+            let nowStr = (new Date((new Date()).getTime() - offset)).toISOString().split("T")[0];
+            let nowYear = nowStr.split("-")[0];
+            let nowMonth = nowStr.split("-")[1];
+            $.each(pResult.data, function(pIndex, pValue){
+                var nextDate = new Date(parseInt(`20${pValue.cntrwk_endde.split("/")[0]}`), parseInt(`${pValue.cntrwk_endde.split("/")[1]}`)+2, 0);
+                var nextDateStr = (new Date(nextDate.getTime()-offset)).toISOString().split("T")[0];
+                var _style = "display:none;";
+                var _class = '';
+                if((nextDateStr.split("-")[0] == nowYear) && (nextDateStr.split("-")[1] == nowMonth)){
+                    _style = "";
+                    _class = "colorY";
+                }
+
+                html += `<tr class="row${pValue.cntrct_sn}" id="${pValue.cntrct_sn}" style="${_style}">
+                            <td class="bold colorBtn top_border middle" style="text-align:left;">${pValue.spt_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center">${pValue.bsn_chrg_nm}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.cntrwk_endde}</td>
+                        </tr>`;
+            });
+            $("#dtList1").find("tbody[role=exec]").html(html);
+
+            $.each(pResult.taxbill, function(cntrct_sn, pValue){
+                var mSum = 0;
+                $.each(pValue.M, function(pIndex, pRow){
+                    mSum += pRow[1];
+                });
+                var sSum = 0;
+                $.each(pValue.S, function(pIndex, pRow){
+                    sSum += pRow[1];
+                });
+                var tSum = 0;
+                $.each(pValue.T, function(pIndex, pRow){
+                    tSum += pRow[1];
+                });
+                if(pResult.rcppay.hasOwnProperty(cntrct_sn)){
+                    mSum -= pResult.rcppay[cntrct_sn].M;
+                    sSum -= pResult.rcppay[cntrct_sn].S;
+                    tSum -= pResult.rcppay[cntrct_sn].T;
+                }
+                console.log(mSum, sSum, tSum);
+                 $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(2).html((mSum/1000).toFormat('NUMBER'));
+                 $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(4).html((sSum/1000).toFormat('NUMBER'));
+                 $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(6).html((tSum/1000).toFormat('NUMBER'));
+            });
+            $.each(pResult.account, function(cntrct_sn, pRow){
+                var isShow = false;
+
+            	if(pRow.M.length > 0){
+					var pDate = pRow.M[pRow.M.length-1];
+					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`)+12, 0);
+					var nextDateStr = (new Date(nextDate.getTime()-offset)).toISOString().split("T")[0];
+					$(document).find(`.row${cntrct_sn}`).eq(0).find("td").eq(3).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+                    if((nextDateStr.split("-")[0] == nowYear) && (nextDateStr.split("-")[1] == nowMonth)){
+                        isShow = true;
+                        $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(3).addClass("colorY");
+                    }
+				}
+            	if(pRow.S.length > 0) {
+					var pDate = pRow.S[pRow.S.length - 1];
+					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`) + 6, 0);
+					var nextDateStr = (new Date(nextDate.getTime() - offset)).toISOString().split("T")[0];
+					$(document).find(`.row${cntrct_sn}`).eq(0).find("td").eq(5).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+                    if((nextDateStr.split("-")[0] == nowYear) && (nextDateStr.split("-")[1] == nowMonth)){
+                        isShow = true;
+                        $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(5).addClass("colorY");
+                    }
+				}
+                if(isShow){
+                    $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).show();
+                }
+            });
+
+            // $("#dtList1").find("tbody[role=exec]").yRowspan(0);
+            // $("#dtList1").find("tbody[role=exec]").yRowspan(1);
+        }
+	});
+
+
+  });
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport6').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+	});
+</script>
+<!-- 레포트1 레이어 팝업 끝 -->
+{% endblock %}

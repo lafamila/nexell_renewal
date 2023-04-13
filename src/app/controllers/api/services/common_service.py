@@ -5,6 +5,237 @@ import datetime
 import calendar
 import dateutil
 
+def get_groupCode_datatable(params):
+    query = """SELECT ctmmny_sn
+				, parnts_code
+				, code
+				, code_nm
+				, code_dc
+				, code_ordr
+				, estn_code_a
+				, estn_code_b
+				, estn_code_c
+				, use_at
+				, regist_dtm
+				, register_id
+				, update_dtm
+				, updater_id
+				FROM code
+				WHERE 1=1
+				AND ctmmny_sn = '1'
+				AND parnts_code = 'ROOT' """
+    data = []
+
+    if "s_code" in params and params["s_code"]:
+        query += " AND code LIKE %s "
+        data.append("%{}%".format(params['s_code']))
+
+    if "s_code_nm" in params and params["s_code_nm"]:
+        query += " AND code_nm LIKE %s "
+        data.append("%{}%".format(params['s_code_nm']))
+
+    if "s_use_at" in params and params["s_use_at"]:
+        query += " AND use_at = %s "
+        data.append(params['s_use_at'])
+
+    return dt_query(query, data, params)
+
+def get_code_datatable(params):
+    query = """SELECT ctmmny_sn
+				, parnts_code
+				, code
+				, code_nm
+				, code_dc
+				, code_ordr
+				, estn_code_a
+				, estn_code_b
+				, estn_code_c
+				, use_at
+				, regist_dtm
+				, register_id
+				, update_dtm
+				, updater_id
+				FROM code
+				WHERE 1=1
+				AND ctmmny_sn = '1'
+				AND parnts_code = '{0}'
+""".format(params['s_parnts_code'])
+    data = []
+
+    if "s_code" in params and params["s_code"]:
+        query += " AND code LIKE %s "
+        data.append("%{}%".format(params['s_code']))
+
+    if "s_code_nm" in params and params["s_code_nm"]:
+        query += " AND code_nm LIKE %s "
+        data.append("%{}%".format(params['s_code_nm']))
+
+    if "s_use_at" in params and params["s_use_at"]:
+        query += " AND use_at = %s "
+        data.append(params['s_use_at'])
+
+    return dt_query(query, data, params)
+
+def get_code(params):
+    query = """SELECT ctmmny_sn
+				, parnts_code
+				, code
+				, code_nm
+				, code_dc
+				, code_ordr
+				, estn_code_a
+				, estn_code_b
+				, estn_code_c
+				, use_at
+				, regist_dtm
+				, register_id
+				, update_dtm
+				, updater_id
+				FROM code
+				WHERE 1=1
+				AND ctmmny_sn = '1'
+				AND parnts_code = '{0}'
+				AND code = '{1}'
+""".format(params['s_parnts_code'], params['s_code'])
+    g.curs.execute(query)
+    result = g.curs.fetchone()
+    return result
+
+def insert_code(params):
+    query = """INSERT INTO code
+				( ctmmny_sn
+				, parnts_code
+				, code
+				, code_nm
+				, code_dc
+				, code_ordr
+				, estn_code_a
+				, estn_code_b
+				, estn_code_c
+				, use_at
+				, regist_dtm
+				, register_id
+				)
+				VALUES
+				( '1'
+				, %(parnts_code)s
+				, %(code)s
+				, %(code_nm)s
+				, %(code_dc)s
+				, %(code_ordr)s
+				, %(estn_code_a)s
+				, %(estn_code_b)s
+				, %(estn_code_c)s
+				, %(use_at)s
+				, %(regist_dtm)s
+				, %(register_id)s
+				)
+"""
+    data = dict()
+
+    data['parnts_code'] = None
+    if "parnts_code" in params and params["parnts_code"]:
+        data["parnts_code"] = params["parnts_code"]
+
+    data['code'] = None
+    if "code" in params and params["code"]:
+        data["code"] = params["code"]
+
+    data['code_nm'] = None
+    if "code_nm" in params and params["code_nm"]:
+        data["code_nm"] = params["code_nm"]
+
+    data['code_dc'] = None
+    if "code_dc" in params and params["code_dc"]:
+        data["code_dc"] = params["code_dc"]
+
+    data['code_ordr'] = None
+    if "code_ordr" in params and params["code_ordr"]:
+        data["code_ordr"] = params["code_ordr"]
+
+    data['estn_code_a'] = None
+    if "estn_code_a" in params and params["estn_code_a"]:
+        data["estn_code_a"] = params["estn_code_a"]
+
+    data['estn_code_b'] = None
+    if "estn_code_b" in params and params["estn_code_b"]:
+        data["estn_code_b"] = params["estn_code_b"]
+
+    data['estn_code_c'] = None
+    if "estn_code_c" in params and params["estn_code_c"]:
+        data["estn_code_c"] = params["estn_code_c"]
+
+    data['use_at'] = None
+    if "use_at" in params and params["use_at"]:
+        data["use_at"] = params["use_at"]
+
+    data['regist_dtm'] = None
+    if "regist_dtm" in params and params["regist_dtm"]:
+        data["regist_dtm"] = params["regist_dtm"]
+    else:
+        data["regist_dtm"] = datetime.datetime.now()
+
+    data['register_id'] = None
+    if "register_id" in params and params["register_id"]:
+        data["register_id"] = params["register_id"]
+    else:
+        data["register_id"] = session['member']['member_id']
+
+    g.curs.execute(query, data)
+
+def update_code(params):
+    data = dict()
+    data['parnts_code'] = None
+    if "parnts_code" in params and params["parnts_code"]:
+        data["parnts_code"] = params["parnts_code"]
+
+    data['code'] = None
+    if "code" in params and params["code"]:
+        data["code"] = params["code"]
+
+    data['code_nm'] = None
+    if "code_nm" in params and params["code_nm"]:
+        data["code_nm"] = params["code_nm"]
+
+    data['code_dc'] = None
+    if "code_dc" in params and params["code_dc"]:
+        data["code_dc"] = params["code_dc"]
+
+    data['code_ordr'] = None
+    if "code_ordr" in params and params["code_ordr"]:
+        data["code_ordr"] = params["code_ordr"]
+
+    data['estn_code_a'] = None
+    if "estn_code_a" in params and params["estn_code_a"]:
+        data["estn_code_a"] = params["estn_code_a"]
+
+    data['estn_code_b'] = None
+    if "estn_code_b" in params and params["estn_code_b"]:
+        data["estn_code_b"] = params["estn_code_b"]
+
+    data['estn_code_c'] = None
+    if "estn_code_c" in params and params["estn_code_c"]:
+        data["estn_code_c"] = params["estn_code_c"]
+
+    data['use_at'] = None
+    if "use_at" in params and params["use_at"]:
+        data["use_at"] = params["use_at"]
+
+    data['update_dtm'] = None
+    if "update_dtm" in params and params["update_dtm"]:
+        data["update_dtm"] = params["update_dtm"]
+    else:
+        data["update_dtm"] = datetime.datetime.now()
+
+    data['updater_id'] = None
+    if "updater_id" in params and params["updater_id"]:
+        data["updater_id"] = params["updater_id"]
+    else:
+        data["updater_id"] = session['member']['member_id']
+
+    query = """UPDATE code SET {} WHERE ctmmny_sn = '1' AND parnts_code='{}' AND code='{}'""".format(", ".join(["{0}=%({0})s".format(key) for key, value in data.items() if value is not None]), params['parnts_code'], params['code'])
+    g.curs.execute(query, data)
+
 def get_bcncs():
     query = """SELECT DISTINCT c.bcnc_sn AS num
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS name
@@ -18,6 +249,14 @@ def get_bcncs():
     result = g.curs.fetchall()
     return result
 
+def delete_code(params):
+    query = """DELETE
+				FROM code
+				WHERE 1=1
+				AND ctmmny_sn = '1'
+				AND parnts_code = '{0}'
+				AND code = '{1}' """.format(params['parnts_code'], params['code'])
+    g.curs.execute(query)
 def get_chrgs():
     query = """SELECT DISTINCT c.bsn_chrg_sn AS num
 				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS name
@@ -110,7 +349,7 @@ def get_s34_account_list(params):
 
 def get_s6_account_list(params):
     query = """SELECT CAST(DATE_FORMAT(s.dlivy_de, %s) AS CHAR ) AS s_dlivy_de
-    				, p.delng_ty_code AS p_delng_ty_code
+    				, IF(p.delng_ty_code IN ('61', '62'), '61', '64') AS p_delng_ty_code
     				, c.cntrct_sn
     				FROM account s
     				LEFT JOIN account p
@@ -121,7 +360,7 @@ def get_s6_account_list(params):
                     ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
     				WHERE s.ctmmny_sn = 1
     				AND s.delng_se_code = 'S'
-    				AND p.delng_ty_code IN ('61', '62')
+    				AND p.delng_ty_code IN ('61', '62', '64', '65')
     """
     data = ['%y/%m']
     if "s_resrv_type" in params and params['s_resrv_type']:
@@ -145,7 +384,7 @@ def get_s6_account_list(params):
         query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
         data.append(params["s_resrv_c_chrg"])
 
-    query += """ GROUP BY s_dlivy_de, p.delng_ty_code, c.cntrct_sn
+    query += """ GROUP BY s_dlivy_de, IF(p.delng_ty_code IN ('61', '62'), '61', '64'), c.cntrct_sn
     	         ORDER BY s_dlivy_de ASC """
     g.curs.execute(query, data)
     result = g.curs.fetchall()

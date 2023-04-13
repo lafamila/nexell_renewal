@@ -1,3 +1,4 @@
+{% include "approvals/common_style.html" %}
 <style>
     .input-available{
         height:36px!important;
@@ -9,22 +10,26 @@
         border-right:1px solid #ddd;
     }
 </style>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
-        <col width="75%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
     </colgroup>
+    <thead>
+        <tr>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
+        </tr>
+    </thead>
     <tbody>
         <tr>
-            <th colspan="2" style="background:#0070C0;border-color:#0070C0;color:white;">현장현황</th>
-        </tr>
-        <tr>
             <td class="colorSky">계약번호</td>
-            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
         </tr>
         <tr>
             <td class="colorSky">현장명</td>
-            <td class="text-center hasinput">
+            <td class="text-center hasinput" colspan="3">
                 <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
                     {% if not init %}
                         <option value=""></option>
@@ -39,19 +44,16 @@
         <tr>
             <td class="colorSky">세대수</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
-        </tr>
-        <tr>
             <td class="colorSky">지역</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
         </tr>
         <tr>
             <td class="colorSky">공사기간</td>
-            <td class="hasinput"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
         </tr>
-
     </tbody>
 </table>
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -71,8 +73,10 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15">공사 현황 (영업) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
         </tr>
+    </thead>
+    <tbody role="header">
         <tr>
             <th class="colorB text-center">구분</th>
             <th class="color-contract text-center">내역</th>
@@ -90,7 +94,7 @@
             <th class="color-contract text-center">이익금(VA)</th>
             <th class="color-contract text-center">VA율</th>
         </tr>
-    </thead>
+    </tbody>
     <tbody role="ct_se_code_contract">
         <tr data-row="C">
             <th class="colorB text-center middle" rowspan="2">수주계약</th>
@@ -126,7 +130,7 @@
     </tbody>
 </table>
 
-<table class="table table-bordered table-form">
+<table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -142,10 +146,11 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" style="border-right:0px!important;position:relative;height:40px;" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 (관리/자동) - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
             </th>
-
         </tr>
+    </thead>
+    <tbody role="header">
         <tr>
             <th class="color-contract text-center">출고일</th>
             <th class="color-contract text-center">상품명</th>
@@ -160,7 +165,7 @@
             <th class="color-contract text-center">매입처</th>
             <th class="color-contract text-center">비고</th>
         </tr>
-    </thead>
+    </tbody>
     <tbody role="equip_row">
         <tr data-row="equip_tr">
             <td class="text-center" name="dlivy_de[]"></td>
@@ -228,17 +233,19 @@
         padding:2px!important;
     }
 </style>
-<table class="table table-bordered table-form" style="width:35%!important;">
+<table class="table table-bordered table-form small-table" style="width:35%!important;">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
     </colgroup>
-  <tbody>
+  <thead>
     <tr>
-        <th class="colorN text-center" colspan="4">특이사항</th>
+        <th class="sub-title colorN text-center" colspan="4"><span>특이사항</span></th>
     </tr>
+  </thead>
+  <tbody>
     <tr>
         <td class="text-center" colspan="4"></td>
     </tr>
