@@ -343,9 +343,8 @@ getSalesApprovalList = function()
 
 			$(myList).on('click', '.btnUpdate', function(pEvent) {
 				var eq_sn = $(this).data('eq_sn');
-                var dlivy_de = prompt("매입일을 입력하세요.");
-                //TODO : 날짜형식 확인하고 업데이트 ajax 실행 ==> 그 컨트롤러에서 매입매출장 만들기
-				$.datatable1.ajax.reload();
+				$('#popBox1').find("#eq_sn").val(eq_sn);
+				$('#popBox1').modal('show');
 			});
 			$(myList).on('change', 'thead input.form-control', function(pEvent){
 				if ($(this).data('before')) {
@@ -431,6 +430,102 @@ $(function(){
      */
 	getSalesApprovalList();
 });
+
+
+
 </script>
 
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>매입/매출</span></a>
+						</li>
+						<!-- <li class="" data-action="2">
+							<a data-toggle="tab" href="#popEdit1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>매출</span></a>
+						</li> -->
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar" id="popEditToolbar">
+						<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+
+								<table class="table table-bordered">
+									<colgroup>
+										<col width="120">
+										<col width="320">
+										<col width="120">
+										<col width="320">
+									</colgroup>
+									<tbody id="selng">
+									<form id="frmBoxS">
+										<input type="hidden" id="eq_sn" name="eq_sn"/>
+										<tr>
+											<th>출고일</th>
+											<td class="hasinput" colspan="1">
+												<div class="input-group" style="width:100%!important;">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="dlivy_de" name="dlivy_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td colspan="2"></td>
+										</tr>
+										<tr>
+											<th class="required">매출유형</th>
+											<td class="hasinput" colspan="1">
+												<select class="form-control select2 w100p" id="delng_ty_code" name="delng_ty_code">
+													<option value=""></option>
+													{% for code in selng_ty_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+                                            <th>수금예정일</th>
+											<td class="hasinput" colspan="1">
+												<div class="input-group">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="expect_de" name="expect_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+										</tr>
+									</form>
+									</tbody>
+								</table>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+	$('#popBox1').on('click', '#btnSave', function(pEvent) {
+		var params = {"eq_sn" : $("#eq_sn").val(), "expect_de" : $("#expect_de").val(), "delng_ty_code" : $("#delng_ty_code option:selected").val(), "dlivy_de" : $("#dlivy_de").val()};
+		console.log(params);
+		$.ajax({
+			url : '/api/sales/equip_to_account',
+			method: 'GET',
+			data: params,
+			success: function(pResult){
+				$.datatable1.ajax.reload();
+				$('#popBox1').modal("hide");
+			}
+		})
+	});
+
+</script>
 {% endblock %}

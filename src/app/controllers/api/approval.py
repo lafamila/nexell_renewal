@@ -59,26 +59,36 @@ def get_approval():
     result['approval'] = apvl.get_approval(params)
     result['html'] = apvl.get_approval_template(result['approval']['template_url'], init=False)
     result['member_list'] = apvl.get_approval_member(params)
-    isMyTurn = False
+    required_m_list = [r for r in result['member_list'] if r['reg_type'] in (0, 1)]
     last_member = None
-    isFirst = False
-    for i, member in enumerate(result['member_list']):
-        if i == 0 and member['mber_sn'] == session['member']['member_sn']:
-            isFirst = True
-        if member['approval_status_code'] == 1:
-            last_member = (member['mber_sn'], i)
-            continue
-        elif member['approval_status_code'] == -1:
+    next_member = None
+    isFired = False
+    isMyTurn = False
+    isFirst = result['approval']['reg_mber'] == session['member']['member_sn']
+    isCancelable = False
+    isDone = False
+    for i, member in enumerate(required_m_list):
+        if member['approval_status_code'] == -1:
+            isFired = True
             break
-        elif member['approval_status_code'] == 0 and member['mber_sn'] == session['member']['member_sn']:
-            isMyTurn = True
-            break
-        else:
-            break
-    if last_member is not None and last_member[0] == session['member']['member_sn'] and (last_member[1]+1) < len(result['member_list']):
-        isCancelable = True
-    else:
+    if isFired:
+        isMyTurn = False
         isCancelable = False
+    else:
+        for i, member in enumerate(required_m_list):
+            if member['approval_status_code'] == 1:
+                last_member = (member['mber_sn'], i)
+            elif member['approval_status_code'] == 0:
+                next_member = (member['mber_sn'], i)
+                break
+        if next_member is None:
+            isDone = True
+        elif next_member[0] == session['member']['member_sn']:
+            isMyTurn = True
+
+        if last_member is not None and last_member[0] == session['member']['member_sn'] and next_member is not None:
+            isCancelable = True
+
     result['approval']['approval_data'] = json.loads(result['approval']['approval_data'])
     result['myTurn'] = isMyTurn
     result['isFirst'] = isFirst
@@ -88,24 +98,29 @@ def get_approval():
 @bp.route('/delete_approval', methods=['GET'])
 def delete_approval():
     params = request.args.to_dict()
-    member_list = apvl.get_approval_member(params)
-    deletable = False
-    msg = "진행중인 결재자가 있어 삭제가 불가능합니다."
-    if not member_list:
-        deletable = True
-        msg = "성공적으로 삭제되었습니다."
-    else:
-        if member_list[-1]["approval_status_code"] == 1:
-            deletable = False
-            msg = "최종 결재가 완료되어 삭제가 불가능합니다."
-        elif member_list[0]["approval_status_code"] == 0:
+    approval = apvl.get_approval(params)
+    if int(approval['reg_mber']) == int(session['member']['member_sn']):
+
+        member_list = apvl.get_approval_member(params)
+        deletable = False
+        msg = "진행중인 결재자가 있어 삭제가 불가능합니다."
+        if not member_list:
             deletable = True
             msg = "성공적으로 삭제되었습니다."
+        else:
+            if member_list[-1]["approval_status_code"] == 1:
+                deletable = False
+                msg = "최종 결재가 완료되어 삭제가 불가능합니다."
+            elif member_list[0]["approval_status_code"] == 0:
+                deletable = True
+                msg = "성공적으로 삭제되었습니다."
 
-    if deletable:
-        apvl.delete_approval(params)
+        if deletable:
+            apvl.delete_approval(params)
 
-
+    else:
+        deletable = False
+        msg = "기안자가 아니면 삭제할 수 없습니다."
     return jsonify({"status" : deletable, "message" : msg})
 @bp.route('/update_approval', methods=['POST'])
 def update_approval():
@@ -118,6 +133,7 @@ def update_approval():
     if result['status']:
         apvl.update_approval(params)
         member_list = apvl.get_approval_member(params)
+        member_list = [m for m in member_list if m['reg_type'] in (0, 1)]
         isEnd = True
         for m in member_list:
             if m['approval_status_code'] in (-1, 0):

@@ -2,6 +2,128 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 
+def get_stock_datatable_search(params):
+    query = """SELECT '1' AS ctmmny_sn
+    				, s.stock_sn AS stock_sn				
+    				, prduct_se_code AS prduct_se_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
+    				, prduct_ty_code as prduct_ty_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_TY_CODE' AND code=s.prduct_ty_code) AS prduct_ty_nm
+    				, s.model_no AS modl_nm
+    				, m.delng_sn AS delng_sn
+    				, m.cntrct_sn AS cntrct_sn
+    				, p.ddt_man AS puchas_de
+    				, s.use_flag as puchas_se_code
+    				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                        WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                        ELSE 0
+                        END AS puchas_amount_one
+    				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn), '')
+    				  ELSE IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS cntrct_nm
+    				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '')
+    				  ELSE IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS bcnc_nm
+    				, CASE WHEN m.stock_sttus IN (2, 3) THEN sa.dlivy_de ELSE '' END AS instl_de
+    				, m.ddt_man AS wrhousng_de
+    				, s.rm AS rm
+    				, s.use_type AS bigo
+    				, m.stock_sttus AS invn_sttus_code
+    				, CASE WHEN m.stock_sttus=1 AND (s.rm LIKE %s) IS NOT TRUE THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.cntrct_sn)
+    				WHEN m.stock_sttus=1 AND m.cntrct_sn = 2 AND s.rm LIKE %s THEN '이현/예약'
+    				WHEN m.stock_sttus=1 AND m.cntrct_sn = 3 AND s.rm LIKE %s THEN '기타/예약'
+    				WHEN m.stock_sttus IN (2,3) THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=(m.stock_sttus-2))
+    				ELSE (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.stock_sttus)
+    				END AS invn_sttus_nm
+    				FROM (SELECT * FROM stock WHERE 1=1) s 
+    				INNER JOIN 
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+    				INNER JOIN
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
+    				WHERE 1=1
+    				AND m.ddt_man BETWEEN '{0}' AND '{1}'
+    """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
+    # query += "GROUP BY prduct_se_nm, prduct_ty_nm, modl_nm, bigo, puchas_de, puchas_se_code, puchas_amount_one, bcnc_nm, cntrct_nm, instl_de, wrhousng_de, invn_sttus_nm, rm "
+    data = ["%예약%", "%예약%", "%예약%"]
+    if "after" in params and params["after"]:
+        afters = params["after"].split(",")
+        if "before" in params and params["before"]:
+            befores = params["before"].split(",")
+            afters = [a for a in afters if a not in befores]
+        if len(afters)>0:
+            query += " AND ( s.stock_sn IN ({}) OR ( 1=1 ".format(",".join(["%s"]*len(afters)))
+            data += afters
+    if "before" in params and params["before"]:
+        befores = params["before"].split(",")
+        query += " AND s.stock_sn NOT IN ({})".format(",".join(["%s"]*len(befores)))
+        data += befores
+    if "s_prduct_ty_code" in params and params['s_prduct_ty_code']:
+        if int(params["s_prduct_ty_code"]) == 0:
+            query += " AND s.prduct_ty_code IN (1, 2) "
+        else:
+            query += " AND s.prduct_ty_code=%s"
+            data.append(params["s_prduct_ty_code"])
+
+    if "s_modl_nm" in params and params['s_modl_nm']:
+        query += " AND s.model_no LIKE %s"
+        data.append('%{}%'.format(params["s_modl_nm"]))
+
+    if "s_rm" in params and params['s_rm']:
+        query += " AND s.rm LIKE %s"
+        data.append('%{}%'.format(params["s_rm"]))
+
+    if "s_cntrct_nm" in params and params['s_cntrct_nm']:
+        query += " AND m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s"
+        data.append('%{}%'.format(params["s_cntrct_nm"]))
+
+    if "s_bcnc_sn" in params and params['s_bcnc_sn']:
+        query += " AND m.stock_sttus IN (2,3) AND (SELECT bcnc_sn FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) = %s"
+        data.append(params["s_bcnc_sn"])
+
+    if "s_puchas_se_code" in params and params['s_puchas_se_code']:
+        query += " AND s.use_flag=%s"
+        data.append(params['s_puchas_se_code'])
+
+    if "s_bigo" in params and params['s_bigo']:
+        query += " AND s.use_type=%s"
+        data.append(params['s_bigo'])
+
+    if "s_invn_sttus_code" in params and params['s_invn_sttus_code']:
+        sttus_code = params['s_invn_sttus_code']
+        if sttus_code == '2S':
+            query += " AND (m.stock_sttus=1 AND m.cntrct_sn=2 AND s.rm LIKE %s)"
+            data.append("%예약%")
+
+        elif sttus_code == '3S':
+            query += " AND (m.stock_sttus=1 AND m.cntrct_sn=3 AND s.rm LIKE %s)"
+            data.append("%예약%")
+
+        elif sttus_code == "0":
+            query += " AND m.stock_sttus = 2"
+
+        elif sttus_code == "1":
+            query += " AND m.stock_sttus = 3"
+
+        elif sttus_code == "4":
+            query += " AND m.stock_sttus = 4"
+
+        elif sttus_code == "100":
+            query += " AND m.stock_sttus = 1 AND m.cntrct_sn IN (2, 3)"
+
+        else:
+            query += " AND m.stock_sttus = 1 AND m.cntrct_sn=%s"
+            data.append(sttus_code)
+    if "after" in params and params["after"]:
+        afters = params["after"].split(",")
+        if "before" in params and params["before"]:
+            befores = params["before"].split(",")
+            afters = [a for a in afters if a not in befores]
+        if len(afters) > 0:
+            query += ") )"
+
+    return dt_query(query, data, params)
 def get_stock_datatable(params, prduct_se_code):
     query = """SELECT '1' AS ctmmny_sn
 				, s.stock_sn AS stock_sn				
@@ -196,7 +318,8 @@ def get_stock_summary(params, prduct_se_code):
 
 
 def get_stock(params):
-    query = """SELECT prduct_se_code
+    query = """SELECT s.stock_sn 
+                , prduct_se_code
 				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
 				, prduct_ty_code
 				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_TY_CODE' AND code=s.prduct_ty_code) AS prduct_ty_nm
@@ -241,12 +364,21 @@ def get_stock_log(params):
 				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') s ON s.cnnc_sn=p.delng_sn
 				WHERE l.stock_sn=%(s_stock_sn)s    
-				ORDER BY l.ddt_man ASC
+				ORDER BY l.ddt_man ASC, l.log_sn ASC
     """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
+def get_stock_by_account(delng_sn, isReturn=True):
+    query = """SELECT stock_sn, log_sn
+                FROM stock_log
+                WHERE delng_sn=%s"""
+    if isReturn:
+        query += """ AND stock_sttus=2 """
+    g.curs.execute(query, delng_sn)
+    result = g.curs.fetchall()
+    return result
 def get_stock_list(params, prduct_se_code, reserved=False):
     query = """SELECT '1' AS ctmmny_sn
                 , m.stock_sttus AS etc2

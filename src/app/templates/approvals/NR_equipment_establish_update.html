@@ -300,11 +300,19 @@
                         </tr>
                         <tr>
                             <th class="color-contract text-center">계약변경</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_human_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_direct_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_daily_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_sum_change" disabled/>
+                            </td>
+                            <th class="colorP text-right" data-column="company1_pink_change"></th>
                         </tr>
                         <tr>
                             <th class="color-contract text-center">집행</th>
@@ -439,11 +447,19 @@
                         </tr>
                         <tr>
                             <th class="color-contract text-center">계약변경</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_human_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_direct_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_daily_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_sum_change" disabled/>
+                            </td>
+                            <th class="colorP text-right" data-column="company2_pink_change"></th>
                         </tr>
                         <tr>
                             <th class="color-contract text-center">집행</th>
@@ -578,11 +594,19 @@
                         </tr>
                         <tr>
                             <th class="color-contract text-center">계약변경</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_human_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_direct_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_daily_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_sum_change" disabled/>
+                            </td>
+                            <th class="colorP text-right" data-column="company3_pink_change"></th>
                         </tr>
                         <tr>
                             <th class="color-contract text-center">집행</th>
@@ -624,7 +648,10 @@
   </thead>
   <tbody>
     <tr>
-        <td class="text-center" colspan="4"></td>
+        <td class="hasinput" colspan="4">
+            <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
+
+        </td>
     </tr>
   </tbody>
 </table>
@@ -652,6 +679,8 @@
                     });
                     $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
                     var max_extra_sn = 0;
+                    $(document).find("#costTable tbody[role='ct_se_code_extra']").remove();
+                    $(document).find("#costTable tbody[role='ct_se_code_diff']").remove();
                     $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
                         max_extra_sn = extra_sn;
                         var pRow = pResult.extraCostList[extra_sn];
@@ -728,9 +757,46 @@
                                     </tr>
                                 </tbody>`;
                     $(document).find("#costTable").append(html);
-                    $(document).find("tbody[role='equip_already_row'], tbody[role='equip_row']").trigger("change");
-                    $(document).find("tbody[role='equip_other_already_row'], tbody[role='equip_other_row']").trigger("change");
                     $(document).find("tbody[role='ct_se_code_extra_alpha']").trigger("change");
+                    {% if init %}
+                    $.each(pResult.outsrcList, function(pIndex, pValue){
+                        var company = `company${pIndex+1}`;
+                        $(document).find(`tbody[role='${company}']`).show();
+                        $(document).find(`[name='${company}_name']`).yVal(pValue.outsrc_fo_sn);
+                        $(document).find(`[name='${company}_date']`).val(pValue.cntrct_de);
+                        $(document).find(`[name='${company}_owner']`).val(pValue.rspnber_nm);
+                        $(document).find(`[name='${company}_owner_telno']`).val(pValue.rspnber_telno);
+                        $(document).find(`[name='${company}_dam']`).val(pValue.charger_nm);
+                        $(document).find(`[name='${company}_dam_telno']`).val(pValue.charger_telno);
+                        if(pResult.outsrcItem.hasOwnProperty(pValue.outsrc_fo_sn)){
+                            cloneRow(`${company}_tr`, pResult.outsrcItem[pValue.outsrc_fo_sn].e5CostList.length-1);
+                        }
+                        var eCost5Total = 0;
+                        $.each(pResult.outsrcItem[pValue.outsrc_fo_sn].e5CostList, function(pI, pR){
+                            $(document).find(`[name='${company}_item_name[]']`).eq(pI).val(pR.model_no);
+                            $(document).find(`[name='${company}_item_dlnt[]']`).eq(pI).val(pR.qy.toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_item_damt[]']`).eq(pI).val(pR.amount.toFormat('NUMBER'));
+                            eCost5Total += Math.round(1.1 * parseInt(pR.qy) * parseInt(pR.amount));
+                        });
+                        if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
+                            $(document).find(`[name='${company}_human']`).val(pValue.pymnt_mth.split("-")[0].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_direct']`).val(pValue.pymnt_mth.split("-")[1].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_daily']`).val(pValue.pymnt_mth.split("-")[2].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_sum']`).val(pValue.pymnt_mth.split("-")[3].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_human']`).attr("readonly", true);
+                            $(document).find(`[name='${company}_direct']`).attr("readonly", true);
+                            $(document).find(`[name='${company}_daily']`).attr("readonly", true);
+                            $(document).find(`[name='${company}_sum']`).attr("readonly", true);
+                            $(document).find(`[data-column='${company}_pink']`).html(eCost5Total.toFormat('NUMBER'));
+
+                        }
+                        $(document).find(`[name='${company}_human_change']`).attr("disabled", false);
+                        $(document).find(`[name='${company}_direct_change']`).attr("disabled", false);
+                        $(document).find(`[name='${company}_daily_change']`).attr("disabled", false);
+                        $(document).find(`[name='${company}_sum_change']`).attr("disabled", false);
+                        $(document).find(`tbody[role='${company}_row']`).trigger("change");
+                    });
+                    {% endif %}
                 }
             });
 
@@ -752,20 +818,9 @@
             }
             $(document).find(`tbody[role='${company}_row']`).trigger("change");
         }
-        else if(["company1_already_tr", "company2_already_tr", "company3_already_tr"].includes(selector)){
-            var company = selector.split("_")[0];
-            for(let i=0;i<count;i++){
-                var trs = $(document).find(`tbody[role='${company}_already_row'] tr`);
-                var origin = trs.eq(0).clone(true);
-                $(origin).find("td:not(.hasinput)").html("");
-                $(origin).find("td.hasinput input").val("");
-                $(document).find(`tbody[role='${company}_already_row']`).append($(origin));
-            }
-            $(document).find(`tbody[role='${company}_already_row']`).trigger("change");
-        }
     }
 
-    $(document).on("change", "tbody[role='company1_row'], tbody[role='company2_row'], tbody[role='company3_row'], tbody[role='company1_already_row'], tbody[role='company2_already_row'], tbody[role='company3_already_row']", function(){
+    $(document).on("change", "tbody[role='company1_row'], tbody[role='company2_row'], tbody[role='company3_row']", function(){
         var total_amount = 0;
         var company = $(this).attr("role").split("_")[0];
         $(`tbody[role='${company}_row']`).find("tr").each(function(pIndex, pRow){
@@ -777,17 +832,6 @@
             $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
             $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
             $(pRow).find(`[data-column='${company}_item_total[]']`).html(total.toFormat('NUMBER'));
-            total_amount += total;
-        });
-        $(`tbody[role='${company}_already_row']`).find("tr").each(function(pIndex, pRow){
-            var dlnt = parseInt($(pRow).find(`input[name='${company}_item_dlnt_already[]']`).val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
-            var damt = parseInt($(pRow).find(`input[name='${company}_item_damt_already[]']`).val().replaceAll(",", "")); if(isNaN(damt)) damt = 0;
-            var amount = dlnt*damt;
-            var tax = Math.round(amount*0.1);
-            var total = amount + tax;
-            $(pRow).find(`[data-column='${company}_item_amount_already[]']`).html(amount.toFormat('NUMBER'));
-            $(pRow).find(`[data-column='${company}_item_tax_already[]']`).html(tax.toFormat('NUMBER'));
-            $(pRow).find(`[data-column='${company}_item_total_already[]']`).html(total.toFormat('NUMBER'));
             total_amount += total;
         });
         $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
@@ -921,28 +965,41 @@
         var sum = parseInt($(this).find(`input[name='${company}_sum']`).val().replaceAll(",", "")); if(isNaN(sum)) sum = 0;
         var pink = human + direct + daily + sum;
         $(`tbody[role='${company}_detail']`).find(`[data-column='${company}_pink']`).html(pink.toFormat('NUMBER'));
+        var human_change = parseInt($(this).find(`input[name='${company}_human_change']`).val().replaceAll(",", "")); if(isNaN(human_change)) human_change = 0;
+        var direct_change = parseInt($(this).find(`input[name='${company}_direct_change']`).val().replaceAll(",", "")); if(isNaN(direct_change)) direct_change = 0;
+        var daily_change = parseInt($(this).find(`input[name='${company}_daily_change']`).val().replaceAll(",", "")); if(isNaN(daily_change)) daily_change = 0;
+        var sum_change = parseInt($(this).find(`input[name='${company}_sum_change']`).val().replaceAll(",", "")); if(isNaN(sum_change)) sum_change = 0;
+        var pink_change = human_change + direct_change + daily_change + sum_change;
+        $(`tbody[role='${company}_detail']`).find(`[data-column='${company}_pink_change']`).html(pink_change.toFormat('NUMBER'));
         var hdd = 0;
         var s = 0;
         for(let i=1;i<=3;i++){
             var company = `company${i}`;
             var row = $(document).find(`tbody[role='${company}_detail']`);
-            var human = parseInt($(row).find(`input[name='${company}_human']`).val().replaceAll(",", "")); if(isNaN(human)) human = 0;
-            var direct = parseInt($(row).find(`input[name='${company}_direct']`).val().replaceAll(",", "")); if(isNaN(direct)) direct = 0;
-            var daily = parseInt($(row).find(`input[name='${company}_daily']`).val().replaceAll(",", "")); if(isNaN(daily)) daily = 0;
-            var sum = parseInt($(row).find(`input[name='${company}_sum']`).val().replaceAll(",", "")); if(isNaN(sum)) sum = 0;
+            var human = parseInt($(row).find(`input[name='${company}_human_change']`).val().replaceAll(",", "")); if(isNaN(human)) human = 0;
+            var direct = parseInt($(row).find(`input[name='${company}_direct_change']`).val().replaceAll(",", "")); if(isNaN(direct)) direct = 0;
+            var daily = parseInt($(row).find(`input[name='${company}_daily_change']`).val().replaceAll(",", "")); if(isNaN(daily)) daily = 0;
+            var sum = parseInt($(row).find(`input[name='${company}_sum_change']`).val().replaceAll(",", "")); if(isNaN(sum)) sum = 0;
             hdd += (human+direct+daily);
             s += sum;
         }
-        $(document).find("input[name='E_5']").val(hdd.toFormat('NUMBER'));
-        $(document).find("input[name='E_3']").val(s.toFormat('NUMBER'));
-        $(document).find("input[name='E_4']").val(0);
+        $(document).find("input[name='E_5_alpha']").val(hdd.toFormat('NUMBER'));
+        $(document).find("input[name='E_3_alpha']").val(s.toFormat('NUMBER'));
+        $(document).find("input[name='E_4_alpha']").val(0);
         $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
     });
 
     {% if init %}
-    $(document).on("click", "#addRow", function(){
-        cloneRow("equip_tr", 1);
+    $(document).on("click", "#company1_addRowItem", function(){
+        cloneRow("company1_tr", 1);
     });
+    $(document).on("click", "#company2_addRowItem", function(){
+        cloneRow("company2_tr", 1);
+    });
+    $(document).on("click", "#company3_addRowItem", function(){
+        cloneRow("company3_tr", 1);
+    });
+
     window.projects = {};
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
@@ -1006,6 +1063,10 @@
     $.fn.afterLoadApproval = function() {
         var cntrct_sn = $("#cntrct_sn").find(":selected").val();
         get_cost(cntrct_sn);
+        $(document).find("tbody[role='company_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='company1'] input, tbody[role='company1'] select").attr("disabled", true);
+        $(document).find("tbody[role='company2'] input, tbody[role='company2'] select").attr("disabled", true);
+        $(document).find("tbody[role='company3'] input, tbody[role='company3'] select").attr("disabled", true);
 
     }
     {% endif %}

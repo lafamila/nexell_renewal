@@ -1,0 +1,575 @@
+{% extends 'common/report_base.html' %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReportNR">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;완료</i></button>
+					<button type="button" class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report" id="exportExcelNR">
+				<div id="content">
+				<section id="widget-grid">
+
+					<div class="row">
+						<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+							<!-- Widget ID (each widget will need unique ID)-->
+							<div class="jarviswidget jarviswidget-color-darken">
+
+						<div class="widget-body no-padding">
+							<table class="datatable table table-bordered table-hover floating-thead" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="125">
+									<col width="155">
+									<col width="85">
+									<col width="94">
+									<col width="75">
+									<col width="90">
+									<col width="165">
+									<col width="*">
+									<col width="125">
+									<col width="125">
+									<col width="100">
+									<col width="155">
+									<col width="75">
+									<col width="75">
+								</colgroup>
+								<thead>
+									<!-- 검색 -->
+									<tr>
+										<th class="search">검색</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_prduct_ty_code" name="s_prduct_ty_code">
+												<option value="">[전체]</option>
+                                                <option value="0">실내기/실외기</option>
+												{% for code in prduct_ty_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+                                        </th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_modl_nm" name="s_modl_nm">
+										</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bigo" name="s_bigo">
+												<option value="">[전체]</option>
+												<option value="일반">일반</option>
+												<option value="빌트인">빌트인</option>
+												<option value="자재">자재</option>
+												<!-- {member_list}
+												<option value="{value}">{label} {etc1}</option>
+												{/member_list} -->
+											</select>
+										</th>
+										<th class="hasinput">
+<!--											<div class="input-group">-->
+<!--												<input type="text" class="form-control datepicker" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_puchas_de" name="s_puchas_de" placeholder="[전체]">-->
+<!--	   										 <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
+<!--											</div>-->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_puchas_se_code" name="s_puchas_se_code">
+												<option value="">[전체]</option>
+												<option value="0">본사</option>
+												<option value="1">재고</option>
+												<!-- {member_list}
+												<option value="{value}">{label} {etc1}</option>
+												{/member_list} -->
+											</select>
+										</th>
+										<th class="hasinput"></th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
+												<option value="">[전체]</option>
+												{% for code in bcnc_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">
+										</th>
+                                        <th class="hasinput" colspan="2" style="text-align:center;">
+                                            <input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_start" name="s_ddt_man_start" placeholder="[시작일자]">
+                                            <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                                            <input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_end" name="s_ddt_man_end" placeholder="[종료일자]">
+                                            <!-- <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_invn_sttus_code" name="s_invn_sttus_code">
+												<option value="100">창고전체</option>
+                                                <option value="2">이현창고 </option>
+                                                <option value="3">기타창고 </option>
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_rm" name="s_rm">
+										</th>
+
+										<th class="hasinput text-center">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+                                        </th>
+										<th class="hasinput">
+										</th>
+									</tr>
+									<!-- 헤더 -->
+                                </thead>
+                                <thead role="head">
+									<tr>
+										<th class="text-center" rowspan="1">No.</th>
+										<th class="text-center" rowspan="1">분류</th>
+										<th class="text-center" rowspan="1">모델명</th>
+										<th class="text-center" rowspan="1">유형</th>
+										<th class="text-center" rowspan="1">매입일</th>
+										<th class="text-center" rowspan="1">매입구분</th>
+										<th class="text-center" rowspan="1">매입단가</th>
+										<th class="text-center" rowspan="1">거래처명</th>
+										<th class="text-center" rowspan="1">계약명(현장명)</th>
+										<th class="text-center" rowspan="1">출고일</th>
+										<th class="text-center" rowspan="1">회수/폐기일</th>
+										<th class="text-center" rowspan="1">분류</th>
+										<th class="text-center" rowspan="1">비고</th>
+										<th class="text-center" rowspan="1">종합현황</th>
+										<th class="text-center" rowspan="1"></th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+							</div>
+						</article>
+					</div>
+				</section>
+				</div>
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+<!-- 레포트1 레이어 팝업 끝 -->
+
+<script>
+var before = "{{params}}";
+var after = "{{add_params}}";
+
+getInventoryList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		paging: false,
+		buttons: [
+            'excelHtml5',
+		],
+        ajax: {
+            url: '/api/stock/ajax_get_inventory_datatable_search',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({"before" : before, "after" : after}, params, {
+					's_prduct_ty_code': $('#dtList1').find('#s_prduct_ty_code').val(),
+					's_modl_nm': $('#dtList1').find('#s_modl_nm').val(),
+					's_instl_de': $('#dtList1').find('#s_instl_de').val(),
+					's_se_code': $('#dtList1').find('#s_se_code').val(),
+					's_sttus_code': $('#dtList1').find('#s_sttus_code').val(),
+					's_cntrct_nm': $('#dtList1').find('#s_cntrct_nm').val(),
+					's_rm': $('#dtList1').find('#s_rm').val(),
+					's_bcnc_sn': $('#dtList1').find('#s_bcnc_sn').val(),
+					's_puchas_se_code': $('#dtList1').find('#s_puchas_se_code').val(),
+					's_bigo': $('#dtList1').find('#s_bigo').val(),
+					's_invn_sttus_code': $('#dtList1').find('#s_invn_sttus_code').val(),
+					's_ddt_man_start': $('#dtList1').find('#s_ddt_man_start').val(),
+					's_ddt_man_end': $('#dtList1').find('#s_ddt_man_end').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+        columns: [
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'prduct_ty_nm', className: 'text-center' },
+            { data: 'modl_nm' , className: 'text-center'},
+            { data: 'bigo', className: 'text-center' },
+            { data: 'puchas_de' , className: 'text-center'},
+            { data: 'puchas_se_code', className: 'text-center',
+				render: function(data, type, row, meta) {
+					var result = '';
+					if (data == 0) {
+						result = '본사';
+					} else if (data == 1) {
+						result = '재고';
+					}
+					return result;
+				}
+			},
+            { data: 'puchas_amount_one', className: 'text-right',
+				render: function(data, type, row, meta) {
+					return data.toString().toFormat('NUMBER');
+				}
+            },
+            { data: 'bcnc_nm' , className: 'text-center'},
+            { data: 'cntrct_nm' , className: 'text-center'},
+            { data: 'instl_de' , className: 'text-center'},
+            { data: 'wrhousng_de', className: 'text-center' },
+            { data: 'invn_sttus_nm' , className: 'text-center'},
+            { data: 'rm' , className: 'text-center'},
+
+            { data: 'stock_sn', className: 'hasinput text-center', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+
+
+                    html += '<div class="btn-group">';
+                    html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-sn="'+row.stock_sn+'">';
+                    html += '		<i class="fa fa-edit"></i>';
+                    html += '	</button>';
+                    html += '</div>';
+					return html;
+				}
+			},
+            { data: 'stock_sn', className: 'hasinput text-center', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+
+					html += '<div class="btn-group">';
+					html += `	<input type="checkbox" data-sn="${data}" class="checkbox-inline row-check" />`;
+					html += '</div>';
+					return html;
+				}
+			},
+        ],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+
+		},
+
+		initComplete: function(pSettings, pJson) { console.log('initComplete', pJson);
+
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var stock_sn = $(this).data('sn');
+                getReport(stock_sn);
+            });
+			$(myList).on('change', 'thead input', function(pEvent){
+				$.datatable1.ajax.reload();
+				// if (pEvent.keyCode === 13) {
+				// }
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+			});
+		},
+    });
+}
+
+
+    $(document).ready(function(){
+		var minYears = 1;
+		var maxYears = 10;
+		$('.datepicker-e').datepicker({
+			beforeShow: function(dateText) {
+				$(this).data('before', $(this).val());
+			},
+			onSelect: function(dateText) {
+				$(this).change();
+			},
+			onClose: function(dateText) {
+				var minDate = new Date($(this).val());
+				minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+				$(".datepicker-s").datepicker( "option", "minDate", minDate );
+			},
+		});
+
+		var end = $('.datepicker-e').val();
+		if (end == '') {
+			$('.datepicker-e').datepicker('setDate', 'today');
+		}
+
+		$('.datepicker-s').datepicker({
+			beforeShow: function(dateText) {
+				$(this).data('before', $(this).val());
+
+				var minDate = new Date($('.datepicker-e').val());
+				minDate.setDate(minDate.getDate() - ((365*maxYears)-1));
+				$(".datepicker-s").datepicker( "option", "minDate", minDate );
+			},
+			onSelect: function(dateText) {
+				$(this).change();
+			},
+			onClose: function(dateText) {
+			},
+		});
+
+		var start = $('.datepicker-s').val();
+		if (start == '') {
+			var end = $('.datepicker-e').val();
+			var endDate = new Date(end);
+			endDate.setFullYear(endDate.getFullYear());
+			endDate.setMonth(0);
+			endDate.setDate(1);
+			endDate.setDate(endDate.getDate());
+			$('.datepicker-s').datepicker('setDate', endDate);
+		}
+		getInventoryList();
+    });
+	$(function() {
+    /**************************************************************************
+     * 인쇄 버튼 클릭 처리
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var sns = [];
+		$.each($('#dtList1').find(".row-check:checked"), function(pIndex, pTag){
+			var sn = $(pTag).data("sn");
+			sns.push(sn);
+		});
+		if(sns.length > 0){
+			var _window = window;
+			setTimeout( function(){
+				//location.reload(true);
+				_window.opener.cloneRowStock(sns.join(","), "{{response}}");
+				self.close();
+			},500);
+
+		}
+		else{
+			alert("선택된 재고가 없습니다.");
+			return false;
+		}
+		// window.opener.document.getElementById("message").value = sns.join(",");
+	});
+});
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<div class="modal fade" keyboard="true" id="popReport2">
+    <div class="modal-dialog modal-w1200" style="width:50%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report" id="exportExcelNR">
+
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReport2{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+</style>
+
+
+<table id="report_summary">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="600">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorB text-center" colspan="4">사용 이력</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="colorSky">제품분류</th>
+			<td id="prduct_se"></td>
+			<th class="colorSky">제품유형</th>
+			<td id="prduct_ty"></td>
+		</tr>
+        <tr>
+			<th class="colorSky">모델명</th>
+			<td id="model_nm"></td>
+			<th class="colorSky" id="dlnt_nm">수량</th>
+			<td id="qy"></td>
+		</tr>
+        <tr>
+			<th class="colorSky">거래처명</th>
+			<td id="bcnc_nm"></td>
+			<th class="colorSky" id="cntrct_nm">현장명</th>
+			<td id="invn_nm"></td>
+		</tr>
+	</tbody>
+	<tfoot>
+	</tfoot>
+</table>
+<table id="report_status">
+	<colgroup>
+		<col width="150">
+		<col width="200">
+		<col width="400">
+		<col width="200">
+		<col width="200">
+	</colgroup>
+	<thead role="head">
+		<tr>
+			<th class="colorN text-center">구분</th>
+			<th class="colorN text-center">날짜</th>
+			<th class="colorN text-center">이력</th>
+			<th class="colorN text-center">매입단가</th>
+			<th class="colorN text-center">매출금액(판매)</th>
+		</tr>
+
+	</thead>
+	<tbody role="body">
+	</tbody>
+	<tfoot>
+	</tfoot>
+</table>
+
+<!-- <div id="img-out"></div> -->
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+getReport = function(s_stock_sn)
+{
+	var params = '';
+	params += '&s_stock_sn=' + s_stock_sn;
+	$.ajax({
+		url: '/api/stock/ajax_get_stock_log',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getReport2', pResult);
+			if (pResult.status) {
+
+                var pValue = pResult.summary;
+				$('#report_summary').find("#prduct_se").html(pValue.prduct_se_nm);
+				$('#report_summary').find("#prduct_ty").html(pValue.prduct_ty_nm);
+				$('#report_summary').find("#invn_nm").html(pValue.invn_sttus_nm);
+				$('#report_summary').find("#bcnc_nm").html(pValue.bcnc_nm);
+				$('#report_summary').find("#qy").html(pValue.qy.toString().toFormat('NUMBER'));
+				$('#report_summary').find("#model_nm").html(pValue.modl_nm);
+				var sttus = parseInt(pValue.stock_sttus);
+				if(sttus == 0 || sttus == 1){
+					$("#dlnt_nm").html("재고수량");
+					$("#cntrct_nm").html("창고명");
+				}
+				else if(sttus == 2){
+					$("#dlnt_nm").html("전시수량");
+					$("#cntrct_nm").html("현장명");
+				}
+				else if(sttus == 3){
+					$("#dlnt_nm").html("판매수량");
+					$("#cntrct_nm").html("현장명");
+				}
+				else{
+					$("#dlnt_nm").html("수량");
+					$("#cntrct_nm").html("현장명");
+				}
+                var pLog = pResult.log;
+                var html = '';
+                $.each(pLog, function(pIndex, pValue){
+                    if(pValue.stock_sttus == 1) {
+						var num = pIndex == 0 ? '' : (pLog[pIndex - 1].stock_sttus == 2 ? "회수" : "반품");
+					}
+                    else {
+                    	var num = pValue.stock_sttus == 2 ? "전시" : (pValue.stock_sttus == 3 ? "판매" : "폐기");
+					}
+					var damt = pValue.damt == '' ? 0 : parseInt(pValue.damt);
+					html += '<tr>';
+					html += '    <td class="text-center">'+num+'</td>';
+					html += '    <td class="text-center">'+pValue.ddt_man+'</td>';
+					html += '    <td class="text-center">'+pValue.cntrct_nm+'</td>';
+					html += '    <td class="text-number">'+damt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+pValue.samt.toString().toFormat('NUMBER')+'</td>';
+					html += '</tr>';
+                });
+                $('#report_status').find("tbody[role=body]").html(html);
+				$('#popReport2').modal('show');
+			}
+		}
+	});
+}
+
+</script>
+
+{% endblock %}

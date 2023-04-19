@@ -363,7 +363,10 @@
             </td>
             <th class="color-contract text-center">도급계약일</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" data-type="date" name="company1_date"/>
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="company1_date" name="company1_date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
             </td>
         </tr>
         <tr>
@@ -438,7 +441,7 @@
                             <th class="color-contract text-center middle" rowspan="5">분류</th>
                             <th class="color-contract text-center">내역</th>
                             <th class="color-contract text-center">인건비</th>
-                            <th class="color-contract text-center">착불</th>
+                            <th class="color-contract text-center">직불</th>
                             <th class="color-contract text-center">일용직</th>
                             <th class="color-contract text-center">로지텍/타사</th>
                             <th class="color-contract text-center">합계</th>
@@ -502,7 +505,10 @@
             </td>
             <th class="color-contract text-center">도급계약일</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" data-type="date" name="company2_date"/>
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="company2_date" name="company2_date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
             </td>
         </tr>
         <tr>
@@ -577,7 +583,7 @@
                             <th class="color-contract text-center middle" rowspan="5">분류</th>
                             <th class="color-contract text-center">내역</th>
                             <th class="color-contract text-center">인건비</th>
-                            <th class="color-contract text-center">착불</th>
+                            <th class="color-contract text-center">직불</th>
                             <th class="color-contract text-center">일용직</th>
                             <th class="color-contract text-center">로지텍/타사</th>
                             <th class="color-contract text-center">합계</th>
@@ -641,7 +647,10 @@
             </td>
             <th class="color-contract text-center">도급계약일</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" data-type="date" name="company3_date"/>
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="company3_date" name="company3_date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
             </td>
         </tr>
         <tr>
@@ -716,7 +725,7 @@
                             <th class="color-contract text-center middle" rowspan="5">분류</th>
                             <th class="color-contract text-center">내역</th>
                             <th class="color-contract text-center">인건비</th>
-                            <th class="color-contract text-center">착불</th>
+                            <th class="color-contract text-center">직불</th>
                             <th class="color-contract text-center">일용직</th>
                             <th class="color-contract text-center">로지텍/타사</th>
                             <th class="color-contract text-center">합계</th>
@@ -1142,6 +1151,14 @@
 
 
             }
+        });
+        $(document).find(".datepicker").datepicker({
+            beforeShow: function(dateText) {
+                $(this).data('before', $(this).val());
+            },
+            onSelect: function(dateText) {
+                $(this).change();
+            },
         });
         var input = document.querySelector('input[data-type="number"]');
         input.addEventListener('input', function() {

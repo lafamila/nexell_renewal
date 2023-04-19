@@ -58,10 +58,10 @@
             <td class="hasinput" colspan="4">
                 <div class="btn-group btn-group-justified" data-toggle="buttons">
                     <label class="btn btn-default">
-                        <input type="radio" name="opt_approval_type" value="S">설치
+                        <input type="radio" name="opt_approval_type" value="S">예상
                     </label>
                     <label class="btn btn-default">
-                        <input type="radio" name="opt_approval_type" value="H">회수
+                        <input type="radio" name="opt_approval_type" value="H">정산
                     </label>
                 </div>
             </td>
@@ -178,7 +178,7 @@
             <th class="color-contract text-center">행사기간</th>
             <th class="color-contract text-center">행사일(일)</th>
             <th class="color-contract text-center">도우미(명)</th>
-            <th class="color-contract text-center">옵션율</th>
+            <th class="color-contract text-center">옵션율(%)</th>
             <th class="color-contract text-center">옵션행사비</th>
             <th class="color-contract text-center">행사비 지급일</th>
             <th class="color-contract text-center">비고</th>
@@ -187,22 +187,40 @@
     <tbody role="option_row">
         <tr row="E">
             <th class="colorSky text-center">예상</th>
-            <td class="hasinput"><input type="text" class="form-control text-left" name="e_opt_period" id="e_opt_period"></td>
-            <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="e_opt_dtm" id="e_opt_dtm"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control datepicker" style="display:inline-block;width:89px!important;" data-type="date" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="e_opt_period_start" name="e_opt_period_start" placeholder="[시작일자]">
+                <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                <input type="text" class="form-control datepicker" style="display:inline-block;width:89px!important;" data-type="date" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="e_opt_period_end" name="e_opt_period_end" placeholder="[종료일자]">
+            </td>
+            <td class="hasinput"><input type="text" class="form-control text-center" data-type="number" name="e_opt_dtm" id="e_opt_dtm" readonly></td>
             <td class="hasinput"><input type="text" class="form-control text-left" data-type="number" name="e_opt_helper" id="e_opt_helper"></td>
             <td class="hasinput"><input type="text" class="form-control text-left" name="e_opt_rate" id="e_opt_rate"></td>
             <td class="hasinput"><input type="text" class="form-control text-left" data-type="number" name="e_opt_amount" id="e_opt_amount"></td>
-            <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="e_opt_pay_dtm" id="e_opt_pay_dtm"></td>
+            <td class="hasinput">
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="e_opt_pay_dtm" name="e_opt_pay_dtm">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </td>
             <td class="hasinput"><input type="text" class="form-control text-left" name="e_opt_rm" id="e_opt_rm"></td>
         </tr>
         <tr row="C">
             <th class="colorSky text-center">정산</th>
-            <td class="hasinput"><input type="text" class="form-control text-left" name="c_opt_period" id="c_opt_period"></td>
-            <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="c_opt_dtm" id="c_opt_dtm"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control datepicker" style="display:inline-block;width:89px!important;" data-type="date" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="c_opt_period_start" name="c_opt_period_start" placeholder="[시작일자]">
+                <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+                <input type="text" class="form-control datepicker" style="display:inline-block;width:89px!important;" data-type="date" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="c_opt_period_end" name="c_opt_period_end" placeholder="[종료일자]">
+            </td>
+            <td class="hasinput"><input type="text" class="form-control text-center" data-type="number" name="c_opt_dtm" id="c_opt_dtm" readonly></td>
             <td class="hasinput"><input type="text" class="form-control text-left" data-type="number" name="c_opt_helper" id="c_opt_helper"></td>
             <td class="hasinput"><input type="text" class="form-control text-left" name="c_opt_rate" id="c_opt_rate"></td>
             <td class="hasinput"><input type="text" class="form-control text-left" data-type="number" name="c_opt_amount" id="c_opt_amount"></td>
-            <td class="hasinput"><input type="text" class="form-control text-center" data-type="date" name="c_opt_pay_dtm" id="c_opt_pay_dtm"></td>
+            <td class="hasinput">
+                <div class="input-group">
+                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-type="date" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="c_opt_pay_dtm" name="c_opt_pay_dtm">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </td>
             <td class="hasinput"><input type="text" class="form-control text-left" name="c_opt_rm" id="c_opt_rm"></td>
         </tr>
     </tbody>
@@ -241,7 +259,9 @@
   </thead>
   <tbody>
     <tr>
-        <td rowspan="11"></td>
+        <td rowspan="11">
+            <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
+        </td>
         <td class="text-center">구분</td>
         <td class="text-center">분양(%)</td>
         <td class="text-center">500세대</td>
@@ -358,6 +378,20 @@
   </tbody>
 </table>
 <script>
+function dateDiff(_date1, _date2) {
+    console.log(_date1, _date2);
+    var diffDate_1 = new Date(_date1);
+    var diffDate_2 = new Date(_date2);
+
+    var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
+    console.log(diff);
+    diff = Math.round(diff / (1000 * 3600 * 24));
+    console.log(diff);
+
+    return diff;
+}
+
+
     get_cost = function(cntrct_sn){
         $.ajax({
             url : '/api/project/get_costs_bd',
@@ -405,6 +439,16 @@
                     return result;
                }
     $(document).on("change", "tbody[role='option_row']", function(){
+        var e_opt_period_start = $(this).find("input[name='e_opt_period_start']").val();
+        var e_opt_period_end = $(this).find("input[name='e_opt_period_end']").val();
+        var c_opt_period_start = $(this).find("input[name='c_opt_period_start']").val();
+        var c_opt_period_end = $(this).find("input[name='c_opt_period_end']").val();
+        if(e_opt_period_start != '' && e_opt_period_end != ''){
+            $(this).find("input[name='e_opt_dtm']").val(dateDiff(e_opt_period_start, e_opt_period_end));
+        }
+        if(c_opt_period_start != '' && c_opt_period_end != ''){
+            $(this).find("input[name='c_opt_dtm']").val(dateDiff(c_opt_period_start, c_opt_period_end));
+        }
         var e_amount = parseInt($(this).find("input[name='e_opt_amount']").val().replaceAll(",", "")); if(isNaN(e_amount)) e_amount = 0;
         var c_amount = parseInt($(this).find("input[name='c_opt_amount']").val().replaceAll(",", "")); if(isNaN(c_amount)) c_amount = 0;
         $(this).parent().find("[data-column='diff']").html((e_amount - c_amount).toFormat('NUMBER'));
@@ -462,6 +506,19 @@
 
 
             }
+        });
+        $(document).find(".datepicker").datepicker({
+            beforeShow: function(dateText) {
+                $(this).data('before', $(this).val());
+            },
+            onSelect: function(dateText) {
+                $(this).change();
+            },
+            onClose: function(dateText) {
+                var minDate = new Date($(this).val());
+                minDate.setDate(minDate.getDate() - (365*5));
+                $(".datepicker-s").datepicker( "option", "minDate", minDate );
+            },
         });
         var input = document.querySelector('input[data-type="number"]');
         input.addEventListener('input', function() {

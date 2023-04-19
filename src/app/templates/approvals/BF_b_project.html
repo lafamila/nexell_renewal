@@ -169,19 +169,19 @@
                 <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_amount" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_61">
+                <input type="text" class="form-control text-right" data-type="number" name="D_61">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_61_DC">
+                <input type="text" class="form-control text-right" data-type="number" name="D_61_DC">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_63">
+                <input type="text" class="form-control text-right" data-type="number" name="D_63">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_7" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_7" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_10" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_10" readonly>
             </td>
             <td class="text-center" data-column="va"></td>
             <td class="text-center" data-column="va_rate"></td>
@@ -373,38 +373,37 @@
         }
     }
     $(document).on("change", "tbody[role='construct_row']", function(){
-        var total = 0;
+        var total_fee_amount = 0;
+        var total_amount = 0;
         $(this).find("tr").each(function(pIndex, pRow){
             var qy = parseInt($(pRow).find("input[name='qy[]']").eq(0).val().replaceAll(",", "")); if(isNaN(qy)) qy = 0;
             var puchas_amount = parseInt($(pRow).find("input[name='puchas_amount[]']").eq(0).val().replaceAll(",", "")); if(isNaN(puchas_amount)) puchas_amount = 0;
             var amount = parseInt($(pRow).find("input[name='amount[]']").eq(0).val().replaceAll(",", "")); if(isNaN(amount)) amount = 0;
-            var rate = parseInt($(pRow).find("input[name='rate[]']").eq(0).val().replaceAll(",", "")); if(isNaN(rate)) rate = 0;
-            var camt = count * amt;
-            var tax = Math.round(camt*0.1)
-            $(pRow).find("input[name='construct_tax[]']").eq(0).val(tax.toFormat('NUMBER'));
-            $(pRow).find("[data-column='construct_camt']").html(camt.toFormat('NUMBER'));
-            $(pRow).find("[data-column='construct_sum']").html((camt+tax).toFormat('NUMBER'));
-            total += camt+tax;
+            var rate = parseFloat($(pRow).find("input[name='rate[]']").eq(0).val().replaceAll(",", "").replaceAll("%", "")); if(isNaN(rate)) rate = 0.0;
+            $(pRow).find("input[name='dc_rate[]']").eq(0).val((100 - amount*100.0/puchas_amount).toFixed(1)+"%");
+            $(pRow).find("input[name='cntrct_amount[]']").eq(0).val((qy*amount).toFormat('NUMBER'));
+            $(pRow).find("input[name='cntrct_fee_amount[]']").eq(0).val((qy*amount*rate/100.0).toFormat('NUMBER'));
+            total_amount += qy*amount;
+            total_fee_amount += qy*amount*rate/100.0;
         });
-        $(this).find("[data-column='construct_total']").html(total.toFormat('NUMBER'));
+        $(document).find("[name='total_cntrct_fee_amount']").val(total_fee_amount.toFormat('NUMBER'));
+        $(document).find("[name='total_cntrct_amount']").val(total_amount.toFormat('NUMBER'));
+        $(document).find("[name='total_rate']").val((total_fee_amount*100.0/total_amount).toFixed(1)+"%");
+        $(document).find("[name='D_10']").val(Math.round(total_fee_amount*0.005).toFormat('NUMBER'));
     });
     $(document).on("change", "tbody[role='ct_se_code']", function(){
-        var totals = [];
-        $(this).find("tr").each(function(pIndex, pRow){
-            var total = 0;
-            $(pRow).find("input[data-type='number']").each(function(pI, pTag){
-                var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
-                total += value;
-            });
-            $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
-            totals.push(total);
-            if(pIndex == 0){
-                $(document).find("input[name='D_10']").val(Math.round(total*0.005).toFormat('NUMBER'));
-            }
-        });
+        var fee_amount = parseInt($(document).find("[name='total_cntrct_fee_amount']").val().replaceAll(",", "")); if(isNaN(fee_amount)) fee_amount = 0;
+        var D_61_DC = parseInt($(document).find("[name='D_61_DC']").val().replaceAll(",", "")); if(isNaN(D_61_DC)) D_61_DC = 0;
+        var D_63 = parseInt($(document).find("[name='D_63']").val().replaceAll(",", "")); if(isNaN(D_63)) D_63 = 0;
+        var D_61 = parseInt($(document).find("[name='D_61']").val().replaceAll(",", "")); if(isNaN(D_61)) D_61 = 0;
+        var D_7 = parseInt($(document).find("[name='D_7']").val().replaceAll(",", "")); if(isNaN(D_7)) D_7 = 0;
+        var D_10 = parseInt($(document).find("[name='D_10']").val().replaceAll(",", "")); if(isNaN(D_10)) D_10 = 0;
 
-        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
-        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+        var va = fee_amount + D_61_DC + D_63 - D_61 - D_7 - D_10;
+
+
+        $(this).find("[data-column='va']").html(va.toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html((va*100.0/fee_amount).toFixed(1)+"%");
     });
 
     {% if init %}
@@ -509,17 +508,17 @@
             if(target.length > 0){
                 var rates = parseInt(target.html().replaceAll(",", ""));
                 if(!isNaN(rates)){
-                    $("input[name='B_7']").val((rates*10000).toFormat('NUMBER'));
-                    $("input[name='B_7']").focus();
-                    $("input[name='B_7']").focusout();
+                    $("input[name='D_7']").val((rates*10000).toFormat('NUMBER'));
+                    $("input[name='D_7']").focus();
+                    $("input[name='D_7']").focusout();
                     done = true;
                 }
             }
             if(!done){
-                $("input[name='B_7']").attr("readonly", false);
+                $("input[name='D_7']").attr("readonly", false);
             }
             else{
-                $("input[name='B_7']").attr("readonly", true);
+                $("input[name='D_7']").attr("readonly", true);
             }
         }
         $(this).data("before", option_rate);

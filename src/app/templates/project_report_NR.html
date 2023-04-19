@@ -612,7 +612,7 @@ div.report table th, div.report table td {
 	</colgroup>
 	<tbody class="">
 		<tr>
-			<th class="sub-title colorN text-center" colspan="12">비 삼성장비매입금액 (관리/자동) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="12">① 삼성장비매입금액 (관리/자동) - VAT포함</th>
 		</tr>
 		<tr>
 			<th class="colorG" colspan="1" rowspan="3">출고일</th>
@@ -1187,43 +1187,43 @@ div.report table th, div.report table td {
 //				}
 
 				// 차액
-				var tCost = [];
-				var trList = $('#report_plan').find('tbody tr');
-				$.each(trList, function(pIndex, pValue) {
-					var tdList = $(pValue).find('td');
-					console.log('tdList', tdList);
-					if (pIndex == 0) {
-						$.each(tdList, function(pIndex, pValue) {
-							var tmp = $(pValue).html().replaceAll(',', '');
-							if (tmp != '') {
-								tCost[pIndex] = parseInt(tmp);
-							} else {
-								tCost[pIndex] = 0;
-							}
-						});
-					} else {
-						$.each(tdList, function(pIndex, pValue) {
-							var tmp = $(pValue).html().replaceAll(',', '');
-							if (tmp != '') {
-								tCost[pIndex] -= parseInt(tmp);
-							} else {
-								tCost[pIndex] -= 0;
-							}
-						});
-					}
-				});
-				console.log('tCost', tCost);
-				var thList = $('#report_plan').find('tfoot tr td');
-				$.each(thList, function(pIndex, pValue) {
-					console.log('tCost[pIndex]', tCost[pIndex]);
-                    if(pIndex >= 10){
-                        return false;
-                    }
-
-					if (tCost[pIndex]!==null) {
-						$(pValue).html(tCost[pIndex].toString().toFormat('NUMBER'));
-					}
-				});
+				// var tCost = [];
+				// var trList = $('#report_plan').find('tbody tr');
+				// $.each(trList, function(pIndex, pValue) {
+				// 	var tdList = $(pValue).find('td');
+				// 	console.log('tdList', tdList);
+				// 	if (pIndex == 0) {
+				// 		$.each(tdList, function(pIndex, pValue) {
+				// 			var tmp = $(pValue).html().replaceAll(',', '');
+				// 			if (tmp != '') {
+				// 				tCost[pIndex] = parseInt(tmp);
+				// 			} else {
+				// 				tCost[pIndex] = 0;
+				// 			}
+				// 		});
+				// 	} else {
+				// 		$.each(tdList, function(pIndex, pValue) {
+				// 			var tmp = $(pValue).html().replaceAll(',', '');
+				// 			if (tmp != '') {
+				// 				tCost[pIndex] -= parseInt(tmp);
+				// 			} else {
+				// 				tCost[pIndex] -= 0;
+				// 			}
+				// 		});
+				// 	}
+				// });
+				// console.log('tCost', tCost);
+				// var thList = $('#report_plan').find('tfoot tr td');
+				// $.each(thList, function(pIndex, pValue) {
+				// 	console.log('tCost[pIndex]', tCost[pIndex]);
+                //     if(pIndex >= 10){
+                //         return false;
+                //     }
+				//
+				// 	if (tCost[pIndex]!==null) {
+				// 		$(pValue).html(tCost[pIndex].toString().toFormat('NUMBER'));
+				// 	}
+				// });
 
 				var tCostTotal = cCostTotal - eCostTotal;
 				$('#popReportNR').find('#tCostTotal').html(tCostTotal.toString().toFormat('NUMBER'));
@@ -1515,6 +1515,7 @@ div.report table th, div.report table td {
 				/* ********************************************************* */
 				var html = '';
 				var outsrcList = pResult.outsrcList;
+				var outsrcItem = pResult.outsrcItem;
 				var all_amt_total = 0;
                 var all_sum_total = 0;
 				$.each(outsrcList, function(pIndex, pValue) {
@@ -1536,14 +1537,8 @@ div.report table th, div.report table td {
 					html += '    <th class="color-contract">연락처</th>';
 					html += '    <td colspan="2">'+pValue.charger_telno+'</td>';
 					html += '</tr>';
-					html += '<tr>';
-					html += '    <th class="color-contract">도급업체선정근거</th>';
-					html += '    <td colspan="3">'+pValue.pymnt_mth+'</td>';
-					html += '    <th class="color-contract">이행증권내역</th>';
-					html += '    <td colspan="2">'+pValue.outsrc_dtls+'</td>';
-					html += '</tr>';
 					html += '<tr> ';
-					html += '	<th class="color-contract">설치비</th> ';
+					html += '	<th class="color-contract">내역</th> ';
 					html += '	<th class="color-contract">실내기대수</th> ';
 					html += '	<th class="color-contract">대당단가</th> ';
 					html += '	<th class="color-contract">공급가액</th> ';
@@ -1551,10 +1546,14 @@ div.report table th, div.report table td {
 					html += '	<th class="color-contract">합계</th> ';
 					html += '	<th class="color-contract">공사비총액</th> ';
 					html += '</tr> ';
-
-					var eCost5 = pValue.e5CostList[0];
+					if(outsrcItem.hasOwnProperty(pValue.outsrc_fo_sn)){
+					var eCost5 = outsrcItem[pValue.outsrc_fo_sn]['e5CostList'][0];
+					var eCost5Total = 0;
+					$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pV){
+						eCost5Total += Math.round(pV.amount*pV.qy * 1.1);
+					});
 					if (eCost5) {
-						var eCost5_amt = eCost5.amount/1.1;
+						var eCost5_amt = eCost5.amount;
 						var eCost5_amt_total = eCost5_amt * eCost5.qy;
 						var eCost5_vat_total = eCost5_amt_total / 10;
 						var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
@@ -1566,11 +1565,11 @@ div.report table th, div.report table td {
 						html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
 						html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
 						html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" rowspan="'+pValue.e5CostList.length+'">'+eCost5.total.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" rowspan="'+outsrcItem[pValue.outsrc_fo_sn]['e5CostList'].length+'">'+eCost5Total.toString().toFormat('NUMBER')+'</td> ';
 						html += '</tr> ';
-						$.each(pValue.e5CostList, function(pIndex, pValue){
+						$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pValue){
 							if (pIndex != 0) {
-								var eCost5_amt = pValue.amount/1.1;
+								var eCost5_amt = pValue.amount;
 								var eCost5_amt_total = eCost5_amt * pValue.qy;
 								var eCost5_vat_total = eCost5_amt_total / 10;
 								var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
@@ -1585,6 +1584,79 @@ div.report table th, div.report table td {
 							}
 						});
 					}
+				}
+				html += '<tr> ';
+				html += '	<td class="color-contract">내역</td> ';
+				html += '	<td class="color-contract">인건비</td> ';
+				html += '	<td class="color-contract">직불</td> ';
+				html += '	<td class="color-contract">일용직</td> ';
+				html += '	<td class="color-contract">로지텍/타사</td> ';
+				html += '	<td class="color-contract">합계</td> ';
+				html += '	<td class="color-contract">집행률</td> ';
+				html += '</tr> ';
+				if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
+					html += '<tr>';
+					html += '    <th class="color-contract">계약내역</th>';
+					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[0].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[1].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[2].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[3].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right" rowspan="4"></td>';
+					html += '</tr>';
+				}
+				else{
+					html += '<tr>';
+					html += '    <th class="color-contract">계약내역</th>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right" rowspan="4"></td>';
+					html += '</tr>';
+
+				}
+				if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4) {
+					html += '<tr>';
+					html += '    <th class="color-contract">계약변경</th>';
+					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[2].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[3].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
+					html += '</tr>';
+
+				}
+				else{
+					html += '<tr>';
+					html += '    <th class="color-contract">계약변경</th>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '    <td class="text-right"></td>';
+					html += '</tr>';
+
+				}
+
+				html += '<tr>';
+				html += '    <th class="color-contract">집행</th>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '</tr>';
+				html += '<tr>';
+				html += '    <th class="color-contract">잔액</th>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right"></td>';
+				html += '</tr>';
+
 
 					html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;">';
 					//매입계산서
@@ -1816,15 +1888,24 @@ div.report table th, div.report table td {
 				/* 모델하우스 */
 				/* ********************************************************* */
 				var model_cost_list = pResult.sModelCostList;
+				var return_list = pResult.modelList;
 				var html = '';
 				var total_dlnt = 0;
 				var total_amount = 0;
 				var total_diff = 0;
 				$.each(model_cost_list, function(pIndex, pValue){
+					var return_de = '';
+					var return_dlnt = 0;
+					var return_place = '';
+					if(return_list.hasOwnProperty(pValue.delng_sn)){
+						return_de = return_list[pValue.delng_sn].return_de;
+						return_place = return_list[pValue.delng_sn].return_place;
+						return_dlnt = return_list[pValue.delng_sn].count;
+					}
 					var dlamt = parseInt(pValue.dlamt); if(isNaN(dlamt)) dlamt = 0;
 					var dlnt = parseInt(pValue.dlnt); if(isNaN(dlnt)) dlnt = 0;
 					var amount = dlamt*dlnt;
-					var diff = dlnt - 0;
+					var diff = dlnt - return_dlnt;
 					total_dlnt += dlnt;
 					total_amount += amount;
 					total_diff += diff;
@@ -1837,10 +1918,10 @@ div.report table th, div.report table td {
 								<td class="text-right">${amount.toFormat('NUMBER')}</td>
 								<td class="text-center">${pValue.bcnc_nm}</td>
 								<td class="text-center">${pValue.expect_de}</td>
-								<td class="text-center"></td>
-								<td class="text-center"></td>
+								<td class="text-center">${return_de}</td>
+								<td class="text-center">${return_dlnt.toFormat('NUMBER')}</td>
 								<td class="text-center">${diff.toFormat('NUMBER')}</td>
-								<td class="text-center"></td>
+								<td class="text-center">${return_place}</td>
 								<td class="text-center"></td>
 							</tr>`
 				});

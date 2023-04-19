@@ -293,7 +293,7 @@
 		});
 		$("#calTFooter").hide();
 		getTodayWork();
-		getApprovalList();
+		// getApprovalList();
 		getAlmostDoneProject();
 
 		// if session['member']['dept_code'] == 'BI'
@@ -424,20 +424,20 @@
 </div><!--modal-->
 <!-- 매입/매출 레포트 팝업 끝 -->
 <script type="text/javascript">
-getApprovalList = function(){
-	$.ajax({
-		url: '/api/approval/ajax_get_approval_datatable',
-		type: 'POST',
-		data: {"s_start_de_start" : "0000-00-00", "s_start_de_end" : "9999-99-99"},
-		dataType: 'json',
-		contentType: false,
-		processData: false,
-		success: function (pResult) {
-			console.log(pResult);
-		}
-	});
-
-}
+// getApprovalList = function(){
+// 	$.ajax({
+// 		url: '/api/approval/ajax_get_approval_datatable',
+// 		type: 'POST',
+// 		data: {"s_start_de_start" : "0000-00-00", "s_start_de_end" : "9999-99-99"},
+// 		dataType: 'json',
+// 		contentType: false,
+// 		processData: false,
+// 		success: function (pResult) {
+// 			console.log(pResult);
+// 		}
+// 	});
+//
+// }
 getBIMSProject = function(){
 	var new_window_width = parseInt(screen.width/1.5);
 	var new_window_height = parseInt(screen.height) - 20;

@@ -102,3 +102,17 @@ def completed_ajax_get_completed_reportNR():
 
     result['status'] = True
     return jsonify(result)
+
+@bp.route('/get_completed_info', methods=['GET'])
+def get_completed_info():
+    params = request.args.to_dict()
+    result = dict()
+    result['bcnc'] = cp.get_completed_bcnc_data(params)
+    result['data'] = cp.get_completed(params)
+    return jsonify(result)
+
+@bp.route('/insert_completed', methods=['POST'])
+def insert_completed():
+    params = request.get_json()
+    cp.insert_completed(params)
+    return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})

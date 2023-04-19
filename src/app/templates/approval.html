@@ -132,7 +132,8 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 	}
 	.member-header{
 		display:grid;
-		grid-template-columns: 8.375fr 7.625fr 0.75fr;
+		/*grid-template-columns: 8.375fr 7.625fr 0.75fr;*/
+		grid-template-columns: 1fr 1fr;
 	}
 	.approval-left{
 		border-right:1px solid #ccc;
@@ -295,9 +296,9 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 											</select>
 										</th>
 										<th class="hasinput">
-											<select class="form-control select2 w100p" id="s_approval_ty_code" name="s_approval_ty_code">
+											<select class="form-control select2 w100p" id="s_approval_tty_code" name="s_approval_tty_code">
 												<option value="">[전체]</option>
-												{% for code in approval_ty_code_list %}
+												{% for code in approval_tty_code_list %}
 												<option value="{{code.value}}" data-parent="{{code.etc1}}">{{code.value}}.{{code.label}}</option>
 												{% endfor %}
 											</select>
@@ -305,25 +306,25 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_approval_title" name="s_approval_title">
 										</th>
-										<th class="hasinput">
-											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">
-												<option value="">[전체]</option>
-<!--												{% for code in bcnc_list %}-->
-<!--												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>-->
-<!--												{% endfor %}-->
-											</select>
-										</th>
+										<th class="hasinput"></th>
 										<th class="hasinput">
 											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de_start" name="s_start_de_start" placeholder="[시작일자]">
 											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
 											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de_end" name="s_start_de_end" placeholder="[종료일자]">
+										</th>
+										<th class="hasinput">
+<!--											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">-->
+<!--												<option value="">[전체]</option>-->
+<!--&lt;!&ndash;												{% for code in bcnc_list %}&ndash;&gt;-->
+<!--&lt;!&ndash;												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>&ndash;&gt;-->
+<!--&lt;!&ndash;												{% endfor %}&ndash;&gt;-->
+<!--											</select>-->
 										</th>
                                         <th class="hasinput">
 <!--											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de_start" name="s_end_de_start" placeholder="[시작일자]">-->
 <!--											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>-->
 <!--											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de_end" name="s_end_de_end" placeholder="[종료일자]">-->
 										</th>
-										<th class="hasinput"></th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_final_mber_sn" name="s_final_mber_sn">
 												<option value="">[전체]</option>
@@ -341,11 +342,11 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 										<th>No.</th>
 										<th>문서구분</th>
 										<th>문서명</th>
-										<th>현장명</th>
-										<th>상태</th>
-										<th>기안일</th>
-										<th>종결일</th>
+										<th>제목</th>
 										<th>기안자</th>
+										<th>기안일</th>
+										<th>상태</th>
+										<th>종결일</th>
 										<th>최종결재자</th>
 										<th>-</th>
 										<th class="text-right">
@@ -401,7 +402,7 @@ getApprovalList = function()
             data: function(params) {
 				return $.extend({}, params, {
 					's_approval_se_code': $('#dtList1').find('#s_approval_se_code').val(),
-					's_approval_ty_code': $('#dtList1').find('#s_approval_ty_code').val(),
+					's_approval_tty_code': $('#dtList1').find('#s_approval_tty_code').val(),
 					's_approval_title': $('#dtList1').find('#s_approval_title').val(),
 					's_approval_status': $('#dtList1').find('#s_approval_status').val(),
                     's_start_de_start': $('#dtList1').find('#s_start_de_start').val(),
@@ -428,10 +429,10 @@ getApprovalList = function()
             { data: 'approval_se_nm' },
             { data: 'approval_ty_nm' },
             { data: 'approval_title' },
-            { data: 'approval_status' },
-            { data: 'start_de' },
-            { data: 'end_de' },
             { data: 'start_mber_nm' },
+            { data: 'start_de' },
+            { data: 'approval_status' },
+            { data: 'end_de' },
             { data: 'final_mber_nm' },
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
@@ -702,13 +703,6 @@ $(function(){
 												<option value="2">수신</option>
 											</select>
 										</div>
-										<div class="hasinput">
-											<div class="btn-group">
-												<button class="btn btn-table btn-info" title="등록" id="regist-member">
-													<i class="fa fa-edit"></i>
-												</button>
-											</div>
-										</div>
 
 									</div>
 
@@ -756,12 +750,29 @@ $(function(){
 	$(document).on('click', '#btnSave', function(){
 		var data = $("#frmBox3").serializeObject();
 		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code":$(document).find(".approval-ty-list .active").data("code"),"approval_list" : []}
-		$(".approval-left .badge").each(function(pIndex, pTag){
+		$(".approval-right .badge").each(function(pIndex, pTag){
 			var mber_sn = $(pTag).data("sn");
 			var approval_type = $(pTag).data("type");
 			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
 		});
-
+		var loginSN = $("#loginSN").val();
+		var pass=false;
+		$(".approval-left .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type});
+			if((parseInt(approval_type) == 1) && (loginSN == mber_sn)){
+				pass=true;
+			}
+		});
+		if(loginSN != '66' && !pass){
+			alert("기안자는 반드시 결재자 리스트에 포함되어야합니다.");
+			return false;
+		}
+		else{
+			if(loginSN == '66'){
+				params.approval_list.push({"mber_sn" : '66', "reg_type": '1'});
+			}
 		$.ajax({
 			url: '/api/approval/ajax_insert_approval',
 			type: 'POST',
@@ -805,6 +816,7 @@ $(function(){
 			}
 		});
 
+		}
 	});
 	init = function(){
 		$('#popEditTabs').find("a[data-action='tab1']").trigger('click');
@@ -838,9 +850,6 @@ $(function(){
 
 					$(`.approval-se-list > div[data-code="${pResult.approval.approval_se_code}"]`).addClass("active");
 					let approval_ty_list = window.approval_ty_list[parseInt(pResult.approval.approval_se_code)];
-					console.log(window.approval_ty_list);
-					console.log(parseInt(pResult.approval.approval_se_code));
-					console.log(approval_ty_list);
 					let html = '';
 					let pIndex = 1;
 					$.each(approval_ty_list, function(_, pRow){
@@ -934,7 +943,19 @@ $(function(){
 					if ($.isFunction($.fn.afterLoadApproval)) {
 						$("#popBox1").afterLoadApproval();
 					}
-		
+					$.each(pResult.member_list, function(pIndex, pValue){
+						var reg_nm = '';
+						if(parseInt(pValue.reg_type) == 0)
+							reg_nm = "협조";
+						else if(parseInt(pValue.reg_type) == 1)
+							reg_nm = "결재";
+						else if(parseInt(pValue.reg_type) == 2)
+							reg_nm = "수신";
+						insert_regist_member(pValue.mber_sn, pValue.mber_nm, pValue.reg_type, reg_nm);
+
+					})
+					$('#popEditTabs').find("a[data-action='tab3']").trigger('click');
+
 				}
 			});
 
@@ -1029,13 +1050,7 @@ $(function(){
 
 		}
 	});
-
-
-	$(document).on("click", "#regist-member", function(){
-		let mber_sn = $("#member-search-select").find(":selected").val();
-		let mber_nm = $("#member-search-select").find(":selected").text();
-		let apvl_type = $("#member-approval-select").find(":selected").val();
-		let apvl_nm = $("#member-approval-select").find(":selected").text();
+	function insert_regist_member(mber_sn, mber_nm, apvl_type, apvl_nm){
 		if(mber_sn != "" && apvl_type != ""){
 			var target = ".approval-left";
 			if(apvl_type == "2"){
@@ -1060,7 +1075,19 @@ $(function(){
 						</div>`;
 			$(target).append(html);
 		}
+	}
 
+	$(document).on("change", "#member-approval-select", function(){
+		let mber_sn = $("#member-search-select").find(":selected").val();
+		let mber_nm = $("#member-search-select").find(":selected").text();
+		let apvl_type = $("#member-approval-select").find(":selected").val();
+		let apvl_nm = $("#member-approval-select").find(":selected").text();
+		if(mber_sn != '' && apvl_type != ''){
+			insert_regist_member(mber_sn, mber_nm, apvl_type, apvl_nm);
+		}
+	});
+	$(document).on("change", "#member-search-select", function(){
+		$("#member-approval-select").yVal('');
 	});
 	$(document).on("click", ".badge-close", function(){
 		let container = $(this).parent().parent();
@@ -1138,6 +1165,9 @@ $(function(){
 								</div>
 
 							</span>
+							<span class="widget-toolbar" style="width:100%;padding:0px!important;display:grid;">
+								<button type="button" class="btn" id="btnApproveCopy" title="결재 정보를 복사합니다." style="display:none;width:50%;"><i class="fa fa-copy"> 품의 복사</i></button>
+							</span>
 							<span class="widget-toolbar grid-three" id="popCheckEditToolbar" style="width:100%;padding:0px!important;display:grid;">
 
 								<div style="display:inline-block;">
@@ -1146,7 +1176,6 @@ $(function(){
 								<button type="button" class="btn btn-primary" id="btnApprove" title="결재 처리합니다." data-value="1" disabled><i class="fa fa-save"> 결재</i></button>
 								<button type="button" class="btn btn-danger" id="btnNotApprove" title="반려 처리합니다." data-value="-1" disabled><i class="fa fa-trash-o"> 반려</i></button>
 								<button type="button" class="btn btn-danger" id="btnApproveCancel" title="결재 취소 처리합니다." data-value="0" style="display:none;"><i class="fa fa-trash-o"> 결재취소</i></button>
-								<button type="button" class="btn btn-success" id="btnApproveCopy" title="결재 정보를 복사합니다." style="display:none;"><i class="fa fa-copy"> 복사</i></button>
 								<input type="hidden" id="s_approval_sn" value=""/>
 							</span>
 							<style>
@@ -1213,14 +1242,16 @@ $(function(){
 									font-weight:bold;
 								}
 								.approval-line .approval-line-list>div:nth-child(2)>div{
-									display:inline-block;
+									display:inline-grid;
 								}
 								.approval-line .approval-line-list>div:nth-child(4)>div{
-									display:inline-block;
+									display:inline-grid;
 								}
 								.approval-member{
 									width:80px;
 									border:1px solid #aaa;
+									display:grid;
+									grid-template-rows: 16px 48px 16px 1fr;
 								}
 								.approval-member>div{
 									padding-top:2px;

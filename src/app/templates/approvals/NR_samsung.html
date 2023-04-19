@@ -190,15 +190,15 @@
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
             </td>
-            <td class="text-right" name="sdlnt[]"></td>
+            <td class="text-right" data-type="number" name="sdlnt[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
             </td>
-            <td class="text-right" name="amount[]"></td>
+            <td class="text-right" data-type="number" name="amount[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
             </td>
-            <td class="text-right" name="va[]"></td>
+            <td class="text-right" data-type="number" name="va[]"></td>
             <td class="hasinput">
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
@@ -271,6 +271,7 @@
                 method : 'GET',
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
+                    console.log(pResult);
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
@@ -383,6 +384,10 @@
             var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
             var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            if(dlnt + sdlnt > cnt_dlnt){
+                dlnt = cnt_dlnt - sdlnt;
+                $(pRow).find("[name='dlnt[]']").val(dlnt.toFormat('NUMBER'));
+            }
             var amount = cnt_dlnt*dlamt;
             var va = samount-amount;
             total_amount += amount;

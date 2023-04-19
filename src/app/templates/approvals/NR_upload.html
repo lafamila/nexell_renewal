@@ -209,12 +209,26 @@ function updateThumbnail(dropZoneElement, file) {
             url : '/api/project/get_b_projects',
             method: 'GET',
             success: function(pResult){
+
+
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
                     html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
-                $(document).find("#cntrct_sn").html(html);
+                $.ajax({
+                    url : '/api/project/get_p_projects',
+                    method: 'GET',
+                    success: function(pResult){
+                        $.each(pResult, function(pIndex, pValue){
+                            html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                            window.projects[pValue.cntrct_sn] = pValue;
+                        });
+                        $(document).find("#cntrct_sn").html(html);
+
+
+                    }
+                });
 
 
             }

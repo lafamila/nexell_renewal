@@ -1153,6 +1153,22 @@ def set_reserve_data(params):
         params['r_sn'] = result['r_sn']
     g.curs.execute("UPDATE reserved SET {}=%(data)s WHERE r_sn=%(r_sn)s".format(params['column']), params)
 
+def get_equipment(params):
+    g.curs.execute("""SELECT eq_sn
+                            , order_de
+                            , cntrct_sn
+                            , prdlst_se_code
+                            , model_no
+                            , dlnt
+                            , pamt
+                            , samt
+                            , bcnc_sn
+                            , delng_ty_code
+                            , cnnc_sn
+                            , dlivy_de
+                    FROM equipment WHERE eq_sn=%(eq_sn)s""", params)
+    result = g.curs.fetchone()
+    return result
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):
 #     s_pxcond_mt = params['s_pxcond_mt']

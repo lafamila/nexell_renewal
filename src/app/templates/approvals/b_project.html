@@ -627,7 +627,7 @@
             $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
             if(!isNaN(parseInt(pValue.home_count))){
                 for(let i=0;i<7;i++){
-                    if(parseInt(pValue.home_count) < 500+i*250){
+                    if(parseInt(pValue.home_count) <= 500+i*250){
                         window.home_count = 500+i*250;
                         break;
                     }
@@ -678,6 +678,10 @@
             $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
                 if($(pTag).html().endsWith("TYPE")){
                     $(pTag).removeClass("colorY");
+                }
+                else if($(pTag).data("col") && $(pTag).data("col").endsWith("TYPE")){
+                    $(pTag).removeClass("colorY");
+
                 }
             });
             $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){

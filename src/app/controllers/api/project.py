@@ -3,6 +3,7 @@ from .services import project_service as prj
 from .services import member_service as mber
 from .services import charger_service as chrg
 from .services import dspy_cost_service as dsp
+from .services import stock_service as st
 from app.connectors import DB
 from app.helpers import session_helper
 from .services import set_menu
@@ -63,9 +64,37 @@ def ajax_get_reportNR():
     result['sModelCostList'] = prj.get_model_cost_list(params)
     result['sOptionCostList'] = prj.get_option_cost_list(params)
     result['outsrcList'] = prj.get_outsrc_report_list(params)
-
-    #TODO : modelList api
-    result['modelList'] = []
+    result['outsrcItem'] = dict()
+    for outsrc in result['outsrcList']:
+        s_params = {key:value for key, value in params.items()}
+        s_params["s_outsrc_fo_sn"] = outsrc["outsrc_fo_sn"]
+        result['outsrcItem'][outsrc["outsrc_fo_sn"]] = prj.get_outsrc_detail(s_params)
+    result['modelList'] = dict()
+    for d in result['sModelCostList']:
+        stocks = st.get_stock_by_account(d['delng_sn'])
+        for stock in stocks:
+            detail = st.get_stock_log({"s_stock_sn" : stock['stock_sn']})
+            from pprint import pprint
+            candidate = False
+            candidateDate = None
+            candidatePlace = None
+            for log in detail[::-1]:
+                if log['stock_sttus'] == 1:
+                    candidate = True
+                    candidateDate = log['ddt_man']
+                    candidatePlace = log['cntrct_nm']
+                    continue
+                if candidate and log['log_sn'] == stock['log_sn']:
+                    if d['delng_sn'] not in result['modelList']:
+                        result['modelList'][d['delng_sn']] = {"count" : 0, "return_de" : None, "return_place" : None}
+                    result['modelList'][d['delng_sn']]["count"] += 1
+                    result['modelList'][d['delng_sn']]["return_de"] = candidateDate
+                    result['modelList'][d['delng_sn']]["return_place"] = candidatePlace
+                    break
+                candidate = False
+                candidateDate = None
+                candidatePlace = None
+            # if detail['item_sttus'] == 1
     result['dspyCostList'] = dsp.get_dspy_cost_list(params)
     result["status"] = True
     return jsonify(result)
@@ -196,6 +225,26 @@ def insert_b_project():
     prj.insert_b_project(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
+@bp.route('/insert_BF_b_project', methods=['POST'])
+def insert_BF_b_project():
+    params = request.get_json()
+    prj.insert_b_bf_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/get_cost_bf_bd', methods=['GET'])
+def get_cost_bf_bd():
+    params = request.args.to_dict()
+    result = dict()
+    prjct = prj.get_project_by_cntrct_nm(params["s_cntrct_sn"])
+    params["s_prjct_sn"] = prjct["prjct_sn"]
+    result['cCostList'] = prj.get_c_cost_list(params)
+    result['cCostListExtra'] = prj.get_c_cost_list_extra(params)
+    result['eCostListExtra'] = prj.get_e_cost_list_extra(params)
+    result['eCostList'] = prj.get_e_cost_list(params)
+    result['gCostList'] = prj.get_g_cost_list(params)
+    return jsonify(result)
+
+
 @bp.route('/get_costs_bd', methods=['GET'])
 def get_costs_bd():
     params = request.args.to_dict()
@@ -214,6 +263,13 @@ def get_costs_bd():
     result['otherList'] = prj.get_expect_equip_other_list(params)
     result['etcRcppayList'] = prj.get_etc_rcppay_report_list(params)
     result['outsrcList'] = prj.get_outsrc_list(params)
+    result['outsrcItem'] = dict()
+    result['prjct'] = prjct
+    for outsrc in result['outsrcList']:
+        s_params = {key:value for key, value in params.items()}
+        s_params["s_outsrc_fo_sn"] = outsrc["outsrc_fo_sn"]
+        result['outsrcItem'][outsrc["outsrc_fo_sn"]] = prj.get_outsrc_detail(s_params)
+
     return jsonify(result)
 
 @bp.route('/get_outsrc_detail', methods=['GET'])
@@ -245,7 +301,8 @@ def insert_c_project():
 @bp.route('/insert_biss', methods=['POST'])
 def insert_biss():
     params = request.get_json()
-    raise Exception
+    prj.update_biss(params)
+    return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})
 
 @bp.route('/update_c_project', methods=['POST'])
 def update_c_project():

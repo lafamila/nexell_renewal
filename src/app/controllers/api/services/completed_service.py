@@ -566,3 +566,67 @@ def get_partner_status_list(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+def get_completed_bcnc_data(params):
+    params['s_pxcond_mt'] = datetime.datetime.now().strftime("%Y-%m")
+    query = """SELECT GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'P', %(s_pxcond_mt)s) AS completed_1
+                    , GET_TAXBIL_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'C', %(s_pxcond_mt)s) AS completed_2
+                    , GET_PXCOND_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'S', %(s_pxcond_mt)s) AS completed_3
+                FROM contract c
+                WHERE c.cntrct_sn=%(s_cntrct_sn)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+def get_completed(params):
+    query = """SELECT MAX(body1) AS body1
+                    , MAX(body2) AS body2
+                    , MAX(body3) AS body3
+                    , MAX(body4) AS body4
+                    , SUM(IFNULL(bcnc_1, 0)) AS bcnc_1
+                    , SUM(IFNULL(bcnc_2, 0)) AS bcnc_2
+                    , SUM(IFNULL(bcnc_3, 0)) AS bcnc_3
+                    , SUM(IFNULL(est_1, 0)) AS est_1
+                    , SUM(IFNULL(est_2, 0)) AS est_2
+                    , SUM(IFNULL(est_3, 0)) AS est_3
+                    , SUM(IFNULL(logi_1, 0)) AS logi_1
+                    , SUM(IFNULL(logi_2, 0)) AS logi_2
+                FROM completed 
+                WHERE 1=1
+                AND cntrct_sn=%(s_cntrct_sn)s 
+                AND outsrc_fo_sn=%(s_outsrc_fo_sn)s 
+                GROUP BY cntrct_sn, outsrc_fo_sn"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+def insert_completed(params):
+    data = {}
+    for i in range(1, 4):
+        key = "bcnc_now_{}".format(i)
+        if key in params and params[key]:
+            data["bcnc_{}".format(i)] = int(params[key].replace(",", ""))
+
+    for i in range(1, 5):
+        key = "body_{}_a".format(i)
+        if key in params and params[key] != '':
+            data["body{}".format(i)] = int(params[key].replace(",", ""))
+
+    for i in range(1, 4):
+        key = "now_est_{}".format(i)
+        if key in params and params[key]:
+            data["est_{}".format(i)] = int(params[key].replace(",", ""))
+
+    for i in range(1, 3):
+        key = "now_logi_{}".format(i)
+        if key in params and params[key]:
+            data["logi_{}".format(i)] = int(params[key].replace(",", ""))
+
+    data["cntrct_sn"] = params["cntrct_sn"]
+    data["outsrc_fo_sn"] = params["outsrc_fo_sn"]
+
+    keys = list(data.keys())
+
+    query = """INSERT INTO completed({}) VALUES({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+    g.curs.execute(query, data)
+

@@ -17,6 +17,7 @@ def refresh_code_list():
                 progrs_sttus_code_list=get_code_list('progrs_sttus_code'.upper()),
                 approval_se_code_list=get_code_list('approval_se_code'.upper()),
                 approval_ty_code_list=get_code_list('approval_ty_code'.upper()),
+                approval_tty_code_list=get_code_list('approval_tty_code'.upper()),
                 mber_sttus_code_list=get_code_list('mber_sttus_code'.upper()),
                 acntctgr_code_list=get_code_list('acntctgr_code'.upper()),
                 rcppay_se_code_list=get_code_list('rcppay_se_code'.upper()),

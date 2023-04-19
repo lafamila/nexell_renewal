@@ -268,6 +268,7 @@
                 method : 'GET',
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
+                    console.log(pResult);
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
@@ -368,35 +369,35 @@
         }
     }
     $(document).on("change", "tbody[role='equip_row']", function(){
-        var total_amount = 0;
-        var total_samount = 0;
-        var total_cnt_dlnt = 0;
-        var total_dlnt = 0;
-        var total_sdlnt = 0;
-        var total_va = 0;
-        $(this).find("tr").each(function(pIndex, pRow){
-            var cnt_dlnt = parseInt($(pRow).find("[name='cnt_dlnt[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
-            var dlamt = parseInt($(pRow).find("[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
-            var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
-            var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
-            var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
-            var amount = cnt_dlnt*dlamt;
-            var va = samount-amount;
-            total_amount += amount;
-            total_samount += samount;
-            total_cnt_dlnt += cnt_dlnt;
-            total_dlnt += dlnt;
-            total_sdlnt += sdlnt;
-            total_va += va;
-            $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
-            $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
-        });
-        $(this).parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
-        $(this).parent().find("[data-column='total_sdlnt']").html(total_sdlnt.toFormat('NUMBER'));
-        $(this).parent().find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
-        $(this).parent().find("[data-column='total_cnt_dlnt']").html(total_cnt_dlnt.toFormat('NUMBER'));
-        $(this).parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
-        $(this).parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
+        // var total_amount = 0;
+        // var total_samount = 0;
+        // var total_cnt_dlnt = 0;
+        // var total_dlnt = 0;
+        // var total_sdlnt = 0;
+        // var total_va = 0;
+        // $(this).find("tr").each(function(pIndex, pRow){
+        //     var cnt_dlnt = parseInt($(pRow).find("[name='cnt_dlnt[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+        //     var dlamt = parseInt($(pRow).find("[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+        //     var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+        //     var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
+        //     var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+        //     var amount = cnt_dlnt*dlamt;
+        //     var va = samount-amount;
+        //     total_amount += amount;
+        //     total_samount += samount;
+        //     total_cnt_dlnt += cnt_dlnt;
+        //     total_dlnt += dlnt;
+        //     total_sdlnt += sdlnt;
+        //     total_va += va;
+        //     $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+        //     $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
+        // });
+        // $(this).parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
+        // $(this).parent().find("[data-column='total_sdlnt']").html(total_sdlnt.toFormat('NUMBER'));
+        // $(this).parent().find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
+        // $(this).parent().find("[data-column='total_cnt_dlnt']").html(total_cnt_dlnt.toFormat('NUMBER'));
+        // $(this).parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
+        // $(this).parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
     });
 
     $(document).on("change", "tbody[role='ct_se_code_contract']", function(){

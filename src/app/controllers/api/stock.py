@@ -25,6 +25,24 @@ def disconnect(response):
     return response
 
 
+@bp.route('/ajax_get_inventory_datatable_search', methods=['POST'])
+def ajax_get_inventory_datatable_search():
+    params = request.form.to_dict()
+    result = st.get_stock_datatable_search(params)
+    return jsonify(result)
+
+
+@bp.route('/get_stock_info', methods=['GET'])
+def get_stock_info():
+    stock_sns = request.args.get("stock_sns")
+    stock_sns = stock_sns.split(",")
+    result = []
+    for stock_sn in stock_sns:
+        params = {"s_stock_sn" : stock_sn}
+        data = st.get_stock(params)
+        result.append(data)
+    return jsonify(result)
+
 @bp.route('/ajax_get_inventory_datatable_ts', methods=['POST'])
 def ajax_get_inventory_datatable_ts():
     params = request.form.to_dict()

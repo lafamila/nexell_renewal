@@ -511,6 +511,8 @@
                         $(pRow).find("input, select").attr("disabled", true);
                     });
                     var max_extra_sn = 0;
+                    $(document).find("#costTable tbody[role='ct_se_code_extra']").remove();
+                    $(document).find("#costTable tbody[role='ct_se_code_diff']").remove();
                     $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
                         max_extra_sn = extra_sn;
                         var pRow = pResult.extraCostList[extra_sn];

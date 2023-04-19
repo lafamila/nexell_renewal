@@ -76,6 +76,7 @@ def get_approval(params):
                 , a.approval_ty_code
                 , a.approval_data
                 , a.approval_title
+                , a.reg_mber
                 FROM approval a
                 WHERE 1=1
                 AND a.approval_sn=%(approval_sn)s"""
@@ -133,7 +134,7 @@ def get_approval_datatable(params):
 				END AS approval_status
 				, DATE_FORMAT(a.reg_dtm, '%%Y-%%m-%%d') AS start_de
 				, IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '') AS end_de
-				, (SELECT mber_nm FROM member WHERE mber_sn=m.mber_sn) AS final_mber_nm
+				, (SELECT mber_nm FROM member WHERE mber_sn=last.mber_sn) AS final_mber_nm
 				, (SELECT mber_nm FROM member WHERE mber_sn=a.reg_mber) AS start_mber_nm
 				FROM (SELECT * FROM approval_member WHERE mber_sn=%s ) am
 				LEFT JOIN approval a 
@@ -144,18 +145,20 @@ def get_approval_datatable(params):
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) mi ON a.approval_sn=mi.approval_sn
 				LEFT OUTER JOIN 
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='0' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) n ON a.approval_sn=n.approval_sn
+				LEFT OUTER JOIN 
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='1' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) last ON a.approval_sn=last.approval_sn
 				WHERE 1=1
 				AND a.reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
 """.format(params['s_start_de_start'], params['s_start_de_end'])
 
     data = [session['member']['member_sn']]
+    if "s_approval_tty_code" in params and params['s_approval_tty_code']:
+        query += " AND (SELECT estn_code_a FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) = %s"
+        data.append(params["s_approval_tty_code"])
     return dt_query(query, data, params)
 
-#
-#     if "s_cntrct_no" in params and params['s_cntrct_no']:
-#         query += " AND c.cntrct_no LIKE %s"
-#         data.append('%{}%'.format(params["s_cntrct_no"]))
-#
+
+
 #     if "s_spt_nm" in params and params['s_spt_nm']:
 #         query += " AND c.spt_nm LIKE %s"
 #         data.append('%{}%'.format(params["s_spt_nm"]))

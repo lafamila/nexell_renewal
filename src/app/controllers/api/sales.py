@@ -2,6 +2,7 @@ from flask import Blueprint, g, current_app, render_template, redirect, request,
 from .services import sales_service as sales
 from .services import project_service as prj
 from .services import stock_service as st
+from .services import common_service as cm
 
 from app.connectors import DB
 from app.helpers import session_helper
@@ -430,11 +431,81 @@ def ajax_get_sales_expect_report():
 
     return jsonify(table_data)
 
+@bp.route('/equip_to_account', methods=['GET'])
+def equip_to_account():
+    params = request.args.to_dict()
+    equipment = cm.get_equipment(params)
+    prjct = prj.get_project_by_cntrct_nm(equipment["cntrct_sn"])
+    cntrct = prj.get_contract({"s_cntrct_sn" : equipment["cntrct_sn"]})
+
+    row = dict()
+    row['cntrct_sn'] = equipment['cntrct_sn']
+    row['prjct_sn'] = prjct['prjct_sn']
+    row['ctmmny_sn'] = 1
+    row['regist_dtm'] = datetime.now()
+    row['register_id'] = session['member']['member_id']
+    row['delng_se_code'] = 'P'
+    row['ddt_man'] = params['dlivy_de']
+    row['bcnc_sn'] = equipment['bcnc_sn']
+    row['prdlst_se_code'] = equipment['prdlst_se_code']
+    row['model_no'] = equipment['model_no']
+    row['delng_ty_code'] = equipment['delng_ty_code']
+    row['dlnt'] = equipment['dlnt']
+    row['dlamt'] = equipment['pamt']
+    keys = list(row.keys())
+    g.curs.execute("INSERT INTO account({0}) VALUES ({1})".format(",".join(keys), ",".join(["%({})s".format(key) for key in keys])), row)
+    delng_sn = g.curs.lastrowid
+    row['delng_se_code'] = 'S'
+    row['dlivy_de'] = params['dlivy_de']
+    row['cnnc_sn'] = delng_sn
+    row['bcnc_sn'] = cntrct["bcnc_sn"]
+    row['delng_ty_code'] = params["delng_ty_code"]
+    row['expect_de'] = params['expect_de']
+    keys = list(row.keys())
+    g.curs.execute("INSERT INTO account({0}) VALUES ({1})".format(",".join(keys), ",".join(["%({})s".format(key) for key in keys])), row)
+    g.curs.execute("UPDATE equipment SET dlivy_de=%(dlivy_de)s WHERE eq_sn=%(eq_sn)s", params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
+
 @bp.route('/insert_ms_equip', methods=['POST'])
 def insert_ms_equip():
     params = request.get_json()
-    sales.insert_ms_equip(params)
-    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    if params['msh_approval_type'] in ('S', 'B'):
+        delng_sns = sales.insert_ms_equip(params)
+        stock_sns = [(stock_sn, delng_sn, model_no, dlnt, prduct_ty_code) for delng_ty_code, stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in zip(params["delng_ty_code[]"], params["delng_sn[]"], delng_sns, params["model_no[]"], params["dlnt[]"], params["prduct_ty_code[]"])]
+        for stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in stock_sns:
+
+            if stock_sn == "":
+                for _ in range(int(dlnt)):
+                    s_params = {"use_type" : "", "prduct_se_code" : "1", "prduct_ty_code" : prduct_ty_code, "model_no" : model_no}
+                    stock_sn = st.insert_stock(s_params, 0)
+                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+            else:
+                st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    else:
+        sales.insert_ms_equip(params)
+        for delng_sn, dlnt, invn_sttus_code, return_de in zip(params["delng_sn[]"], params["return_dlnt[]"], params["stock_place[]"], params["return_de[]"]):
+
+            stocks = st.get_stock_by_account(delng_sn)
+            for s in stocks[:min(len(stocks), int(dlnt))]:
+                st.insert_log(s['stock_sn'], 1, invn_sttus_code, None, return_de)
+
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/get_model_list', methods=['GET'])
+def get_model_list():
+    params = request.args.to_dict()
+    result = dict()
+    result['model'] = sales.get_model_list(params)
+    result['after'] = []
+    delng_sns = [acc['delng_sn'] for acc in result['model']]
+    g.curs.execute("SELECT log_sn, stock_sn, cnnc_sn FROM stock_log WHERE delng_sn IN ({})".format(
+        ",".join(['%s'] * len(delng_sns))), delng_sns)
+    stocks = g.curs.fetchall(transform=False)
+    for stock in stocks:
+        if stock['cnnc_sn'] is not None:
+            result['after'].append(stock['stock_sn'])
+    return jsonify(result)
 
 @bp.route('/insert_equipment', methods=['POST'])
 def insert_equipment():
@@ -465,5 +536,12 @@ def update_equipment():
     params = request.get_json()
     prj.insert_c_extra_project(params)
     sales.insert_equipment(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/update_equipment_establish', methods=['POST'])
+def update_equipment_establish():
+    params = request.get_json()
+    prj.insert_c_extra_project(params)
+    sales.update_equipment_establish(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
