@@ -53,6 +53,44 @@
         </tr>
 
     </tbody>
+    <tbody role="model_approval">
+        <tr>
+            <td class="hasinput" colspan="4">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="radio" name="msh_approval_type" value="S">설치
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="msh_approval_type" value="B">변경
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="msh_approval_type" value="H">회수
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tbody role="model_house">
+        <tr>
+            <td class="colorSky">MH 설치장소</td>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="mh_place" id="mh_place"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky">MH 설치세대</td>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="mh_count" id="mh_count"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky">공사일정</td>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="mh_period" id="mh_period"/>
+            </td>
+
+        </tr>
+    </tbody>
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
@@ -136,13 +174,15 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="80"/>
+        <col width="80"/>
+        <col width="80"/>
         <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
+        <col width="1"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="16"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② M/H 매입 현황</span>
+			<th class="sub-title colorN text-center" colspan="18"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② M/H 매입 현황</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowMHStock">재고장비추가</button>
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRowMH"><i class="fa fa-plus"></i></button>
@@ -152,6 +192,7 @@
     </thead>
     <tbody role="header">
         <tr>
+            <th class="color-contract text-center">분류</th>
             <th class="color-contract text-center">상품명</th>
             <th class="color-contract text-center">출고일</th>
             <th class="color-contract text-center">모델명</th>
@@ -165,6 +206,7 @@
             <th class="color-contract text-center">회수예정일</th>
             <th class="colorP text-center">회수일</th>
             <th class="colorP text-center">회수수량</th>
+            <th class="colorP text-center">기회수수량</th>
             <th class="colorP text-center">차이수량</th>
             <th class="colorP text-center">회수창고</th>
             <th class="color-contract text-center">-</th>
@@ -172,7 +214,6 @@
     </tbody>
     <tbody role="m_house_row">
         <tr data-row="m_house_tr">
-            <td class="text-center" name="dlivy_de[]"></td>
             <td class="hasinput" data-target="S">
                 <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
                     <option value=""></option>
@@ -182,17 +223,32 @@
                 </select>
             </td>
             <td class="hasinput" data-target="S">
+                <select class="form-control select2" name="prduct_ty_code[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in prduct_ty_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="text-center" name="dlivy_de[]"></td>
+            <td class="hasinput" data-target="S">
                 <input type="text" class="form-control text-left" name="model_no[]"/>
                 <input type="hidden" name="delng_ty_code[]" value=""/>
-                <input type="hidden" name="delng_ty_code[]" value=""/>
             </td>
             <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+                <input type="text" class="form-control text-right" data-type="number" name="qy[]"/>
             </td>
             <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
+                <input type="text" class="form-control text-right" data-type="number" name="amount[]"/>
             </td>
-            <td class="text-right" data-column="amount"></td>
+            <td class="hasinput" data-target="S">
+                <input type="text" class="form-control text-right" data-type="number" name="pamount[]"/>
+            </td>
+            <td class="text-right" data-column="pamount_sum"></td>
+            <td class="hasinput" data-target="S">
+                <input type="text" class="form-control text-right" data-type="number" name="dc[]"/>
+            </td>
+            <td class="text-right" data-column="ramount"></td>
             <td class="hasinput" data-target="S">
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
@@ -202,34 +258,43 @@
                 </select>
             </td>
             <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-center" name="expect_de[]"/>
+                <input type="text" class="form-control text-center" data-type="date" name="expect_de[]"/>
             </td>
-            <td class="hasinput" data-target="R">
-                <input type="text" class="form-control text-center" name="return_de[]"/>
+            <td class="hasinput" data-target="H">
+                <input type="text" class="form-control text-center" data-type="date" name="return_de[]"/>
             </td>
-            <td class="hasinput" data-target="R">
+            <td class="hasinput" data-target="H">
                 <input type="text" class="form-control text-center" data-type="number" name="return_dlnt[]"/>
             </td>
+            <td class="text-right" data-column="return_before"></td>
             <td class="text-right" data-column="diff"></td>
             <td class="hasinput" data-target="R">
                 <select class="form-control select2" name="stock_place[]" style="width:100%!important;">
                     <option value=""></option>
-                    <option value="1">이현창고</option>
-                    <option value="2">기타창고</option>
+                    <option value="2">이현창고</option>
+                    <option value="3">기타창고</option>
                 </select>
             </td>
-            <td></td>
+            <td class="hasinput">
+                <button class="btn btn-table btn-warning removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+            </td>
         </tr>
     </tbody>
     <tfoot>
         <tr>
             <th class="colorG text-center" colspan="4">합계</th>
-            <th class="colorG text-right" data-column="total_dlnt"></th>
-            <th class="colorP text-right" data-column="total_amount"></th>
+            <th class="colorG text-right" data-column="total_qy"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_pamount_sum"></th>
+            <th class="colorG text-right" data-column="total_dc"></th>
+            <th class="colorG text-right" data-column="total_ramount"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
+
+            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_return_dlnt"></th>
+            <th class="colorG text-right" data-column="total_return_before"></th>
             <th class="colorG text-right" data-column="total_diff"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
@@ -341,8 +406,8 @@
             <th class="colorP text-right" data-column="total_amount"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
-            <th class="colorG"></th>
-            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_return_dlnt"></th>
+            <th class="colorG text-right" data-column="total_return_before"></th>
             <th class="colorG text-right" data-column="total_diff"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
@@ -404,6 +469,15 @@
 </table>
 
 <script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
     get_cost_bf_bd = function(cntrct_sn){
         $.ajax({
             url : '/api/project/get_cost_bf_bd',
@@ -453,32 +527,59 @@
                     return result;
                }
     cloneRow = function(selector, count){
-        if(selector == "construct_tr"){
-            for(let i=0;i<count;i++){
-                var trs = $(document).find("tbody[role='construct_row'] tr");
-                var origin = trs.eq(0).clone(true);
-                $(origin).find("td:not(.hasinput)").html("0");
-                $(origin).find("td.hasinput input").val("");
-                $(document).find("tbody[role='construct_row']").append($(origin));
-            }
-            $(document).find("tbody[role='construct_row']").trigger("change");
-            $(document).find("tbody[role='construct_row']").yRowspan(0);
+    }
+    getValue = function(tag, isHTML=true){
+        if(isHTML){
+            var value = parseInt($(tag).html().replaceAll(",", ""));
+        }
+        else{
+                var value = parseInt($(tag).val().replaceAll(",", ""));
 
         }
+        if(isNaN(value)) value = 0;
+        return value;
     }
-    $(document).on("change", "tbody[role='construct_row']", function(){
-        var total = 0;
+
+    $(document).on("change", "tbody[role='m_house_row'], tbody[role='s_house_row']", function(){
+        var total_qy = 0;
+        var total_pamount_sum = 0;
+        var total_dc = 0;
+        var total_ramount = 0;
+        var total_return_dlnt = 0;
+        var total_return_before = 0;
+        var total_diff = 0;
         $(this).find("tr").each(function(pIndex, pRow){
-            var count = parseInt($(pRow).find("input[name='construct_count[]']").eq(0).val().replaceAll(",", "")); if(isNaN(count)) count = 0;
-            var amt = parseInt($(pRow).find("input[name='construct_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(amt)) amt = 0;
-            var camt = count * amt;
-            var tax = Math.round(camt*0.1)
-            $(pRow).find("input[name='construct_tax[]']").eq(0).val(tax.toFormat('NUMBER'));
-            $(pRow).find("[data-column='construct_camt']").html(camt.toFormat('NUMBER'));
-            $(pRow).find("[data-column='construct_sum']").html((camt+tax).toFormat('NUMBER'));
-            total += camt+tax;
+            var qy = getValue($(pRow).find("input[name='qy[]']").eq(0), false);
+            var pamount = getValue($(pRow).find("input[name='pamount[]']").eq(0), false);
+            var pamount_sum = qy*pamount;
+            $(pRow).find(`[data-column="pamount_sum"]`).html(pamount_sum.toFormat('NUMBER'));
+            var dc = getValue($(pRow).find("input[name='dc[]']").eq(0), false);
+            var ramount = pamount_sum - dc;
+            $(pRow).find(`[data-column="ramount"]`).html(ramount.toFormat('NUMBER'));
+
+            var return_dlnt = getValue($(pRow).find("input[name='return_dlnt[]']").eq(0), false);
+            var return_before = getValue($(pRow).find(`[data-column="return_before"]`));
+            if(return_dlnt + return_before > qy){
+                return_dlnt = qy - return_before;
+                $(pRow).find("input[name='return_dlnt[]']").eq(0).val(return_dlnt.toFormat('NUMBER'));
+            }
+            var diff = qy - return_dlnt - return_before;
+            $(pRow).find("[data-column='diff']").eq(0).html(diff.toFormat('NUMBER'));
+            total_qy += qy;
+            total_pamount_sum += pamount_sum;
+            total_dc += dc;
+            total_ramount += ramount;
+            total_return_dlnt += return_dlnt;
+            total_return_before += return_before;
+            total_diff += diff;
         });
-        $(this).find("[data-column='construct_total']").html(total.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_qy']").html(total_qy.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_pamount_sum']").html(total_pamount_sum.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_dc']").html(total_dc.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_ramount']").html(total_ramount.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_return_dlnt']").html(total_return_dlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_return_before']").html(total_return_before.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
     });
     $(document).on("change", "tbody[role='ct_se_code']", function(){
         var fee_amount = parseInt($(document).find("[name='total_cntrct_fee_amount']").val().replaceAll(",", "")); if(isNaN(fee_amount)) fee_amount = 0;
@@ -535,6 +636,13 @@
             $(this).focusout();
         }
     });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
     $(document).on("change", "#cntrct_sn", function(){
         var cntrct_sn = $("#cntrct_sn").find(":selected").val();
         $(document).find(".colorY").removeClass("colorY");
