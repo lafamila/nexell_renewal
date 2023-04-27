@@ -37,9 +37,32 @@ div.report table tfoot {
 	border-left: 1px solid #000!important;
 	border-right: 1px solid #000!important;
 	border-bottom: 0px solid #000!important;
+	border-top: 0px solid #000!important;
+}
+div.report table tbody tr:first-child th, div.report table tbody tr:first-child td, div.report table thead tr:first-child th, div.report table thead tr:first-child td{
+	border-top:0px solid #555!important;
+}
+div.report table:not(:last-child){
+	border-bottom: 0px solid #000!important;
+}
+div.report table:not(:first-child){
+	border-top: 2px solid #000!important;
+}
+div.report table tbody:first-child{
+	border-top:0px solid #000!important;
 }
 div.report table th, div.report table td {
     padding: 5px!important;
+}
+div.report table table tr td:last-child, div.report table table tr th:last-child{
+	border-right:0px solid #555!important;
+}
+div.report table table tr td:first-child, div.report table table tr th:first-child{
+	border-left:0px solid #555!important;
+}
+div.report table table thead, div.report table table tbody, div.report table table tbody[role=body], div.report table table tfoot{
+	border-right:0px solid #000!important;
+	border-left:0px solid #000!important;
 }
 </style>
 <style>
@@ -75,96 +98,116 @@ div.report table th, div.report table td {
 
 <table id="report_contract">
 	<colgroup>
-		<col width="150">
-		<col width="600">
-		<col width="150">
-		<col width="225">
-		<col width="150">
-		<col width="225">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
 	</colgroup>
-	<thead>
+	<thead style="border-top:3px solid #000!important;">
 		<tr>
-			<th class="sub-title colorN text-center" colspan="13">계약관리 보고서 (영업/자동)</th>
+			<th class="sub-title colorN text-center" colspan="8">기본정보 - VAT포함</th>
 		</tr>
 
 	</thead>
 	<tbody>
         <tr>
-			<th class="color-contract">계약번호</th>
-			<td id="manage_no"></td>
-			<th class="color-contract">작성일</th>
+			<th class="color-contract">프로젝트 번호</th>
+			<td id="manage_no" colspan="3"></td>
+			<th class="color-contract">작성일(자동)</th>
 			<td id="regist_dtm"></td>
 			<th class="color-contract">계약일</th>
 			<td id="cntrct_de"></td>
 		</tr>
         <tr>
 			<th class="color-contract">거래처명</th>
-			<td id="bcnc_nm"></td>
+			<td id="bcnc_nm" colspan="3"></td>
 			<th class="color-contract">공사기간</th>
 			<td id="cntrwk_period" colspan="3"></td>
 		</tr>
         <tr>
 			<th class="color-contract">현장명</th>
-			<td id="spt_nm"></td>
+			<td id="spt_nm" colspan="3"></td>
 			<th class="color-contract">현장주소</th>
 			<td id="spt_adres" colspan="3"></td>
 		</tr>
-        <tr>
-			<th class="color-contract">넥셀영업담당</th>
-			<td id="bsn_chrg_nm"></td>
-			<th class="color-contract">현장영업담당</th>
+		<tr>
+			<th class="color-contract">세대수</th>
+			<td id="home_count"></td>
+			<th class="color-contract">지역</th>
+			<td id="home_region"></td>
+			<th class="color-contract">넥셀현장담당</th>
 			<td id="spt_chrg_nm" colspan="3"></td>
 		</tr>
-<!--
         <tr>
-			<th class="color-contract">프로젝트 유형</th>
-			<td></td>
-			<th class="color-contract">프로젝트 생성여부</th>
-			<td colspan="3"></td>
+            <th class="color-contract">프로젝트 유형</th>
+            <th class="hasinput" colspan="3" style="padding:0px!important;">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    {% for code in prjct_ty_code_list %}
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_ty_code" value="{{code.value}}">{{code.label}}
+                    </label>
+                    {% endfor %}
+                </div>
+            </th>
+			<th class="color-contract">넥셀영업담당</th>
+			<td id="bsn_chrg_nm" colspan="3"></td>
 		</tr>
--->
+		<tr>
+            <th class="color-contract">프로젝트 생성여부</th>
+            <th class="hasinput" colspan="3" style="padding:0px!important;">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_creat_at" value="Y">생성
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_creat_at" value="N">단납건
+                    </label>
+                </div>
+            </th>
+            <th class="color-contract">진행상태</th>
+            <th class="hasinput" colspan="3" style="padding:0px!important;">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    {% for code in progrs_sttus_code_list %}
+                    <label class="btn btn-default">
+                        <input type="radio" name="progrs_sttus_code" value="{{code.value}}">{{code.label}}
+                    </label>
+                    {% endfor %}
+                </div>
+            </th>
+		</tr>
 	</tbody>
 	<tfoot>
 	</tfoot>
 </table>
-<table id="report_project">
+<table id="report_project" style="border-top:0px solid #000!important;">
 	<colgroup>
-		<col width="150">
-		<col width="200">
-		<col width="200">
-		<col width="200">
-		<col width="150">
-
-		<col width="200">
-		<col width="25">
-		<col width="150">
-		<col width="25">
-		<col width="200">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
 	</colgroup>
-    <thead>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="13">프로젝트 진행 예정 보고서 (영업/자동)</th>
-		</tr>
-
-	</thead>
 	<tbody>
 		<tr>
 			<th class="colorSky" rowspan="2">본사담당</th>
 			<th class="colorSky">담당자명</th>
-			<th class="colorSky">휴대폰</th>
-			<th class="colorSky">유선전화</th>
+			<th class="colorSky" colspan="2">휴대폰</th>
 			<th class="colorSky" rowspan="2">거래처담당</th>
 			<th class="colorSky">담당자명</th>
-			<th class="colorSky" colspan="3">휴대폰</th>
-			<th class="colorSky">유선전화</th>
+			<th class="colorSky" colspan="2">휴대폰</th>
 		</tr>
 		<tr>
 			<td id="charger_nm1">-</td>
-			<td id="charger_moblphon1"></td>
-			<td id="charger_telno1"></td>
+			<td id="charger_moblphon1" colspan="2"></td>
 			<td id="charger_nm2">-</td>
-			<td id="charger_moblphon2" colspan="3"></td>
-			<td id="charger_telno2"></td>
+			<td id="charger_moblphon2" colspan="2"></td>
 		</tr>
 <!--
 		<tr>
@@ -176,201 +219,208 @@ div.report table th, div.report table td {
 			<th class="colorSky">장비/공사내역</th>
 			<td colspan="3" id="cntrwk_dtls"></td>
 			<th class="colorSky">계약DC(%)</th>
-            <td id="cntrct_dscnt_rt" colspan="2"></td>
+            <td id="cntrct_dscnt_rt" colspan=""></td>
 			<th class="colorSky">품의DC(%)</th>
-            <td id="cnsul_dscnt_rt" colspan="2"></td>
+            <td id="cnsul_dscnt_rt" colspan="1"></td>
 		</tr>
         <tr>
-			<th class="colorSky">설치팀장</th>
+            <th class="colorSky">설치팀장</th>
 			<td id="charger_nm6"></td>
-			<td id="charger_moblphon6"></td>
-			<td id="charger_telno6"></td>
+			<td id="charger_moblphon6" colspan="2"></td>
 			<th class="colorSky">실적신고</th>
-            <td id="acmslt_sttemnt_at" colspan="2"></td>
+            <td id="acmslt_sttemnt_at" colspan="1"></td>
 			<th class="colorSky">건설공사대장</th>
-            <td id="cntwrk_regstr_ennc" colspan="2"></td>
+            <td id="cntwrk_regstr_ennc" colspan="1"></td>
         </tr>
-<!--
-        <tr>
-			<th class="colorSky">관리사</th>
-			<th class="colorSky">담당자명</th>
-			<th class="colorSky">휴대폰</th>
-			<th class="colorSky">유선전화</th>
-			<th class="colorSky">관리사</th>
-			<th class="colorSky">담당자명</th>
-			<th class="colorSky" colspan="3">휴대폰</th>
-			<th class="colorSky">유선전화</th>
-		</tr>
 
-		<tr>
-			<th class="colorSky">도면품질지도사</th>
-			<td id="charger_nm3"></td>
-			<td id="charger_moblphon3"></td>
-			<td id="charger_telno3"></td>
-			<th class="colorSky">현장품질관리사</th>
-			<td id="charger_nm4"></td>
-			<td id="charger_moblphon4" colspan="3"></td>
-			<td id="charger_telno4"></td>
-		</tr>
-		<tr>
-			<th class="colorSky">현장관리자</th>
-			<td id="charger_nm5"></td>
-			<td id="charger_moblphon5"></td>
-			<td id="charger_telno5"></td>
-		</tr>
--->
 	</tbody>
 </table>
 <!-- ---------------------------------------------------------------------- -->
-<table id="rptTable5">
+<table id="rptTable3" style="border-top:0px solid #000!important;">
 	<colgroup>
-		<col width="145">
-		<col width="450">
-		<col width="300">
-		<col width="*">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
+        <col width="175">
+        <col width="150">
 	</colgroup>
-	<thead>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="7">계약조건 (영업/자동) - VAT포함</th>
-		</tr>
-	</thead>
+	<!--
 	<tbody id="cCostList">
-
+		<tr>
+			<th class="colorSky">설치공사금액산출</th>
+			<th class="colorSky">실내기대수</th>
+			<th class="colorSky">대당단가</th>
+			<th class="colorSky">공급가액</th>
+			<th class="colorSky">세액</th>
+			<th class="colorSky">합계</th>
+			<th class="colorSky">공사비총액</th>
+		</tr>
+		<tr>
+			<td class="text-center" id="cCost5_model_no"></td>
+			<td class="text-number" id="cCost5_qy"></td>
+			<td class="text-number" id="cCost5_amt"></td>
+			<td class="text-number" id="cCost5_amt_total"></td>
+			<td class="text-number" id="cCost5_vat_total"></td>
+			<td class="text-number" id="cCost5_sum"></td>
+			<td class="text-number" id="cCost5_total"></td>
+		</tr>
 	</tbody>
-
+	-->
 	<tbody>
 		<tr>
 			<th class="colorSky" colspan="1">결제방법(1)</th>
-			<td class="text-left" colspan="3" id="setle_mth"></td>
+			<td class="text-left" colspan="7" id="setle_mth"></td>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">결제방법(2)</th>
-			<th class="colorSky" colspan="1">금액</th>
+			<th class="colorSky" colspan="2">금액</th>
 			<th class="colorSky" colspan="1">일자</th>
-			<th class="colorSky">비고(특이사항)</th>
+			<th class="colorSky" colspan="4">비고(특이사항)</th>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">계약금</th>
-			<td class="text-number" colspan="1" id="enty"></td>
+			<td class="text-number" colspan="2" id="enty"></td>
 			<td colspan="1" id="enty_de"></td>
-			<td id="enty_rm"></td>
+			<td id="enty_rm" colspan="4"></td>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">중도금</th>
-			<td class="text-number" colspan="1" id="prtpay"></td>
+			<td class="text-number" colspan="2" id="prtpay"></td>
 			<td colspan="1" id="prtpay_de"></td>
-			<td id="prtpay_rm"></td>
+			<td id="prtpay_rm" colspan="4"></td>
 		</tr>
 		<tr>
 			<th class="colorSky" colspan="1">잔금</th>
-			<td class="text-number" colspan="1" id="surlus"></td>
+			<td class="text-number" colspan="2" id="surlus"></td>
 			<td colspan="1" id="surlus_de"></td>
-			<td id="surlus_rm"></td>
+			<td id="surlus_rm" colspan="4"></td>
 		</tr>
 	</tbody>
 </table>
-<table id="report_c_cost">
-	<colgroup>
-		<col width="80">
-		<col width="145">
-		<col width="*">
-	</colgroup>
-	<tbody>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="10">본납 품목 세부 내역 (영업) - VAT포함</th>
-		</tr>
-		<tr>
-			<th class="colorSky">구분</th>
-			<th class="colorSky">모델명</th>
-			<th class="colorSky">수량</th>
-			<th class="colorSky">출고가</th>
-			<th class="colorSky">매입DC율(%)</th>
-			<th class="colorSky">매입단가</th>
-			<th class="colorSky">장비매입금</th>
-			<th class="colorSky">계약단가</th>
-			<th class="colorSky">계약총액</th>
-			<th class="colorSky">이익금(VA)</th>
-		</tr>
-	</tbody>
-	<tbody role="body"></tbody>
+
+<table>
+    <colgroup>
+        <col width="80"/>
+        <col width="180"/>
+        <col width="40"/>
+        <col width="100"/>
+        <col width="60"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+    </colgroup>
+    <tbody>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="10">직납 품목 세부 내역 - VAT포함</th>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">구분</th>
+            <th class="color-contract text-center">모델명</th>
+            <th class="color-contract text-center">수량</th>
+            <th class="color-contract text-center">출고가</th>
+            <th class="color-contract text-center">매입DC율(%)</th>
+            <th class="color-contract text-center">매입단가</th>
+            <th class="color-contract text-center">장비매입금</th>
+            <th class="color-contract text-center">계약단가</th>
+            <th class="color-contract text-center">계약총액</th>
+            <th class="color-contract text-center">이익금(VA)</th>
+        </tr>
+    </tbody>
+    <tbody role="construct_expect_row">
+
+    </tbody>
+    <tbody role="construct_expect_row_total">
+        <tr>
+            <th class="colorG text-center" colspan="2">합계</th>
+            <td class="colorG text-center" data-column="expect_qy_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="expect_amount_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="expect_cntrct_amount_total"></td>
+            <td class="colorG text-number" data-column="expect_va_total"></td>
+        </tr>
+    </tbody>
+    <tbody role="construct_row">
+    </tbody>
+    <tbody role="construct_row_total" style="display:none;">
+        <tr>
+            <th class="colorG text-center" colspan="2">합계</th>
+            <td class="colorG text-center" data-column="qy_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="amount_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="cntrct_amount_total"></td>
+            <td class="colorG text-number" data-column="va_total"></td>
+        </tr>
+    </tbody>
 </table>
 <!-- ---------------------------------------------------------------------- -->
-<table id="report_e_cost">
-	<colgroup>
-		<col width="80">
-		<col width="145">
-		<col width="*">
-	</colgroup>
-	<tbody>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="10">M,S/H (영업) - VAT포함</th>
-		</tr>
-		<tr>
-			<th class="colorSky">구분</th>
-			<th class="colorSky">전시구분(재고)</th>
-			<th class="colorSky">출고일</th>
-			<th class="colorSky">모델명</th>
-			<th class="colorSky">수량</th>
-			<th class="colorSky">출고가</th>
-			<th class="colorSky">M,S/H 매입단가</th>
-			<th class="colorSky">M,S/H 매입금액</th>
-			<th class="colorSky">M,S/H 추가DC금액</th>
-			<th class="colorSky">실전시비용</th>
-		</tr>
-	</tbody>
-	<tbody role="body"></tbody>
-</table><!-- ---------------------------------------------------------------------- -->
 
 
 
 <table id="report_plan">
 	<colgroup>
-		<col width="145">
+		<col width="80">
 		<col width="*">
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="10">예정 보고서 (영업) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="12">직납 보고서 (영업) - VAT포함</th>
 		</tr>
 		<tr>
-            <th class="colorSky">구분</th>
-            <th class="colorSky">계약총액</th>
-			<th class="colorSky">장비매입금</th>
-			<th class="colorSky">M,S/H 매입금액</th>
-			<th class="colorSky">M,S/H 추가DC금액</th>
-			<th class="colorSky">M,S/H 판매금액</th>
-			<th class="colorSky">옵션행사비</th>
-			<th class="colorSky">기타비용</th>
-            <th class="colorSky">이익금(VA)</th>
-			<th class="colorSky">VA율(%)</th>
+            <th class="colorN">구분</th>
+            <th class="color-contract">내역</th>
+            <th class="color-contract">계약총액</th>
+			<th class="color-contract">장비매입금</th>
+			<th class="color-contract">M,S/H 매입금액</th>
+			<th class="color-contract">M,S/H 추가DC금액</th>
+			<th class="color-contract">M,S/H 판매금액</th>
+			<th class="color-contract">옵션행사비</th>
+			<th class="color-contract">기타비용</th>
+			<th class="color-contract">설계변경</th>
+            <th class="color-contract">이익금(VA)</th>
+			<th class="color-contract">VA율(%)</th>
 
 		</tr>
 	</thead>
 	<tbody role="plan">
         <tr>
-            <td class="colorSky text-center">㉠ 예상 (사전입찰)</td>
-            <th class="colorY text-number"></th>
+            <th class="colorN text-center">사전입찰</th>
+            <th class="colorSky text-center">예정가</th>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
-            <th class="colorY text-number"></th>
+            <td class="color text-number"></td>
+            <td class="color text-number"></td>
+            <td class="color text-number"></td>
             <td class="color text-number"></td>
         </tr>
 	</tbody>
 	<tbody role="exec">
 		<tr>
-            <td class="colorSky text-center">㉡ 계약현황</td>
-            <th class="colorY text-number"></th>
+            <th class="colorN text-center">수주계약</th>
+            <th class="colorSky text-center">계약가</th>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
             <td class="color text-number"></td>
-            <th class="colorY text-number"></th>
+            <td class="color text-number"></td>
+            <td class="color text-number"></td>
+            <td class="color text-number"></td>
             <td class="color text-number"></td>
         </tr>
 	</tbody>
@@ -438,11 +488,11 @@ div.report table th, div.report table td {
 		<tr>
 			<th class="colorP">계약총액</th>
 			<th class="colorP">입금합계</th>
-			<th class="colorP">① 장비매입금</th>
+			<th class="colorP">① 장비 매입/출고 현황</th>
 			<th class="colorP">② M,S/H 매입금액</th>
 			<th class="colorP">③ M,S/H 추가DC금액</th>
 			<th class="colorP">④ M,S/H 판매금액</th>
-			<th class="colorP">⑤ 옵션행사비,기타비용(0.5% 이상)</th>
+			<th class="colorP">⑤ 옵션행사비</th>
 			<th class="colorP">이익금(VA)</th>
 			<th class="colorP">VA율(%)</th>
 		</tr>
@@ -525,20 +575,18 @@ div.report table th, div.report table td {
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorG">세금계산서일자</th>
-			<th class="colorG">공급가액</th>
-			<th class="colorG">부가세</th>
-			<th class="colorG">합계</th>
-			<th class="colorG">발행업체</th>
+			<th class="color-contract">세금계산서일자</th>
+			<th class="color-contract">공급가액</th>
+			<th class="color-contract">부가세</th>
+			<th class="color-contract">합계</th>
+			<th class="color-contract">발행업체</th>
 		</tr>
 	</thead>
 	<tbody>
 	</tbody>
 	<tfoot>
 		<tr>
-			<th class="colorG">합계</th>
-			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
+			<th class="colorG" colspan="3">합계</th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
 		</tr>
@@ -556,22 +604,22 @@ div.report table th, div.report table td {
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorY">입금일자</th>
-			<th class="colorY">금액</th>
-			<th class="colorY">잔액</th>
-			<th class="colorY">수금율</th>
-			<th class="colorY">수금내역</th>
+			<th class="colorLP">입금일자</th>
+			<th class="colorLP">금액</th>
+			<th class="colorLP">잔액</th>
+			<th class="colorLP">수금율</th>
+			<th class="colorLP">수금내역</th>
 		</tr>
 	</thead>
 	<tbody>
 	</tbody>
 	<tfoot>
 		<tr>
-			<th class="colorY">합계</th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
+			<th class="colorG">합계</th>
+			<th class="colorP text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
 		</tr>
 	</tfoot>
 </table>
@@ -620,64 +668,109 @@ div.report table th, div.report table td {
 	</tfoot>
 </table>
 <!-- ---------------------------------------------------------------------- -->
-<table id="report_s_account">
+<table id="rptTable14">
 	<colgroup>
-		<col width="30">
-		<col width="115">
-		<col width="*">
+        <col width="80"/>
+        <col width="100"/>
+        <col width="120"/>
+        <col width="50"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="50"/>
+        <col width="50"/>
+        <col width="80"/>
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="13">② M,S/H 매입 현황 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="15">② M,S/H 매입 현황 (관리) - VAT포함</th>
 		</tr>
-		<tr>
-			<th class="colorG">구분</th>
-			<th class="colorG">출고일</th>
-			<th class="colorG">모델명</th>
-			<th class="colorG">수량</th>
-			<th class="colorG">출고가</th>
-			<th class="colorG">M,S/H 매입단가</th>
-			<th class="colorG">M,S/H 매입금액</th>
-			<th class="colorG">M,S/H 추가DC금액</th>
-
-            <th class="colorG">실전시비용</th>
-
-			<th class="colorG">매입형태</th>
-			<th class="color-contract">회수일</th>
-			<th class="color-contract">수량</th>
-			<th class="colorG">비고(이동)</th>
 		</tr>
 	</tbody>
-	<tbody id="report_s6_account"></tbody>
+	<tbody role="m_house_header">
+		<th class="color-contract text-center">구분</th>
+		<th class="color-contract text-center">출고일</th>
+		<th class="color-contract text-center">모델명</th>
+		<th class="color-contract text-center">수량</th>
+		<th class="color-contract text-center">출고가</th>
+		<th class="color-contract text-center">M/H 매입단가</th>
+		<th class="color-contract text-center">M/H 매입금액</th>
+		<th class="color-contract text-center">M/H 추가DC금액</th>
+		<th class="color-contract text-center">실전시비용</th>
+		<th class="color-contract text-center">매입형태</th>
+		<th class="color-contract text-center">회수예정일</th>
+		<th class="colorP text-center">회수일</th>
+		<th class="colorP text-center">회수수량</th>
+		<th class="colorP text-center">차이수량</th>
+		<th class="colorP text-center">회수창고</th>
+	</tbody>
+	<tbody role="m_house_row">
+
+	</tbody>
+	<tbody role="m_house_foot">
+
+	</tbody>
+	<tbody role="s_house_header">
+		<th class="color-contract text-center">구분</th>
+		<th class="color-contract text-center">출고일</th>
+		<th class="color-contract text-center">모델명</th>
+		<th class="color-contract text-center">수량</th>
+		<th class="color-contract text-center">출고가</th>
+		<th class="color-contract text-center">M/H 매입단가</th>
+		<th class="color-contract text-center">M/H 매입금액</th>
+		<th class="color-contract text-center">M/H 추가DC금액</th>
+		<th class="color-contract text-center">실전시비용</th>
+		<th class="color-contract text-center">매입형태</th>
+		<th class="color-contract text-center">회수예정일</th>
+		<th class="colorP text-center">회수일</th>
+		<th class="colorP text-center">회수수량</th>
+		<th class="colorP text-center">차이수량</th>
+		<th class="colorP text-center">회수창고</th>
+	</tbody>
+	<tbody role="s_house_row">
+
+	</tbody>
+	<tbody role="s_house_foot">
+
+	</tbody>
 	<tfoot>
-		<tr>
-			<th class="colorG" colspan="2">합계</th>
-			<th class="colorG"></th>
-			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
-			<th class="colorP text-number"></th>
-			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
-			<th class="colorG"></th>
-			<th class="color-contract"></th>
-			<th class="color-contract text-number"></th>
-			<th class="colorG"></th>
-		</tr>
+		<th class="colorG text-center">합계</th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center" data-column="total_qy"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorP text-right" data-column="total_amount"></th>
+		<th class="colorP text-right" data-column="total_dc"></th>
+		<th class="colorG text-right" data-column="total_ramount"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center" data-column="total_return"></th>
+		<th class="colorG text-center"></th>
+		<th class="colorG text-center"></th>
 	</tfoot>
+
+
 </table>
-                <!-- ---------------------------------------------------------------------- -->
+<!-- ---------------------------------------------------------------------- -->
 <table>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="2">③ M,S/H 추가DC 현황 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="2">③ M,S/H 전시차감 현황 (관리) - VAT포함</th>
 		</tr>
 	</tbody>
 	<tbody role="body">
 		<tr>
 			<th style="width:53%;padding:0px!important;vertical-align:top!important;">
-<table style="border:0px!important;" id="report_s2_taxbil">
+<table style="width:100%;border:0px!important;" id="report_s2_taxbil">
 	<colgroup>
+		<col width="*">
 		<col width="143">
 		<col width="*">
 		<col width="*">
@@ -686,28 +779,42 @@ div.report table th, div.report table td {
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorG">세금계산서일자</th>
-			<th class="colorG">공급가액</th>
-			<th class="colorG">부가세</th>
-			<th class="colorG">합계</th>
-			<th class="colorG">발행업체</th>
+			<th class="color-contract">구분</th>
+			<th class="color-contract">세금계산서일자</th>
+			<th class="color-contract">공급가액</th>
+			<th class="color-contract">부가세</th>
+			<th class="color-contract">합계</th>
+			<th class="color-contract">발행업체</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody role="m_tax">
 	</tbody>
-	<tfoot>
+	<tbody role="m_tax_foot">
 		<tr>
 			<th class="colorG">합계</th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
 		</tr>
-	</tfoot>
+	</tbody>
+	<tbody role="s_tax">
+	</tbody>
+	<tbody role="s_tax_foot">
+		<tr>
+			<th class="colorG">합계</th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+		</tr>
+	</tbody>
 </table>
 			</th>
 			<th style="width:47%;padding:0px!important;vertical-align:top!important;">
-<table style="border:0px!important;" id="report_i2_rcppay">
+<table style="width:100%;border:0px!important;" id="report_i2_rcppay">
 	<colgroup>
 		<col width="130">
 		<col width="*">
@@ -717,41 +824,51 @@ div.report table th, div.report table td {
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorY">입금일자</th>
-			<th class="colorY">금액</th>
-			<th class="colorY">잔액</th>
-			<th class="colorY">수금율</th>
-			<th class="colorY">수금내역</th>
+			<th class="color-contract">입금일자</th>
+			<th class="color-contract">금액</th>
+			<th class="color-contract">잔액</th>
+			<th class="color-contract">수금율</th>
+			<th class="color-contract">수금내역</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody role="m_rcppay">
 	</tbody>
-	<tfoot>
+	<tbody role="m_rcppay_foot">
 		<tr>
-			<th class="colorY">합계</th>
-			<th class="colorP text-number"></th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
+			<th class="colorG">합계</th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
 		</tr>
-	</tfoot>
+	</tbody>
+	<tbody role="s_rcppay">
+	</tbody>
+	<tbody role="s_rcppay_foot">
+		<tr>
+			<th class="colorG">합계</th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG text-number"></th>
+		</tr>
+	</tbody>
 </table>
 			</th>
 		</tr>
 	</tbody>
 </table>
 <!-- ---------------------------------------------------------------------- -->
-
 <table>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="2">④ M,S/H 판매 현황 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="2">④ M,S/H 판매현황 (관리) - VAT포함</th>
 		</tr>
 	</tbody>
 	<tbody role="body">
 		<tr>
 			<th style="width:53%;padding:0px!important;vertical-align:top!important;">
-<table style="border:0px!important;" id="report_s3_taxbil">
+<table style="width:100%;border:0px!important;" id="report_s3_taxbil">
 	<colgroup>
 		<col width="143">
 		<col width="*">
@@ -761,11 +878,11 @@ div.report table th, div.report table td {
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorG">세금계산서일자</th>
-			<th class="colorG">공급가액</th>
-			<th class="colorG">부가세</th>
-			<th class="colorG">합계</th>
-			<th class="colorG">발행업체</th>
+			<th class="color-contract">판매일</th>
+			<th class="color-contract">모델명</th>
+			<th class="color-contract">수량</th>
+			<th class="color-contract">금액</th>
+			<th class="color-contract">판매금액</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -774,7 +891,7 @@ div.report table th, div.report table td {
 		<tr>
 			<th class="colorG">합계</th>
 			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
+			<th class="colorG"></th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
 		</tr>
@@ -782,9 +899,11 @@ div.report table th, div.report table td {
 </table>
 			</th>
 			<th style="width:47%;padding:0px!important;vertical-align:top!important;">
-<table style="border:0px!important;" id="report_i3_rcppay">
+<table style="width:100%;border:0px!important;" id="report_i3_rcppay">
 	<colgroup>
 		<col width="130">
+		<col width="*">
+		<col width="*">
 		<col width="*">
 		<col width="*">
 		<col width="*">
@@ -792,22 +911,26 @@ div.report table th, div.report table td {
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="colorY">입금일자</th>
-			<th class="colorY">금액</th>
-			<th class="colorY">잔액</th>
-			<th class="colorY">수금율</th>
-			<th class="colorY">수금내역</th>
+			<th class="colorLP">발행업체</th>
+			<th class="colorLP">발행일자</th>
+			<th class="colorLP">발행금액</th>
+			<th class="colorLP">입금일자</th>
+			<th class="colorLP">입금금액</th>
+			<th class="colorLP">잔액</th>
+			<th class="colorLP">수금율</th>
 		</tr>
 	</thead>
 	<tbody>
 	</tbody>
 	<tfoot>
 		<tr>
-			<th class="colorY">합계</th>
+			<th class="colorG"></th>
+			<th class="colorG"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG"></th>
 			<th class="colorP text-number"></th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
-			<th class="colorY text-number"></th>
+			<th class="colorG text-number"></th>
+			<th class="colorG"></th>
 		</tr>
 	</tfoot>
 </table>
@@ -815,6 +938,70 @@ div.report table th, div.report table td {
 		</tr>
 	</tbody>
 </table>
+
+<table id="rptTableOpt">
+	<colgroup>
+		<col width="50"/>
+		<col width="160"/>
+		<col width="80"/>
+		<col width="80"/>
+		<col width="80"/>
+		<col width="180"/>
+		<col width="100"/>
+		<col width="160"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8">⑤ 옵션행사비</th>
+		</tr>
+		<tr>
+			<th class="color-contract text-center">구분</th>
+			<th class="color-contract text-center">행사기간</th>
+			<th class="color-contract text-center">행사일(일)</th>
+			<th class="color-contract text-center">도우미(명)</th>
+			<th class="color-contract text-center">옵션율</th>
+			<th class="color-contract text-center">옵션행사비</th>
+			<th class="color-contract text-center">행사비 지급일</th>
+			<th class="color-contract text-center">비고</th>
+		</tr>
+	</thead>
+	<tbody role="body">
+		<tr>
+			<th class="colorSky text-center">예상</th>
+			<td class="text-center" data-column="e_opt_period"></td>
+			<td class="text-center" data-column="e_opt_dtm"></td>
+			<td class="text-center" data-type="number" data-column="e_opt_helper"></td>
+			<td class="text-center" data-column="e_opt_rate"></td>
+			<td class="text-right" data-type="number" data-column="e_opt_amount"></td>
+			<td class="text-center" data-column="e_opt_pay_dtm"></td>
+			<td class="text-center" data-column="e_opt_rm"></td>
+		</tr>
+		<tr>
+			<th class="colorSky text-center">정산</th>
+			<td class="text-center" data-column="c_opt_period"></td>
+			<td class="text-center" data-column="c_opt_dtm"></td>
+			<td class="text-center" data-type="number" data-column="c_opt_helper"></td>
+			<td class="text-center" data-column="c_opt_rate"></td>
+			<td class="colorP text-right" data-type="number" data-column="c_opt_amount"></td>
+			<td class="text-center" data-column="c_opt_pay_dtm"></td>
+			<td class="text-center" data-column="c_opt_rm"></td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<th class="colorG text-center">차이</th>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-right" data-column="diff"></td>
+			<td class="colorG text-center"></td>
+			<td class="colorG text-center"></td>
+		</tr>
+	</tfoot>
+</table>
+
+
 <!-- ---------------------------------------------------------------------- -->
 <table id="report_e_etc">
 	<colgroup>
@@ -822,29 +1009,29 @@ div.report table th, div.report table td {
 		<col width="150">
 		<col width="*">
 	</colgroup>
-	<tbody class="">
+	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="5">⑤ 옵션행사비,기타비용(0.5% 이상) (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="6">⑥ 기타비용 (관리) - VAT포함</th>
 		</tr>
 		<tr>
-			<th class="colorY">일자</th>
-			<th class="colorY">계정과목</th>
-			<th class="colorY">내역</th>
-			<th class="colorY">지출자</th>
-			<th class="colorY">금액</th>
+			<th class="color-contract">일자</th>
+			<th class="color-contract">계정과목</th>
+			<th class="color-contract">내역</th>
+			<th class="color-contract">지출자</th>
+			<th class="color-contract">금액</th>
+			<th class="color-contract">비고</th>
 		</tr>
 	</tbody>
 	<tbody role="body"></tbody>
 	<tfoot>
 		<tr>
-			<th class="colorY">합계</th>
-			<th class="colorY"></th>
-			<th class="colorY"></th>
-			<th class="colorY"></th>
+			<th class="colorG" colspan="4">합계</th>
 			<th class="colorP text-number"></th>
+			<th class="colorG"></th>
 		</tr>
 	</tfoot>
 </table>
+
 <!-- ---------------------------------------------------------------------- -->
 <table id="rptTable13">
 	<colgroup>
@@ -942,6 +1129,14 @@ div.report table th, div.report table td {
 				$('#popReportBD').find('#bcnc_nm').html(contract.bcnc_nm); //거래처
 				$('#popReportBD').find('#spt_nm').html(contract.spt_nm); //현장명
 				$('#popReportBD').find('#cntrwk_period').html(contract.cntrwk_period); //공사기간
+				$('#popReportBD').find('#home_count').html(contract.home_count); //세대수
+				$('#popReportBD').find('#home_region').html(contract.home_region); //지역
+				$('#popReportBD').find('[name=prjct_ty_code]').yVal(contract.prjct_ty_code); //프로젝트 유형
+				$('#popReportBD').find('[name=prjct_ty_code]').yReadonly(true); //프로젝트 유형
+				$('#popReportBD').find('[name=prjct_creat_at]').yVal(contract.prjct_creat_at); //프로젝트 생성
+				$('#popReportBD').find('[name=prjct_creat_at]').yReadonly(true); //프로젝트 생성
+				$('#popReportBD').find('[name=progrs_sttus_code]').yVal(contract.progrs_sttus_code); //프로젝트 진행
+				$('#popReportBD').find('[name=progrs_sttus_code]').yReadonly(true); //프로젝트 진행
 
 //                $('#popReportBD').find('#biss_a').html(biss2text(contract.biss_a));
 //                $('#popReportBD').find('#biss_b').html(biss2text(contract.biss_b));
@@ -961,12 +1156,27 @@ div.report table th, div.report table td {
 				$('#popReportBD').find('#cntwrk_regstr_ennc').html(project.cntwrk_regstr_ennc); //건설공사대장
 
 				$.each(charger, function(pIndex, pValue) { //담당자정보
-					var charger_nm = pValue.charger_nm; if (charger_nm == '') charger_nm = '-';
-					$('#popReportBD').find('#charger_sn'+pValue.charger_se_code).html(pValue.charger_sn);
-					$('#popReportBD').find('#charger_nm'+pValue.charger_se_code).html(charger_nm);
-					$('#popReportBD').find('#charger_telno'+pValue.charger_se_code).html(pValue.charger_telno);
+					$('#popReportBD').find('#charger_nm'+pValue.charger_se_code).html(pValue.charger_nm);
 					$('#popReportBD').find('#charger_moblphon'+pValue.charger_se_code).html(pValue.charger_moblphon);
 				});
+
+				if (project.cntrct_dscnt_rt != 0) { //계약할인율
+					$('#popReportBD').find('#cntrct_dscnt_rt').html(project.cntrct_dscnt_rt+'%');
+				}
+				if (project.cnsul_dscnt_rt != 0) { //품의할인율
+					$('#popReportBD').find('#cnsul_dscnt_rt').html(project.cnsul_dscnt_rt+'%');
+				}
+				$('#popReportBD').find('#enty').html(project.enty.toString().toFormat('NUMBER')); //계약금
+				$('#popReportBD').find('#enty_de').html(project.enty_de); //계약금일자
+				$('#popReportBD').find('#enty_rm').html(project.enty_rm); //계약금비고
+				$('#popReportBD').find('#prtpay').html(project.prtpay.toString().toFormat('NUMBER')); //중도금
+				$('#popReportBD').find('#prtpay_de').html(project.prtpay_de); //중도금일자
+				$('#popReportBD').find('#prtpay_rm').html(project.prtpay_rm); //중도금비고
+				$('#popReportBD').find('#surlus').html(project.surlus.toString().toFormat('NUMBER')); //잔금
+				$('#popReportBD').find('#surlus_de').html(project.surlus_de); //잔금일자
+				$('#popReportBD').find('#surlus_rm').html(project.surlus_rm); //잔금비고
+				$('#popReportBD').find('#setle_mth').html(project.setle_mth); //결제방법(2)
+
 				/* ********************************************************* */
 				/* 프로젝트 진행 예정 보고서(영업) */
 				/* ********************************************************* */
@@ -980,17 +1190,18 @@ div.report table th, div.report table td {
 				var cCostList = pResult.cCostListExtra;
 				var p_sum_totalExtra = 0, s_sum_totalExtra = 0, va_totalExtra = 0;
                 var qy_totExtra = 0;
+				console.log(cCostList);
 				$.each(cCostList, function(pIndex, pValue) {
 					var p_dc_amt = Math.round(pValue.puchas_amount * ((100-pValue.dscnt_rt)/100));
 					var p_dc_amt_sum = p_dc_amt * parseInt(pValue.qy);
 					var s_amt_sum = pValue.salamt * parseInt(pValue.qy);
 					var va = s_amt_sum - p_dc_amt_sum;
 					html += '<tr>';
-					html += '    <td class="colorSky">예정</td>';
+					html += '    <td class="colorSky">사전입찰</td>';
 					html += '    <td>'+pValue.model_no+'</td>';
-					html += '    <td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-center">'+pValue.qy.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+pValue.puchas_amount.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+Math.round(pValue.dscnt_rt)+'%</td>';
+					html += '    <td class="text-center">'+Math.round(pValue.dscnt_rt)+'%</td>';
 					html += '    <td class="text-number">'+p_dc_amt.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+p_dc_amt_sum.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+pValue.salamt.toString().toFormat('NUMBER')+'</td>';
@@ -1001,25 +1212,20 @@ div.report table th, div.report table td {
 					s_sum_totalExtra += s_amt_sum;
 					va_totalExtra += va;
                     qy_totExtra += parseInt(pValue.qy);
+					console.log(s_amt_sum);
 				});
-                html += '<tr>';
-                html += '    <td class="colorSky" style="border-bottom:2px solid #000!important;">예정</td>';
-                html += '    <td class="colorSky" style="border-bottom:2px solid #000!important;">합계</td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;">'+qy_totExtra.toString().toFormat('NUMBER')+'</td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;"></td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;"></td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;"></td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;">'+p_sum_totalExtra.toString().toFormat('NUMBER')+'</td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;"></td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;">'+s_sum_totalExtra.toString().toFormat('NUMBER')+'</td>';
-                html += '    <td class="text-number colorSky" style="border-bottom:2px solid #000!important;">'+va_totalExtra.toString().toFormat('NUMBER')+'</td>';
-                html += '</tr>';
 
+                $('#popReportBD').find('tbody[role="construct_expect_row"]').html(html);
+                $('#popReportBD').find('tbody[role="construct_expect_row"]').yRowspan(0);
+                $('#popReportBD').find(`td[data-column="expect_qy_total"]`).html(qy_totExtra.toString().toFormat('NUMBER'));
+                $('#popReportBD').find(`td[data-column="expect_amount_total"]`).html(p_sum_totalExtra.toString().toFormat('NUMBER'));
+                $('#popReportBD').find(`td[data-column="expect_cntrct_amount_total"]`).html(s_sum_totalExtra.toString().toFormat('NUMBER'));
+                $('#popReportBD').find(`td[data-column="expect_va_total"]`).html(va_totalExtra.toString().toFormat('NUMBER'));
 
                 //IMPORTANT
 				cCostTotalExtra = s_sum_totalExtra;
-				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(0)').html('㉠ 예상 (사전입찰)');
-				$('#popReportBD').find('#report_plan tbody[role=plan] th:eq(0)').html(s_sum_totalExtra.toString().toFormat('NUMBER'));
+				// $('#popReportBD').find('#report_plan tbody[role=plan] td:eq(0)').html('㉠ 예상 (사전입찰)');
+				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(0)').html(s_sum_totalExtra.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(1)').html(p_sum_totalExtra.toString().toFormat('NUMBER'));
 
                 /* ********************************************************* */
@@ -1031,53 +1237,52 @@ div.report table th, div.report table td {
 
 				/* 예상 본납 품목 세부내역 */
 				/* ********************************************************* */
-				var cCostList = pResult.cCostList;
-				var p_sum_total = 0, s_sum_total = 0, va_total = 0;
-                var qy_tot = 0;
-				$.each(cCostList, function(pIndex, pValue) {
-					var p_dc_amt = Math.round(pValue.puchas_amount * ((100-pValue.dscnt_rt)/100));
-					var p_dc_amt_sum = p_dc_amt * parseInt(pValue.qy);
-					var s_amt_sum = pValue.salamt * parseInt(pValue.qy);
-					var va = s_amt_sum - p_dc_amt_sum;
-					html += '<tr>';
-					html += '    <td class="colorSky">확정</td>';
-					html += '    <td>'+pValue.model_no+'</td>';
-					html += '    <td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+pValue.puchas_amount.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+Math.round(pValue.dscnt_rt)+'%</td>';
-					html += '    <td class="text-number">'+p_dc_amt.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+p_dc_amt_sum.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+pValue.salamt.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+s_amt_sum.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+va.toString().toFormat('NUMBER')+'</td>';
-					html += '</tr>';
-					p_sum_total += p_dc_amt_sum;
-					s_sum_total += s_amt_sum;
-					va_total += va;
-                    qy_tot += parseInt(pValue.qy);
-				});
-                html += '<tr>';
-                html += '    <td class="colorSky">확정</td>';
-                html += '    <td class="colorSky">합계</td>';
-                html += '    <td class="text-number colorSky">'+qy_tot.toString().toFormat('NUMBER')+'</td>';
-                html += '    <td class="text-number colorSky"></td>';
-                html += '    <td class="text-number colorSky"></td>';
-                html += '    <td class="text-number colorSky"></td>';
-                html += '    <td class="text-number colorSky">'+p_sum_total.toString().toFormat('NUMBER')+'</td>';
-                html += '    <td class="text-number colorSky"></td>';
-                html += '    <th class="text-number color-contract">'+s_sum_total.toString().toFormat('NUMBER')+'</th>';
-                html += '    <td class="text-number colorSky">'+va_total.toString().toFormat('NUMBER')+'</td>';
-                html += '</tr>';
+
+				if(contract.progrs_sttus_code != 'B') {
+					var cCostList = pResult.cCostList;
+					var p_sum_total = 0, s_sum_total = 0, va_total = 0;
+					var qy_tot = 0;
+					var html = '';
+					$.each(cCostList, function (pIndex, pValue) {
+						var p_dc_amt = Math.round(pValue.puchas_amount * ((100 - pValue.dscnt_rt) / 100));
+						var p_dc_amt_sum = p_dc_amt * parseInt(pValue.qy);
+						var s_amt_sum = pValue.salamt * parseInt(pValue.qy);
+						var va = s_amt_sum - p_dc_amt_sum;
+						html += '<tr>';
+						html += '    <td class="colorSky">수주계약</td>';
+						html += '    <td>' + pValue.model_no + '</td>';
+						html += '    <td class="text-center">' + pValue.qy.toString().toFormat('NUMBER') + '</td>';
+						html += '    <td class="text-number">' + pValue.puchas_amount.toString().toFormat('NUMBER') + '</td>';
+						html += '    <td class="text-center">' + Math.round(pValue.dscnt_rt) + '%</td>';
+						html += '    <td class="text-number">' + p_dc_amt.toString().toFormat('NUMBER') + '</td>';
+						html += '    <td class="text-number">' + p_dc_amt_sum.toString().toFormat('NUMBER') + '</td>';
+						html += '    <td class="text-number">' + pValue.salamt.toString().toFormat('NUMBER') + '</td>';
+						html += '    <td class="text-number">' + s_amt_sum.toString().toFormat('NUMBER') + '</td>';
+						html += '    <td class="text-number">' + va.toString().toFormat('NUMBER') + '</td>';
+						html += '</tr>';
+						p_sum_total += p_dc_amt_sum;
+						s_sum_total += s_amt_sum;
+						va_total += va;
+						qy_tot += parseInt(pValue.qy);
+					});
 
 
+					cCostTotal = s_sum_total;
+					if (cCostList.length > 0) {
+						$('#popReportBD').find('tbody[role="construct_row"]').html(html);
+						$('#popReportBD').find('tbody[role="construct_row"]').yRowspan(0);
+						$('#popReportBD').find('tbody[role="construct_row_total"]').show();
+					}
+					$('#popReportBD').find(`td[data-column="qy_total"]`).html(qy_tot.toString().toFormat('NUMBER'));
+					$('#popReportBD').find(`td[data-column="amount_total"]`).html(p_sum_total.toString().toFormat('NUMBER'));
+					$('#popReportBD').find(`td[data-column="cntrct_amount_total"]`).html(s_sum_total.toString().toFormat('NUMBER'));
+					$('#popReportBD').find(`td[data-column="va_total"]`).html(va_total.toString().toFormat('NUMBER'));
 
-				$('#popReportBD').find('#report_c_cost tbody[role=body]').html(html);
-                $('#popReportBD').find('#report_c_cost tbody[role=body]').yRowspan(0);
-				cCostTotal = s_sum_total;
-				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(0)').html('㉡ 계약현황');
-				$('#popReportBD').find('#report_plan tbody[role=exec] th:eq(0)').html(s_sum_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(0)').html(s_sum_total.toString().toFormat('NUMBER'));
+					// $('#popReportBD').find('#report_plan tbody[role=exec] td:eq(0)').html('㉡ 계약현황');
+					$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(0)').html(s_sum_total.toString().toFormat('NUMBER'));
+					$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
+					$('#popReportBD').find('#report_exec tbody[role=body] td:eq(0)').html(s_sum_total.toString().toFormat('NUMBER'));
+				}
 
 				/* ********************************************************* */
 
@@ -1095,8 +1300,11 @@ div.report table th, div.report table td {
                         var p_puchas = (p_puchas_amount*parseInt(pValue.qy));
 						var p_dc_amt = Math.round(pValue.puchas_amount * ((100-pValue.dscnt_rt)/100));
 						var p_dsp_amt = p_dc_amt * parseInt(pValue.qy);
-						var p_add_dc_amt = ((pValue.puchas_amount * parseInt(pValue.qy))*pValue.add_dscnt_rt)/100;
+						var p_add_dc_amt = Math.round(((pValue.puchas_amount * parseInt(pValue.qy))*pValue.add_dscnt_rt)/100);
 						var p_real_dsp_amt = p_dsp_amt - p_add_dc_amt;
+
+
+
 						if (pValue.ct_se_code != '7') {
 							html += '<tr>';
 							html += '    <td class="colorSky">예정</td>';
@@ -1119,7 +1327,7 @@ div.report table th, div.report table td {
 							html += '</tr>';
                             qy_totExtra += parseInt(pValue.qy);
 						}
-						if (pValue.ct_se_code == '61') { //모델하우스(매입)
+						if (pValue.ct_se_code == '61' || pValue.ct_se_code == '64') { //모델하우스(매입)
 							p_dsp_amt_totalExtra += p_dsp_amt;
 							p_add_dc_amt_totalExtra += p_add_dc_amt;
 							p_real_dsp_amt_totalExtra += p_real_dsp_amt;
@@ -1175,14 +1383,15 @@ div.report table th, div.report table td {
                 $('#popReportBD').find('#report_plan tbody[role=plan] td:eq(4)').html(p_sell_amt_totalExtra.toString().toFormat('NUMBER'));
 				eCostTotalExtra = p_add_dc_amt_totalExtra;
 
+
 				var tmp = cCostTotalExtra - p_sum_totalExtra - p_dsp_amt_totalExtra + p_add_dc_amt_totalExtra - p_option_amt_totalExtra - p_etc_amt_totalExtra + p_sell_amt_totalExtra;
 				var va = (tmp/cCostTotalExtra)*100;
 				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(2)').html(p_dsp_amt_totalExtra.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(3)').html(p_add_dc_amt_totalExtra.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(5)').html(p_option_amt_totalExtra.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(6)').html(p_etc_amt_totalExtra.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_plan tbody[role=plan] th:eq(1)').html(tmp.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(7)').html(va.toFixed(1)+'%');
+				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(8)').html(tmp.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_plan tbody[role=plan] td:eq(9)').html(va.toFixed(1)+'%');
 
 				var eCostList = pResult.eCostList;
 				var p_dsp_amt_total = 0, p_add_dc_amt_total = 0, p_real_dsp_amt_total = 0, p_option_amt_total = 0, p_etc_amt_total = 0;
@@ -1193,7 +1402,7 @@ div.report table th, div.report table td {
                         var p_puchas = (p_puchas_amount*parseInt(pValue.qy));
 						var p_dc_amt = Math.round(pValue.puchas_amount * ((100-pValue.dscnt_rt)/100));
 						var p_dsp_amt = p_dc_amt * parseInt(pValue.qy);
-						var p_add_dc_amt = ((pValue.puchas_amount * parseInt(pValue.qy))*pValue.add_dscnt_rt)/100;
+						var p_add_dc_amt = Math.round(((pValue.puchas_amount * parseInt(pValue.qy))*pValue.add_dscnt_rt)/100);
 						var p_real_dsp_amt = p_dsp_amt - p_add_dc_amt;
 						if (pValue.ct_se_code != '7') {
 							html += '<tr>';
@@ -1217,7 +1426,7 @@ div.report table th, div.report table td {
 							html += '</tr>';
                             qy_tot += parseInt(pValue.qy);
 						}
-						if (pValue.ct_se_code == '61') { //모델하우스(매입)
+						if (pValue.ct_se_code == '61' || pValue.ct_se_code == '64') { //모델하우스(매입)
 							p_dsp_amt_total += p_dsp_amt;
 							p_add_dc_amt_total += p_add_dc_amt;
 							p_real_dsp_amt_total += p_real_dsp_amt;
@@ -1270,14 +1479,18 @@ div.report table th, div.report table td {
 				});
                 $('#popReportBD').find('#report_plan tbody[role=exec] td:eq(4)').html(p_sell_amt_total.toString().toFormat('NUMBER'));
 				eCostTotal = p_add_dc_amt_total;
+
+				p_option_amt_total = (pResult.sOptionCostList!= null) ? parseInt(pResult.sOptionCostList.c_opt_amount) : p_option_amt_total;
+				if(isNaN(p_option_amt_total)) p_option_amt_total = 0;
+
 				var tmp = cCostTotal - p_sum_total - p_dsp_amt_total + p_add_dc_amt_total - p_option_amt_total - p_etc_amt_total + p_sell_amt_total;
 				var va = (tmp/cCostTotal)*100;
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(2)').html(p_dsp_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(3)').html(p_add_dc_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(5)').html(p_option_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(6)').html(p_etc_amt_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_plan tbody[role=exec] th:eq(1)').html(tmp.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(7)').html(va.toFixed(1)+'%');
+				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(8)').html(tmp.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(9)').html(va.toFixed(1)+'%');
 
 				/* ********************************************************* */
 
@@ -1325,9 +1538,9 @@ div.report table th, div.report table td {
 					}
 				}
 				$('#popReportBD').find('#report_s_taxbil tbody').html(html);
-				$('#popReportBD').find('#report_s_taxbil tfoot th:eq(1)').html(splpc_am_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s_taxbil tfoot th:eq(2)').html(vat_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s_taxbil tfoot th:eq(3)').html(sum_total.toString().toFormat('NUMBER'));
+				// $('#popReportBD').find('#report_s_taxbil tfoot th:eq(1)').html(splpc_am_total.toString().toFormat('NUMBER'));
+				// $('#popReportBD').find('#report_s_taxbil tfoot th:eq(2)').html(vat_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s_taxbil tfoot th:eq(1)').html(sum_total.toString().toFormat('NUMBER'));
 
 				var html = '';
 				var iRcppayList = pResult.iRcppayList;
@@ -1368,83 +1581,83 @@ div.report table th, div.report table td {
 
 				/* 모델(샘플)하우스 장비 매입 현황 (관리) */
 				/* ********************************************************* */
-				var a_dlnt_total = 0, a_dlamt_total = 0, a_last_dlamt_total = 0;
-				var html = '';
-				var sAccountList = pResult.s6AccountList;
-				var s_dlnt_sum = 0, p_dlamt_sum_total = 0, p_last_dlamt_sum_total = 0;
-                var p_dlamt_tot = 0;
-                var wrhousng_tot = 0;
-
-
-
-                $.each(sAccountList, function(pIndex, pValue) {
-                    var wrhousng_de = [];
-                    if(pResult['modelList'].hasOwnProperty(pValue.s_model_no.trim()) && pResult['modelList'][pValue.s_model_no.trim()].hasOwnProperty(pValue.s_dlivy_de)){
-
-                        $.each(pResult['modelList'][pValue.s_model_no.trim()][pValue.s_dlivy_de], function(pI, pV){
-                            if(pV.p_bcnc_nm == pValue.p_bcnc_nm)
-                                wrhousng_de.push([pV.ddt_man, pV.dlnt]);
-                        });
-                    }
-
-					var p_dlamt_sum = pValue.s_dlnt * pValue.p_dlamt;
-					var p_last_dlamt_sum = Math.round(pValue.p_dlivy_amt * (pValue.p_add_dscnt_rt/100))*pValue.s_dlnt;
-                    if(wrhousng_de.length == 0){
-                        html += '<tr>';
-                        html += '    <td class="colorG">M,S/H</td>';
-                        html += '    <td>'+pValue.s_dlivy_de+'</td>';
-                        html += '    <td>'+pValue.s_model_no+'</td>';
-                        html += '    <td class="text-number">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
-
-                        if (pValue.p_bcnc_nm == '넥셀시스템') {
-                            html += '    <td>재고활용</td>';
-                        } else {
-                            html += '    <td>'+pValue.p_bcnc_nm+'</td>';
-                        }
-                        html += '    <td></td>';
-                        html += '    <td></td>';
-                        html += '    <td>'+pValue.s_rm+'</td>';
-                        html += '</tr>';
-                    }
-                    else{
-                        $.each(wrhousng_de, function(i,v){
-                            html += '<tr>';
-                            html += '    <td class="colorG">M,S/H</td>';
-                            if(i == 0){
-                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_dlivy_de+'</td>';
-                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_model_no+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
-
-                                if (pValue.p_bcnc_nm == '넥셀시스템') {
-                                    html += '    <td rowspan="'+wrhousng_de.length+'">재고활용</td>';
-                                } else {
-                                    html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.p_bcnc_nm+'</td>';
-                                }
-                            }
-                            html += '    <td>'+v[0]+'</td>';
-                            html += '    <td class="text-number">'+v[1]+'</td>';
-                            if(i==0){
-//                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
-                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
-                            }
-                            html += '</tr>';
-                            wrhousng_tot += parseInt(v[1]);
-
-                        });
-                    }
-					s_dlnt_sum += parseInt(pValue.s_dlnt);
-					p_dlamt_sum_total += parseInt(p_dlamt_sum);
-					p_last_dlamt_sum_total += parseInt(p_last_dlamt_sum);
+// 				var a_dlnt_total = 0, a_dlamt_total = 0, a_last_dlamt_total = 0;
+// 				var html = '';
+// 				var sAccountList = pResult.s6AccountList;
+// 				var s_dlnt_sum = 0, p_dlamt_sum_total = 0, p_last_dlamt_sum_total = 0;
+//                 var p_dlamt_tot = 0;
+//                 var wrhousng_tot = 0;
+//
+//
+//
+//                 $.each(sAccountList, function(pIndex, pValue) {
+//                     var wrhousng_de = [];
+//                     if(pResult['modelList'].hasOwnProperty(pValue.s_model_no.trim()) && pResult['modelList'][pValue.s_model_no.trim()].hasOwnProperty(pValue.s_dlivy_de)){
+//
+//                         $.each(pResult['modelList'][pValue.s_model_no.trim()][pValue.s_dlivy_de], function(pI, pV){
+//                             if(pV.p_bcnc_nm == pValue.p_bcnc_nm)
+//                                 wrhousng_de.push([pV.ddt_man, pV.dlnt]);
+//                         });
+//                     }
+//
+// 					var p_dlamt_sum = pValue.s_dlnt * pValue.p_dlamt;
+// 					var p_last_dlamt_sum = Math.round(pValue.p_dlivy_amt * (pValue.p_add_dscnt_rt/100))*pValue.s_dlnt;
+//                     if(wrhousng_de.length == 0){
+//                         html += '<tr>';
+//                         html += '    <td class="colorG">M,S/H</td>';
+//                         html += '    <td>'+pValue.s_dlivy_de+'</td>';
+//                         html += '    <td>'+pValue.s_model_no+'</td>';
+//                         html += '    <td class="text-number">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
+//
+//                         if (pValue.p_bcnc_nm == '넥셀시스템') {
+//                             html += '    <td>재고활용</td>';
+//                         } else {
+//                             html += '    <td>'+pValue.p_bcnc_nm+'</td>';
+//                         }
+//                         html += '    <td></td>';
+//                         html += '    <td></td>';
+//                         html += '    <td>'+pValue.s_rm+'</td>';
+//                         html += '</tr>';
+//                     }
+//                     else{
+//                         $.each(wrhousng_de, function(i,v){
+//                             html += '<tr>';
+//                             html += '    <td class="colorG">M,S/H</td>';
+//                             if(i == 0){
+//                                 html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_dlivy_de+'</td>';
+//                                 html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_model_no+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
+//
+//                                 if (pValue.p_bcnc_nm == '넥셀시스템') {
+//                                     html += '    <td rowspan="'+wrhousng_de.length+'">재고활용</td>';
+//                                 } else {
+//                                     html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.p_bcnc_nm+'</td>';
+//                                 }
+//                             }
+//                             html += '    <td>'+v[0]+'</td>';
+//                             html += '    <td class="text-number">'+v[1]+'</td>';
+//                             if(i==0){
+// //                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
+//                                 html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
+//                             }
+//                             html += '</tr>';
+//                             wrhousng_tot += parseInt(v[1]);
+//
+//                         });
+//                     }
+// 					s_dlnt_sum += parseInt(pValue.s_dlnt);
+// 					p_dlamt_sum_total += parseInt(p_dlamt_sum);
+// 					p_last_dlamt_sum_total += parseInt(p_last_dlamt_sum);
 //					if (sAccountList.length == (pIndex+1)) {
 //						html += '<tr>';
 //						html += '    <td class="colorG">소개</td>';
@@ -1459,124 +1672,222 @@ div.report table th, div.report table td {
 //						html += '</tr>';
 //					}
 					// 전체합계처리
-					a_dlnt_total += parseInt(pValue.s_dlnt);
-					if (pValue.p_delng_ty_code == 61) {
-						a_dlamt_total += parseInt(p_dlamt_sum);
-						a_last_dlamt_total += parseInt(p_last_dlamt_sum);
-                        p_dlamt_tot += parseInt(pValue.p_dlamt);
-					}
-				});
-				$('#popReportBD').find('#report_s6_account').html(html);
-				$('#popReportBD').find('#report_s6_account').yRowspan(0);
-
-				var html = '';
-                var sAccountList = pResult.s7AccountList;
-				var s_dlnt_sum = 0, p_dlamt_sum_total = 0, p_last_dlamt_sum_total = 0;
-				$.each(sAccountList, function(pIndex, pValue) {
-                    var wrhousng_de = [];
-                    if(pResult['modelList'].hasOwnProperty(pValue.s_model_no) && pResult['modelList'][pValue.s_model_no].hasOwnProperty(pValue.s_dlivy_de)){
-                        $.each(pResult['modelList'][pValue.s_model_no][pValue.s_dlivy_de], function(pI, pV){
-                            wrhousng_de.push([pV.ddt_man, pV.dlnt]);
-                        });
-                    }
-
-                    var p_dlamt_sum = pValue.s_dlnt * pValue.p_dlamt;
-					var p_last_dlamt_sum = Math.round(pValue.p_dlivy_amt * (pValue.p_add_dscnt_rt/100))*pValue.s_dlnt;
-
-                    if(wrhousng_de.length == 0){
-                        html += '<tr>';
-                        html += '    <td class="colorG">M,S/H</td>';
-                        html += '    <td>'+pValue.s_dlivy_de+'</td>';
-                        html += '    <td>'+pValue.s_model_no+'</td>';
-                        html += '    <td class="text-number">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
-
-                        if (pValue.p_bcnc_nm == '넥셀시스템') {
-                            html += '    <td>재고활용</td>';
-                        } else {
-                            html += '    <td>'+pValue.p_bcnc_nm+'</td>';
-                        }
-                        html += '    <td></td>';
-                        html += '    <td></td>';
-                        html += '    <td>'+pValue.s_rm+'</td>';
-                        html += '</tr>';
-                    }
-                    else{
-                        $.each(wrhousng_de, function(i,v){
-                            html += '<tr>';
-                            html += '    <td class="colorG">M,S/H</td>';
-                            if(i == 0){
-                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_dlivy_de+'</td>';
-                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_model_no+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
-                                html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
-
-                                if (pValue.p_bcnc_nm == '넥셀시스템') {
-                                    html += '    <td rowspan="'+wrhousng_de.length+'">재고활용</td>';
-                                } else {
-                                    html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.p_bcnc_nm+'</td>';
-                                }
-                            }
-                            html += '    <td>'+v[0]+'</td>';
-                            html += '    <td class="text-number">'+v[1]+'</td>';
-                            if(i==0){
-//                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
-                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
-                            }
-                            html += '</tr>';
-                            wrhousng_tot += parseInt(v[1]);
-                        });
-                    }
-
-					s_dlnt_sum += parseInt(pValue.s_dlnt);
-					p_dlamt_sum_total += parseInt(p_dlamt_sum);
-					p_last_dlamt_sum_total += parseInt(p_last_dlamt_sum);
-//					if (sAccountList.length == (pIndex+1)) {
-//						html += '<tr>';
-//						html += '    <td class="colorG">소개</td>';
-//						html += '    <td class="colorG"></td>';
-//						html += '    <td class="colorG text-number">'+s_dlnt_sum.toString().toFormat('NUMBER')+'</td>';
-//						html += '    <td class="colorG text-number"></td>';
-//						html += '    <td class="colorG text-number">'+p_dlamt_sum_total.toString().toFormat('NUMBER')+'</td>';
-//						html += '    <td class="colorG text-number">'+p_last_dlamt_sum_total.toString().toFormat('NUMBER')+'</td>';
-//						html += '    <td class="colorG"></td>';
-//						html += '    <td class="colorG"></td>';
-//						html += '    <td class="colorG"></td>';
-//						html += '</tr>';
-//					}
-					// 전체합계처리
-					a_dlnt_total += parseInt(pValue.s_dlnt);
-					a_dlamt_total += parseInt(p_dlamt_sum);
-					a_last_dlamt_total += parseInt(p_last_dlamt_sum);
-                    p_dlamt_tot += parseInt(pValue.p_dlamt);
-
-				});
-				$('#popReportBD').find('#report_s7_account').html(html);
-				$('#popReportBD').find('#report_s7_account').yRowspan(0);
-				$('#popReportBD').find('#report_s_account tfoot th:eq(2)').html(a_dlnt_total.toString().toFormat('NUMBER'));
-//				$('#popReportBD').find('#report_s_account tfoot th:eq(4)').html(p_dlamt_tot.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s_account tfoot th:eq(5)').html(a_dlamt_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s_account tfoot th:eq(6)').html(a_last_dlamt_total.toString().toFormat('NUMBER'));
-                $('#popReportBD').find('#report_s_account tfoot th:eq(7)').html((a_dlamt_total - a_last_dlamt_total).toString().toFormat('NUMBER'));
-                $('#popReportBD').find('#report_s_account tfoot th:eq(10)').html(wrhousng_tot.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(2)').html(a_dlamt_total.toString().toFormat('NUMBER'));
+// 					a_dlnt_total += parseInt(pValue.s_dlnt);
+// 					if (pValue.p_delng_ty_code == 61) {
+// 						a_dlamt_total += parseInt(p_dlamt_sum);
+// 						a_last_dlamt_total += parseInt(p_last_dlamt_sum);
+//                         p_dlamt_tot += parseInt(pValue.p_dlamt);
+// 					}
+// 				});
+// 				$('#popReportBD').find('#report_s6_account').html(html);
+// 				$('#popReportBD').find('#report_s6_account').yRowspan(0);
+//
+// 				var html = '';
+//                 var sAccountList = pResult.s7AccountList;
+// 				var s_dlnt_sum = 0, p_dlamt_sum_total = 0, p_last_dlamt_sum_total = 0;
+// 				$.each(sAccountList, function(pIndex, pValue) {
+//                     var wrhousng_de = [];
+//                     if(pResult['modelList'].hasOwnProperty(pValue.s_model_no) && pResult['modelList'][pValue.s_model_no].hasOwnProperty(pValue.s_dlivy_de)){
+//                         $.each(pResult['modelList'][pValue.s_model_no][pValue.s_dlivy_de], function(pI, pV){
+//                             wrhousng_de.push([pV.ddt_man, pV.dlnt]);
+//                         });
+//                     }
+//
+//                     var p_dlamt_sum = pValue.s_dlnt * pValue.p_dlamt;
+// 					var p_last_dlamt_sum = Math.round(pValue.p_dlivy_amt * (pValue.p_add_dscnt_rt/100))*pValue.s_dlnt;
+//
+//                     if(wrhousng_de.length == 0){
+//                         html += '<tr>';
+//                         html += '    <td class="colorG">M,S/H</td>';
+//                         html += '    <td>'+pValue.s_dlivy_de+'</td>';
+//                         html += '    <td>'+pValue.s_model_no+'</td>';
+//                         html += '    <td class="text-number">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                         html += '    <td class="text-number">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
+//
+//                         if (pValue.p_bcnc_nm == '넥셀시스템') {
+//                             html += '    <td>재고활용</td>';
+//                         } else {
+//                             html += '    <td>'+pValue.p_bcnc_nm+'</td>';
+//                         }
+//                         html += '    <td></td>';
+//                         html += '    <td></td>';
+//                         html += '    <td>'+pValue.s_rm+'</td>';
+//                         html += '</tr>';
+//                     }
+//                     else{
+//                         $.each(wrhousng_de, function(i,v){
+//                             html += '<tr>';
+//                             html += '    <td class="colorG">M,S/H</td>';
+//                             if(i == 0){
+//                                 html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_dlivy_de+'</td>';
+//                                 html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_model_no+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.s_dlnt.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlivy_amt.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+p_last_dlamt_sum.toString().toFormat('NUMBER')+'</td>';
+//                                 html += '    <td class="text-number" rowspan="'+wrhousng_de.length+'">'+(p_dlamt_sum - p_last_dlamt_sum).toString().toFormat('NUMBER')+'</td>';
+//
+//                                 if (pValue.p_bcnc_nm == '넥셀시스템') {
+//                                     html += '    <td rowspan="'+wrhousng_de.length+'">재고활용</td>';
+//                                 } else {
+//                                     html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.p_bcnc_nm+'</td>';
+//                                 }
+//                             }
+//                             html += '    <td>'+v[0]+'</td>';
+//                             html += '    <td class="text-number">'+v[1]+'</td>';
+//                             if(i==0){
+// //                                html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
+//                                 html += '    <td rowspan="'+wrhousng_de.length+'">'+pValue.s_rm+'</td>';
+//                             }
+//                             html += '</tr>';
+//                             wrhousng_tot += parseInt(v[1]);
+//                         });
+//                     }
+//
+// 					s_dlnt_sum += parseInt(pValue.s_dlnt);
+// 					p_dlamt_sum_total += parseInt(p_dlamt_sum);
+// 					p_last_dlamt_sum_total += parseInt(p_last_dlamt_sum);
+// //					if (sAccountList.length == (pIndex+1)) {
+// //						html += '<tr>';
+// //						html += '    <td class="colorG">소개</td>';
+// //						html += '    <td class="colorG"></td>';
+// //						html += '    <td class="colorG text-number">'+s_dlnt_sum.toString().toFormat('NUMBER')+'</td>';
+// //						html += '    <td class="colorG text-number"></td>';
+// //						html += '    <td class="colorG text-number">'+p_dlamt_sum_total.toString().toFormat('NUMBER')+'</td>';
+// //						html += '    <td class="colorG text-number">'+p_last_dlamt_sum_total.toString().toFormat('NUMBER')+'</td>';
+// //						html += '    <td class="colorG"></td>';
+// //						html += '    <td class="colorG"></td>';
+// //						html += '    <td class="colorG"></td>';
+// //						html += '</tr>';
+// //					}
+// 					// 전체합계처리
+// 					a_dlnt_total += parseInt(pValue.s_dlnt);
+// 					a_dlamt_total += parseInt(p_dlamt_sum);
+// 					a_last_dlamt_total += parseInt(p_last_dlamt_sum);
+//                     p_dlamt_tot += parseInt(pValue.p_dlamt);
+//
+// 				});
+// 				$('#popReportBD').find('#report_s7_account').html(html);
+// 				$('#popReportBD').find('#report_s7_account').yRowspan(0);
+// 				$('#popReportBD').find('#report_s_account tfoot th:eq(2)').html(a_dlnt_total.toString().toFormat('NUMBER'));
+// //				$('#popReportBD').find('#report_s_account tfoot th:eq(4)').html(p_dlamt_tot.toString().toFormat('NUMBER'));
+// 				$('#popReportBD').find('#report_s_account tfoot th:eq(5)').html(a_dlamt_total.toString().toFormat('NUMBER'));
+// 				$('#popReportBD').find('#report_s_account tfoot th:eq(6)').html(a_last_dlamt_total.toString().toFormat('NUMBER'));
+//                 $('#popReportBD').find('#report_s_account tfoot th:eq(7)').html((a_dlamt_total - a_last_dlamt_total).toString().toFormat('NUMBER'));
+//                 $('#popReportBD').find('#report_s_account tfoot th:eq(10)').html(wrhousng_tot.toString().toFormat('NUMBER'));
+// 				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(2)').html(a_dlamt_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
+				
+				var model_cost_list = pResult.sModelCostList;
+				var return_list = pResult.modelList;
+				var html = [''];
+				var total_qy = [0, 0];
+				var total_amount = [0, 0];
+				var total_dc = [0, 0];
+				var total_ramount = [0, 0];
+				var total_return = [0, 0];
+				$.each(model_cost_list, function(pIndex, pValue){
+					var return_de = '';
+					var return_dlnt = 0;
+					var return_place = '';
+					if(return_list.hasOwnProperty(pValue.delng_sn)){
+						return_de = return_list[pValue.delng_sn].return_de;
+						return_place = return_list[pValue.delng_sn].return_place;
+						return_dlnt = return_list[pValue.delng_sn].count;
+					}
+					var dlamt = parseInt(pValue.dlamt); if(isNaN(dlamt)) dlamt = 0;
+					var dlnt = parseInt(pValue.dlnt); if(isNaN(dlnt)) dlnt = 0;
+					var amount = dlamt*dlnt;
+					var diff = dlnt - return_dlnt;
+
+					var _type = ["61", "62"].includes(pValue.delng_ty_code) ? 0 : 1;
+					total_qy[_type] += dlnt;
+					total_amount[_type] += amount;
+					total_dc[_type] += Math.round(pValue.dlnt*pValue.dlivy_amt * pValue.add_dscnt_rt / 100.0);
+					total_ramount[_type] += (amount - Math.round(pValue.dlnt*pValue.dlivy_amt * pValue.add_dscnt_rt / 100.0));
+					total_return[_type] += return_dlnt;
+
+
+					html[_type] += `<tr>
+								<td class="text-center">${(_type == 0)? "M/H" : "S/H"}</td>
+								<td class="text-center">${pValue.dlivy_de}</td>
+								<td class="text-center">${pValue.model_no}</td>
+								<td class="text-center">${dlnt.toFormat('NUMBER')}</td>
+								<td class="text-right">${pValue.dlivy_amt.toFormat('NUMBER')}</td>
+								<td class="text-right">${dlamt.toFormat('NUMBER')}</td>
+								<td class="text-right">${amount.toFormat('NUMBER')}</td>
+								<td class="text-right">${Math.round(pValue.dlivy_amt*dlnt * pValue.add_dscnt_rt / 100.0).toFormat('NUMBER')}</td>
+								<td class="text-right">${(amount - Math.round(pValue.dlivy_amt*dlnt * pValue.add_dscnt_rt / 100.0)).toFormat('NUMBER')}</td>
+								<td class="text-center">${pValue.bcnc_nm}</td>
+								<td class="text-center">${pValue.wrhousng_de}</td>
+								<td class="text-center">${return_de}</td>
+								<td class="text-center">${return_dlnt.toFormat('NUMBER')}</td>
+								<td class="text-center">${diff.toFormat('NUMBER')}</td>
+								<td class="text-center">${return_place}</td>
+							</tr>`
+				});
+				var html_tot1 = `<tr>
+									<td class="colorG text-center">M/H 계</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG text-center">${total_qy[0].toFormat('NUMBER')}</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG text-right">${total_amount[0].toFormat('NUMBER')}</td>
+									<td class="colorG text-right">${total_dc[0].toFormat('NUMBER')}</td>
+									<td class="colorG text-right">${total_ramount[0].toFormat('NUMBER')}</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG text-center">${total_return[0].toFormat('NUMBER')}</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+								</tr>`;
+				var html_tot2 = `<tr>
+									<td class="colorG text-center">S/H 계</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG text-center">${total_qy[1].toFormat('NUMBER')}</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG text-right">${total_amount[1].toFormat('NUMBER')}</td>
+									<td class="colorG text-right">${total_dc[1].toFormat('NUMBER')}</td>
+									<td class="colorG text-right">${total_ramount[1].toFormat('NUMBER')}</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+									<td class="colorG text-center">${total_return[1].toFormat('NUMBER')}</td>
+									<td class="colorG"></td>
+									<td class="colorG"></td>
+								</tr>`;
+				$('#popReportBD').find('#rptTable14 tbody[role=m_house_row]').html(html[0]);
+				$('#popReportBD').find('#rptTable14 tbody[role=m_house_foot]').html(html_tot1);
+				$('#popReportBD').find('#rptTable14 tbody[role=s_house_row]').html(html[1]);
+				$('#popReportBD').find('#rptTable14 tbody[role=s_house_foot]').html(html_tot2);
+				var a_last_dlamt_total = total_dc;
+
+				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_qy']").html((total_qy[0] + total_qy[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_amount']").html((total_amount[0] + total_amount[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_dc']").html((total_dc[0] + total_dc[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_ramount']").html((total_ramount[0] + total_ramount[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_return']").html((total_return[0] + total_return[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr td:eq(2)').html((total_amount[0]+total_amount[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr td:eq(3)').html((total_dc[0]+total_dc[1]).toFormat('NUMBER'));
+				
 				/* 모델(샘플)하우스 추가 DC 현황 (관리) */
 				/* ********************************************************* */
 				var html = '';
-				var sTaxbilList = pResult.s2TaxbilList;
+				var sTaxbilList = pResult.s2TaxbilList.M;
 				var splpc_am_total = 0, vat_total = 0, sum_total = 0;
 				$.each(sTaxbilList, function(pIndex, pValue) {
 					html += '<tr class="colorW">';
+					html += '    <td>M/H</td>';
 					html += '    <td>'+pValue.pblicte_de+'</td>';
 					html += '    <td class="text-number">'+pValue.splpc_am.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+pValue.vat.toString().toFormat('NUMBER')+'</td>';
@@ -1587,9 +1898,9 @@ div.report table th, div.report table td {
 					vat_total += parseInt(pValue.vat);
 					sum_total += parseInt(pValue.total);
 				});
-				if (pResult.s2TaxbilList.length < pResult.i2RcppayList.length) {
-					var max = pResult.i2RcppayList.length - pResult.s2TaxbilList.length
-					for (i=0; i<max; i++) {
+				if (pResult.s2TaxbilList.M.length < pResult.i2RcppayList.M.length) {
+					var max = pResult.i2RcppayList.M.length - pResult.s2TaxbilList.M.length
+					for (let i=0; i<max; i++) {
 						html += '<tr class="colorW">';
 						html += '    <td>-</td>';
 						html += '    <td></td>';
@@ -1599,18 +1910,18 @@ div.report table th, div.report table td {
 						html += '</tr>';
 					}
 				}
-				$('#popReportBD').find('#report_s2_taxbil tbody').html(html);
-				$('#popReportBD').find('#report_s2_taxbil tfoot th:eq(1)').html(splpc_am_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s2_taxbil tfoot th:eq(2)').html(vat_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s2_taxbil tfoot th:eq(3)').html(sum_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="m_tax"]').html(html);
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="m_tax_foot"] th:eq(2)').html(splpc_am_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="m_tax_foot"] th:eq(3)').html(vat_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="m_tax_foot"] th:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
 
 				var html = '';
-				var iRcppayList = pResult.i2RcppayList;
-				var iRcppay_sub = a_last_dlamt_total, iRcppay_rate = 0.0;
+				var iRcppayList = pResult.i2RcppayList.M;
+				var iRcppay_sub = a_last_dlamt_total[0], iRcppay_rate = 0.0;
 				var amount_total = 0, sub_total = 0, rate_total = 0.0;
 				$.each(iRcppayList, function(pIndex, pValue) {
 					iRcppay_sub -= parseInt(pValue.amount);
-					iRcppay_rate = ((a_last_dlamt_total-iRcppay_sub)/a_last_dlamt_total)*100;
+					iRcppay_rate = ((a_last_dlamt_total[0]-iRcppay_sub)/a_last_dlamt_total[0])*100;
 					html += '<tr class="colorW">';
 					html += '    <td>'+pValue.rcppay_de+'</td>';
 					html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
@@ -1622,9 +1933,9 @@ div.report table th, div.report table td {
 					sub_total = iRcppay_sub;
 					rate_total = iRcppay_rate;
 				});
-				if (pResult.i2RcppayList.length < pResult.s2TaxbilList.length) {
-					var max = pResult.s2TaxbilList.length - pResult.i2RcppayList.length
-					for (i=0; i<max; i++) {
+				if (pResult.i2RcppayList.M.length < pResult.s2TaxbilList.M.length) {
+					var max = pResult.s2TaxbilList.M.length - pResult.i2RcppayList.M.length
+					for (let i=0; i<max; i++) {
 						html += '<tr class="colorW">';
 						html += '    <td>-</td>';
 						html += '    <td></td>';
@@ -1634,22 +1945,17 @@ div.report table th, div.report table td {
 						html += '</tr>';
 					}
 				}
-				$('#popReportBD').find('#report_i2_rcppay tbody').html(html);
-				$('#popReportBD').find('#report_i2_rcppay tfoot th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_i2_rcppay tfoot th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_i2_rcppay tfoot th:eq(3)').html(rate_total.toFixed(1)+'%');
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="m_rcppay"]').html(html);
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="m_rcppay_foot"] th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="m_rcppay_foot"] th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="m_rcppay_foot"] th:eq(3)').html(rate_total.toFixed(1)+'%');
 
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(3)').html(amount_total.toString().toFormat('NUMBER'));
-				/* ********************************************************* */
-
-
-                /* 모델(샘플)하우스 판매현황 (관리) */
-				/* ********************************************************* */
 				var html = '';
-				var sTaxbilList = pResult.s3TaxbilList;
+				var sTaxbilList = pResult.s2TaxbilList.S;
 				var splpc_am_total = 0, vat_total = 0, sum_total = 0;
 				$.each(sTaxbilList, function(pIndex, pValue) {
 					html += '<tr class="colorW">';
+					html += '    <td>S/H</td>';
 					html += '    <td>'+pValue.pblicte_de+'</td>';
 					html += '    <td class="text-number">'+pValue.splpc_am.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+pValue.vat.toString().toFormat('NUMBER')+'</td>';
@@ -1660,9 +1966,9 @@ div.report table th, div.report table td {
 					vat_total += parseInt(pValue.vat);
 					sum_total += parseInt(pValue.total);
 				});
-				if (pResult.s3TaxbilList.length < pResult.i3RcppayList.length) {
-					var max = pResult.i3RcppayList.length - pResult.s3TaxbilList.length
-					for (i=0; i<max; i++) {
+				if (pResult.s2TaxbilList.S.length < pResult.i2RcppayList.S.length) {
+					var max = pResult.i2RcppayList.S.length - pResult.s2TaxbilList.S.length
+					for (let i=0; i<max; i++) {
 						html += '<tr class="colorW">';
 						html += '    <td>-</td>';
 						html += '    <td></td>';
@@ -1672,35 +1978,32 @@ div.report table th, div.report table td {
 						html += '</tr>';
 					}
 				}
-				$('#popReportBD').find('#report_s3_taxbil tbody').html(html);
-				$('#popReportBD').find('#report_s3_taxbil tfoot th:eq(1)').html(splpc_am_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s3_taxbil tfoot th:eq(2)').html(vat_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s3_taxbil tfoot th:eq(3)').html(sum_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_s3_taxbil tfoot th:eq(1)').html(splpc_am_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="s_tax"]').html(html);
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="s_tax_foot"] th:eq(2)').html(splpc_am_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="s_tax_foot"] th:eq(3)').html(vat_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s2_taxbil tbody[role="s_tax_foot"] th:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
 
 				var html = '';
-				var iRcppayList = pResult.i3RcppayList;
-				var iRcppay_sub = sum_total, iRcppay_rate = 0.0;
-                var rate = 0.0;
+				var iRcppayList = pResult.i2RcppayList.S;
+				var iRcppay_sub = a_last_dlamt_total[1], iRcppay_rate = 0.0;
 				var amount_total = 0, sub_total = 0, rate_total = 0.0;
 				$.each(iRcppayList, function(pIndex, pValue) {
 					iRcppay_sub -= parseInt(pValue.amount);
-					iRcppay_rate = ((cCostTotal-iRcppay_sub)/cCostTotal)*100;
-                    rate = (parseInt(pValue.amount)*100/sum_total);
+					iRcppay_rate = ((a_last_dlamt_total[1]-iRcppay_sub)/a_last_dlamt_total[1])*100;
 					html += '<tr class="colorW">';
 					html += '    <td>'+pValue.rcppay_de+'</td>';
 					html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+iRcppay_sub.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+rate.toFixed(1)+'%</td>';
+					html += '    <td class="text-number">'+iRcppay_rate.toFixed(1)+'%</td>';
 					html += '    <td>'+pValue.rcppay_dtls+'</td>';
 					html += '</tr>';
 					amount_total += parseInt(pValue.amount);
 					sub_total = iRcppay_sub;
 					rate_total = iRcppay_rate;
 				});
-				if (pResult.i3RcppayList.length < pResult.s3TaxbilList.length) {
-					var max = pResult.s3TaxbilList.length - pResult.i3RcppayList.length
-					for (i=0; i<max; i++) {
+				if (pResult.i2RcppayList.S.length < pResult.s2TaxbilList.S.length) {
+					var max = pResult.s2TaxbilList.S.length - pResult.i2RcppayList.S.length
+					for (let i=0; i<max; i++) {
 						html += '<tr class="colorW">';
 						html += '    <td>-</td>';
 						html += '    <td></td>';
@@ -1710,11 +2013,138 @@ div.report table th, div.report table td {
 						html += '</tr>';
 					}
 				}
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="s_rcppay"]').html(html);
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(3)').html(rate_total.toFixed(1)+'%');
+
+
+				/* M/SH, 옵션 */
+				var html = '';
+				var dspyOptionList = pResult.sOptionCostList;
+				console.log(dspyOptionList);
+				if(dspyOptionList != null){
+					$.each(dspyOptionList, function(pKey, pValue){
+						var target = $(document).find(`#rptTableOpt tbody[role=body] [data-column='${pKey}']`);
+						if($(target).data("type") != 'number'){
+							$(target).html(pValue);
+						}
+						else{
+							$(target).html(pValue.toFormat('NUMBER'));
+						}
+					});
+					var c_opt_amount = parseInt(dspyOptionList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
+					var e_opt_amount = parseInt(dspyOptionList.e_opt_amount); if(isNaN(e_opt_amount)) e_opt_amount = 0;
+
+					var diff = e_opt_amount - c_opt_amount;
+					$(document).find(`#rptTableOpt tfoot [data-column='diff']`).html(diff.toFormat('NUMBER'));
+					$('#popReportBD').find('#report_exec tbody[role=body] td:eq(5)').html(c_opt_amount.toFormat('NUMBER'));
+				}
+
+				/* 모델(샘플)하우스 판매현황 (관리) */
+				/* ********************************************************* */
+				var html = '';
+				var s_total_dlnt = 0, s_total_amount = 0;
+				$.each(pResult.s63List, function(pIndex, pValue){
+						html += '<tr class="colorW">';
+						html += '	<td class="text-center">'+pValue.dlivy_de+'</td>';
+						html += '	<td class="text-center">'+pValue.model_no+'</td>';
+						html += '	<td class="text-center">'+pValue.dlnt.toFormat('NUMBER')+'</td>';
+						html += '	<td class="text-right">'+pValue.dlamt.toFormat('NUMBER')+'</td>';
+						html += '	<td class="text-right">'+(pValue.dlnt*pValue.dlamt).toFormat('NUMBER')+'</td>';
+						html += '</tr>';
+						s_total_dlnt += pValue.dlnt;
+						s_total_amount += (pValue.dlnt*pValue.dlamt);
+				});
+
+				if(pResult.si3ListLength > pResult.s63ListLength){
+					for(let i=0;i<pResult.si3ListLength-pResult.s63ListLength;i++){
+						html += '<tr class="colorW">';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '</tr>';
+					}
+				}
+				$('#popReportBD').find('#report_s3_taxbil tbody').html(html);
+				$('#popReportBD').find('#report_s3_taxbil tfoot th:eq(2)').html(s_total_dlnt.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_s3_taxbil tfoot th:eq(4)').html(s_total_amount.toString().toFormat('NUMBER'));
+				// $('#popReportBD').find('#report_s3_taxbil tfoot th:eq(1)').html(splpc_am_total.toString().toFormat('NUMBER'));
+
+				var html = '';
+				var sTaxbilList = pResult.s3TaxbilList;
+				var splpc_am_total = 0, vat_total = 0, sum_total = 0;
+				$.each(sTaxbilList, function(pIndex, pValue) {
+					splpc_am_total += parseInt(pValue.splpc_am);
+					vat_total += parseInt(pValue.vat);
+					sum_total += parseInt(pValue.total);
+
+				});
+				var iRcppay_sub = sum_total, iRcppay_rate = 0.0;
+				var amount_total = 0, sub_total = 0, rate_total = 0.0;
+
+				$.each(pResult.si3List, function(pIndex, pValue) {
+					if(!pValue.hasOwnProperty('rcppay')){
+						html += '<tr class="colorW">';
+						html += '    <td>'+pValue.pblicte_trget_nm+'</td>';
+						html += '    <td>'+pValue.pblicte_de+'</td>';
+						html += '    <td class="text-number">'+pValue.total.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td></td>';
+						html += '    <td></td>';
+						html += '    <td class="text-number">'+pValue.total.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td>0%</td>';
+						html += '</tr>';
+					}
+					else{
+						var rcppayList = pValue.rcppay;
+						html += '<tr class="colorW">';
+						html += '    <td class="middle" rowspan="'+rcppayList.length+'">'+pValue.pblicte_trget_nm+'</td>';
+						html += '    <td class="middle" rowspan="'+rcppayList.length+'">'+pValue.pblicte_de+'</td>';
+						html += '    <td class="text-number middle" rowspan="'+rcppayList.length+'">'+pValue.total.toString().toFormat('NUMBER')+'</td>';
+						$.each(rcppayList, function(pI, pR){
+							iRcppay_sub -= parseInt(pR.amount);
+							iRcppay_rate = ((sum_total-iRcppay_sub)/sum_total)*100;
+							if(pI != 0){
+								html += '<tr class="colorW">';
+
+							}
+								html += '    <td>'+pR.rcppay_de+'</td>';
+								html += '    <td class="text-number">'+pR.amount.toFormat('NUMBER')+'</td>';
+								html += '    <td class="text-number">'+iRcppay_sub.toString().toFormat('NUMBER')+'</td>';
+								html += '    <td class="text-number">'+iRcppay_rate.toFixed(1)+'%</td>';
+
+							html += '</tr>';
+							amount_total += parseInt(pR.amount);
+							sub_total = iRcppay_sub;
+							rate_total = iRcppay_rate;
+
+						});
+
+					}
+				});
+				if(pResult.si3ListLength < pResult.s63ListLength){
+					for(let i=0;i<pResult.s63ListLength-pResult.si3ListLength;i++){
+						html += '<tr class="colorW">';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '	<td>&nbsp;</td>';
+						html += '</tr>';
+					}
+				}
+
 				$('#popReportBD').find('#report_i3_rcppay tbody').html(html);
-				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(3)').html(rate_total.toFixed(1)+'%');
+				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(4)').html(amount_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(5)').html(sub_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(6)').html(rate_total.toFixed(1)+'%');
+				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(2)').html(sum_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(4)').html(amount_total.toString().toFormat('NUMBER'));
+				/* ********************************************************* */
 
 				/* 장비 매입/출고 현황 (관리) */
 				/* ********************************************************* */
@@ -1766,6 +2196,7 @@ div.report table th, div.report table td {
 					html += '    <td class="text-left">'+pValue.rcppay_dtls+'</td>';
 					html += '    <td>'+pValue.papr_invstmnt_nm+'</td>';
 					html += '    <td class="text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td></td>';
 					html += '</tr>';
 					amt_total += parseInt(amt);
 				});
@@ -1784,7 +2215,6 @@ div.report table th, div.report table td {
 //				});
 				$('#popReportBD').find('#report_e_etc tbody[role=body]').html(html);
 				$('#popReportBD').find('#report_e_etc tfoot th:eq(4)').html(amt_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(5)').html(amt_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* M/SH, 옵션 */

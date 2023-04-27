@@ -3,6 +3,7 @@ from .services import project_service as prj
 from .services import member_service as mber
 from .services import charger_service as chrg
 from .services import dspy_cost_service as dsp
+from .services import sales_service as sales
 from .services import stock_service as st
 from app.connectors import DB
 from app.helpers import session_helper
@@ -117,17 +118,71 @@ def ajax_get_reportBD():
 
     result['sTaxbilList'] = prj.get_s_taxbil_report_list(params)
     result['iRcppayList'] = prj.get_i_rcppay_report_list(params)
-    result['s2TaxbilList'] = prj.get_s2_taxbil_report_list(params)
-    result['i2RcppayList'] = prj.get_i2_rcppay_report_list(params)
+
+    result['s2TaxbilList'] = {"M" : [], "S" : []}
+    s2TaxbilList = prj.get_s2_taxbil_report_list(params)
+    for s in s2TaxbilList:
+        if s['delng_se_code'] == 'S2':
+            result['s2TaxbilList']['M'].append(s)
+        else:
+            result['s2TaxbilList']['S'].append(s)
+
+    result['i2RcppayList'] = {"M" : [], "S" : []}
+    i2RcppayList = prj.get_i2_rcppay_report_list(params)
+    for i in i2RcppayList:
+        if i['rcppay_se_code'] == 'I2':
+            result['i2RcppayList']['M'].append(i)
+        else:
+            result['i2RcppayList']['S'].append(i)
     result['s3TaxbilList'] = prj.get_s3_taxbil_report_list(params)
     result['i3RcppayList'] = prj.get_i3_rcppay_report_list(params)
+    s3TaxbilList = prj.get_s3_taxbil_report_list(params)
+    i3RcppayList = prj.get_i3_rcppay_report_list(params)
+    s3TaxbilList = {s['taxbil_sn'] : s for s in s3TaxbilList}
+    for i in i3RcppayList:
+        if i['cnnc_sn'] != '' and i['cnnc_sn'] in s3TaxbilList:
+            if 'rcppay' not in s3TaxbilList[i['cnnc_sn']]:
+
+                s3TaxbilList[i['cnnc_sn']]['rcppay'] = list()
+            s3TaxbilList[i['cnnc_sn']]['rcppay'].append(i)
+
+    result['si3List'] = s3TaxbilList
+    result['s63List'] = prj.get_sale_model_list(params)
+    result['si3ListLength'] = sum([1 if 'rcppay' not in s else len(s['rcppay']) for s in s3TaxbilList.values()])
+    result['s63ListLength'] = len(result['s63List'])
+    result['sOptionCostList'] = prj.get_option_cost_list(params)
+
 
     result['s12AccountList'] = prj.get_s12_account_report_list(params)
     result['s6AccountList'] = prj.get_s6_account_report_list(params)
     result['s7AccountList'] = prj.get_s7_account_report_list(params)
 
     #TODO : modelList api
-    result['modelList'] = []
+    result['sModelCostList'] = sales.get_model_list(params)
+    result['modelList'] = dict()
+    for d in result['sModelCostList']:
+        stocks = st.get_stock_by_account(d['delng_sn'])
+        for stock in stocks:
+            detail = st.get_stock_log({"s_stock_sn" : stock['stock_sn']})
+            candidate = False
+            candidateDate = None
+            candidatePlace = None
+            for log in detail[::-1]:
+                if log['stock_sttus'] == 1:
+                    candidate = True
+                    candidateDate = log['ddt_man']
+                    candidatePlace = log['cntrct_nm']
+                    continue
+                if candidate and log['log_sn'] == stock['log_sn']:
+                    if d['delng_sn'] not in result['modelList']:
+                        result['modelList'][d['delng_sn']] = {"count" : 0, "return_de" : None, "return_place" : None}
+                    result['modelList'][d['delng_sn']]["count"] += 1
+                    result['modelList'][d['delng_sn']]["return_de"] = candidateDate
+                    result['modelList'][d['delng_sn']]["return_place"] = candidatePlace
+                    break
+                candidate = False
+                candidateDate = None
+                candidatePlace = None
     result['etcRcppayList'] = prj.get_etc_rcppay_report_list(params)
     result['dspyCostList'] = dsp.get_dspy_cost_list(params)
     result["status"] = True
@@ -153,16 +208,67 @@ def ajax_get_reportBF():
 
     result['s1TaxbilList'] = prj.get_s1_taxbil_report_list(params)
     result['i1RcppayList'] = prj.get_i1_rcppay_report_list(params)
-    result['s2TaxbilList'] = prj.get_s2_taxbil_report_list(params)
-    result['i2RcppayList'] = prj.get_i2_rcppay_report_list(params)
+    result['s2TaxbilList'] = {"M" : [], "S" : []}
+    s2TaxbilList = prj.get_s2_taxbil_report_list(params)
+    for s in s2TaxbilList:
+        if s['delng_se_code'] == 'S2':
+            result['s2TaxbilList']['M'].append(s)
+        else:
+            result['s2TaxbilList']['S'].append(s)
+
+    result['i2RcppayList'] = {"M" : [], "S" : []}
+    i2RcppayList = prj.get_i2_rcppay_report_list(params)
+    for i in i2RcppayList:
+        if i['rcppay_se_code'] == 'I2':
+            result['i2RcppayList']['M'].append(i)
+        else:
+            result['i2RcppayList']['S'].append(i)
     result['s3TaxbilList'] = prj.get_s3_taxbil_report_list(params)
     result['i3RcppayList'] = prj.get_i3_rcppay_report_list(params)
+    s3TaxbilList = prj.get_s3_taxbil_report_list(params)
+    i3RcppayList = prj.get_i3_rcppay_report_list(params)
+    s3TaxbilList = {s['taxbil_sn'] : s for s in s3TaxbilList}
+    for i in i3RcppayList:
+        if i['cnnc_sn'] != '' and i['cnnc_sn'] in s3TaxbilList:
+            if 'rcppay' not in s3TaxbilList[i['cnnc_sn']]:
+
+                s3TaxbilList[i['cnnc_sn']]['rcppay'] = list()
+            s3TaxbilList[i['cnnc_sn']]['rcppay'].append(i)
+
+    result['si3List'] = s3TaxbilList
+    result['s63List'] = prj.get_sale_model_list(params)
+    result['si3ListLength'] = sum([1 if 'rcppay' not in s else len(s['rcppay']) for s in s3TaxbilList.values()])
+    result['s63ListLength'] = len(result['s63List'])
+    result['sOptionCostList'] = prj.get_option_cost_list(params)
 
     result['s6AccountList'] = prj.get_s6_account_report_list(params)
+    result['sModelCostList'] = sales.get_model_list(params)
+    result['modelList'] = dict()
+    for d in result['sModelCostList']:
+        stocks = st.get_stock_by_account(d['delng_sn'])
+        for stock in stocks:
+            detail = st.get_stock_log({"s_stock_sn" : stock['stock_sn']})
+            candidate = False
+            candidateDate = None
+            candidatePlace = None
+            for log in detail[::-1]:
+                if log['stock_sttus'] == 1:
+                    candidate = True
+                    candidateDate = log['ddt_man']
+                    candidatePlace = log['cntrct_nm']
+                    continue
+                if candidate and log['log_sn'] == stock['log_sn']:
+                    if d['delng_sn'] not in result['modelList']:
+                        result['modelList'][d['delng_sn']] = {"count" : 0, "return_de" : None, "return_place" : None}
+                    result['modelList'][d['delng_sn']]["count"] += 1
+                    result['modelList'][d['delng_sn']]["return_de"] = candidateDate
+                    result['modelList'][d['delng_sn']]["return_place"] = candidatePlace
+                    break
+                candidate = False
+                candidateDate = None
+                candidatePlace = None
     result['s7AccountList'] = prj.get_s7_account_report_list(params)
 
-    #TODO : modelList api
-    result['modelList'] = []
     result['etcRcppayList'] = prj.get_etc_rcppay_report_list(params)
     result['dspyCostList'] = dsp.get_dspy_cost_list(params)
     result["status"] = True
@@ -219,10 +325,22 @@ def get_p_projects():
     result = prj.get_p_projects(params)
     return jsonify(result)
 
+@bp.route('/get_all_projects', methods=['GET'])
+def get_all_projects():
+    params = request.args.to_dict()
+    result = prj.get_all_projects(params)
+    return jsonify(result)
+
 @bp.route('/insert_b_project', methods=['POST'])
 def insert_b_project():
     params = request.get_json()
     prj.insert_b_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_BD_b_project', methods=['POST'])
+def insert_BD_b_project():
+    params = request.get_json()
+    prj.insert_b_bd_project(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
 @bp.route('/insert_BF_b_project', methods=['POST'])
@@ -238,10 +356,18 @@ def get_cost_bf_bd():
     prjct = prj.get_project_by_cntrct_nm(params["s_cntrct_sn"])
     params["s_prjct_sn"] = prjct["prjct_sn"]
     result['cCostList'] = prj.get_c_cost_list(params)
+    result['cCostListByExtra'] = dict()
+    for cost in result['cCostList']:
+        extra_sn = cost['extra_sn']
+        if extra_sn not in result['cCostListByExtra']:
+            result['cCostListByExtra'][extra_sn] = list()
+        result['cCostListByExtra'][extra_sn].append(cost)
+
     result['cCostListExtra'] = prj.get_c_cost_list_extra(params)
     result['eCostListExtra'] = prj.get_e_cost_list_extra(params)
     result['eCostList'] = prj.get_e_cost_list(params)
     result['gCostList'] = prj.get_g_cost_list(params)
+    result['samsungList'] = prj.get_expect_equip_list(params)
     return jsonify(result)
 
 
@@ -286,10 +412,70 @@ def get_option_cost():
     result = prj.get_option_cost_list(params)
     return jsonify(result)
 
+@bp.route('/insert_BF_option_cost', methods=['POST'])
+def insert_BF_option_cost():
+    params = request.get_json()
+    prj.insert_option_cost(params)
+    if params['opt_approval_type'] != 'S':
+        prj.insert_b_option_bf_project(params)
+
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+
+@bp.route('/insert_BD_option_cost', methods=['POST'])
+def insert_BD_option_cost():
+    params = request.get_json()
+    prj.insert_option_cost(params)
+    if params['opt_approval_type'] != 'S':
+        prj.insert_b_option_bd_project(params)
+
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
 @bp.route('/insert_option_cost', methods=['POST'])
 def insert_option_cost():
     params = request.get_json()
     prj.insert_option_cost(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_BF_c_project', methods=['POST'])
+def insert_BF_c_project():
+    params = request.get_json()
+    prj.delete_option_bf_project(params)
+    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    prj.insert_b_option_bf_project(params)
+
+    prj.insert_BF_c_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/update_BF_c_project', methods=['POST'])
+def update_BF_c_project():
+    params = request.get_json()
+    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    prj.insert_b_option_bf_project(params)
+    prj.update_BF_c_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/insert_BD_c_project', methods=['POST'])
+def insert_BD_c_project():
+    params = request.get_json()
+    prj.delete_option_bd_project(params)
+    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    prj.insert_b_option_bd_project(params)
+    prj.insert_bd_expect_equipment(params)
+    prj.insert_BF_c_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+
+@bp.route('/update_BD_c_project', methods=['POST'])
+def update_BD_c_project():
+    params = request.get_json()
+    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    prj.insert_b_option_bd_project(params)
+    prj.insert_bd_expect_equipment(params)
+    prj.update_BF_c_project(params)
+
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
 @bp.route('/insert_c_project', methods=['POST'])
@@ -309,3 +495,9 @@ def update_c_project():
     params = request.get_json()
     prj.update_c_project(params)
     return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/ajax_update_flaw_co', methods=['GET'])
+def ajax_update_flaw_co():
+    params = request.args.to_dict()
+    prj.update_flaw_co(params)
+    return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})

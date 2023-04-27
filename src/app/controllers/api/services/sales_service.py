@@ -313,7 +313,7 @@ def update_account(params):
     data = OrderedDict()
 
     for key in params:
-        if key not in ("s_delng_sn", "item_sn[]", "invn_sttus_code", "prduct_se_code", "prduct_ty_code"):
+        if key not in ("s_delng_sn", "item_sn[]", "invn_sttus_code", "prduct_se_code", "prduct_ty_code", "use_type"):
             if params[key] != '':
                 data[key] = params[key]
 
@@ -579,6 +579,100 @@ def get_expect_p_r_list(params):
     result = g.curs.fetchall()
     return result
 
+def insert_ms_BF_equip(params):
+    if params['msh_approval_type'] in ('S', 'B'):
+        params['regist_dtm'] = datetime.datetime.now()
+        params['register_id'] = session['member']['member_id']
+        cntrct_sn = params["cntrct_sn"]
+        if params['msh_approval_type'] == 'S':
+            g.curs.execute(
+                "UPDATE contract SET mh_place=%s, mh_count=%s, mh_period=%s, mh_approval_step=1 WHERE cntrct_sn=%s",
+                (params['mh_place'], params['mh_count'], params['mh_period'], cntrct_sn))
+        else:
+            g.curs.execute(
+                "SELECT delng_sn FROM account WHERE cntrct_sn=%(cntrct_sn)s AND (delng_se_code='P' and delng_ty_code IN ('61', '62', '64', '65')) OR cnnc_sn IN (SELECT delng_sn FROM account WHERE delng_se_code='P' and delng_ty_code IN ('61', '62', '64', '65') AND cntrct_sn=%(cntrct_sn)s)",
+                params)
+            accounts = g.curs.fetchall()
+            delng_sns = [acc['delng_sn'] for acc in accounts]
+            for delng_sn in delng_sns:
+                delete_account({"s_delng_sn": delng_sn})
+
+            g.curs.execute("SELECT log_sn, stock_sn, cnnc_sn FROM stock_log WHERE delng_sn IN ({})".format(
+                ",".join(['%s'] * len(delng_sns))), delng_sns)
+            stocks = g.curs.fetchall(transform=False)
+            for stock in stocks:
+                if stock['cnnc_sn'] is None:
+                    g.curs.execute("DELETE FROM stock WHERE stock_sn=%s", stock['stock_sn'])
+                g.curs.execute("DELETE FROM stock_log WHERE log_sn=%s", stock['log_sn'])
+
+            g.curs.execute("UPDATE contract SET mh_place=%s, mh_count=%s, mh_period=%s WHERE cntrct_sn=%s",
+                           (params['mh_place'], params['mh_count'], params['mh_period'], cntrct_sn))
+
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        prjct_sn = prjct['prjct_sn']
+        ddt_man = datetime.datetime.now()
+        data = OrderedDict()
+        for key in params:
+            if key.endswith("[]"):
+                if key == "pamount[]":
+                    data["dlamt"] = [int(d.replace(",", "")) for d in params[key]]
+                elif key == "dlivy_amt[]":
+                    data["dlivy_amt"] = [int(d.replace(",", "")) for d in params[key]]
+                elif key == "add_dc_rate[]":
+                    data["add_dscnt_rt"] = [float(d.replace("%", "")) if d != '' else 0.0 for d in params[key] ]
+                elif key == "qy[]":
+                    data["dlnt"] = [int(d.replace(",", "")) for d in params[key]]
+                elif key == "dc_rate[]":
+                    data["dscnt_rt"] = [float(d.replace("%", "")) for d in params[key] ]
+                elif key in ("expect_de[]",):
+                    data["wrhousng_de"] = params[key]
+                elif key in ("delng_sn[]", "prduct_ty_code[]", "stock_sn[]", "return_de[]", "return_dlnt[]", "stock_place[]", "dc[]"):
+                    continue
+                else:
+                    data[key.replace("[]", "")] = params[key]
+
+        input_data = []
+        for i, key in enumerate(data):
+            if i == 0:
+                for row in data[key]:
+                    input_data.append({key: row})
+            else:
+                for j, row in enumerate(data[key]):
+                    input_data[j][key] = row
+        for row in input_data:
+            row['cntrct_sn'] = cntrct_sn
+            row['prjct_sn'] = prjct_sn
+            row['ctmmny_sn'] = 1
+            row['regist_dtm'] = datetime.datetime.now()
+            row['register_id'] = session['member']['member_id']
+            row['delng_se_code'] = 'P'
+            row['ddt_man'] = datetime.datetime.now()
+
+        sub_query = [key for key in input_data[0]]
+        params_query = ["%({})s".format(key) for key in input_data[0]]
+
+        query = """INSERT INTO account({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+        delng_sns = []
+        for i in input_data:
+            g.curs.execute(query, i)
+            delng_sn = g.curs.lastrowid
+            delng_sns.append(delng_sn)
+        if params['msh_approval_type'] == 'B':
+            g.curs.execute("DELETE FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code='E' AND ct_se_code IN ('61', '62', '64', '65')", params)
+        for row in input_data:
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, add_dscnt_rt, cost_date, extra_sn, regist_dtm, register_id, dspy_se_code)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', %(delng_ty_code)s, %(bcnc_sn)s, %(model_no)s, %(dlnt)s, %(b61)s, 0.0, %(add_dscnt_rt)s ,'0000-00-00', 0, %(regist_dtm)s, %(register_id)s, %(dspy_se_code)s)"""
+            row['b61'] = row['dlamt']
+            add_dc = (row['add_dscnt_rt'] / 100.0) * (row['dlivy_amt'])
+            row['add_dscnt_rt'] = (add_dc * 100.0 / row['b61']) if row['b61'] != 0 else 0.0
+            row['dspy_se_code'] = 1 if int(row['delng_ty_code']) in (61, 62) else 2
+            g.curs.execute(query, row)
+
+        return delng_sns
+    else:
+        cntrct_sn = params["cntrct_sn"]
+        g.curs.execute("UPDATE contract SET mh_approval_step=2 WHERE cntrct_sn=%s", (cntrct_sn,))
+
 
 def insert_ms_equip(params):
     if params['msh_approval_type'] in ('S', 'B'):
@@ -680,7 +774,12 @@ def get_model_list(params):
                     , p.model_no
                     , p.dlnt
                     , p.dlamt
+                    , p.dlivy_amt
                     , p.wrhousng_de
+                    , p.delng_ty_code
+                    , p.dscnt_rt
+                    , p.add_dscnt_rt
+    				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS bcnc_nm
                     , (SELECT prduct_ty_code FROM stock WHERE stock_sn=sl.stock_sn) AS prduct_ty_code
                     , IFNULL(s.dlivy_de, '') AS dlivy_de
                     FROM account p
@@ -692,7 +791,7 @@ def get_model_list(params):
 
                     AND p.delng_se_code='P'
                     AND p.cntrct_sn=%(s_cntrct_sn)s
-                    AND p.delng_ty_code IN ('61', '62')
+                    AND p.delng_ty_code IN ('61', '62', '64', '65')
                     """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -926,5 +1025,30 @@ def insert_equipment_samsung(params):
             real_data.append(d)
     query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code) 
     VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """
+    g.curs.executemany(query, real_data)
+
+def insert_equipment_BD_samsung(params):
+    row_length = len(params['equip_sn[]'])
+    order_de = datetime.datetime.now().strftime("%Y-%m-%d")
+    data = []
+    for _ in range(row_length):
+        data.append({"cntrct_sn" : params["cntrct_sn"], "order_de" : order_de})
+
+    for key in params:
+        if key.endswith("[]"):
+            for i, v in enumerate(params[key]):
+                k = key.replace("[]", "")
+                if k in ("dlnt", "pamount", "cntrct_amount", "dlivy_amt"):
+                    value = None if v.replace(",", "") == "" else int(v.replace(",", ""))
+                else:
+                    value = v
+                data[i][k] = value
+
+    real_data = []
+    for d in data:
+        if d['dlnt'] is not None and d['dlnt'] > 0:
+            real_data.append(d)
+    query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code, dlivy_amt) 
+    VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(pamount)s, %(cntrct_amount)s, %(bcnc_sn)s, %(equip_sn)s, 1, %(dlivy_amt)s) """
     g.curs.executemany(query, real_data)
 

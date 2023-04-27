@@ -14,6 +14,9 @@ def dt_query(query, data, params={}):
 
         query += " ORDER BY {} {}".format(order_column, order_dir)
 
+    elif "custom_order" in params:
+        query += " ORDER BY "+ ",".join(params["custom_order"])
+
     if "length" in params and int(params["length"]) > 0:
         query += " LIMIT {}, {}".format(params['start'], params['length'])
 

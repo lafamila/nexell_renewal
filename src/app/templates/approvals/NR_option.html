@@ -171,7 +171,7 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="8"><span>⑧ 옵션행사비<span></span></th>
+			<th class="sub-title colorN text-center" colspan="8"><span>⑧ 옵션행사비</span></th>
         </tr>
         <tr>
             <th class="color-contract text-center">구분</th>
@@ -444,10 +444,10 @@ function dateDiff(_date1, _date2) {
         var c_opt_period_start = $(this).find("input[name='c_opt_period_start']").val();
         var c_opt_period_end = $(this).find("input[name='c_opt_period_end']").val();
         if(e_opt_period_start != '' && e_opt_period_end != ''){
-            $(this).find("input[name='e_opt_dtm']").val(dateDiff(e_opt_period_start, e_opt_period_end));
+            $(this).find("input[name='e_opt_dtm']").val(dateDiff(e_opt_period_start, e_opt_period_end)+1);
         }
         if(c_opt_period_start != '' && c_opt_period_end != ''){
-            $(this).find("input[name='c_opt_dtm']").val(dateDiff(c_opt_period_start, c_opt_period_end));
+            $(this).find("input[name='c_opt_dtm']").val(dateDiff(c_opt_period_start, c_opt_period_end)+1);
         }
         var e_amount = parseInt($(this).find("input[name='e_opt_amount']").val().replaceAll(",", "")); if(isNaN(e_amount)) e_amount = 0;
         var c_amount = parseInt($(this).find("input[name='c_opt_amount']").val().replaceAll(",", "")); if(isNaN(c_amount)) c_amount = 0;

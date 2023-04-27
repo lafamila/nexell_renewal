@@ -83,22 +83,10 @@ def completed_ajax_get_completed_reportNR():
     result['contractStatusList'] = cp.get_contract_status_list(params)
     result['executStatusList'] = cp.get_execut_status_list(params)
     result['completedList'] = cp.get_completed_reportNR(params)
-    result['modelTemp'] = cp.get_completed_reportNR_M2(params)
-    result['completedList2'] = cp.get_partner_contract_status(params)
-    result['completedList3'] = cp.get_partner_status_list(params)
     new_params = dict()
     new_params["s_pxcond_mt"] = (datetime.strptime(s_pxcond_dtm, "%Y-%m-%d")-relativedelta.relativedelta(months=1)).strftime("%Y-%m")
     result['lastDate'] = cp.get_completed_reportNR(new_params)
 
-    # TODO : modelList api
-    result['modelList'] = dict()
-    # $result['modelList'] = array();
-    # foreach($this->m_completed->get_completed_reportNR_M2($params) as $model) {
-    #   if (!array_key_exists($model['bsn_dept_code'], $result['modelList'])){
-    #       $result['modelList'][$model['bsn_dept_code']] = array();
-    #   }
-    #   $result['modelList'][$model['bsn_dept_code']][$model['cntrct_execut_code']] = $model;
-    # }
 
     result['status'] = True
     return jsonify(result)

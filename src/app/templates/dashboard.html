@@ -50,7 +50,7 @@
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div style="position: relative;">
 
-        <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline" id="dashboard_title1">팀별 실적 현황 <span style="font-size:12px!important;">(VAT 포함)</span></h5>
+        <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline" id="dashboard_title1">팀별 실적 현황 <span style="font-size:12px!important;">(단위:천원, VAT 포함)</span></h5>
         <div style="position: absolute; right: 0; top: -5px; text-align: right; max-width: 50%; overflow: hidden">
             <button class="btn btn-info" data-toggle="modal" href="#popReport99"><i class="fa fa-print"> 영업점검</i></button>
             <button class="btn btn-info" data-toggle="modal" href="#popReport8"><i class="fa fa-print"> 사전입찰</i></button>
@@ -148,9 +148,9 @@
 			<col width="75">
 			<col width="75">
 			<col width="75">
-			<col width="125">
+			<col width="205">
 <!--			<col width="*">-->
-			<col width="575">
+			<col width="495">
 			<col width="75">
 			<col width="75">
 		</colgroup>
@@ -168,11 +168,6 @@
 				<th class="colorB" style="vertical-align:middle;">유보</th>
 				<th class="colorB" style="vertical-align:middle;">판매</th>
 				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;">계</th>
-
-
-
-
-
                 <th class="colorG" style="border-right:2px solid black!important;">건설사</th>
 				<th class="colorG">계약명(현장명)</th>
 				<th class="colorG">BiSS건수</th>
@@ -230,7 +225,7 @@
                     <th class="colorG">현장명</th>
                     <th class="colorG">부서</th>
                     <th class="colorG">장비대</th>
-                    <th class="colorG">로지텍</th>
+                    <th class="colorG">자재</th>
                     <th class="colorG">설치비</th>
                     <th class="colorG">합계</th>
                     <th class="colorG">세금계산서금액</th>
@@ -370,18 +365,19 @@ getCompletedSummary = function(s_pxcond_mt)
 		processData: false,
 		success: function(pResult) {
             console.log("ajax_get_completed_summary", pResult);
+			var DELIMITER = 1000;
 			var pxcond_mt = pResult.s_pxcond_mt;
 			var pxcond_mt_arr = pxcond_mt.split('-');
 			var year = parseInt(pxcond_mt_arr[0]);
 			var month = parseInt(pxcond_mt_arr[1]);
 			var day = parseInt(pxcond_mt_arr[2]);
-            $("#dashboard_title1").html(year+'년 '+month+'월 팀별 실적 현황 <span style="font-size:12px!important;">(VAT 포함)</span>');
+            $("#dashboard_title1").html(year+'년 '+month+'월 팀별 실적 현황 <span style="font-size:12px!important;">(단위:천원, VAT 포함)</span>');
 			// ============================================================
 			var html = '';
 			var rt1 = 0, rt2 = 0, rt3 = 0;
 			var b_amt1 = 0, b_amt2 = 0, b_amt3 = 0, b_amt4 = 0, b_amt5 = 0;
 			var total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
-			$('#content').find('#rptContractStatus_m').html(month+'월');
+			$('#content').find('#rptContractStatus_m').html(month+'월' + (month%3 == 1 ? " (장려금 발생월)" : ""));
 			$.each(pResult.contractStatusList, function(pIndex, pValue){
 				if (pValue.amt_ty_code == '2') { // 수주
                     b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
@@ -389,21 +385,26 @@ getCompletedSummary = function(s_pxcond_mt)
                     b_amt3 = parseInt(pValue.y_contract_amount); if(isNaN(b_amt3)) b_amt3 = 0;
                     b_amt4 = 0; for(i=1; i<=month; i++) { b_amt4 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt4)) b_amt4 = 0;
                     b_amt5 = 0; for(i=1; i<=12; i++) { b_amt5 += isNaN(parseInt(pValue['m'+i]))?0:parseInt(pValue['m'+i]); } if(isNaN(b_amt5)) b_amt5 = 0;
+
+					b_amt1 = Math.round(b_amt1/DELIMITER);
+					b_amt2 = Math.round(b_amt2/DELIMITER);
+					b_amt3 = Math.round(b_amt3/DELIMITER);
+					b_amt4 = Math.round(b_amt4/DELIMITER);
+					b_amt5 = Math.round(b_amt5/DELIMITER);
 					rt1 = (b_amt2 < 0) ? 100.0 + (b_amt2 - b_amt1)*100/b_amt2 : (b_amt1/b_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
 					rt2 = (b_amt4 < 0) ? 100.0 + (b_amt4 - b_amt3)*100/b_amt4 : (b_amt3/b_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
 					rt3 = (b_amt3/b_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
-
-					html += '<tr>';
+					html += '<tr data-amt="'+pValue.amt_ty_code+'">';
 					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;border-bottom:1px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
                     html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
                     html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number total-rates" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+b_amt5+'"></td>';
                     html += '</tr>';
 					// 합계처리
@@ -416,17 +417,17 @@ getCompletedSummary = function(s_pxcond_mt)
 						rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
 						rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
 						rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
-						html += '<tr>';
+						html += '<tr data-amt="'+pValue.amt_ty_code+'">';
 						html += '    <td class="text-center" style="border-right:2px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
 						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
                         html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky" id="suju_rates'+pValue.amt_ty_code+'">'+total5.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky"></td>';
                         html += '</tr>';
 						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
@@ -447,26 +448,26 @@ getCompletedSummary = function(s_pxcond_mt)
                     var j_amt4 = parseInt(pValue.ty8_goal_amount_sum); if(isNaN(j_amt4)) j_amt4 = 0;
                     var j_amt5 = parseInt(pValue.ty8_goal_amount_total); if(isNaN(j_amt5)) j_amt5 = 0;
 
-					var k_amt1 = b_amt1 + j_amt1;
-					var k_amt2 = b_amt2 + j_amt2;
-					var k_amt3 = b_amt3 + j_amt3;
-					var k_amt4 = b_amt4 + j_amt4;
-					var k_amt5 = b_amt5 + j_amt5;
+					var k_amt1 = Math.round((b_amt1 + j_amt1)/DELIMITER);
+					var k_amt2 = Math.round((b_amt2 + j_amt2)/DELIMITER);
+					var k_amt3 = Math.round((b_amt3 + j_amt3)/DELIMITER);
+					var k_amt4 = Math.round((b_amt4 + j_amt4)/DELIMITER);
+					var k_amt5 = Math.round((b_amt5 + j_amt5)/DELIMITER);
 					rt1 = (k_amt2 < 0) ? 100.0 + (k_amt2 - k_amt1)*100/k_amt2 : (k_amt1/k_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
 					rt2 = (k_amt4 < 0) ? 100.0 + (k_amt4 - k_amt3)*100/k_amt4 : (k_amt3/k_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
 					rt3 = (k_amt3/k_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
 					
-					html += '<tr class="'+pValue.dept_code+'">';
+					html += '<tr class="'+pValue.dept_code+'" data-amt="'+pValue.amt_ty_code+'">';
 					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
 					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
-					html += '    <td class="text-number">'+(b_amt2 + j_amt2).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+(b_amt1 + j_amt1).toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
-					html += '    <td class="text-number">'+(b_amt4 + j_amt4).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number">'+(b_amt3 + j_amt3).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1)+'%'))+'</td>';
-					html += '    <td class="text-number">'+(b_amt5 + j_amt5).toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-number">'+k_amt2.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+k_amt1.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-number">'+k_amt4.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number">'+k_amt3.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-number">'+k_amt5.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number total-rates" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+k_amt5+'"></td>';
 					html += '</tr>';
 					// 장려금금
@@ -484,38 +485,30 @@ getCompletedSummary = function(s_pxcond_mt)
 					// html += '    <td class="text-number '+pValue.dept_code+'"></td>';
 					// html += '</tr>';
 					// 소계
-					t_amt1 = parseInt(b_amt1) + parseInt(j_amt1);
-					t_amt2 = parseInt(b_amt2) + parseInt(j_amt2);
-					t_amt3 = parseInt(b_amt3) + parseInt(j_amt3);
-					t_amt4 = parseInt(b_amt4) + parseInt(j_amt4);
-					t_amt5 = parseInt(b_amt5) + parseInt(j_amt5);
-					rt1 = (t_amt2 < 0) ? 100.0 + (t_amt2 - t_amt1)*100/t_amt2 : (t_amt1/t_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
-					rt2 = (t_amt4 < 0) ? 100.0 + (t_amt4 - t_amt3)*100/t_amt4 : (t_amt3/t_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
-					rt3 = (t_amt3/t_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
 
 					// 합계처리
                     if(pValue.dept_code !== 'ST' ) {
-                        total1 += parseInt(t_amt1);
-                        total2 += parseInt(t_amt2);
-                        total3 += parseInt(t_amt3);
-                        total4 += parseInt(t_amt4);
-                        total5 += parseInt(t_amt5);
+                        total1 += parseInt(k_amt1);
+                        total2 += parseInt(k_amt2);
+                        total3 += parseInt(k_amt3);
+                        total4 += parseInt(k_amt4);
+                        total5 += parseInt(k_amt5);
                     }
 					if ((pIndex+1)%pValue.dept_count == 0) {
 						rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
 						rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
 						rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
-						html += '<tr>';
+						html += '<tr data-amt="'+pValue.amt_ty_code+'">';
 						html += '    <td class="text-center" style="border-right:2px solid black!important;">'+link_start+pValue.amt_ty_nm+link_end+'</td>';
 						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
                         html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1) + '%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1) + '%'))+'</td>';
                         html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '' : (rt2.toFixed(1) + '%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1) + '%'))+'</td>';
                         html += '    <td class="text-number colorSky" id="suju_rates'+pValue.amt_ty_code+'">'+total5.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '' : (rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky"></td>';
                         html += '</tr>';
 						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
@@ -541,6 +534,16 @@ getCompletedSummary = function(s_pxcond_mt)
                     $(pValue).html('');
                 }
             });
+			var cells = $('#content').find('#rptContractStatus tbody[role=body] tr[data-amt="5"] td, #rptContractStatus tbody[role=body] tr[data-amt="5"] th');
+            $.each(cells, function(pIndex, pValue){
+                let value = $(pValue).html();
+				if(!isNaN(parseInt(value.replaceAll(",", "")))){
+					if(parseInt(value.replaceAll(",", "")) < 0){
+						$(pValue).addClass("color-red")
+					}
+				}
+            });
+
 		}
 	});
 }
@@ -1166,7 +1169,10 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 					}
 				</style>
 				<div id="rpt99">
-				<div class="title"><h2 class="colorLS"></h2></div>
+				<div class="title" style="position:relative;">
+					<h2 class="colorLS"></h2>
+					<h6 style="position:absolute;right: 78px;top: 48px;">(단위:천원)</h6>
+				</div>
 
 				<!-- 기성 현황 시작 -->
 				<table id="top-summary" class="table table-bordered w100p">
@@ -1258,10 +1264,12 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 </div><!--modal-->
 <script>
 $(document).on("click", "#addContractDashboardMonth", function(){
-	$("#popReport99_inside").modal("show");
+	$("#popReport99_inside").show();
+	$("#popReport99_inside").addClass("in");
 });
 $(document).on("click", "#deleteContractDashboardMonth", function(){
-	$("#popReport99_inside_delete").modal("show");
+	$("#popReport99_inside_delete").show();
+	$("#popReport99_inside_delete").addClass("in");
 });
 initpopReport99_inside_delete = function(){
 	$("#popReport99_inside_delete").find("#s_s_dept_code").yVal('');
@@ -1278,30 +1286,6 @@ initpopReport99_inside = function(){
 	$("#popReport99_inside").find("#s_cntrct_sn").yVal('');
 
 }
-$('#popReport99_inside').on('hidden.bs.modal', function(pEvent)
-{
-	initpopReport99_inside();
-	var end = $('#report99_pxcond_mt').val();
-	if (end == '') {
-		$('#report99_pxcond_mt').datepicker('setDate', 'today');
-		end = $('#report99_pxcond_mt').val();
-	}
-	getMonthReport(end);
-
-	// $("#popReport99").modal("hide");
-});
-$('#popReport99_inside_delete').on('hidden.bs.modal', function(pEvent)
-{
-	initpopReport99_inside_delete();
-	var end = $('#report99_pxcond_mt').val();
-	if (end == '') {
-		$('#report99_pxcond_mt').datepicker('setDate', 'today');
-		end = $('#report99_pxcond_mt').val();
-	}
-	getMonthReport(end);
-	// $("#popReport99").modal("hide");
-
-});
 $(document).on('change', "#s_s_dept_code, #s_s_amt_ty_code", function(pEvent)
 {
 	var params = $("#frmBox2DashboardMonth").formSerialize();
@@ -1388,6 +1372,18 @@ fnValidateDashboardMonth = function(){
 
 	return result;
 }
+$(document).on("click", `#popReport99_inside [data-dismiss="modal"]`, function(){
+		$("#popReport99_inside").hide();
+		$("#popReport99_inside").removeClass("in");
+		initpopReport99_inside();
+
+});
+$(document).on("click", `#popReport99_inside_delete [data-dismiss="modal"]`, function(){
+		$("#popReport99_inside_delete").hide();
+		$("#popReport99_inside_delete").removeClass("in");
+		initpopReport99_inside_delete();
+
+});
 $(document).on("click", "#btnSaveDashboardMonth", function(){
 	var params = $("#frmBox1DashboardMonth").formSerialize();
 	var end = $('#report99_pxcond_mt').val();
@@ -1410,7 +1406,16 @@ $(document).on("click", "#btnSaveDashboardMonth", function(){
 		},
 		success: function (pResult) {
 			alert("성공적으로 입력되었습니다.");
-			$("#popReport99_inside").modal("hide");
+			$("#popReport99_inside").hide();
+			$("#popReport99_inside").removeClass("in");
+			initpopReport99_inside();
+			var end = $('#report99_pxcond_mt').val();
+			if (end == '') {
+				$('#report99_pxcond_mt').datepicker('setDate', 'today');
+				end = $('#report99_pxcond_mt').val();
+			}
+			getMonthReport(end);
+
 		}
 	});
 });
@@ -1435,7 +1440,16 @@ $(document).on("click", "#btnDeleteDashboardMonth", function(){
 		},
 		success: function (pResult) {
 			alert("성공적으로 삭제되었습니다.");
-			$("#popReport99_inside_delete").modal("hide");
+			$("#popReport99_inside_delete").hide();
+			$("#popReport99_inside_delete").removeClass("in");
+			initpopReport99_inside_delete();
+			var end = $('#report99_pxcond_mt').val();
+			if (end == '') {
+				$('#report99_pxcond_mt').datepicker('setDate', 'today');
+				end = $('#report99_pxcond_mt').val();
+			}
+			getMonthReport(end);
+
 		}
 	});
 });
@@ -1530,6 +1544,7 @@ getMonthReport = function(pxcond_mt){
 				rt1 = (b_amt2 < 0) ? 100.0 + (b_amt2 - b_amt1) * 100 / b_amt2 : (b_amt1 / b_amt2) * 100; if (isNaN(rt1)) rt1 = 0.0;
 				rt2 = (b_amt4 < 0) ? 100.0 + (b_amt4 - b_amt3) * 100 / b_amt4 : (b_amt3 / b_amt4) * 100; if (isNaN(rt2)) rt2 = 0.0;
 				rt3 = (b_amt3 / b_amt5) * 100; if (isNaN(rt3)) rt3 = 0.0;
+				diff = Math.round((b_amt3 - b_amt4)/1000);
 				total21 += b_amt1;
 				total22 += b_amt2;
 				total23 += b_amt3;
@@ -1558,7 +1573,9 @@ getMonthReport = function(pxcond_mt){
 			rt21 = (total22 < 0) ? 100.0 + (total22 - total21) * 100 / total22 : (total21 / total22) * 100; if (isNaN(rt21)) rt21 = 0.0;
 			rt22 = (total24 < 0) ? 100.0 + (total24 - total23) * 100 / total24 : (total23 / total24) * 100; if (isNaN(rt22)) rt22 = 0.0;
 			rt23 = (total23 / total25) * 100; if (isNaN(rt23)) rt23 = 0.0;
-
+			var diff1 = 0, diff2 = 0;
+			diff1 = Math.round((total13 - total14)/1000);
+			diff2 = Math.round((total23 - total24)/1000);
 			html += `<tr data-dept="total">
 						<td class="colorSky text-center middle">수주</td>
 						<td class="colorLG text-center middle">소계</td>
@@ -1569,7 +1586,7 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorLG text-right middle">${Math.round(total14 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total13 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt12 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
-						<td class="colorLG text-right middle ${diff < 0 ? 'color-red' : ''}">${diff.toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle ${diff1 < 0 ? 'color-red' : ''}">${diff1.toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total15 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>;
 						<td class="colorSky text-center middle">매출</td>
@@ -1581,7 +1598,7 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorLG text-right middle">${Math.round(total24 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total23 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt22 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
-						<td class="colorLG text-right middle ${diff < 0 ? 'color-red' : ''}">${diff.toFormat('NUMBER')}</td>
+						<td class="colorLG text-right middle ${diff2 < 0 ? 'color-red' : ''}">${diff2.toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total25 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt23 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>
 					 </tr>`;
@@ -1594,6 +1611,8 @@ getMonthReport = function(pxcond_mt){
 			$.each(pDataOrder, function(pIndex, dept_code){
 				var pRow = pResult.contractList[dept_code];
 				var sLength = 0, tLength = 0;
+				var sLENGTH_DIFF = 1;
+				var tLENGTH_DIFF = ((now_month % 3) == 1 ? 2 : 1);
 				if(pRow.hasOwnProperty('2')) sLength = pRow['2'].length;
 				if(pRow.hasOwnProperty('3')) tLength = pRow['3'].length;
 				var length = Math.max(sLength, tLength);
@@ -1674,8 +1693,28 @@ getMonthReport = function(pxcond_mt){
 				var tot21 = 0, tot22 = 0, tot23 = 0, tot24 = 0;
 				for(let i=0;i<length;i++){
 					html += `   <tr data-dept="${dept_code}">`;
-					if(i < sLength && pRow.hasOwnProperty('2')){
+					if((i < sLength-sLENGTH_DIFF) && pRow.hasOwnProperty('2')){
 						var pR = pRow['2'][i];
+						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
+						var d_rm = pR.dashboard_rm;
+						var amount = pR.amount;
+						var diff = (pR.amount-pR.value);
+						html += `	<td class="color-contract middle text-center">수주</td>
+								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
+								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
+								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmS" data-row="${pR.cntrct_sn}">${d_rm}</td>
+								`;
+						tot11 += pR.value;
+						tot12 += d_value;
+						tot13 += amount;
+						tot14 += diff;
+					}
+					else if( (i >= (length - sLENGTH_DIFF)) && pRow.hasOwnProperty('2')){
+						var pR = pRow['2'][i - (length - sLength)];
 						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
@@ -1705,8 +1744,29 @@ getMonthReport = function(pxcond_mt){
 								 	<td class="middle text-left" colspan="4"></td>
 								`;
 					}
-					if(i < tLength && pRow.hasOwnProperty('3')){
+					if((i < tLength-tLENGTH_DIFF) && pRow.hasOwnProperty('3')){
 						var pR = pRow['3'][i];
+						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
+						var d_rm = pR.dashboard_rm;
+						var amount = pR.amount;
+						var diff = (pR.amount-pR.value);
+						html += `	<td class="color-contract middle text-center">매출</td>
+								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
+								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
+								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmT" data-row="${pR.cntrct_sn}">${d_rm}</td>
+								`;
+						tot21 += pR.value;
+						tot22 += d_value;
+						tot23 += amount;
+						tot24 += diff;
+
+					}
+					else if((i >= (length - tLENGTH_DIFF)) && pRow.hasOwnProperty('3')){
+						var pR = pRow['3'][i - (length - tLength)];
 						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
@@ -1763,23 +1823,23 @@ getMonthReport = function(pxcond_mt){
 				$("#rpt99").find(`tr[data-dept="${dept_code}"] td[data-value="valueT"]`).html(Math.round(tot22).toFormat('NUMBER'));
 
 				//now_day
-				if(now_day < 25){
-					var top_summaries = $("#top-summary").find(`tr[data-dept='${dept_code}']`).find("td[data-column='summary']");
-					var goal_2 = parseInt($(top_summaries).eq(0).html().replaceAll(",", ''));
-					var expect_2 = parseInt($(top_summaries).eq(1).html().replaceAll(",", ''));
-					var rate_2 = 0.0;
-					if(goal_2 != 0){
-						rate_2 = (expect_2*100.0/goal_2).toFixed(1);
-					}
-					$(top_summaries).eq(3).html(rate_2+"%");
-					var goal_3 = parseInt($(top_summaries).eq(10).html().replaceAll(",", ''));
-					var expect_3 = parseInt($(top_summaries).eq(11).html().replaceAll(",", ''));
-					var rate_3 = 0.0;
-					if(goal_3 != 0){
-						rate_3 = (expect_3*100.0/goal_3).toFixed(1);
-					}
-					$(top_summaries).eq(13).html(rate_3+"%");
-				}
+				// if(now_day < 25){
+				// 	var top_summaries = $("#top-summary").find(`tr[data-dept='${dept_code}']`).find("td[data-column='summary']");
+				// 	var goal_2 = parseInt($(top_summaries).eq(0).html().replaceAll(",", ''));
+				// 	var expect_2 = parseInt($(top_summaries).eq(1).html().replaceAll(",", ''));
+				// 	var rate_2 = 0.0;
+				// 	if(goal_2 != 0){
+				// 		rate_2 = (expect_2*100.0/goal_2).toFixed(1);
+				// 	}
+				// 	$(top_summaries).eq(3).html(rate_2+"%");
+				// 	var goal_3 = parseInt($(top_summaries).eq(10).html().replaceAll(",", ''));
+				// 	var expect_3 = parseInt($(top_summaries).eq(11).html().replaceAll(",", ''));
+				// 	var rate_3 = 0.0;
+				// 	if(goal_3 != 0){
+				// 		rate_3 = (expect_3*100.0/goal_3).toFixed(1);
+				// 	}
+				// 	$(top_summaries).eq(13).html(rate_3+"%");
+				// }
 
 				var summaries = $("#rpt99").find(`#detail-${dept_code}`).find("tr[data-row='summary'] td");
 				var answers = $("#top-summary").find(`tr[data-dept='${dept_code}']`).find("td[data-column='summary']");
@@ -1836,7 +1896,7 @@ $(document).on("dblclick", "#popReport99 .input-available", function(){
 	var data = prompt("값을 입력하세요.");
 	if($(td).hasClass("only-number")) {
 		try {
-			if (/^\d+$/.test(data)) {
+			if (/^-?\d+$/.test(data)) {
 				data = parseInt(data);
 			} else {
 				throw new Error(`Parameter is not a number : ${data}`);
@@ -3583,7 +3643,7 @@ getLogit = function(s_pxcond_mt)
 				html += `<tr>
 							<td class="colorSky text-center">${pValue.dept_nm.replace("팀", "")}</td>
 							<td class="text-left" rowspan="2"><a href="/dashboard/logitech?cntrct_sn=${pValue.cntrct_sn}" target="_blank">${pValue.spt_nm}</a></td>
-							<td class="text-center" rowspan="2">${pValue.cntrwk_period}</td>
+							<td class="text-center" rowspan="2" style="line-height: 0.9!important;">${pValue.cntrwk_period}</td>
 							<td class="text-center" rowspan="2">${cntrct_amount.toFormat('NUMBER')}</td>
 							<td class="text-center">로지텍</td>
 							<td class="text-right">${logi_before.toFormat('NUMBER')}</td>

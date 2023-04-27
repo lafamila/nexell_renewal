@@ -187,11 +187,7 @@ def get_goals(params):
         query += " and c.spt_nm LIKE %s"
         data.append("%{}%".format(params["s_spt_nm"]))
 
-    params["order[0][column]"] = 'code_ordr'
-    params["columns[code_ordr][data]"] = 'code_ordr'
-    params["columns[code_ordr][data]"] = 'code_ordr'
-    params["order[0][dir]"] = 'ASC'
-    print(query, data)
+    params["custom_order"] = ["stdyy", "code_ordr", "mber_nm", "IF(c.bcnc_sn = 244, 1, 0) ASC", "bcnc_nm", "spt_nm"]
     return dt_query(query, data, params)
 
 def get_goals_by_member(params):

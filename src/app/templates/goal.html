@@ -359,7 +359,7 @@ tbody .btnUpdate, tbody .btn{
 										<th style="text-align:center!important;">No.</th>
 										<th style="text-align:center!important;">년도</th>
 										<th style="text-align:center!important;">부서</th>
-										<th style="text-align:center!important;">사원</th>
+										<th style="text-align:center!important;" id="chrg_sn_label">영업담당</th>
 										<th style="text-align:center!important;">건설사</th>
 										<th style="text-align:center!important;">현장명</th>
 										<th style="text-align:center!important;">1월</th>
@@ -565,6 +565,12 @@ getGoals = function(){
 					$(document).find("tbody[role=body]").find("td").html('');
 				}
 			});
+			if($('#dtList1').find('#s_amt_ty_code').val() == '2'){
+				$("#chrg_sn_label").text("영업담당");
+			}
+			else{
+				$("#chrg_sn_label").text("현장담당");
+			}
 
         },
 		footerCallback: function ( row, data, start, end, display ) {

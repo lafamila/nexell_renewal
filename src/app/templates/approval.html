@@ -885,6 +885,13 @@ $(function(){
 					$.each(app.approval_data, function(key, value){
 						if(key.endsWith("[]")){
 							var pTag = $("#popBox1").find(`[name='${key}']`);
+							if(pTag.length == 0){
+								$("#formContent").find("tbody[data-tr]").each(function(_, trTag){
+									if ($.isFunction(cloneRow)) {
+										cloneRow($(trTag).data("tr"), 1);
+									}
+								});
+							}
 							if(pTag.length != value.length){
 								if ($.isFunction(cloneRow)) {
 									cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
@@ -932,7 +939,6 @@ $(function(){
 								}
 							}
 							else if(tagName == "TEXTAREA"){
-								console.log("lafamila", value);
 								$(pTag).html(`${value}`);
 
 							}
@@ -1344,6 +1350,14 @@ getApproval = function(approval_sn){
 			$.each(app.approval_data, function(key, value){
 				if(key.endsWith("[]")){
 					var pTag = $("#popBox2").find(`[name='${key}']`);
+					if(pTag.length == 0){
+						$("#formCheckContent").find("tbody[data-tr]").each(function(_, trTag){
+							if ($.isFunction(cloneRow)) {
+								cloneRow($(trTag).data("tr"), 1);
+							}
+						});
+						var pTag = $("#popBox2").find(`[name='${key}']`);
+					}
 					if(pTag.length != value.length){
 						if ($.isFunction(cloneRow)) {
 							cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
@@ -1352,15 +1366,14 @@ getApproval = function(approval_sn){
 					$.each(value, function(pIndex, pValue){
 
 						var tagName = $("#popBox2").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
-						console.log(key, pValue, pIndex, tagName);
 						if(tagName == "INPUT"){
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).val(pValue);
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
 						}
 						else if(tagName == "SELECT"){
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
-							$("#popBox2").find(`[name='${key}']`).eq(pIndex).prop("disabled", true);
-
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).find(`option`).prop("disabled", true);
+							// $("#popBox2").find(`[name='${key}']`).eq(pIndex).prop("disabled", true);
 						}
 						else if(tagName == "TEXTAREA"){
 							$("#popBox2").find(`[name='${key}']`).eq(pIndex).html(pValue);
@@ -1374,7 +1387,6 @@ getApproval = function(approval_sn){
 					var tagName = '';
 					var tagType = '';
 					if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
-						console.log(key);
 						pTag = $("#popBox2").find(`[name='${key}']`);
 						tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
 						tagType = $(pTag).eq(0).attr("type");
@@ -1398,7 +1410,6 @@ getApproval = function(approval_sn){
 						}
 					}
 					else if(tagName == "TEXTAREA"){
-						console.log("lafamila", value);
 						$(pTag).html(`${value}`);
 						$(pTag).attr("readonly", true);
 

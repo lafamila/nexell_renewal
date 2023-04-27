@@ -37,9 +37,32 @@ div.report table tfoot {
 	border-left: 1px solid #000!important;
 	border-right: 1px solid #000!important;
 	border-bottom: 0px solid #000!important;
+	border-top: 0px solid #000!important;
+}
+div.report table tbody tr:first-child th, div.report table tbody tr:first-child td, div.report table thead tr:first-child th, div.report table thead tr:first-child td{
+	border-top:0px solid #555!important;
+}
+div.report table:not(:last-child){
+	border-bottom: 0px solid #000!important;
+}
+div.report table:not(:first-child){
+	border-top: 2px solid #000!important;
+}
+div.report table tbody:first-child{
+	border-top:0px solid #000!important;
 }
 div.report table th, div.report table td {
     padding: 5px!important;
+}
+div.report table table tr td:last-child, div.report table table tr th:last-child{
+	border-right:0px solid #555!important;
+}
+div.report table table tr td:first-child, div.report table table tr th:first-child{
+	border-left:0px solid #555!important;
+}
+div.report table table thead, div.report table table tbody, div.report table table tbody[role=body], div.report table table tfoot{
+	border-right:0px solid #000!important;
+	border-left:0px solid #000!important;
 }
 </style>
 <style>
@@ -83,7 +106,7 @@ div.report table th, div.report table td {
         <col width="175">
         <col width="150">
 	</colgroup>
-	<thead>
+	<thead style="border-top:3px solid #000!important;">
 		<tr>
 			<th class="sub-title colorN text-center" colspan="8">기본정보 - VAT포함</th>
 		</tr>
@@ -159,7 +182,7 @@ div.report table th, div.report table td {
 	<tfoot>
 	</tfoot>
 </table>
-<table id="report_project">
+<table id="report_project" style="border-top:0px solid #000!important;">
 	<colgroup>
         <col width="175">
         <col width="150">
@@ -213,7 +236,7 @@ div.report table th, div.report table td {
 <!-- ---------------------------------------------------------------------- -->
 
 <!-- ---------------------------------------------------------------------- -->
-<table id="rptTable3">
+<table id="rptTable3" style="border-top:0px solid #000!important;">
 	<colgroup>
         <col width="175">
         <col width="150">
@@ -325,6 +348,9 @@ div.report table th, div.report table td {
 
 	</colgroup>
 	<thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="15" style="border-right:0px!important;">공사 현황 (영업) - VAT포함</th>
+        </tr>
 		<tr>
 			<th class="colorN text-center">구분</th>
 			<th class="color-contract text-center">내역</th>
@@ -411,91 +437,6 @@ div.report table th, div.report table td {
 	</tbody>
 </table>
 
-<!-- ---------------------------------------------------------------------- -->
-				<!--
-<table id="report_plan">
-	<colgroup>
-		<col width="150">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="110">
-		<col width="120">
-		<col width="120">
-		<col width="70">
-		<col width="70">
-		<col width="120">
-	</colgroup>
-	<thead>
-		<tr>
-			<th class="colorN text-center">계약(예정공사비)</th>
-			<th class="colorSky">삼성장비매입금액</th>
-			<th class="colorSky">타사매입</th>
-			<th class="colorSky">설치비</th>
-			<th class="colorSky">로지텍자재</th>
-			<th class="colorSky">기타자재</th>
-			<th class="colorSky">옵션행사비</th>
-			<th class="colorSky">간접비</th>
-			<th class="colorSky">기타</th>
-			<th class="colorSky">M,S/H</th>
-			<th class="colorG">설계변경</th>
-			<th class="colorP" colspan="3">총액</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<th class="colorSky">㉡ 계약가</th>
-			<td class="text-number" id="cCost1"></td>
-			<td class="text-number" id="cCost2"></td>
-			<td class="text-number" id="cCost5"></td>
-			<td class="text-number" id="cCost3"></td>
-			<td class="text-number" id="cCost4"></td>
-			<td class="text-number" id="cCost7"></td>
-			<td class="text-number" id="cCost8"></td>
-			<td class="text-number" id="cCost10"></td>
-			<td class="text-number" id="cCost61"></td>
-			<td class="text-number" id="cCost99"></td>
-			<th class="text-number colorY" id="cCostTotal" colspan="3"></th>
-		</tr>
-		<tr>
-			<th class="colorSky">실행가</th>
-			<td class="text-number" id="eCost1"></td>
-			<td class="text-number" id="eCost2"></td>
-			<td class="text-number" id="eCost5"></td>
-			<td class="text-number" id="eCost3"></td>
-			<td class="text-number" id="eCost4"></td>
-			<td class="text-number" id="eCost7"></td>
-			<td class="text-number" id="eCost8"></td>
-			<td class="text-number" id="eCost10"></td>
-			<td class="text-number" id="eCost61"></td>
-			<td class="text-number" id="eCost99"></td>
-			<td class="text-number color0" id="eCostTotal" colspan="3"></td>
-		</tr>
-	</tbody>
-	<tfoot>
-		<tr>
-			<th class="colorSky">차액</th>
-			<td class="text-number" id="tCost1"></td>
-			<td class="text-number" id="tCost2"></td>
-			<td class="text-number" id="tCost5"></td>
-			<td class="text-number" id="tCost3"></td>
-			<td class="text-number" id="tCost4"></td>
-			<td class="text-number" id="tCost7"></td>
-			<td class="text-number footer" id="tCost8"></td>
-			<td class="text-number" id="tCost10"></td>
-			<td class="text-number" id="tCost61"></td>
-			<td class="text-number" id="tCost99"></td>
-			<th class="colorLP">VA</th>
-			<td class="text-number color0" id="tCost11"></td>
-			<th class="text-number colorY" id="tCostTotal"></th>
-		</tr>
-	</tfoot>
-</table>
--->
 <table id="report_exec">
 	<colgroup>
 		<col width="100">
@@ -552,8 +493,9 @@ div.report table th, div.report table td {
 		</tr>
 	</tbody>
 </table>
-<table id="report_biss">
+<table id="report_biss" style="display:none;">
 	<colgroup>
+		<col width="100">
 		<col width="100">
 		<col width="100">
 		<col width="100">
@@ -566,7 +508,7 @@ div.report table th, div.report table td {
 	</colgroup>
 	<tbody>
         <tr>
-			<th class="sub-title colorN text-center" colspan="9">협력업체 현황</th>
+			<th class="sub-title colorN text-center" colspan="10">협력업체 현황</th>
 		</tr>
 		<tr>
 			<th class="colorG">계약이행증권</th>
@@ -578,6 +520,7 @@ div.report table th, div.report table td {
 			<th class="colorG">S-NET</th>
 			<th class="colorG">준공현장정보</th>
 			<th class="colorP">마지막기성</th>
+			<th class="colorG">BISS지적사항</th>
 		</tr>
 	</tbody>
 	<tbody role="body">
@@ -591,6 +534,7 @@ div.report table th, div.report table td {
 			<td class="text-center" id="biss_g"></td>
 			<td class="text-center" id="biss_h"></td>
 			<td class="text-center" id="biss_i"></td>
+			<td class="text-center" id="biss_j"></td>
 		</tr>
 	</tbody>
 </table>
@@ -848,7 +792,7 @@ div.report table th, div.report table td {
 	</tbody>
 	<tbody role="body2">
 
-		<table id="rptTable13">
+		<table id="rptTable13" style="display:none;">
 			<colgroup>
 				<col width="145">
 				<col width="*">
@@ -1033,6 +977,7 @@ div.report table th, div.report table td {
                 $('#popReportNR').find('#biss_g').html(biss2text(contract.biss_g));
                 $('#popReportNR').find('#biss_h').html(biss2text(contract.biss_h));
                 $('#popReportNR').find('#biss_i').html(biss2text(contract.biss_i));
+                $('#popReportNR').find('#biss_j').html(biss2text(contract.biss_j));
 
 
 				$('#popReportNR').find('#spt_adres').html(contract.spt_adres); //현장주소
@@ -1321,11 +1266,11 @@ div.report table th, div.report table td {
 					html += '            </colgroup>';
 					html += '            <thead>';
 					html += '                <tr>';
-					html += '                    <th class="colorG">세금계산서일자</th>';
-					html += '                    <th class="colorG">공급가액</th>';
-					html += '                    <th class="colorG">부가세</th>';
-					html += '                    <th class="colorG">합계</th>';
-					html += '                    <th class="colorG">발행업체</th>';
+					html += '                    <th class="color-contract">세금계산서일자</th>';
+					html += '                    <th class="color-contract">공급가액</th>';
+					html += '                    <th class="color-contract">부가세</th>';
+					html += '                    <th class="color-contract">합계</th>';
+					html += '                    <th class="color-contract">발행업체</th>';
 					html += '                </tr>';
 					html += '            </thead>';
 					html += '            <tbody role="body">';
@@ -1359,9 +1304,7 @@ div.report table th, div.report table td {
 					html += '            </tbody>';
 					html += '            <tfoot>';
 					html += '                <tr>';
-					html += '                    <th class="colorG">합계</th>';
-					html += '                    <th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
-					html += '                    <th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorG" colspan="3">합계</th>';
 					html += '                    <th class="colorG text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
 					html += '                    <th class="colorG text-number"></th>';
 					html += '                </tr>';
@@ -1379,11 +1322,11 @@ div.report table th, div.report table td {
 					html += '            </colgroup>';
 					html += '            <thead>';
 					html += '                <tr>';
-					html += '                    <th class="colorY">입금일자</th>';
-					html += '                    <th class="colorY">금액</th>';
-					html += '                    <th class="colorY">잔액</th>';
-					html += '                    <th class="colorY">수금율</th>';
-					html += '                    <th class="colorY">수금내역</th>';
+					html += '                    <th class="colorLP">입금일자</th>';
+					html += '                    <th class="colorLP">금액</th>';
+					html += '                    <th class="colorLP">잔액</th>';
+					html += '                    <th class="colorLP">수금율</th>';
+					html += '                    <th class="colorLP">수금내역</th>';
 					html += '                </tr>';
 					html += '            </thead>';
 					html += '            <tbody role="body">';
@@ -1421,11 +1364,11 @@ div.report table th, div.report table td {
 					html += '            </tbody>';
 					html += '            <tfoot>';
 					html += '                <tr>';
-					html += '                    <th class="colorY">합계</th>';
+					html += '                    <th class="colorG">합계</th>';
 					html += '                    <th class="colorP text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
-					html += '                    <th class="colorY text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
-					html += '                    <th class="colorY text-number">'+rate_total.toFixed(1)+'%</th>';
-					html += '                    <th class="colorY text-number"></th>';
+					html += '                    <th class="colorG text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorG text-number">'+rate_total.toFixed(1)+'%</th>';
+					html += '                    <th class="colorG text-number"></th>';
 					html += '                </tr>';
 					html += '            </tfoot>';
 					html += '        </table>';
@@ -1838,7 +1781,7 @@ div.report table th, div.report table td {
 					html += '    <td class=" text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+vat.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+sum.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="">'+pValue.rm+'</td>';
+					html += '    <td class="">'+((pValue.rm == '') ? pValue.model_where : pValue.rm)+'</td>';
 					html += '</tr>';
 					amt_total += parseInt(amt);
 					vat_total += parseInt(vat);

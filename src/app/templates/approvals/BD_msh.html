@@ -92,6 +92,7 @@
         </tr>
     </tbody>
 </table>
+
 <table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
@@ -126,7 +127,7 @@
     </thead>
     <tbody role="ct_se_code">
         <tr data-row="B">
-            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+            <th class="colorB text-center middle">사전입찰</th>
             <th class="colorSky text-center">예정가</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_amount" readonly>
@@ -135,24 +136,105 @@
                 <input type="text" class="form-control text-right" data-type="number" name="total_amount" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_61">
+                <input type="text" class="form-control text-right" data-type="number" name="D_61">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_61_DC">
+                <input type="text" class="form-control text-right" data-type="number" name="D_61_DC">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_63">
+                <input type="text" class="form-control text-right" data-type="number" name="D_63">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_7" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_7" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_10" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_10" readonly>
             </td>
             <td class="text-center" data-column="va"></td>
             <td class="text-center" data-column="va_rate"></td>
         </tr>
     </tbody>
+</table>
+
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="80"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="1"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="19"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② M/H 매입 현황</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowMHStock">재고장비추가</button>
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRowMH"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="color-contract text-center">분류</th>
+            <th class="color-contract text-center">상품명</th>
+            <th class="color-contract text-center">모델명</th>
+            <th class="color-contract text-center">수량</th>
+            <th class="color-contract text-center">출고가</th>
+            <th class="color-contract text-center">매입DC(%)</th>
+            <th class="color-contract text-center">M/H 매입단가</th>
+            <th class="color-contract text-center">M/H 매입금액</th>
+            <th class="color-contract text-center">추가DC(%)</th>
+            <th class="color-contract text-center">M/H 추가DC금액</th>
+            <th class="color-contract text-center">실전시비용</th>
+            <th class="color-contract text-center">매입형태</th>
+            <th class="color-contract text-center">회수예정일</th>
+            <th class="colorP text-center">회수일</th>
+            <th class="colorP text-center">회수수량</th>
+            <th class="colorP text-center">기회수수량</th>
+            <th class="colorP text-center">차이수량</th>
+            <th class="colorP text-center">회수창고</th>
+            <th class="color-contract text-center">-</th>
+        </tr>
+    </tbody>
+    <tbody role="m_house_row" data-tr="m_house_tr">
+    </tbody>
+    <tfoot>
+        <tr>
+            <th class="colorG text-center" colspan="3">합계</th>
+            <th class="colorG text-right" data-column="total_qy"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_pamount_sum"></th>
+            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_dc"></th>
+            <th class="colorG text-right" data-column="total_ramount"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+
+            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_return_dlnt"></th>
+            <th class="colorG text-right" data-column="total_return_before"></th>
+            <th class="colorG text-right" data-column="total_diff"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+        </tr>
+    </tfoot>
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
@@ -170,97 +252,64 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="80"/>
+        <col width="80"/>
+        <col width="80"/>
         <col width="100"/>
-        <col width="100"/>
+        <col width="1"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="16"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② M,S/H 매입 현황</span>
+			<th class="sub-title colorN text-center" colspan="19"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② S/H 매입 현황</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
-                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                    <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowSHStock">재고장비추가</button>
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRowSH"><i class="fa fa-plus"></i></button>
                 </div>
             </th>
         </tr>
     </thead>
     <tbody role="header">
         <tr>
-            <th class="color-contract text-center">구분</th>
+            <th class="color-contract text-center">분류</th>
             <th class="color-contract text-center">상품명</th>
-            <th class="color-contract text-center">출고일</th>
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">수량</th>
             <th class="color-contract text-center">출고가</th>
-            <th class="color-contract text-center">M,S/H 매입단가</th>
-            <th class="color-contract text-center">M,S/H 매입금액</th>
-            <th class="color-contract text-center">M,S/H 추가DC금액</th>
+            <th class="color-contract text-center">매입DC(%)</th>
+            <th class="color-contract text-center">M/H 매입단가</th>
+            <th class="color-contract text-center">M/H 매입금액</th>
+            <th class="color-contract text-center">추가DC(%)</th>
+            <th class="color-contract text-center">M/H 추가DC금액</th>
             <th class="color-contract text-center">실전시비용</th>
             <th class="color-contract text-center">매입형태</th>
             <th class="color-contract text-center">회수예정일</th>
             <th class="colorP text-center">회수일</th>
             <th class="colorP text-center">회수수량</th>
+            <th class="colorP text-center">기회수수량</th>
             <th class="colorP text-center">차이수량</th>
             <th class="colorP text-center">회수창고</th>
+            <th class="color-contract text-center">-</th>
         </tr>
     </tbody>
-    <tbody role="ms_house_row">
-        <tr data-row="ms_house_tr">
-            <td class="text-center" name="dlivy_de[]"></td>
-            <td class="hasinput" data-target="S">
-                <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
-                    <option value=""></option>
-                    {% for code in prdlst_se_code_list %}
-                    <option value="{{code.value}}">{{code.label}}</option>
-                    {% endfor %}
-                </select>
-            </td>
-            <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-left" name="model_no[]"/>
-                <input type="hidden" name="delng_ty_code[]" value="61"/>
-            </td>
-            <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
-            </td>
-            <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
-            </td>
-            <td class="text-right" data-column="amount"></td>
-            <td class="hasinput" data-target="S">
-                <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
-                    <option value=""></option>
-                    {% for code in bcnc_list %}
-                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
-                    {% endfor %}
-                </select>
-            </td>
-            <td class="hasinput" data-target="S">
-                <input type="text" class="form-control text-center" name="expect_de[]"/>
-            </td>
-            <td class="hasinput" data-target="R">
-                <input type="text" class="form-control text-center" name="return_de[]"/>
-            </td>
-            <td class="hasinput" data-target="R">
-                <input type="text" class="form-control text-center" data-type="number" name="return_dlnt[]"/>
-            </td>
-            <td class="text-right" data-column="diff"></td>
-            <td class="hasinput" data-target="R">
-                <select class="form-control select2" name="stock_place[]" style="width:100%!important;">
-                    <option value=""></option>
-                    <option value="1">이현창고</option>
-                    <option value="2">기타창고</option>
-                </select>
-            </td>
-            <td></td>
-        </tr>
+    <tbody role="s_house_row" data-tr="s_house_tr">
     </tbody>
     <tfoot>
         <tr>
-            <th class="colorG text-center" colspan="4">합계</th>
-            <th class="colorG text-right" data-column="total_dlnt"></th>
-            <th class="colorP text-right" data-column="total_amount"></th>
+            <th class="colorG text-center" colspan="3">합계</th>
+            <th class="colorG text-right" data-column="total_qy"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_pamount_sum"></th>
             <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_dc"></th>
+            <th class="colorG text-right" data-column="total_ramount"></th>
+            <th class="colorG"></th>
+            <th class="colorG"></th>
+
+            <th class="colorG"></th>
+            <th class="colorG text-right" data-column="total_return_dlnt"></th>
+            <th class="colorG text-right" data-column="total_return_before"></th>
             <th class="colorG text-right" data-column="total_diff"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
@@ -286,7 +335,9 @@
   </thead>
   <tbody>
     <tr>
-        <td rowspan="4"></td>
+        <td rowspan="4">
+            <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
+        </td>
         <td class="text-center">구분</td>
         <td class="text-center">1TYPE</td>
         <td class="text-center">2TYPE</td>
@@ -322,69 +373,386 @@
 </table>
 
 <script>
+    get_model_list = function(cntrct_sn){
+        $.ajax({
+                url : '/api/sales/get_model_list',
+                method : 'GET',
+                data : {"s_cntrct_sn" : cntrct_sn},
+                success: function(pData){
+                    var pResult = pData.model;
+                    console.log(pData);
+                    window.after = pData.after;
+                    var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+                    if(checked == 'H'){
+                        $.each(pResult, function(pIndex, pValue){
+                            var _type = ["61", "62"].includes(pValue.delng_ty_code) ? "m" : "s";
+                            var rows = cloneRow(`${_type}_house_tr`, 1);
+                            var origin = rows[0];
+                            var return_before = 0;
+                            if(pData.modelList.hasOwnProperty(pValue.delng_sn)){
+                                return_before = pData.modelList[pValue.delng_sn].count;
+                            }
+                            $(origin).find(`input[type='hidden'][name='${_type}_delng_sn[]']`).val(pValue.delng_sn);
+                            $(origin).find(`input[type='hidden'][name='${_type}_delng_ty_code[]']`).val(pValue.delng_ty_code);
+                            $(origin).find(`[name="${_type}_prdlst_se_code[]"]`).yVal(pValue.prdlst_se_code);
+                            $(origin).find(`[name="${_type}_prduct_ty_code[]"]`).yVal(pValue.prduct_ty_code);
+                            $(origin).find(`[name="${_type}_bcnc_sn[]"]`).yVal(pValue.bcnc_sn);
+                            $(origin).find(`[name="${_type}_model_no[]"]`).val(pValue.model_no);
+                            $(origin).find(`[name="${_type}_qy[]"]`).val(pValue.dlnt);
+                            $(origin).find(`[name="${_type}_dlivy_amt[]"]`).val(pValue.dlivy_amt);
+                            $(origin).find(`[name="${_type}_dc_rate[]"]`).val(pValue.dscnt_rt+"%");
+                            $(origin).find(`[name="${_type}_add_dc_rate[]"]`).val(pValue.add_dscnt_rt+"%");
+                            $(origin).find(`[name="${_type}_expect_de[]"]`).val(pValue.wrhousng_de);
+                            $(origin).find(`[name="${_type}_pamount[]"]`).val(pValue.dlamt);
+                            $(origin).find(`[data-column="return_before"]`).html(return_before.toFormat('NUMBER'));
+                            if(checked == 'H'){
+                                $(origin).find("input").attr("disabled", false);
+                                $(origin).find("[data-target='S']").find("input").attr("readonly", true);
+                                $(origin).find("[data-target='S']").find("select option:not(:selected)").attr("disabled", true);
+                                $(origin).find("[data-target='H']").find(".select2").select2();
+                            }
+                            else{
+                                $(origin).find("[data-target='H']").find("select, input").attr("disabled", true);
+
+                            }
+                        });
+                    }
+
+                    $(document).find("tbody[role='m_house_row']").trigger("change");
+                    $(document).find("tbody[role='s_house_row']").trigger("change");
+
+                }
+        });
+    }
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    get_cost_bf_bd = function(cntrct_sn){
+        $.ajax({
+            url : '/api/project/get_cost_bf_bd',
+            method: 'GET',
+            data : {"s_cntrct_sn" : cntrct_sn},
+            success: function(pResult){
+                console.log(pResult);
+                var cntrct_amount_total = 0, amount_total = 0;
+                $.each(pResult.cCostListExtra, function(pIndex, pValue){
+
+                    var amount = Math.round(pValue.puchas_amount * (100 - pValue.dscnt_rt) / 100.0 * pValue.qy);
+                    var cntrct_amount = pValue.salamt * pValue.qy;
+                    cntrct_amount_total += cntrct_amount;
+                    amount_total += amount;
+                });
+                $.each(pResult.eCostListExtra, function(pIndex, pValue){
+                    if(pValue.ct_se_code == "61"){
+
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_61"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_61_DC"]`).val((pValue.puchas_amount*pValue.add_dscnt_rt/100.0).toFormat('NUMBER'));
+                    }
+                    else if(pValue.ct_se_code == "7"){
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_7"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                    }
+                    else if(pValue.ct_se_code == "10"){
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_10"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                    }
+                });
+                $.each(pResult.gCostList, function(pIndex, pValue){
+                     $(`tbody[role="ct_se_code"]`).find(`[name="D_63"]`).val(pValue.salamt.toFormat('NUMBER'));
+                });
+                $(`tbody[role="ct_se_code"]`).find(`[name="total_cntrct_amount"]`).val(cntrct_amount_total.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="total_amount"]`).val(amount_total.toFormat('NUMBER'));
+
+                $(`tbody[role="ct_se_code"]`).trigger("change");
+
+                $(document).find("tbody[role='ct_se_code'] input").attr("disabled", false);
+                $(document).find("tbody[role='ct_se_code'] input").attr("readonly", true);
+
+
+            }
+
+        })
+    }
     fnValidate = function(){
                     var result = true;
                     return result;
                }
     cloneRow = function(selector, count){
-        if(selector == "construct_tr"){
+        var cloned_row = [];
+        if(selector == "m_house_tr" || selector == "s_house_tr"){
+            var _type = (selector == "m_house_tr") ? "m" : "s";
+            var delng_ty_code = (selector == "m_house_tr") ? "61" : "64";
             for(let i=0;i<count;i++){
-                var trs = $(document).find("tbody[role='construct_row'] tr");
-                var origin = trs.eq(0).clone(true);
-                $(origin).find("td:not(.hasinput)").html("0");
-                $(origin).find("td.hasinput input").val("");
-                $(document).find("tbody[role='construct_row']").append($(origin));
+                var html = '';
+                html += `<tr data-row="${_type}_house_tr">
+                            <td class="hasinput" data-target="S">
+                                <select class="form-control select2 init-select2" name="${_type}_prdlst_se_code[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    {% for code in prdlst_se_code_list %}
+                                    <option value="{{code.value}}">{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <select class="form-control select2 init-select2" name="${_type}_prduct_ty_code[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    {% for code in prduct_ty_code_list %}
+                                    <option value="{{code.value}}">{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-left" name="${_type}_model_no[]"/>
+                                <input type="hidden" name="${_type}_delng_ty_code[]" value="${delng_ty_code}"/>
+                                <input type="hidden" name="${_type}_delng_sn[]" value=""/>
+                                <input type="hidden" name="${_type}_stock_sn[]" value=""/>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-right" data-type="number" name="${_type}_qy[]"/>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-right" data-type="number" name="${_type}_dlivy_amt[]"/>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-right" data-type="rate" name="${_type}_dc_rate[]"/>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-right" data-type="number" name="${_type}_pamount[]"/>
+                            </td>
+                            <td class="text-right" data-column="pamount_sum"></td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-right" data-type="rate" name="${_type}_add_dc_rate[]"/>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-right" data-type="number" name="${_type}_dc[]" readonly/>
+                            </td>
+                            <td class="text-right" data-column="ramount"></td>
+                            <td class="hasinput" data-target="S">
+                                <select class="form-control select2 init-select2" name="${_type}_bcnc_sn[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    {% for code in bcnc_list %}
+                                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput" data-target="S">
+                                <input type="text" class="form-control text-center" data-type="date" name="${_type}_expect_de[]"/>
+                            </td>
+                            <td class="hasinput" data-target="H">
+                                <input type="text" class="form-control text-center" data-type="date" name="${_type}_return_de[]"/>
+                            </td>
+                            <td class="hasinput" data-target="H">
+                                <input type="text" class="form-control text-center" data-type="number" name="${_type}_return_dlnt[]"/>
+                            </td>
+                            <td class="text-right" data-column="return_before"></td>
+                            <td class="text-right" data-column="diff"></td>
+                            <td class="hasinput" data-target="R">
+                                <select class="form-control select2 init-select2" name="${_type}_stock_place[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    <option value="2">이현창고</option>
+                                    <option value="3">기타창고</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <button class="btn btn-table btn-warning removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
+                        </tr>
+`;
+                var tag = $($.parseHTML(html));
+                $(document).find(`tbody[role="${_type}_house_row"]`).append($(tag));
+                {% if init %}
+                $(tag).find(".init-select2").select2();
+                $(tag).find(".init-select2").removeClass("init-select2");
+                {% endif %}
+                cloned_row.push($(tag));
             }
-            $(document).find("tbody[role='construct_row']").trigger("change");
-            $(document).find("tbody[role='construct_row']").yRowspan(0);
+        }
+        return cloned_row;
+    }
+    getValue = function(tag, isHTML=true){
+        if(isHTML){
+            var value = parseInt($(tag).html().replaceAll(",", ""));
+        }
+        else{
+            var value = parseInt($(tag).val().replaceAll(",", ""));
 
         }
+        if(isNaN(value)) value = 0;
+        return value;
     }
-    $(document).on("change", "tbody[role='construct_row']", function(){
-        var total = 0;
+
+    $(document).on("change", "tbody[role='m_house_row'], tbody[role='s_house_row']", function(){
+        var total_qy = 0;
+        var total_pamount_sum = 0;
+        var total_dc = 0;
+        var total_ramount = 0;
+        var total_return_dlnt = 0;
+        var total_return_before = 0;
+        var total_diff = 0;
+        var _type = ($(this).attr("role") == "m_house_row") ? "m" : "s";
         $(this).find("tr").each(function(pIndex, pRow){
-            var count = parseInt($(pRow).find("input[name='construct_count[]']").eq(0).val().replaceAll(",", "")); if(isNaN(count)) count = 0;
-            var amt = parseInt($(pRow).find("input[name='construct_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(amt)) amt = 0;
-            var camt = count * amt;
-            var tax = Math.round(camt*0.1)
-            $(pRow).find("input[name='construct_tax[]']").eq(0).val(tax.toFormat('NUMBER'));
-            $(pRow).find("[data-column='construct_camt']").html(camt.toFormat('NUMBER'));
-            $(pRow).find("[data-column='construct_sum']").html((camt+tax).toFormat('NUMBER'));
-            total += camt+tax;
+            var qy = getValue($(pRow).find(`input[name='${_type}_qy[]']`).eq(0), false);
+            var dlivy_amt = getValue($(pRow).find(`input[name='${_type}_dlivy_amt[]']`).eq(0), false);
+            var dc_rate = parseFloat($(pRow).find(`input[name='${_type}_dc_rate[]']`).eq(0).val().replaceAll("%", "")); if(isNaN(dc_rate)) dc_rate = 0.0;
+            var add_dc_rate = parseFloat($(pRow).find(`input[name='${_type}_add_dc_rate[]']`).eq(0).val().replaceAll("%", "")); if(isNaN(add_dc_rate)) add_dc_rate = 0.0;
+            var pamount = Math.round(dlivy_amt * (100 - dc_rate) / 100.0);
+            $(pRow).find(`input[name='${_type}_pamount[]']`).eq(0).val(pamount.toFormat('NUMBER'));
+            var pamount_sum = qy*pamount;
+            $(pRow).find(`[data-column="pamount_sum"]`).html(pamount_sum.toFormat('NUMBER'));
+            var dc = Math.round(dlivy_amt * qy * add_dc_rate / 100.0);
+            $(pRow).find(`input[name='${_type}_dc[]']`).eq(0).val(dc.toFormat('NUMBER'));
+            var ramount = pamount_sum - dc;
+            $(pRow).find(`[data-column="ramount"]`).html(ramount.toFormat('NUMBER'));
+
+            var return_dlnt = getValue($(pRow).find(`input[name='${_type}_return_dlnt[]']`).eq(0), false);
+            var return_before = getValue($(pRow).find(`[data-column="return_before"]`));
+            if(return_dlnt + return_before > qy){
+                return_dlnt = qy - return_before;
+                $(pRow).find(`input[name='${_type}_return_dlnt[]']`).eq(0).val(return_dlnt.toFormat('NUMBER'));
+            }
+            var diff = qy - return_dlnt - return_before;
+            $(pRow).find("[data-column='diff']").eq(0).html(diff.toFormat('NUMBER'));
+            total_qy += qy;
+            total_pamount_sum += pamount_sum;
+            total_dc += dc;
+            total_ramount += ramount;
+            total_return_dlnt += return_dlnt;
+            total_return_before += return_before;
+            total_diff += diff;
         });
-        $(this).find("[data-column='construct_total']").html(total.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_qy']").html(total_qy.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_pamount_sum']").html(total_pamount_sum.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_dc']").html(total_dc.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_ramount']").html(total_ramount.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_return_dlnt']").html(total_return_dlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_return_before']").html(total_return_before.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
     });
     $(document).on("change", "tbody[role='ct_se_code']", function(){
-        var totals = [];
-        $(this).find("tr").each(function(pIndex, pRow){
-            var total = 0;
-            $(pRow).find("input[data-type='number']").each(function(pI, pTag){
-                var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
-                total += value;
-            });
-            $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
-            totals.push(total);
-            if(pIndex == 0){
-                $(document).find("input[name='D_10']").val(Math.round(total*0.005).toFormat('NUMBER'));
+        var total_cntrct_amount = parseInt($(document).find("[name='total_cntrct_amount']").val().replaceAll(",", "")); if(isNaN(total_cntrct_amount)) total_cntrct_amount = 0;
+        var total_amount = parseInt($(document).find("[name='total_amount']").val().replaceAll(",", "")); if(isNaN(total_amount)) total_amount = 0;
+        var D_61_DC = parseInt($(document).find("[name='D_61_DC']").val().replaceAll(",", "")); if(isNaN(D_61_DC)) D_61_DC = 0;
+        var D_63 = parseInt($(document).find("[name='D_63']").val().replaceAll(",", "")); if(isNaN(D_63)) D_63 = 0;
+        var D_61 = parseInt($(document).find("[name='D_61']").val().replaceAll(",", "")); if(isNaN(D_61)) D_61 = 0;
+        var D_7 = parseInt($(document).find("[name='D_7']").val().replaceAll(",", "")); if(isNaN(D_7)) D_7 = 0;
+        var D_10 = parseInt($(document).find("[name='D_10']").val().replaceAll(",", "")); if(isNaN(D_10)) D_10 = 0;
+
+        var va = total_cntrct_amount + D_61_DC + D_63 - D_61 - D_7 - D_10 - total_amount;
+
+
+        $(this).find("[data-column='va']").html(va.toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html((va*100.0/total_cntrct_amount).toFixed(1)+"%");
+    });
+    $(document).find("input[name=msh_approval_type]").on("change", function(){
+        var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+        if(checked == 'S'){
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] input").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] select").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='H'] input").attr("disabled", true);
+            $(`tbody[role='ms_house_row']`).find("[data-target='H'] select").attr("disabled", true);
+            $(document).find("tbody[role='model_house'] input").attr("disabled", false);
+        }
+        else if(checked == 'B'){
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] input").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] select").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='H'] input").attr("disabled", true);
+            $(`tbody[role='ms_house_row']`).find("[data-target='H'] select").attr("disabled", true);
+            $(document).find("tbody[role='model_house'] input").attr("disabled", false);
+            var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+            {% if init %}
+            get_model_list(cntrct_sn);
+            {% endif %}
+            //ajax돌려서 데이터 가져오고, 가져온 데이터 뿌리고, 각각 input hidden 으로 delng_sn 넣기
+        }
+        else{
+            $(`tbody[role='ms_house_row']`).find("[data-target='H'] input").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='H'] select").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] input").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] select").attr("disabled", false);
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] input").attr("readonly", true);
+            $(`tbody[role='ms_house_row']`).find("[data-target='S'] select").find("option:not(:selected)").attr("disabled", "disabled");
+            $(document).find("tbody[role='model_house'] input").attr("disabled", true);
+            var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+            {% if init %}
+            get_model_list(cntrct_sn);
+            {% endif %}
+
+        }
+    });
+    {% if init %}
+    window.after = [];
+    $(document).on("click", "#addRowMH", function(){
+        var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+        if(checked != 'H') {
+            cloneRow("m_house_tr", 1);
+        }
+    });
+    $(document).on("click", "#addRowSH", function(){
+        var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+        if(checked != 'H') {
+            cloneRow("s_house_tr", 1);
+        }
+    });
+    var prdlst_se_code = {"1" : "1", "2" : "2", "3" : "4", "4" : "3"};
+    cloneRowStock = function(params, response){
+        var target = (response == "0") ? "m" : "s";
+        var delng_ty_code = (response == "0") ? "62" : "65";
+        $.ajax({
+            url : '/api/stock/get_stock_info',
+            method: 'GET',
+            data : {"stock_sns" : params},
+            success: function(pResult){
+                console.log(pResult);
+                var rows = cloneRow(`${target}_house_tr`, pResult.length);
+                $.each(pResult, function(pIndex, pValue){
+                    var row = rows[pIndex];
+                    $(row).find(`input[type='hidden'][name='${target}_stock_sn[]']`).val(pValue.stock_sn);
+                    $(row).find(`input[type='hidden'][name='${target}_delng_ty_code[]']`).val(delng_ty_code);
+                    if(prdlst_se_code.hasOwnProperty(pValue.prduct_ty_code+"")){
+                        $(row).find(`[name="${target}_prdlst_se_code[]"]`).yVal(prdlst_se_code[pValue.prduct_ty_code+""]);
+                    }
+                    else{
+                        $(row).find(`[name="${target}_prdlst_se_code[]"]`).yVal('9');
+                    }
+                    $(row).find(`[name="${target}_prduct_ty_code[]"]`).yVal(pValue.prduct_ty_code);
+                    $(row).find(`[name="${target}_bcnc_sn[]"]`).yVal('79');
+                    $(row).find(`select`).find("option:not(:selected)").attr("disabled", "disabled");
+                    $(row).find(`[name="${target}_model_no[]"]`).attr("readonly", true);
+                    $(row).find(`[name="${target}_model_no[]"]`).val(pValue.modl_nm);
+                    $(row).find(`[name="${target}_qy[]"]`).val("1");
+                    $(row).find(`[name="${target}_qy[]"]`).attr("readonly", true);
+                    $(row).find(`[name="${target}_dlivy_amt[]"]`).val("0");
+                    $(row).find(`[name="${target}_dlivy_amt[]"]`).attr("readonly", true);
+                    $(row).find(`[name="${target}_dc_rate[]"]`).val("0");
+                    $(row).find(`[name="${target}_dc_rate[]"]`).attr("readonly", true);
+                    $(row).find(`[name="${target}_pamount[]"]`).val("0");
+                    $(row).find(`[name="${target}_pamount[]"]`).attr("readonly", true);
+                    $(row).find(`[name="${target}_add_dc_rate[]"]`).val("0");
+                    $(row).find(`[name="${target}_add_dc_rate[]"]`).attr("readonly", true);
+                    $(row).find(`[name="${target}_dc[]"]`).val("0");
+                    $(row).find(`[name="${target}_dc[]"]`).attr("readonly", true);
+
+
+
+                });
+                $(document).find(`tbody[role='${target}_house_row']`).trigger("change");
+
             }
         });
 
-        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
-        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
-    });
-
-    {% if init %}
-    $(document).on("click", "#addRow", function(){
-        cloneRow("construct_tr", 1);
-    });
+    }
 
     window.projects = {};
     $(document).ready(function(){
-        $(document).find("tbody[role='construct_row'] input").attr("disabled", true);
+        $(document).find("input[name=msh_approval_type]").yReadonly(true);
         $(document).find("tbody[role='ct_se_code'] input").attr("disabled", true);
         $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", true);
         $.ajax({
-            url : '/api/project/get_b_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var html = `<option value="">[전체]</option>`;
@@ -414,127 +782,83 @@
             $(this).focusout();
         }
     });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
     $(document).on("change", "#cntrct_sn", function(){
         var cntrct_sn = $("#cntrct_sn").find(":selected").val();
         $(document).find(".colorY").removeClass("colorY");
         if(cntrct_sn != ''){
+            $(document).find("input[name=msh_approval_type]").yReadonly(false);
             var pValue = window.projects[cntrct_sn];
             $("#cntrct_no").val(pValue.cntrct_no);
             $("#home_count").val(pValue.home_count);
             $("#home_region").val(pValue.home_region);
             $("#cntrwk_period").val(pValue.cntrwk_period);
-            if(pValue.home_region == "서울권"){
-                $("#option_rate").find("option[value='70']").attr("disabled", true);
-                $("#option_rate").find("option[value='80']").attr("disabled", true);
-                $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                    if($(pTag).html()==pValue.home_region){
-                        $(pTag).addClass("colorY");
-                    }
-                });
+            $("#mh_count").val(pValue.mh_count);
+            $("#mh_place").val(pValue.mh_place);
+            $("#mh_period").val(pValue.mh_period);
+            if(pValue.mh_approval_step == ''){
+                $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
+                $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
+                $(document).find("input[name=msh_approval_type][value='H']").yReadonly(true);
             }
-            else if(pValue.home_region == "수도권" || pValue.home_region == "지방권"){
-                $("#option_rate").find("option[value='70']").attr("disabled", false);
-                $("#option_rate").find("option[value='80']").attr("disabled", false);
-                $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                    if($(pTag).html()==pValue.home_region){
-                        $(pTag).addClass("colorY");
-                    }
-                });
-            }
-            $(document).find("tbody[role='construct_row'] input").attr("disabled", false);
-            $(document).find("tbody[role='ct_se_code'] input").attr("disabled", false);
-            $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
-            if(!isNaN(parseInt(pValue.home_count))){
-                for(let i=0;i<7;i++){
-                    if(parseInt(pValue.home_count) < 500+i*250){
-                        window.home_count = 500+i*250;
-                        break;
-                    }
-                }
-                $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
-                    if($(pTag).html() == window.home_count.toFormat('NUMBER')+"세대"){
-                        $(pTag).addClass("colorY");
-                    }
-                });
-            }
-        }
-    });
-    $(document).on("change", "#option_rate", function(){
-        var option_rate = $("#option_rate").find(":selected").val();
-        if(option_rate != ''){
-            if($("#home_count").val() != ''){
-                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt($("#home_count").val().replaceAll(",", ""))/100).toFormat('NUMBER'));
-            }
-            var home_region = $("#home_region").val();
-            $(document).find(`[data-region="${home_region}"][data-column="분양"]`).removeClass("colorY");
-            $(document).find(`[data-region="${home_region}"][data-rate="${$(this).data("before")}"][data-column="${window.home_count}"]`).removeClass("colorY");
-            $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
-            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${window.home_count}"]`);
-            $(target).addClass("colorY");
-            var done = false;
-            if(target.length > 0){
-                var rates = parseInt(target.html().replaceAll(",", ""));
-                if(!isNaN(rates)){
-                    $("input[name='B_7']").val((rates*10000).toFormat('NUMBER'));
-                    $("input[name='B_7']").focus();
-                    $("input[name='B_7']").focusout();
-                    done = true;
-                }
-            }
-            if(!done){
-                $("input[name='B_7']").attr("readonly", false);
+            else if(pValue.mh_approval_step == 1){
+                $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
+                $(document).find("input[name=msh_approval_type][value='B']").yReadonly(false);
+                $(document).find("input[name=msh_approval_type][value='H']").yReadonly(false);
             }
             else{
-                $("input[name='B_7']").attr("readonly", true);
+                $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
+                $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
+                $(document).find("input[name=msh_approval_type][value='H']").yReadonly(false);
             }
+            get_cost_bf_bd(cntrct_sn);
         }
-        $(this).data("before", option_rate);
     });
+
+    $(document).on("click", "#addRowMHStock, #addRowSHStock", function(){
+        var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+        if(checked != undefined && checked != '' && (checked == 'S' || checked == 'B')) {
+            var new_window_width = parseInt(screen.width) - 100;
+            var new_window_height = parseInt(screen.height) - 100;
+            var positionX = 50;
+            var stock_sns = [];
+            $(document).find(`[name='m_delng_ty_code[]'][value='62']`).each(function (pIndex, pTag) {
+                stock_sns.push($(pTag).parent().find(`[name="m_stock_sn[]"]`).val());
+            });
+            $(document).find(`[name='s_delng_ty_code[]'][value='65']`).each(function (pIndex, pTag) {
+                stock_sns.push($(pTag).parent().find(`[name="s_stock_sn[]"]`).val());
+            });
+            var params = "&response="+($(this).attr("id") == "addRowMHStock" ? "0" : "1");
+            if (stock_sns.length > 0) {
+                params += "&before=" + stock_sns.join(",");
+            }
+            if (checked == 'B' && window.after.length > 0){
+                params += "&after=" + window.after.join(",");
+            }
+            var popup = window.open("/stock/search?" + params, "stock_search", `width=${new_window_width},height=${new_window_height},left=${positionX}`);
+        }
+    });
+
     {% else %}
     $.fn.afterLoadApproval = function(){
-        var home_region = $("#home_region").val();
-        var home_count = $("#home_count").val().replaceAll(",", "");
-        var home_count_col = '';
-        for(let i=0;i<7;i++){
-            if(parseInt(home_count) < 500+i*250){
-                home_count_col = 500+i*250;
-                break;
-            }
-        }
-        $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
-            if($(pTag).html() == home_count_col.toFormat('NUMBER')+"세대"){
-                $(pTag).addClass("colorY");
-            }
-        });
 
-
-        var option_rate = $("#option_rate").find(":selected").val();
-        if(home_region == "서울권"){
-            $("#option_rate").find("option[value='70']").attr("disabled", true);
-            $("#option_rate").find("option[value='80']").attr("disabled", true);
-            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                if($(pTag).html()==home_region){
-                    $(pTag).addClass("colorY");
-                }
-            });
-        }
-        else if(home_region == "수도권" || home_region == "지방권"){
-            $("#option_rate").find("option[value='70']").attr("disabled", false);
-            $("#option_rate").find("option[value='80']").attr("disabled", false);
-            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                if($(pTag).html()==home_region){
-                    $(pTag).addClass("colorY");
-                }
-            });
-        }
-        if(option_rate != ''){
-            if($("#home_count").val() != ''){
-                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt(home_count)/100).toFormat('NUMBER'));
-            }
-           $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
-            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${home_count_col}"]`);
-            $(target).addClass("colorY");
-        }
     }
     {% endif %}
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+            var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+            if(checked != 'H') {
+
+                $(this).closest("tr").remove();
+            }
+        {% endif %}
+        return false;
+    });
+
 </script>

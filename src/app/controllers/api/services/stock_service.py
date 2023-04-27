@@ -370,12 +370,14 @@ def get_stock_log(params):
     result = g.curs.fetchall()
     return result
 
-def get_stock_by_account(delng_sn, isReturn=True):
-    query = """SELECT stock_sn, log_sn
-                FROM stock_log
-                WHERE delng_sn=%s"""
+def get_stock_by_account(delng_sn, isReturn=True, isOut=False):
+    query = """SELECT x.stock_sn, x.log_sn
+                FROM stock_log x """
+    if isOut:
+        query += """ INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn"""
+    query += " WHERE x.delng_sn=%s"
     if isReturn:
-        query += """ AND stock_sttus=2 """
+        query += """ AND x.stock_sttus=2 """
     g.curs.execute(query, delng_sn)
     result = g.curs.fetchall()
     return result
@@ -464,6 +466,9 @@ def insert_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man):
 
 def update_stock_rm(stock_sn, rm):
     g.curs.execute("UPDATE stock SET rm=%s WHERE stock_sn=%s", (rm, stock_sn))
+
+def update_stock_type(stock_sn, type):
+    g.curs.execute("UPDATE stock SET use_type=%s WHERE stock_sn=%s", (type, stock_sn))
 
 def get_stock_report_list(params):
     query = """SELECT prduct_se_code

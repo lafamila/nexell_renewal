@@ -90,7 +90,7 @@
     </thead>
     <tbody role="construct_row">
         <tr data-row="construct_tr">
-            <th class="colorSky text-center">예정</th>
+            <td class="colorSky text-center">예정</td>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="model_no[]">
             </td>
@@ -157,7 +157,7 @@
     </thead>
     <tbody role="ct_se_code">
         <tr data-row="B">
-            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+            <th class="colorB text-center middle">사전입찰</th>
             <th class="colorSky text-center">예정가</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_fee_amount" readonly>
@@ -178,10 +178,10 @@
                 <input type="text" class="form-control text-right" data-type="number" name="D_63">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="D_7" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_7" value="0" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="D_10" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_10" value="0" readonly>
             </td>
             <td class="text-center" data-column="va"></td>
             <td class="text-center" data-column="va_rate"></td>
@@ -191,6 +191,8 @@
 
 <table class="table table-bordered table-form small-table">
     <colgroup>
+        <col width="120"/>
+        <col width="120"/>
         <col width="120"/>
         <col width="120"/>
         <col width="120"/>
@@ -208,146 +210,89 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center border_right" colspan="4" style="border-right:1px solid #666!important;"><span>옵 션 현 황</span></th>
+			<th class="sub-title colorN text-center border_right" colspan="6" style="border-right:1px solid #666!important;"><span>옵 션 현 황</span></th>
 			<th class="sub-title color-contract text-center border_right" colspan="10"><span>옵션행사 실행 기준표(4일기준)</span></th>
         </tr>
     </thead>
     <tbody role="option">
         <tr data-row="option_header">
-            <td class="colorSky text-center">옵션율</td>
+            <td class="colorSky text-center">부스</td>
             <td class="hasinput">
-                <select class="form-control select2 w100p" id="option_rate" name="option_rate" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
-                    <option value=""></option>
-                    <option value="70">70%</option>
-                    <option value="80">80%</option>
-                    <option value="90">90%</option>
-                    <option value="100">100%</option>
+                <select class="form-control select2 w100p" id="option_1" name="option_1" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="0">X</option>
+                    <option value="1">O</option>
                 </select>
-
             </td>
-            <td class="colorSky text-center">예상 옵션 세대수</td>
-            <td class="text-center border_right" data-column="option_count" style="border-right:1px solid #666!important;"></td>
-            <td class="text-center">구분</td>
-            <td class="text-center">분양(%)</td>
-            <td class="text-center">500세대</td>
-            <td class="text-center">750세대</td>
-            <td class="text-center">1,000세대</td>
-            <td class="text-center">1,250세대</td>
-            <td class="text-center">1,500세대</td>
-            <td class="text-center">1,750세대</td>
-            <td class="text-center">2,000세대</td>
-            <td class="text-center">참조</td>
-        </tr>
-        <tr data-row="option_row">
-            <td class="sub-title colorN text-center border_right" colspan="4" style="font-weight:bold;border-right:1px solid #666!important;">특 이 사 항</td>
-            <td class="text-center" rowspan="2">서울권</td>
-            <td data-region="서울권" data-rate="90" data-column="분양" class="text-center">90</td>
-            <td data-region="서울권" data-rate="90" data-column="500" class="text-center">400</td>
-            <td data-region="서울권" data-rate="90" data-column="750" class="text-center">600</td>
-            <td data-region="서울권" data-rate="90" data-column="1000" class="text-center">800</td>
-            <td data-region="서울권" data-rate="90" data-column="1250" class="text-center">1100</td>
-            <td data-region="서울권" data-rate="90" data-column="1500" class="text-center">1400</td>
-            <td data-region="서울권" data-rate="90" data-column="1750" class="text-center">1850</td>
-            <td data-region="서울권" data-rate="90" data-column="2000" class="text-center" rowspan="2">2000</td>
-            <td class="text-center" rowspan="2">서울지역</td>
+            <td class="colorSky text-center">인력</td>
+            <td class="hasinput">
+                <select class="form-control select2 w100p" id="option_2" name="option_2" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="0">X</option>
+                    <option value="1">O</option>
+                </select>
+            </td>
+            <td class="colorSky text-center">제작물</td>
+            <td class="hasinput">
+                <select class="form-control select2 w100p" id="option_3" name="option_3" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="0">X</option>
+                    <option value="1">O</option>
+                </select>
+            </td>
+            <td class="text-center" rowspan="2">구분</td>
+            <td class="text-center" data-limit="500" colspan="3">500세대 미만</td>
+            <td class="text-center" data-limit="1000" colspan="3">1,000세대 미만</td>
+            <td class="text-center" data-limit="1500" colspan="3">1,500세대 미만</td>
         </tr>
         <tr>
-            <td class="hasinput" colspan="4" rowspan="9" style="border-right:1px solid #666!important;">
-                <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo">
+            <td class="sub-title colorN text-center border_right" colspan="6" style="font-weight:bold;border-right:1px solid #666!important;">특 이 사 항</td>
+            <td class="text-center">부스</td>
+            <td class="text-center">인력</td>
+            <td class="text-center">제작물</td>
+            <td class="text-center">부스</td>
+            <td class="text-center">인력</td>
+            <td class="text-center">제작물</td>
+            <td class="text-center">부스</td>
+            <td class="text-center">인력</td>
+            <td class="text-center">제작물</td>
+        </tr>
+        <tr role="option_row">
+            <th class="hasinput colorW" colspan="6" rowspan="3" style="border-right:1px solid #666!important;">
+                <textarea style="height:92px;width:100%;resize:none;border:none;" name="option_bigo">
                 </textarea>
-            </td>
-            <td data-region="서울권" data-rate="100" data-column="분양" class="text-center">100</td>
-            <td data-region="서울권" data-rate="100" data-column="500" class="text-center">500</td>
-            <td data-region="서울권" data-rate="100" data-column="750" class="text-center">725</td>
-            <td data-region="서울권" data-rate="100" data-column="1000" class="text-center">950</td>
-            <td data-region="서울권" data-rate="100" data-column="1250" class="text-center">1225</td>
-            <td data-region="서울권" data-rate="100" data-column="1500" class="text-center">1500</td>
-            <td data-region="서울권" data-rate="100" data-column="1750" class="text-center">1750</td>
-            <td data-region="서울권" data-rate="100" data-column="2000" class="text-center" style="display:none;">2000</td>
+            </th>
+            <td class="text-center">서울권</td>
+            <td class="text-center">150</td>
+            <td class="text-center">130</td>
+            <td class="text-center">100</td>
+            <td class="text-center">150</td>
+            <td class="text-center">170</td>
+            <td class="text-center">130</td>
+            <td class="text-center">150</td>
+            <td class="text-center">220</td>
+            <td class="text-center">150</td>
         </tr>
-        <tr data-row="option_row">
-            <td class="text-center" rowspan="4">수도권</td>
-            <td data-region="수도권" data-rate="70" data-column="분양" class="text-center">70</td>
-            <td data-region="수도권" data-rate="70" data-column="500" class="text-center">300</td>
-            <td data-region="수도권" data-rate="70" data-column="750" class="text-center">390</td>
-            <td data-region="수도권" data-rate="70" data-column="1000" class="text-center">480</td>
-            <td data-region="수도권" data-rate="70" data-column="1250" class="text-center">540</td>
-            <td data-region="수도권" data-rate="70" data-column="1500" class="text-center">600</td>
-            <td data-region="수도권" data-rate="70" data-column="1750" class="text-center">800</td>
-            <td data-region="수도권" data-rate="70" data-column="2000" class="text-center">1000</td>
-            <td class="text-center" rowspan="4">경기지역, <br/>광역시</td>
+        <tr role="option_row">
+            <td class="text-center">수도권</td>
+            <td class="text-center">170</td>
+            <td class="text-center">145</td>
+            <td class="text-center">100</td>
+            <td class="text-center">170</td>
+            <td class="text-center">190</td>
+            <td class="text-center">130</td>
+            <td class="text-center">170</td>
+            <td class="text-center">240</td>
+            <td class="text-center">150</td>
         </tr>
-        <tr>
-            <td data-region="수도권" data-rate="80" data-column="분양" class="text-center">80</td>
-            <td data-region="수도권" data-rate="80" data-column="500" class="text-center">300</td>
-            <td data-region="수도권" data-rate="80" data-column="750" class="text-center">405</td>
-            <td data-region="수도권" data-rate="80" data-column="1000" class="text-center">510</td>
-            <td data-region="수도권" data-rate="80" data-column="1250" class="text-center">555</td>
-            <td data-region="수도권" data-rate="80" data-column="1500" class="text-center">600</td>
-            <td data-region="수도권" data-rate="80" data-column="1750" class="text-center">1150</td>
-            <td data-region="수도권" data-rate="80" data-column="2000" class="text-center" rowspan="3">1500</td>
-        </tr>
-        <tr>
-            <td data-region="수도권" data-rate="90" data-column="분양" class="text-center">90</td>
-            <td data-region="수도권" data-rate="90" data-column="500" class="text-center">350</td>
-            <td data-region="수도권" data-rate="90" data-column="750" class="text-center">450</td>
-            <td data-region="수도권" data-rate="90" data-column="1000" class="text-center">550</td>
-            <td data-region="수도권" data-rate="90" data-column="1250" class="text-center">600</td>
-            <td data-region="수도권" data-rate="90" data-column="1500" class="text-center">650</td>
-            <td data-region="수도권" data-rate="90" data-column="1750" class="text-center">1075</td>
-            <td data-region="수도권" data-rate="90" data-column="2000" class="text-center" style="display:none;">1500</td>
-        </tr>
-        <tr>
-            <td data-region="수도권" data-rate="100" data-column="분양" class="text-center">100</td>
-            <td data-region="수도권" data-rate="100" data-column="500" class="text-center">450</td>
-            <td data-region="수도권" data-rate="100" data-column="750" class="text-center">525</td>
-            <td data-region="수도권" data-rate="100" data-column="1000" class="text-center">600</td>
-            <td data-region="수도권" data-rate="100" data-column="1250" class="text-center">650</td>
-            <td data-region="수도권" data-rate="100" data-column="1500" class="text-center">700</td>
-            <td data-region="수도권" data-rate="100" data-column="1750" class="text-center">1100</td>
-            <td data-region="수도권" data-rate="100" data-column="2000" class="text-center" style="display:none;">1500</td>
-        </tr>
-        <tr>
-            <td class="text-center" rowspan="4">지방권</td>
-            <td data-region="지방권" data-rate="70" data-column="분양" class="text-center">70</td>
-            <td data-region="지방권" data-rate="70" data-column="500" class="text-center">240</td>
-            <td data-region="지방권" data-rate="70" data-column="750" class="text-center">445</td>
-            <td data-region="지방권" data-rate="70" data-column="1000" class="text-center">650</td>
-            <td data-region="지방권" data-rate="70" data-column="1250" class="text-center">675</td>
-            <td data-region="지방권" data-rate="70" data-column="1500" class="text-center">700</td>
-            <td data-region="지방권" data-rate="70" data-column="1750" class="text-center">1000</td>
-            <td data-region="지방권" data-rate="70" data-column="2000" class="text-center" rowspan="2">1300</td>
-            <td class="text-center" rowspan="4">제주포함</td>
-        </tr>
-        <tr>
-            <td data-region="지방권" data-rate="80" data-column="분양" class="text-center">80</td>
-            <td data-region="지방권" data-rate="80" data-column="500" class="text-center">260</td>
-            <td data-region="지방권" data-rate="80" data-column="750" class="text-center">455</td>
-            <td data-region="지방권" data-rate="80" data-column="1000" class="text-center">650</td>
-            <td data-region="지방권" data-rate="80" data-column="1250" class="text-center">675</td>
-            <td data-region="지방권" data-rate="80" data-column="1500" class="text-center">700</td>
-            <td data-region="지방권" data-rate="80" data-column="1750" class="text-center">1000</td>
-            <td data-region="지방권" data-rate="80" data-column="2000" class="text-center" style="display:none;">1300</td>
-        </tr>
-        <tr>
-            <td data-region="지방권" data-rate="90" data-column="분양" class="text-center">90</td>
-            <td data-region="지방권" data-rate="90" data-column="500" class="text-center">280</td>
-            <td data-region="지방권" data-rate="90" data-column="750" class="text-center">515</td>
-            <td data-region="지방권" data-rate="90" data-column="1000" class="text-center">750</td>
-            <td data-region="지방권" data-rate="90" data-column="1250" class="text-center">750</td>
-            <td data-region="지방권" data-rate="90" data-column="1500" class="text-center">750</td>
-            <td data-region="지방권" data-rate="90" data-column="1750" class="text-center">1125</td>
-            <td data-region="지방권" data-rate="90" data-column="2000" class="text-center" rowspan="2">1500</td>
-        </tr>
-        <tr>
-            <td data-region="지방권" data-rate="100" data-column="분양" class="text-center">100</td>
-            <td data-region="지방권" data-rate="100" data-column="500" class="text-center">300</td>
-            <td data-region="지방권" data-rate="100" data-column="750" class="text-center">550</td>
-            <td data-region="지방권" data-rate="100" data-column="1000" class="text-center">800</td>
-            <td data-region="지방권" data-rate="100" data-column="1250" class="text-center">800</td>
-            <td data-region="지방권" data-rate="100" data-column="1500" class="text-center">800</td>
-            <td data-region="지방권" data-rate="100" data-column="1750" class="text-center">1150</td>
-            <td data-region="지방권" data-rate="100" data-column="2000" class="text-center" style="display:none;">1500</td>
+        <tr role="option_row">
+            <td class="text-center">지방권</td>
+            <td class="text-center">200</td>
+            <td class="text-center">150</td>
+            <td class="text-center">100</td>
+            <td class="text-center">200</td>
+            <td class="text-center">200</td>
+            <td class="text-center">130</td>
+            <td class="text-center">200</td>
+            <td class="text-center">250</td>
+            <td class="text-center">150</td>
         </tr>
 
     </tbody>
@@ -363,7 +308,6 @@
             for(let i=0;i<count;i++){
                 var trs = $(document).find("tbody[role='construct_row'] tr");
                 var origin = trs.eq(0).clone(true);
-                $(origin).find("td:not(.hasinput)").html("0");
                 $(origin).find("td.hasinput input").val("");
                 $(document).find("tbody[role='construct_row']").append($(origin));
             }
@@ -386,10 +330,12 @@
             total_amount += qy*amount;
             total_fee_amount += qy*amount*rate/100.0;
         });
+
         $(document).find("[name='total_cntrct_fee_amount']").val(total_fee_amount.toFormat('NUMBER'));
         $(document).find("[name='total_cntrct_amount']").val(total_amount.toFormat('NUMBER'));
         $(document).find("[name='total_rate']").val((total_fee_amount*100.0/total_amount).toFixed(1)+"%");
-        $(document).find("[name='D_10']").val(Math.round(total_fee_amount*0.005).toFormat('NUMBER'));
+        $(document).find("[name='D_10']").val(Math.round(total_amount*0.005).toFormat('NUMBER'));
+        $(`tbody[role="ct_se_code"]`).trigger("change");
     });
     $(document).on("change", "tbody[role='ct_se_code']", function(){
         var fee_amount = parseInt($(document).find("[name='total_cntrct_fee_amount']").val().replaceAll(",", "")); if(isNaN(fee_amount)) fee_amount = 0;
@@ -456,21 +402,15 @@
             $("#home_count").val(pValue.home_count);
             $("#home_region").val(pValue.home_region);
             $("#cntrwk_period").val(pValue.cntrwk_period);
-            if(pValue.home_region == "서울권"){
-                $("#option_rate").find("option[value='70']").attr("disabled", true);
-                $("#option_rate").find("option[value='80']").attr("disabled", true);
+            if(pValue.home_region == "서울권" || pValue.home_region == "수도권" || pValue.home_region == "지방권"){
                 $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
                     if($(pTag).html()==pValue.home_region){
                         $(pTag).addClass("colorY");
+                        $(pTag).attr("data-home", "home");
                     }
-                });
-            }
-            else if(pValue.home_region == "수도권" || pValue.home_region == "지방권"){
-                $("#option_rate").find("option[value='70']").attr("disabled", false);
-                $("#option_rate").find("option[value='80']").attr("disabled", false);
-                $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                    if($(pTag).html()==pValue.home_region){
-                        $(pTag).addClass("colorY");
+                    else{
+                        $(pTag).removeClass("colorY");
+                        $(pTag).attr("data-home", "");
                     }
                 });
             }
@@ -478,96 +418,118 @@
             $(document).find("tbody[role='ct_se_code'] input").attr("disabled", false);
             $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
             if(!isNaN(parseInt(pValue.home_count))){
-                for(let i=0;i<7;i++){
-                    if(parseInt(pValue.home_count) < 500+i*250){
-                        window.home_count = 500+i*250;
-                        break;
-                    }
+                if(parseInt(pValue.home_count) < 500){
+                    window.home_count = 1;
                 }
-                $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
-                    if($(pTag).html() == window.home_count.toFormat('NUMBER')+"세대"){
-                        $(pTag).addClass("colorY");
-                    }
-                });
+                else if(parseInt(pValue.home_count) < 1000){
+                    window.home_count = 2;
+                }
+                else{
+                    window.home_count = 3;
+                }
+                $(document).find(`tr[data-row='option_header'] td[data-limit]`).removeClass("colorY");
+                $(document).find(`tr[data-row='option_header'] td[data-limit='${window.home_count*500}']`).addClass("colorY");
             }
         }
     });
-    $(document).on("change", "#option_rate", function(){
-        var option_rate = $("#option_rate").find(":selected").val();
-        if(option_rate != ''){
-            if($("#home_count").val() != ''){
-                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt($("#home_count").val().replaceAll(",", ""))/100).toFormat('NUMBER'));
-            }
-            var home_region = $("#home_region").val();
-            $(document).find(`[data-region="${home_region}"][data-column="분양"]`).removeClass("colorY");
-            $(document).find(`[data-region="${home_region}"][data-rate="${$(this).data("before")}"][data-column="${window.home_count}"]`).removeClass("colorY");
-            $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
-            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${window.home_count}"]`);
-            $(target).addClass("colorY");
-            var done = false;
-            if(target.length > 0){
-                var rates = parseInt(target.html().replaceAll(",", ""));
-                if(!isNaN(rates)){
-                    $("input[name='D_7']").val((rates*10000).toFormat('NUMBER'));
-                    $("input[name='D_7']").focus();
-                    $("input[name='D_7']").focusout();
-                    done = true;
+    $(document).on("change", "#option_1, #option_2, #option_3", function(){
+        var on1 = $("#option_1").find(":selected").val() == "1";
+        var on2 = $("#option_2").find(":selected").val() == "1";
+        var on3 = $("#option_3").find(":selected").val() == "1";
+        $.each($(document).find("tbody[role='option'] tr[role='option_row']"), function(pIndex, pRow){
+            $(pRow).find("td").each(function(pI, pT){
+                if(pI > 0){
+                    $(pT).removeClass("colorY");
                 }
+            });
+        });
+        var tr = $(document).find("tbody[role='option'] td[data-home='home']").parent();
+        if(tr.length > 0){
+            var total = 0;
+            if(on1){
+
+                $(tr).find("td").eq(1 + (window.home_count-1)*3).addClass("colorY");
+                var value = parseInt($(tr).find("td").eq(1 + (window.home_count-1)*3).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                total += value;
             }
-            if(!done){
-                $("input[name='D_7']").attr("readonly", false);
+            if(on2){
+                $(tr).find("td").eq(2 + (window.home_count-1)*3).addClass("colorY");
+                var value = parseInt($(tr).find("td").eq(2 + (window.home_count-1)*3).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                total += value;
             }
-            else{
-                $("input[name='D_7']").attr("readonly", true);
+            if(on3){
+                $(tr).find("td").eq(3 + (window.home_count-1)*3).addClass("colorY");
+                var value = parseInt($(tr).find("td").eq(3 + (window.home_count-1)*3).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                total += value;
             }
+            $("input[name='D_7']").val((total*10000).toFormat('NUMBER'));
+            $("input[name='D_7']").focus();
+            $("input[name='D_7']").focusout();
         }
-        $(this).data("before", option_rate);
+        else{
+            $("input[name='D_7']").val("0");
+            $("input[name='D_7']").focus();
+            $("input[name='D_7']").focusout();
+        }
+        $("input[name='D_7']").attr("readonly", true);
+
+
+
     });
     {% else %}
     $.fn.afterLoadApproval = function(){
         var home_region = $("#home_region").val();
         var home_count = $("#home_count").val().replaceAll(",", "");
-        var home_count_col = '';
-        for(let i=0;i<7;i++){
-            if(parseInt(home_count) < 500+i*250){
-                home_count_col = 500+i*250;
-                break;
-            }
+        var home_count_col = 1;
+        if(home_region == "서울권" || home_region == "수도권" || home_region == "지방권"){
+            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
+                if($(pTag).html()==home_region){
+                    $(pTag).addClass("colorY");
+                    $(pTag).attr("data-home", "home");
+                }
+                else{
+                    $(pTag).removeClass("colorY");
+                    $(pTag).attr("data-home", "");
+                }
+            });
         }
-        $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
-            if($(pTag).html() == home_count_col.toFormat('NUMBER')+"세대"){
-                $(pTag).addClass("colorY");
-            }
+
+        if(parseInt(home_count) < 500){
+            home_count_col = 1;
+        }
+        else if(parseInt(home_count) < 1000){
+            home_count_col = 2;
+        }
+        else{
+            home_count_col = 3;
+        }
+        $(document).find(`tr[data-row='option_header'] td[data-limit]`).removeClass("colorY");
+        $(document).find(`tr[data-row='option_header'] td[data-limit='${home_count_col*500}']`).addClass("colorY");
+        var on1 = $("#option_1").find(":selected").val() == "1";
+        var on2 = $("#option_2").find(":selected").val() == "1";
+        var on3 = $("#option_3").find(":selected").val() == "1";
+        $.each($(document).find("tbody[role='option'] tr[role='option_row']"), function(pIndex, pRow){
+            $(pRow).find("td").each(function(pI, pT){
+                if(pI > 0){
+                    $(pT).removeClass("colorY");
+                }
+            });
         });
+        var tr = $(document).find("tbody[role='option'] td[data-home='home']").parent();
+        if(tr.length > 0){
+            if(on1){
 
-
-        var option_rate = $("#option_rate").find(":selected").val();
-        if(home_region == "서울권"){
-            $("#option_rate").find("option[value='70']").attr("disabled", true);
-            $("#option_rate").find("option[value='80']").attr("disabled", true);
-            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                if($(pTag).html()==home_region){
-                    $(pTag).addClass("colorY");
-                }
-            });
-        }
-        else if(home_region == "수도권" || home_region == "지방권"){
-            $("#option_rate").find("option[value='70']").attr("disabled", false);
-            $("#option_rate").find("option[value='80']").attr("disabled", false);
-            $(document).find("tbody[role='option'] td").each(function(pIndex, pTag){
-                if($(pTag).html()==home_region){
-                    $(pTag).addClass("colorY");
-                }
-            });
-        }
-        if(option_rate != ''){
-            if($("#home_count").val() != ''){
-                $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt(home_count)/100).toFormat('NUMBER'));
+                $(tr).find("td").eq(1 + (home_count_col-1)*3).addClass("colorY");
             }
-           $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
-            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${home_count_col}"]`);
-            $(target).addClass("colorY");
+            if(on2){
+                $(tr).find("td").eq(2 + (home_count_col-1)*3).addClass("colorY");
+            }
+            if(on3){
+                $(tr).find("td").eq(3 + (home_count_col-1)*3).addClass("colorY");
+            }
         }
+
+
     }
     {% endif %}
 </script>

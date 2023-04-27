@@ -130,6 +130,12 @@ def ajax_get_month_report():
             result['contractList'][c['dept_code']][str(c['amt_ty_code'])].append(c)
             cntrct_sns[(c['dept_code'], c['amt_ty_code'], c['cntrct_sn'])] = 1
 
+    # 정렬
+    for dept_code in result['contractList']:
+        for amt_ty_code in result['contractList'][dept_code]:
+            temp = result['contractList'][dept_code][amt_ty_code]
+            result['contractList'][dept_code][amt_ty_code] = list(sorted(temp, key=lambda k: (k["bcnc_nm"], k["cntrct_nm"])))
+
     # 요약/디테일 부서 일치
     for r in result['contractStatusList']:
         if r['dept_code'] not in result['contractList']:
@@ -143,7 +149,6 @@ def ajax_get_month_report():
             goal_data[int(g['dashboard_row'])] = dict()
         goal_data[int(g['dashboard_row'])][g['dashboard_column']] = g['dashboard_data']
 
-
     DEPT_CNTRCT_SN = {"ST" : -1, "TS1" : -2, "TS2" : -3, "BI" : -4, "ETC" : -5}
 
 
@@ -152,12 +157,32 @@ def ajax_get_month_report():
 
 
         for r in result['contractStatusList']:
-            if str(r['amt_ty_code']) == '3' and r['ty8_goal_amount'] != 0 or r['ty9_goal_amount'] != 0:
+            if str(r['amt_ty_code']) == '3' and (r['ty8_goal_amount'] != 0 or r['ty9_goal_amount'] != 0):
                 if '3' not in result['contractList'][r['dept_code']]:
                     result['contractList'][r['dept_code']]['3'] = []
                 row = {'value': r['ty8_goal_amount'], 'stdyy': str(params["s_stdyy"]).zfill(4), 'amt_ty_code': 3,
                  'dept_code': r['dept_code'], 'cntrct_sn': DEPT_CNTRCT_SN[r['dept_code']], 'cntrct_nm': '장려금', 'bcnc_sn': '', 'bcnc_nm': '',
                  'amount': r['ty9_goal_amount']}
+                dashboard_row = DEPT_CNTRCT_SN[r['dept_code']]
+                if dashboard_row in goal_data:
+                    if 'rmT' in goal_data[dashboard_row]:
+                        row['dashboard_rm'] = goal_data[dashboard_row]['rmT']
+                    else:
+                        row['dashboard_rm'] = ''
+                    if 'valueT' in goal_data[dashboard_row]:
+                        row['dashboard_value'] = goal_data[dashboard_row]['valueT']
+                    else:
+                        row['dashboard_value'] = ''
+                else:
+                    row['dashboard_value'] = ''
+                    row['dashboard_rm'] = ''
+                result['contractList'][r['dept_code']]['3'].append(row)
+            elif str(r['amt_ty_code']) == '3':
+                if '3' not in result['contractList'][r['dept_code']]:
+                    result['contractList'][r['dept_code']]['3'] = []
+                row = {'value': 0, 'stdyy': str(params["s_stdyy"]).zfill(4), 'amt_ty_code': 3,
+                 'dept_code': r['dept_code'], 'cntrct_sn': DEPT_CNTRCT_SN[r['dept_code']], 'cntrct_nm': '장려금', 'bcnc_sn': '', 'bcnc_nm': '',
+                 'amount': 0}
                 dashboard_row = DEPT_CNTRCT_SN[r['dept_code']]
                 if dashboard_row in goal_data:
                     if 'rmT' in goal_data[dashboard_row]:
@@ -181,61 +206,60 @@ def ajax_get_month_report():
         if r['amt_ty_code'] == '3':
             total_amount_3[r['dept_code']] = r['ty9_goal_amount'] + r['m_contract_amount']
         if r['amt_ty_code'] == '2':
-            total_amount_2[r['dept_code']] = r['ty9_goal_amount'] + r['m_contract_amount']
+            total_amount_2[r['dept_code']] = r['m_contract_amount']
 
     for dept_code in result['contractList']:
         if '3' in result['contractList'][dept_code]:
             remain = total_amount_3[dept_code] - sum([c['amount'] for c in result['contractList'][dept_code]['3']])
         else:
             remain = total_amount_3[dept_code]
-        if remain != 0:
-            row = {'value': 0, 'stdyy': str(params["s_stdyy"]).zfill(4), 'amt_ty_code': 3,
-                   'dept_code': dept_code, 'cntrct_sn': DEPT_CNTRCT_SN[r['dept_code']]-len(DEPT_CNTRCT_SN), 'cntrct_nm': '단납 건(1,000만원 이하)',
-                   'bcnc_sn': '', 'bcnc_nm': '',
-                   'amount': remain}
-            dashboard_row = DEPT_CNTRCT_SN[r['dept_code']] - len(DEPT_CNTRCT_SN)
-            if dashboard_row in goal_data:
-                if 'rmT' in goal_data[dashboard_row]:
-                    row['dashboard_rm'] = goal_data[dashboard_row]['rmT']
-                else:
-                    row['dashboard_rm'] = ''
-                if 'valueT' in goal_data[dashboard_row]:
-                    row['dashboard_value'] = goal_data[dashboard_row]['valueT']
-                else:
-                    row['dashboard_value'] = ''
+        row = {'value': 0, 'stdyy': str(params["s_stdyy"]).zfill(4), 'amt_ty_code': 3,
+               'dept_code': dept_code, 'cntrct_sn': DEPT_CNTRCT_SN[dept_code]-len(DEPT_CNTRCT_SN), 'cntrct_nm': '단납 건(1,000만원 이하)',
+               'bcnc_sn': '', 'bcnc_nm': '',
+               'amount': remain}
+        dashboard_row = DEPT_CNTRCT_SN[dept_code] - len(DEPT_CNTRCT_SN)
+        if dashboard_row in goal_data:
+            if 'rmT' in goal_data[dashboard_row]:
+                row['dashboard_rm'] = goal_data[dashboard_row]['rmT']
+            else:
+                row['dashboard_rm'] = ''
+            if 'valueT' in goal_data[dashboard_row]:
+                row['dashboard_value'] = goal_data[dashboard_row]['valueT']
             else:
                 row['dashboard_value'] = ''
-                row['dashboard_rm'] = ''
-            if '3' not in result['contractList'][dept_code]:
-                result['contractList'][dept_code]['3'] = list()
-            result['contractList'][dept_code]['3'].append(row)
+        else:
+            row['dashboard_value'] = ''
+            row['dashboard_rm'] = ''
+        if '3' not in result['contractList'][dept_code]:
+            result['contractList'][dept_code]['3'] = list()
+        result['contractList'][dept_code]['3'].append(row)
+
 
     for dept_code in result['contractList']:
         if '2' in result['contractList'][dept_code]:
             remain = total_amount_2[dept_code] - sum([c['amount'] for c in result['contractList'][dept_code]['2']])
         else:
             remain = total_amount_2[dept_code]
-        if remain != 0:
-            row = {'value': 0, 'stdyy': str(params["s_stdyy"]).zfill(4), 'amt_ty_code': 2,
-                   'dept_code': dept_code, 'cntrct_sn': DEPT_CNTRCT_SN[r['dept_code']]-(len(DEPT_CNTRCT_SN)*2), 'cntrct_nm': '단납 건(5,000만원 이하)',
-                   'bcnc_sn': '', 'bcnc_nm': '',
-                   'amount': remain}
-            dashboard_row = DEPT_CNTRCT_SN[r['dept_code']] - (len(DEPT_CNTRCT_SN)*2)
-            if dashboard_row in goal_data:
-                if 'rmT' in goal_data[dashboard_row]:
-                    row['dashboard_rm'] = goal_data[dashboard_row]['rmT']
-                else:
-                    row['dashboard_rm'] = ''
-                if 'valueT' in goal_data[dashboard_row]:
-                    row['dashboard_value'] = goal_data[dashboard_row]['valueT']
-                else:
-                    row['dashboard_value'] = ''
+        row = {'value': 0, 'stdyy': str(params["s_stdyy"]).zfill(4), 'amt_ty_code': 2,
+               'dept_code': dept_code, 'cntrct_sn': DEPT_CNTRCT_SN[dept_code]-(len(DEPT_CNTRCT_SN)*2), 'cntrct_nm': '단납 건(5,000만원 이하)',
+               'bcnc_sn': '', 'bcnc_nm': '',
+               'amount': remain}
+        dashboard_row = DEPT_CNTRCT_SN[dept_code] - (len(DEPT_CNTRCT_SN)*2)
+        if dashboard_row in goal_data:
+            if 'rmS' in goal_data[dashboard_row]:
+                row['dashboard_rm'] = goal_data[dashboard_row]['rmS']
+            else:
+                row['dashboard_rm'] = ''
+            if 'valueS' in goal_data[dashboard_row]:
+                row['dashboard_value'] = goal_data[dashboard_row]['valueS']
             else:
                 row['dashboard_value'] = ''
-                row['dashboard_rm'] = ''
-            if '2' not in result['contractList'][dept_code]:
-                result['contractList'][dept_code]['2'] = list()
-            result['contractList'][dept_code]['2'].append(row)
+        else:
+            row['dashboard_value'] = ''
+            row['dashboard_rm'] = ''
+        if '2' not in result['contractList'][dept_code]:
+            result['contractList'][dept_code]['2'] = list()
+        result['contractList'][dept_code]['2'].append(row)
 
     return jsonify(result)
 

@@ -401,6 +401,7 @@ def get_contract(params):
 				, biss_g
 				, biss_h
 				, biss_i
+				, biss_j
 				, home_count
 				, home_region
 				FROM contract c
@@ -899,7 +900,7 @@ def get_etc_rcppay_report_list(params):
 				AND r.cntrct_sn = %(s_cntrct_sn)s
 				AND r.prjct_sn = %(s_prjct_sn)s
 				AND r.rcppay_se_code = 'O'
-				AND r.acntctgr_code NOT IN ('108', '638', '110') 
+				AND r.acntctgr_code NOT IN ('108', '638', '110', '504') 
 				UNION ALL
 				SELECT c.card_de AS rcppay_de
 				, c.acntctgr_code
@@ -915,7 +916,7 @@ def get_etc_rcppay_report_list(params):
 				FROM card c
 				WHERE c.ctmmny_sn = 1
 				AND c.cntrct_sn = %(s_cntrct_sn)s
-				AND c.acntctgr_code NOT IN ('108', '638', '110') 
+				AND c.acntctgr_code NOT IN ('108', '638', '110', '504') 
 				UNION ALL
 				SELECT s.dlivy_de AS rcppay_de
 				, '' AS acntctgr_code
@@ -1049,6 +1050,7 @@ def get_s4_account_report_list(params):
     				, a.bcnc_sn AS s_bcnc_sn
     				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=a.ctmmny_sn AND bcnc_sn=a.bcnc_sn) AS s_bcnc_nm
     				, a.rm
+    				, ac.model_no AS model_where
     				FROM account a
     				LEFT JOIN account ac
     				ON a.ctmmny_sn=ac.ctmmny_sn AND a.cntrct_sn=ac.cntrct_sn AND a.prjct_sn=ac.prjct_sn AND a.cnnc_sn=ac.delng_sn
@@ -1059,6 +1061,29 @@ def get_s4_account_report_list(params):
     				AND ac.delng_ty_code = '4'
     				ORDER BY a.dlivy_de
     """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_sale_model_list(params):
+    query = """SELECT IFNULL(s.dlivy_de, '') AS dlivy_de
+                    , p.model_no AS model_no
+                    , p.prdlst_se_code AS prdlst_se_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=p.prdlst_se_code) AS prdlst_se_nm
+                    , s.dlamt AS dlamt
+                    , s.dlnt AS dlnt
+                    , p.bcnc_sn AS bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS bcnc_nm
+                    , p.wrhousng_de AS expect_de
+                    , p.delng_sn AS delng_sn
+                    , p.model_no
+                FROM (SELECT * FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('63', '66')) p
+                LEFT OUTER JOIN account s
+                ON s.cnnc_sn=p.delng_sn
+                WHERE 1=1
+				AND p.cntrct_sn = %(s_cntrct_sn)s
+				AND p.prjct_sn = %(s_prjct_sn)s
+            """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -1375,13 +1400,14 @@ def get_s2_taxbil_report_list(params):
 				, t.vat
 				, (t.splpc_am + t.vat) AS total
 				, t.pblicte_trget_sn
+				, t.delng_se_code
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=t.ctmmny_sn AND bcnc_sn=t.pblicte_trget_sn) AS pblicte_trget_nm
 				FROM taxbil t
 				WHERE t.ctmmny_sn = 1
 				AND t.cntrct_sn = %(s_cntrct_sn)s
 				AND t.prjct_sn = %(s_prjct_sn)s
-				AND t.delng_se_code = 'S2'
-				ORDER BY t.pblicte_de, t.pblicte_trget_sn
+				AND t.delng_se_code IN ('S2', 'S4')
+				ORDER BY t.delng_se_code, t.pblicte_de, t.pblicte_trget_sn
 """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -1395,11 +1421,12 @@ def get_i2_rcppay_report_list(params):
 				, r.prvent_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=r.ctmmny_sn AND bcnc_sn=r.prvent_sn) AS prvent_nm
 				, r.rcppay_dtls
+				, rcppay_se_code
 				FROM rcppay r
 				WHERE r.ctmmny_sn = 1
 				AND r.cntrct_sn = %(s_cntrct_sn)s
 				AND r.prjct_sn = %(s_prjct_sn)s
-				AND r.rcppay_se_code = 'I2'
+				AND r.rcppay_se_code IN ('I2', 'I4')
 				ORDER BY r.rcppay_de
 """
     g.curs.execute(query, params)
@@ -1409,9 +1436,10 @@ def get_i2_rcppay_report_list(params):
 def get_s3_taxbil_report_list(params):
     query = """SELECT t.pblicte_de
 				, t.splpc_am
-				, t.vat
-				, (t.splpc_am + t.vat) AS total
+				, IFNULL(t.vat, 0) AS vat
+				, (t.splpc_am + IFNULL(t.vat, 0)) AS total
 				, t.pblicte_trget_sn
+				, t.taxbil_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=t.ctmmny_sn AND bcnc_sn=t.pblicte_trget_sn) AS pblicte_trget_nm
 				FROM taxbil t
 				WHERE t.ctmmny_sn = 1
@@ -1432,6 +1460,7 @@ def get_i3_rcppay_report_list(params):
 				, r.prvent_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=r.ctmmny_sn AND bcnc_sn=r.prvent_sn) AS prvent_nm
 				, r.rcppay_dtls
+				, r.cnnc_sn
 				FROM rcppay r
 				WHERE r.ctmmny_sn = 1
 				AND r.cntrct_sn = %(s_cntrct_sn)s
@@ -1495,7 +1524,7 @@ def get_s6_account_report_list(params):
 				AND s.cntrct_sn = %(s_cntrct_sn)s
 				AND s.prjct_sn = %(s_prjct_sn)s
 				AND s.delng_se_code = 'S'
-				AND p.delng_ty_code IN ('61', '62')
+				AND p.delng_ty_code IN ('61', '62', '64', '65')
 				ORDER BY s.dlivy_de
 """
     g.curs.execute(query, params)
@@ -1830,6 +1859,8 @@ def insert_project(params):
         query = """INSERT INTO charger(cntrct_sn, prjct_sn, charger_se_code, charger_nm, charger_moblphon, charger_telno, regist_dtm, register_id) VALUES (%s, %s, %s, %s, %s, '', NOW(), %s)"""
         g.curs.execute(query, (cntrct_sn, prjct_sn, 1, params["charger_nm1"], params["charger_moblphon1"], session["member"]["member_id"]))
         g.curs.execute(query, (cntrct_sn, prjct_sn, 2, params["charger_nm2"], params["charger_moblphon2"], session["member"]["member_id"]))
+        if params['prjct_ty_code'] in ('BD', 'BF'):
+            g.curs.execute(query, (cntrct_sn, prjct_sn, 6, params["charger_nm6"], params["charger_moblphon6"], session["member"]["member_id"]))
 
 def get_b_projects(params):
     query = """SELECT cntrct_sn
@@ -1857,8 +1888,31 @@ def get_p_projects(params):
                     , CONCAT(cntrwk_bgnde,' ~ ',cntrwk_endde) AS cntrwk_period
                     , home_count
                     , home_region
+                    , mh_count
+                    , mh_place
+                    , mh_period
+                    , mh_approval_step
                 FROM contract 
                 WHERE progrs_sttus_code='P'
+                AND prjct_creat_at='Y'
+                """
+
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
+def get_all_projects(params):
+    query = """SELECT cntrct_sn
+                    , cntrct_no
+                    , spt_nm
+                    , CONCAT(cntrwk_bgnde,' ~ ',cntrwk_endde) AS cntrwk_period
+                    , home_count
+                    , home_region
+                    , mh_count
+                    , mh_place
+                    , mh_period
+                    , mh_approval_step
+                FROM contract 
+                WHERE progrs_sttus_code IN ('P', 'B')
                 AND prjct_creat_at='Y'
                 """
 
@@ -1870,6 +1924,45 @@ def get_project_by_cntrct_nm(cntrct_sn):
     g.curs.execute("SELECT prjct_sn FROM project WHERE cntrct_sn=%s", (cntrct_sn, ))
     prjct = g.curs.fetchone()
     return prjct
+
+
+def insert_BF_c_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    params['regist_dtm'] = datetime.now()
+    params['register_id'] = session['member']['member_id']
+
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '10', '기타비용', 1, %(b10)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
+    params['b10'] = int(params['E_10'].replace(",", ""))
+    g.curs.execute(query, params)
+
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
+    params['b7'] = int(params['E_7'].replace(",", ""))
+    g.curs.execute(query, params)
+
+    g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
+def update_BF_c_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    params['regist_dtm'] = datetime.now()
+    params['register_id'] = session['member']['member_id']
+    g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'E' and cntrct_sn=%s", params['cntrct_sn'])
+    extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
+    params["extra_sn"] = extra_sn
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '10', '기타비용', 1, %(b10)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+    params['b10'] = int(params['Z_10'].replace(",", "")) - int(params['E_10'].replace(",", ""))
+    g.curs.execute(query, params)
+
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+    params['b7'] = int(params['Z_7'].replace(",", "")) - int(params['E_7'].replace(",", ""))
+    g.curs.execute(query, params)
+
+    g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
+
 
 def insert_c_project(params):
     cost_data = []
@@ -1930,7 +2023,8 @@ def insert_c_project(params):
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
 
-    g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P' WHERE cntrct_sn=%(cntrct_sn)s", params)
+    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
 def insert_c_extra_project(params):
     cost_data = []
     g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code IN ('C', 'E') and cntrct_sn=%s", params['cntrct_sn'])
@@ -1954,20 +2048,162 @@ def insert_c_extra_project(params):
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
 
+def delete_option_bf_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    g.curs.execute("DELETE FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code='C' AND ct_se_code='9' AND purchsofc_sn='2'", params)
 
-def insert_b_bf_project(params):
-    from pprint import pprint
-    pprint(params)
+def delete_option_bd_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    g.curs.execute("DELETE FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code='C' AND ct_se_code='1' AND purchsofc_sn='2'", params)
+def insert_b_option_bf_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
     params['regist_dtm'] = datetime.now()
     params['register_id'] = session['member']['member_id']
-    for model_no, qy, puchas_amount, dscnt_rt, fee_rt in zip(params['model_no[]'], params['qy[]'], params['puchas_amount[]'], params['dc_rate[]'], params['rate[]']):
+    if "Z_10" in params:
+        g.curs.execute(
+            "SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'C' and cntrct_sn=%s",params['cntrct_sn'])
+        extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
+        params["extra_sn"] = extra_sn
+    else:
+        params["extra_sn"] = 0
+
+    for model_no, qy, puchas_amount, dscnt_rt, fee_rt, amount in zip(params['model_no[]'], params['qy[]'], params['puchas_amount[]'], params['dc_rate[]'], params['rate[]'], params['amount[]']):
         if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '' and fee_rt == '':
             continue
         qy = int(qy.replace(",", ""))
+        amount = int(amount.replace(",", ""))
         puchas_amount = int(puchas_amount.replace(",", ""))
-        dscnt_rt = float(dscnt_rt.replace("%", ""))
+        dscnt_rt = (100.0 - (amount / puchas_amount)*100.0)
+        fee_rt = float(fee_rt.replace("%", ""))
+        pParams = {key : value for key, value in params.items() if not key.endswith("[]")}
+        pParams["qy"] = qy
+        pParams["puchas_amount"] = puchas_amount
+        pParams["dscnt_rt"] = dscnt_rt
+        pParams["fee_rt"] = fee_rt
+        pParams['model_no'] = model_no
+        if "cost_date" in params:
+            pParams["cost_date"] = params["cost_date"]
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, regist_dtm, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, %(cost_date)s, %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+        else:
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, regist_dtm, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+        g.curs.execute(query, pParams)
+
+def insert_bd_expect_equipment(params):
+    for model_no, qy, puchas_amount, dlamt, salamt, dlivy_amt in zip(params['model_no[]'], params['qy[]'], params['dlivy_amt[]'], params['dlamt[]'], params['cntrct_dlamt[]'], params['dlivy_amt[]']):
+        if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '':
+            continue
+        qy = int(qy.replace(",", ""))
+        puchas_amount = int(puchas_amount.replace(",", ""))
+        dlamt = int(dlamt.replace(",", ""))
+        dscnt_rt = float((1.0-(dlamt/puchas_amount))*100.0)
+        salamt = int(salamt.replace(",", ""))
+        dlivy_amt = int(dlivy_amt.replace(",", ""))
+        query = """INSERT INTO expect_equipment(cntrct_sn, model_no, prdlst_se_code, bcnc_sn, delng_ty_code, cnt_dlnt, dlamt, samt, rm, dlivy_amt)
+                    VALUES (%(cntrct_sn)s, %(model_no)s, '9', 74, 1, %(qy)s, %(dlamt)s, %(salamt)s, '', %(dlivy_amt)s)"""
+        pParams = {key : value for key, value in params.items() if not key.endswith("[]")}
+        pParams["qy"] = qy
+        pParams["dlamt"] = dlamt
+        pParams["salamt"] = salamt
+        pParams['model_no'] = model_no
+        pParams["dlivy_amt"] = dlivy_amt
+        g.curs.execute(query, pParams)
+
+def insert_b_option_bd_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    params['regist_dtm'] = datetime.now()
+    params['register_id'] = session['member']['member_id']
+    if "Z_10" in params:
+        g.curs.execute(
+            "SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'C' and cntrct_sn=%s",params['cntrct_sn'])
+        extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
+        params["extra_sn"] = extra_sn
+    else:
+        params["extra_sn"] = 0
+
+    for model_no, qy, puchas_amount, dlamt, salamt in zip(params['model_no[]'], params['qy[]'], params['dlivy_amt[]'], params['dlamt[]'], params['cntrct_dlamt[]']):
+        if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '':
+            continue
+        qy = int(qy.replace(",", ""))
+        puchas_amount = int(puchas_amount.replace(",", ""))
+        dlamt = int(dlamt.replace(",", ""))
+        dscnt_rt = float((1.0-(dlamt/puchas_amount))*100.0)
+        salamt = int(salamt.replace(",", ""))
+        pParams = {key : value for key, value in params.items() if not key.endswith("[]")}
+        pParams["qy"] = qy
+        pParams["puchas_amount"] = puchas_amount
+        pParams["dscnt_rt"] = dscnt_rt
+        pParams["salamt"] = salamt
+        pParams['model_no'] = model_no
+        if "cost_date" in params:
+            pParams["cost_date"] = params["cost_date"]
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, %(cost_date)s, %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+        else:
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+        g.curs.execute(query, pParams)
+
+
+def insert_b_bd_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    params['regist_dtm'] = datetime.now()
+    params['register_id'] = session['member']['member_id']
+    for model_no, qy, puchas_amount, dlamt, salamt in zip(params['model_no[]'], params['qy[]'], params['dlivy_amt[]'], params['dlamt[]'], params['cntrct_dlamt[]']):
+        if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '':
+            continue
+        qy = int(qy.replace(",", ""))
+        puchas_amount = int(puchas_amount.replace(",", ""))
+        dlamt = int(dlamt.replace(",", ""))
+        dscnt_rt = float((1.0-(dlamt/puchas_amount))*100.0)
+        salamt = int(salamt.replace(",", ""))
+        query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)
+                    VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'B', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
+        pParams = {key : value for key, value in params.items() if not key.endswith("[]")}
+        pParams["qy"] = qy
+        pParams["puchas_amount"] = puchas_amount
+        pParams["dscnt_rt"] = dscnt_rt
+        pParams["salamt"] = salamt
+        pParams['model_no'] = model_no
+        g.curs.execute(query, pParams)
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, add_dscnt_rt, cost_date, extra_sn, regist_dtm, register_id, dspy_se_code)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '61', '74', '(예상)', 1, %(b61)s, 0.0, %(b61rate)s ,'0000-00-00', 0, %(regist_dtm)s, %(register_id)s, 1)"""
+    params['b61'] = int(params['D_61'].replace(",", ""))
+    params['b61rate'] = (int(params['D_61_DC'].replace(",", ""))*100/int(params['D_61'].replace(",", ""))) if int(params['D_61'].replace(",", "")) != 0 else 0.0
+    g.curs.execute(query, params)
+
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, salamt, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'G', '63', '판매금액', 1, %(b63)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
+    params['b63'] = int(params['D_63'].replace(",", ""))
+    g.curs.execute(query, params)
+
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '10', '기타비용', 1, %(b10)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
+    params['b10'] = int(params['D_10'].replace(",", ""))
+    g.curs.execute(query, params)
+
+    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
+                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
+    params['b7'] = int(params['D_7'].replace(",", ""))
+    g.curs.execute(query, params)
+def insert_b_bf_project(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    params['prjct_sn'] = prjct['prjct_sn']
+    params['regist_dtm'] = datetime.now()
+    params['register_id'] = session['member']['member_id']
+    for model_no, qy, puchas_amount, dscnt_rt, fee_rt, amount in zip(params['model_no[]'], params['qy[]'], params['puchas_amount[]'], params['dc_rate[]'], params['rate[]'], params['amount[]']):
+        if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '' and fee_rt == '':
+            continue
+        qy = int(qy.replace(",", ""))
+        amount = int(amount.replace(",", ""))
+        puchas_amount = int(puchas_amount.replace(",", ""))
+        dscnt_rt = (100.0 - (amount / puchas_amount)*100.0)
         fee_rt = float(fee_rt.replace("%", ""))
         query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, regist_dtm, register_id)
                     VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'B', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
@@ -1981,7 +2217,7 @@ def insert_b_bf_project(params):
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, add_dscnt_rt, cost_date, extra_sn, regist_dtm, register_id, dspy_se_code)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '61', '74', '(예상)', 1, %(b61)s, 0.0, %(b61rate)s ,'0000-00-00', 0, %(regist_dtm)s, %(register_id)s, 1)"""
     params['b61'] = int(params['D_61'].replace(",", ""))
-    params['b61rate'] = int(params['D_61_DC'].replace(",", ""))*100/int(params['D_61'].replace(",", ""))
+    params['b61rate'] = (int(params['D_61_DC'].replace(",", ""))*100/int(params['D_61'].replace(",", ""))) if int(params['D_61'].replace(",", "")) != 0 else 0.0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, salamt, cost_date, extra_sn, regist_dtm, register_id)
@@ -2037,6 +2273,7 @@ def insert_b_project(params):
 
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
+
 
 
 def insert_option_cost(params):
@@ -2159,6 +2396,7 @@ def get_expect_equip_list(params):
                     , e.dlamt
                     , e.samt AS samount
                     , e.rm
+                    , e.dlivy_amt
                     , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
                     , IFNULL(q.dlnt, 0) AS sdlnt
                 FROM expect_equipment e
@@ -2273,9 +2511,12 @@ def get_reserved_project_list(params):
 
 def update_biss(params):
     data = dict()
-    for i in range(9):
+    for i in range(10):
         key = "biss_{}".format(chr(ord('a')+i))
         data[key] = params[key]
     keys = list(data.keys())
     query = """UPDATE contract SET {} WHERE cntrct_sn=%(cntrct_sn)s""".format(",".join(["{0}=%({0})s".format(k) for k in keys]))
+    g.curs.execute(query, params)
+def update_flaw_co(params):
+    query = """UPDATE contract SET flaw_co=%(biss)s WHERE cntrct_sn=%(cntrct_sn)s"""
     g.curs.execute(query, params)

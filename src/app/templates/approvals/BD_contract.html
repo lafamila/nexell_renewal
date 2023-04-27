@@ -24,11 +24,11 @@
     </thead>
     <tbody>
         <tr>
-            <td class="colorSky">계약번호</td>
+            <td class="colorSky text-center">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
         </tr>
         <tr>
-            <td class="colorSky">현장명</td>
+            <td class="colorSky text-center">현장명</td>
             <td class="text-center hasinput" colspan="3">
                 <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
                     {% if not init %}
@@ -42,18 +42,19 @@
             </td>
         </tr>
         <tr>
-            <td class="colorSky">세대수</td>
+            <td class="colorSky text-center">세대수</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
-            <td class="colorSky">지역</td>
+            <td class="colorSky text-center">지역</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
         </tr>
         <tr>
-            <td class="colorSky">공사기간</td>
+            <td class="colorSky text-center">공사기간</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
         </tr>
 
     </tbody>
 </table>
+
 <table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
@@ -69,7 +70,11 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="10"><span>직납 품목 및 내역</span><span class="text-right">VAT포함</span> </th>
+			<th class="sub-title colorN text-center" style="" colspan="10"><span>직납 품목 세부 내역 - VAT포함</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
         </tr>
         <tr>
             <th class="color-contract text-center">구분</th>
@@ -84,74 +89,97 @@
             <th class="color-contract text-center">이익금(VA)</th>
         </tr>
     </thead>
-    <tbody role="B_row">
-      <tr data-row="B_tr">
-        <th class="colorSky text-center">예정</th>
-        <td class="hasinput">
-            <input type="text" class="form-control text-left" name="model_no[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="qy[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="puchas_amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="rate" name="dc_rate[]" readonly>
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="samsung_amount[]" readonly>
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="cntrct_amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="va[]" readonly>
-        </td>
-      </tr>
-
+    <tbody role="construct_expect_row">
+        <tr data-row="construct_expect_tr">
+            <td class="colorSky text-center">예정</td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="expect_model_no[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="expect_qy[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="expect_dlivy_amt[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="rate" name="expect_dc_rate[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="expect_dlamt[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="expect_amount[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="rate" name="expect_cntrct_dlamt[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="expect_cntrct_amount[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="expect_va[]" readonly>
+            </td>
+        </tr>
     </tbody>
-    <tbody role="C_row">
-      <tr data-row="C_tr">
-        <th class="colorSky text-center">확정</th>
-        <td class="hasinput">
-            <input type="text" class="form-control text-left" name="model_no[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="qy[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="puchas_amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="rate" name="dc_rate[]" readonly>
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="samsung_amount[]" readonly>
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="cntrct_amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_amount[]">
-        </td>
-        <td class="hasinput">
-            <input type="text" class="form-control text-right" data-type="number" name="va[]" readonly>
-        </td>
-      </tr>
-
+    <tbody>
+        <tr>
+            <td class="colorG text-center" colspan="2">합계</td>
+            <td class="colorG text-center" data-column="expect_qy_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center" data-column="expect_amount_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center" data-column="expect_cntrct_amount_total"></td>
+            <td class="colorG text-center" data-column="expect_va_total"></td>
+        </tr>
+    </tbody>
+    <tbody role="construct_row">
+        <tr data-row="construct_tr">
+            <td class="colorSky text-center">확정</td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no[]">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="qy[]">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlivy_amt[]">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="rate" name="dc_rate[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="amount[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="rate" name="cntrct_dlamt[]">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="cntrct_amount[]" readonly>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="va[]" readonly>
+            </td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+            <td class="colorG text-center" colspan="2">합계</td>
+            <td class="colorG text-center" data-column="qy_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center" data-column="amount_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center" data-column="cntrct_amount_total"></td>
+            <td class="colorG text-center" data-column="va_total"></td>
+        </tr>
     </tbody>
 </table>
-
 <table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="100"/>
@@ -186,7 +214,7 @@
     </thead>
     <tbody role="ct_se_code">
         <tr data-row="B">
-            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+            <th class="colorB text-center middle">사전입찰</th>
             <th class="colorSky text-center">예정가</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="total_cntrct_amount" readonly>
@@ -195,55 +223,62 @@
                 <input type="text" class="form-control text-right" data-type="number" name="total_amount" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_61">
+                <input type="text" class="form-control text-right" data-type="number" name="D_61">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_61_DC">
+                <input type="text" class="form-control text-right" data-type="number" name="D_61_DC">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_63">
+                <input type="text" class="form-control text-right" data-type="number" name="D_63">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_7" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_7" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="B_10" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_10" readonly>
             </td>
             <td class="text-center" data-column="va"></td>
             <td class="text-center" data-column="va_rate"></td>
         </tr>
-        <tr data-row="C">
+        <tr data-row="E">
             <th class="colorB text-center middle" rowspan="2">수주계약</th>
             <th class="colorSky text-center">계약가</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_total_cntrct_amount">
+                <input type="text" class="form-control text-right" data-type="number" name="E_total_cntrct_amount" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_total_amount">
+                <input type="text" class="form-control text-right" data-type="number" name="E_total_amount" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_61">
+                <input type="text" class="form-control text-right" data-type="number" name="E_61">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_61_DC">
+                <input type="text" class="form-control text-right" data-type="number" name="E_61_DC">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_63">
+                <input type="text" class="form-control text-right" data-type="number" name="E_63">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_7">
+                <input type="text" class="form-control text-right" data-type="number" name="E_7" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="C_10">
+                <input type="text" class="form-control text-right" data-type="number" name="E_10" readonly>
             </td>
-            <td class="text-center" data-column="va"></td>
-            <td class="text-center" data-column="va_rate"></td>
+            <td class="text-center" data-column="E_va"></td>
+            <td class="text-center" data-column="E_va_rate"></td>
         </tr>
     </tbody>
 </table>
 
-<table class="table table-bordered table-form small-table" style="width:35%!important;">
+<table class="table table-bordered table-form small-table">
     <colgroup>
+        <col width="900"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
@@ -251,48 +286,29 @@
     </colgroup>
   <thead>
     <tr>
-        <th class="sub-title colorN text-center" colspan="4"><span>특이사항</span></th>
+        <th class="sub-title colorN text-center" colspan="11"><span>특이사항</span></th>
     </tr>
-
   </thead>
   <tbody>
     <tr>
-        <td class="text-center" colspan="4"></td>
+        <td colspan="11">
+            <textarea style="width:100%;height:100%;min-height:150px!important;resize:none;border:none;" name="option_bigo"></textarea>
+        </td>
     </tr>
   </tbody>
 </table>
 <script>
-    get_cost = function(cntrct_sn){
-        $.ajax({
-            url : '/api/project/get_costs_bd',
-            method : 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn},
-            success: function(pResult){
-                $(document).find("input[name=opt_approval_type]").yReadonly(false);
-                $(document).find("tbody[role='option_house'] input").attr("disabled", false);
-                $.each(pResult.bCostList, function(pIndex, pValue){
-                    $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
-                });
-                var totals = [];
-                $("tbody[role='ct_se_code']").find("tr").each(function(pIndex, pRow){
-                    var total = 0;
-                    $(pRow).find("[data-type='number']").each(function(pI, pTag){
-                        var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
-                        total += value;
-                    });
-                    $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
-                    totals.push(total);
-                    if(pIndex == 0){
-                        $(document).find("[name='D_10']").html(Math.round(total*0.005).toFormat('NUMBER'));
-                    }
-                });
+    function dateDiff(_date1, _date2) {
+        console.log(_date1, _date2);
+        var diffDate_1 = new Date(_date1);
+        var diffDate_2 = new Date(_date2);
 
-                $("tbody[role='ct_se_code']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
-                $("tbody[role='ct_se_code']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+        var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
+        console.log(diff);
+        diff = Math.round(diff / (1000 * 3600 * 24));
+        console.log(diff);
 
-            }
-        });
-
+        return diff;
     }
     function isValidDate(dateString) {
       var regEx = /^\d{4}-\d{2}-\d{2}$/;
@@ -303,53 +319,202 @@
       if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
       return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
     }
+    get_cost_bf_bd = function(cntrct_sn){
+        $.ajax({
+            url : '/api/project/get_cost_bf_bd',
+            method: 'GET',
+            data : {"s_cntrct_sn" : cntrct_sn},
+            success: function(pResult){
+                console.log(pResult);
+                var cntrct_amount_total = 0, amount_total = 0;
+                cloneRow("construct_tr", pResult.cCostList.length-1);
+                $.each(pResult.cCostList, function(pIndex, pValue){
+                    $("tbody[role='construct_row']").find(`[name="model_no[]"]`).eq(pIndex).val(pValue.model_no);
+                    $("tbody[role='construct_row']").find(`[name="qy[]"]`).eq(pIndex).val(pValue.qy.toFormat('NUMBER'));
+                    $("tbody[role='construct_row']").find(`[name="dlivy_amt[]"]`).eq(pIndex).val(pValue.puchas_amount.toFormat('NUMBER'));
+                    $("tbody[role='construct_row']").find(`[name="dlamt[]"]`).eq(pIndex).val(Math.round((100.0-pValue.dscnt_rt)*pValue.puchas_amount/100.0).toFormat('NUMBER'));
+                    $("tbody[role='construct_row']").find(`[name="cntrct_dlamt[]"]`).eq(pIndex).val(pValue.salamt.toFormat('NUMBER'));
+                });
+                $("tbody[role='construct_row']").trigger("change");
+                cloneRow("construct_expect_tr", pResult.cCostListExtra.length-1);
+                $.each(pResult.cCostListExtra, function(pIndex, pValue){
+                    var amount = Math.round(pValue.puchas_amount * (100 - pValue.dscnt_rt) / 100.0 * pValue.qy);
+                    var cntrct_amount = pValue.salamt * pValue.qy;
+                    cntrct_amount_total += cntrct_amount;
+                    amount_total += amount;
+                    $("tbody[role='construct_expect_row']").find(`[name="expect_model_no[]"]`).eq(pIndex).val(pValue.model_no);
+                    $("tbody[role='construct_expect_row']").find(`[name="expect_qy[]"]`).eq(pIndex).val(pValue.qy.toFormat('NUMBER'));
+                    $("tbody[role='construct_expect_row']").find(`[name="expect_dlivy_amt[]"]`).eq(pIndex).val(pValue.puchas_amount.toFormat('NUMBER'));
+                    $("tbody[role='construct_expect_row']").find(`[name="expect_dlamt[]"]`).eq(pIndex).val(Math.round((100.0-pValue.dscnt_rt)*pValue.puchas_amount/100.0).toFormat('NUMBER'));
+                    $("tbody[role='construct_expect_row']").find(`[name="expect_cntrct_dlamt[]"]`).eq(pIndex).val(pValue.salamt.toFormat('NUMBER'));
+                });
+                $("tbody[role='construct_expect_row']").trigger("change");
+                $.each(pResult.eCostListExtra, function(pIndex, pValue){
+                    if(pValue.ct_se_code == "61"){
 
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_61"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_61_DC"]`).val((pValue.puchas_amount*pValue.add_dscnt_rt/100.0).toFormat('NUMBER'));
+                    }
+                    else if(pValue.ct_se_code == "7"){
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_7"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                        $(`tbody[role="ct_se_code"]`).find(`[name="E_7"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                    }
+                    else if(pValue.ct_se_code == "10"){
+                        $(`tbody[role="ct_se_code"]`).find(`[name="D_10"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                    }
+                });
+                var e_61 = 0;
+                var e_61_dc = 0;
+                $.each(pResult.eCostList, function(pIndex, pValue){
+                    if(["61", "62", "64", "65"].includes(pValue.ct_se_code)){
+                        e_61 += pValue.puchas_amount;
+                        e_61_dc += (pValue.puchas_amount*pValue.add_dscnt_rt/100.0);
+                    }
+                });
+                $(`tbody[role="ct_se_code"]`).find(`[name="E_61"]`).val(e_61.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="E_61_DC"]`).val(e_61_dc.toFormat('NUMBER'));
+                $.each(pResult.gCostList, function(pIndex, pValue){
+                     $(`tbody[role="ct_se_code"]`).find(`[name="D_63"]`).val(pValue.salamt.toFormat('NUMBER'));
+                     $(`tbody[role="ct_se_code"]`).find(`[name="E_63"]`).val(pValue.salamt.toFormat('NUMBER'));
+                });
+                $(`tbody[role="ct_se_code"]`).find(`[name="total_cntrct_amount"]`).val(cntrct_amount_total.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="total_amount"]`).val(amount_total.toFormat('NUMBER'));
+
+                $(`tbody[role="ct_se_code"]`).trigger("change");
+
+                $(document).find("tbody[role='ct_se_code'] input").attr("disabled", false);
+                $(document).find("tbody[role='ct_se_code'] input").attr("readonly", true);
+
+
+            }
+
+        })
+    }
     fnValidate = function(){
                     var result = true;
                     return result;
                }
-    $(document).on("change", "tbody[role='option_row']", function(){
-        var e_amount = parseInt($(this).find("input[name='e_opt_amount']").val().replaceAll(",", "")); if(isNaN(e_amount)) e_amount = 0;
-        var c_amount = parseInt($(this).find("input[name='c_opt_amount']").val().replaceAll(",", "")); if(isNaN(c_amount)) c_amount = 0;
-        $(this).parent().find("[data-column='diff']").html((e_amount - c_amount).toFormat('NUMBER'));
-    });
-    $(document).find("input[name=opt_approval_type]").on("change", function(){
-        var checked = $(document).find("input[name=opt_approval_type]:checked").val();
-        if(checked == 'S'){
-            $(document).find("tbody[role='option_row'] tr[row='E'] input").attr("disabled", false);
-            $(document).find("tbody[role='option_row'] tr[row='C'] input").attr("disabled", true);
+    cloneRow = function(selector, count){
+        if(selector == "construct_tr"){
+            for(let i=0;i<count;i++){
+                var trs = $(document).find("tbody[role='construct_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='construct_row']").append($(origin));
+            }
+            $(document).find("tbody[role='construct_row']").trigger("change");
+            $(document).find("tbody[role='construct_row']").yRowspan(0);
+
+        }
+        if(selector == "construct_expect_tr"){
+            for(let i=0;i<count;i++){
+                var trs = $(document).find("tbody[role='construct_expect_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='construct_expect_row']").append($(origin));
+            }
+            $(document).find("tbody[role='construct_expect_row']").trigger("change");
+            $(document).find("tbody[role='construct_expect_row']").yRowspan(0);
+
+        }
+    }
+
+    getValue = function(tag, isHTML=true){
+        if(isHTML){
+            var value = parseInt($(tag).html().replaceAll(",", ""));
         }
         else{
-            var params = {"s_cntrct_sn" : $("#cntrct_sn").find(":selected").val()};
-            $.ajax({
-                url : '/api/project/get_option_cost',
-                method: 'GET',
-                data : params,
-                success: function(pResult){
-                    if(pResult != null){
-                        $.each(pResult, function(pKey, pValue){
-                            if(pKey.startsWith("e_")){
-                                var target = $(document).find(`tbody[role='option_row'] tr[row='E'] input[name='${pKey}']`);
-                                if($(target).data("type") == "number"){
-                                    $(target).val(pValue.toFormat('NUMBER'));
-                                }
-                                else{
-                                    $(target).val(pValue);
-                                }
+            var value = parseInt($(tag).val().replaceAll(",", ""));
 
-                            }
-                        });
-                    }
-                    $(document).find("tbody[role='option_row'] tr[row='E'] input").attr("disabled", true);
-                    $(document).find("tbody[role='option_row'] tr[row='C'] input").attr("disabled", false);
-
-                }
-            })
         }
+        if(isNaN(value)) value = 0;
+        return value;
+    }
+    $(document).on("change", "tbody[role='construct_row']", function(){
+        var total_amount = 0;
+        var total_cntrct_amount = 0;
+        var total_qy = 0;
+        $(this).find("tr").each(function(pIndex, pRow){
+            var qy = parseInt($(pRow).find("input[name='qy[]']").eq(0).val().replaceAll(",", "")); if(isNaN(qy)) qy = 0;
+            var dlivy_amt = parseInt($(pRow).find("input[name='dlivy_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(dlivy_amt)) dlivy_amt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var cntrct_dlamt = parseInt($(pRow).find("input[name='cntrct_dlamt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(cntrct_dlamt)) cntrct_dlamt = 0;
+            $(pRow).find("input[name='dc_rate[]']").eq(0).val((100 - dlamt*100.0/dlivy_amt).toFixed(2)+"%");
+            $(pRow).find("input[name='amount[]']").eq(0).val((qy*dlamt).toFormat('NUMBER'));
+            $(pRow).find("input[name='cntrct_amount[]']").eq(0).val((qy*cntrct_dlamt).toFormat('NUMBER'));
+            $(pRow).find("input[name='va[]']").eq(0).val((qy*(cntrct_dlamt-dlamt)).toFormat('NUMBER'));
+            total_amount += qy*dlamt;
+            total_cntrct_amount += qy*cntrct_dlamt;
+            total_qy += qy;
+        });
+        $(document).find(`[data-column="qy_total"]`).html(total_qy.toFormat('NUMBER'));
+        $(document).find(`[data-column="amount_total"]`).html(total_amount.toFormat('NUMBER'));
+        $(document).find(`[data-column="cntrct_amount_total"]`).html(total_cntrct_amount.toFormat('NUMBER'));
+        $(document).find(`[data-column="va_total"]`).html((total_cntrct_amount-total_amount).toFormat('NUMBER'));
+        $(document).find("[name='E_total_cntrct_amount']").val(total_cntrct_amount.toFormat('NUMBER'));
+        $(document).find("[name='E_total_amount']").val(total_amount.toFormat('NUMBER'));
+        $(document).find("[name='E_10']").val(Math.round(total_cntrct_amount*0.005).toFormat('NUMBER'));
+        $(`tbody[role="ct_se_code"]`).trigger("change");
+    });
+    $(document).on("change", "tbody[role='construct_expect_row']", function(){
+        var total_amount = 0;
+        var total_cntrct_amount = 0;
+        var total_qy = 0;
+        $(this).find("tr").each(function(pIndex, pRow){
+            var qy = parseInt($(pRow).find("input[name='expect_qy[]']").eq(0).val().replaceAll(",", "")); if(isNaN(qy)) qy = 0;
+            var dlivy_amt = parseInt($(pRow).find("input[name='expect_dlivy_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(dlivy_amt)) dlivy_amt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='expect_dlamt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var cntrct_dlamt = parseInt($(pRow).find("input[name='expect_cntrct_dlamt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(cntrct_dlamt)) cntrct_dlamt = 0;
+            $(pRow).find("input[name='expect_dc_rate[]']").eq(0).val((100 - dlamt*100.0/dlivy_amt).toFixed(2)+"%");
+            $(pRow).find("input[name='expect_amount[]']").eq(0).val((qy*dlamt).toFormat('NUMBER'));
+            $(pRow).find("input[name='expect_cntrct_amount[]']").eq(0).val((qy*cntrct_dlamt).toFormat('NUMBER'));
+            $(pRow).find("input[name='expect_va[]']").eq(0).val((qy*(cntrct_dlamt-dlamt)).toFormat('NUMBER'));
+            total_amount += qy*dlamt;
+            total_cntrct_amount += qy*cntrct_dlamt;
+            total_qy += qy;
+        });
+        $(document).find(`[data-column="expect_qy_total"]`).html(total_qy.toFormat('NUMBER'));
+        $(document).find(`[data-column="expect_amount_total"]`).html(total_amount.toFormat('NUMBER'));
+        $(document).find(`[data-column="expect_cntrct_amount_total"]`).html(total_cntrct_amount.toFormat('NUMBER'));
+        $(document).find(`[data-column="expect_va_total"]`).html((total_cntrct_amount-total_amount).toFormat('NUMBER'));
+    });
+    $(document).on("change", "tbody[role='ct_se_code']", function(){
+        var total_cntrct_amount = parseInt($(document).find("[name='total_cntrct_amount']").val().replaceAll(",", "")); if(isNaN(total_cntrct_amount)) total_cntrct_amount = 0;
+        var total_amount = parseInt($(document).find("[name='total_amount']").val().replaceAll(",", "")); if(isNaN(total_amount)) total_amount = 0;
+        var D_61_DC = parseInt($(document).find("[name='D_61_DC']").val().replaceAll(",", "")); if(isNaN(D_61_DC)) D_61_DC = 0;
+        var D_63 = parseInt($(document).find("[name='D_63']").val().replaceAll(",", "")); if(isNaN(D_63)) D_63 = 0;
+        var D_61 = parseInt($(document).find("[name='D_61']").val().replaceAll(",", "")); if(isNaN(D_61)) D_61 = 0;
+        var D_7 = parseInt($(document).find("[name='D_7']").val().replaceAll(",", "")); if(isNaN(D_7)) D_7 = 0;
+        var D_10 = parseInt($(document).find("[name='D_10']").val().replaceAll(",", "")); if(isNaN(D_10)) D_10 = 0;
+
+        var va = total_cntrct_amount + D_61_DC + D_63 - D_61 - D_7 - D_10 - total_amount;
+
+
+        $(this).find("[data-column='va']").html(va.toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html((va*100.0/total_cntrct_amount).toFixed(1)+"%");
+
+        var E_total_cntrct_amount = parseInt($(document).find("[name='E_total_cntrct_amount']").val().replaceAll(",", "")); if(isNaN(E_total_cntrct_amount)) E_total_cntrct_amount = 0;
+        var E_total_amount = parseInt($(document).find("[name='E_total_amount']").val().replaceAll(",", "")); if(isNaN(E_total_amount)) E_total_amount = 0;
+        var E_61_DC = parseInt($(document).find("[name='E_61_DC']").val().replaceAll(",", "")); if(isNaN(E_61_DC)) E_61_DC = 0;
+        var E_63 = parseInt($(document).find("[name='E_63']").val().replaceAll(",", "")); if(isNaN(E_63)) E_63 = 0;
+        var E_61 = parseInt($(document).find("[name='E_61']").val().replaceAll(",", "")); if(isNaN(E_61)) E_61 = 0;
+        var E_7 = parseInt($(document).find("[name='E_7']").val().replaceAll(",", "")); if(isNaN(E_7)) E_7 = 0;
+        var E_10 = parseInt($(document).find("[name='E_10']").val().replaceAll(",", "")); if(isNaN(E_10)) E_10 = 0;
+
+        var E_va = E_total_cntrct_amount + D_61_DC + D_63 - D_61 - D_7 - D_10 - E_total_amount;
+
+
+        $(this).find("[data-column='E_va']").html(E_va.toFormat('NUMBER'));
+        $(this).find("[data-column='E_va_rate']").html((E_va*100.0/E_total_cntrct_amount).toFixed(1)+"%");
+
     });
     {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("construct_tr", 1);
+    });
     window.projects = {};
     $(document).ready(function(){
+        $(document).find("tbody[role='ct_se_code'] input").attr("disabled", true);
         $.ajax({
             url : '/api/project/get_b_projects',
             method: 'GET',
@@ -364,6 +529,19 @@
 
             }
         });
+        $(document).find(".datepicker").datepicker({
+            beforeShow: function(dateText) {
+                $(this).data('before', $(this).val());
+            },
+            onSelect: function(dateText) {
+                $(this).change();
+            },
+            onClose: function(dateText) {
+                var minDate = new Date($(this).val());
+                minDate.setDate(minDate.getDate() - (365*5));
+                $(".datepicker-s").datepicker( "option", "minDate", minDate );
+            },
+        });
         var input = document.querySelector('input[data-type="number"]');
         input.addEventListener('input', function() {
           this.value = this.value.replace(/[^0-9 \,]/, '');
@@ -373,12 +551,6 @@
         var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
         $(this).val(value);
     });
-    $(document).on("focusout", "input[data-type='date']", function(){
-        if(!isValidDate($(this).val()) && $(this).val() != ''){
-            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
-            $(this).val("");
-        }
-    });
     $(document).on("focusout", "input", function(){
         $(this).closest("tbody").trigger("change");
     });
@@ -387,22 +559,26 @@
             $(this).focusout();
         }
     });
-
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
     $(document).on("change", "#cntrct_sn", function(){
         var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        $(document).find(".colorY").removeClass("colorY");
         if(cntrct_sn != ''){
             var pValue = window.projects[cntrct_sn];
             $("#cntrct_no").val(pValue.cntrct_no);
             $("#home_count").val(pValue.home_count);
             $("#home_region").val(pValue.home_region);
             $("#cntrwk_period").val(pValue.cntrwk_period);
-            get_cost(cntrct_sn);
+            get_cost_bf_bd(cntrct_sn);
         }
     });
     {% else %}
-    $.fn.afterLoadApproval = function() {
-        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
-        get_cost(cntrct_sn);
+    $.fn.afterLoadApproval = function(){
 
     }
     {% endif %}

@@ -134,6 +134,7 @@ tbody .btnUpdate, tbody .btnPrint{
 						<div class="widget-toolbar">
 <!--                            <button class="btn btn-info" data-toggle="modal" href="#popReport7"><i class="fa fa-print"> 업무일지</i></button>-->
 							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button class="btn btn-warning" id="btnBiss" data-toggle="modal" href="#popBoxBiss">BISS 입력</i></button>
 						</div>
 					</header>
 					<!-- widget body div-->
@@ -174,7 +175,6 @@ tbody .btnUpdate, tbody .btnPrint{
 									<col width="170">
 									<col width="*">
 									<col width="120">
-									<col width="120">
 									<col width="136">
 									<col width="130">
 									<col width="130">
@@ -200,8 +200,6 @@ tbody .btnUpdate, tbody .btnPrint{
 										</th>
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">
-										</th>
-										<th class="hasinput">
 										</th>
 										<th class="hasinput">
 										</th>
@@ -279,7 +277,6 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th>거래처명</th>
 										<th>계약명(현장명)</th>
 										<th style="text-align:left!important;">총 수주금액 계</th>
-										<th style="text-align:left!important;">수주금액</th>
                                         <th style="padding:9px 10px!important">보고서</th>
 										<th>영업부서</th>
 										<th>영업담당</th>
@@ -372,11 +369,6 @@ getProjectList = function()
             { data: 'bcnc_nm' },
             { data: 'spt_nm' },
             { data: 'cntrct_amount', className: 'text-number', //계약금액
-                render: function(data, type, row, meta) {
-                    return data.toString().toFormat('NUMBER');
-                }
-            },
-            { data: 'amount', className: 'text-number', //계약금액
                 render: function(data, type, row, meta) {
                     return data.toString().toFormat('NUMBER');
                 }
@@ -593,6 +585,12 @@ $(function(){
 //		endDate.setDate(endDate.getDate() - (365*maxYears));
 		$('.datepicker-s').datepicker('setDate', endDate);
 	}
+
+
+	$(document).on('click', '#btnBiss', function(pEvent) {
+		insert_biss();
+	});
+
 
 	/******************************************************************************
 	*
@@ -1059,6 +1057,127 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
         </div><!--modal-content-->
     </div><!--modal-dialog-->
 </div><!--modal-->
+<div class="modal fade" data-backdrop="static" id="popBoxBiss">
+    <style type="text/css">
+#popBoxBiss tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBoxBiss tbody{
+    font-size:12px!important;
+}
 
+    </style>
+    <div class="modal-dialog modal-w900" style="width:800px!important">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabsBiss">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBoxBiss1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>BISS 입력</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;">
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox no-padding" style="display:block;">
+
+					</div>
+					<!-- end widget edit box -->
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBoxBiss1">
+							<form id="frmBoxBiss">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbarBiss">
+												<button type="button" class="btn btn-primary" id="btnSaveBiss" title="저장합니다."><i class="fa fa-save"> 저장</i></button>
+
+											</span>
+											</th>
+										</tr>
+
+										<tr class="required">
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">BISS건수</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" step="1" name="biss" id="biss" class="form-control text-right"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+	init = function(){
+		$("#popBoxBiss").find("#s_bsn_chrg_sn").yVal('');
+		$("#popBoxBiss").find("#cntrct_sn").yVal('');
+		$("#popBoxBiss").find("#biss").val('');
+
+	}
+	$(document).on('click', '#btnSaveBiss', function(){
+		var authors = ["*"];
+		var loginId = $("#loginID").val();
+		if(!authors.includes("*") && !authors.includes(loginId)){
+			alert("권한이 없습니다.");
+			return false;
+		}
+		var params = $("#frmBoxBiss").formSerialize();
+		if($('#popBoxBiss').find("#cntrct_sn").val() == ''){
+			alert("계약을 선택해주세요.");
+			return false;
+		}
+		$.ajax({
+			url: '/api/project/ajax_update_flaw_co',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				alert("저장되었습니다.");
+				init();
+			}
+
+		});
+	});
+
+	$('#popBoxBiss').on('shown.bs.modal', function(pEvent)
+	{
+		init();
+	});
+</script>
 
 {% endblock %}

@@ -285,6 +285,52 @@ def get_c_chrgs():
     result = g.curs.fetchall()
     return result
 
+def get_add_dscnt_list(params):
+    query = """SELECT IF(p.delng_ty_code IN ('61', '62'), '61', '64') AS p_delng_ty_code
+    				, c.cntrct_sn
+                    , IFNULL(SUM(p.dlnt * IFNULL(p.dlivy_amt, 0) * IFNULL(p.add_dscnt_rt, 0.0) / 100.0), 0) AS amount
+    				FROM account s
+    				LEFT JOIN account p
+    				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+    				LEFT JOIN contract c 
+    				ON s.cntrct_sn=c.cntrct_sn
+                    LEFT JOIN charger ch
+                    ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
+    				WHERE s.ctmmny_sn = 1
+    				AND s.delng_se_code = 'S'
+    				AND p.delng_ty_code IN ('61', '62', '64', '65')
+    """
+    data = []
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND c.bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND c.bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += """ GROUP BY IF(p.delng_ty_code IN ('61', '62'), '61', '64'), c.cntrct_sn
+    	         """
+    print(query)
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+
+
 def get_s12_account_list(params, s_dlivy_de=True):
 
     query = """SELECT DATE_FORMAT(s.dlivy_de, %s) AS s_dlivy_de
@@ -632,6 +678,7 @@ def get_bcnc_contract_list(params):
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
 				, c.spt_nm
 				, m.dept_code
+				, m.ofcps_code
 				, c.cntrwk_bgnde
 				, c.cntrwk_endde
 				, CONCAT(c.cntrwk_bgnde,' ~ ',c.cntrwk_endde) AS cntrwk_period
@@ -667,7 +714,7 @@ def get_bcnc_contract_list(params):
         else:
             query += " AND m.dept_code='BI' "
 
-    query += " ORDER BY code_ordr ASC, spt_chrg_nm ASC, bcnc_nm ASC, spt_nm ASC"
+    query += " ORDER BY code_ordr ASC, ofcps_code ASC, spt_chrg_nm ASC, bcnc_nm ASC, spt_nm ASC"
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -777,6 +824,8 @@ def get_month_contract_list(params):
                     , c.spt_nm
     				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
     				, m.dept_code
+    				, m.mber_nm
+    				, m.ofcps_code
     				, c.bcnc_sn
     				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
@@ -795,7 +844,7 @@ def get_month_contract_list(params):
                     LEFT JOIN contract c ON g.cntrct_sn=c.cntrct_sn
                     LEFT JOIN member m ON g.mber_sn=m.mber_sn        
                     WHERE (IFNULL(g.1m, 0) + IFNULL(g.2m, 0) + IFNULL(g.3m, 0)+ IFNULL(g.4m, 0)+ IFNULL(g.5m, 0)+ IFNULL(g.6m, 0)+ IFNULL(g.7m, 0)+ IFNULL(g.8m, 0)+ IFNULL(g.9m, 0)+ IFNULL(g.10m, 0)+ IFNULL(g.11m, 0)+ IFNULL(g.12m, 0)) > 0
-                    ORDER BY code_ordr, bcnc_nm, spt_nm
+                    ORDER BY code_ordr, dept_nm, ofcps_code, bcnc_nm, spt_nm
             """
     data = ["%Y-%m", params['s_year']]
     g.curs.execute(query, data)

@@ -66,7 +66,10 @@ def ajax_get_contracts_by_member():
 @bp.route('/ajax_add_goal_member', methods=['GET'])
 def ajax_add_goal_member():
     params = request.args.to_dict()
-    params["chrg_sn"] = params["s_spt_chrg_sn"]
+    if params["s_amt_ty_code"] == "2":
+        params["chrg_sn"] = params["s_bsn_chrg_sn"]
+    else:
+        params["chrg_sn"] = params["s_spt_chrg_sn"]
     gl.insert_goals(params, [params["cntrct_sn"]])
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 

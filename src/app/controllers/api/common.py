@@ -80,12 +80,18 @@ def ajax_get_bnd():
     result['bnd'] = cm.get_bnd_data(params)
     result['data'] = cm.get_bnd_projects(params)
     result['rate'] = dict()
+    result['rcppay'] = dict()
+
     cntrct_amount = cm.get_bnd_rates(params)
     for c in cntrct_amount:
         cntrct_sn = str(c['cntrct_sn'])
         if cntrct_sn not in result['rate']:
             result['rate'][cntrct_sn] = {"amount" : 0}
         result['rate'][cntrct_sn]["cntrct_amount"] = c['cntrct_amount']
+        if cntrct_sn not in result['rcppay']:
+            result['rcppay'][cntrct_sn] = {"M" : 0, "S" : 0, "T" : 0}
+        #     result['rcppay'][cntrct_sn][rcppay_se_code] = amount
+        result['rcppay'][cntrct_sn]['T'] = c['cntrct_amount']
     params['s_year'] = params['bnd_year']
     s12_account = cm.get_s12_account_list(params, s_dlivy_de=False)
     for s in s12_account:
@@ -115,15 +121,23 @@ def ajax_get_bnd():
             result['taxbill'][cntrct_sn] = {"M" : [], "S" : [], "T" : []}
         result['taxbill'][cntrct_sn][delng_se_code].append((dlivy_de, amount))
 
-    rcppay = cm.get_i2_rcppay_list(params)
-    result['rcppay'] = dict()
-    for r in rcppay:
-        cntrct_sn = str(r['cntrct_sn'])
-        amount = r['amount']
-        rcppay_se_code = 'M' if r['rcppay_se_code'] == 'I2' else ('S' if r['rcppay_se_code'] == 'I4' else 'T')
+    # rcppay = cm.get_i2_rcppay_list(params)
+    # for r in rcppay:
+    #     cntrct_sn = str(r['cntrct_sn'])
+    #     amount = r['amount']
+    #     rcppay_se_code = 'M' if r['rcppay_se_code'] == 'I2' else ('S' if r['rcppay_se_code'] == 'I4' else 'T')
+    #     if cntrct_sn not in result['rcppay']:
+    #         result['rcppay'][cntrct_sn] = {"M" : 0, "S" : 0, "T" : 0}
+    #     result['rcppay'][cntrct_sn][rcppay_se_code] = amount
+
+    dscnt_total = cm.get_add_dscnt_list(params)
+    for d in dscnt_total:
+        cntrct_sn = str(d['cntrct_sn'])
+        amount = d['amount']
+        delng_ty_code = 'M' if d['p_delng_ty_code'] in ('61', '62') else 'S'
         if cntrct_sn not in result['rcppay']:
             result['rcppay'][cntrct_sn] = {"M" : 0, "S" : 0, "T" : 0}
-        result['rcppay'][cntrct_sn][rcppay_se_code] = amount
+        result['rcppay'][cntrct_sn][delng_ty_code] = amount
 
     for cntrct_sn in result['account']:
         if cntrct_sn in result['taxbill']:

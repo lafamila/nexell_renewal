@@ -86,7 +86,7 @@ tbody .btnUpdate, tbody .btn{
                     </script>
 					<header>
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
-                        <h2><span id="year">2020</span>년 월별 수주 현황</h2>
+                        <h2><span id="year">-</span>년 월별 수주 현황</h2>
 						<div class="widget-toolbar">
                             <h2>VAT 포함 (단위 : 천원)</h2>&nbsp;&nbsp;&nbsp;
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
@@ -205,7 +205,8 @@ tbody .btnUpdate, tbody .btn{
 									<!-- 헤더 -->
 									<tr>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:28px;" rowspan="2">부서</th>
-										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;" rowspan="2">거래처</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;" rowspan="2">영업담당</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;" rowspan="2">건설사</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:122px;" rowspan="2">현장명</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:70px;" rowspan="2">구분</th>
 										<th class="colorSky right_border bottom_border" style="text-align:center!important;" colspan="13">월</th>
@@ -267,10 +268,12 @@ tbody .btnUpdate, tbody .btn{
 			processData: false,
 			success: function(pResult) {
 				console.log(pResult);
+				$("#year").html(s_year);
+				var DELIMITER = 1000;
 				var html = '';
 				if(pResult.contract.length == 0){
 					html += `<tr>
-								<td class="text-center middle bold" style="height:100px;" colspan="18">목표 금액이 입력된 현장이 없습니다.<br><button class="btn btnUpdate" style="margin-top:10px;" onclick="javascript:location.href='/goal';">목표 금액 입력</button></td>
+								<td class="text-center middle bold" style="height:100px;" colspan="19">목표 금액이 입력된 현장이 없습니다.<br><button class="btn btnUpdate" style="margin-top:10px;" onclick="javascript:location.href='/goal';">목표 금액 입력</button></td>
 							 </tr>`
 				}
 				$.each(pResult.contract, function(pIndex, pValue) {
@@ -280,33 +283,35 @@ tbody .btnUpdate, tbody .btn{
 						let year = pValue.cntrct_de.split("-")[0];
 						let month = pValue.cntrct_de.split("-")[1];
 						if(year == s_year){
-							pData[`${parseInt(month)}m`] = pValue.cntrct_amount;
+							pData[`${parseInt(month)}m`] = (pValue.cntrct_amount)/DELIMITER;
 						}
 					}
 					for(let i=1;i<=12;i++) pData["tot"] += pData[`${i}m`];
 
 					html += `<tr id="row${pValue.cntrct_sn}-1" data-year="${s_year}">
 								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
+								<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
 								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
 								<td class="right_border middle text-left bold">${pValue.spt_nm}</td>
 								<td class="right_border middle text-center bold">계획</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="1m">${pValue["1m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="2m">${pValue["2m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="3m">${pValue["3m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="4m">${pValue["4m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="5m">${pValue["5m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="6m">${pValue["6m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="7m">${pValue["7m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="8m">${pValue["8m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="9m">${pValue["9m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="10m">${pValue["10m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="11m">${pValue["11m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="12m">${pValue["12m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="tot">${pValue["tot"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(pData.tot*100.0/pValue.tot).toFixed(2)+"%"}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="1m">${Math.round(pValue["1m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="2m">${Math.round(pValue["2m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="3m">${Math.round(pValue["3m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="4m">${Math.round(pValue["4m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="5m">${Math.round(pValue["5m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="6m">${Math.round(pValue["6m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="7m">${Math.round(pValue["7m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="8m">${Math.round(pValue["8m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="9m">${Math.round(pValue["9m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="10m">${Math.round(pValue["10m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="11m">${Math.round(pValue["11m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="12m">${Math.round(pValue["12m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-right bold" data-column="tot">${Math.round(pValue["tot"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(Math.round(pData.tot/DELIMITER)*100.0/pValue.tot).toFixed(2)+"%"}</td>
 							 </tr>
 							 <tr id="row${pValue.cntrct_sn}-2" data-year="${s_year}">
 								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
+								<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
 								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
 								<td class="right_border middle text-left bold">${pValue.spt_nm}</td>
 								<td class="colorJ right_border middle text-center bold">달성</td>
@@ -330,12 +335,14 @@ tbody .btnUpdate, tbody .btn{
 				$("#dtList1").find("tbody").yRowspan(0);
 				$("#dtList1").find("tbody").yRowspan(1);
 				$("#dtList1").find("tbody").yRowspan(2);
-				$("#dtList1").find("tbody").yRowspan(17);
+				$("#dtList1").find("tbody").yRowspan(3);
+				$("#dtList1").find("tbody").yRowspan(18);
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(0, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(1, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(2, "bottom_border");
-				$(document).find("#dtList1 tbody[role='body']").yRowClass(17, "bottom_border");
-				$(document).find("#dtList1 tbody[role='body']").yRowClassNext(2, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(3, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClass(18, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClassNext(3, "bottom_border");
 				$(document).find(".colored").removeClass("colored");
 				$.each(pResult.colored, function(pIndex, pValue){
 					if(parseInt(pValue.month_class) == 1)

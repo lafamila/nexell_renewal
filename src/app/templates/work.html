@@ -9,7 +9,7 @@ tbody .btnUpdate, tbody .btn{
         font-size:12px!important;
     }
     .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
-        border: 1px solid #111;
+        border: 1px solid #ddd;
     }
 
     .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
@@ -142,6 +142,9 @@ tbody .btnUpdate, tbody .btn{
                             .colored{
                                 background:rgb(255,204,153)!important;
                             }
+							.bottom_border_double{
+								border-bottom-color:#666!important;
+							}
 
                         </style>
                         <script>
@@ -173,8 +176,8 @@ tbody .btnUpdate, tbody .btn{
 										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">성명</th>
 										<th class="tot right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">지&nbsp;&nbsp;&nbsp;각<br>(연간누계)</th>
 										<th class="colorSkyB right_border" style="text-align:center!important;" colspan="4">휴가</th>
-										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">연차 사용일</th>
-										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">반차 사용일</th>
+										<th class="colorG bottom_border right_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">연차 사용일</th>
+										<th class="colorG bottom_border right_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">반차 사용일</th>
 										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">기타</th>
 									</tr>
 									<tr>
@@ -232,21 +235,23 @@ getWork = function(work_date)
 			$.each(pResult.data, function(pIndex, pValue){
 				var _class = (pValue.today_rate == 1) ? "colorY" : "";
 				html += `<tr id="${pValue.mber_sn}" data-year="${work_year}">
-							<td class="colorG middle">${pValue.dept_nm}</td>
-							<td class="colorG middle">${pValue.ofcps_nm}</td>
-							<td>${pValue.mber_nm}</td>
-							<td class="${_class}">${pValue.rate_count}</td>
-							<td class="input-available" data-column="tot2">${pValue.tot}</td>
-							<td data-column="use">${pValue.use}</td>
-							<td data-column="half">${pValue.half}</td>
-							<td data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
-							<td>${pValue.use_dates}</td>
-							<td>${pValue.half_dates}</td>
+							<td class="colorG middle text-center">${pValue.dept_nm}</td>
+							<td class="colorG middle text-center">${pValue.ofcps_nm}</td>
+							<td class=" text-center right_border">${pValue.mber_nm}</td>
+							<td class="${_class} text-center right_border">${pValue.rate_count}</td>
+							<td class="input-available text-center" data-column="tot2">${pValue.tot}</td>
+							<td class=" text-center" data-column="use">${pValue.use}</td>
+							<td class=" text-center" data-column="half">${pValue.half}</td>
+							<td class=" text-center right_border" data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
+							<td class="right_border">${pValue.use_dates}</td>
+							<td class="right_border">${pValue.half_dates}</td>
 							<td class="colorBtn input-available" data-column="rm2">${pValue.rm}</td>
 						 </tr>`;
 			});
 			$(document).find("#dtList1 tbody").html(html);
 			$(document).find("#dtList1 tbody").yRowspan(0);
+			$(document).find("#dtList1 tbody").yRowClass(0, "bottom_border_double");
+			$(document).find("#dtList1 tbody").yRowClassNext(0, "bottom_border_double");
 
 			$.each(pResult.work_data, function(pIndex, pValue){
 				var rowId = pValue.work_row;

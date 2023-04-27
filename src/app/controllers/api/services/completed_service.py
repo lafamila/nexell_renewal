@@ -44,15 +44,15 @@ def get_completed_summary(params):
     query += """
                 , IF(dept_code='ETC', 99, (SELECT code_ordr FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=t.dept_code )) AS dept_order
 				FROM (
-				SELECT g.amt_ty_code
+				SELECT z.amt_ty_code
 				, IF(m.dept_code IN ('EL','CT', 'MA'), 'ETC', m.dept_code) AS dept_code
-				, CASE WHEN g.amt_ty_code = '2' THEN GET_SUJU_AMOUNT({0}, g.mber_sn, 'M')
-				WHEN g.amt_ty_code = '3' THEN GET_PXCOND_MONTH_AMOUNT('C', {0}, g.mber_sn)
-				WHEN g.amt_ty_code = '5' THEN GET_VA_MONTH_AMOUNT({1}, g.mber_sn)
+				, CASE WHEN z.amt_ty_code = '2' THEN GET_SUJU_AMOUNT({0}, z.mber_sn, 'M')
+				WHEN z.amt_ty_code = '3' THEN GET_PXCOND_MONTH_AMOUNT('C', {0}, z.mber_sn)
+				WHEN z.amt_ty_code = '5' THEN GET_VA_MONTH_AMOUNT({1}, z.mber_sn)
 				END AS m_contract_amount
-				, CASE WHEN g.amt_ty_code = '2' THEN GET_SUJU_AMOUNT({0}, g.mber_sn, 'A')
-				WHEN g.amt_ty_code = '3' THEN GET_PXCOND_TOTAL_AMOUNT('C', {1}, g.mber_sn)
-				WHEN g.amt_ty_code = '5' THEN GET_VA_TOTAL_AMOUNT({1}, g.mber_sn)
+				, CASE WHEN z.amt_ty_code = '2' THEN GET_SUJU_AMOUNT({0}, z.mber_sn, 'A')
+				WHEN z.amt_ty_code = '3' THEN GET_PXCOND_TOTAL_AMOUNT('C', {1}, z.mber_sn)
+				WHEN z.amt_ty_code = '5' THEN GET_VA_TOTAL_AMOUNT({1}, z.mber_sn)
 				END AS y_contract_amount
 				, GET_GOAL_AMOUNT({0}, '8', g.mber_sn, 'M') AS ty8_goal_amount  
 				, GET_GOAL_AMOUNT({0}, '9', g.mber_sn, 'M') AS ty9_goal_amount
@@ -71,10 +71,12 @@ def get_completed_summary(params):
 				, g.10m
 				, g.11m
 				, g.12m
-				, g.stdyy
-				FROM (SELECT stdyy, amt_ty_code, mber_sn, SUM(IFNULL(1m, 0)) AS 1m, SUM(IFNULL(2m, 0)) AS 2m, SUM(IFNULL(3m, 0)) AS 3m, SUM(IFNULL(4m, 0)) AS 4m, SUM(IFNULL(5m, 0)) AS 5m, SUM(IFNULL(6m, 0)) AS 6m, SUM(IFNULL(7m, 0)) AS 7m, SUM(IFNULL(8m, 0)) AS 8m, SUM(IFNULL(9m, 0)) AS 9m, SUM(IFNULL(10m, 0)) AS 10m, SUM(IFNULL(11m, 0)) AS 11m, SUM(IFNULL(12m, 0)) AS 12m FROM goal WHERE stdyy = SUBSTRING({0}, 1, 4) AND amt_ty_code IN ('2','3','5', '8', '9') GROUP BY mber_sn, amt_ty_code, stdyy) g
-				JOIN member m
-				ON m.mber_sn=g.mber_sn
+				, IFNULL(g.stdyy, '{2}') AS stdyy
+				FROM member m
+				LEFT OUTER JOIN (SELECT x.amt_ty_code, y.mber_sn FROM (SELECT code AS amt_ty_code FROM `code` WHERE parnts_code='AMT_TY_CODE' AND USE_AT='Y') x LEFT OUTER JOIN member y ON y.mber_sn=y.mber_sn) z
+				ON m.mber_sn=z.mber_sn
+				LEFT OUTER JOIN (SELECT stdyy, amt_ty_code, mber_sn, SUM(IFNULL(1m, 0)) AS 1m, SUM(IFNULL(2m, 0)) AS 2m, SUM(IFNULL(3m, 0)) AS 3m, SUM(IFNULL(4m, 0)) AS 4m, SUM(IFNULL(5m, 0)) AS 5m, SUM(IFNULL(6m, 0)) AS 6m, SUM(IFNULL(7m, 0)) AS 7m, SUM(IFNULL(8m, 0)) AS 8m, SUM(IFNULL(9m, 0)) AS 9m, SUM(IFNULL(10m, 0)) AS 10m, SUM(IFNULL(11m, 0)) AS 11m, SUM(IFNULL(12m, 0)) AS 12m FROM goal WHERE stdyy = SUBSTRING({0}, 1, 4) AND amt_ty_code IN ('2','3','5', '8', '9') GROUP BY mber_sn, amt_ty_code, stdyy) g
+				ON m.mber_sn=g.mber_sn AND g.amt_ty_code=z.amt_ty_code
 				WHERE 1=1				
 				"""
     if year >= 2023:
@@ -88,7 +90,8 @@ def get_completed_summary(params):
 				GROUP BY t.amt_ty_code, t.dept_code
 				ORDER BY t.amt_ty_code, dept_order, t.dept_code"""
 
-    g.curs.execute(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2))))
+    print(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2)), str(year).zfill(4)))
+    g.curs.execute(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2)), str(year).zfill(4)))
     result = g.curs.fetchall()
 
     g.curs.execute("SELECT parnts_code AS p, code AS v, code_nm AS nm, code_ordr AS ordr FROM code WHERE PARNTS_CODE IN ('AMT_TY_CODE', 'DEPT_CODE')")
@@ -140,29 +143,29 @@ def get_contract_status_list(params):
 				, SUM(ty8_goal_amount_sum) AS ty8_goal_amount_sum
 				, SUM(ty9_goal_amount_sum) AS ty9_goal_amount_sum
 				, SUM(ty8_goal_amount_total) AS ty8_goal_amount_total
-				, SUM(1m) AS m1
-				, SUM(2m) AS m2
-				, SUM(3m) AS m3
-				, SUM(4m) AS m4
-				, SUM(5m) AS m5
-				, SUM(6m) AS m6
-				, SUM(7m) AS m7
-				, SUM(8m) AS m8
-				, SUM(9m) AS m9
-				, SUM(10m) AS m10
-				, SUM(11m) AS m11
-				, SUM(12m) AS m12
-				, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code LIKE 'TS%%') AS dept_count
+				, SUM(IFNULL(1m,0)) AS m1
+				, SUM(IFNULL(2m,0)) AS m2
+				, SUM(IFNULL(3m,0)) AS m3
+				, SUM(IFNULL(4m,0)) AS m4
+				, SUM(IFNULL(5m,0)) AS m5
+				, SUM(IFNULL(6m,0)) AS m6
+				, SUM(IFNULL(7m,0)) AS m7
+				, SUM(IFNULL(8m,0)) AS m8
+				, SUM(IFNULL(9m,0)) AS m9
+				, SUM(IFNULL(10m,0)) AS m10
+				, SUM(IFNULL(11m,0)) AS m11
+				, SUM(IFNULL(12m,0)) AS m12
+				, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code IN ('TS1', 'TS2')) AS dept_count
 				FROM (
-				SELECT g.amt_ty_code
+				SELECT z.amt_ty_code
 				, m.dept_code
-				, CASE WHEN g.amt_ty_code = '2' THEN GET_SUJU_AMOUNT(%(s_pxcond_mt)s, g.mber_sn, 'M')
-				WHEN g.amt_ty_code = '3' THEN GET_PXCOND_MONTH_AMOUNT('C', %(s_pxcond_mt)s, g.mber_sn)
-				WHEN g.amt_ty_code = '5' THEN GET_VA_MONTH_AMOUNT(%(s_pxcond_mt)s, g.mber_sn)
+				, CASE WHEN z.amt_ty_code = '2' THEN GET_SUJU_AMOUNT(%(s_pxcond_mt)s, z.mber_sn, 'M')
+				WHEN z.amt_ty_code = '3' THEN GET_PXCOND_MONTH_AMOUNT('C', %(s_pxcond_mt)s, z.mber_sn)
+				WHEN z.amt_ty_code = '5' THEN GET_VA_MONTH_AMOUNT(%(s_pxcond_mt)s, z.mber_sn)
 				END AS m_contract_amount
-				, CASE WHEN g.amt_ty_code = '2' THEN GET_SUJU_AMOUNT(%(s_pxcond_mt)s, g.mber_sn, 'A')
-				WHEN g.amt_ty_code = '3' THEN GET_PXCOND_TOTAL_AMOUNT('C', %(s_pxcond_mt)s, g.mber_sn)
-				WHEN g.amt_ty_code = '5' THEN GET_VA_TOTAL_AMOUNT(%(s_pxcond_mt)s, g.mber_sn)
+				, CASE WHEN g.amt_ty_code = '2' THEN GET_SUJU_AMOUNT(%(s_pxcond_mt)s, z.mber_sn, 'A')
+				WHEN z.amt_ty_code = '3' THEN GET_PXCOND_TOTAL_AMOUNT('C', %(s_pxcond_mt)s, z.mber_sn)
+				WHEN z.amt_ty_code = '5' THEN GET_VA_TOTAL_AMOUNT(%(s_pxcond_mt)s, z.mber_sn)
 				END AS y_contract_amount
 				, GET_GOAL_AMOUNT(%(s_pxcond_mt)s, '8', g.mber_sn, 'M') AS ty8_goal_amount
 				, GET_GOAL_AMOUNT(%(s_pxcond_mt)s, '9', g.mber_sn, 'M') AS ty9_goal_amount
@@ -181,13 +184,15 @@ def get_contract_status_list(params):
 				, g.10m
 				, g.11m
 				, g.12m
-				FROM goal g
-				LEFT JOIN member m
-				ON m.mber_sn=g.mber_sn
-				WHERE g.stdyy = SUBSTRING(%(s_pxcond_mt)s, 1, 4)
-				AND g.amt_ty_code IN ('2','3','5','6')
-				AND m.dept_code LIKE 'TS%%'
-				ORDER BY g.amt_ty_code, m.dept_code
+				FROM member m
+				LEFT OUTER JOIN (SELECT x.amt_ty_code, y.mber_sn FROM (SELECT code AS amt_ty_code FROM `code` WHERE parnts_code='AMT_TY_CODE' AND USE_AT='Y') x LEFT OUTER JOIN member y ON y.mber_sn=y.mber_sn) z
+				ON m.mber_sn=z.mber_sn
+				LEFT OUTER JOIN (SELECT stdyy, amt_ty_code, mber_sn, SUM(IFNULL(1m, 0)) AS 1m, SUM(IFNULL(2m, 0)) AS 2m, SUM(IFNULL(3m, 0)) AS 3m, SUM(IFNULL(4m, 0)) AS 4m, SUM(IFNULL(5m, 0)) AS 5m, SUM(IFNULL(6m, 0)) AS 6m, SUM(IFNULL(7m, 0)) AS 7m, SUM(IFNULL(8m, 0)) AS 8m, SUM(IFNULL(9m, 0)) AS 9m, SUM(IFNULL(10m, 0)) AS 10m, SUM(IFNULL(11m, 0)) AS 11m, SUM(IFNULL(12m, 0)) AS 12m FROM goal WHERE stdyy = SUBSTRING(%(s_pxcond_mt)s, 1, 4) AND amt_ty_code IN ('2','3','5', '8', '9') GROUP BY mber_sn, amt_ty_code, stdyy) g
+				ON m.mber_sn=g.mber_sn AND g.amt_ty_code=z.amt_ty_code
+				WHERE 1=1
+				AND z.amt_ty_code IN ('2','3','5','6')
+				AND m.dept_code IN ('TS1', 'TS2')
+				ORDER BY z.amt_ty_code, m.dept_code
 				) t
 				GROUP BY t.amt_ty_code, t.dept_code"""
     g.curs.execute(query, params)
@@ -407,14 +412,15 @@ def get_completed_reportNR(params):
 				AND co.ct_se_code NOT IN ('10')
 				AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7', '8'))
 				AND ct.prjct_ty_code = 'NR'
-				AND m.dept_code NOT IN ('MA')
+				AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
+				AND m.dept_code IN ('TS1', 'TS2', 'TS3')
 				AND ct.cntrct_de < '{1}' """.format(first_day, last_day, first_year, last_year)
     if 's_cntrct_execut_code' in params and params['s_cntrct_execut_code']:
         query += " AND co.cntrct_execut_code = %(s_cntrct_execut_code)s "
 
     query += """ ) t
 				GROUP BY bsn_dept_code, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
-				ORDER BY bsn_dept_code, cntrct_bcnc_sn, ofcps_code, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn """
+				ORDER BY bsn_dept_code, spt_chrg_sn, cntrct_bcnc_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn """
 
     g.curs.execute(query, params)
     result = g.curs.fetchall()

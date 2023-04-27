@@ -242,7 +242,7 @@ tbody .btnUpdate, tbody .btn{
 									<!-- 헤더 -->
 									<tr>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:28px;" rowspan="2">부서</th>
-										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:55px;" rowspan="2">담당자</th>
+										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:65px;" rowspan="2">현장담당</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:75px;" rowspan="2">건설사</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:122px;" rowspan="2">현장명</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center;min-width:70px;" rowspan="2">계약금액</th>
@@ -329,7 +329,15 @@ tbody .btnUpdate, tbody .btn{
 				console.log(pResult);
 				var html = '';
 				var small_cntrct = {};
+				var member_list = [];
+				var member_nm_list = {};
 				$.each(pResult.contract, function(pIndex, pValue){
+					if(!member_list.includes(pValue.spt_chrg_sn)){
+						member_list.push(pValue.spt_chrg_sn);
+					}
+					if(!member_nm_list.hasOwnProperty(pValue.spt_chrg_sn)){
+						member_nm_list[pValue.spt_chrg_sn] = pValue.spt_chrg_nm;
+					}
 					if(!small_cntrct.hasOwnProperty(pValue.spt_chrg_sn)){
 						small_cntrct[pValue.spt_chrg_sn] = {"spt_chrg_nm": pValue.spt_chrg_nm, "bcnc_nm" : "", "spt_nm" : "단납(5천 이하)", "dept_nm" : pValue.dept_nm, "p_total" : {}, "s_total" : {}, "cntrct_amount" : 0, "a_cost" : 0, "tot_p" : 0, "tot_s" : 0};
 						for(let i=1;i<=12;i++){
@@ -483,12 +491,12 @@ tbody .btnUpdate, tbody .btn{
 
 				});
 				var html = '';
-				$.each(small_cntrct, function(sn, pValue) {
-					var trs = $(document).find("#dtList1").find(`tr[data일-sn="${sn}"]`);
+				$.each(member_list, function(pIndex, sn) {
+					var trs = $(document).find("#dtList1").find(`tr[data-sn="${sn}"]`);
 					var total = ($(trs).calculation(4, 32));
 					html += `<tr data-row="calcTotal">
 									<td class="bold colorSky right_border text-center middle">종합<br>(자동)</td>
-									<td class="bold colorSky right_border text-center middle">${pValue.spt_chrg_nm}</td>
+									<td class="bold colorSky right_border text-center middle">${member_nm_list[sn]}</td>
 									<td class="bold right_border text-center middle"></td>
 									<td class="bold right_border text-left middle" data-column="spt_nm"></td>
 									<td class="bold right_border text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(total[0]).toString().toFormat('NUMBER')}</td>
@@ -529,35 +537,35 @@ tbody .btnUpdate, tbody .btn{
 				html += `<tr data-row="calcTotal">
 							<td class="bold colorSky right_border text-center middle">종합<br>(자동)</td>
 							<td class="bold colorSky right_border top_border text-center middle" colspan="3">총 계</td>
-							<td class="bold right_border text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(total[0]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s1m">${Math.round(total[1]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s2m">${Math.round(total[2]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s3m">${Math.round(total[3]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s4m">${Math.round(total[4]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s5m">${Math.round(total[5]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s6m">${Math.round(total[6]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s7m">${Math.round(total[7]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s8m">${Math.round(total[8]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s9m">${Math.round(total[9]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s10m">${Math.round(total[10]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s11m">${Math.round(total[11]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="s12m">${Math.round(total[12]).toString().toFormat('NUMBER')}</td>
-							<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total[13]).toString().toFormat('NUMBER')}</td>
-							<td class="bold right_border text-right middle nozero no-padding-3">${Math.round(total[14]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p1m">${Math.round(total[15]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p2m">${Math.round(total[16]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p3m">${Math.round(total[17]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p4m">${Math.round(total[18]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p5m">${Math.round(total[19]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p6m">${Math.round(total[20]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p7m">${Math.round(total[21]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p8m">${Math.round(total[22]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p9m">${Math.round(total[23]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p10m">${Math.round(total[24]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p11m">${Math.round(total[25]).toString().toFormat('NUMBER')}</td>
-							<td class="bold text-right middle nozero no-padding-3" data-column="p12m">${Math.round(total[26]).toString().toFormat('NUMBER')}</td>
-							<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total[27]).toString().toFormat('NUMBER')}</td>
-							<td class="bold right_border text-right middle no-padding-3">${Math.round(total[28]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky right_border top_border text-right middle no-padding-3" data-column="cntrct_amount">${Math.round(total[0]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s1m">${Math.round(total[1]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s2m">${Math.round(total[2]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s3m">${Math.round(total[3]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s4m">${Math.round(total[4]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s5m">${Math.round(total[5]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s6m">${Math.round(total[6]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s7m">${Math.round(total[7]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s8m">${Math.round(total[8]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s9m">${Math.round(total[9]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s10m">${Math.round(total[10]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s11m">${Math.round(total[11]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="s12m">${Math.round(total[12]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border right_border text-right middle nozero no-padding-3">${Math.round(total[13]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border right_border text-right middle nozero no-padding-3">${Math.round(total[14]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p1m">${Math.round(total[15]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p2m">${Math.round(total[16]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p3m">${Math.round(total[17]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p4m">${Math.round(total[18]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p5m">${Math.round(total[19]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p6m">${Math.round(total[20]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p7m">${Math.round(total[21]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p8m">${Math.round(total[22]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p9m">${Math.round(total[23]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p10m">${Math.round(total[24]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p11m">${Math.round(total[25]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border text-right middle nozero no-padding-3" data-column="p12m">${Math.round(total[26]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border right_border text-right middle nozero no-padding-3">${Math.round(total[27]).toString().toFormat('NUMBER')}</td>
+							<td class="bold colorSky top_border right_border text-right middle no-padding-3">${Math.round(total[28]).toString().toFormat('NUMBER')}</td>
 					 </tr>`;
 				$(html).insertAfter("#dtList1 tbody[role='calc'] tr:last-child");
 				$(document).find("#dtList1").hideZero();

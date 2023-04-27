@@ -654,7 +654,7 @@ def get_goal_89(params):
     query = """SELECT dashboard_row, dashboard_column, dashboard_data
                 FROM dashboard
                 WHERE dashboard_date='{0}' 
-                AND dashboard_column IN ('rmT', 'valueT')
+                AND dashboard_column IN ('rmT', 'valueT', 'rmS', 'valueS')
                 AND dashboard_row < 0""".format(params['s_pxcond_m'])
 
     g.curs.execute(query)
