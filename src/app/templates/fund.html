@@ -327,7 +327,6 @@ function isValidDate(dateString) {
   if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
   return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
 }
-
 getFundList = function()
 {
     $.datatable1 = $('#dtList1').DataTable({
@@ -476,7 +475,10 @@ getFundList = function()
 			});
 
 			$('#btnExcel').on('click', function(pEvent) {
-				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
 			});
 
 			$(myList).on('change', '#check-all', function(pEvent){

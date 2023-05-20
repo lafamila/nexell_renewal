@@ -107,24 +107,34 @@ body.smart-style-6 .table thead tr {
 <!--                <td style="background:#fff;text-align:center;">-</td>-->
 <!--                <td style="background:#fff;text-align:center;">-</td>-->
 <!--            </tr>-->
+			<style>
+				.colorDG{
+					background:rgb(191,191,191)!important;
+				}
+				.colorN{
+					background: #0070C0!important;
+					color: #fff!important;
+				}
+				.colorLG{
+					background: #eee!important;
+				}
+			</style>
             <tr>
-                <th rowspan="4" style="border-right: 1px solid #000!important;
+                <th class="colorDG" rowspan="4" style="border-right: 1px solid #000!important;
                                        border-top: 1px solid #000!important;
 										font-size: 16px!important;
-										background: #0070C0!important;
-										color: #fff!important;
 										padding: 7px!important;
 										vertical-align: middle!important;
 										text-align: center!important;">집<br>계<br>표</th>
-                <th style="border-right: 1px solid #000!important;border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">구분</th>
-                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">현장전시</th>
-                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">이현창고</th>
-                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">기타창고</th>
-                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">판매</th>
-                <th style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">폐기</th>
+                <th class="colorN" style="border-right: 1px solid #000!important;border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">구분</th>
+                <th class="colorN" style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">현장전시</th>
+                <th class="colorN" style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">이현창고</th>
+                <th class="colorN" style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">기타창고</th>
+                <th class="colorN" style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">판매</th>
+                <th class="colorN" style="border-bottom: 1px solid #000!important;border-top: 1px solid #000!important;background:#fff;text-align:center;">폐기</th>
             </tr>
             <tr>
-                <th style="border-right: 1px solid #000!important;background:#fff;text-align:center;">현장수</th>
+                <th class="colorLG" style="border-right: 1px solid #000!important;background:#fff;text-align:center;">현장수</th>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
@@ -132,7 +142,7 @@ body.smart-style-6 .table thead tr {
                 <td style="background:#fff;text-align:center;"></td>
             </tr>
             <tr>
-                <th style="border-right: 1px solid #000!important;background:#fff;text-align:center;">수량</th>
+                <th class="colorLG" style="border-right: 1px solid #000!important;background:#fff;text-align:center;">수량</th>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
@@ -140,7 +150,7 @@ body.smart-style-6 .table thead tr {
                 <td style="background:#fff;text-align:center;">-</td>
             </tr>
             <tr>
-                <th style="border-right: 1px solid #000!important;background:#fff;text-align:center;">금액</th>
+                <th class="colorLG" style="border-right: 1px solid #000!important;background:#fff;text-align:center;">금액</th>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
                 <td style="background:#fff;text-align:center;"></td>
@@ -453,7 +463,10 @@ getInventoryList = function()
 			});
 
 			$('#btnExcel').on('click', function(pEvent) {
-				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
 			});
 		},
     });
@@ -1610,4 +1623,7 @@ $(function() {
 
 </script>
 {% include './stock_report.html' %}
+
+
+
 {% endblock %}

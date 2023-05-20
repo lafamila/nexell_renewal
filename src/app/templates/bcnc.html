@@ -603,7 +603,7 @@ $(document).on("dblclick", ".input-available", function(){
 
 	var data = prompt("값을 입력하세요.");
 	try{
-		if(/^\d+$/.test(data)){
+		if(/^-?\d+$/.test(data)){
 			data = parseInt(data);
 		}
 		else{

@@ -138,3 +138,26 @@ def ajax_get_stock_report():
     result['list'] = st.get_stock_report_list(params)
 
     return result
+
+@bp.route('/ajax_get_built_month', methods=['GET'])
+def ajax_get_built_month():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = st.get_built_month(params)
+    result['status'] = True
+    return jsonify(result)
+@bp.route('/ajax_get_built_month_sales', methods=['GET'])
+def ajax_get_built_month_sales():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = st.get_built_month_sales(params)
+    result['status'] = True
+    return jsonify(result)
+
+@bp.route('/ajax_get_stock_month', methods=['GET'])
+def ajax_get_stock_month():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = st.get_stock_month(params)
+    result['status'] = True
+    return jsonify(result)

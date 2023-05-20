@@ -15,8 +15,16 @@
 					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
 				</div>
                 <div class="pull-right" style="margin-right:10px;">
+                    <button type="button" id="buttonAddGoal" class="btn btn-table btn-warning" title="목표등록" data-toggle="modal" href="#popBox2" data-action="init" data-actioncontract="insert">목표등록</button>
                     <button type="button" id="buttonAdd" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
                 </div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r3_s_ddt_man" name="r3_s_ddt_man">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+
 			</div>
 			<div class="modal-body report">
 
@@ -48,6 +56,12 @@
                     tr.myETC, #eETC{
                         cursor:pointer;
                     }
+                    #rptParnterStatus1 .btn.btn-table>i.fa {
+                        height:12px!important;
+                    }
+                    #rptParnterStatus1 .btn {
+                        line-height:1.0!important;
+                    }
                 </style>
                 <table id="rptParnterStatus1">
                     <colgroup>
@@ -74,6 +88,8 @@
                         <col width="50">
                         <col width="50">
                         <col width="50">
+                        <col width="50">
+                        <col width="50">
 
                     </colgroup>
                     <thead>
@@ -87,9 +103,9 @@
                             <th class="colorN text-center middle" rowspan="2">프로젝트<br>담당자</th>
                             <th class="colorN text-center middle" colspan="4">설계현황</th>
                             <th class="colorN text-center middle" colspan="5">수주현황</th>
-                            <th class="colorN text-center middle" colspan="2">설계사무소현황</th>
+                            <th class="colorN text-center middle" colspan="3">설계사무소현황</th>
                             <th class="colorN text-center middle" colspan="3">스펙인현황</th>
-                            <th class="colorN text-center middle" rowspan="2">비고</th>
+                            <th class="colorN text-center middle" rowspan="2" colspan="2">비고</th>
                         </tr>
                         <tr>
                             <th class="colorN text-center middle">설계기간</th>
@@ -101,6 +117,7 @@
                             <th class="colorN text-center middle">진행</th>
                             <th class="colorN text-center middle">낙주</th>
                             <th class="colorN text-center middle">수주달성율</th>
+                            <th class="colorN text-center middle">BO</th>
                             <th class="colorN text-center middle">설계사무소</th>
                             <th class="colorN text-center middle">연목표달성율</th>
                             <th class="colorN text-center middle">No</th>
@@ -122,6 +139,7 @@
 <script>
     getBlueprint = function(){
         var params = '';
+        params += "&stdyy="+$(document).find('#r3_s_ddt_man').val().split("-")[0]+"-"+$(document).find('#r3_s_ddt_man').val().split("-")[1];
         $.ajax({
             url: '/api/common/ajax_get_blueprint',
             type: 'GET',
@@ -129,22 +147,86 @@
             dataType: 'json',
             contentType: false,
             processData: false,
-            success: function (pResult) {
+            success: function (pData) {
+				console.log(pData);
+				var pGoal = pData.goal;
+				var pResult = pData.data;
                 var html = '';
                 if(pResult.length == 0){
-                    html += '<tr><td class="text-center" colspan="22">데이터를 등록해주세요.</td></tr>';
+                    html += '<tr><td class="text-center" colspan="24">데이터를 등록해주세요.</td></tr>';
                 }
                 else{
                     var mber_sn = null;
+                    var mber_nm = null;
+                    var b_type_nm = null;
                     var b_type = null;
                     var order = 1;
+                    var sum_data = [];
+					var SUM_COLUMNS = [2, 3, 4, 5, 6, 7, 8, 10, 14];
+					var sum_idx = 0;
+                    sum_data.push({0 : new Array(9).fill(0), 1 : new Array(9).fill(0)});
                     $.each(pResult, function(pIndex, pValue){
-                        if(mber_sn == pValue.mber_sn && b_type == pValue.b_type){
-                            order++;
-                        }
-                        else{
+						if(mber_sn == null && b_type == null){
                             order = 1;
                         }
+                        else if(mber_sn == pValue.mber_sn && b_type == pValue.b_type){
+                            order++;
+                        }
+						else if(mber_sn == pValue.mber_sn && b_type != pValue.b_type){
+							var D = sum_data[sum_idx][b_type]
+							html += `<tr>
+										<td class="text-center middle">${mber_nm}</td>
+										<td class="text-center middle">${b_type_nm}</td>
+										<td class="text-center middle colorLG" colspan="5">소계</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG">${D[0]}</td>
+										<td class=" colorLG">${D[1]}</td>
+										<td class=" colorLG">${D[2]}</td>
+										<td class=" colorLG">${D[3]}</td>
+										<td class=" colorLG">${D[4]}</td>
+										<td class=" colorLG">${D[5]}</td>
+										<td class=" colorLG">${D[6]}</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG">${D[7]}</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG">${D[8]}</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+									 </tr>`;
+							order = 1;
+						}
+						else{
+							//소계
+							var D = sum_data[sum_idx][b_type]
+							html += `<tr>
+										<td class="text-center middle">${mber_nm}</td>
+										<td class="text-center middle">${b_type_nm}</td>
+										<td class="text-center middle colorLG" colspan="5">소계</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG">${D[0]}</td>
+										<td class=" colorLG">${D[1]}</td>
+										<td class=" colorLG">${D[2]}</td>
+										<td class=" colorLG">${D[3]}</td>
+										<td class=" colorLG">${D[4]}</td>
+										<td class=" colorLG">${D[5]}</td>
+										<td class=" colorLG">${D[6]}</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG">${D[7]}</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG">${D[8]}</td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+										<td class=" colorLG"></td>
+									 </tr>`;
+							sum_data.push({0 : new Array(9).fill(0), 1 : new Array(9).fill(0)});
+							sum_idx++;
+							order = 1;
+						}
                         html += `<tr>
                                     <td class="text-center middle">${pValue.mber_nm}</td>
                                     <td class="text-center middle">${pValue.b_type_nm}</td>
@@ -153,20 +235,94 @@
                                     <td class="text-center middle">${pValue.bcnc_nm}</td>
                                     <td class="text-center middle">${pValue.dept_nm}</td>
                                     <td class="text-center middle">${pValue.bsn_mber_nm}</td>`;
-                        for(let i=1;i<=14;i++)
-                        html += `   <td class="text-center middle input-available" data-column="b_${i}" data-row="${pValue.b_sn}">${pValue['b_'+i]}</td>`
-                        html += `</tr>`;
+                        for(let i=1;i<=16;i++) {
+							if(SUM_COLUMNS.includes(i)){
+								if(i != 14 && i != 10){
+									if(pValue['b_' + i] != ''){
+										sum_data[sum_idx][pValue.b_type][SUM_COLUMNS.indexOf(i)]++;
+									}
+
+								}
+								else{
+									var v = parseInt(pValue['b_' + i]); if(isNaN(v)) v = 0;
+									sum_data[sum_idx][pValue.b_type][SUM_COLUMNS.indexOf(i)] += v;
+								}
+
+							}
+							html += `   <td class="text-center middle input-available" data-column="b_${i}" data-row="${pValue.b_sn}">${pValue['b_' + i]}</td>`
+						}
+
+                        html += `   <td class="text-center middle" style="padding:0px!important;">
+                                        <div class="btn-group">
+                                            <button class="btn btn-table btn-danger btnFinish" title="삭제" data-sn="${pValue.b_sn}">
+                                            <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+								</tr>`;
+                        mber_sn = pValue.mber_sn;
+                        mber_nm = pValue.mber_nm;
+                        b_type = pValue.b_type;
+                        b_type_nm = pValue.b_type_nm;
                     });
+
+					var D = sum_data[sum_idx][b_type]
+					html += `<tr>
+								<td class="text-center middle">${mber_nm}</td>
+								<td class="text-center middle">${b_type_nm}</td>
+								<td class="text-center middle colorLG" colspan="5">소계</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG">${D[0]}</td>
+								<td class=" colorLG">${D[1]}</td>
+								<td class=" colorLG">${D[2]}</td>
+								<td class=" colorLG">${D[3]}</td>
+								<td class=" colorLG">${D[4]}</td>
+								<td class=" colorLG">${D[5]}</td>
+								<td class=" colorLG">${D[6]}</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG">${D[7]}</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG">${D[8]}</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG"></td>
+							 </tr>`;
+					var D = new Array(9).fill(0);
+					$.each(sum_data, function(pIndex, pRow){ $.each(pRow, function(_, data){ $.each(data, function(i, d){ D[i] += d; }) }) });
+					html += `<tr>
+								<td class="text-center middle colorLG"></td>
+								<td class="text-center middle colorLG"></td>
+								<td class="text-center middle colorLG" colspan="5">합계</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG">${D[0]}</td>
+								<td class=" colorLG">${D[1]}</td>
+								<td class=" colorLG">${D[2]}</td>
+								<td class=" colorLG">${D[3]}</td>
+								<td class=" colorLG">${D[4]}</td>
+								<td class=" colorLG">${D[5]}</td>
+								<td class=" colorLG">${D[6]}</td>
+								<td class=" colorLG">${(D[3] +D[4] +D[5]) != 0 ? ((D[3]+D[4])*100.0/(D[3] +D[4] +D[5])).toFixed(1)+"%" : "-"}</td>
+								<td class=" colorLG">${D[7]}</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG">${pGoal != null ? (((D[7])*100.0/pGoal.amount).toFixed(1)+"%") : "-"}</td>
+								<td class=" colorLG">${D[8]}</td>
+								<td class=" colorLG">${pGoal != null ? (((D[8])*100.0/pGoal.hp).toFixed(1)+"%") : "-"}</td>
+								<td class=" colorLG"></td>
+								<td class=" colorLG"></td>
+							 </tr>`;
+					//수주달성율/연목표달성율만 계산하면 끝!
+					$("#rptParnterStatus1").find("tbody").html(html);
+					$("#rptParnterStatus1").find("tbody").yRowspan(0);
+					$("#rptParnterStatus1").find("tbody").yRowspan(1);
                 }
-                $("#rptParnterStatus1").find("tbody").html(html);
+
 
             }
         });
     }
-    $(document).ready(function(){
-        getBlueprint();
-
-    });
 
 
 	$(function() {
@@ -180,8 +336,36 @@
 			parent.frames['_print'].focus();
 			parent.frames['_print'].print();
 		});
+        $(document).on("click", ".btnFinish", function(){
+            var authors = ["*"];
+            var loginId = $("#loginID").val();
+            if(!authors.includes("*") && !authors.includes(loginId)){
+                alert("권한이 없습니다.");
+                return false;
+            }
+            if(confirm("삭제하시겠습니까?")){
+                var b_sn = $(this).data("sn");
+                var params = '';
+                params += '&b_sn='+b_sn;
+                $.ajax({
+                    url: '/api/common/delete_blueprint',
+                    type: 'GET',
+                    data: params,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function (pResult) {
+                        getBlueprint();
+                    }
+                });
+
+            }
+
+
+        });
 	});
 $(document).on("dblclick", ".input-available", function(){
+
 	var authors = ["*"];
 	var loginId = $("#loginID").val();
 	if(!authors.includes("*") && !authors.includes(loginId)){
@@ -190,6 +374,9 @@ $(document).on("dblclick", ".input-available", function(){
 	}
 
 	var data = prompt("값을 입력하세요.");
+	if(data == null){
+		return false;
+	}
 	var td = $(this);
 	var rowId = $(this).data("row");
 	var column = $(this).data("column");
@@ -197,6 +384,7 @@ $(document).on("dblclick", ".input-available", function(){
 	params += '&b_sn='+rowId;
 	params += '&column='+column;
 	params += '&data='+data;
+    params += "&stdyy="+$(document).find('#r3_s_ddt_man').val().split("-")[0]+"-"+$(document).find('#r3_s_ddt_man').val().split("-")[1];
 	$.ajax({
 		url: '/api/common/update_blueprint',
 		type: 'GET',
@@ -205,7 +393,7 @@ $(document).on("dblclick", ".input-available", function(){
 		contentType: false,
 		processData: false,
 		success: function (pResult) {
-            $(td).text(data);
+            getBlueprint();
 		}
 	});
 
@@ -287,7 +475,7 @@ $(document).on("dblclick", ".input-available", function(){
 											<td class="hasinput" colspan="2">
 												<select class="form-control select2" id="s_cntrct_sn" name="s_cntrct_sn">
 													<option value="">[계약을 선택해주세요.]</option>
-                                                    {% for code in contract_list %}
+                                                    {% for code in contract_nr_list %}
                                                     <option value="{{code.value}}">{{code.label}}</option>
                                                     {% endfor %}
 												</select>
@@ -308,7 +496,17 @@ $(document).on("dblclick", ".input-available", function(){
 
 <script>
     var isDataChange = false;
+    $(document).ready(function(){
+		if ($(document).find('#r3_s_ddt_man').val() == '') {
+			$(document).find('#r3_s_ddt_man').datepicker('setDate', 'today');
+		}
+		getBlueprint();
 
+
+    });
+	$(document).on("change", "#r3_s_ddt_man", function(){
+		getBlueprint();
+	});
 	init = function(){
 		$("#popBox1").find("#s_mber_sn").yVal('');
 		$("#popBox1").find("#s_b_type").yVal('');
@@ -318,6 +516,7 @@ $(document).on("dblclick", ".input-available", function(){
 	}
 	$(document).on('click', '#btnSave', function(){
 		var params = $("#frmBox1").formSerialize();
+        params += "&stdyy="+$(document).find('#r3_s_ddt_man').val().split("-")[0]+"-"+$(document).find('#r3_s_ddt_man').val().split("-")[1];
 		if($('#popBox1').find("#s_cntrct_sn").val() == ''){
 			alert("계약을 선택해주세요.");
 			return false;
@@ -346,11 +545,127 @@ $(document).on("dblclick", ".input-available", function(){
 	$('#popBox1').on('hidden.bs.modal', function(pEvent)
 	{
 		if (isDataChange) {
-			location.reload();
+			getBlueprint();
 			isDataChange = false;
 		}
 	});
 
 </script>
 
+<div class="modal fade" data-backdrop="static" id="popBox2">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="width:800px!important" id="container">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs3">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox2" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>설계현황 목표 등록</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;height:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox2" style="height:100%;">
+							<form id="frmBox2" style="height:100%;">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbar">
+												<button type="button" class="btn btn-primary" id="btnSaveGoal" title="저장합니다."><i class="fa fa-save"> 저장</i></button>
+
+											</span>
+											</th>
+										</tr>
+
+										<tr class="required">
+											<th class="color-contract">연목표 건수</th>
+											<td class="hasinput" colspan="2">
+                                                <input type="number" class="form-control text-right" name="amount" id="amount" step="1"/>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">연목표 HP</th>
+											<td class="hasinput" colspan="2">
+                                                <input type="number" class="form-control text-right" name="hp" id="hp" step="0.1"/>
+											</td>
+										</tr>
+
+									</tbody>
+								</table>
+
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script>
+	initModal = function(){
+		$('#popBox2').find("#hp").val('');
+		$('#popBox2').find("#amount").val('');
+
+	}
+	$(document).on('click', '#btnSaveGoal', function(){
+		var params = $("#frmBox2").formSerialize();
+        params += "&stdyy="+$(document).find('#r3_s_ddt_man').val().split("-")[0];
+		if($('#popBox2').find("#hp").val() == ''){
+			alert("연목표 HP를 입력해주세요.");
+			return false;
+		}
+		if($('#popBox2').find("#amount").val() == ''){
+			alert("연목표 건수를 입력해주세요.");
+			return false;
+		}
+		$.ajax({
+			url: '/api/common/insert_blueprint_goal',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				console.log(pResult);
+				isDataChange = true;
+			}
+
+		});
+	});
+	$('#popBox2').on('shown.bs.modal', function(pEvent)
+	{
+		initModal();
+	});
+
+	$('#popBox2').on('hidden.bs.modal', function(pEvent)
+	{
+		getBlueprint();
+	});
+
+</script>
 {% endblock %}

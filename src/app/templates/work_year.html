@@ -508,7 +508,10 @@ getWorkYear = function(){
 			});
 
 			$('#btnExcel').on('click', function(pEvent) {
-				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
 			});
 
 
@@ -536,7 +539,7 @@ $(document).on("dblclick", ".input-available", function(){
 	if(column != 'rm'){
 		var data = prompt("값을 입력하세요.", before.replaceAll(",", ""));
 		try{
-			if(/^\d+$/.test(data)){
+			if(/^-?\d+$/.test(data)){
 				data = parseInt(data);
 			}
 			else{

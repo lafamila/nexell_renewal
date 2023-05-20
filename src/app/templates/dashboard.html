@@ -25,6 +25,9 @@
 	.table-dashboard>tbody>tr>td, .table-dashboard>tbody>tr>th, .table-dashboard>tfoot>tr>td, .table-dashboard>tfoot>tr>th, .table-dashboard>thead>tr>td, .table-dashboard>thead>tr>th {
 		line-height: 0.5 !important;
 	}
+	.fontColorN{
+		color: blue!important;
+	}
 </style>
 
 <div id="ribbon" style="background:#B3E5FC!important;">
@@ -113,7 +116,7 @@
 		</colgroup>
 		<tbody role="header" style="border-bottom:none!important;">
             <tr>
-                <th rowspan="3" class="colorB" style="vertical-align:middle;font-size:11px!important;">기준</th>
+                <th class="colorB" style="vertical-align:middle;font-size:11px!important;border-bottom:none!important;"></th>
                 <th class="colorB" style="font-size:11px!important;">부서</th>
                 <th class="colorB" style="font-size:11px!important;">진행</th>
                 <th class="colorB" style="font-size:11px!important;">대기</th>
@@ -121,6 +124,7 @@
                 <th class="colorB" style="font-size:11px!important;">유보</th>
             </tr>
             <tr>
+                <th rowspan="3" class="colorB" style="vertical-align:middle;font-size:11px!important;border-top:none!important;">기준</th>
                 <td style="font-size:11px!important;">공조</td>
                 <td style="font-size:11px!important;">공1%</td>
                 <td style="font-size:11px!important;">공0%</td>
@@ -157,7 +161,7 @@
 		<tbody role="header">
 			<tr>
 				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" colspan="9">현장현황</th>
-				<th class="colorG" colspan="4">BiSS 지적현황</th>
+				<th class="colorG" colspan="4">BISS 지적현황</th>
 			</tr>
 			<tr>
 				<th class="colorB" style="vertical-align:middle;">부서</th>
@@ -170,7 +174,7 @@
 				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;">계</th>
                 <th class="colorG" style="border-right:2px solid black!important;">건설사</th>
 				<th class="colorG">계약명(현장명)</th>
-				<th class="colorG">BiSS건수</th>
+				<th class="colorG">BISS건수</th>
 				<th class="colorG">계</th>
 			</tr>
 		</tbody>
@@ -197,7 +201,7 @@
 
 <!-- 미수금현황 시작 -->
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<h5 class="sub-title underline">외상미수금</h5>
+		<h5 class="sub-title underline">외상미수금 <span style="font-size:12px!important;">(단위:천원)</span></h5>
 		<table id="rcppay_status_summary">
 			<colgroup>
                         <col width="60">
@@ -233,7 +237,7 @@
                     <th class="colorG">예정일</th>
                     <th class="colorButton">입금일</th>
                     <th class="colorButton">입금액</th>
-                    <th class="colorButton">미입금액</th>
+                    <th class="colorP">미입금액</th>
 
                 </tr>
             </thead>
@@ -250,7 +254,7 @@
                     <th class="colorP text-number" colspan="2"></th>
                     <th class="colorButton"></th>
                     <th class="colorButton"></th>
-                    <th class="colorButton"></th>
+                    <th class="colorP text-number"></th>
                 </tr>
             </tfoot>
 		</table>
@@ -263,7 +267,7 @@
 
     <div style="position: relative;">
 
-        <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline">매입처별 매입 현황 (장비, 자재)</h5>
+        <h5 style="position: absolute; left: 0; top: 0; width:100%;overflow: hidden" class="sub-title underline">매입처별 매입 현황 (장비, 자재) <span style="font-size:12px!important;">(단위:천원)</span></h5>
         <div style="position: absolute; right: 0; top: -5px; text-align: right; max-width: 50%; overflow: hidden">
             <button class="btn btn-info" data-toggle="modal" href="#popReport9"><i class="fa fa-print"> 지급자재현황</i></button>
             <button class="btn btn-info" data-toggle="modal" href="#popReport4"><i class="fa fa-print"> 연간현황</i></button>
@@ -712,23 +716,31 @@ getSalesExpectReport = function(){
 			/* summary start */
 			var html = '';
 			var _class = "colorW";
+			var DELIMITER = 1000;
 			$.each(pTable.longTermData, function(pIndex, pValue){
 				var color3 = $.dateDiff(pValue.rcppay_de) <= 3.0 ? ' colorButton' : ' ';
+				var price_1 = pValue.price_1 == '' ? '' : Math.round(pValue.price_1/DELIMITER);
+				var price_2 = pValue.price_2 == '' ? '' : Math.round(pValue.price_2/DELIMITER);
+				var price_3 = pValue.price_3 == '' ? '' : Math.round(pValue.price_3/DELIMITER);
+				var price_4 = pValue.price_4 == '' ? '' : Math.round(pValue.price_4/DELIMITER);
+				var price_sum = pValue.price_sum == '' ? '' : Math.round(pValue.price_sum/DELIMITER);
+				var diff = pValue.diff == '' ? '' : Math.round(pValue.diff/DELIMITER);
+				var rcppay_amount = pValue.rcppay_amount == '' ? '' : Math.round(pValue.rcppay_amount/DELIMITER);
 				html += `<tr class="${_class}">`;
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dlivy_de+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.bcnc_nm+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.cntrct_nm+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dept_nm+'</td>';
-				html += '    <td class="text-number">'+pValue.price_1.toString().toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-number">'+pValue.price_2.toString().toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_3.toString().toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_sum.toString().toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_4.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number">'+price_1.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number">'+price_2.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+price_3.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+price_sum.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+price_4.toString().toFormat('NUMBER')+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+ ((pValue.taxbil_sn == '') ? '' : (pValue.delng_se_nm.match(/\(([^)]+)\)/g) == null ? '매출' : pValue.delng_se_nm.match(/\(([^)]+)\)/g)[0].replaceAll("(", "").replaceAll(")", "")))+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.expect_de.substr(2,5)+'</td>';
 				html += '    <td class="'+color3+'">'+pValue.rcppay_de.substr(2,8)+'</td>';
-				html += '    <td class="text-number '+color3+'">'+pValue.rcppay_amount.toString().toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'">'+pValue.diff.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number '+color3+'">'+rcppay_amount.toString().toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-number colorSky"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'">'+diff.toString().toFormat('NUMBER')+'</td>';
 				html += '</tr>';
 			});
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").html(html);
@@ -736,6 +748,7 @@ getSalesExpectReport = function(){
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(1);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(2);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(3);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(6);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(7);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(8);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(9);
@@ -795,7 +808,7 @@ getSalesSummary = function(s_pxcond_mt)
 			if (pResult.status) {
                 console.log("sales", pResult);
 				var html = '';
-
+				var DELIMITER = 1000;
                 var bcncs = [];
                 var depts = [];
                 $.each(pResult.one, function(pIndex, pValue){
@@ -856,12 +869,12 @@ getSalesSummary = function(s_pxcond_mt)
                     row += '  <td class="colorSky">'+pValue+'</td>';
                     $.each(depts, function(p, q){
                        let price = getSales(pResult.one, pValue, q);
-                       row += '  <td>'+price.toString().toFormat('NUMBER')+'</td>';
+                       row += '  <td>'+Math.round(price/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                        sum += parseInt(price);
 
                         prices[p] += parseInt(price);
                     });
-                    row += '  <td>'+sum.toString().toFormat('NUMBER')+'</td>';
+                    row += '  <td>'+Math.round(sum/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                     row += '</tr>';
                     prices[depts.length] += sum;
                     if(sum != 0){
@@ -909,7 +922,7 @@ getSalesSummary = function(s_pxcond_mt)
                 html += '<tr>';
                 html += '    <td class="colorSky">총계</td>';
                 $.each(prices, function(k, v){
-                    html += '<td class="colorSky">'+v.toString().toFormat('NUMBER')+'</td>';
+                    html += '<td class="colorSky">'+Math.round(v/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                 });
                 html += '</tr>';
                 $('#rptSalesSummery tbody[role=footer]').html(html);
@@ -1582,25 +1595,25 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorLG text-right middle" colspan="2">${Math.round(total12 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle" data-value="valueStot"></td>
 						<td class="colorLG text-right middle">${Math.round(total11 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt11.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle">${Math.round(total14 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total13 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt12 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt12 == Infinity) ? '' : (rt12.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle ${diff1 < 0 ? 'color-red' : ''}">${diff1.toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total15 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>;
+						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt13.toFixed(1) + '%'))}</td>;
 						<td class="colorSky text-center middle">매출</td>
 						<td class="colorLG text-center middle">소계</td>
 						<td class="colorLG text-right middle" colspan="2">${Math.round(total22 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle" data-value="valueTtot"></td>
 						<td class="colorLG text-right middle">${Math.round(total21 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt21.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle">${Math.round(total24 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total23 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt22 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt22 == Infinity) ? '' : (rt22.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle ${diff2 < 0 ? 'color-red' : ''}">${diff2.toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total25 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt23 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt23 == Infinity) ? '' : (rt23.toFixed(1) + '%'))}</td>
 					 </tr>`;
 
 			$("#rpt99").find("#top-summary").find("tbody[role='body']").html(html);
@@ -1702,9 +1715,9 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
-								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
-								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmS" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
@@ -1722,9 +1735,9 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
-								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
-								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmS" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
@@ -1737,9 +1750,9 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2"></td>
 								 	<td class="middle text-left" colspan="2"></td>
-								 	<td class="middle text-right"></td>
-								 	<td class="middle text-right"></td>
-								 	<td class="middle text-right"></td>
+								 	<td class="middle text-right colorLG"></td>
+								 	<td class="middle text-right fontColorN"></td>
+								 	<td class="middle text-right colorLG"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-left" colspan="4"></td>
 								`;
@@ -1753,9 +1766,9 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
-								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
-								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmT" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
@@ -1774,9 +1787,9 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
 								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
-								 	<td class="middle text-right">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
-								 	<td class="middle text-right">${Math.round(amount/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
+								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmT" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
@@ -1790,9 +1803,9 @@ getMonthReport = function(pxcond_mt){
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2"></td>
 								 	<td class="middle text-left" colspan="2"></td>
-								 	<td class="middle text-right"></td>
-								 	<td class="middle text-right"></td>
-								 	<td class="middle text-right"></td>
+								 	<td class="middle text-right colorLG"></td>
+								 	<td class="middle text-right fontColorN"></td>
+								 	<td class="middle text-right colorLG"></td>
 								 	<td class="middle text-right"></td>
 								 	<td class="middle text-left" colspan="4"></td>
 								`;
@@ -1896,7 +1909,7 @@ $(document).on("dblclick", "#popReport99 .input-available", function(){
 	var data = prompt("값을 입력하세요.");
 	if($(td).hasClass("only-number")) {
 		try {
-			if (/^-?\d+$/.test(data)) {
+			if(/^-?\d+$/.test(data)) {
 				data = parseInt(data);
 			} else {
 				throw new Error(`Parameter is not a number : ${data}`);
@@ -2034,7 +2047,7 @@ $(function() {
 			</style>
 
 				<div id="rpt8">
-				<div class="title"><h2 class="colorLS" id="title">팀별 사전입찰 현황</h2></div>
+				<div class="title" style="position:relative;"><h2 class="colorLS" id="title">팀별 사전입찰 현황</h2><h6 style="position:absolute;right: 78px;top: 48px;">(단위:천원)</h6></div>
 
 				<!-- 기성 현황 시작 -->
 				<table id="suju" class="table table-bordered w100p">
@@ -2094,6 +2107,7 @@ getCompletedSujuB = function(s_pxcond_mt)
             var total_count2 = 0;
 			var total_price_1 = 0;
             var total_price_2 = 0;
+			var DELIMITER = 1000;
             $.each(pResult.data, function(pIndex, pValue){
                 if(before != "" && before != pValue.code_nm){
 
@@ -2104,7 +2118,7 @@ getCompletedSujuB = function(s_pxcond_mt)
                     html += '    <td class="colorN3"></td>';
                     html += '    <td class="colorN3"></td>';
                     html += '    <td class="colorN3"></td>';
-                    html += '    <td class="colorN3">'+before_price_2.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="colorN3">'+Math.round(before_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                     html += '</tr>';
                     total_count += before_count;
                     total_count2 += before_count2;
@@ -2131,7 +2145,7 @@ getCompletedSujuB = function(s_pxcond_mt)
 				//
 
                 html += '    <td>'+pValue.home_count+'</td>';
-                html += '    <td>'+pValue.price_2.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td>'+Math.round(pValue.price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                 html += '</tr>';
                 before = pValue.code_nm;
                 if(pValue.ordr == '0')
@@ -2148,7 +2162,7 @@ getCompletedSujuB = function(s_pxcond_mt)
 			html += '    <td class="colorN3"></td>';
 			html += '    <td class="colorN3"></td>';
 			html += '    <td class="colorN3"></td>';
-			html += '    <td class="colorN3">'+before_price_2.toString().toFormat('NUMBER')+'</td>';
+			html += '    <td class="colorN3">'+Math.round(before_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
             html += '</tr>';
             total_count += before_count;
             total_count2 += before_count2;
@@ -2161,7 +2175,7 @@ getCompletedSujuB = function(s_pxcond_mt)
             html += '    <td class="colorSky"></td>';
             html += '    <td class="colorSky"></td>';
             html += '    <td class="colorSky"></td>';
-            html += '    <td class="colorSky">'+total_price_2.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="colorSky">'+Math.round(total_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
             html += '</tr>';
 
             $("#rpt8").find("#suju tbody[role=body_suju]").html(html);
@@ -2741,6 +2755,9 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
             });
             pData.sort((a, b) => (a.ordr > b.ordr) ? 1 : -1 )
             $.each(pResult.data, function(pIndex, pValue){
+				if(pValue.new_rate != ''){
+					pValue.rate = pValue.new_rate;
+				}
 				if(before != "" && before != pValue.sttus_nm){
 
                     html += '<tr>';

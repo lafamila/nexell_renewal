@@ -25,6 +25,7 @@
 			<div class="modal-body report">
 
 				<div id="rpt6">
+					<div class="title"><h2 class="colorLS" id="title" style="font-weight:bold;">빌트인 관심 현장 (전시 및 수수료 회수)</h2></div>
 				<!--<div class="title"><h2 class="colorLS" id="title">팀별 VA 현황</h2></div>-->
 				<style>
 
@@ -44,6 +45,9 @@
 					#rpt6 #dtList1{
 						font-size: 10px!important;
 					}
+                    .middle{
+                        vertical-align: middle!important;
+                    }
 
 				</style>
 				<style>
@@ -124,13 +128,16 @@
             let nowYear = nowStr.split("-")[0];
             let nowMonth = nowStr.split("-")[1];
             $.each(pResult.data, function(pIndex, pValue){
-                var nextDate = new Date(parseInt(`20${pValue.cntrwk_endde.split("/")[0]}`), parseInt(`${pValue.cntrwk_endde.split("/")[1]}`)+2, 0);
+                if(pValue.expect_de == ''){
+                    pValue.expect_de = pValue.cntrwk_endde;
+                }
+                var nextDate = new Date(parseInt(`20${pValue.expect_de.split("/")[0]}`), parseInt(`${pValue.expect_de.split("/")[1]}`)+2, 0);
                 var nextDateStr = (new Date(nextDate.getTime()-offset)).toISOString().split("T")[0];
                 var _style = "display:none;";
                 var _class = '';
                 if((nextDateStr.split("-")[0] == nowYear) && (nextDateStr.split("-")[1] == nowMonth)){
                     _style = "";
-                    _class = "colorY";
+                    _class = "colorP";
                 }
 
                 html += `<tr class="row${pValue.cntrct_sn}" id="${pValue.cntrct_sn}" style="${_style}">
@@ -141,7 +148,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.cntrwk_endde}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.expect_de}</td>
                         </tr>`;
             });
             $("#dtList1").find("tbody[role=exec]").html(html);
@@ -164,7 +171,6 @@
                     sSum -= pResult.rcppay[cntrct_sn].S;
                     tSum -= pResult.rcppay[cntrct_sn].T;
                 }
-                console.log(mSum, sSum, tSum);
                  $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(2).html((mSum/1000).toFormat('NUMBER'));
                  $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(4).html((sSum/1000).toFormat('NUMBER'));
                  $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(6).html((tSum/1000).toFormat('NUMBER'));
@@ -176,20 +182,20 @@
 					var pDate = pRow.M[pRow.M.length-1];
 					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`)+12, 0);
 					var nextDateStr = (new Date(nextDate.getTime()-offset)).toISOString().split("T")[0];
-					$(document).find(`.row${cntrct_sn}`).eq(0).find("td").eq(3).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find("td").eq(3).text(`${nextDateStr.split("-")[0].substr(2)}/${nextDateStr.split("-")[1]}/${parseInt(nextDateStr.split("-")[2])}`);
                     if((nextDateStr.split("-")[0] == nowYear) && (nextDateStr.split("-")[1] == nowMonth)){
                         isShow = true;
-                        $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(3).addClass("colorY");
+                        $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(3).addClass("colorP");
                     }
 				}
             	if(pRow.S.length > 0) {
 					var pDate = pRow.S[pRow.S.length - 1];
 					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`) + 6, 0);
 					var nextDateStr = (new Date(nextDate.getTime() - offset)).toISOString().split("T")[0];
-					$(document).find(`.row${cntrct_sn}`).eq(0).find("td").eq(5).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find("td").eq(5).text(`${nextDateStr.split("-")[0].substr(2)}/${nextDateStr.split("-")[1]}/${parseInt(nextDateStr.split("-")[2])}`);
                     if((nextDateStr.split("-")[0] == nowYear) && (nextDateStr.split("-")[1] == nowMonth)){
                         isShow = true;
-                        $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(5).addClass("colorY");
+                        $("#dtList1").find("tbody[role=exec]").find(`#${cntrct_sn}`).find("td").eq(5).addClass("colorP");
                     }
 				}
                 if(isShow){

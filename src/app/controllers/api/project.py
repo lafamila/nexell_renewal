@@ -28,6 +28,91 @@ def disconnect(response):
     return response
 
 
+@bp.route('/ajax_get_contract', methods=['GET'])
+def ajax_get_contract():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = prj.get_contract(params)
+    if result['data']:
+        if result['data']['prjct_creat_at'] == 'Y':
+            projectParams = {"s_cntrct_sn" : result['data']['cntrct_sn']}
+            result['project'] = prj.get_project_list(projectParams)
+            if result['project']:
+                projectParams['s_prjct_sn'] = result['project'][0]['prjct_sn']
+                result['charger'] = chrg.get_charger_list(projectParams)
+    result['status'] = True
+
+    return jsonify(result)
+
+
+@bp.route('/ajax_delete_contract', methods=['POST'])
+def ajax_delete_contract():
+    params = request.form.to_dict()
+    prj.delete_contract(params)
+    return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
+
+@bp.route('/ajax_update_contract', methods=['POST'])
+def ajax_update_contract():
+    params = request.form.to_dict()
+    prj.update_contract(params)
+    return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
+
+@bp.route('/ajax_delete_project', methods=['POST'])
+def ajax_delete_project():
+    params = request.form.to_dict()
+    prj.delete_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
+@bp.route('/ajax_update_project', methods=['POST'])
+def ajax_update_project():
+    params = request.form.to_dict()
+    prj.update_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
+
+@bp.route('/ajax_get_cost_list', methods=['GET'])
+def ajax_get_cost_list():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = prj.get_cost_list(params)
+    result['status'] = True
+    return jsonify(result)
+
+@bp.route('/ajax_get_cost', methods=['GET'])
+def ajax_get_cost():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = prj.get_cost(params)
+    result['status'] = True
+    return jsonify(result)
+
+@bp.route('/ajax_insert_cost', methods=['POST'])
+def ajax_insert_cost():
+    params = request.form.to_dict()
+    prj.insert_cost(params)
+    return jsonify({"status": True, "message" : "성공적으로 추가되었습니다."})
+@bp.route('/ajax_update_cost', methods=['POST'])
+def ajax_update_cost():
+    params = request.form.to_dict()
+    prj.update_cost(params)
+    return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
+
+@bp.route('/ajax_delete_cost', methods=['GET'])
+def ajax_delete_cost():
+    params = request.args.to_dict()
+    prj.delete_cost(params)
+    return jsonify({"status": True, "message": "성공적으로 삭제되었습니다."})
+
+@bp.route('/ajax_get_project', methods=['GET'])
+def ajax_get_project():
+    params = request.args.to_dict()
+    result = dict()
+
+    result['contract'] = prj.get_contract(params)
+    result['project'] = prj.get_project(params)
+    result['charger'] = chrg.get_charger_list(params)
+
+    return jsonify(result)
+
+
 @bp.route('/ajax_get_project_datatable', methods=['POST'])
 def ajax_get_project_datatable():
     params = request.form.to_dict()
@@ -500,4 +585,10 @@ def update_c_project():
 def ajax_update_flaw_co():
     params = request.args.to_dict()
     prj.update_flaw_co(params)
+    return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/ajax_insert_co_st', methods=['GET'])
+def ajax_insert_co_st():
+    params = request.args.to_dict()
+    prj.insert_co_st(params)
     return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})

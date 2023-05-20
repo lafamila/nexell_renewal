@@ -1,6 +1,13 @@
 {% include "approvals/common_style.html" %}
 
-
+<style>
+    th.color-contract{
+        text-align:center!important;
+    }
+    th{
+        text-align:center!important;
+    }
+</style>
 <table class="table table-bordered table-form main-table">
     <colgroup>
         <col width="175">
@@ -53,7 +60,7 @@
                 </div>
             </td>
         </tr>
-        <tr class="required"><th class="color-contract">현장명</th>
+        <tr class="required"><th class="color-contract">현장명(10자이내)</th>
             <td class="hasinput" colspan="3">
                 <input type="text" class="form-control" id="cntrct_nm" name="cntrct_nm">
             </td>
@@ -77,8 +84,17 @@
                 </select>
             </td>
             <th class="color-contract">넥셀 현장담당</th>
-            <td class="hasinput" colspan="3">
-                <select class="form-control select2" id="spt_chrg_sn" name="spt_chrg_sn">
+            <td class="hasinput" colspan="1">
+                <select class="form-control select2" id="spt_chrg_sn" name="spt_chrg_sn" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in member_list %}
+                    <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <th class="color-contract">넥셀 영업담당</th>
+            <td class="hasinput" colspan="1">
+                <select class="form-control select2" id="bsn_chrg_sn" name="bsn_chrg_sn" style="width:100%!important;">
                     <option value=""></option>
                     {% for code in member_list %}
                     <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
@@ -97,14 +113,12 @@
                     {% endfor %}
                 </div>
             </td>
-            <th class="color-contract">넥셀 영업담당</th>
+            <th class="color-contract">준공예정일</th>
             <td class="hasinput" colspan="3">
-                <select class="form-control select2" id="bsn_chrg_sn" name="bsn_chrg_sn">
-                    <option value=""></option>
-                    {% for code in member_list %}
-                    <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
-                    {% endfor %}
-                </select>
+                <div class="input-group">
+                    <input type="text" class="form-control datepicker" style="width:100%!important;z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="expect_de" name="expect_de">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
             </td>
         </tr>
 
@@ -349,11 +363,11 @@
                         $(document).find('#cntrct_nm').trigger('focus');
                         result = false;
                     }
-                    // else if(cntrct_nm.length > 10){
-                    //     alert("현장명은 10글자 이내로 입력바랍니다.");
-                    //     $(document).find('#cntrct_nm').trigger('focus');
-                    //     result = false;
-                    // }
+                    else if(cntrct_nm.length > 10){
+                        alert("현장명은 10글자 이내로 입력바랍니다.");
+                        $(document).find('#cntrct_nm').trigger('focus');
+                        result = false;
+                    }
 
                     var spt_adres = $("#spt_adres").val();
                     if (result == true && fnIsEmpty(spt_adres)) {

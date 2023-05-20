@@ -422,6 +422,19 @@ def ajax_get_sales_expect_report():
                                 r_rows[i]['amount'], diff, taxbil_sn)
                 total_long_result[order].append(data)
 
+    for key in total_long_result:
+        results = total_long_result[key]
+        finals_data = dict()
+        for f in results:
+            if (f['cntrct_sn'], f['taxbil_sn']) not in finals_data:
+                finals_data[(f['cntrct_sn'], f['taxbil_sn'])] = []
+            finals_data[(f['cntrct_sn'], f['taxbil_sn'])].append(f)
+
+        sorted_finals = []
+        for cntrct_sn in sorted(list(finals_data.keys()), key=lambda x: finals_data[x][0]['dlivy_de']):
+            sorted_finals += finals_data[cntrct_sn]
+        total_long_result[key] = sorted_finals
+
     finals = []
     for key in total_long_result:
         if key == -1:
@@ -430,7 +443,16 @@ def ajax_get_sales_expect_report():
         func = lambda x: x['expect_de'] != '0000-00' and datetime.strptime(datetime.now().strftime("%Y-%m-01"), "%Y-%m-%d") > datetime.strptime(x['expect_de'], "%Y-%m")
         finals += filter(func, results)
 
-    table_data["longTermData"] = finals
+    finals_data = dict()
+    for f in finals:
+        if (f['cntrct_sn'], f['taxbil_sn']) not in finals_data:
+            finals_data[(f['cntrct_sn'], f['taxbil_sn'])] = []
+        finals_data[(f['cntrct_sn'], f['taxbil_sn'])].append(f)
+
+    sorted_finals = []
+    for cntrct_sn in sorted(list(finals_data.keys()), key=lambda x: finals_data[x][0]['dlivy_de']):
+        sorted_finals += finals_data[cntrct_sn]
+    table_data["longTermData"] = sorted_finals
 
     return jsonify(table_data)
 
@@ -453,7 +475,7 @@ def equip_to_account():
     row['prdlst_se_code'] = equipment['prdlst_se_code']
     row['model_no'] = equipment['model_no']
     row['delng_ty_code'] = equipment['delng_ty_code']
-    row['dlnt'] = equipment['dlnt']
+    row['dlnt'] = params["before_dlnt"]
     row['dlamt'] = equipment['pamt']
     keys = list(row.keys())
     g.curs.execute("INSERT INTO account({0}) VALUES ({1})".format(",".join(keys), ",".join(["%({})s".format(key) for key in keys])), row)
@@ -468,7 +490,8 @@ def equip_to_account():
     row['expect_de'] = params['expect_de']
     keys = list(row.keys())
     g.curs.execute("INSERT INTO account({0}) VALUES ({1})".format(",".join(keys), ",".join(["%({})s".format(key) for key in keys])), row)
-    g.curs.execute("UPDATE equipment SET dlivy_de=%(dlivy_de)s WHERE eq_sn=%(eq_sn)s", params)
+    params['last_dlnt'] = equipment['before_dlnt'] + int(params["before_dlnt"])
+    g.curs.execute("UPDATE equipment SET dlivy_de=%(dlivy_de)s, before_dlnt=%(last_dlnt)s WHERE eq_sn=%(eq_sn)s", params)
     return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
 

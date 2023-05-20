@@ -324,7 +324,6 @@ def get_add_dscnt_list(params):
 
     query += """ GROUP BY IF(p.delng_ty_code IN ('61', '62'), '61', '64'), c.cntrct_sn
     	         """
-    print(query)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -533,6 +532,7 @@ def get_s6_taxbill_list(params):
     				, t.delng_se_code AS s_delng_se_code
     				, c.cntrct_sn
     				, SUM(t.splpc_am + IFNULL(t.vat, 0)) as amount
+    				, c.prjct_ty_code
     				FROM taxbil t
     				LEFT JOIN contract c 
     				ON t.cntrct_sn=c.cntrct_sn
@@ -540,6 +540,46 @@ def get_s6_taxbill_list(params):
                     ON c.cntrct_sn=ch.cntrct_sn AND ch.charger_se_code='1'
     				WHERE t.delng_se_code IN ('S1', 'S2', 'S4')
     				AND t.taxbil_yn = 'Y'
+    """
+    data = ['%y/%m']
+    if "s_resrv_type" in params and params['s_resrv_type']:
+        query += " AND c.prjct_ty_code=%s"
+        data.append(params["s_resrv_type"])
+    else:
+        query += " AND c.prjct_ty_code IN ('BD', 'BF')"
+
+    query += """ AND c.prjct_creat_at IN ('Y')
+                 AND c.progrs_sttus_code NOT IN ('C')  """
+
+    if "s_resrv_bcnc" in params and params['s_resrv_bcnc']:
+        query += " AND bcnc_sn=%s"
+        data.append(params["s_resrv_bcnc"])
+
+    if "s_resrv_chrg" in params and params['s_resrv_chrg']:
+        query += " AND bsn_chrg_sn=%s"
+        data.append(params["s_resrv_chrg"])
+
+    if "s_resrv_c_chrg" in params and params['s_resrv_c_chrg']:
+        query += " AND SUBSTRING_INDEX(SUBSTRING_INDEX(charger_nm, ' ', 1), ' ', -1)=%s"
+        data.append(params["s_resrv_c_chrg"])
+
+    query += """ GROUP BY s_dlivy_de, s_delng_se_code, c.cntrct_sn
+    	         ORDER BY s_dlivy_de ASC """
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+def get_bd_taxbill_list(params):
+    query = """SELECT CAST(DATE_FORMAT(t.pblicte_de, %s) AS CHAR ) AS s_dlivy_de
+    				, t.delng_se_code AS s_delng_se_code
+    				, c.cntrct_sn
+    				, SUM(t.splpc_am + IFNULL(t.vat, 0)) as amount
+    				FROM taxbil t
+    				LEFT JOIN contract c 
+    				ON t.cntrct_sn=c.cntrct_sn
+    				WHERE 1=1
+    				AND c.prjct_ty_code = 'BD'
+    				AND t.taxbil_yn = 'Y'
+    				AND t.delng_se_code = 'S' 
     """
     data = ['%y/%m']
     if "s_resrv_type" in params and params['s_resrv_type']:
@@ -616,9 +656,10 @@ def get_bnd_rates(params):
 
 def get_bnd_projects(params):
     query = """SELECT c.cntrct_sn
-				, c.bcnc_sn
+				, c.bcnc_sn				
 				, DATE_FORMAT(c.cntrwk_endde, %s) AS cntrwk_endde
 				, DATE_FORMAT(c.cntrct_de, %s) AS cntrct_de
+				, IF(c.expect_de IS NULL, '', DATE_FORMAT(c.expect_de, %s)) AS expect_de
 				, c.bsn_chrg_sn
 				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS bsn_chrg_nm
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
@@ -628,6 +669,7 @@ def get_bnd_projects(params):
 				, IF(c.prjct_ty_code IN ('BD'), '직계약', '수수료') AS prjct_ty_nm
 				, c.progrs_sttus_code
 				, c.prjct_ty_code
+				, IFNULL(c.rate, 0) AS rate
 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
@@ -645,7 +687,7 @@ def get_bnd_projects(params):
 				AND ch.charger_se_code='1'
 				WHERE 1=1
             """
-    data = ["%y/%c/%d", "%y/%c/%d"]
+    data = ["%y/%m/%d", "%y/%m/%d", "%y/%m/%d"]
     if "s_resrv_type" in params and params['s_resrv_type']:
         query += " AND c.prjct_ty_code=%s"
         data.append(params["s_resrv_type"])
@@ -760,20 +802,53 @@ def set_bcnc_data(params):
             params["bcnc_data"] = ""
         g.curs.execute("INSERT INTO bcnced(bcnc_year, bcnc_row, bcnc_month, bcnc_data, bcnc_class) VALUES(%(bcnc_year)s, %(bcnc_row)s, %(bcnc_month)s, %(bcnc_data)s, %(bcnc_class)s)", params)
 
-def set_bnd_data(params):
-    row = g.curs.execute("SELECT bnd_sn FROM bnd WHERE bnd_year=%(bnd_year)s AND bnd_row=%(bnd_row)s AND bnd_month=%(bnd_month)s", params)
+
+def ajax_update_contract_rate(params):
+    g.curs.execute("UPDATE contract SET rate=%(rate)s WHERE cntrct_sn=%(cntrct_sn)s", params)
+
+
+def set_money_data(params):
+    row = g.curs.execute(
+        "SELECT money_sn FROM money WHERE money_year=%(money_year)s AND money_row=%(money_row)s AND money_month=%(money_month)s",
+        params)
     if row:
         result = g.curs.fetchone()
-        params['bnd_sn'] = result['bnd_sn']
-        if "bnd_data" in params:
-            g.curs.execute("UPDATE bnd SET bnd_data=%(bnd_data)s, bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+        params['money_sn'] = result['money_sn']
+        if "money_data" in params:
+            g.curs.execute("UPDATE money SET money_data=%(money_data)s, money_class=%(money_class)s WHERE money_sn=%(money_sn)s",
+                           params)
         else:
-            g.curs.execute("UPDATE bnd SET bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+            g.curs.execute("UPDATE money SET money_class=%(money_class)s WHERE money_sn=%(money_sn)s", params)
 
     else:
-        if "bnd_data" not in params:
-            params["bnd_data"] = ""
-        g.curs.execute("INSERT INTO bnd(bnd_year, bnd_row, bnd_month, bnd_data, bnd_class) VALUES(%(bnd_year)s, %(bnd_row)s, %(bnd_month)s, %(bnd_data)s, %(bnd_class)s)", params)
+        if "money_data" not in params:
+            params["money_data"] = ""
+        g.curs.execute(
+            "INSERT INTO money(money_year, money_row, money_month, money_data, money_class) VALUES(%(money_year)s, %(money_row)s, %(money_month)s, %(money_data)s, %(money_class)s)",
+            params)
+
+
+def set_bnd_data(params):
+    if params["bnd_month"] == "expect_de":
+        params["cntrct_sn"] = params["bnd_row"].replace("row", "")
+        y, m, d = params["bnd_data"].split("/")
+        params["expect_de"] = "20{}-{}-{}".format(y.zfill(2), m.zfill(2), d.zfill(2))
+        g.curs.execute("UPDATE contract SET expect_de=%(expect_de)s WHERE cntrct_sn=%(cntrct_sn)s", params)
+
+    else:
+        row = g.curs.execute("SELECT bnd_sn FROM bnd WHERE bnd_year=%(bnd_year)s AND bnd_row=%(bnd_row)s AND bnd_month=%(bnd_month)s", params)
+        if row:
+            result = g.curs.fetchone()
+            params['bnd_sn'] = result['bnd_sn']
+            if "bnd_data" in params:
+                g.curs.execute("UPDATE bnd SET bnd_data=%(bnd_data)s, bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+            else:
+                g.curs.execute("UPDATE bnd SET bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+
+        else:
+            if "bnd_data" not in params:
+                params["bnd_data"] = ""
+            g.curs.execute("INSERT INTO bnd(bnd_year, bnd_row, bnd_month, bnd_data, bnd_class) VALUES(%(bnd_year)s, %(bnd_row)s, %(bnd_month)s, %(bnd_data)s, %(bnd_class)s)", params)
 
 def set_month_data(params):
     row = g.curs.execute("SELECT month_sn FROM month WHERE month_year=%(month_year)s AND month_row=%(month_row)s AND month_month=%(month_month)s", params)
@@ -800,8 +875,36 @@ def get_bnd_data(params):
     result = g.curs.fetchall()
     return result
 
+def get_money_data_input(params):
+    g.curs.execute("SELECT money_sn, money_year, money_row, money_month, money_data, money_class FROM money WHERE money_year=%s", params['money_year'])
+    result = g.curs.fetchall()
+    return result
+
 def get_month_data(params):
     g.curs.execute("SELECT month_sn, month_year, month_row, month_month, month_data, month_class FROM month WHERE month_year=%s", params['s_year'])
+    result = g.curs.fetchall()
+    return result
+
+def get_month_co_contract_list(params):
+    query = """SELECT s.year
+                    , s.cntrct_sn
+                    , c.bcnc_sn
+                    , c.spt_nm
+                    , DATE_FORMAT(c.cntrct_de, '%%Y-%%m') AS cntrct_de
+                    , m.mber_nm
+                    , m.ofcps_code
+                    , m.dept_code
+                    , s.rate
+                    , (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+    				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+    				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
+                    FROM month_st s
+                    LEFT JOIN member m ON s.mber_sn=m.mber_sn
+                    LEFT JOIN contract c ON s.cntrct_sn=c.cntrct_sn
+                    WHERE 1=1
+                    AND s.rate > 0
+                    AND s.year=%(s_year)s"""
+    g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
@@ -1095,7 +1198,7 @@ def insert_vacation_out(params, vacation_type):
 
 def insert_vacation(params):
     data = OrderedDict()
-    data['mber_sn'] = session['member']['member_sn']
+    data['mber_sn'] = params["mber_sn"]
     st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
     ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
     if params['vacation_type'] == 'y':
@@ -1121,10 +1224,30 @@ def insert_vacation(params):
         data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
         g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
+def get_blueprint_goal(params):
+    query = "SELECT stdyy, amount, hp FROM blueprint_goal WHERE stdyy=%(stdyy)s"
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+def get_blueprint_total(params):
+    query = """ SELECT SUM(b_10) AS b_10_total
+                    , SUM(b_14) AS b_14_total
+            """
+    for i in range(2, 9):
+        query += """, SUM(IF(b_{0} IS NULL OR b_{0} = '', 0 , 1)) AS b_{0}_total """.format(i)
+    query += """ FROM blueprint
+                    WHERE 1=1
+                    AND stdyy LIKE '{0}%%'""".format(params['stdyy'].split("-")[0])
+    g.curs.execute(query)
+    result = g.curs.fetchone()
+    return result
+
 def get_blueprint(params):
     query = """
                 SELECT b.b_sn
                     , b.mber_sn
+                    , b.stdyy
                     , (SELECT mber_nm FROM member WHERE mber_sn=b.mber_sn) AS mber_nm
                     , b.b_type
                     , IF(b_type = 0, '신규현장', '변경현장') AS b_type_nm
@@ -1136,20 +1259,30 @@ def get_blueprint(params):
                     , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
                     , (SELECT mber_nm FROM member WHERE mber_sn=m.mber_sn) AS bsn_mber_nm
             """
-    for i in range(1, 15):
+    for i in range(1, 17):
         query += ", b.b_{0} AS b_{0}".format(i)
     query += """ FROM blueprint b
                 LEFT JOIN contract c ON b.cntrct_sn=c.cntrct_sn
                 LEFT JOIN member m ON c.bsn_chrg_sn=m.mber_sn
+                WHERE 1=1
+                AND b.stdyy=%(stdyy)s
                 ORDER BY mber_nm, b.b_type, b.b_sn"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
 def insert_blueprint(params):
-    g.curs.execute("INSERT INTO blueprint(mber_sn, b_type, cntrct_sn) VALUES (%(s_mber_sn)s, %(s_b_type)s, %(s_cntrct_sn)s)", params)
+    g.curs.execute("INSERT INTO blueprint(mber_sn, b_type, cntrct_sn, stdyy) VALUES (%(s_mber_sn)s, %(s_b_type)s, %(s_cntrct_sn)s, %(stdyy)s)", params)
+def insert_blueprint_goal(params):
+    row = g.curs.execute("SELECT * FROM blueprint_goal WHERE stdyy=%(stdyy)s", params)
+    if row:
+        g.curs.execute("UPDATE blueprint_goal SET amount=%(amount)s, hp=%(hp)s WHERE stdyy=%(stdyy)s", params)
+    else:
+        g.curs.execute("INSERT INTO blueprint_goal(stdyy, amount, hp) VALUES (%(stdyy)s, %(amount)s, %(hp)s)", params)
 def update_blueprint(params):
     g.curs.execute("UPDATE blueprint SET {0}=%(data)s WHERE b_sn=%(b_sn)s".format(params['column']), params)
+def delete_blueprint(params):
+    g.curs.execute("DELETE FROM blueprint WHERE b_sn=%(b_sn)s", params)
 
 def get_research(params):
     query = """SELECT e.research_row
@@ -1215,6 +1348,7 @@ def get_equipment(params):
                             , delng_ty_code
                             , cnnc_sn
                             , dlivy_de
+                            , before_dlnt
                     FROM equipment WHERE eq_sn=%(eq_sn)s""", params)
     result = g.curs.fetchone()
     return result
@@ -1318,3 +1452,314 @@ def get_equipment(params):
 #     g.curs.execute(query, params)
 #     result = g.curs.fetchall()
 #     return result
+
+def get_extra(params):
+    query = """SELECT e.extra_row
+				, e.extra_month
+				, e.extra_data
+				FROM extra e
+				WHERE 1=1
+				AND e.extra_year = %(extra_year)s
+				AND e.extra_sn IN (SELECT MAX(ex.extra_sn) FROM extra ex WHERE ex.extra_year=%(extra_year)s GROUP BY ex.extra_row, ex.extra_month)"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def insert_extra(params):
+    query = """INSERT INTO extra(extra_year, extra_row, extra_month, extra_data) VALUES (%(extra_year)s, %(extra_row)s, %(extra_month)s, %(extra_data)s)"""
+    g.curs.execute(query, params)
+
+
+def get_first(params):
+    query = """SELECT SUM(IFNULL(p_month01, 0)) AS 1m
+				, SUM(IFNULL(p_month02, 0)) AS 2m
+				, SUM(IFNULL(p_month03, 0)) AS 3m
+				, SUM(IFNULL(p_month04, 0)) AS 4m
+				, SUM(IFNULL(p_month05, 0)) AS 5m
+				, SUM(IFNULL(p_month06, 0)) AS 6m
+				, SUM(IFNULL(p_month07, 0)) AS 7m
+				, SUM(IFNULL(p_month08, 0)) AS 8m
+				, SUM(IFNULL(p_month09, 0)) AS 9m
+				, SUM(IFNULL(p_month10, 0)) AS 10m
+				, SUM(IFNULL(p_month11, 0)) AS 11m
+				, SUM(IFNULL(p_month12, 0)) AS 12m
+				FROM (
+				SELECT 'part' AS type
+				, b.esntl_delng_no
+				, b.bcnc_nm
+				, b.bcnc_sn
+				, IF (SUBSTRING(a.ddt_man,6,2) = '01', SUM(a.dlnt*a.dlamt), 0) AS p_month01
+				, IF (SUBSTRING(a.ddt_man,6,2) = '02', SUM(a.dlnt*a.dlamt), 0) AS p_month02
+				, IF (SUBSTRING(a.ddt_man,6,2) = '03', SUM(a.dlnt*a.dlamt), 0) AS p_month03
+				, IF (SUBSTRING(a.ddt_man,6,2) = '04', SUM(a.dlnt*a.dlamt), 0) AS p_month04
+				, IF (SUBSTRING(a.ddt_man,6,2) = '05', SUM(a.dlnt*a.dlamt), 0) AS p_month05
+				, IF (SUBSTRING(a.ddt_man,6,2) = '06', SUM(a.dlnt*a.dlamt), 0) AS p_month06
+				, IF (SUBSTRING(a.ddt_man,6,2) = '07', SUM(a.dlnt*a.dlamt), 0) AS p_month07
+				, IF (SUBSTRING(a.ddt_man,6,2) = '08', SUM(a.dlnt*a.dlamt), 0) AS p_month08
+				, IF (SUBSTRING(a.ddt_man,6,2) = '09', SUM(a.dlnt*a.dlamt), 0) AS p_month09
+				, IF (SUBSTRING(a.ddt_man,6,2) = '10', SUM(a.dlnt*a.dlamt), 0) AS p_month10
+				, IF (SUBSTRING(a.ddt_man,6,2) = '11', SUM(a.dlnt*a.dlamt), 0) AS p_month11
+				, IF (SUBSTRING(a.ddt_man,6,2) = '12', SUM(a.dlnt*a.dlamt), 0) AS p_month12
+				, SUM(a.dlnt*a.dlamt) AS p_month99
+				FROM account a
+				JOIN bcnc b
+				ON a.ctmmny_sn=b.ctmmny_sn AND a.bcnc_sn=b.bcnc_sn
+				WHERE a.ctmmny_sn = 1
+				AND a.ddt_man BETWEEN CONCAT(%(year)s,'-01-01') AND CONCAT(%(year)s,'-12-31')
+				AND a.delng_se_code = 'P'
+				GROUP BY b.esntl_delng_no, b.bcnc_nm, SUBSTRING(a.ddt_man,1,7)
+				) t
+				WHERE bcnc_sn=74
+				GROUP BY bcnc_nm
+				ORDER BY type, p_month99 DESC"""
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_kisung_suju(params):
+    query = """SELECT SUM(t.m01) AS 1m
+				, SUM(t.m02) AS 2m
+				, SUM(t.m03) AS 3m
+				, SUM(t.m04) AS 4m
+				, SUM(t.m05) AS 5m
+				, SUM(t.m06) AS 6m
+				, SUM(t.m07) AS 7m
+				, SUM(t.m08) AS 8m
+				, SUM(t.m09) AS 9m
+				, SUM(t.m10) AS 10m
+				, SUM(t.m11) AS 11m
+				, SUM(t.m12) AS 12m
+				FROM (
+				SELECT mb.dept_code AS dept
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-01-01'), mb.mber_sn, 'M') AS m01
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-02-01'), mb.mber_sn, 'M') AS m02
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-03-01'), mb.mber_sn, 'M') AS m03
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-04-01'), mb.mber_sn, 'M') AS m04
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-05-01'), mb.mber_sn, 'M') AS m05
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-06-01'), mb.mber_sn, 'M') AS m06
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-07-01'), mb.mber_sn, 'M') AS m07
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-08-01'), mb.mber_sn, 'M') AS m08
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-09-01'), mb.mber_sn, 'M') AS m09
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-10-01'), mb.mber_sn, 'M') AS m10
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-11-01'), mb.mber_sn, 'M') AS m11
+				, GET_SUJU_AMOUNT(CONCAT(%(year)s,'-12-01'), mb.mber_sn, 'M') AS m12
+				FROM member mb
+				WHERE 1
+				AND (mb.dept_code LIKE 'TS%%' OR mb.dept_code LIKE 'BI%%')
+				) t """
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_kisung_sales(params):
+    query = """SELECT IFNULL(SUM(t.m01),0) AS 1m
+				, IFNULL(SUM(t.m02),0) AS 2m
+				, IFNULL(SUM(t.m03),0) AS 3m
+				, IFNULL(SUM(t.m04),0) AS 4m
+				, IFNULL(SUM(t.m05),0) AS 5m
+				, IFNULL(SUM(t.m06),0) AS 6m
+				, IFNULL(SUM(t.m07),0) AS 7m
+				, IFNULL(SUM(t.m08),0) AS 8m
+				, IFNULL(SUM(t.m09),0) AS 9m
+				, IFNULL(SUM(t.m10),0) AS 10m
+				, IFNULL(SUM(t.m11),0) AS 11m
+				, IFNULL(SUM(t.m12),0) AS 12m
+				FROM (
+				SELECT mb.dept_code AS dept
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-01-01'), mb.mber_sn),0) AS m01
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-02-01'), mb.mber_sn),0) AS m02
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-03-01'), mb.mber_sn),0) AS m03
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-04-01'), mb.mber_sn),0) AS m04
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-05-01'), mb.mber_sn),0) AS m05
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-06-01'), mb.mber_sn),0) AS m06
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-07-01'), mb.mber_sn),0) AS m07
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-08-01'), mb.mber_sn),0) AS m08
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-09-01'), mb.mber_sn),0) AS m09
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-10-01'), mb.mber_sn),0) AS m10
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-11-01'), mb.mber_sn),0) AS m11
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(%(year)s,'-12-01'), mb.mber_sn),0) AS m12
+				FROM member mb
+				WHERE 1
+				AND (mb.dept_code LIKE 'TS%%' OR mb.dept_code LIKE 'BI%%')
+				UNION
+				SELECT mb.dept_code AS dept
+				, IFNULL(SUM(1m),0) AS m01
+				, IFNULL(SUM(2m),0) AS m02
+				, IFNULL(SUM(3m),0) AS m03
+				, IFNULL(SUM(4m),0) AS m04
+				, IFNULL(SUM(5m),0) AS m05
+				, IFNULL(SUM(6m),0) AS m06
+				, IFNULL(SUM(7m),0) AS m07
+				, IFNULL(SUM(8m),0) AS m08
+				, IFNULL(SUM(9m),0) AS m09
+				, IFNULL(SUM(10m),0) AS m10
+				, IFNULL(SUM(11m),0) AS m11
+				, IFNULL(SUM(12m), 0) AS m12
+				FROM goal go
+				JOIN member mb
+				ON go.mber_sn = mb.mber_sn
+				WHERE go.stdyy = %(year)s
+				AND go.amt_ty_code = '9'
+				AND mb.dept_code <> 'PM'
+				GROUP BY mb.dept_code
+				) t """
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+
+def get_kisung_va(params):
+    query = """SELECT SUM(t.m01) AS 1m
+				, SUM(t.m02) AS 2m
+				, SUM(t.m03) AS 3m
+				, SUM(t.m04) AS 4m
+				, SUM(t.m05) AS 5m
+				, SUM(t.m06) AS 6m
+				, SUM(t.m07) AS 7m
+				, SUM(t.m08) AS 8m
+				, SUM(t.m09) AS 9m
+				, SUM(t.m10) AS 10m
+				, SUM(t.m11) AS 11m
+				, SUM(t.m12) AS 12m
+				FROM (
+				SELECT mb.dept_code AS dept
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-01'), mb.mber_sn)) AS m01
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-02'), mb.mber_sn)) AS m02
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-03'), mb.mber_sn)) AS m03
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-04'), mb.mber_sn)) AS m04
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-05'), mb.mber_sn)) AS m05
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-06'), mb.mber_sn)) AS m06
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-07'), mb.mber_sn)) AS m07
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-08'), mb.mber_sn)) AS m08
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-09'), mb.mber_sn)) AS m09
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-10'), mb.mber_sn)) AS m10
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-11'), mb.mber_sn)) AS m11
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(%(year)s,'-12'), mb.mber_sn)) AS m12
+				FROM member mb
+				WHERE mb.dept_code IN ('TS1','TS2','TS3','BI')
+				GROUP BY mb.dept_code
+				UNION
+				SELECT mb.dept_code AS dept
+				, SUM(1m) AS m01
+				, SUM(2m) AS m02
+				, SUM(3m) AS m03
+				, SUM(4m) AS m04
+				, SUM(5m) AS m05
+				, SUM(6m) AS m06
+				, SUM(7m) AS m07
+				, SUM(8m) AS m08
+				, SUM(9m) AS m09
+				, SUM(10m) AS m10
+				, SUM(11m) AS m11
+				, IFNULL(SUM(12m), 0) AS m12
+				FROM goal go
+				JOIN member mb
+				ON go.mber_sn = mb.mber_sn
+				WHERE go.stdyy = %(year)s
+				AND go.amt_ty_code = '9'
+				AND mb.dept_code <> 'PM'
+				GROUP BY mb.dept_code
+				) t """
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_last(params):
+    query = """SELECT SUM(IFNULL(g.1m, 0)) AS 1m
+				, SUM(IFNULL(g.2m, 0)) AS 2m
+				, SUM(IFNULL(g.3m, 0)) AS 3m
+				, SUM(IFNULL(g.4m, 0)) AS 4m
+				, SUM(IFNULL(g.5m, 0)) AS 5m
+				, SUM(IFNULL(g.6m, 0)) AS 6m
+				, SUM(IFNULL(g.7m, 0)) AS 7m
+				, SUM(IFNULL(g.8m, 0)) AS 8m
+				, SUM(IFNULL(g.9m, 0)) AS 9m
+				, SUM(IFNULL(g.10m, 0)) AS 10m
+				, SUM(IFNULL(g.11m, 0)) AS 11m
+				, SUM(IFNULL(g.12m, 0)) AS 12m
+				FROM goal g
+				LEFT JOIN member m
+				ON m.mber_sn=g.mber_sn
+				LEFT JOIN code c
+				ON c.ctmmny_sn=1 AND c.parnts_code='DEPT_CODE' AND c.code=m.dept_code
+				WHERE 1=1
+				AND g.stdyy = %(year)s
+				AND g.amt_ty_code=9
+				GROUP BY amt_ty_code
+				ORDER BY amt_ty_code"""
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_goal(params):
+    query = """SELECT g.stdyy
+				, g.amt_ty_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='AMT_TY_CODE' AND code=g.amt_ty_code) AS amt_ty_nm
+				, SUM(IFNULL(g.1m, 0)) AS 1m
+				, SUM(IFNULL(g.2m, 0)) AS 2m
+				, SUM(IFNULL(g.3m, 0)) AS 3m
+				, SUM(IFNULL(g.4m, 0)) AS 4m
+				, SUM(IFNULL(g.5m, 0)) AS 5m
+				, SUM(IFNULL(g.6m, 0)) AS 6m
+				, SUM(IFNULL(g.7m, 0)) AS 7m
+				, SUM(IFNULL(g.8m, 0)) AS 8m
+				, SUM(IFNULL(g.9m, 0)) AS 9m
+				, SUM(IFNULL(g.10m, 0)) AS 10m
+				, SUM(IFNULL(g.11m, 0)) AS 11m
+				, SUM(IFNULL(g.12m, 0)) AS 12m
+				FROM goal g
+				LEFT JOIN member m
+				ON m.mber_sn=g.mber_sn
+				LEFT JOIN code c
+				ON c.ctmmny_sn=1 AND c.parnts_code='DEPT_CODE' AND c.code=m.dept_code
+				WHERE 1=1
+				AND g.stdyy = %(year)s
+				AND g.amt_ty_code IN (2, 3, 5, 8)
+				GROUP BY amt_ty_code
+				ORDER BY amt_ty_code"""
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+
+def get_finance(params):
+    query = """SELECT e.finance_row
+				, e.finance_month
+				, e.finance_data
+				FROM finance e
+				WHERE 1=1
+				AND e.finance_year = %(finance_year)s
+				AND e.finance_sn IN (SELECT MAX(ex.finance_sn) FROM finance ex WHERE ex.finance_year=%(finance_year)s GROUP BY ex.finance_row, ex.finance_month) """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def insert_finance(params):
+    query = """INSERT INTO finance(finance_year, finance_row, finance_month, finance_data) VALUES (%(finance_year)s, %(finance_row)s, %(finance_month)s, %(finance_data)s)"""
+    g.curs.execute(query, params)
+
+def reserve_out(params):
+    query = """INSERT INTO reserve_out(cntrct_sn) VALUES(%(cntrct_sn)s)"""
+    g.curs.execute(query, params)
+
+def insert_bbs(params):
+    query = """INSERT INTO bbs(bbs_type, bbs_title, bbs_content, reg_sn) VALUES(%(bbs_type)s, %(bbs_title)s, %(bbs_content)s, %(reg_sn)s)"""
+    params["reg_sn"] = session["member"]['member_sn']
+    g.curs.execute(query, params)
+
+def get_bbs_list(params):
+    g.curs.execute("SELECT bbs_sn, bbs_type, bbs_title, bbs_content, reg_sn, m.mber_nm AS reg_nm, DATE_FORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_date FROM bbs b LEFT JOIN member m ON b.reg_sn=m.mber_sn ORDER BY reg_date DESC")
+    result = g.curs.fetchall()
+    return result
+def get_bbs(params):
+    g.curs.execute("SELECT bbs_sn, bbs_type, bbs_title, bbs_content, reg_sn, m.mber_nm AS reg_nm, DATE_FORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_date FROM bbs b LEFT JOIN member m ON b.reg_sn=m.mber_sn WHERE bbs_sn=%(bbs_sn)s", params)
+    result = g.curs.fetchone()
+    return result
+def delete_bbs(params):
+    g.curs.execute("DELETE FROM bbs WHERE bbs_sn=%(bbs_sn)s", params)

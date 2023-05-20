@@ -125,7 +125,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="color-contract">거래처명</th>
 			<td id="bcnc_nm" colspan="3"></td>
 			<th class="color-contract">공사기간</th>
-			<td id="cntrwk_period" colspan="3"></td>
+			<td id="cntrwk_period"></td>
+			<th class="color-contract">준공예정일</th>
+			<td id="expect_de"></td>
 		</tr>
         <tr>
 			<th class="color-contract">현장명</th>
@@ -1087,6 +1089,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBF').find('#bcnc_nm').html(contract.bcnc_nm); //거래처
 				$('#popReportBF').find('#spt_nm').html(contract.spt_nm); //현장명
 				$('#popReportBF').find('#cntrwk_period').html(contract.cntrwk_period); //공사기간
+				$('#popReportBF').find('#expect_de').html(contract.expect_de); //공사기간
 				$('#popReportBF').find('#home_count').html(contract.home_count); //세대수
 				$('#popReportBF').find('#home_region').html(contract.home_region); //지역
 				$('#popReportBF').find('[name=prjct_ty_code]').yVal(contract.prjct_ty_code); //프로젝트 유형
@@ -1270,6 +1273,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(2)').html(p_sum_total.toString().toFormat('NUMBER'));
 
 					$('#popReportBF').find('#report_exec tbody[role=body] td:eq(1)').html(fee_rt_avg.toFixed(1)+'%');
+					$('#popReportBF').find('#report_exec tbody[role=body] td:eq(0)').html(p_sum_total.toString().toFormat('NUMBER'));
+					$('#popReportBF').find('#report_exec tbody[role=body] th:eq(1)').html((p_sum_total * (isNaN(fee_rt_avg) ? 0 : fee_rt_avg) / 100.0).toString().toFormat('NUMBER'));
+
 				}
 
                 // $('#popReportBF').find('#report_c_cost tbody[role=body]').html(html);
@@ -1554,12 +1560,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					}
 				}
 				$('#popReportBF').find('#report_i1_rcppay tbody').html(html);
+				$('#popReportBF').find('#report_exec tbody[role=body] th:eq(0)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i1_rcppay tfoot th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i1_rcppay tfoot th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i1_rcppay tfoot th:eq(3)').html(rate_total.toFixed(1)+'%');
-				$('#popReportBF').find('#report_exec tbody[role=body] td:eq(0)').html(p_sum_total.toString().toFormat('NUMBER'));
-                $('#popReportBF').find('#report_exec tbody[role=body] th:eq(0)').html(amount_total.toString().toFormat('NUMBER'));
-				$('#popReportBF').find('#report_exec tbody[role=body] th:eq(1)').html((p_sum_total * (isNaN(fee_rt_avg) ? 0 : fee_rt_avg) / 100.0).toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 모델(샘플)하우스 장비 매입 현황 (관리) */

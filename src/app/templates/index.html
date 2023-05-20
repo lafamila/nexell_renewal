@@ -33,7 +33,7 @@
 				.right-container{
 					height:100%;
 					display:grid;
-					grid-template-rows: 1fr 1fr;
+					grid-template-rows: 1fr 1fr 1fr 1fr;
 					row-gap:15px;
 				}
 				.left-container > div:first-child{
@@ -77,7 +77,7 @@
 				.table-container div:first-child span:first-child, .attendance-container span:first-child{
 					font-size:15px!important;
 				}
-				.table-container div:first-child {
+				.table-container > div:first-child {
 					display: grid;
 					grid-template-columns: 100px 1fr 60px;
 				}
@@ -133,6 +133,57 @@
 					background-color: #002060;
 					color:white;
 				}
+				.table-form{
+					border:1px solid #002060!important;
+					display:grid;
+					grid-template-rows: 34px 110px;
+				}
+				.table-thead{
+					display:grid;
+					grid-template-columns: 2fr 4.5fr 1.75fr 1.75fr;
+				}
+				.table-thead > div{
+					display: grid;
+					justify-content: center;
+					align-items: center;
+					background-color: #002060;
+					color:white;
+					font-weight:bold;
+					border-right:1px solid #555;
+				}
+				.table-tbody{
+					overflow-y:auto;
+					box-sizing:border-box;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+				}
+
+				.table-tbody > .table-tr{
+					height:27.5px;
+					display:grid;
+					grid-template-columns: 2fr 4.5fr 1.75fr 1.75fr;
+					border-bottom:1px solid #999;
+				}
+				.table-tbody::-webkit-scrollbar{
+					width:2px!important;
+				}
+				.table-tbody::-webkit-scrollbar-track{
+					width:2px!important;
+					background:#eee;
+				}
+				.table-tbody::-webkit-scrollbar-thumb{
+					width:2px!important;
+					background:#555!important;
+				}
+				.table-tbody > .table-tr > .table-td{
+					display: grid;
+					justify-content: center;
+					align-items: center;
+					font-weight:normal!important;
+				}
+				.table-tbody > .table-tr > .table-td:not(:last-child){
+					border-right:1px solid #999;
+				}
 			</style>
 			<div class="grid-container">
 				<div class="left-container" style="font-weight: normal!important;">
@@ -179,57 +230,81 @@
 							<span><a href="/approval">전체보기</a></span>
 						</div>
 						<div>
-							<table style="width:100%;height:100%;" class="table table-bordered">
-								<colgroup>
-									<col width="20%">
-									<col width="60%">
-									<col width="10%">
-									<col width="10%">
-								</colgroup>
-								<thead>
-									<tr>
-										<th>양식</th>
-										<th>제목</th>
-										<th>기안일</th>
-										<th>기안자</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td colspan="4" style="vertical-align: middle;">현재 수신된 결재문서가 존재하지 않습니다.</td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="table-form">
+								<div class="table-thead">
+									<div>양식</div>
+									<div>제목</div>
+									<div>기안자</div>
+									<div>기안일</div>
+								</div>
+								<div class="table-tbody" id="approval_status_1">
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="table-container">
+						<div>
+							<span>진행문서</span>
+							<span></span>
+							<span><a href="/approval">전체보기</a></span>
+						</div>
+						<div>
+							<div class="table-form">
+								<div class="table-thead">
+									<div>양식</div>
+									<div>제목</div>
+									<div>기안자</div>
+									<div>기안일</div>
+								</div>
+								<div class="table-tbody" id="approval_status_2">
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="table-container">
+						<div>
+							<span>수신문서</span>
+							<span></span>
+							<span><a href="/approval">전체보기</a></span>
+						</div>
+						<div>
+							<div class="table-form">
+								<div class="table-thead">
+									<div>양식</div>
+									<div>제목</div>
+									<div>기안자</div>
+									<div>기안일</div>
+								</div>
+								<div class="table-tbody" id="approval_status_3">
+								</div>
+							</div>
+
 						</div>
 					</div>
 					<div class="table-container">
 						<div>
 							<span>공지사항</span>
 							<span></span>
+							{% if session['member']['auth_cd'] == 1 %}
+							<span><a href="#popReport1" data-target="#popReport1" data-toggle="modal">글쓰기</a></span>
+							{% else %}
 							<span></span>
+							{% endif %}
 						</div>
 						<div>
-							<table style="width:100%;height:100%;" class="table table-bordered">
-								<colgroup>
-									<col width="20%">
-									<col width="60%">
-									<col width="10%">
-									<col width="10%">
-								</colgroup>
-								<thead>
-									<tr>
-										<th>분류</th>
-										<th>제목</th>
-										<th>작성일</th>
-										<th>작성자</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td colspan="4" style="vertical-align: middle;">현재 등록된 공지사항이 존재하지 않습니다.</td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="table-form">
+								<div class="table-thead">
+									<div>분류</div>
+									<div>제목</div>
+									<div>작성자</div>
+									<div>작성일</div>
+								</div>
+								<div class="table-tbody" id="approval_status_4">
+								</div>
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -293,7 +368,10 @@
 		});
 		$("#calTFooter").hide();
 		getTodayWork();
-		// getApprovalList();
+		getApprovalList("미결", "#approval_status_1");
+		getApprovalList("진행", "#approval_status_2");
+		getApprovalList("수신", "#approval_status_3");
+		getBBS();
 		getAlmostDoneProject();
 
 		// if session['member']['dept_code'] == 'BI'
@@ -424,20 +502,27 @@
 </div><!--modal-->
 <!-- 매입/매출 레포트 팝업 끝 -->
 <script type="text/javascript">
-// getApprovalList = function(){
-// 	$.ajax({
-// 		url: '/api/approval/ajax_get_approval_datatable',
-// 		type: 'POST',
-// 		data: {"s_start_de_start" : "0000-00-00", "s_start_de_end" : "9999-99-99"},
-// 		dataType: 'json',
-// 		contentType: false,
-// 		processData: false,
-// 		success: function (pResult) {
-// 			console.log(pResult);
-// 		}
-// 	});
-//
-// }
+getApprovalList = function(s_approval_status, target){
+	$.ajax({
+		url: '/api/approval/ajax_get_approval_datatable',
+		type: 'POST',
+		data: {"s_approval_status" : s_approval_status},
+		success: function (pResult) {
+			var html = '';
+			console.log(pResult);
+			$.each(pResult.data, function(pIndex, pValue){
+				html += `<div class="table-tr">
+							<div class="table-td">${pValue.approval_ty_nm}</div>
+							<div class="table-td">${pValue.approval_title}</div>
+							<div class="table-td">${pValue.start_mber_nm}</div>
+							<div class="table-td">${pValue.start_de}</div>
+						</div>`;
+			});
+			$(document).find(target).html(html);
+		}
+	});
+
+}
 getBIMSProject = function(){
 	var new_window_width = parseInt(screen.width/1.5);
 	var new_window_height = parseInt(screen.height) - 20;
@@ -748,5 +833,212 @@ $(function() {
 <!--########################################################################-->
 <!--# page layer end                                                       #-->
 <!--########################################################################-->
+
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:88%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					{% if session['member']['auth_cd'] == 1 %}
+					<button type="button" class="btn btn-danger" id="btnDeleteBbs"><i class="fa fa-trash">&nbsp;삭제</i></button>
+					{% endif %}
+
+					<button type="button" class="btn btn-primary" id="btnSaveBbs"><i class="fa fa-save">&nbsp;저장</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+<style>
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #popReport1 div.report table th,
+    #popReport1 div.report table td {
+        font-size: 8px!important;
+        padding: 7px 5px!important;
+        line-height: 1.0!important;
+    }
+}
+</style>
+				<div id="rpt">
+
+				<!-- 기성 현황 시작 -->
+				<table id="bbs" class="table table-bordered w100p">
+					<colgroup>
+						<col width="20%"/>
+						<col width="80%"/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th class="colorN" colspan="2">공지사항 작성</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th class="color-contract middle">분류</th>
+							<td class="hasinput">
+								<select class="form-control select2" id="bbs_type" name="bbs_type" style="width:100%;">
+									<option value=""></option>
+									<option value="1">공지사항</option>
+									<option value="2">경조사</option>
+									<option value="3">뉴스레터</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th class="color-contract middle">제목</th>
+							<td class="hasinput">
+								<input type="text" class="form-control" id="bbs_title" name="bbs_title">
+							</td>
+						</tr>
+						<tr>
+							<th class="color-contract middle">내용</th>
+							<td class="hasinput">
+								<textarea style="width:100%;height:60vh;resize:none;border:none;" name="bbs_content" id="bbs_content"></textarea>
+							</td>
+						</tr>
+					</tbody>
+
+				</table>
+				</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script>
+var BBS_TYPE = {1 : "공지사항", 2: "경조사", 3:"뉴스레터"}	;
+getBBS = function()
+{
+	$.ajax({
+		url: '/api/common/get_bbs_list',
+		type: 'GET',
+		data: '',
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			var html = '';
+			$.each(pResult, function(pIndex, pValue){
+				html += `<div class="table-tr">
+							<div class="table-td">${BBS_TYPE[pValue.bbs_type]}</div>
+							<div class="table-td bbs_link" data-sn="${pValue.bbs_sn}">${pValue.bbs_title}</div>
+							<div class="table-td">${pValue.reg_nm}</div>
+							<div class="table-td">${pValue.reg_date}</div>
+						</div>`;
+			});
+			$(document).find("#approval_status_4").html(html);
+
+
+		}
+	});
+}
+
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$(document).on("click", ".bbs_link", function(){
+		$("#popReport1").data("status", "show");
+		var sn = $(this).data("sn");
+		$.ajax({
+			url : '/api/common/get_bbs',
+			method : 'GET',
+			data : {"bbs_sn" : sn},
+			success : function(pResult){
+				$("#popReport1").find("#btnDeleteBbs").data("sn", sn);
+				$("#popReport1").find("#bbs_type").yVal(pResult.bbs_type);
+				$("#popReport1").find("#bbs_title").val(pResult.bbs_title);
+				$("#popReport1").find("#bbs_content").val(pResult.bbs_content);
+				$("#popReport1").modal("show");
+
+			},
+			error: function(pResult){
+				alert("에러가 발생했습니다.");
+			}
+		})
+
+	});
+	$('#popReport1').on('show.bs.modal', function(pEvent) {
+		var status = $(this).data("status");
+		if(status == "show"){
+			$("#btnSaveBbs").hide();
+			$("#popReport1").find("#btnDeleteBbs").show();
+			$("#popReport1").find("#bbs_type").attr("disabled", true);
+			$("#popReport1").find("#bbs_title").attr("disabled", true);
+			$("#popReport1").find("#bbs_content").attr("disabled", true);
+		}
+		else{
+			$("#popReport1").find("#btnDeleteBbs").data("sn", '');
+			$("#popReport1").find("#btnDeleteBbs").hide();
+			$("#btnSaveBbs").show();
+			$("#popReport1").find("#bbs_type").yVal('');
+			$("#popReport1").find("#bbs_title").val('');
+			$("#popReport1").find("#bbs_content").val('');
+			$("#popReport1").find("#bbs_type").attr("disabled", false);
+			$("#popReport1").find("#bbs_title").attr("disabled", false);
+			$("#popReport1").find("#bbs_content").attr("disabled", false);
+		}
+	});
+	$('#popReport1').on('hidden.bs.modal', function(pEvent) {
+		$("#popReport1").data("status", "insert");
+	});
+
+
+    /**************************************************************************
+     *
+     */
+	$(document).on("click", '#btnDeleteBbs', function(){
+		var bbs_sn = $(this).data("sn");
+		if(bbs_sn != '' && bbs_sn != undefined){
+			if(confirm("정말 삭제하시겠습니까?")){
+				$.ajax({
+					url : '/api/common/delete_bbs',
+					method : 'GET',
+					data : {"bbs_sn" : bbs_sn},
+					success : function(pResult){
+						$("#popReport1").modal("hide");
+						getBBS();
+
+					},
+					error: function(pResult){
+						alert("에러가 발생했습니다.");
+					}
+				})
+
+			}
+		}
+	});
+	$('#btnSaveBbs').on('click', function(pEvent) {
+		var params = {"bbs_type" : $("#popReport1").find("#bbs_type").val(), "bbs_title" : $("#popReport1").find("#bbs_title").val().trim(), "bbs_content" : $("#popReport1").find("#bbs_content").val().trim()};
+		if(params["bbs_type"] == ''){
+			alert("분류를 선택해주세요.");
+			return false;
+		}
+		if(params["bbs_title"] == ''){
+			alert("제목을 입력해주세요.");
+			return false;
+		}
+		if(params["bbs_content"].trim() == ''){
+			alert("내용을 입력해주세요.");
+			return false;
+		}
+		$.ajax({
+			url : '/api/common/insert_bbs',
+			method : 'POST',
+			data : params,
+			success: function(pResult){
+				$("#popReport1").modal("hide");
+				getBBS();
+			},
+			error:function(pResult){
+				alert("심각한 오류가 발생했습니다.");
+			}
+		})
+	});
+});
+
+</script>
 
 {% endblock %}

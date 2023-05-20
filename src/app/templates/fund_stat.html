@@ -220,7 +220,7 @@
 				<div class="jarviswidget jarviswidget-color-darken">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
-						<h2>부서별 계정과목별</h2>
+						<h2>부서별 계정과목</h2>
 						<div class="widget-toolbar">
 							<button type="button" class="btn btn-success" id="btnExcel2"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
@@ -242,6 +242,7 @@
 									<col width="170">
 									<col width="*">
 									<col width="*">
+									<col width="80">
 								</colgroup>
 								<thead>
 									<tr>
@@ -275,6 +276,13 @@
 										</th>
 										<th class="hasinput">
 										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_types" name="s_types">
+												<option value="">[전체]</option>
+												<option value="B">1.현금</option>
+												<option value="C">2.카드</option>
+											</select>
+										</th>
 									</tr>
 									<tr>
 										<th>No.</th>
@@ -283,6 +291,7 @@
 										<th class="text-left">계정과목</th>
 										<th class="text-left">입금누계</th>
 										<th class="text-left">출금누계</th>
+										<th class="text-left">구분</th>
 									</tr>
 								</thead>
 							</table>
@@ -388,7 +397,11 @@ getFundStatDatatables1 = function()
 			});
 
 			$('#btnExcel1').on('click', function(pEvent) {
-				$(myList).parent().find('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$(myList).parent().find('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
+
 			});
 		},
     });
@@ -413,6 +426,7 @@ getFundStatDatatables2 = function()
 					's_rcppay_de2_end': $('#dtList2').find('#s_rcppay_de2_end').val(),
 					's_dept_code': $('#dtList2').find('#s_dept_code').val(),
 					's_acntctgr_code': $('#dtList2').find('#s_acntctgr_code').val(),
+					's_types': $('#dtList2').find('#s_types').val(),
 				});
             },
             error: function(pJqXHR, pTextStatus, pErrorThrown) {
@@ -438,6 +452,12 @@ getFundStatDatatables2 = function()
 			{ data: 'o_amount', className: 'text-number',
 				render: function(data, type, row, meta) {
 					return data.toString().toFormat('NUMBER');
+				}
+			},
+			{ data: 'types', className: 'text-left',
+				render: function(data, type, row, meta) {
+					if(data == 'B') return "현금";
+					else return "카드";
 				}
 			},
 		],
@@ -481,7 +501,11 @@ getFundStatDatatables2 = function()
 			});
 
 			$('#btnExcel2').on('click', function(pEvent) {
-				$(myList).parent().find('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable2.context[0]._iDisplayLength=0;
+				$.datatable2.ajax.reload(function(){
+					$(myList).parent().find('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
+
 			});
 		},
     });

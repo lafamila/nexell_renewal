@@ -211,7 +211,7 @@ def get_completed_va(params):
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
 				, c.spt_nm
-				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
+				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
 				, (SELECT SUM(IFNULL(p.dlamt * p.dlnt, 0)) FROM account p LEFT JOIN account s ON p.delng_sn=s.cnnc_sn WHERE s.delng_ty_code NOT IN ('14') AND p.delng_se_code IN ('P', 'P1') AND p.ddt_man BETWEEN '{0}' AND '{1}' AND p.cntrct_sn=c.cntrct_sn) AS p1
 				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS p3
 				, 0 AS s2
@@ -248,7 +248,7 @@ def get_completed_sales(params):
 				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
 				LEFT JOIN bcnc b
 				ON t.pblicte_trget_sn = b.bcnc_sn
-				WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3')
+				WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4')
 				AND t.pblicte_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
 				AND bcnc_nm <> ''
 				GROUP BY dept_nm, bcnc_nm, spt_nm, pblicte_de)
@@ -596,6 +596,7 @@ def get_projects_by_dept_member(params):
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=c.prjct_ty_code) AS prjct_ty_nm
 				, CONCAT(DATE_FORMAT(cntrwk_bgnde, '%%Y-%%m'),'~',DATE_FORMAT(cntrwk_endde, '%%Y-%%m')) AS cntrwk_period
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
+				, c.rate AS new_rate
 				, (SELECT SUM(IFNULL(co.qy*co.puchas_amount, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code='E' AND co.ct_se_code NOT IN ('61','62', '63','7', '8', '10')) AS exec_sum
 				, (SELECT SUM(CASE WHEN co.ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'P', %(s_pxcond_mt)s)
 				WHEN co.ct_se_code IN ('3') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'S', %(s_pxcond_mt)s)
@@ -698,7 +699,7 @@ def get_extra_goal_contract(params):
                          AND co.cntrct_sn = c.cntrct_sn
                         GROUP BY co.cntrct_sn
                     ), 0)
-                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
+                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3' ,'S4') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
                     END AS amount
                     FROM dashboard_month d
                     LEFT JOIN contract c ON d.cntrct_sn=c.cntrct_sn   
@@ -714,7 +715,6 @@ def get_extra_goal_contract(params):
     if "s_s_amt_ty_code" in params:
         query += " AND d.amt_ty_code=%s"
         data.append(params['s_s_amt_ty_code'])
-    print(query)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -756,7 +756,7 @@ def get_goal_contract(params):
                          AND co.cntrct_sn = c.cntrct_sn
                         GROUP BY co.cntrct_sn
                     ), 0)
-                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
+                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
                     END AS amount
                     FROM goal g
                     LEFT JOIN member m

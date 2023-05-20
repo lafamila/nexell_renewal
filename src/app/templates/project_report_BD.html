@@ -126,7 +126,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="color-contract">거래처명</th>
 			<td id="bcnc_nm" colspan="3"></td>
 			<th class="color-contract">공사기간</th>
-			<td id="cntrwk_period" colspan="3"></td>
+			<td id="cntrwk_period"></td>
+			<th class="color-contract">준공예정일</th>
+			<td id="expect_de"></td>
 		</tr>
         <tr>
 			<th class="color-contract">현장명</th>
@@ -1129,6 +1131,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBD').find('#bcnc_nm').html(contract.bcnc_nm); //거래처
 				$('#popReportBD').find('#spt_nm').html(contract.spt_nm); //현장명
 				$('#popReportBD').find('#cntrwk_period').html(contract.cntrwk_period); //공사기간
+				$('#popReportBD').find('#expect_de').html(contract.expect_de); //공사기간
 				$('#popReportBD').find('#home_count').html(contract.home_count); //세대수
 				$('#popReportBD').find('#home_region').html(contract.home_region); //지역
 				$('#popReportBD').find('[name=prjct_ty_code]').yVal(contract.prjct_ty_code); //프로젝트 유형

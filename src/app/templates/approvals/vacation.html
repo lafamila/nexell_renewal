@@ -61,49 +61,50 @@
     </colgroup>
     <tbody>
         <tr>
-            <th class="color-contract">신청일자</th>
+            <th class="color-contract text-center">신청일자</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" data-type="date" name="reg_date" readonly/>
+                <input type="text" class="form-control text-left" data-type="date" name="reg_date" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">부서</th>
+            <th class="color-contract text-center">부서</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" name="dept_nm" value="{{session['member']['dept_nm']}}" readonly/>
+                <input type="text" class="form-control text-left" name="dept_nm" value="{{session['member']['dept_nm']}}" readonly/>
+                <input type="hidden" class="form-control text-left" name="mber_sn" value="{{session['member']['member_sn']}}" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">이름</th>
+            <th class="color-contract text-center">이름</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" name="name" value="{{session['member']['member_nm']}}" readonly/>
+                <input type="text" class="form-control text-left" name="name" value="{{session['member']['member_nm']}}" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">휴가중연락처</th>
+            <th class="color-contract text-center">휴가중연락처</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" name="tel_no"/>
+                <input type="text" class="form-control text-left" name="tel_no"/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">기타연락처</th>
+            <th class="color-contract text-center">기타연락처</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" name="etc_tel_no"/>
+                <input type="text" class="form-control text-left" name="etc_tel_no"/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">행선지</th>
+            <th class="color-contract text-center">행선지</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-center" name="to_go"/>
+                <input type="text" class="form-control text-left" name="to_go"/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">사유</th>
+            <th class="color-contract text-center">사유</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="rm"/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">휴가구분</th>
+            <th class="color-contract text-center">휴가구분</th>
             <td class="hasinput">
                 <select class="form-control w50p" id="vacation_type" name="vacation_type" style="padding-top:0px!important;padding-bottom:0px!important;">
                     <option value="">[전체]</option>
@@ -114,7 +115,7 @@
             </td>
         </tr>
         <tr id="vacation_type_detail_tr" style="display:none;">
-            <th class="color-contract">-</th>
+            <th class="color-contract text-center">-</th>
             <td class="hasinput">
                 <select class="form-control w50p" id="vacation_type_detail" name="vacation_type_detail" style="padding-top:0px!important;padding-bottom:0px!important;">
                     <option value="t"></option>
@@ -124,7 +125,7 @@
             </td>
         </tr>
         <tr>
-            <th class="color-contract">일자</th>
+            <th class="color-contract text-center">일자</th>
             <td class="hasinput">
                 <input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
                 <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>

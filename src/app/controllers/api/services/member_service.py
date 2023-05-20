@@ -23,7 +23,7 @@ def update_member(params):
     data = OrderedDict()
     for key in params:
         if key not in ("mber_sn"):
-            if key in ("out_de",):
+            if key in ("out_de", "enter_de"):
                 if params[key] == '':
                     params[key] = None
                 data[key] = params[key]
@@ -255,3 +255,52 @@ def update_todo(params):
 def delete_member(params):
     query = "DELETE FROM member WHERE mber_sn=%(mber_sn)s"
     g.curs.execute(query, params)
+
+def get_vacation_list(params):
+    query = """SELECT vacation_sn
+                    , vacation_de
+                    , vacation_type
+                    , rm
+                    , etc1
+                    , etc2
+                    FROM vacation
+                    WHERE 1=1
+                    AND mber_sn=%(mber_sn)s
+                    ORDER BY vacation_de DESC"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def delete_vacation(params):
+    g.curs.execute("DELETE FROM vacation WHERE vacation_sn=%(vacation_sn)s", params)
+
+def insert_vacation(params):
+    data = OrderedDict()
+    data['mber_sn'] = params["mber_sn"]
+    st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
+    ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
+    if params['vacation_type'] == 'y':
+        if params['vacation_type_detail'] == 't':
+            data['vacation_type'] = 1
+        elif params['vacation_type_detail'] == 'h1':
+            data['vacation_type'] = 2
+        elif params['vacation_type_detail'] == 'h2':
+            data['vacation_type'] = 3
+    elif params['vacation_type'] == 'b':
+        if params['vacation_type_detail'] == 't':
+            data['vacation_type'] = 4
+        elif params['vacation_type_detail'] == 'h1':
+            data['vacation_type'] = 5
+        elif params['vacation_type_detail'] == 'h2':
+            data['vacation_type'] = 6
+    else:
+        data['vacation_type'] = 7
+    data['rm'] = params['to_go']
+    data['etc1'] = params['rm']
+    data['etc2'] = params['tel_no']
+    for d in range((ed_de - st_de).days + 1):
+        data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
+        g.curs.execute(
+            "INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]),
+                                                          ",".join(["%({})s".format(key) for key in data.keys()])),
+            data)

@@ -90,6 +90,7 @@ tbody .btnUpdate, tbody .btn{
 						<div class="widget-toolbar">
                             <h2>VAT 포함 (단위 : 천원)</h2>&nbsp;&nbsp;&nbsp;
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
+							<button class="btn btn-warning" id="s_edit" data-toggle="modal" href="#popBoxBiss">수정</i></button>
 						</div>
 						<div class="widget-toolbar">
 						</div>
@@ -267,7 +268,6 @@ tbody .btnUpdate, tbody .btn{
 			contentType: false,
 			processData: false,
 			success: function(pResult) {
-				console.log(pResult);
 				$("#year").html(s_year);
 				var DELIMITER = 1000;
 				var html = '';
@@ -276,7 +276,20 @@ tbody .btnUpdate, tbody .btn{
 								<td class="text-center middle bold" style="height:100px;" colspan="19">목표 금액이 입력된 현장이 없습니다.<br><button class="btn btnUpdate" style="margin-top:10px;" onclick="javascript:location.href='/goal';">목표 금액 입력</button></td>
 							 </tr>`
 				}
+				var option_html = '<option value="">[계약을 선택해주세요.]</option>';
+				var ALREADY = {};
+				$.each(pResult.contract, function(pIndex, pValue){
+					if(!ALREADY.hasOwnProperty(pValue.cntrct_sn)) {
+						// if(pValue.dept_code == 'ST') option_html += '<option value="'+pValue.cntrct_sn+'">'+pValue.spt_nm+'</option>';
+						option_html += '<option value="' + pValue.cntrct_sn + '">' + pValue.spt_nm + '</option>';
+						ALREADY[pValue.cntrct_sn] = 1;
+					}
+
+				});
+				$("#popBoxBiss").find("#cntrct_sn").html(option_html);
+				var ALREADY = {};
 				$.each(pResult.contract, function(pIndex, pValue) {
+
 					var pData = {"tot" : 0};
 					for(let i=1;i<=12;i++) pData[`${i}m`] = 0;
 					if(pValue.cntrct_de !== ""){
@@ -286,9 +299,15 @@ tbody .btnUpdate, tbody .btn{
 							pData[`${parseInt(month)}m`] = (pValue.cntrct_amount)/DELIMITER;
 						}
 					}
+					if(!ALREADY.hasOwnProperty(pValue.cntrct_sn)){
+						ALREADY[pValue.cntrct_sn] = 0;
+					}
+					else{
+						ALREADY[pValue.cntrct_sn] += 2;
+					}
 					for(let i=1;i<=12;i++) pData["tot"] += pData[`${i}m`];
 
-					html += `<tr id="row${pValue.cntrct_sn}-1" data-year="${s_year}">
+					html += `<tr id="row${pValue.cntrct_sn}-${ALREADY[pValue.cntrct_sn]+1}" data-year="${s_year}">
 								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
 								<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
 								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
@@ -309,7 +328,7 @@ tbody .btnUpdate, tbody .btn{
 								<td class="colorBtn right_border middle text-right bold" data-column="tot">${Math.round(pValue["tot"]/DELIMITER).toString().toFormat('NUMBER')}</td>
 								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(Math.round(pData.tot/DELIMITER)*100.0/pValue.tot).toFixed(2)+"%"}</td>
 							 </tr>
-							 <tr id="row${pValue.cntrct_sn}-2" data-year="${s_year}">
+							 <tr id="row${pValue.cntrct_sn}-${ALREADY[pValue.cntrct_sn]+2}" data-year="${s_year}">
 								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
 								<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
 								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
@@ -370,6 +389,7 @@ $(document).on('click', "#s_submit", function(pEvent){
 	getMonthPlan(year);
 
 });
+
 set_color = function(td){
 	var authors = ["*"];
 	var loginId = $("#loginID").val();
@@ -473,4 +493,149 @@ $(function() {
 	getMonthPlan(year);
 });
 </script>
+
+<div class="modal fade" data-backdrop="static" id="popBoxBiss">
+    <style type="text/css">
+#popBoxBiss tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBoxBiss tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="width:800px!important">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabsBiss">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBoxBiss1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>BISS 입력</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;">
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox no-padding" style="display:block;">
+
+					</div>
+					<!-- end widget edit box -->
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBoxBiss1">
+							<form id="frmBoxBiss">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbarBiss">
+												<button type="button" class="btn btn-primary" id="btnSaveBiss" title="저장합니다."><i class="fa fa-save"> 저장</i></button>
+
+											</span>
+											</th>
+										</tr>
+
+										<tr class="required">
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">추가영업자</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="mber_sn" name="mber_sn" >
+													<option value="">[추가영업자를 선택해주세요.]</option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">지분율(%)</th>
+											<td class="hasinput" colspan="2">
+												<input type="number" step="0.1" class="form-control text-right" id="percent" name="percent"/>
+											</td>
+										</tr>
+
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+	init = function(){
+		$("#popBoxBiss").find("#mber_sn").yVal('');
+		$("#popBoxBiss").find("#cntrct_sn").yVal('');
+		$("#popBoxBiss").find("#cntrct_sn").yVal('');
+		$("#popBoxBiss").find("#percent").val('');
+
+	}
+	$(document).on('click', '#btnSaveBiss', function(){
+		var authors = ["*"];
+		var loginId = $("#loginID").val();
+		if(!authors.includes("*") && !authors.includes(loginId)){
+			alert("권한이 없습니다.");
+			return false;
+		}
+		var params = $("#frmBoxBiss").formSerialize();
+		if($('#popBoxBiss').find("#cntrct_sn").val() == ''){
+			alert("계약을 선택해주세요.");
+			return false;
+		}
+		if($('#popBoxBiss').find("#mber_sn").val() == ''){
+			alert("추가영업자를 선택해주세요.");
+			return false;
+		}
+		if($('#popBoxBiss').find("#percent").val() == ''){
+			alert("지분률을 입력해주세요.");
+			return false;
+		}
+		params += "&year="+$("#s_year").val();
+		$.ajax({
+			url: '/api/project/ajax_insert_co_st',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				alert("저장되었습니다.");
+				location.reload();
+			}
+
+		});
+	});
+
+	$('#popBoxBiss').on('shown.bs.modal', function(pEvent)
+	{
+		init();
+
+	});
+</script>
+
+
 {% endblock %}

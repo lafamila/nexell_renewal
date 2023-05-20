@@ -168,7 +168,15 @@ tbody .btnUpdate, tbody .btn{
                             .button{
                                 padding:0px!important;
                             }
-
+							.middle{
+								vertical-align: middle!important;
+							}
+							#dtList1 td{
+								line-height:1.0!important;
+							}
+							#dtList1 .btn.btn-table>i.fa{
+								height:12px!important;
+							}
                         </style>
                         <!-- widget content -->
 						<div class="widget-body no-padding">
@@ -184,6 +192,7 @@ tbody .btnUpdate, tbody .btn{
 									<col width="140">
 									<col width="120">
 									<col width="250">
+									<col width="1">
 
 								</colgroup>
 								<thead>
@@ -204,10 +213,10 @@ tbody .btnUpdate, tbody .btn{
 										<th class="colorB" style="text-align:center!important;" rowspan="2">유보금액</th>
 										<th class="colorB" style="text-align:center!important;" colspan="2">기간</th>
 										<th class="colorB" style="text-align:center!important;" rowspan="2">지급일자</th>
-										<th class="colorB" style="text-align:center!important;" rowspan="2">비고</th>
+										<th class="colorB" style="text-align:center!important;" rowspan="2" colspan="2">비고</th>
 									</tr>
 									<tr>
-										<th class="colorB" style="text-align:center;">업체명</th>
+										<th class="colorB" style="text-align:center;">거래처명</th>
 										<th class="colorB" style="text-align:center;">시작</th>
 										<th class="colorB" style="text-align:center;">종료</th>
 									</tr>
@@ -219,7 +228,7 @@ tbody .btnUpdate, tbody .btn{
 									<tr class="tot">
 										<th style="text-align:center;" colspan="5">합계</th>
 										<th class="text-number" id="total">0</th>
-										<th class="text-number" colspan="4"></th>
+										<th class="text-number" colspan="5"></th>
 									</tr>
 								</tfoot>
 							</table>
@@ -258,16 +267,23 @@ tbody .btnUpdate, tbody .btn{
 				$.each(pResult.data, function(pIndex, pValue){
 					total_diff += pValue.diff;
 					html += `<tr data-sn="${pValue.cntrct_sn}" data-out="${pValue.outsrc_fo_sn}">
-								<td class="text-center">${pValue.outsrc_fo_nm}</td>
-								<td class="text-center">${pValue.bcnc_nm}</td>
-								<td class="text-left">${pValue.spt_nm}</td>
-								<td class="text-right">${pValue.cntrct_amount.toFormat('NUMBER')}</td>
-								<td class="text-right">${(pValue.diff*100.0/pValue.cntrct_amount).toFixed(1)}%</td>
-								<td class="text-right">${pValue.diff.toFormat('NUMBER')}</td>
-								<td class="input-available text-center" data-column="r_dt_bg">${pValue.r_dt_bg}</td>
-								<td class="input-available text-center" data-column="r_dt_ed">${pValue.r_dt_ed}</td>
-								<td class="input-available text-center" data-column="r_dt_reg">${pValue.r_dt_reg}</td>
-								<td class="input-available text-left" data-column="rm">${pValue.rm}</td>
+								<td class="middle text-center">${pValue.outsrc_fo_nm}</td>
+								<td class="middle text-center">${pValue.bcnc_nm}</td>
+								<td class="middle text-left">${pValue.spt_nm}</td>
+								<td class="middle text-right">${pValue.cntrct_amount.toFormat('NUMBER')}</td>
+								<td class="middle text-right">${(pValue.diff*100.0/pValue.cntrct_amount).toFixed(1)}%</td>
+								<td class="middle text-right">${pValue.diff.toFormat('NUMBER')}</td>
+								<td class="middle input-available text-center" data-column="r_dt_bg">${pValue.r_dt_bg}</td>
+								<td class="middle input-available text-center" data-column="r_dt_ed">${pValue.r_dt_ed}</td>
+								<td class="middle input-available text-center" data-column="r_dt_reg">${pValue.r_dt_reg}</td>
+								<td class="middle input-available text-left" data-column="rm">${pValue.rm}</td>
+								<td class="middle text-center" style="padding:0px!important;">
+									<div class="btn-group">
+										<button class="btn btn-table btn-danger btnFinish" title="삭제" data-sn="${pValue.cntrct_sn}">
+										<i class="fa fa-trash"></i>
+										</button>
+									</div>
+								</td>
 							 </tr>`;
 				});
 				$("#dtList1").find("tbody").html(html);
@@ -276,6 +292,25 @@ tbody .btnUpdate, tbody .btn{
 	});
 
 	}
+	$(document).on("click", ".btnFinish", function(){
+		var btn = $(this);
+		var authors = ["*"];
+		var loginId = $("#loginID").val();
+		if(!authors.includes("*") && !authors.includes(loginId)){
+			alert("권한이 없습니다.");
+			return false;
+		}
+		var cntrct_sn = $(this).data("sn");
+		$.ajax({
+			url : '/api/common/reserve_out',
+			method: 'GET',
+			data : {"cntrct_sn" : cntrct_sn}
+		}).done(function(pResult){
+			$(btn).closest("tr").remove();
+			alert("처리가 완료되었습니다.");
+		})
+
+	});
 	$(document).ready(function(){
 		getReserveProject();
 	});

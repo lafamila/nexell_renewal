@@ -111,7 +111,7 @@
 									<col width="50">
 									<!-- <col width="110"> -->
 									<col width="80">
-									<col width="202">
+									<col width="132">
 									<col width="70">
 									<col width="192">
 									<col width="90">
@@ -119,7 +119,7 @@
 									<col width="120">
 									<col width="100">
 									<col width="130">
-									<col width="313">
+									<col width="383">
                                     <col width="*">
 									<col width="1">
 								</colgroup>
@@ -137,7 +137,7 @@
 												{% endfor %}
 											</select>
 										</th>
-										<th class="hasinput">
+										<th class="hasinput" colspan="2">
 											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_card_de_start" name="s_card_de_start" placeholder="[시작일자]">
 											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
 											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_card_de_end" name="s_card_de_end" placeholder="[종료일자]">
@@ -145,8 +145,6 @@
 												<input type="text" class="form-control datepicker" placeholder="[전체]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_card_de" name="s_card_de">
 												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 											</div> -->
-										</th>
-                                        <th class="hasinput">
 										</th>
                                         <th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_frch_nm" name="s_frch_nm">
@@ -192,8 +190,6 @@
 											</div>
 										</th>
 									</tr>
-                                </thead>
-								<thead role="head">
 									<tr>
 										<th>No.</th>
 										<!-- <th>계약번호</th> -->
@@ -1193,15 +1189,15 @@ getReportCards = function(card_de)
                     html += '<h5 class="sub-title" id="rptCard'+idx+'">'+pIndex+'</h5>';
                     html += '<table id="rptTable'+idx+'">';
                     html += '    <colgroup>';
-                    html += '        <col width="120">';
-                    html += '        <col width="80">';
-                    html += '        <col width="210">';
-                    html += '        <col width="120">';
-                    html += '        <col width="130">';
                     html += '        <col width="110">';
-                    html += '        <col width="130">';
-                    html += '        <col width="130">';
-                    html += '        <col width="260">';
+                    html += '        <col width="70">';
+                    html += '        <col width="180">';
+                    html += '        <col width="110">';
+                    html += '        <col width="110">';
+                    html += '        <col width="90">';
+                    html += '        <col width="120">';
+                    html += '        <col width="110">';
+                    html += '        <col width="350">';
                     html += '        <col width="*">';
                     html += '    </colgroup>';
                     html += '    <thead>';

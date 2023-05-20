@@ -47,8 +47,6 @@ def get_work_datatable(params):
         data.append(int(params["s_cal_year"])-1)
 
     query += " ORDER BY code_ordr, mber_sttus_code, mber_nm"
-    print(query)
-    print(data)
     return dt_query(query, data, params)
 
 def get_work_time(params):
@@ -219,7 +217,6 @@ def get_work(params):
                     """.format(work_date, work_year)
 
     data = ['%Y%m%d', '%Y%m%d', '{}%'.format(work_year), work_date.replace("-", "")]
-    print(query, data)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result

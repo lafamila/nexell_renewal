@@ -93,10 +93,12 @@ def get_sales_approval_datatable(params):
                     , dlnt
                     , pamt
                     , bcnc_sn
+                    , before_dlnt
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
                     FROM equipment e
                     WHERE 1=1
                     AND ((e.dlivy_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or e.dlivy_de IS NULL)
+                    AND before_dlnt < dlnt
                     """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
     data = []
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
@@ -301,7 +303,6 @@ def insert_account(params):
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
-    print(data)
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]
 
@@ -587,7 +588,7 @@ def insert_ms_BF_equip(params):
         if params['msh_approval_type'] == 'S':
             g.curs.execute(
                 "UPDATE contract SET mh_place=%s, mh_count=%s, mh_period=%s, mh_approval_step=1 WHERE cntrct_sn=%s",
-                (params['mh_place'], params['mh_count'], params['mh_period'], cntrct_sn))
+                (params['mh_place'], params['mh_count'], params['mh_period']+"~"+params['mh_period_end'], cntrct_sn))
         else:
             g.curs.execute(
                 "SELECT delng_sn FROM account WHERE cntrct_sn=%(cntrct_sn)s AND (delng_se_code='P' and delng_ty_code IN ('61', '62', '64', '65')) OR cnnc_sn IN (SELECT delng_sn FROM account WHERE delng_se_code='P' and delng_ty_code IN ('61', '62', '64', '65') AND cntrct_sn=%(cntrct_sn)s)",
@@ -606,7 +607,7 @@ def insert_ms_BF_equip(params):
                 g.curs.execute("DELETE FROM stock_log WHERE log_sn=%s", stock['log_sn'])
 
             g.curs.execute("UPDATE contract SET mh_place=%s, mh_count=%s, mh_period=%s WHERE cntrct_sn=%s",
-                           (params['mh_place'], params['mh_count'], params['mh_period'], cntrct_sn))
+                           (params['mh_place'], params['mh_count'], params['mh_period']+"~"+params['mh_period_end'], cntrct_sn))
 
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
         prjct_sn = prjct['prjct_sn']
@@ -694,7 +695,7 @@ def insert_ms_equip(params):
                     g.curs.execute("DELETE FROM stock WHERE stock_sn=%s", stock['stock_sn'])
                 g.curs.execute("DELETE FROM stock_log WHERE log_sn=%s", stock['log_sn'])
 
-            g.curs.execute("UPDATE contract SET mh_place=%s, mh_count=%s, mh_period=%s WHERE cntrct_sn=%s", (params['mh_place'], params['mh_count'], params['mh_period'], cntrct_sn))
+            g.curs.execute("UPDATE contract SET mh_place=%s, mh_count=%s, mh_period=%s WHERE cntrct_sn=%s", (params['mh_place'], params['mh_count'], params['mh_period']+"~"+params['mh_period_end'], cntrct_sn))
 
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
         prjct_sn = prjct['prjct_sn']
@@ -847,16 +848,19 @@ def update_equipment_establish(params):
 
         c['pymnt_mth'] = "{}-{}-{}-{}".format(human, direct, daily, s)
 
-        human = c['human_change'].replace(",", "")
-        direct = c['direct_change'].replace(",", "")
-        daily = c['daily_change'].replace(",", "")
-        s = c['sum_change'].replace(",", "")
-        human = int(human) if human != '' else 0
-        direct = int(direct) if direct != '' else 0
-        daily = int(daily) if daily != '' else 0
-        s = int(s) if s != '' else 0
+        if 'human_change' in c:
+            human = c['human_change'].replace(",", "")
+            direct = c['direct_change'].replace(",", "")
+            daily = c['daily_change'].replace(",", "")
+            s = c['sum_change'].replace(",", "")
+            human = int(human) if human != '' else 0
+            direct = int(direct) if direct != '' else 0
+            daily = int(daily) if daily != '' else 0
+            s = int(s) if s != '' else 0
 
-        c['outsrc_dtls'] = "{}-{}-{}-{}".format(human, direct, daily, s)
+            c['outsrc_dtls'] = "{}-{}-{}-{}".format(human, direct, daily, s)
+        else:
+            c['outsrc_dtls'] = None
         query = """SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s"""
         g.curs.execute(query, c)
         outsrcs = g.curs.fetchall()

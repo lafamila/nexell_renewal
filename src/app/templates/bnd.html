@@ -558,13 +558,15 @@ tbody .btnUpdate, tbody .btn{
                             <td class="bold colorBtn top_border text-center ${_class} t-t-date" style="text-align:left;"></td>
                             <td class="bold colorBtn top_border text-right ${_class} t-t-date" style="text-align:left;"></td>
                             <td class="bold colorBtn top_border text-right middle right_border ${_class} t-remain" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center middle right_border ${_class} input-available" style="text-align:left;" data-column="cntrwk_endde">${pValue.cntrwk_endde}</td>`;
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} input-available" style="text-align:left;" data-column="expect_de">${pValue.expect_de}</td>`;
               if(pValue.prjct_ty_code == 'BF'){
+				  var rate = parseInt(pValue.rate);
+				  console.log(pValue.rate);
               	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class} input-available-select" style="text-align:left;padding:0px!important" data-column="rate">
 								<select class="select2" name="s_rate" style="width:100%;">
-									<option value="0">0%</option>
-									<option value="90">90%</option>
-									<option value="100">100%</option>
+									<option value="0" ${rate == 0 ? "selected" : ""}>0%</option>
+									<option value="90" ${rate == 90 ? "selected" : ""}>90%</option>
+									<option value="100" ${rate == 100 ? "selected" : ""}>100%</option>
 								</select>
 							</td>`;
 			  }
@@ -686,6 +688,7 @@ tbody .btnUpdate, tbody .btn{
             			$(document).find(`.row${cntrct_sn}`).find(".m-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".m-next-date").addClass("colorY");
 					}
 					var remain = Math.round((rcppay[cntrct_sn].S - sTotal)/1000);
             		if(sTotal > 0) {
@@ -695,6 +698,7 @@ tbody .btnUpdate, tbody .btn{
             			$(document).find(`.row${cntrct_sn}`).find(".s-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
             			$(document).find(`.row${cntrct_sn}`).find(".s-remain").addClass("colorY");
+            			$(document).find(`.row${cntrct_sn}`).find(".s-next-date").addClass("colorY");
 					}
 					var remain = Math.round((rcppay[cntrct_sn].T - tTotal)/1000);
             		if(tTotal > 0) {
@@ -714,7 +718,8 @@ tbody .btnUpdate, tbody .btn{
             $("#dtList1").find("tbody .select2").select2();
             $.each(pResult.bnd, function(pIndex, pValue){
             	if(pValue.bnd_month == 'rate'){
-					$(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"] select`).val(pValue.bnd_data).trigger('change');
+					// $(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"] select`).val(pValue.bnd_data).trigger('change');
+					return true;
 				}
             	else{
 	            	$(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"]`).text(pValue.bnd_data);
@@ -735,7 +740,6 @@ tbody .btnUpdate, tbody .btn{
 	});
   }
 $(document).on("change", ".input-available-select", function(){
-	var column = $(this).data("column");
 	var authors = ["*"];
 	var loginId = $("#loginID").val();
 	if(!authors.includes("*") && !authors.includes(loginId)){
@@ -743,17 +747,12 @@ $(document).on("change", ".input-available-select", function(){
 		return false;
 	}
 	var data = $(this).find("option:selected").val();
-	var td = $(this);
-	var rowId = $(this).parent().attr("class");
-	var s_year = $("#s_year").val();
+	var rowId = $(this).closest("tr").attr("class").replaceAll("row", "");
 	var params = '';
-	params += '&bnd_year='+s_year;
-	params += '&bnd_row='+rowId;
-	params += '&bnd_month='+column;
-	params += '&bnd_data='+data;
-	params += '&bnd_class=0';
+	params += '&cntrct_sn='+rowId;
+	params += '&rate='+data;
 	$.ajax({
-		url: '/api/bnd/ajax_set_bnd_data',
+		url: '/api/bnd/ajax_update_contract_rate',
 		type: 'GET',
 		data: params,
 		dataType: 'json',
@@ -774,7 +773,7 @@ $(document).on("dblclick", ".input-available", function(){
 		alert("권한이 없습니다.");
 		return false;
 	}
-	if(column == "cntrwk_endde"){
+	if(column == "expect_de"){
 		var data = prompt("값을 입력하세요. (yy/m/dd)");
 	}
 	else{
@@ -935,32 +934,32 @@ $(function() {
 	<colgroup>
 		<col width="100">
 		<col width="50">
+		<col width="100">
+		<col width="250">
+		<col width="100">
+		<col width="100">
 		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="150">
-		<col width="150">
+		<col width="100">
+		<col width="100">
 		<col width="150">
 	</colgroup>
 	<thead>
 		<tr>
 			<th class="colorG" rowspan="2">년</th>
-			<th class="colorG" rowspan="2">월</th>
-			<th class="colorG" colspan="2">제품전시</th>
-			<th class="colorG" colspan="3">전시차감</th>
-			<th class="colorG" colspan="3">판매수수료(영업)</th>
+			<th class="colorG" rowspan="2" style="border-right:2px solid #555!important;">월</th>
+			<th class="colorG" colspan="2" style="border-right:2px solid #555!important;">전시내역</th>
+			<th class="colorG" colspan="3" style="border-right:2px solid #555!important;">전시차감</th>
+			<th class="colorG" colspan="3">판매/수수료</th>
 		</tr>
 		<tr>
-			<th class="colorG">신규전시</th>
-			<th class="colorG">총전시현장</th>
-			<th class="colorG">입금</th>
-			<th class="colorG">미입금</th>
-			<th class="colorG">잔액</th>
-			<th class="colorG">입금</th>
-			<th class="colorG">잔량</th>
-			<th class="colorG">잔액</th>
+			<th class="colorG">전시건수</th>
+			<th class="colorG" style="border-right:2px solid #555!important;">총 전시현장수(M/H + S/H)</th>
+			<th class="colorG">차감건수</th>
+			<th class="colorG">미차감건수</th>
+			<th class="colorG" style="border-right:2px solid #555!important;">잔액(단위:천원)</th>
+			<th class="colorG">발행건수</th>
+			<th class="colorG">미발행건수</th>
+			<th class="colorG">잔액(단위:천원)</th>
 		</tr>
 	</thead>
 	<tbody role="body">
@@ -980,21 +979,48 @@ getBuiltInMonth = function(s_ddt_man)
 	var params = '';
 	params += '&s_ddt_man=' + s_ddt_man;
 
-	// $.ajax({
-	// 	url: '/api/stock/ajax_get_built_month',
-	// 	type: 'GET',
-	// 	data: params,
-	// 	dataType: 'json',
-	// 	contentType: false,
-	// 	processData: false,
-	// 	success: function(pResult) {
-	// 		console.log('getBuiltInMonth', pResult);
-	// 		if (pResult.status) {
-	//
-	//
-	// 		}
-	// 	}
-	// });
+	$.ajax({
+		url: '/api/stock/ajax_get_built_month',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getBuiltInMonth', pResult);
+			if (pResult.status) {
+				var html = `<tr>
+								<td class="text-center colorG">${s_ddt_man.split("-")[0]}</td>
+								<td class="text-center colorG" style="border-right:2px solid #555!important;">전월</td>
+								<td class="text-center"></td>
+								<td class="text-center" style="border-right:2px solid #555!important;"></td>
+								<td class="text-center"></td>
+								<td class="text-center"></td>
+								<td class="text-center" style="border-right:2px solid #555!important;"></td>
+								<td class="text-center"></td>
+								<td class="text-center"></td>
+								<td class="text-center"></td>
+							</tr>`;
+				$.each(pResult.data, function(pIndex, pValue){
+					html += `<tr>
+								<td class="text-center colorG">${pValue.stdyy}</td>
+								<td class="text-center colorG" style="border-right:2px solid #555!important;">${pValue.stdmm}</td>
+								<td class="text-center">${pValue.cnt_new.toFormat('NUMBER')}</td>
+								<td class="text-center" style="border-right:2px solid #555!important;">${pValue.cnt_out_all.toFormat('NUMBER')}</td>
+								<td class="text-center">${pValue.cnt_in_1.toFormat('NUMBER')}</td>
+								<td class="text-center">${pValue.cnt_not_in_1.toFormat('NUMBER')}</td>
+								<td class="text-right" style="border-right:2px solid #555!important;">${pValue.cnt_remain_1.toFormat('NUMBER')}</td>
+								<td class="text-center">${pValue.cnt_in_2.toFormat('NUMBER')}</td>
+								<td class="text-center">${pValue.cnt_not_in_2.toFormat('NUMBER')}</td>
+								<td class="text-right">${pValue.cnt_remain_2.toFormat('NUMBER')}</td>
+							</tr>`;
+				});
+				$("#rptTable1").find("tbody").html(html);
+				$("#rptTable1").find("tbody[role='body']").yRowspan(0);
+
+			}
+		}
+	});
 }
 $(function() {
     /**************************************************************************

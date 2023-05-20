@@ -19,6 +19,7 @@
 			<div class="modal-body report">
 
 				<div id="rpt6">
+					<div class="title"><h2 class="colorLS" id="title" style="font-weight:bold;">마감 예정 현장</h2></div>
 				<!--<div class="title"><h2 class="colorLS" id="title">팀별 VA 현황</h2></div>-->
 				<style>
 
@@ -110,6 +111,7 @@
 				var pData = pResult.data;
 				$.each(pData, function(pIndex, pValue){
 					var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
+					rate = pValue.new_rate == '' ? rate : parseFloat(pValue.new_rate);
 					if(rate == 0.0 && pValue.progrs_sttus_code == 'P'){
 						pValue.progrs_sttus_code = 'K';
 						pValue.sttus_nm = '대기';

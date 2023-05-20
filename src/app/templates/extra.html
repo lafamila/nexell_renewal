@@ -64,7 +64,7 @@ tbody .btnUpdate, tbody .btn{
 				<div class="jarviswidget jarviswidget-color-darken" style="margin-bottom:10px!important;">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
-                        <h2>영업외 이익현황 (<span id="year">2020</span>년)</h2>
+                        <h2>영업외 이익현황 (<span id="year">2020</span>년) [관리자입력]</h2>
 						<div class="widget-toolbar">
                             <input type="text" id="s_year" name="s_year" style="color:#333;"/><button type="button" class="btn btn-info" id="s_submit">검색</button>
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
@@ -168,26 +168,26 @@ tbody .btnUpdate, tbody .btn{
                                 <tbody>
                                     <tr id="row1" data-name="1">
                                         <td class="colorG bold" style="text-align:center;vertical-align : middle;" rowspan="7">삼성전자</td>
-                                        <td class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">분기관 (수시)</td>
-                                        <td class="colorG bold" style="text-align:center;">매입금액</td>
-                                        <td class="text-number color-contract bottom_border" name="goal"></td>
-                                        <td class="text-number color-contract bottom_border" name="1m"></td>
-                                        <td class="text-number color-contract bottom_border" name="2m"></td>
-                                        <td class="text-number color-contract bottom_border" name="3m"></td>
-                                        <td class="text-number color-contract bottom_border" name="4m"></td>
-                                        <td class="text-number color-contract bottom_border" name="5m"></td>
-                                        <td class="text-number color-contract bottom_border" name="6m"></td>
-                                        <td class="text-number color-contract bottom_border" name="7m"></td>
-                                        <td class="text-number color-contract bottom_border" name="8m"></td>
-                                        <td class="text-number color-contract bottom_border" name="9m"></td>
-                                        <td class="text-number color-contract bottom_border" name="10m"></td>
-                                        <td class="text-number color-contract bottom_border" name="11m"></td>
-                                        <td class="text-number color-contract bottom_border" name="12m"></td>
-                                        <td class="text-number color-contract bottom_border" name="total"></td>
-                                        <td class="text-number color-contract bottom_border" name="rate"></td>
+                                        <td class="colorG bold" style="text-align:center;vertical-align:middle;" rowspan="2">스타장려금</td>
+                                        <td class="colorG bold" style="text-align:center;">입금</td>
+                                        <td class="text-number colorY" name="goal"></td>
+                                        <td class="text-number " name="1m"></td>
+                                        <td class="text-number " name="2m"></td>
+                                        <td class="text-number " name="3m"></td>
+                                        <td class="text-number " name="4m"></td>
+                                        <td class="text-number " name="5m"></td>
+                                        <td class="text-number " name="6m"></td>
+                                        <td class="text-number " name="7m"></td>
+                                        <td class="text-number " name="8m"></td>
+                                        <td class="text-number " name="9m"></td>
+                                        <td class="text-number " name="10m"></td>
+                                        <td class="text-number " name="11m"></td>
+                                        <td class="text-number " name="12m"></td>
+                                        <td class="text-number " name="total"></td>
+                                        <td class="text-number colorB" name="rate"></td>
                                     </tr>
                                     <tr id="row2" data-name="2">
-                                        <td class="colorG bold" style="text-align:center;">할인금액</td>
+                                        <td class="colorG bold" style="text-align:center;">출금</td>
                                         <td class="text-number colorY" name="goal"></td>
                                         <td class="text-number" name="1m"></td>
                                         <td class="text-number" name="2m"></td>
@@ -259,7 +259,7 @@ tbody .btnUpdate, tbody .btn{
                                         <td class="text-number colorB" name="rate"></td>
                                     </tr>
                                     <tr id="row5" data-name="5">
-                                        <td class="colorG bold" style="text-align:center;" colspan="2">기타/스타장려금(입,출금)</td>
+                                        <td class="colorG bold" style="text-align:center;" colspan="2">기타</td>
                                         <td class="text-number colorY" name="goal"></td>
                                         <td class="text-number" name="1m"></td>
                                         <td class="text-number" name="2m"></td>
@@ -428,7 +428,7 @@ tbody .btnUpdate, tbody .btn{
 				<div class="jarviswidget jarviswidget-color-darken">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
-                        <h2>종합현황 (<span id="year2">2020</span>년)</h2>
+                        <h2>종합현황 (<span id="year2">2020</span>년) [자동]</h2>
 						<div class="widget-toolbar">
 							<button type="button" class="btn btn-success" id="btnExcel2"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 						</div>
@@ -824,7 +824,7 @@ calcTotal = function()
             let data = $("#dtList1").find("#row"+idx).find("td[name="+month+"m]").html().toString().replaceAll(',', '');
             data = (data == '') ? 0 : parseInt(data);
             total += data;
-            if(idx != 1 && idx != 6)
+            if(idx != 6)
                 val_month[month-1] += data;
         }
 
@@ -835,12 +835,12 @@ calcTotal = function()
         $("#dtList1").find("#row"+idx).find("td[name=rate]").html(rt.toFixed(1)+'%');
 
 
-        if(idx != 1 && idx != 6){
+        if(idx != 6){
             val_goal += goal;
             val_total += total;
 
         }
-        console.log(idx, val_month);
+
         if(idx == 5 || idx == 9){
 
             $("#dtList1").find("#tot"+val_idx).find("td").eq(1).html(val_goal.toString().toFormat('NUMBER'));
@@ -864,7 +864,7 @@ calcTotal = function()
         let tot = 0;
         let cols = $("#dtList1").find("td[name="+month+"m]");
         $.each(cols, function(pIndex, pValue){
-            if(pIndex == 0 || pIndex == 6)
+            if(pIndex == 6)
                 return;
             let data = $(pValue).html().replaceAll(',', '');
             data = (data == '') ? 0 : parseInt(data);
@@ -876,7 +876,7 @@ calcTotal = function()
     let goal = 0;
     var cols = $("#dtList1").find("td[name=goal]");
     $.each(cols, function(pIndex, pValue){
-        if(pIndex == 0 || pIndex == 6)
+        if(pIndex == 6)
             return;
         let data = $(pValue).html().replaceAll(',', '');
         data = (data == '') ? 0 : parseInt(data);
@@ -888,7 +888,7 @@ calcTotal = function()
     let rt = 0.0;
     var cols = $("#dtList1").find("td[name=total]");
     $.each(cols, function(pIndex, pValue){
-        if(pIndex == 0 || pIndex == 6)
+        if(pIndex == 6)
             return;
         let data = $(pValue).html().replaceAll(',', '');
         data = (data == '') ? 0 : parseInt(data);
@@ -973,7 +973,7 @@ $(document).on('dblclick', "td[name=goal], td[name=1m], td[name=2m], td[name=3m]
     var data = $(this).html().replaceAll(',', '');
     var loginid = $('#loginID').val();
 
-    if(loginid == 'rachel' || loginid == 'ma_keunmi'){
+    if(loginid == 'rachel' || loginid == 'ma_keunmi' || loginid == 'nexelll'){
         var inputValue = prompt('값을 입력하세요.', data);
         if (inputValue != null && inputValue != data) {
             if(parseInt(data) != 0)

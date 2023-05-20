@@ -553,4 +553,271 @@ tbody .btnUpdate, tbody .btn{
 	</section>
 
 </div>
+
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+getExtra = function(finance_year)
+{
+	var params = '';
+	params += '&finance_year='+finance_year;
+	$.ajax({
+		url: '/api/common/ajax_get_finance',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log(pResult);
+            var pData = pResult.data;
+            $.each(pData, function(pIndex, pValue){
+                if(pValue.finance_month != 'name' && pValue.finance_month != 'name2' && (!isNaN(parseInt(pValue.finance_row.replaceAll('row', ''))) || pValue.finance_row.replaceAll('row','') == 'a' || pValue.finance_row.replaceAll('row','') == 'b' )){
+                    var data = parseInt(pValue.finance_data);
+                    if(isNaN(data)) data = 0;
+                    if(data == 0){
+                        data = '';
+                    }
+                    else{
+                        data = data + '';
+                    }
+                    $("#"+pValue.finance_row).find("td[name="+pValue.finance_month+"]").html(data.toFormat('NUMBER'));
+
+                }
+                else{
+                    $("#"+pValue.finance_row).find("td[name="+pValue.finance_month+"]").html(pValue.finance_data);
+
+                }
+            });
+
+            calcTotal();
+            $("#year").html(finance_year);
+		}
+	});
+}
+
+resetTable = function()
+{
+    var val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var val_idx = 1;
+    for(let idx=1;idx<18;idx++){
+        if(idx == 11 || idx == 17){
+            continue;
+        }
+        for(let month=1;month<=12;month++){
+            $("#row"+idx).find("td[name="+month+"m]").html('');
+        }
+
+
+        //소계
+        if(idx == 10 || idx == 16){
+            for(let month=1;month<=12;month++){
+                $("#tot"+val_idx).find("td").eq(month+1).html('0');
+            }
+            $("#tot"+val_idx).find("td").eq(15).html('0');
+            val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            val_idx += 1;
+        }
+    }
+
+    for(let month=1;month<=12;month++){
+        $("#"+month+'m').html('0');
+    }
+    $(document).find("td[name=name]").html('&nbsp;');
+    $(document).find("td[name=name2]").html('&nbsp;');
+    for(let month=1;month<=12;month++){
+        $(document).find("tbody[role=extra] td[name="+month+"m]").html('&nbsp');
+    }
+    for(let month=1;month<=12;month++){
+        $(document).find("tbody[role=plan]").find("td[name="+month+"m]").html('');
+    }
+}
+
+calcTotal = function()
+{
+
+    var val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var val_total = 0;
+    var val_idx = 1;
+    var val_op = 1;
+    for(let idx=1;idx<18;idx++){
+        if(idx == 11 || idx == 17){
+            continue;
+        }
+        let total = 0;
+        console.log(idx);
+        for(let month=1;month<=12;month++){
+            let data = $("#row"+idx).find("td[name="+month+"m]").html().toString().replaceAll(',', '');
+            data = (data == '') ? 0 : parseInt(data);
+            total += data;
+            val_month[month-1] += data;
+        }
+
+        val_total += val_op*total;
+
+        //소계
+        if(idx == 10 || idx == 16){
+            for(let month=1;month<=12;month++){
+                $("#tot"+val_idx).find("td").eq(month+1).html(val_month[month-1].toString().toFormat('NUMBER'));
+            }
+            $("#tot"+val_idx).find("td").eq(15).html(val_total.toString().toFormat('NUMBER'));
+            val_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            val_total = 0;
+            val_idx += 1;
+            val_op = val_op*-1;
+        }
+    }
+    for(let month=1;month<=12;month++){
+        let tot = 0;
+        let data1 = $("#tot1 td").eq(month+1).html().replaceAll(',', '');
+        data1 = (data1 == '') ? 0 : parseInt(data1);
+        let data2 = $("#tot2 td").eq(month+1).html().replaceAll(',', '');
+        data2 = (data1 == '') ? 0 : parseInt(data2);
+        tot = data1 - data2;
+        $("#"+month+'m').html(tot.toString().toFormat('NUMBER'));
+    }
+
+
+//    let total = 0;
+//    var cols = $("td[name=total]");
+//    $.each(cols, function(pIndex, pValue){
+//        let data = $(pValue).html().replaceAll(',', '');
+//        data = (data == '') ? 0 : parseInt(data);
+//        total += data;
+//    });
+//    $("#total").html(total.toString().toFormat('NUMBER'));
+}
+
+insertExtra = function(finance_year, finance_row, finance_month, finance_data)
+{
+	var params = '';
+	params += '&finance_year='+finance_year;
+	params += '&finance_row='+finance_row;
+	params += '&finance_month='+finance_month;
+	params += '&finance_data='+finance_data;
+    console.log(params);
+	$.ajax({
+		url: '/api/common/ajax_insert_finance',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            calcTotal();
+		}
+	});
+}
+
+
+$(document).on('dblclick', "td[name=name],td[name=name2], td[name=1m], td[name=2m], td[name=3m], td[name=4m], td[name=5m], td[name=6m], td[name=7m], td[name=8m], td[name=9m], td[name=10m], td[name=11m], td[name=12m]", function(pEvent){
+    var year = $("#s_year").val();
+    var row = $(this).parent().attr('id');
+    var month = $(this).attr('name');
+    var data = $(this).html().replaceAll(',', '');
+    if(data == '&nbsp;'){
+        data = '';
+    }
+    var inputValue = prompt('값을 입력하세요.', data);
+    inputValue = inputValue.replaceAll(',', '');
+    if (inputValue != null && inputValue != data) {
+        if(month != 'name' && month != 'name2' && (!isNaN(parseInt(row.replaceAll('row', ''))) || row.replaceAll('row','') == 'a' || row.replaceAll('row','') == 'b' )){
+            if(parseInt(data) != 0)
+                $(this).html(inputValue.toString().toFormat('NUMBER'));
+            else{
+                $(this).html('');
+                inputValue = 0;
+            }
+            insertExtra(year, row, month, inputValue);
+
+        }
+        else{
+            if(inputValue == ''){
+                $(this).html('&nbsp;');
+            }
+            else
+                $(this).html(inputValue);
+            insertExtra(year, row, month, inputValue);
+        }
+
+    }
+
+});
+$(document).on('click', "#s_submit", function(pEvent){
+
+    var year = $("#s_year").val();
+    resetTable();
+	getExtra(year);
+
+});
+$(document).on('click', '#btnScreen', function(e) {
+	window.print();
+});
+$(document).on('click', '#btnExcel', function(e) {
+    var postfix = $("#s_year").val();
+    var fileName = "재무상태현황_"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList1';
+//    $.each(tbls, function(tblIdx, tbl){
+
+
+//        $trs = $(tbl).find('tr');
+//        $.each($trs, function(pI, tr){
+//            $tds = $(tr).find('td');
+//            $.each($tds, function(i, td){
+//                var idx = i;
+//                if($(td).attr('rowspan') > 0){
+//                    $(td).attr('rowspan', 1);
+//                }
+//                else if($(td).css('display') == 'none'){
+//                    console.log("else : ", idx);
+//                    if(idx == 6 || idx == 7 || idx==11){
+//                        $(td).show();
+//                        $(td).html('0');
+//                    }
+//                    else{
+//                        $(td).show();
+//
+//                    }
+//                }
+//            });
+//        });
+
+
+        var table_div = document.getElementById(tbl);
+
+        table_html += table_div.outerHTML.replace(/ /g, '%20');
+//    });
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+	getExtra(postfix);
+
+//    getReportExpectSales2($('#popReport3').find('#r3_s_ddt_man').val());
+
+    e.preventDefault();
+
+
+
+});
+
+</script>
+<script type="text/javascript">
+$(function() {
+	/**************************************************************************
+     *
+     */
+    //$('#dtList1 tbody').yRowspan(0);
+    var year = new Date().getFullYear();
+    $("#s_year").val(year);
+	getExtra(year);
+});
+</script>
+
 {% endblock %}

@@ -90,7 +90,6 @@ def get_completed_summary(params):
 				GROUP BY t.amt_ty_code, t.dept_code
 				ORDER BY t.amt_ty_code, dept_order, t.dept_code"""
 
-    print(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2)), str(year).zfill(4)))
     g.curs.execute(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2)), str(year).zfill(4)))
     result = g.curs.fetchall()
 

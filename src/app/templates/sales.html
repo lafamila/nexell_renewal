@@ -504,7 +504,10 @@ getSalesList = function()
 			});
 
 			$('#btnExcel').on('click', function(pEvent) {
-				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
 			});
 		},
     });
@@ -690,7 +693,9 @@ $(function(){
 												<select class="form-control select2 w100p" id="delng_ty_code" name="delng_ty_code">
 													<option value=""></option>
 													{% for code in puchas_ty_code_list %}
+													{% if code.value not in ('7', '8', '9') %}
 													<option value="{{code.value}}">{{code.label}}</option>
+													{% endif %}
 													{% endfor %}
 												</select>
 											</td>

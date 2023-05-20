@@ -104,6 +104,7 @@ tbody .btnUpdate, tbody .btnPrint{
 									<col width="250">
 									<col width="110">
 									<col width="110">
+									<col width="110">
 									<col width="100">
 									<col width="1">
 								</colgroup>
@@ -133,6 +134,7 @@ tbody .btnUpdate, tbody .btnPrint{
 										</th>
                                         <th class="hasinput"></th>
                                         <th class="hasinput"></th>
+                                        <th class="hasinput"></th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
 												<option value="">[전체]</option>
@@ -150,12 +152,13 @@ tbody .btnUpdate, tbody .btnPrint{
 									<!-- 헤더 -->
 									<tr>
 										<th>No.</th>
-										<th>매입일</th>
-										<th>주문일</th>
+										<th>최근주문일자</th>
+										<th>주문요청일</th>
 										<th>현장명</th>
 										<th>매입품목</th>
 										<th>모델명</th>
-										<th style="text-align:left!important;">수량</th>
+										<th style="text-align:left!important;">주문요청수량</th>
+										<th style="text-align:left!important;">기주문수량</th>
 										<th style="text-align:left!important;">단가</th>
 										<th>매입처</th>
 										<th class="text-right">
@@ -290,18 +293,17 @@ getSalesApprovalList = function()
             { data: 'prdlst_se_nm' },
             { data: 'model_no' },
             { data: 'dlnt' },
+            { data: 'before_dlnt' },
             { data: 'pamt' },
             { data: 'bcnc_nm' },
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
-                    if(row.dlivy_de == ''){
                       html += '<div class="btn-group">';
                       html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-eq_sn="'+row.eq_sn+'">';
                       html += '		<i class="fa fa-edit"></i>';
                       html += '	</button>';
                       html += '</div>';
-                    }
 					return html;
 				}
 			},
@@ -361,7 +363,10 @@ getSalesApprovalList = function()
 			});
 
 			$('#btnExcel').on('click', function(pEvent) {
-				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
 			});
 		},
     });
@@ -472,14 +477,17 @@ $(function(){
 									<form id="frmBoxS">
 										<input type="hidden" id="eq_sn" name="eq_sn"/>
 										<tr>
-											<th>출고일</th>
+											<th>예상출고일</th>
 											<td class="hasinput" colspan="1">
 												<div class="input-group" style="width:100%!important;">
 													<input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="dlivy_de" name="dlivy_de">
 													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 												</div>
 											</td>
-											<td colspan="2"></td>
+											<th>수량</th>
+											<td class="hasinput" colspan="1">
+												<input type="number" class="form-control text-right" id="before_dlnt" name="before_dlnt"/>
+											</td>
 										</tr>
 										<tr>
 											<th class="required">매출유형</th>
@@ -514,7 +522,7 @@ $(function(){
 
 <script>
 	$('#popBox1').on('click', '#btnSave', function(pEvent) {
-		var params = {"eq_sn" : $("#eq_sn").val(), "expect_de" : $("#expect_de").val(), "delng_ty_code" : $("#delng_ty_code option:selected").val(), "dlivy_de" : $("#dlivy_de").val()};
+		var params = {"eq_sn" : $("#eq_sn").val(), "expect_de" : $("#expect_de").val(), "delng_ty_code" : $("#delng_ty_code option:selected").val(), "dlivy_de" : $("#dlivy_de").val(), "before_dlnt" : $("#before_dlnt").val()};
 		console.log(params);
 		$.ajax({
 			url : '/api/sales/equip_to_account',

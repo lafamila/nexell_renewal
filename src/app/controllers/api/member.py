@@ -46,7 +46,7 @@ def ajax_qr_image_off():
         session['member'] = mber.get_member_info(member_sn)
         mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
         set_menu(session['member']['auth_cd'])
-    elif member_qr == '1234':
+    elif member_qr == '4321':
         session['member'] = mber.get_member_info(member_sn)
         mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
         set_menu(session['member']['auth_cd'])
@@ -109,3 +109,20 @@ def ajax_delete_member():
     params = request.form.to_dict()
     mber.delete_member(params)
     return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
+
+@bp.route('/vacation_list', methods=['GET'])
+def vacation_list():
+    params = request.args.to_dict()
+    result = mber.get_vacation_list(params)
+    return jsonify(result)
+@bp.route('/delete_vacation', methods=['GET'])
+def delete_vacation():
+    params = request.args.to_dict()
+    result = mber.delete_vacation(params)
+    return jsonify(result)
+
+@bp.route('/insert_vacation', methods=['POST'])
+def insert_vacation():
+    params = request.form.to_dict()
+    mber.insert_vacation(params)
+    return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})

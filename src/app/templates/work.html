@@ -18,6 +18,9 @@ tbody .btnUpdate, tbody .btn{
 	.middle{
 		vertical-align: middle!important;
 	}
+	.colorY{
+		background:rgb(255,204,153)!important;
+	}
 
 </style>
 <!--########################################################################-->
@@ -86,6 +89,7 @@ tbody .btnUpdate, tbody .btn{
 						<div class="widget-toolbar">
 							<input type="text" class="form-control datepicker-s" style="display:inline;width:96px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_year" name="s_year" placeholder="[기준일자]">
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+							<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
 						</div>
 						<div class="widget-toolbar">
 						</div>
@@ -119,9 +123,6 @@ tbody .btnUpdate, tbody .btn{
                             }
                             .colorG {
                                 background: rgb(204,255,204)!important;
-                            }
-                            .colorY {
-                                background: #FDFD96!important;
                             }
                             .table>thead+tbody, .table>tbody+tbody {
                                 border-top: 2px solid #000;
@@ -234,14 +235,38 @@ getWork = function(work_date)
 			var html = '';
 			$.each(pResult.data, function(pIndex, pValue){
 				var _class = (pValue.today_rate == 1) ? "colorY" : "";
+				var _class_today1 = "";
+				var _class_today2 = "";
+				$.each(pValue.use_dates.split(","), function(pIndex, pValue){
+					if(pValue != ''){
+						var tm = work_date.split("-")[1];
+						var td = work_date.split("-")[2];
+						var m = pValue.split('/')[0];
+						var d = pValue.split("/")[1];
+						if((parseInt(tm) == parseInt(m)) && (parseInt(td) == parseInt(d))){
+							_class_today1 = " colorY";
+						}
+					}
+				});
+				$.each(pValue.half_dates.split(","), function(pIndex, pValue){
+					if(pValue != ''){
+						var tm = work_date.split("-")[1];
+						var td = work_date.split("-")[2];
+						var m = pValue.split('/')[0];
+						var d = pValue.split("/")[1];
+						if((parseInt(tm) == parseInt(m)) && (parseInt(td) == parseInt(d))){
+							_class_today2 = " colorY";
+						}
+					}
+				});
 				html += `<tr id="${pValue.mber_sn}" data-year="${work_year}">
 							<td class="colorG middle text-center">${pValue.dept_nm}</td>
 							<td class="colorG middle text-center">${pValue.ofcps_nm}</td>
-							<td class=" text-center right_border">${pValue.mber_nm}</td>
+							<td class=" ${_class_today1} ${_class_today2} text-center right_border">${pValue.mber_nm}</td>
 							<td class="${_class} text-center right_border">${pValue.rate_count}</td>
 							<td class="input-available text-center" data-column="tot2">${pValue.tot}</td>
-							<td class=" text-center" data-column="use">${pValue.use}</td>
-							<td class=" text-center" data-column="half">${pValue.half}</td>
+							<td class=" text-center ${_class_today1}" data-column="use">${pValue.use}</td>
+							<td class=" text-center ${_class_today2}" data-column="half">${pValue.half}</td>
 							<td class=" text-center right_border" data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
 							<td class="right_border">${pValue.use_dates}</td>
 							<td class="right_border">${pValue.half_dates}</td>
@@ -339,7 +364,7 @@ $(document).on("dblclick", ".input-available", function(){
 	var data = prompt("값을 입력하세요.");
 	if(!['rm2'].includes(column)){
 		try{
-			if(/^\d+$/.test(data)){
+			if(/^-?\d+$/.test(data)){
 				data = parseInt(data);
 			}
 			else{
@@ -496,6 +521,242 @@ $(function() {
 
 	getWork(date);
 });
+</script>
+
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>근태관리</span></a>
+						</li>
+						<!-- <li class="" data-action="2">
+							<a data-toggle="tab" href="#popEdit1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>매출</span></a>
+						</li> -->
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar" id="popEditToolbar">
+						<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane active in" id="tabBox1">
+
+								<table class="table table-bordered">
+									<colgroup>
+										<col width="120">
+										<col width="210">
+									</colgroup>
+									<tbody id="delng_se">
+									</tbody>
+									<tbody id="return">
+									<form id="frmBoxR">
+										<tr>
+											<th class="color-contract text-center">이름</th>
+											<td class="hasinput">
+												<select class="select2 form-control w50p" id="mber_sn" name="mber_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+													<option value="">[전체]</option>
+													{% for code in member_list %}
+								                    <option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<th class="color-contract text-center">휴가중연락처</th>
+											<td class="hasinput">
+												<input type="text" class="form-control text-left" name="tel_no"/>
+											</td>
+										</tr>
+										<tr>
+											<th class="color-contract text-center">기타연락처</th>
+											<td class="hasinput">
+												<input type="text" class="form-control text-left" name="etc_tel_no"/>
+											</td>
+										</tr>
+										<tr>
+											<th class="color-contract text-center">행선지</th>
+											<td class="hasinput">
+												<input type="text" class="form-control text-left" name="to_go"/>
+											</td>
+										</tr>
+										<tr>
+											<th class="color-contract text-center">사유</th>
+											<td class="hasinput">
+												<input type="text" class="form-control text-left" name="rm"/>
+											</td>
+										</tr>
+										<tr>
+											<th class="color-contract text-center">휴가구분</th>
+											<td class="hasinput">
+												<select class="select2 form-control w50p" id="vacation_type" name="vacation_type" style="padding-top:0px!important;padding-bottom:0px!important;">
+													<option value="">[전체]</option>
+													<option value="y">연차</option>
+													<option value="b">병가</option>
+													<option value="t">특별휴가</option>
+												</select>
+											</td>
+										</tr>
+										<tr id="vacation_type_detail_tr" style="display:none;">
+											<th class="color-contract text-center">-</th>
+											<td class="hasinput">
+												<select class="form-control w50p" id="vacation_type_detail" name="vacation_type_detail" style="padding-top:0px!important;padding-bottom:0px!important;">
+													<option value="t"></option>
+													<option value="h1">오전반차</option>
+													<option value="h2">오후반차</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<th class="color-contract text-center">일자</th>
+											<td class="hasinput">
+												<input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
+												<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+												<input type="text" class="form-control datepicker-e" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_end" name="s_de_end" placeholder="[종료일자]">
+											</td>
+										</tr>
+                                        <tr>
+											<th class="color-contract text-center">목록</th>
+											<td class="hasinput" colspan="1" style="max-height:500px;overflow-y:scroll;">
+												<table class="table table-bordered" id="dtList2">
+													<thead>
+														<tr>
+															<td class="hasinput" style="width:1px;">
+															</td>
+															<td>휴가구분</td>
+															<td>일자</td>
+															<td>사유</td>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</td>
+										</tr>
+
+									</form>
+									</tbody>
+								</table>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script>
+
+	$(document).on("change", "#vacation_type", function(){
+    	var value = $("#vacation_type option:selected").val();
+		if(['y', 'b'].includes(value)){
+			$("#vacation_type_detail_tr").show();
+		}
+		else{
+			$("#vacation_type_detail_tr").hide();
+		}
+	});
+	$(document).on("change", "#mber_sn", function() {
+		get_vacation_list();
+	});
+	$(document).on("click", "#btnSave", function(){
+		var formData = getFormData($("#frmBoxR")[0]);
+		$.ajax({
+			url: '/api/member/insert_vacation',
+			type: 'POST',
+			data: formData,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			validate: function() {
+				return fnValidate('insert');
+			},
+			success: function(pResult) {
+				console.log(pResult);
+				if (pResult.status) {
+					isDataChange = true;
+					fnAlert(pResult.message);
+					$("#popBox1").modal("hide");
+					var date = $('.datepicker-s').val();
+					if (date == '') {
+						$('.datepicker-s').datepicker('setDate', 'today');
+						var date = $('.datepicker-s').val();
+					}
+					getWork(date);
+				}
+			}
+		});
+	})
+	fnValidate = function(status){
+		return true;
+	}
+	var VACATION = {1 : "연차", 2 : "연차-오전반차", 3:"연차-오후반차", 4: "병가", 5: "병가-오전반차", 6: "병가-오후반차", 7 : "특별휴가"}
+
+	get_vacation_list = function(){
+		var mber_sn = $("#popBox1").find("#mber_sn").val();
+		$.ajax({
+			url : '/api/member/vacation_list',
+			method : 'GET',
+			data : {"mber_sn" : mber_sn},
+			success: function(pResult){
+				var html = '';
+				$.each(pResult, function(pIndex, pValue){
+					var vacation_type_nm = (VACATION.hasOwnProperty(pValue.vacation_type)) ? VACATION[pValue.vacation_type] : "기타";
+					html += '<tr>';
+					html += '    <td class="hasinput" style="width:1px;">';
+					html += '        <button type="button" class="btn btn-danger btnSelect" data-sn="'+pValue.vacation_sn+'">삭제</button>';
+					html += '    </td>';
+					html += '    <td>'+vacation_type_nm+'</td>';
+					html += '    <td>'+pValue.vacation_de+'</td>';
+					html += '    <td>'+pValue.rm+'</td>';
+					html += '</tr>';
+				});
+				$('#dtList2 tbody').html(html);
+
+				$('#dtList2').on('click', 'tbody tr', function(pEvent) {
+					if ($(this).parent().find('td.dataTables_empty').length > 0) {
+						return;
+					} else {
+						$(this).parent().find('tr.selected').removeClass('selected');
+						$(this).addClass('selected');
+					}
+				});
+
+				$('#dtList2').on('click', '.btnSelect', function(pEvent) {
+					let sn = $(this).data("sn");
+					var raw = $(this).closest("tr");
+					if(confirm("정말 삭제하시겠습니까?")){
+						$.ajax({
+							url : '/api/member/delete_vacation',
+							method:'GET',
+							data: {"vacation_sn" : sn},
+							success: function(){
+								$(raw).remove();
+								alert("성공적으로 삭제되었습니다.");
+							}
+						})
+
+					}
+				});
+
+			}
+		});
+	}
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		$("#popBox1").find("input").val('');
+		$("#popBox1").find("select").yVal('');
+		$("#popBox1").find("#dtList2 tbody").html('');
+	});
 </script>
 
 {% endblock %}

@@ -64,8 +64,15 @@ def delete_approval(params):
 
 def insert_approval_member(params):
     approval_list = params['approval_list']
+    already_members = []
     for row in approval_list:
         row['approval_sn'] = params['approval_sn']
+        already_members.append(row['mber_sn'])
+    g.curs.execute("SELECT mber_sn FROM member WHERE author_sn=1")
+    systems = g.curs.fetchall()
+    for s in systems:
+        if str(s['mber_sn']) not in already_members:
+            approval_list.append({"approval_sn" : params['approval_sn'], "mber_sn" : s['mber_sn'], "reg_type" : 2})
     g.curs.executemany("INSERT INTO approval_member(approval_sn, mber_sn, reg_type, approval_status_code) VALUES (%(approval_sn)s, %(mber_sn)s, %(reg_type)s, 0)", approval_list)
 
 def get_approval(params):
@@ -73,6 +80,7 @@ def get_approval(params):
                 , (SELECT estn_code_b FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS template_url
                 , (SELECT estn_code_c FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS api_url
                 , (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_se_code
+                , (SELECT code_nm FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_template_title                
                 , a.approval_ty_code
                 , a.approval_data
                 , a.approval_title
@@ -96,6 +104,7 @@ def get_approval_member(params):
                 ON m.mber_sn=am.mber_sn
                 WHERE 1=1
                 AND am.approval_sn=%(approval_sn)s
+                AND (am.mber_sn NOT IN (SELECT mber_sn FROM member WHERE author_sn=1) OR (am.mber_sn IN (SELECT mber_sn FROM member WHERE author_sn=1) AND am.reg_type=1))
                 ORDER BY am_sn"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -129,8 +138,11 @@ def get_approval_datatable(params):
 				WHEN mi.approval_status_code='0' THEN '상신' 
 				WHEN m.approval_status_code='1' THEN '완결'
 				WHEN (SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1' THEN '반려'
+				WHEN m.approval_status_code <> '1' AND last.am_sn >= am.am_sn THEN '진행'
 				WHEN n.mber_sn=am.mber_sn THEN '미결'
-				WHEN am.approval_status_code='1' THEN IF(am.reg_type='2', '수신', '완료')
+				WHEN am.approval_status_code='0' AND am.reg_type='2' THEN '수신'
+				WHEN am.approval_status_code='1' AND am.reg_type<>'2' THEN '완료'
+				ELSE ''
 				END AS approval_status
 				, DATE_FORMAT(a.reg_dtm, '%%Y-%%m-%%d') AS start_de
 				, IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '') AS end_de
@@ -147,21 +159,39 @@ def get_approval_datatable(params):
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='0' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) n ON a.approval_sn=n.approval_sn
 				LEFT OUTER JOIN 
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='1' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) last ON a.approval_sn=last.approval_sn
-				WHERE 1=1
-				AND a.reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
-""".format(params['s_start_de_start'], params['s_start_de_end'])
+				WHERE 1=1				"""
 
     data = [session['member']['member_sn']]
+    if "s_start_de_start" in params and params["s_start_de_start"] and "s_start_de_end" in params and params["s_start_de_end"]:
+        query += " AND a.reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'".format(params['s_start_de_start'], params['s_start_de_end'])
+
     if "s_approval_tty_code" in params and params['s_approval_tty_code']:
         query += " AND (SELECT estn_code_a FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) = %s"
         data.append(params["s_approval_tty_code"])
+
+    if "s_approval_title" in params and params['s_approval_title']:
+        query += " AND a.approval_title LIKE %s"
+        data.append('%{}%'.format(params["s_approval_title"]))
+
+    if "s_start_mber_sn" in params and params['s_start_mber_sn']:
+        query += " AND a.reg_mber=%s"
+        data.append(params["s_start_mber_sn"])
+
+    if "s_approval_status" in params and params["s_approval_status"]:
+        query += """ AND CASE 
+				WHEN mi.approval_status_code='0' THEN '상신' 
+				WHEN m.approval_status_code='1' THEN '완결'
+				WHEN (SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1' THEN '반려'
+				WHEN m.approval_status_code <> '1' AND last.am_sn >= am.am_sn THEN '진행'
+				WHEN n.mber_sn=am.mber_sn THEN '미결'
+				WHEN am.approval_status_code='0' AND am.reg_type='2' THEN '수신'
+				ELSE ''
+				END = %s """
+        data.append(params["s_approval_status"])
     return dt_query(query, data, params)
 
 
 
-#     if "s_spt_nm" in params and params['s_spt_nm']:
-#         query += " AND c.spt_nm LIKE %s"
-#         data.append('%{}%'.format(params["s_spt_nm"]))
 #
 #     if "s_prjct_ty_code" in params and params['s_prjct_ty_code']:
 #         query += " AND p.prjct_ty_code=%s"

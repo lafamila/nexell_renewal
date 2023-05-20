@@ -24,11 +24,11 @@
     </thead>
     <tbody>
         <tr>
-            <td class="colorSky">계약번호</td>
+            <td class="colorSky text-center">계약번호</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
         </tr>
         <tr>
-            <td class="colorSky">현장명</td>
+            <td class="colorSky text-center">현장명</td>
             <td class="text-center hasinput" colspan="3">
                 <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
                     {% if not init %}
@@ -42,13 +42,13 @@
             </td>
         </tr>
         <tr>
-            <td class="colorSky">세대수</td>
+            <td class="colorSky text-center">세대수</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
-            <td class="colorSky">지역</td>
+            <td class="colorSky text-center">지역</td>
             <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
         </tr>
         <tr>
-            <td class="colorSky">공사기간</td>
+            <td class="colorSky text-center">공사기간</td>
             <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
         </tr>
     </tbody>
@@ -455,7 +455,7 @@
   </thead>
   <tbody>
     <tr>
-        <td class="text-center" colspan="4"></td>
+        <td class="text-center" colspan="4"><textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea></td>
     </tr>
   </tbody>
 </table>
@@ -496,6 +496,10 @@
                         $(pRow).find(`[name="rm_already[]"]`).yVal(pValue.rm);
                         $(pRow).find("input, select").attr("disabled", true);
                     });
+                    if(pResult.samsungList.length == 0){
+                        $(document).find(`tr[data-row="equip_already_tr"]`).find("input, select").attr("disabled", true);
+                    }
+
                     cloneRow("equip_other_already_tr", pResult.otherList.length-1);
                     $.each(pResult.otherList, function(pIndex, pValue){
                         var pRow = $(document).find("tbody[role='equip_other_already_row']").find("tr").eq(pIndex);
@@ -510,6 +514,9 @@
                         $(pRow).find(`[name="rm_other_already[]"]`).yVal(pValue.rm);
                         $(pRow).find("input, select").attr("disabled", true);
                     });
+                    if(pResult.otherList.length == 0){
+                        $(document).find(`tr[data-row="equip_other_already_tr"]`).find("input, select").attr("disabled", true);
+                    }
                     var max_extra_sn = 0;
                     $(document).find("#costTable tbody[role='ct_se_code_extra']").remove();
                     $(document).find("#costTable tbody[role='ct_se_code_diff']").remove();

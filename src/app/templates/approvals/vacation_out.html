@@ -5,19 +5,19 @@
     </colgroup>
     <tbody>
         <tr>
-            <th class="color-contract">신청일자</th>
+            <th class="color-contract text-center">신청일자</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-center" data-type="date" name="reg_date" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">외근지</th>
+            <th class="color-contract text-center">외근지</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-center" name="to_go"/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">외근일자</th>
+            <th class="color-contract text-center">외근일자</th>
             <td class="hasinput">
                 <input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
                 <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
@@ -120,6 +120,8 @@ getWorkPersonal = function(){
 			$(document).find("#dtList0 tbody").find("td").eq(6).find("input").val(parseInt(pData.use).toFormat('NUMBER'));
 			$(document).find("#dtList0 tbody").find("td").eq(7).find("input").val((parseInt(pData.tot) + parseInt(pData.mod) - parseInt(pData.use)).toFormat('NUMBER'));
           }
+        cloneRow("member_tr", 1);
+          $(document).find(`select[name="member_sn[]"]`).eq(0).yVal({{session['member']['member_sn']}});
 
 		}
 	});

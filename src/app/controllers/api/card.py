@@ -71,6 +71,7 @@ def ajax_get_contract():
     result['status'] = True
     return jsonify(result)
 
+
 @bp.route('/ajax_get_card_dashboard', methods=['GET'])
 def ajax_get_card_dashboard():
     params = request.args.to_dict()

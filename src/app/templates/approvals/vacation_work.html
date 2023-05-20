@@ -5,25 +5,25 @@
     </colgroup>
     <tbody>
         <tr>
-            <th class="color-contract">신청일자</th>
+            <th class="color-contract text-center">신청일자</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-center" data-type="date" name="reg_date" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">부서</th>
+            <th class="color-contract text-center">부서</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-center" name="dept_nm" value="{{session['member']['dept_nm']}}" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">이름</th>
+            <th class="color-contract text-center">이름</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-center" name="name" value="{{session['member']['member_nm']}}" readonly/>
             </td>
         </tr>
         <tr>
-            <th class="color-contract">근무일자</th>
+            <th class="color-contract text-center">근무일자</th>
             <td class="hasinput">
                 <input type="text" class="form-control datepicker-s" style="display:inline-block;width:40%!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_de_start" name="s_de_start" placeholder="[시작일자]">
                 <span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
@@ -31,7 +31,7 @@
             </td>
         </tr>
         <tr>
-            <th class="color-contract">사유</th>
+            <th class="color-contract text-center">사유</th>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="rm"/>
             </td>

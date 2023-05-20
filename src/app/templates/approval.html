@@ -11,7 +11,7 @@
 <!--# contents style start                                                 #-->
 <!--########################################################################-->
 <style type="text/css">
-tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
+tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
     line-height: 0.3!important;
     padding: 3px 7px!important;
 }
@@ -283,6 +283,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 									<col width="110">
 									<col width="1">
 									<col width="1">
+									<col width="1">
 								</colgroup>
 								<thead>
 									<tr>
@@ -306,19 +307,31 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_approval_title" name="s_approval_title">
 										</th>
-										<th class="hasinput"></th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_start_mber_sn" name="s_start_mber_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+							                    <option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</th>
 										<th class="hasinput">
 											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de_start" name="s_start_de_start" placeholder="[시작일자]">
 											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
 											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_start_de_end" name="s_start_de_end" placeholder="[종료일자]">
 										</th>
 										<th class="hasinput">
-<!--											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">-->
-<!--												<option value="">[전체]</option>-->
-<!--&lt;!&ndash;												{% for code in bcnc_list %}&ndash;&gt;-->
-<!--&lt;!&ndash;												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>&ndash;&gt;-->
-<!--&lt;!&ndash;												{% endfor %}&ndash;&gt;-->
-<!--											</select>-->
+											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">
+												<option value="">[전체]</option>
+												<option value="상신">상신</option>
+												<option value="미결">미결</option>
+												<option value="진행">진행</option>
+												<option value="완결">완결</option>
+												<option value="반려">반려</option>
+<!--												{% for code in bcnc_list %}-->
+<!--												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>-->
+<!--												{% endfor %}-->
+											</select>
 										</th>
                                         <th class="hasinput">
 <!--											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_end_de_start" name="s_end_de_start" placeholder="[시작일자]">-->
@@ -330,6 +343,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 												<option value="">[전체]</option>
 											</select>
 										</th>
+										<th class="hasinput"></th>
 										<th class="hasinput"></th>
 										<th class="hasinput text-right">
 											<div class="btn-group">
@@ -348,6 +362,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 										<th>상태</th>
 										<th>종결일</th>
 										<th>최종결재자</th>
+										<th>-</th>
 										<th>-</th>
 										<th class="text-right">
 											<div class="btn-group">
@@ -407,6 +422,7 @@ getApprovalList = function()
 					's_approval_status': $('#dtList1').find('#s_approval_status').val(),
                     's_start_de_start': $('#dtList1').find('#s_start_de_start').val(),
 					's_start_de_end': $('#dtList1').find('#s_start_de_end').val(),
+					's_start_mber_sn': $('#dtList1').find('#s_start_mber_sn').val(),
 					// 's_end_de_start': $('#dtList1').find('#s_end_de_start').val(),
 					// 's_end_de_end': $('#dtList1').find('#s_end_de_end').val(),
 					's_final_mber_sn': $('#dtList1').find('#s_final_mber_sn').val(),
@@ -453,11 +469,25 @@ getApprovalList = function()
 					var html = '';
 
 					html += '<div class="btn-group">';
-					html += '	<button class="btn btn-table btn-danger btnDelete" title="삭제" data-sn="'+row.approval_sn+'">';
+					html += '	<button class="btn btn-table btn-warning btnDelete" title="삭제" data-sn="'+row.approval_sn+'">';
 					html += '		<i class="fa fa-trash"></i>';
 					html += '	</button>';
 					html += '</div>';
 
+
+					return html;
+				}
+			},
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					{% if session['member']['auth_cd'] == 1 %}
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-danger btnTotalDelete" title="완전삭제" data-sn="'+row.approval_sn+'">';
+					html += '		<i class="fa fa-trash"></i>';
+					html += '	</button>';
+					html += '</div>';
+					{% endif %}
 
 					return html;
 				}
@@ -492,6 +522,11 @@ getApprovalList = function()
 			});
 
 			$(myList).on('click', '.btnDelete', function(pEvent) {
+				var approval_sn = $(this).data("sn")
+				deleteApproval(approval_sn);
+			});
+
+			$(myList).on('click', '.btnTotalDelete', function(pEvent) {
 				var approval_sn = $(this).data("sn")
 				deleteApproval(approval_sn);
 			});
@@ -765,6 +800,10 @@ $(function(){
 				pass=true;
 			}
 		});
+		if($("#approval_title").val() == ''){
+			alert("품의 제목을 입력해주시기 바랍니다.");
+			return false;
+		}
 		if(loginSN != '66' && !pass){
 			alert("기안자는 반드시 결재자 리스트에 포함되어야합니다.");
 			return false;
@@ -1121,7 +1160,7 @@ $(function(){
     <div class="modal-dialog modal-w900" style="margin: 0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;" id="approval-check-tab-container">
         <div class="modal-content">
 			<div class="jarviswidget jarviswidget-color-greenDark">
-				<header>
+				<header style="position:relative;">
 					<img src="/static/nexell/img/logo.ico" height="32"/>
 					<span style="font-size:16px;">넥셀시스템</span>
 					<ul class="nav nav-tabs" id="popCheckEditTabs">
@@ -1129,7 +1168,7 @@ $(function(){
 					<div class="jarviswidget-ctrls" role="menu">
 						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
 					</div>
-
+					<h2 id="approval_template_title" style="position:absolute;right:50%;transform:translateX(50%);"></h2>
 				</header>
 				<div role="content" style="min-height:700px;height:700px;overflow-y:auto;">
 					<div class="widget-body no-padding" style="height:100%;">
@@ -1294,7 +1333,7 @@ $(document).on("dblclick", ".input-available", function(){
 	var data = prompt("값을 입력하세요.");
 	if($(this).data("type") == "number"){
 		try{
-			if(/^\d+$/.test(data)){
+			if(/^-?\d+$/.test(data)){
 				data = parseInt(data);
 			}
 			else{
@@ -1347,6 +1386,7 @@ getApproval = function(approval_sn){
 			$("#formCheckContent").html(pResult.html);
 			var app = pResult.approval;
 			$("#approval_title_readonly").val(app.approval_title);
+			$("#approval_template_title").html(app.approval_template_title);
 			$.each(app.approval_data, function(key, value){
 				if(key.endsWith("[]")){
 					var pTag = $("#popBox2").find(`[name='${key}']`);

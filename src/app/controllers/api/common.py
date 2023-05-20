@@ -115,11 +115,27 @@ def ajax_get_bnd():
     for tax in taxbill:
         cntrct_sn = str(tax['cntrct_sn'])
         delng_se_code = 'M' if tax['s_delng_se_code'] == 'S2' else ('S' if tax['s_delng_se_code'] == 'S4' else 'T')
+        if delng_se_code == 'T' and tax['prjct_ty_code'] == 'BD':
+            continue
         dlivy_de = tax['s_dlivy_de']
         amount = tax['amount']
         if cntrct_sn not in result['taxbill']:
             result['taxbill'][cntrct_sn] = {"M" : [], "S" : [], "T" : []}
         result['taxbill'][cntrct_sn][delng_se_code].append((dlivy_de, amount))
+
+    bd_taxbill = cm.get_bd_taxbill_list(params)
+    for tax in bd_taxbill:
+
+        cntrct_sn = str(tax['cntrct_sn'])
+        delng_se_code = 'T'
+        dlivy_de = tax['s_dlivy_de']
+        amount = tax['amount']
+        if cntrct_sn not in result['taxbill']:
+            result['taxbill'][cntrct_sn] = {"M" : [], "S" : [], "T" : []}
+        if cntrct_sn not in result['account']:
+            result['account'][cntrct_sn] = {"M" : [], "S" : []}
+        result['taxbill'][cntrct_sn][delng_se_code].append((dlivy_de, amount))
+
 
     # rcppay = cm.get_i2_rcppay_list(params)
     # for r in rcppay:
@@ -152,7 +168,33 @@ def ajax_get_bnd():
 def ajax_get_month_plan():
     params = request.args.to_dict()
     result = dict()
+    co_st_list = cm.get_month_co_contract_list(params)
+    co_st = dict()
+    for co in co_st_list:
+        if co['cntrct_sn'] not in co_st:
+            co_st[co['cntrct_sn']] = list()
+        co_st[co['cntrct_sn']].append(co)
     result['contract'] = cm.get_month_contract_list(params)
+    extra_contract = list()
+    for r in result['contract']:
+        if r['cntrct_sn'] in co_st:
+            cntrct_amount = r['cntrct_amount']
+            tot = r['tot']
+            for co in co_st[r['cntrct_sn']]:
+                co['cntrct_amount'] = cntrct_amount * co['rate'] / 100.0
+                co['tot'] = tot * co['rate'] / 100.0
+                for i in range(1, 13):
+                    co["{}m".format(i)] = "" if r["{}m".format(i)] == "" else (r["{}m".format(i)] * co['rate'] / 100.0)
+                extra_contract.append(co)
+            for co in co_st[r['cntrct_sn']]:
+                for i in range(1, 13):
+                    if co["{}m".format(i)] != "":
+                        r["{}m".format(i)] -= co["{}m".format(i)]
+                r['cntrct_amount'] -= co['cntrct_amount']
+                r['tot'] -= co['tot']
+    result['contract'] += extra_contract
+    result['contract'] = list(sorted(result['contract'], key=lambda r: (r['code_ordr'], r['dept_nm'], r['ofcps_code'], r['bcnc_nm'], r['spt_nm'])))
+
     result['colored'] = cm.get_month_data(params)
     return jsonify(result)
 
@@ -228,6 +270,18 @@ def ajax_set_bnd_data():
     cm.set_bnd_data(params)
     return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
 
+@bp.route('/money/ajax_set_money_data', methods=['GET'])
+def ajax_set_money_data():
+    params = request.args.to_dict()
+    cm.set_money_data(params)
+    return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+
+@bp.route('/bnd/ajax_update_contract_rate', methods=['GET'])
+def ajax_update_contract_rate():
+    params = request.args.to_dict()
+    cm.ajax_update_contract_rate(params)
+    return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+
 @bp.route('/month/ajax_set_month_data', methods=['GET'])
 def ajax_set_month_data():
     params = request.args.to_dict()
@@ -289,6 +343,8 @@ def money_ajax_get_money_data():
     params = request.args.to_dict()
     result = dict()
     result['contract'] = cm.get_money_data(params)
+    params['money_year'] = "-".join(params['s_mt'].split("-")[:2])
+    result['money'] = cm.get_money_data_input(params)
     return jsonify(result)
 
 @bp.route('/cowork/ajax_get_cowork_data', methods=['GET'])
@@ -448,12 +504,22 @@ def do_nothing():
 @bp.route('/common/ajax_get_blueprint', methods=['GET'])
 def ajax_get_blueprint():
     params = request.args.to_dict()
-    result = cm.get_blueprint(params)
+    result = dict()
+    result['data'] = cm.get_blueprint(params)
+    params['stdyy'] = params['stdyy'].split("-")[0]
+    result['goal'] = cm.get_blueprint_goal(params)
+    result['sum'] = cm.get_blueprint_total(params)
     return jsonify(result)
 @bp.route('/common/insert_blueprint', methods=['GET'])
 def insert_blueprint():
     params = request.args.to_dict()
     result = cm.insert_blueprint(params)
+    return jsonify(result)
+
+@bp.route('/common/insert_blueprint_goal', methods=['GET'])
+def insert_blueprint_goal():
+    params = request.args.to_dict()
+    result = cm.insert_blueprint_goal(params)
     return jsonify(result)
 
 @bp.route('/common/set_reserve_data', methods=['GET'])
@@ -466,6 +532,12 @@ def set_reserve_data():
 def update_blueprint():
     params = request.args.to_dict()
     result = cm.update_blueprint(params)
+    return jsonify(result)
+
+@bp.route('/common/delete_blueprint', methods=['GET'])
+def delete_blueprint():
+    params = request.args.to_dict()
+    result = cm.delete_blueprint(params)
     return jsonify(result)
 
 @bp.route('/research/ajax_get_research', methods=['GET'])
@@ -522,4 +594,44 @@ def get_reserve_list():
     params = request.args.to_dict()
     result = dict()
     result['data'] = prj.get_reserved_project_list(params)
+    return jsonify(result)
+
+@bp.route('/common/ajax_get_finance', methods=['GET'])
+def ajax_get_finance():
+    params = request.args.to_dict()
+    result = dict()
+    result['data'] = cm.get_finance(params)
+    return jsonify(result)
+@bp.route('/common/ajax_insert_finance', methods=['GET'])
+def ajax_insert_finance():
+    params = request.args.to_dict()
+    cm.insert_finance(params)
+    return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
+
+@bp.route('/common/reserve_out', methods=['GET'])
+def reserve_out():
+    params = request.args.to_dict()
+    cm.reserve_out(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/common/insert_bbs', methods=['POST'])
+def insert_bbs():
+    params = request.form.to_dict()
+    cm.insert_bbs(params)
+    return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/common/get_bbs_list', methods=['GET'])
+def get_bbs_list():
+    params = request.args.to_dict()
+    result = cm.get_bbs_list(params)
+    return jsonify(result)
+@bp.route('/common/get_bbs', methods=['GET'])
+def get_bbs():
+    params = request.args.to_dict()
+    result = cm.get_bbs(params)
+    return jsonify(result)
+@bp.route('/common/delete_bbs', methods=['GET'])
+def delete_bbs():
+    params = request.args.to_dict()
+    result = cm.delete_bbs(params)
     return jsonify(result)

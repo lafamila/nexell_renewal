@@ -531,6 +531,7 @@ def get_fund_stat_datatable2(params):
 				, GET_CODE_NAME('DEPT_CODE', t.dept_code) AS dept_nm
 				, SUM(t.i_amount) AS i_amount
 				, SUM(t.o_amount) AS o_amount
+				, t.types
 				FROM (
 				SELECT SUBSTRING(r.rcppay_de,1,7) AS rcppay_de
 				, r.acntctgr_code
@@ -539,6 +540,7 @@ def get_fund_stat_datatable2(params):
 				, GET_CODE_NAME('DEPT_CODE', r.dept_code) AS dept_nm
 				, SUM(IF (r.rcppay_se_code NOT IN ('O'), r.amount, 0)) AS i_amount
 				, SUM(IF (r.rcppay_se_code IN ('O'), r.amount, 0)) AS o_amount
+				, 'B' AS types
 				FROM rcppay r
 				WHERE r.rcppay_se_code NOT IN ('B')
 				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de2_start'], params['s_rcppay_de2_end'])
@@ -560,6 +562,7 @@ def get_fund_stat_datatable2(params):
 				, GET_CODE_NAME('DEPT_CODE', c.dept_code) AS dept_nm
 				, 0 AS i_amount
 				, SUM(IFNULL (c.amount, 0)) AS o_amount
+				, 'C' AS types
 				FROM card c
 				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de2_start'], params['s_rcppay_de2_end'])
 
@@ -573,10 +576,15 @@ def get_fund_stat_datatable2(params):
 
     query += """GROUP BY SUBSTRING(c.card_de,1,7), c.dept_code, c.acntctgr_code
 				) t
-				WHERE 1=1
-				GROUP BY SUBSTRING(t.rcppay_de,1,7), t.dept_code, t.acntctgr_code """
+				WHERE 1=1 """
+    if "s_types" in params and params["s_types"]:
+        query += " AND types=%s "
+        data.append(params["s_types"])
+    query += """ GROUP BY SUBSTRING(t.rcppay_de,1,7), t.dept_code, t.acntctgr_code, t.types """
+
 
     return dt_query(query, data, params)
+
 
 def get_fund_stat_summary2(params):
     data = []

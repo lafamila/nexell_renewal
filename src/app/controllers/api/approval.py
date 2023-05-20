@@ -33,7 +33,6 @@ def ajax_get_project_datatable():
 def ajax_get_approval_ty_list():
     params = request.args.to_dict()
     result = apvl.get_approval_ty_list(params)
-    print(result)
     return jsonify(result)
 
 
@@ -99,7 +98,30 @@ def get_approval():
 def delete_approval():
     params = request.args.to_dict()
     approval = apvl.get_approval(params)
-    if int(approval['reg_mber']) == int(session['member']['member_sn']):
+    if int(session['member']['auth_cd']) == 1:
+        member_list = apvl.get_approval_member(params)
+        deletable = False
+        msg = "진행중인 결재자가 있어 삭제가 불가능합니다."
+        if not member_list:
+            deletable = False
+            msg = "최종 결재가 완료되지 않아 삭제가 불가능합니다."
+        else:
+            if member_list[-1]["approval_status_code"] in 1:
+                deletable = True
+                msg = "성공적으로 삭제되었습니다."
+            elif -1 in [m["approval_status_code"] for m in member_list]:
+                deletable = True
+                msg = "성공적으로 삭제되었습니다."
+
+            elif member_list[0]["approval_status_code"] == 0:
+                deletable = False
+                msg = "상신중인 품의는 삭제가 불가능합니다."
+
+        if deletable:
+            apvl.delete_approval(params)
+
+
+    elif int(approval['reg_mber']) == int(session['member']['member_sn']):
 
         member_list = apvl.get_approval_member(params)
         deletable = False
@@ -112,6 +134,9 @@ def delete_approval():
                 deletable = False
                 msg = "최종 결재가 완료되어 삭제가 불가능합니다."
             elif member_list[0]["approval_status_code"] == 0:
+                deletable = True
+                msg = "성공적으로 삭제되었습니다."
+            elif -1 in [m["approval_status_code"] for m in member_list]:
                 deletable = True
                 msg = "성공적으로 삭제되었습니다."
 
