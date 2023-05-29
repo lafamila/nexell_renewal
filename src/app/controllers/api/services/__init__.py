@@ -40,12 +40,25 @@ def refresh_code_list():
                 amt_ty_code_list=get_code_list('amt_ty_code'.upper()))
 
 
+
+def get_approval_ty_code_by_sn(params):
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT approval_sn
+                        , approval_ty_code
+                        FROM approval WHERE approval_sn=%(approval_sn)s""", params)
+    result = curs.fetchone()
+    curs.close()
+    db.close()
+    return result
+
 def get_approval_by_sn(params):
     db = DB()
     curs = db.cursor()
     curs.execute("""SELECT code_nm AS title
                         , estn_code_b AS url
                         , estn_code_c AS ajax_url
+                        , code AS approval_ty_code
                         FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=%(approval_ty_code)s""", params)
     result = curs.fetchone()
     curs.close()

@@ -1,7 +1,7 @@
 {% extends 'common/report_base.html' %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
-<style>
+<style id="style">
 div.report .sub-title {
 	padding-top: 4px!important;
 }
@@ -210,12 +210,22 @@ body.smart-style-6 .table>tbody>tr>td.hasinput, body.smart-style-6 .table>tbody>
 body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.table-form>thead>tr>th {
     background: #92CDDC;
 }
+
+#formContent select.form-control{
+	padding-top:0px!important;
+	padding-bottom:0px!important;
+	padding-right:4px!important;
+	padding-left:4px!important;
+}
+
 </style>
 
 <!--########################################################################-->
 <!--# page layer start                                                     #-->
 <!--########################################################################-->
 <!-- 레포트1 레이어 팝업 시작 -->
+<input type="hidden" id="loginSN" value="{{ loginSN }}"/>
+<input type="hidden" id="approval_ty_code" value="{{ approval.approval_ty_code }}"/>
 <div id="popReportApproval">
     <div>
         <div class="modal-content">
@@ -254,10 +264,24 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 				</div>
 			</div>
 			<div class="modal-header">
+                {% if init %}
 				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">
 					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목"/>
 					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
 				</div>
+                {% else %}
+				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 320px;">
+					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목" readonly/>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="btnApprove" title="결재 처리합니다." data-value="1" disabled><i class="fa fa-save"> 결재</i></button>
+                        <button type="button" class="btn btn-danger" id="btnNotApprove" title="반려 처리합니다." data-value="-1" disabled><i class="fa fa-trash-o"> 반려</i></button>
+                        <button type="button" class="btn btn-danger" id="btnApproveCancel" title="결재 취소 처리합니다." data-value="0" disabled><i class="fa fa-trash-o"> 결재취소</i></button>
+                        <button type="button" class="btn" id="btnApproveCopy" title="결재 정보를 복사합니다." disabled><i class="fa fa-copy"> 품의 복사</i></button>
+
+                    </div>
+
+				</div>
+                {% endif %}
 
 			</div>
 			<div class="modal-body report" id="exportExcelBD">
@@ -280,7 +304,8 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 		 */
 		$('#btnPrint2').on('click', function(pEvent) {
 			var html = $('#popReportApproval').find('.modal-content').html();
-			console.log(html);
+
+			html = `<style>${$("#style").html()}</style>` + html;
 			$('#_print').contents().find('body>div.report').html('');
 			$('#_print').contents().find('body>div.report').html(html);
 			parent.frames['_print'].focus();
@@ -302,6 +327,154 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 			success: function(pResult){
 				$("#formContent").html(pResult.html);
 				$("#approval-html-title").html(window.approval.title.split('').join('&nbsp;&nbsp;&nbsp;'));
+                {% if not init %}
+                    var approval_sn = "{{ approval_sn }}";
+                    $.ajax({
+                        url : '/api/approval/get_approval',
+                        method : 'GET',
+                        data : {"approval_sn" : approval_sn},
+                        success: function(pResult){
+                            console.log(pResult);
+                            var app = pResult.approval;
+                            $.each(app.approval_data, function(key, value){
+                                if(key.endsWith("[]")){
+                                    var pTag = $("#formContent").find(`[name='${key}']`);
+                                    if(pTag.length == 0){
+                                        $("#formContent").find("tbody[data-tr]").each(function(_, trTag){
+                                            if ($.isFunction(cloneRow)) {
+                                                cloneRow($(trTag).data("tr"), 1);
+                                            }
+                                        });
+                                        var pTag = $("#formContent").find(`[name='${key}']`);
+                                    }
+                                    if(pTag.length != value.length){
+                                        if ($.isFunction(cloneRow)) {
+                                            cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+                                        }
+                                    }
+                                    $.each(value, function(pIndex, pValue){
+
+                                        var tagName = $("#formContent").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+                                        if(tagName == "INPUT"){
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+                                        }
+                                        else if(tagName == "SELECT"){
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).find(`option`).prop("disabled", true);
+                                        }
+                                        else if(tagName == "TEXTAREA"){
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).html(pValue);
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+
+                                        }
+                                    });
+                                }
+                                else{
+                                    var pTag = $("#formContent").find(`#${key}`);
+                                    var tagName = '';
+                                    var tagType = '';
+                                    if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+                                        pTag = $("#formContent").find(`[name='${key}']`);
+                                        tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+                                        tagType = $(pTag).eq(0).attr("type");
+                                    }
+                                    else{
+                                        tagName = $(pTag).prop("tagName").toUpperCase();
+                                        tagType = '';
+                                    }
+                                    if(tagName == "SELECT"){
+                                        $(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+                                        $(pTag).prop("disabled", true);
+                                    }
+                                    else if(tagName == "INPUT"){
+                                        if($(pTag).attr("type") == "radio"){
+                                            $(pTag).yVal(`${value}`);
+                                            $(pTag).yReadonly(true);
+                                        }
+                                        else{
+                                            $(pTag).val(`${value}`);
+                                            $(pTag).attr("readonly", true);
+                                        }
+                                    }
+                                    else if(tagName == "TEXTAREA"){
+                                        $(pTag).html(`${value}`);
+                                        $(pTag).attr("readonly", true);
+
+                                    }
+
+                                }
+                            });
+                            $("#formContent").find("tbody").trigger("change");
+                            if ($.isFunction($.fn.afterLoadApproval)) {
+                                $("#formContent").afterLoadApproval();
+                            }
+                            var html0 = '';
+                            var html1 = '';
+                            var html2 = '';
+                            var loginSN = $("#loginSN").val();
+                            $.each(pResult.member_list, function(pIndex, pMember){
+                                if(pMember.reg_type == 0 || pMember.reg_type == 1){
+                                    var status = pMember.approval_status_code;
+                                    var status_nm = '';
+                                    if(status == 0){
+                                        status_nm = '';
+                                    }
+                                    else if(status == 1){
+                                        status_nm = '(승인)';
+                                    }
+                                    else{
+                                        status_nm = '(반려)';
+                                    }
+                                    var html = `<div class="approval-member">
+                                                    <div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
+                                                    <div><img src="/static/temp/signature.jpg" width="46" height="46"/> </div>
+                                                    <div>${pIndex+1}. ${pMember.mber_nm}</div>
+                                                    <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0] : "&nbsp;"}</div>
+                                                </div>`;
+                                    //${pMember.mber_nm}${status_nm}
+                                    if(pMember.reg_type == 0){
+                                        html0 += html;
+
+                                    }
+                                    else if(pMember.reg_type == 1){
+                                        // ${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}
+                                        html1 += html;
+                                    }
+                                }
+                                else{
+                                    html2 += `<span>${pMember.mber_nm};</span>`;
+                                }
+                            });
+                            $(document).find("#approval_member_0").html(html0);
+                            $(document).find("#approval_member_1").html(html1);
+                            $(document).find("#approval_member_2").html(html2);
+                            if(pResult.myTurn){
+                                //
+                                $("#btnApprove").attr("disabled", false);
+                                $("#btnNotApprove").attr("disabled", false);
+                            }
+                            else{
+                                $("#btnApprove").attr("disabled", true);
+                                $("#btnNotApprove").attr("disabled", true);
+                            }
+                            if(pResult.cancelable){
+                                $("#btnApproveCancel").attr("disabled", false);
+                            }
+                            else{
+                                $("#btnApproveCancel").attr("disabled", true);
+                            }
+                            if(pResult.isFirst){
+                                $("#btnApproveCopy").attr("disabled", false);
+                            }
+                            else{
+                                $("#btnApproveCopy").attr("disabled", true);
+
+                            }
+                        }
+                    });
+
+                {% endif %}
 			},
 			error: function(){
 				alert("에러가 발생했습니다.");
@@ -310,6 +483,73 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 		})
 
 	});
+
+
+$(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", function(){
+	var value = $(this).data("value");
+	var password = prompt("비밀번호를 입력해주세요.");
+	if(password == null || password == undefined){
+		return false;
+	}
+	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : $("#s_approval_sn").val()};
+	if(value == '-1'){
+		var memo = prompt("반려 사유를 입력해주세요.");
+		if(memo != null && memo != undefined){
+			params['memo'] = memo;
+		}
+		else{
+			return false;
+		}
+	}
+	$.ajax({
+		url : '/api/approval/update_approval',
+		method : 'POST',
+		data : params,
+		success : function(pResult){
+			if(pResult.status){
+				if(pResult.isEnd){
+					console.log(pResult.approval);
+					$.ajax({
+						url : pResult.approval.api_url,
+						method : 'POST',
+						data : JSON.stringify(pResult.approval.approval_data),
+						contentType: 'application/json;charset=utf-8',
+						success : function(pResult){
+							if(pResult.status){
+								alert("성공적으로 처리되었습니다.");
+                                self.close();
+
+							}
+						},
+						error : function(pResult){
+							$.ajax({
+								url : '/api/approval/cancel_approval',
+								method: 'POST',
+								data : params,
+								success: function(pResult){
+									alert("오류가 발생했습니다.");
+								},
+								error: function(pResult){
+									alert("심각한 오류가 발생했습니다.");
+								}
+							});
+						}
+					})
+
+				}
+				else{
+					alert("성공적으로 처리되었습니다.");
+                    self.close();
+
+				}
+			}
+			else{
+				alert(pResult.message);
+			}
+
+		}
+	});
+});
 
 </script>
 
@@ -508,6 +748,83 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 		$(document).find("#approval_member_2").html(html2);
 
 	});
+
+    $(document).on('click', '#btnSave', function(){
+		var data = $("#frmBox3").serializeObject();
+		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code": $("#approval_ty_code").val(),"approval_list" : []}
+		$(".approval-right .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
+		});
+		var loginSN = $("#loginSN").val();
+        console.log(loginSN);
+		var pass=false;
+		$(".approval-left .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type});
+			if((parseInt(approval_type) == 1) && (loginSN == mber_sn)){
+				pass=true;
+			}
+		});
+		if($("#approval_title").val() == ''){
+			alert("품의 제목을 입력해주시기 바랍니다.");
+			return false;
+		}
+		if(loginSN != '66' && !pass){
+			alert("기안자는 반드시 결재자 리스트에 포함되어야합니다.");
+			return false;
+		}
+		else{
+			if(loginSN == '66'){
+				params.approval_list.push({"mber_sn" : '66', "reg_type": '1'});
+			}
+		$.ajax({
+			url: '/api/approval/ajax_insert_approval',
+			type: 'POST',
+			data: JSON.stringify(params),
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			processData: false,
+			validate: function() {
+				return fnValidate();
+			},
+			success: function(pResult){
+				var action = $("#popBox1").data("action");
+				if(action == 'copy'){
+					var sn = $("#popBox1").data("sn");
+					$.ajax({
+						url: '/api/approval/delete_approval',
+						method: 'GET',
+						data: {"approval_sn": sn},
+						success: function (pResult) {
+							if(pResult.status){
+								alert(pResult.message);
+								$.datatable1.ajax.reload();
+
+							}
+							else{
+								alert(pResult.message);
+							}
+							$("#popBox1").data('action', "init");
+							$("#popBox1").modal('hide');
+							$.datatable1.ajax.reload();
+						}
+					});
+
+				}
+				else{
+					$("#popBox1").modal('hide');
+
+				}
+				// getApproval(pResult.approval_sn);
+			}
+		});
+
+		}
+	});
+
 
 </script>
 {% endblock %}

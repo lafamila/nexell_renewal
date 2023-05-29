@@ -675,6 +675,12 @@ $(function(){
 						<li class="active" data-action="1">
 							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>품의서 양식</span></a>
 						</li>
+						<li data-action="2">
+							<a data-toggle="tab" href="#tabBox2" data-action="tab2"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>결재라인</span></a>
+						</li>
+						<li data-action="3" style="display:none;">
+							<a data-toggle="tab" href="#tabBox3" data-action="tab3"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>품의서</span></a>
+						</li>
 					</ul>
 					<div class="jarviswidget-ctrls" role="menu">
 						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
@@ -712,6 +718,62 @@ $(function(){
 								</div>
 							</form>
 							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox2">
+
+								<div class="member-search">
+									<div class="member-header">
+										<div class="hasinput">
+											<select class="form-control select2 w100p" id="member-search-select" name="member-search-select">
+												<option value=""></option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="hasinput">
+											<select class="form-control select2 w100p" id="member-approval-select" name="member-approval-select">
+												<option value=""></option>
+												<option value="0">협조</option>
+												<option value="1">결재</option>
+												<option value="2">수신</option>
+											</select>
+										</div>
+
+									</div>
+
+									<div class="member-list">
+										<div class="approval-left">
+											<div class="title">
+												<div>결재/협조</div>
+											</div>
+										</div>
+										<div class="approval-right">
+											<div class="title">
+												<div>수신</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								
+
+							</div><!--tab-pane-->
+							<div class="tab-pane fade" id="tabBox3">
+							<div style="position:relative;height:6px!important;background-color:#002060!important;color:white;">
+								<h1 style="position: absolute; left: 50%;transform:translateX(-50%); top: -35px;overflow: hidden;font-weight:500!important;" class="sub-title underline" id="approval-html-title"></h1>
+								<button style="position:absolute; right:30px; top:-36px;" type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
+							</div>
+							<span class="widget-toolbar" id="popEditToolbar" style="width:100%;padding:0px!important;display:grid;grid-template-columns: 1fr!important">
+								<div style="display:inline-block;">
+									<input type="text" name="approval_title" id="approval_title" class="form-control" placeholder="제목"/>
+								</div>
+							</span>
+							<form id="frmBox3">
+								<div id="formContent">
+
+								</div>
+							</form>
+							</div><!--tab-pane-->
 						</div><!--tab-content-->
 					</div><!--widget-body-->
 				</div><!--content-->
@@ -720,11 +782,91 @@ $(function(){
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
+	$(document).on('click', '#btnSave', function(){
+		var data = $("#frmBox3").serializeObject();
+		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code":$(document).find(".approval-ty-list .active").data("code"),"approval_list" : []}
+		$(".approval-right .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
+		});
+		var loginSN = $("#loginSN").val();
+		var pass=false;
+		$(".approval-left .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type});
+			if((parseInt(approval_type) == 1) && (loginSN == mber_sn)){
+				pass=true;
+			}
+		});
+		if($("#approval_title").val() == ''){
+			alert("품의 제목을 입력해주시기 바랍니다.");
+			return false;
+		}
+		if(loginSN != '66' && !pass){
+			alert("기안자는 반드시 결재자 리스트에 포함되어야합니다.");
+			return false;
+		}
+		else{
+			if(loginSN == '66'){
+				params.approval_list.push({"mber_sn" : '66', "reg_type": '1'});
+			}
+		$.ajax({
+			url: '/api/approval/ajax_insert_approval',
+			type: 'POST',
+			data: JSON.stringify(params),
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			processData: false,
+			validate: function() {
+				return fnValidate();
+			},
+			success: function(pResult){
+				var action = $("#popBox1").data("action");
+				if(action == 'copy'){
+					var sn = $("#popBox1").data("sn");
+					$.ajax({
+						url: '/api/approval/delete_approval',
+						method: 'GET',
+						data: {"approval_sn": sn},
+						success: function (pResult) {
+							if(pResult.status){
+								alert(pResult.message);
+								$.datatable1.ajax.reload();
 
+							}
+							else{
+								alert(pResult.message);
+							}
+							$("#popBox1").data('action', "init");
+							$("#popBox1").modal('hide');
+							$.datatable1.ajax.reload();
+						}
+					});
+
+				}
+				else{
+					$("#popBox1").modal('hide');
+					$.datatable1.ajax.reload();
+
+				}
+				// getApproval(pResult.approval_sn);
+			}
+		});
+
+		}
+	});
 	init = function(){
 		$('#popEditTabs').find("a[data-action='tab1']").trigger('click');
 		$(document).find(".approval-se-list .active").removeClass("active");
 		$(document).find(".approval-ty-list").html("");
+		$("#formContent").html("");
+		$("#popEditTabs").find("li[data-action='3']").hide();
+		$('#popBox1').find('#member-search-select').val('').trigger('change');
+		$('#popBox1').find('#member-approval-select').val('').trigger('change');
+		$('#popBox1').find("#approval_title").val('');
+		$('#popBox1').find('.member-list .badge').remove();
 	}
 	$('#popBox1').on('hidden.bs.modal', function(pEvent)
 	{
@@ -737,6 +879,130 @@ $(function(){
 			init();
 		}
 		else{
+			var sn = $("#popBox1").data("sn");
+			$.ajax({
+				url : '/api/approval/get_approval',
+				method : 'GET',
+				data : {"approval_sn" : sn},
+				success: function(pResult){
+					$(document).find(".approval-se-list > div.active").removeClass("active");
+
+					$(`.approval-se-list > div[data-code="${pResult.approval.approval_se_code}"]`).addClass("active");
+					let approval_ty_list = window.approval_ty_list[parseInt(pResult.approval.approval_se_code)];
+					let html = '';
+					let pIndex = 1;
+					$.each(approval_ty_list, function(_, pRow){
+						let code_nm = pRow[0][0];
+						let code_dc = pRow[0][1];
+						let pV = pRow[1];
+
+						html += `<div>
+									<div>${pIndex}</div>
+									<div>${code_nm}</div>
+									<div>${code_dc}</div>`;
+						for(let i=1;i<=3;i++){
+							if(pV.hasOwnProperty(i)){
+								let pR = pV[i];
+								var _class = (pR.code == pResult.approval.approval_ty_code) ? "active" : "";
+								html += `   <div class="selectable ${_class}" data-code="${pR.code}" data-url="${pR.template_url}" data-title="${pR.code_nm}">O</div>`;
+								if(pR.code == pResult.approval.approval_ty_code){
+									$("#tabBox3").find("#approval-html-title").html(pR.code_nm.split('').join('&nbsp;&nbsp;&nbsp;'));
+								}
+							}
+							else{
+								html += `   <div>X</div>`;
+							}
+						}
+						html += `</div>`;
+						pIndex++;
+					});
+					$("#popEditTabs").find("li[data-action='3']").show();
+					$(".approval-ty-list").html(html);
+					$("#formContent").html(pResult.html);
+					var app = pResult.approval;
+					$("#approval_title").val(app.approval_title);
+					$.each(app.approval_data, function(key, value){
+						if(key.endsWith("[]")){
+							var pTag = $("#popBox1").find(`[name='${key}']`);
+							if(pTag.length == 0){
+								$("#formContent").find("tbody[data-tr]").each(function(_, trTag){
+									if ($.isFunction(cloneRow)) {
+										cloneRow($(trTag).data("tr"), 1);
+									}
+								});
+							}
+							if(pTag.length != value.length){
+								if ($.isFunction(cloneRow)) {
+									cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+								}
+							}
+							$.each(value, function(pIndex, pValue){
+		
+								var tagName = $("#popBox1").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+								if(tagName == "INPUT"){
+									$("#popBox1").find(`[name='${key}']`).eq(pIndex).val(pValue);
+								}
+								else if(tagName == "SELECT"){
+									$("#popBox1").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
+
+								}
+								else if(tagName == "TEXTAREA"){
+									$("#popBox1").find(`[name='${key}']`).eq(pIndex).html(pValue);
+
+								}
+							});
+						}
+						else{
+							var pTag = $("#popBox1").find(`#${key}`);
+							var tagName = '';
+							var tagType = '';
+							if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+
+								pTag = $("#popBox1").find(`[name='${key}']`);
+								tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+								tagType = $(pTag).eq(0).attr("type");
+							}
+							else{
+								tagName = $(pTag).prop("tagName").toUpperCase();
+								tagType = '';
+							}
+							if(tagName == "SELECT"){
+								$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+							}
+							else if(tagName == "INPUT"){
+								if($(pTag).attr("type") == "radio"){
+									$(pTag).yVal(`${value}`);
+								}
+								else{
+									$(pTag).val(`${value}`);
+								}
+							}
+							else if(tagName == "TEXTAREA"){
+								$(pTag).html(`${value}`);
+
+							}
+		
+						}
+					});
+					$("#popBox1").find("tbody").trigger("change");
+					if ($.isFunction($.fn.afterLoadApproval)) {
+						$("#popBox1").afterLoadApproval();
+					}
+					$.each(pResult.member_list, function(pIndex, pValue){
+						var reg_nm = '';
+						if(parseInt(pValue.reg_type) == 0)
+							reg_nm = "협조";
+						else if(parseInt(pValue.reg_type) == 1)
+							reg_nm = "결재";
+						else if(parseInt(pValue.reg_type) == 2)
+							reg_nm = "수신";
+						insert_regist_member(pValue.mber_sn, pValue.mber_nm, pValue.reg_type, reg_nm);
+
+					})
+					$('#popEditTabs').find("a[data-action='tab3']").trigger('click');
+
+				}
+			});
 
 		}
 
@@ -753,6 +1019,20 @@ $(function(){
 				location.reload();
 			}
 		})
+	});
+	$(document).on("shown.bs.tab", "a[data-toggle='tab']",function(e){
+		let tab = $(e.target).data("action");
+		console.log(tab);
+		if(tab == "tab1"){
+			$("#approval-tab-container").attr("style", "margin:0px!important;width:800px!important");
+		}
+		else if(tab == "tab2"){
+			$("#approval-tab-container").attr("style", "margin:0px!important;width:800px!important");
+		}
+		else{
+			$("#approval-tab-container").attr("style", "margin:0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;");
+			$("#frmBox3").find(".select2").select2();
+		}
 	});
 
 	$(document).on("click", ".approval-se-list > div", function(){
@@ -795,18 +1075,285 @@ $(function(){
 			$(this).removeClass("active");
 		}
 		else{
-
-            var params = "";
-            params += "&approval_ty_code="+$(this).data("code");
-        	window.open("/approval/report?"+params, "_blank");
+			var url = $(this).data("url");
+			var title = $(this).data("title");
+			$.ajax({
+				url : '/api/approval/ajax_get_approval_template',
+				method : 'GET',
+				data : {"url" : url},
+				success: function(pResult){
+					$("#formContent").html(pResult.html);
+					$("#tabBox3").find("#approval-html-title").html(title.split('').join('&nbsp;&nbsp;&nbsp;'));
+					$("#popEditTabs").find("li[data-action='3']").show();
+				},
+				error: function(){
+					alert("에러가 발생했습니다.");
+					location.reload();
+				}
+			})
 
 
 		}
 	});
+	function insert_regist_member(mber_sn, mber_nm, apvl_type, apvl_nm){
+		if(mber_sn != "" && apvl_type != ""){
+			var target = ".approval-left";
+			if(apvl_type == "2"){
+				target = ".approval-right";
+			}
+			var duplicated = false;
+			$(document).find("div.badge").each(function(pIndex, pTag){
+				if(mber_sn == $(pTag).data("sn")){
+					duplicated = true;
+					return false;
+				}
+			});
+			if(duplicated){
+				$(document).find(`div.badge[data-sn='${mber_sn}'] .close`).trigger("click");
+			}
+			let idx = $(target).find("div.badge").length+1;
+			let html = `<div data-sn="${mber_sn}" data-type="${apvl_type}" class="badge badge-pill badge-dark">
+							<div>${idx}</div>
+							<div>${mber_nm}</div>
+							<div>${apvl_nm}</div>
+							<div class="close badge-close"></div>
+						</div>`;
+			$(target).append(html);
+		}
+	}
+
+	$(document).on("change", "#member-approval-select", function(){
+		let mber_sn = $("#member-search-select").find(":selected").val();
+		let mber_nm = $("#member-search-select").find(":selected").text();
+		let apvl_type = $("#member-approval-select").find(":selected").val();
+		let apvl_nm = $("#member-approval-select").find(":selected").text();
+		if(mber_sn != '' && apvl_type != ''){
+			insert_regist_member(mber_sn, mber_nm, apvl_type, apvl_nm);
+		}
+	});
+	$(document).on("change", "#member-search-select", function(){
+		$("#member-approval-select").yVal('');
+	});
+	$(document).on("click", ".badge-close", function(){
+		let container = $(this).parent().parent();
+		$(this).parent().remove();
+		let badges = $(container).find("div.badge");
+		$.each(badges, function(pIndex, pValue){
+			$(pValue).find("div").eq(0).text(pIndex+1);
+		});
+	});
 </script>
 
 
+<div class="modal fade" data-backdrop="static" id="popBox2">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="margin: 0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;" id="approval-check-tab-container">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header style="position:relative;">
+					<img src="/static/nexell/img/logo.ico" height="32"/>
+					<span style="font-size:16px;">넥셀시스템</span>
+					<ul class="nav nav-tabs" id="popCheckEditTabs">
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<h2 id="approval_template_title" style="position:absolute;right:50%;transform:translateX(50%);"></h2>
+				</header>
+				<div role="content" style="min-height:700px;height:700px;overflow-y:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<style>
+								.grid-three{
+									grid-template-columns: 1fr 62px 62px;
+								}
+								.grid-four{
+									grid-template-columns: 1fr 62px 62px 82px;
+								}
+							</style>
+							<div class="tab-pane fade active in" id="tabCheckBox1" style="position:relative;">
+							<span class="widget-toolbar" style="width:100%;height:100%;padding:0px!important;">
+								<div class="approval-line-container">
+									<div class="approval-line">
+										<span class="approval-line-list">
+
+
+											<div>
+												결재
+											</div>
+											<div style="display:inline-flex;" id="approval_member_1"></div>
+											<div>
+												협조
+											</div>
+											<div style="display:inline-flex;" id="approval_member_0"></div>
+										</span>
+										<span class="approval-line-list" style="line-height: 1!important;">
+											<div>
+												수신
+											</div>
+											<div style="display:inline-flex;" id="approval_member_2"></div>
+										</span>
+
+									</div>
+								</div>
+
+							</span>
+							<span class="widget-toolbar" style="width:100%;padding:0px!important;display:grid;">
+								<button type="button" class="btn" id="btnApproveCopy" title="결재 정보를 복사합니다." style="display:none;width:50%;"><i class="fa fa-copy"> 품의 복사</i></button>
+							</span>
+							<span class="widget-toolbar grid-three" id="popCheckEditToolbar" style="width:100%;padding:0px!important;display:grid;">
+
+								<div style="display:inline-block;">
+									<input type="text" name="approval_title" id="approval_title_readonly" class="form-control" placeholder="제목" readonly/>
+								</div>
+								<button type="button" class="btn btn-primary" id="btnApprove" title="결재 처리합니다." data-value="1" disabled><i class="fa fa-save"> 결재</i></button>
+								<button type="button" class="btn btn-danger" id="btnNotApprove" title="반려 처리합니다." data-value="-1" disabled><i class="fa fa-trash-o"> 반려</i></button>
+								<button type="button" class="btn btn-danger" id="btnApproveCancel" title="결재 취소 처리합니다." data-value="0" style="display:none;"><i class="fa fa-trash-o"> 결재취소</i></button>
+								<input type="hidden" id="s_approval_sn" value=""/>
+							</span>
+							<style>
+								.approval-member{
+									line-height:1!important;
+								}
+								.approval-line-container{
+									width:100%!important;
+									height:125px;
+									text-align:left!important;
+									box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+									display:grid;
+									grid-template-columns: 1fr;
+									background-color:white;
+									z-index:9999;
+									border-radius: 5px;
+									transition: width 0.4s ease-in-out;
+
+								}
+								.approval-line{
+									display:grid;
+									grid-template-rows: 1fr 20px;
+								}
+								.approval-line .approval-line-list:not(:first-child){
+									display:grid;
+									grid-template-columns: 40px 1fr;
+									width:100%;
+									text-align:left!important;
+								}
+								.approval-line .approval-line-list:first-child{
+									display:grid;
+									grid-template-columns: 40px 1fr 40px 1fr;
+									width:100%;
+									text-align:left!important;
+								}
+								.approval-line .approval-line-list:not(:last-child){
+									border-bottom:1px solid #333;
+								}
+								.approval-line .approval-line-list:last-child {
+									border-bottom:1px solid #333;
+								}
+								.approval-line .approval-line-list:first-child {
+									border-top:1px solid #333;
+								}
+								.approval-line .approval-line-list>div:nth-child(1){
+									display:flex;
+									justify-content: center;
+									align-items: center;
+									border-right:1px solid #333;
+									background-color:#0070C0!important;
+									color:white;
+									font-size:13px;
+									font-weight:bold;
+								}
+								.approval-line .approval-line-list>div:nth-child(3){
+									display:flex;
+									justify-content: center;
+									align-items: center;
+									border-left:1px solid #333;
+									border-right:1px solid #333;
+									background-color:#0070C0!important;
+									color:white;
+									font-size:13px;
+									font-weight:bold;
+								}
+								.approval-line .approval-line-list>div:nth-child(2)>div{
+									display:inline-grid;
+								}
+								.approval-line .approval-line-list>div:nth-child(4)>div{
+									display:inline-grid;
+								}
+								.approval-member{
+									width:80px;
+									border:1px solid #aaa;
+									display:grid;
+									grid-template-rows: 16px 48px 16px 1fr;
+								}
+								.approval-member>div{
+									padding-top:2px;
+									display:flex;
+									justify-content: center;
+									align-items: center;
+								}
+								.approval-member>div:last-child{
+									font-size:7px;
+									line-height:1!important;
+								}
+								.approval-member>div:not(:last-child){
+									font-size:11px;
+									width:100%;
+									border-bottom:1px solid #333;
+								}
+							</style>
+							<form id="frmCheckBox3">
+								<div id="formCheckContent">
+
+								</div>
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
 <script>
+$(document).on("dblclick", ".input-available", function(){
+	var data = prompt("값을 입력하세요.");
+	if($(this).data("type") == "number"){
+		try{
+			if(/^-?\d+$/.test(data)){
+				data = parseInt(data);
+			}
+			else{
+				throw new Error(`Parameter is not a number : ${data}`);
+			}
+		}catch(e){
+			alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+			return false;
+		}
+	}
+	if($(this).data("type") == "number"){
+		$(this).html(data.toFormat('NUMBER'));
+		$(this).trigger("change");
+	}
+	else{
+		$(this).html(data);
+		$(this).trigger("change");
+	}
+
+});
 deleteApproval = function(approval_sn){
 	if(confirm("삭제 후 복구가 불가능합니다. 삭제하시겠습니까?")){
 		$.ajax({
@@ -829,10 +1376,237 @@ deleteApproval = function(approval_sn){
 
 }
 getApproval = function(approval_sn){
-    var params = "";
-    params += "&approval_sn="+approval_sn;
-    window.open("/approval/report?"+params, "_blank");
+	$("#popBox2").find("#s_approval_sn").val(approval_sn);
+	$.ajax({
+		url : '/api/approval/get_approval',
+		method : 'GET',
+		data : {"approval_sn" : approval_sn},
+		success: function(pResult){
+			console.log(pResult);
+			$("#formCheckContent").html(pResult.html);
+			var app = pResult.approval;
+			$("#approval_title_readonly").val(app.approval_title);
+			$("#approval_template_title").html(app.approval_template_title);
+			$.each(app.approval_data, function(key, value){
+				if(key.endsWith("[]")){
+					var pTag = $("#popBox2").find(`[name='${key}']`);
+					if(pTag.length == 0){
+						$("#formCheckContent").find("tbody[data-tr]").each(function(_, trTag){
+							if ($.isFunction(cloneRow)) {
+								cloneRow($(trTag).data("tr"), 1);
+							}
+						});
+						var pTag = $("#popBox2").find(`[name='${key}']`);
+					}
+					if(pTag.length != value.length){
+						if ($.isFunction(cloneRow)) {
+							cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+						}
+					}
+					$.each(value, function(pIndex, pValue){
 
+						var tagName = $("#popBox2").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+						if(tagName == "INPUT"){
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).val(pValue);
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+						}
+						else if(tagName == "SELECT"){
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).find(`option`).prop("disabled", true);
+							// $("#popBox2").find(`[name='${key}']`).eq(pIndex).prop("disabled", true);
+						}
+						else if(tagName == "TEXTAREA"){
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).html(pValue);
+							$("#popBox2").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+
+						}
+					});
+				}
+				else{
+					var pTag = $("#popBox2").find(`#${key}`);
+					var tagName = '';
+					var tagType = '';
+					if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+						pTag = $("#popBox2").find(`[name='${key}']`);
+						tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+						tagType = $(pTag).eq(0).attr("type");
+					}
+					else{
+						tagName = $(pTag).prop("tagName").toUpperCase();
+						tagType = '';
+					}
+					if(tagName == "SELECT"){
+						$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+						$(pTag).prop("disabled", true);
+					}
+					else if(tagName == "INPUT"){
+						if($(pTag).attr("type") == "radio"){
+							$(pTag).yVal(`${value}`);
+							$(pTag).yReadonly(true);
+						}
+						else{
+							$(pTag).val(`${value}`);
+							$(pTag).attr("readonly", true);
+						}
+					}
+					else if(tagName == "TEXTAREA"){
+						$(pTag).html(`${value}`);
+						$(pTag).attr("readonly", true);
+
+					}
+
+				}
+			});
+			$("#popBox2").find("tbody").trigger("change");
+			if ($.isFunction($.fn.afterLoadApproval)) {
+				$("#popBox2").afterLoadApproval();
+			}
+			var html0 = '';
+			var html1 = '';
+			var html2 = '';
+			var loginSN = $("#loginSN").val();
+			$.each(pResult.member_list, function(pIndex, pMember){
+				if(pMember.reg_type == 0 || pMember.reg_type == 1){
+					var status = pMember.approval_status_code;
+					var status_nm = '';
+					if(status == 0){
+						status_nm = '';
+					}
+					else if(status == 1){
+						status_nm = '(승인)';
+					}
+					else{
+						status_nm = '(반려)';
+					}
+					var html = `<div class="approval-member">
+									<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
+									<div><img src="/static/temp/signature.jpg" width="46" height="46"/> </div>
+									<div>${pIndex+1}. ${pMember.mber_nm}</div>
+									<div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0] : "&nbsp;"}</div>
+								</div>`;
+					//${pMember.mber_nm}${status_nm}
+					if(pMember.reg_type == 0){
+						html0 += html;
+
+					}
+					else if(pMember.reg_type == 1){
+						// ${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}
+						html1 += html;
+					}
+				}
+				else{
+					html2 += `<span>${pMember.mber_nm};</span>`;
+				}
+			});
+			$('#popBox2').find("#approval_member_0").html(html0);
+			$('#popBox2').find("#approval_member_1").html(html1);
+			$('#popBox2').find("#approval_member_2").html(html2);
+			if(pResult.myTurn){
+				//
+				$("#popBox2").find("#btnApprove").attr("disabled", false);
+				$("#popBox2").find("#btnNotApprove").attr("disabled", false);
+			}
+			else{
+				$("#popBox2").find("#btnApprove").attr("disabled", true);
+				$("#popBox2").find("#btnNotApprove").attr("disabled", true);
+			}
+			if(pResult.cancelable){
+				$("#popBox2").find("#popCheckEditToolbar").removeClass("grid-three").addClass("grid-four");
+				$("#popBox2").find("#btnApproveCancel").show();
+			}
+			else{
+				$("#popBox2").find("#popCheckEditToolbar").removeClass("grid-four").addClass("grid-three");
+				$("#popBox2").find("#btnApproveCancel").hide();
+				// 기안자가 품의를 열었을때 확인해서 복사버튼 active
+				// 복사버튼 누르면 popBox1에 sn 세팅하고, popBox2 닫고 data-action을 copy로 바꾼다음 popBox1 modal show
+			}
+			if(pResult.isFirst){
+				$("#popBox2").find("#btnApproveCopy").show();
+			}
+			else{
+				$("#popBox2").find("#btnApproveCopy").hide();
+
+			}
+			$('#popBox2').modal('show');
+		}
+	});
 }
+$("#popBox2").on("click", "#btnApproveCopy", function(){
+	var sn = $("#popBox2").find("#s_approval_sn").val();
+	$("#popBox1").data("action", "copy");
+	$("#popBox1").data("sn", sn);
+	$("#popBox2").modal("hide");
+	$("#popBox1").modal("show");
+
+});
+$("#popBox2").on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", function(){
+	var value = $(this).data("value");
+	var password = prompt("비밀번호를 입력해주세요.");
+	if(password == null || password == undefined){
+		return false;
+	}
+	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : $("#popBox2").find("#s_approval_sn").val()};
+	if(value == '-1'){
+		var memo = prompt("반려 사유를 입력해주세요.");
+		if(memo != null && memo != undefined){
+			params['memo'] = memo;
+		}
+		else{
+			return false;
+		}
+	}
+	$.ajax({
+		url : '/api/approval/update_approval',
+		method : 'POST',
+		data : params,
+		success : function(pResult){
+			if(pResult.status){
+				if(pResult.isEnd){
+					console.log(pResult.approval);
+					$.ajax({
+						url : pResult.approval.api_url,
+						method : 'POST',
+						data : JSON.stringify(pResult.approval.approval_data),
+						contentType: 'application/json;charset=utf-8',
+						success : function(pResult){
+							if(pResult.status){
+								alert("성공적으로 처리되었습니다.");
+								$.datatable1.ajax.reload();
+								$("#popBox2").modal("hide");
+
+							}
+						},
+						error : function(pResult){
+							$.ajax({
+								url : '/api/approval/cancel_approval',
+								method: 'POST',
+								data : params,
+								success: function(pResult){
+									alert("오류가 발생했습니다.");
+									$.datatable1.ajax.reload();
+									$("#popBox2").modal("hide");
+								},
+								error: function(pResult){
+									alert("심각한 오류가 발생했습니다.");
+								}
+							});
+						}
+					})
+
+				}
+				else{
+					alert("성공적으로 처리되었습니다.");
+					$.datatable1.ajax.reload();
+					$("#popBox2").modal("hide");
+
+				}
+			}
+			else{
+				alert(pResult.message);
+			}
+
+		}
+	});
+});
 </script>
 {% endblock %}
