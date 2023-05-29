@@ -2151,17 +2151,19 @@ def get_project_by_cntrct_nm(cntrct_sn):
 def insert_BF_c_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
+    if params['prjct_sn'] is None:
+        params['prjct_sn'] = 0
     params['regist_dtm'] = datetime.now()
     params['register_id'] = session['member']['member_id']
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '10', '기타비용', 1, %(b10)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b10'] = int(params['E_10'].replace(",", ""))
+    params['b10'] = int(params['E_10'].replace(",", "")) if params['E_10'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b7'] = int(params['E_7'].replace(",", ""))
+    params['b7'] = int(params['E_7'].replace(",", "")) if params['E_7'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
@@ -2372,6 +2374,9 @@ def insert_b_option_bd_project(params):
         pParams["dscnt_rt"] = dscnt_rt
         pParams["salamt"] = salamt
         pParams['model_no'] = model_no
+        if pParams['prjct_sn'] is None:
+            pParams['prjct_sn'] = 0
+        print(pParams)
         if "cost_date" in params:
             pParams["cost_date"] = params["cost_date"]
             query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)

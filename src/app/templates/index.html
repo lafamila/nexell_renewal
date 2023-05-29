@@ -142,7 +142,11 @@
 					display:grid;
 					grid-template-columns: 2fr 4.5fr 1.75fr 1.75fr;
 				}
-				.table-thead > div{
+				.table-thead-five{
+					display:grid;
+					grid-template-columns: 2fr 4.5fr 1.75fr 1.75fr 1.75fr;
+				}
+				.table-thead > div, .table-thead-five > div{
 					display: grid;
 					justify-content: center;
 					align-items: center;
@@ -162,6 +166,12 @@
 					height:27.5px;
 					display:grid;
 					grid-template-columns: 2fr 4.5fr 1.75fr 1.75fr;
+					border-bottom:1px solid #999;
+				}
+				.table-tbody > .table-tr-five{
+					height:27.5px;
+					display:grid;
+					grid-template-columns: 2fr 4.5fr 1.75fr 1.75fr 1.75fr;
 					border-bottom:1px solid #999;
 				}
 				.table-tbody::-webkit-scrollbar{
@@ -231,10 +241,11 @@
 						</div>
 						<div>
 							<div class="table-form">
-								<div class="table-thead">
+								<div class="table-thead-five">
 									<div>양식</div>
 									<div>제목</div>
 									<div>기안자</div>
+									<div>결재완료자</div>
 									<div>기안일</div>
 								</div>
 								<div class="table-tbody" id="approval_status_1">
@@ -251,10 +262,11 @@
 						</div>
 						<div>
 							<div class="table-form">
-								<div class="table-thead">
+								<div class="table-thead-five">
 									<div>양식</div>
 									<div>제목</div>
 									<div>기안자</div>
+									<div>결재완료자</div>
 									<div>기안일</div>
 								</div>
 								<div class="table-tbody" id="approval_status_2">
@@ -368,8 +380,8 @@
 		});
 		$("#calTFooter").hide();
 		getTodayWork();
-		getApprovalList("미결", "#approval_status_1");
-		getApprovalList("진행", "#approval_status_2");
+		getApprovalList("미결", "#approval_status_1", 5);
+		getApprovalList("진행", "#approval_status_2", 5);
 		getApprovalList("수신", "#approval_status_3");
 		getBBS();
 		getAlmostDoneProject();
@@ -502,7 +514,7 @@
 </div><!--modal-->
 <!-- 매입/매출 레포트 팝업 끝 -->
 <script type="text/javascript">
-getApprovalList = function(s_approval_status, target){
+getApprovalList = function(s_approval_status, target, size=4){
 	$.ajax({
 		url: '/api/approval/ajax_get_approval_datatable',
 		type: 'POST',
@@ -511,12 +523,25 @@ getApprovalList = function(s_approval_status, target){
 			var html = '';
 			console.log(pResult);
 			$.each(pResult.data, function(pIndex, pValue){
+				if(size == 5){
+				html += `<div class="table-tr-five">
+							<div class="table-td">${pValue.approval_ty_nm}</div>
+							<div class="table-td">${pValue.approval_title}</div>
+							<div class="table-td">${pValue.start_mber_nm}</div>
+							<div class="table-td">${pValue.final_mber_nm}</div>
+							<div class="table-td">${pValue.start_de}</div>
+						</div>`;
+
+				}
+				else{
 				html += `<div class="table-tr">
 							<div class="table-td">${pValue.approval_ty_nm}</div>
 							<div class="table-td">${pValue.approval_title}</div>
 							<div class="table-td">${pValue.start_mber_nm}</div>
 							<div class="table-td">${pValue.start_de}</div>
 						</div>`;
+
+				}
 			});
 			$(document).find(target).html(html);
 		}

@@ -593,10 +593,19 @@ def get_projects_by_dept_member(params):
 				, cntrwk_bgnde
 				, cntrwk_endde
 				, prjct_ty_code
+				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_amt
+				, IFNULL((SELECT SUM(IFNULL(co.puchas_amount, 0) * IFNULL(co.qy, 0) * (100 - IFNULL(co.dscnt_rt, 0)) / 100) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_amt				
+				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_qy
+				, IFNULL((SELECT SUM(IFNULL(co.qy, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_qy				
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=c.prjct_ty_code) AS prjct_ty_nm
 				, CONCAT(DATE_FORMAT(cntrwk_bgnde, '%%Y-%%m'),'~',DATE_FORMAT(cntrwk_endde, '%%Y-%%m')) AS cntrwk_period
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
-				, c.rate AS new_rate
+				, CASE WHEN c.prjct_ty_code ='BF' THEN c.rate 
+				WHEN c.prjct_ty_code = 'BD' THEN 0.0
+				ELSE (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1)
+				END AS new_rate
 				, (SELECT SUM(IFNULL(co.qy*co.puchas_amount, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code='E' AND co.ct_se_code NOT IN ('61','62', '63','7', '8', '10')) AS exec_sum
 				, (SELECT SUM(CASE WHEN co.ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'P', %(s_pxcond_mt)s)
 				WHEN co.ct_se_code IN ('3') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'S', %(s_pxcond_mt)s)

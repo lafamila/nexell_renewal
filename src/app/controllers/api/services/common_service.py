@@ -669,6 +669,12 @@ def get_bnd_projects(params):
 				, IF(c.prjct_ty_code IN ('BD'), '직계약', '수수료') AS prjct_ty_nm
 				, c.progrs_sttus_code
 				, c.prjct_ty_code
+				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_amt
+				, IFNULL((SELECT SUM(IFNULL(co.puchas_amount, 0) * IFNULL(co.qy, 0) * (100 - IFNULL(co.dscnt_rt, 0)) / 100) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_amt				
+				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_qy
+				, IFNULL((SELECT SUM(IFNULL(co.qy, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_qy
 				, IFNULL(c.rate, 0) AS rate
 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))

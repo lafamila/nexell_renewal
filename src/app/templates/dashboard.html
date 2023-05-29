@@ -2755,8 +2755,17 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
             });
             pData.sort((a, b) => (a.ordr > b.ordr) ? 1 : -1 )
             $.each(pResult.data, function(pIndex, pValue){
-				if(pValue.new_rate != ''){
+				if(pValue.prjct_ty_code == 'BF'){
 					pValue.rate = pValue.new_rate;
+				}
+				else if(pValue.prjct_ty_code == 'BD'){
+				  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
+					  pValue.rate = 0.0;
+				  }
+				  else{
+					  pValue.rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
+				  }
+
 				}
 				if(before != "" && before != pValue.sttus_nm){
 

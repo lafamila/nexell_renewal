@@ -1,6 +1,7 @@
 from flask import current_app
 from app.connectors import DB
 
+
 def refresh_code_list():
     def wrapper(**params):
         return params
@@ -38,6 +39,32 @@ def refresh_code_list():
                 contract_nr_list=get_contract_NR_list(),
                 amt_ty_code_list=get_code_list('amt_ty_code'.upper()))
 
+
+def get_approval_by_sn(params):
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT code_nm AS title
+                        , estn_code_b AS url
+                        , estn_code_c AS ajax_url
+                        FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=%(approval_ty_code)s""", params)
+    result = curs.fetchone()
+    curs.close()
+    db.close()
+    return result
+
+def get_member_list_by_sn():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT m.mber_sn AS mber_sn
+                    , m.mber_nm AS mber_nm
+                    , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm                
+                    , 'signature.jpg' AS sign_path
+                    FROM member m
+                    WHERE 1=1 """)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return {r['mber_sn'] : r for r in result}
 def get_contract_list():
     db = DB()
     curs = db.cursor()

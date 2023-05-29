@@ -308,14 +308,14 @@ tbody .btnUpdate, tbody .btn{
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="3">분류</th>
-										<th class="colorG middle bottom_border" style="text-align:center;min-width:65px;" rowspan="3">계약일</th>
+										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="4">분류</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:65px;" rowspan="4">계약일</th>
                                         <th class="hasinput button" style="padding:0px!important;">
 											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc">
 												<option value="-1">[전체]</option>
 											</select>
 										</th>
-										<th class="colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="3">현장명</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="4">현장명</th>
                                         <th class="hasinput button" style="padding:0px!important;">
 											<select class="form-control select2 w100p s_resrv_type" name="s_resrv_type">
 												<option value="-1">[전체]</option>
@@ -336,40 +336,66 @@ tbody .btnUpdate, tbody .btn{
 
 											</select>
 										</th>
-										<th class="bold colorG right_border middle bottom_border" style="text-align:center;min-width:45px;" rowspan="3">수주금액</th>
-										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
-										<th class="bold colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">M/H<br>회수예정일</th>
-										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="4">전시내역</th>
-										<th class="bold colorEG right_border middle bottom_border" style="text-align:center!important;" rowspan="3">S/H<br>회수예정일</th>
+										<th class="bold colorG right_border middle bottom_border" style="text-align:center;min-width:45px;" rowspan="4">수주금액</th>
+										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="10">전시내역</th>
 										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="3" rowspan="2">판매/수수료</th>
-										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;" rowspan="3">준공예정일</th>
-										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:80px;" rowspan="3">공정률</th>
-										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:110px;" rowspan="3">비고</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;" rowspan="4">준공예정일</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:80px;" rowspan="4">공정률</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:110px;" rowspan="4">비고</th>
 									</tr>
 									<tr>
-										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="2">건설사</th>
-										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="2">계약분류</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="3">건설사</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="3">계약분류</th>
                                         <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">담당</th>
                                         <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">본사</th>
 
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">M/H</th>
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="4">S/H</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="5">M/H</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="5">S/H</th>
 <!--										<th class="colorSkyB bottom_border right_border middle" style="text-align:center!important;min-width:50px;" rowspan="2">분류</th>-->
                                     </tr>
+									<tr>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_dlivy_de_start" name="m_dlivy_de_start">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_dlivy_de_end" name="m_dlivy_de_end">
+										</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_pblict_de_start" name="m_pblict_de_start">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_pblict_de_end" name="m_pblict_de_end">
+										</th>
+										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:80px;" rowspan="2">추가DC</th>
+										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">잔액</th>
+										<th class="bold colorEG middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">회수예정일</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_dlivy_de_start" name="s_dlivy_de_start">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_dlivy_de_end" name="s_dlivy_de_end">
+										</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_pblict_de_start" name="s_pblict_de_start">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_pblict_de_end" name="s_pblict_de_end">
+										</th>
+										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:80px;" rowspan="2">추가DC</th>
+										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">잔액</th>
+										<th class="bold colorEG middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">회수예정일</th>
+										<th class="hasinput right_border" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="t_pblict_de_start" name="t_pblict_de_start">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="t_pblict_de_end" name="t_pblict_de_end">
+										</th>
+										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:80px;" rowspan="2">금액</th>
+										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">잔액</th>
+									</tr>
                                     <tr>
 										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">출고월</th>
 										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
-										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:80px;">추가DC</th>
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:80px;">잔액</th>
 
                                         <th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">출고월</th>
 										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
-										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:80px;">추가DC</th>
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:80px;">잔액</th>
 
 										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
-										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:80px;">금액</th>
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;min-width:80px;">잔액</th>
 									</tr>
 								</thead>
                                 <tbody role='exec'>
@@ -571,7 +597,14 @@ tbody .btnUpdate, tbody .btn{
 							</td>`;
 			  }
               else{
-              	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class}" style="text-align:left;" data-column="rate-text"></td>`;
+				  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
+					  var rate = 0.0;
+				  }
+				  else{
+					  var rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
+				  }
+
+              	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class}" style="text-align:left;" data-column="rate-text">${rate.toFixed(1)+"%"}</td>`;
 			  }
               html += `     <td class="bold colorBtn top_border text-left middle right_border ${_class} input-available" style="text-align:left;" data-column="rm"></td>
                        </tr>
@@ -685,29 +718,29 @@ tbody .btnUpdate, tbody .btn{
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain);
 					}
             		if(remain == 0){
-            			$(document).find(`.row${cntrct_sn}`).find(".m-date").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".m-next-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-next-date").addClass("colorY");
 					}
 					var remain = Math.round((rcppay[cntrct_sn].S - sTotal)/1000);
             		if(sTotal > 0) {
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain);
 					}
             		if(remain == 0){
-            			$(document).find(`.row${cntrct_sn}`).find(".s-date").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".s-remain").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".s-next-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-remain").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-next-date").addClass("colorY");
 					}
 					var remain = Math.round((rcppay[cntrct_sn].T - tTotal)/1000);
             		if(tTotal > 0) {
 						$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain);
 					}
             		if(remain == 0){
-            			$(document).find(`.row${cntrct_sn}`).find(".t-date").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".t-t-date").addClass("colorY");
-            			$(document).find(`.row${cntrct_sn}`).find(".t-remain").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".t-t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".t-remain").addClass("colorY");
 					}
 				}
 
@@ -724,16 +757,6 @@ tbody .btnUpdate, tbody .btn{
             	else{
 	            	$(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"]`).text(pValue.bnd_data);
 				}
-			});
-            $.each(pResult.rate, function(cntrct_sn, pValue){
-            	var rate = 0.0;
-            	if(Math.round(pValue.cntrct_amount) == 0){
-            		rate = 0.0;
-				}
-            	else{
-					rate = (pValue.amount * 100.0 / pValue.cntrct_amount);
-				}
-            	$(document).find(`.row${cntrct_sn}`).find(`td[data-column="rate-text"]`).text(rate.toFixed(0)+"%");
 			});
             getReserveType(s_resrv_bcnc, s_resrv_type, s_resrv_chrg);
         }
@@ -878,6 +901,12 @@ $(function() {
 	getReserveType("-1", "-1", "-1", "-1");
     $("#s_year").val(year);
     getBndList(year);
+	$(document).find(".datepicker_form").datepicker({
+		onSelect: function(dateText) {
+			$(this).val($(this).val().split("-")[0].substr(2,2)+"-"+$(this).val().split("-")[1]);
+			$(this).change();
+		},
+	});
 });
 </script>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">

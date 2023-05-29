@@ -164,9 +164,9 @@ def get_stock_datatable(params, prduct_se_code):
 				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
 				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
-				INNER JOIN
+				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='P') p_last ON m.delng_sn=p_last.delng_sn
-				INNER JOIN
+				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') sa_last ON sa_last.cnnc_sn=p_last.delng_sn
 				WHERE 1=1
 				AND IF(m.stock_sttus IN (1, 4), m.ddt_man, sa_last.dlivy_de) BETWEEN '{0}' AND '{1}'
@@ -230,7 +230,6 @@ def get_stock_datatable(params, prduct_se_code):
         else:
             query += " AND m.stock_sttus = 1 AND m.cntrct_sn=%s"
             data.append(sttus_code)
-
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):
