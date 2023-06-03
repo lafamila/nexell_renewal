@@ -2,6 +2,9 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 <style id="style">
+body{
+	/*-webkit-print-color-adjust: exact;*/
+}
 div.report .sub-title {
 	padding-top: 4px!important;
 }
@@ -74,7 +77,7 @@ span[name=blank]{
 	line-height:1!important;
 }
 .approval-line-container{
-	height:125px;
+	height:150px;
 	text-align:left!important;
 	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 	display:grid;
@@ -89,7 +92,7 @@ span[name=blank]{
 }
 .approval-line{
 	display:grid;
-	grid-template-rows: 1fr 20px;
+	grid-template-rows: 1fr 22px;
 	cursor:pointer;
 }
 .approval-line .approval-line-list:not(:first-child){
@@ -141,10 +144,11 @@ span[name=blank]{
 	display:inline-grid;
 }
 .approval-member{
-	width:80px;
+	width:90px;
 	border:1px solid #aaa;
 	display:grid;
-	grid-template-rows: 16px 48px 16px 1fr;
+	grid-template-rows: 20px 56px 20px 30px;
+	/*grid-template-rows: 16px 48px 16px 1fr;*/
 }
 .approval-member>div{
 	padding-top:2px;
@@ -229,18 +233,26 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 <div id="popReportApproval">
     <div>
         <div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header" style="height:74px;">
 				<div style="position:absolute;left:26px;">
 					<img src="/static/nexell/img/logo.ico" height="32" style="margin-bottom:2px;"/>
 					<span style="font-size:16px;">넥셀시스템</span>
 				</div>
-				<h1 id="approval-html-title" style="position:absolute;left:50%;transform:translateX(-50%);">asdfasdf</h1>
+				<div class="title">
+					<h2 class="colorLS" id="approval-html-title" style="font-weight:bold;position:absolute;left:50%;transform:translateX(-50%);    display: inline-block!important;margin: 0px!important;padding: 12px 60px!important;border: 3px double #000!important;font-size: 28px!important;text-align: center!important;"></h2>
+				</div>
 				<div class="pull-right" style="margin-right:10px;">
 					<button class="btn btn-warning" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
 					<button class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
 				</div>
 			</div>
-			<div class="modal-header">
+			<div class="modal-header" style="padding:0px!important;border-bottom:none!important;">
+				<div class="pull-right" style="margin-right:25px;margin-top:2px!important;">
+					<button class="btn btn-info" id="member_add" style="line-height:1.0;"><i class="fa fa-plus">&nbsp;결재라인지정</i></button>
+				</div>
+			</div>
+
+			<div class="modal-header" style="padding-top:2px!important;">
 				<div class="approval-line-container">
 					<div class="approval-line">
 						<span class="approval-line-list">
@@ -257,19 +269,19 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 							<div>
 								수신
 							</div>
-							<div style="display:inline-flex;border-right: 1px solid #333;" id="approval_member_2"></div>
+							<div style="display:inline-flex;border-right: 1px solid #333;align-items:center;" id="approval_member_2"></div>
 						</span>
 
 					</div>
 				</div>
 			</div>
 			<div class="modal-header">
-                {% if init %}
+                {% if init in ("init", "copy") %}
 				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">
 					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목"/>
 					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
 				</div>
-                {% else %}
+                {% else  %}
 				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 320px;">
 					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목" readonly/>
                     <div class="btn-group">
@@ -304,15 +316,92 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 		 */
 		$('#btnPrint2').on('click', function(pEvent) {
 			var html = $('#popReportApproval').find('.modal-content').html();
+			console.log(html);
 
 			html = `<style>${$("#style").html()}</style>` + html;
 			$('#_print').contents().find('body>div.report').html('');
 			$('#_print').contents().find('body>div.report').html(html);
-			parent.frames['_print'].focus();
-			parent.frames['_print'].print();
+			$('#_print').contents().find('body>div.report').find("#approval_title").val(window.app.approval_title);
+			$.each(window.app.approval_data, function(key, value){
+				if(key.endsWith("[]")){
+					var pTag = $('#_print').contents().find('body>div.report').find(`[name='${key}']`);
+					if(pTag.length == 0){
+						$('#_print').contents().find('body>div.report').find("tbody[data-tr]").each(function(_, trTag){
+							if ($.isFunction(cloneRow)) {
+								cloneRow($(trTag).data("tr"), 1);
+							}
+						});
+						var pTag = $('#_print').contents().find('body>div.report').find(`[name='${key}']`);
+					}
+					if(pTag.length != value.length){
+						if ($.isFunction(cloneRow)) {
+							cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+						}
+					}
+					$.each(value, function(pIndex, pValue){
+
+						var tagName = $('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+						if(tagName == "INPUT"){
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).val(pValue);
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+						}
+						else if(tagName == "SELECT"){
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).find(`option`).prop("disabled", true);
+						}
+						else if(tagName == "TEXTAREA"){
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).html(pValue);
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
+
+						}
+					});
+				}
+				else{
+					var pTag = $('#_print').contents().find('body>div.report').find(`#${key}`);
+					var tagName = '';
+					var tagType = '';
+					if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+						pTag = $('#_print').contents().find('body>div.report').find(`[name='${key}']`);
+						tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+						tagType = $(pTag).eq(0).attr("type");
+					}
+					else{
+						tagName = $(pTag).prop("tagName").toUpperCase();
+						tagType = '';
+					}
+					if(tagName == "SELECT"){
+						$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+						$(pTag).prop("disabled", true);
+					}
+					else if(tagName == "INPUT"){
+						if($(pTag).attr("type") == "radio"){
+							$(pTag).yVal(`${value}`);
+							$(pTag).yReadonly(true);
+						}
+						else{
+							$(pTag).val(`${value}`);
+							$(pTag).attr("readonly", true);
+						}
+					}
+					else if(tagName == "TEXTAREA"){
+						$(pTag).html(`${value}`);
+						$(pTag).attr("readonly", true);
+
+					}
+
+				}
+			});
+			setTimeout(function(){
+				parent.frames['_print'].focus();
+				parent.frames['_print'].print();
+
+			}, 500);
 		});
-		{% if init %}
+		{% if init in ("init", "copy") %}
 		$(".approval-line-container").on("click", function(){
+			$("#popBox1").modal("show");
+		});
+		$("#member_add").on("click", function(){
 			$("#popBox1").modal("show");
 		});
 		{% endif %}
@@ -325,17 +414,106 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 			method : 'GET',
 			data : {"url" : window.approval.url},
 			success: function(pResult){
-				$("#formContent").html(pResult.html);
 				$("#approval-html-title").html(window.approval.title.split('').join('&nbsp;&nbsp;&nbsp;'));
-                {% if not init %}
+				{% if init == "init" %}
+				$("#formContent").html(pResult.html);
+				var mber_sn = $("#loginSN").val();
+				var pMember = window.member_list[mber_sn];
+				var html = `<div data-sn="${mber_sn}" data-type="1" class="badge badge-pill badge-dark">
+								<div>1</div>
+								<div>${pMember.mber_nm}</div>
+								<div>결재</div>
+								<div class="close badge-close"></div>
+							</div>`;
+				$(".approval-left").append(html);
+
+				var status = 0;
+				var status_nm = '';
+				var html = `<div class="approval-member">
+								<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
+								<div><img src="/static/temp/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
+								<div>1. ${pMember.mber_nm}</div>
+								<div style="display:grid;justify-content: center;align-items: center;"></div>
+							</div>`;
+				$("#approval_member_1").append(html);
+
+
+                {% else %}
                     var approval_sn = "{{ approval_sn }}";
                     $.ajax({
                         url : '/api/approval/get_approval',
                         method : 'GET',
                         data : {"approval_sn" : approval_sn},
                         success: function(pResult){
-                            console.log(pResult);
+							$("#formContent").html(pResult.html);
+							$("#approval_title").val(pResult.approval.approval_title);
                             var app = pResult.approval;
+							window.app = pResult.approval;
+							{% if init == "copy" %}
+							$.each(app.approval_data, function(key, value){
+								if(key.endsWith("[]")){
+									var pTag = $("#formContent").find(`[name='${key}']`);
+									if(pTag.length == 0){
+										$("#formContent").find("tbody[data-tr]").each(function(_, trTag){
+											if ($.isFunction(cloneRow)) {
+												cloneRow($(trTag).data("tr"), 1);
+											}
+										});
+									}
+									if(pTag.length != value.length){
+										if ($.isFunction(cloneRow)) {
+											cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+										}
+									}
+									$.each(value, function(pIndex, pValue){
+
+										var tagName = $("#formContent").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+										if(tagName == "INPUT"){
+											$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
+										}
+										else if(tagName == "SELECT"){
+											$("#formContent").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
+
+										}
+										else if(tagName == "TEXTAREA"){
+											$("#formContent").find(`[name='${key}']`).eq(pIndex).html(pValue);
+
+										}
+									});
+								}
+								else{
+									var pTag = $("#formContent").find(`#${key}`);
+									var tagName = '';
+									var tagType = '';
+									if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+
+										pTag = $("#formContent").find(`[name='${key}']`);
+										tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+										tagType = $(pTag).eq(0).attr("type");
+									}
+									else{
+										tagName = $(pTag).prop("tagName").toUpperCase();
+										tagType = '';
+									}
+									if(tagName == "SELECT"){
+										$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
+									}
+									else if(tagName == "INPUT"){
+										if($(pTag).attr("type") == "radio"){
+											$(pTag).yVal(`${value}`);
+										}
+										else{
+											$(pTag).val(`${value}`);
+										}
+									}
+									else if(tagName == "TEXTAREA"){
+										$(pTag).html(`${value}`);
+
+									}
+
+								}
+							});
+							{% else %}
                             $.each(app.approval_data, function(key, value){
                                 if(key.endsWith("[]")){
                                     var pTag = $("#formContent").find(`[name='${key}']`);
@@ -405,9 +583,11 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 
                                 }
                             });
+							{% endif %}
                             $("#formContent").find("tbody").trigger("change");
                             if ($.isFunction($.fn.afterLoadApproval)) {
                                 $("#formContent").afterLoadApproval();
+
                             }
                             var html0 = '';
                             var html1 = '';
@@ -428,9 +608,9 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                                     }
                                     var html = `<div class="approval-member">
                                                     <div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
-                                                    <div><img src="/static/temp/signature.jpg" width="46" height="46"/> </div>
+                                                    <div><img src="/static/temp/signature.jpg" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/> </div>
                                                     <div>${pIndex+1}. ${pMember.mber_nm}</div>
-                                                    <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0] : "&nbsp;"}</div>
+                                                    <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0]+"<span style='text-align:center;'>"+pMember.update_dtm.split(" ")[1]+"</span>" : "&nbsp;"}</div>
                                                 </div>`;
                                     //${pMember.mber_nm}${status_nm}
                                     if(pMember.reg_type == 0){
@@ -449,6 +629,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                             $(document).find("#approval_member_0").html(html0);
                             $(document).find("#approval_member_1").html(html1);
                             $(document).find("#approval_member_2").html(html2);
+							{% if init == "show" %}
                             if(pResult.myTurn){
                                 //
                                 $("#btnApprove").attr("disabled", false);
@@ -471,10 +652,12 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                                 $("#btnApproveCopy").attr("disabled", true);
 
                             }
+							{% endif %}
                         }
                     });
 
                 {% endif %}
+				$(document).find(".select2").select2();
 			},
 			error: function(){
 				alert("에러가 발생했습니다.");
@@ -491,7 +674,8 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 	if(password == null || password == undefined){
 		return false;
 	}
-	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : $("#s_approval_sn").val()};
+	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : "{{ approval_sn }}"};
+
 	if(value == '-1'){
 		var memo = prompt("반려 사유를 입력해주세요.");
 		if(memo != null && memo != undefined){
@@ -593,7 +777,9 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 										</div>
 										<div style="max-height:480px;overflow-y:auto;">
 											{% for code in member_list %}
-											<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
+												{% if code.value not in (73, 74) %}
+												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
+												{% endif %}
 											{% endfor %}
 
 										</div>
@@ -649,7 +835,6 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 	});
 	$(document).on("keyup", "#member-search", function(e){
 		var text = $(this).val();
-		console.log(text);
 		if(text.length > 0){
 			$(document).find(".member-list-item").each(function(pIndex, pTag){
 				if($(pTag).text().includes(text)){
@@ -719,7 +904,6 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 			var reg_type = parseInt($(pTag).data("type"));
 			var mber_sn = parseInt($(pTag).data("sn"));
 			var pMember = window.member_list[mber_sn];
-			console.log(reg_type);
 			if(reg_type == 0 || reg_type == 1){
 				var status = 0;
 				var status_nm = '';
@@ -748,6 +932,17 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 		$(document).find("#approval_member_2").html(html2);
 
 	});
+	{% if init == "show" %}
+	$(document).on("click", "#btnApproveCopy", function(){
+		var approval_sn = "{{ approval_sn }}";
+		var approval_ty_code = window.approval.approval_ty_code;
+		var params = "";
+		params += "&approval_ty_code="+approval_ty_code;
+	    params += "&approval_sn="+approval_sn;
+		window.open("/approval/report?"+params, "_blank");
+
+	});
+	{% endif %}
 
     $(document).on('click', '#btnSave', function(){
 		var data = $("#frmBox3").serializeObject();
@@ -758,7 +953,6 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
 		});
 		var loginSN = $("#loginSN").val();
-        console.log(loginSN);
 		var pass=false;
 		$(".approval-left .badge").each(function(pIndex, pTag){
 			var mber_sn = $(pTag).data("sn");
@@ -791,33 +985,29 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 				return fnValidate();
 			},
 			success: function(pResult){
-				var action = $("#popBox1").data("action");
-				if(action == 'copy'){
-					var sn = $("#popBox1").data("sn");
+
+				{% if init == "copy" %}
+					var sn = "{{ approval_sn }}";
 					$.ajax({
 						url: '/api/approval/delete_approval',
 						method: 'GET',
 						data: {"approval_sn": sn},
 						success: function (pResult) {
 							if(pResult.status){
-								alert(pResult.message);
-								$.datatable1.ajax.reload();
+								self.close();
 
 							}
 							else{
-								alert(pResult.message);
+								alert("기존 품의 삭제에 실패했습니다.");
+								self.close();
 							}
-							$("#popBox1").data('action', "init");
-							$("#popBox1").modal('hide');
-							$.datatable1.ajax.reload();
 						}
 					});
 
-				}
-				else{
-					$("#popBox1").modal('hide');
+				{% else %}
+					self.close();
 
-				}
+				{% endif %}
 				// getApproval(pResult.approval_sn);
 			}
 		});

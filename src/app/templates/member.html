@@ -461,6 +461,18 @@ $(function() {
 												</div>
 											</td>
 										</tr>
+										<tr><th>업무일지표기</th>
+											<td class="hasinput" colspan="1">
+												<div class="btn-group btn-group-justified" data-toggle="buttons">
+													<label class="btn btn-default">
+														<input type="radio" name="check_todo" value="1">표기
+													</label>
+													<label class="btn btn-default">
+														<input type="radio" name="check_todo" value="0">미표기
+													</label>
+												</div>
+											</td>
+										</tr>
 										<tr><th>현장관리 가능 수<em>*</em></th>
 											<td class="hasinput" colspan="1">
 												<input class="form-control" type="text" id="mber_size" name="mber_size">
@@ -502,6 +514,7 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#out_de').val('');
 		$('#popBox1').find('input[name="check_rate"]').yVal('');
 		$('#popBox1').find('input[name="check_work"]').yVal('');
+		$('#popBox1').find('input[name="check_todo"]').yVal('');
 		$('#popBox1').find('#dept_code').val('').trigger('change');
 		$('#popBox1').find('#ofcps_code').val('').trigger('change');
 		$('#popBox1').find('#rspofc_code').val('').trigger('change');
@@ -550,6 +563,7 @@ getMember = function(s_mber_sn)
 				$('#popBox1').find('#author_sn').val(result.author_sn).trigger('change');
 				$('#popBox1').find('input:radio[name=check_rate]').yVal(result.check_rate);
 				$('#popBox1').find('input:radio[name=check_work]').yVal(result.check_work);
+				$('#popBox1').find('input:radio[name=check_todo]').yVal(result.check_todo);
 				$('#popBox1').find('#mber_sttus_code').val(result.mber_sttus_code).trigger('change');
 				$('#popBox1').data('action', 'update');
 				$('#popBox1').modal('show');
@@ -615,6 +629,11 @@ fnValidate = function(pMode = '')
 
 	var check_work = $('input[name=check_work]:checked').val();
 	if (result == true && fnIsEmpty(check_work)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		result = false;
+	}
+	var check_todo = $('input[name=check_todo]:checked').val();
+	if (result == true && fnIsEmpty(check_todo)) {
 		alert('필수 입력 항목을 선택하시기 바랍니다.');
 		result = false;
 	}

@@ -10,6 +10,9 @@
 		overflow: hidden;
 		white-space: nowrap;
 	}
+	.color-red{
+		color:red!important;
+	}
 
 </style>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
@@ -105,8 +108,12 @@ getReport = function(s_pxcond_mt)
    			  var amt_ty_code = amt_ty_code_int+"";
               var total_goals = [0, 0, 0, 0, 0];
 			  var total_done = [0, 0, 0, 0, 0];
+
 			 $.each(pResult.dept_code_order, function(pI, dept_code){
-				html += '<tr>';
+				if(amt_ty_code != '2' && dept_code == 'ST'){
+					return true;
+				}
+			    html += '<tr>';
 				html += `	<td class="colorSky text-center middle">${pResult.amt_ty_nm[amt_ty_code]}</td>`;
 				html += `	<td class="colorSky text-center middle">${pResult.dept_nm[dept_code]}</td>`;
 				html += `	<th class="colorW text-center middle">목표</th>`;
@@ -168,7 +175,7 @@ getReport = function(s_pxcond_mt)
 				html += `	<td class="colorSky text-center middle">${pResult.dept_nm[dept_code]}</td>`;
 				html += `	<th class="text-center middle">달성률</th>`;
 				for(let i=0;i<5;i++){
-					html += `<th class="text-right middle">${(goals[i] != 0) ? (done[i] * 100.0 / goals[i]).toFixed(2)+"%" : ''}</th>`;
+					html += `<th class="text-right middle">${(goals[i] != 0 && done[i]*goals[i] >= 0) ? (done[i] * 100.0 / goals[i]).toFixed(2)+"%" : '-'}</th>`;
 				}
 				html += `	<th class="colorW"></th>`;
 				html += '</tr>';
@@ -196,11 +203,11 @@ getReport = function(s_pxcond_mt)
 				html += `<tr>
 							<td class="colorG text-center middle" colspan="2">계</td>
 							<td class="colorG text-center">달성률</td>
-							<td class="colorG text-right">${(total_goals[0] != 0)?(total_done[0] * 100.0 / total_goals[0]).toFixed(2) + "%" : "-"}</td>
-							<td class="colorG text-right">${(total_goals[1] != 0)?(total_done[1] * 100.0 / total_goals[1]).toFixed(2) + "%" : "-"}</td>
-							<td class="colorG text-right">${(total_goals[2] != 0)?(total_done[2] * 100.0 / total_goals[2]).toFixed(2) + "%" : "-"}</td>
-							<td class="colorG text-right">${(total_goals[3] != 0)?(total_done[3] * 100.0 / total_goals[3]).toFixed(2) + "%" : "-"}</td>
-							<td class="colorG text-right">${(total_goals[4] != 0)?(total_done[4] * 100.0 / total_goals[4]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[0] != 0 && total_done[0]*total_goals[0] >= 0)?(total_done[0] * 100.0 / total_goals[0]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[1] != 0 && total_done[1]*total_goals[1] >= 0)?(total_done[1] * 100.0 / total_goals[1]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[2] != 0 && total_done[2]*total_goals[2] >= 0)?(total_done[2] * 100.0 / total_goals[2]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[3] != 0 && total_done[3]*total_goals[3] >= 0)?(total_done[3] * 100.0 / total_goals[3]).toFixed(2) + "%" : "-"}</td>
+							<td class="colorG text-right">${(total_goals[4] != 0 && total_done[4]*total_goals[4] >= 0)?(total_done[4] * 100.0 / total_goals[4]).toFixed(2) + "%" : "-"}</td>
 							<td class="colorG text-right"></td>
 						</tr>`;
             });
@@ -210,6 +217,16 @@ getReport = function(s_pxcond_mt)
 			$(document).find("#amountTable tbody[role='body']").html(html);
 			$(document).find("#amountTable tbody[role='body']").yRowspan(0);
 			$(document).find("#amountTable tbody[role='body']").yRowspan(1);
+			var cells = $(document).find("#amountTable tbody[role='body'] td, #amountTable tbody[role='body'] th");
+			$.each(cells, function(pIndex, pValue){
+				let value = $(pValue).html();
+				if(!isNaN(parseInt(value.replaceAll(",", "")))){
+					if(parseInt(value.replaceAll(",", "")) < 0){
+						$(pValue).addClass("color-red")
+					}
+
+				}
+			});
 		}
 
 

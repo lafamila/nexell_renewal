@@ -26,6 +26,9 @@ tbody .btnUpdate, tbody .btn{
 		vertical-align: middle;
 		text-align: center;
 	}
+	#dtList1 td, #dtList1 th{
+		vertical-align:middle!important;
+	}
 </style>
 <!--########################################################################-->
 <!--# RIBBON area start                                                    #-->
@@ -129,7 +132,7 @@ tbody .btnUpdate, tbody .btn{
 				<th style="padding:0px!important;text-align: left;">
 					<select class="form-control select2" id="summary_dept_code" name="summary_dept_code" style="padding-top:0px!important;padding-bottom:0px!important;width:150px!important;">
 						<option value="">[부서]</option>
-						<option value="all">전체</option>
+						<option value="all" selected>전체</option>
 						<option value=""></option>
 					</select>
 				</th>
@@ -542,7 +545,6 @@ getGoals = function(){
 				tot_data['tot'] += pValue['tot'];
 			});
 			$("#summary_dept_code").html(html);
-			$("#summary_dept_code").val(null).trigger("change");
 			$(document).find("#summary_stdyy").html($("#s_year").val()+"년");
 			$("#summary_dept_code").on("change", function(){
 				var dept_code = $(this).val();
@@ -565,6 +567,8 @@ getGoals = function(){
 					$(document).find("tbody[role=body]").find("td").html('');
 				}
 			});
+			$("#summary_dept_code").val("all").trigger("change");
+
 			if($('#dtList1').find('#s_amt_ty_code').val() == '2'){
 				$("#chrg_sn_label").text("영업담당");
 			}

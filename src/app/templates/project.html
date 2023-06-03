@@ -247,7 +247,7 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_prjct_creat_at" name="s_prjct_creat_at">
 												<option value="">[전체]</option>
-												<option value="Y">Y.생성</option>
+												<option value="Y" selected>Y.생성</option>
 												<option value="N">N.미생성</option>
 											</select>
 										</th>
@@ -359,15 +359,15 @@ getProjectList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'cntrct_no' },
-            { data: 'bcnc_nm' },
-            { data: 'spt_nm' },
+            { data: 'cntrct_no', className: 'text-center' },
+            { data: 'bcnc_nm', className: 'text-center' },
+            { data: 'spt_nm', className: 'text-center' },
             { data: 'cntrct_amount', className: 'text-number', //계약금액
                 render: function(data, type, row, meta) {
                     return data.toString().toFormat('NUMBER');
                 }
             },
-            { data: 'prjct_ty_nm', className: 'hasinput',
+            { data: 'prjct_ty_nm', className: 'hasinput text-center',
 				render: function(pData, pType, pRow, pMeta) {
 					var html = '';
 					// html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-toggle="modal" href="#popReport'+row.prjct_ty_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'">';
@@ -393,11 +393,11 @@ getProjectList = function()
                     return html;
                 }
 			},
-            { data: 'dept_nm' },
-            { data: 'bsn_chrg_nm' },
-            { data: 'spt_chrg_nm' },
-            { data: 'cntrct_de' },
-            { data: 'prjct_creat_at',
+            { data: 'dept_nm', className: 'text-center' },
+            { data: 'bsn_chrg_nm', className: 'text-center' },
+            { data: 'spt_chrg_nm', className: 'text-center' },
+            { data: 'cntrct_de', className: 'text-center' },
+            { data: 'prjct_creat_at', className: 'text-center',
 				render: function(data, type, row, meta) {
 					var result = '';
 					if (data == 'Y') { result = '생성'; }
@@ -406,7 +406,7 @@ getProjectList = function()
 					return result;
 				}
 			},
-            { data: 'progrs_sttus_nm' },
+            { data: 'progrs_sttus_nm' , className: 'text-center'},
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
@@ -1691,6 +1691,7 @@ updateContract = function()
 					success: function(pResult) {
 						if (pResult.status) {
 							fnAlert(pResult.message);
+							$.datatable1.ajax.reload();
 						}
 					}
 				});

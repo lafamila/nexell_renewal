@@ -453,7 +453,7 @@ def five_ajax_get_five():
     else:
         params['s_pxcond_mt'] = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d").strftime("%Y-12-31")
     s_pxcond_mt = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d")
-    dept_codes = ['TS1', 'TS2', 'BI', 'ST']
+    dept_codes = ['ST', 'TS1', 'TS2', 'BI']
     amt_ty_codes = [2, 3, 5]
     years = []
     for i in range(4, -1, -1):

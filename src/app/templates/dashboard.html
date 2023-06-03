@@ -360,6 +360,7 @@ getCompletedSummary = function(s_pxcond_mt)
 {
     var params = '';
 	params += '&s_pxcond_mt='+s_pxcond_mt;
+	params += '&purpose=1';
 	$.ajax({
 		url: '/api/dashboard/ajax_get_completed_summary',
 		type: 'GET',
@@ -382,6 +383,7 @@ getCompletedSummary = function(s_pxcond_mt)
 			var b_amt1 = 0, b_amt2 = 0, b_amt3 = 0, b_amt4 = 0, b_amt5 = 0;
 			var total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
 			$('#content').find('#rptContractStatus_m').html(month+'월' + (month%3 == 1 ? " (장려금 발생월)" : ""));
+			var counter = 0;
 			$.each(pResult.contractStatusList, function(pIndex, pValue){
 				if (pValue.amt_ty_code == '2') { // 수주
                     b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
@@ -435,6 +437,7 @@ getCompletedSummary = function(s_pxcond_mt)
                         html += '    <td class="text-number colorSky"></td>';
                         html += '</tr>';
 						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+						counter += pValue.dept_count;
 					}
 				} else if (pValue.amt_ty_code == '3' || pValue.amt_ty_code == '5') { // 매출, VA
                     b_amt1 = parseInt(pValue.m_contract_amount); if(isNaN(b_amt1)) b_amt1 = 0;
@@ -498,7 +501,7 @@ getCompletedSummary = function(s_pxcond_mt)
                         total4 += parseInt(k_amt4);
                         total5 += parseInt(k_amt5);
                     }
-					if ((pIndex+1)%pValue.dept_count == 0) {
+					if ((pIndex+1-counter)%pValue.dept_count == 0) {
 						rt1 =  (total2 < 0) ? 100.0 + (total2 - total1)*100/total2 : (total1/total2)*100; if (isNaN(rt1)) rt1 = 0.0;
 						rt2 =  (total4 < 0) ? 100.0 + (total4 - total3)*100/total4 : (total3/total4)*100; if (isNaN(rt2)) rt2 = 0.0;
 						rt3 = (total3/total5)*100; if (isNaN(rt3)) rt3 = 0.0;
@@ -516,6 +519,7 @@ getCompletedSummary = function(s_pxcond_mt)
                         html += '    <td class="text-number colorSky"></td>';
                         html += '</tr>';
 						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
+						counter += pValue.dept_count;
 					}
 				}
 			});
@@ -869,12 +873,12 @@ getSalesSummary = function(s_pxcond_mt)
                     row += '  <td class="colorSky">'+pValue+'</td>';
                     $.each(depts, function(p, q){
                        let price = getSales(pResult.one, pValue, q);
-                       row += '  <td>'+Math.round(price/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+                       row += '  <td class="text-right">'+Math.round(price/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                        sum += parseInt(price);
 
                         prices[p] += parseInt(price);
                     });
-                    row += '  <td>'+Math.round(sum/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+                    row += '  <td class="text-right">'+Math.round(sum/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                     row += '</tr>';
                     prices[depts.length] += sum;
                     if(sum != 0){
@@ -922,7 +926,7 @@ getSalesSummary = function(s_pxcond_mt)
                 html += '<tr>';
                 html += '    <td class="colorSky">총계</td>';
                 $.each(prices, function(k, v){
-                    html += '<td class="colorSky">'+Math.round(v/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+                    html += '<td class="colorSky text-right">'+Math.round(v/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                 });
                 html += '</tr>';
                 $('#rptSalesSummery tbody[role=footer]').html(html);
@@ -1528,7 +1532,7 @@ getMonthReport = function(pxcond_mt){
 				html += `	<td class="colorSky text-center middle">${pValue1.amt_ty_nm}</td>
 							<td class="colorSky text-center middle">${pValue1.dept_nm.replaceAll("팀", "")}</td>
 							<td class="colorLY text-right middle" data-column="summary" colspan="2">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary" data-value="valueS"></td>
+							<td class="colorLY text-right middle fontColorN" data-column="summary" data-value="valueS"></td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
@@ -1566,7 +1570,7 @@ getMonthReport = function(pxcond_mt){
 				html += `	<td class="colorSky text-center middle">${pValue2.amt_ty_nm}</td>
 							<td class="colorSky text-center middle">${pValue2.dept_nm.replaceAll("팀", "")}</td>
 							<td class="colorLY text-right middle" data-column="summary" colspan="2">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary" data-value="valueT"></td>
+							<td class="colorLY text-right middle fontColorN" data-column="summary" data-value="valueT"></td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
@@ -1593,7 +1597,7 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorSky text-center middle">수주</td>
 						<td class="colorLG text-center middle">소계</td>
 						<td class="colorLG text-right middle" colspan="2">${Math.round(total12 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle" data-value="valueStot"></td>
+						<td class="colorLG text-right middle fontColorN" data-value="valueStot"></td>
 						<td class="colorLG text-right middle">${Math.round(total11 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt11.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle">${Math.round(total14 /1000).toFormat('NUMBER')}</td>
@@ -1605,7 +1609,7 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorSky text-center middle">매출</td>
 						<td class="colorLG text-center middle">소계</td>
 						<td class="colorLG text-right middle" colspan="2">${Math.round(total22 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle" data-value="valueTtot"></td>
+						<td class="colorLG text-right middle fontColorN" data-value="valueTtot"></td>
 						<td class="colorLG text-right middle">${Math.round(total21 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt21.toFixed(1) + '%'))}</td>
 						<td class="colorLG text-right middle">${Math.round(total24 /1000).toFormat('NUMBER')}</td>
@@ -2346,19 +2350,19 @@ getCompletedYearSummary = function()
 							html += '    <td class="text-center colorSky" style="vertical-align:middle;">수주</td>';
 							html += '    <td class="text-center colorSky" style="vertical-align:middle;">' + (pValue.dept_nm.replaceAll('팀','')) + '</td>';
 							html += '    <td class="text-center colorLG">달성율</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m01)/parseInt(suju1.m01))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m02)/parseInt(suju1.m02))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m03)/parseInt(suju1.m03))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m04)/parseInt(suju1.m04))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m05)/parseInt(suju1.m05))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m06)/parseInt(suju1.m06))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m07)/parseInt(suju1.m07))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m08)/parseInt(suju1.m08))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m09)/parseInt(suju1.m09))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m10)/parseInt(suju1.m10))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m11)/parseInt(suju1.m11))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m12)/parseInt(suju1.m12))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.total)/parseInt(suju1.total))*100).toFixed(0) + '%</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m01)<0 ? '-' : ((parseInt(suju2.m01)/parseInt(suju1.m01))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m02)<0 ? '-' : ((parseInt(suju2.m02)/parseInt(suju1.m02))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m03)<0 ? '-' : ((parseInt(suju2.m03)/parseInt(suju1.m03))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m04)<0 ? '-' : ((parseInt(suju2.m04)/parseInt(suju1.m04))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m05)<0 ? '-' : ((parseInt(suju2.m05)/parseInt(suju1.m05))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m06)<0 ? '-' : ((parseInt(suju2.m06)/parseInt(suju1.m06))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m07)<0 ? '-' : ((parseInt(suju2.m07)/parseInt(suju1.m07))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m08)<0 ? '-' : ((parseInt(suju2.m08)/parseInt(suju1.m08))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m09)<0 ? '-' : ((parseInt(suju2.m09)/parseInt(suju1.m09))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m10)<0 ? '-' : ((parseInt(suju2.m10)/parseInt(suju1.m10))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m11)<0 ? '-' : ((parseInt(suju2.m11)/parseInt(suju1.m11))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m12)<0 ? '-' : ((parseInt(suju2.m12)/parseInt(suju1.m12))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.total)<0 ? '-' : ((parseInt(suju2.total)/parseInt(suju1.total))*100).toFixed(0) + '%')+'</td>';
 							html += '</tr>';
 						}
 					});
@@ -2430,19 +2434,19 @@ getCompletedYearSummary = function()
 							html += '    <td class="text-center colorSky" style="vertical-align:middle;">매출</td>';
 							html += '    <td class="text-center colorSky" style="vertical-align:middle;">' + (pValue.dept_nm.replaceAll('팀','')) + '</td>';
 							html += '    <td class="text-center colorLG">달성율</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m01)/parseInt(suju1.m01))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m02)/parseInt(suju1.m02))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m03)/parseInt(suju1.m03))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m04)/parseInt(suju1.m04))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m05)/parseInt(suju1.m05))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m06)/parseInt(suju1.m06))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m07)/parseInt(suju1.m07))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m08)/parseInt(suju1.m08))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m09)/parseInt(suju1.m09))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m10)/parseInt(suju1.m10))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m11)/parseInt(suju1.m11))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.m12)/parseInt(suju1.m12))*100).toFixed(0) + '%</td>';
-							html += '    <td class="text-right colorLG">' + ((parseInt(suju2.total)/parseInt(suju1.total))*100).toFixed(0) + '%</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m01)<0 ? '-' : ((parseInt(suju2.m01)/parseInt(suju1.m01))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m02)<0 ? '-' : ((parseInt(suju2.m02)/parseInt(suju1.m02))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m03)<0 ? '-' : ((parseInt(suju2.m03)/parseInt(suju1.m03))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m04)<0 ? '-' : ((parseInt(suju2.m04)/parseInt(suju1.m04))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m05)<0 ? '-' : ((parseInt(suju2.m05)/parseInt(suju1.m05))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m06)<0 ? '-' : ((parseInt(suju2.m06)/parseInt(suju1.m06))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m07)<0 ? '-' : ((parseInt(suju2.m07)/parseInt(suju1.m07))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m08)<0 ? '-' : ((parseInt(suju2.m08)/parseInt(suju1.m08))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m09)<0 ? '-' : ((parseInt(suju2.m09)/parseInt(suju1.m09))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m10)<0 ? '-' : ((parseInt(suju2.m10)/parseInt(suju1.m10))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m11)<0 ? '-' : ((parseInt(suju2.m11)/parseInt(suju1.m11))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.m12)<0 ? '-' : ((parseInt(suju2.m12)/parseInt(suju1.m12))*100).toFixed(0) + '%')+'</td>';
+							html += '    <td class="text-right colorLG">' + (parseInt(suju2.total)<0 ? '-' : ((parseInt(suju2.total)/parseInt(suju1.total))*100).toFixed(0) + '%')+'</td>';
 							html += '</tr>';
 						}
 					});
@@ -2515,22 +2519,19 @@ getCompletedYearSummary = function()
 							html += '    <td class="text-center colorSky" style="vertical-align:middle;">' + (pValue.dept_nm.replaceAll('팀','')) + '</td>';
 							html += '    <td class="text-center colorLG">달성율</td>';
 
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m01) < 0) ? 100.0 + (parseInt(suju1.m01) - parseInt(suju2.m01))*100/parseInt(suju1.m01) : ((parseInt(suju2.m01)/parseInt(suju1.m01))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m02) < 0) ? 100.0 + (parseInt(suju1.m02) - parseInt(suju2.m02))*100/parseInt(suju1.m02) : ((parseInt(suju2.m02)/parseInt(suju1.m02))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m03) < 0) ? 100.0 + (parseInt(suju1.m03) - parseInt(suju2.m03))*100/parseInt(suju1.m03) : ((parseInt(suju2.m03)/parseInt(suju1.m03))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m04) < 0) ? 100.0 + (parseInt(suju1.m04) - parseInt(suju2.m04))*100/parseInt(suju1.m04) : ((parseInt(suju2.m04)/parseInt(suju1.m04))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m05) < 0) ? 100.0 + (parseInt(suju1.m05) - parseInt(suju2.m05))*100/parseInt(suju1.m05) : ((parseInt(suju2.m05)/parseInt(suju1.m05))*100)).toFixed(0) + '%</td>';
-
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m06) < 0) ? 100.0 + (parseInt(suju1.m06) - parseInt(suju2.m06))*100/parseInt(suju1.m06) : ((parseInt(suju2.m06)/parseInt(suju1.m06))*100)).toFixed(0) + '%</td>';
-
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m07) < 0) ? 100.0 + (parseInt(suju1.m07) - parseInt(suju2.m07))*100/parseInt(suju1.m07) : ((parseInt(suju2.m07)/parseInt(suju1.m07))*100)).toFixed(0) + '%</td>';
-
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m08) < 0) ? 100.0 + (parseInt(suju1.m08) - parseInt(suju2.m08))*100/parseInt(suju1.m08) : ((parseInt(suju2.m08)/parseInt(suju1.m08))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m09) < 0) ? 100.0 + (parseInt(suju1.m09) - parseInt(suju2.m09))*100/parseInt(suju1.m09) : ((parseInt(suju2.m09)/parseInt(suju1.m09))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m10) < 0) ? 100.0 + (parseInt(suju1.m10) - parseInt(suju2.m10))*100/parseInt(suju1.m10) : ((parseInt(suju2.m10)/parseInt(suju1.m10))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m11) < 0) ? 100.0 + (parseInt(suju1.m11) - parseInt(suju2.m11))*100/parseInt(suju1.m11) : ((parseInt(suju2.m11)/parseInt(suju1.m11))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m12) < 0) ? 100.0 + (parseInt(suju1.m12) - parseInt(suju2.m12))*100/parseInt(suju1.m12) : ((parseInt(suju2.m12)/parseInt(suju1.m12))*100)).toFixed(0) + '%</td>';
-                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.total) < 0) ? 100.0 + (parseInt(suju1.total) - parseInt(suju2.total))*100/parseInt(suju1.total) : ((parseInt(suju2.total)/parseInt(suju1.total))*100)).toFixed(0) + '%</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m01)==0||parseInt(suju2.m01)*parseInt(suju1.m01) < 0) ? '-' : ((parseInt(suju2.m01)/parseInt(suju1.m01))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m02)==0||parseInt(suju2.m02)*parseInt(suju1.m02) < 0) ? '-' : ((parseInt(suju2.m02)/parseInt(suju1.m02))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m03)==0||parseInt(suju2.m03)*parseInt(suju1.m03) < 0) ? '-' : ((parseInt(suju2.m03)/parseInt(suju1.m03))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m04)==0||parseInt(suju2.m04)*parseInt(suju1.m04) < 0) ? '-' : ((parseInt(suju2.m04)/parseInt(suju1.m04))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m05)==0||parseInt(suju2.m05)*parseInt(suju1.m05) < 0) ? '-' : ((parseInt(suju2.m05)/parseInt(suju1.m05))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m06)==0||parseInt(suju2.m06)*parseInt(suju1.m06) < 0) ? '-' : ((parseInt(suju2.m06)/parseInt(suju1.m06))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m07)==0||parseInt(suju2.m07)*parseInt(suju1.m07) < 0) ? '-' : ((parseInt(suju2.m07)/parseInt(suju1.m07))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m08)==0||parseInt(suju2.m08)*parseInt(suju1.m08) < 0) ? '-' : ((parseInt(suju2.m08)/parseInt(suju1.m08))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m09)==0||parseInt(suju2.m09)*parseInt(suju1.m09) < 0) ? '-' : ((parseInt(suju2.m09)/parseInt(suju1.m09))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m10)==0||parseInt(suju2.m10)*parseInt(suju1.m10) < 0) ? '-' : ((parseInt(suju2.m10)/parseInt(suju1.m10))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m11)==0||parseInt(suju2.m11)*parseInt(suju1.m11) < 0) ? '-' : ((parseInt(suju2.m11)/parseInt(suju1.m11))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.m12)==0||parseInt(suju2.m12)*parseInt(suju1.m12) < 0) ? '-' : ((parseInt(suju2.m12)/parseInt(suju1.m12))*100).toFixed(0) + '%')+'</td>';
+                            html += '    <td class="text-right colorLG">' + ((parseInt(suju1.total)==0||parseInt(suju2.total)*parseInt(suju1.total) < 0) ? '-' : ((parseInt(suju2.total)/parseInt(suju1.total))*100).toFixed(0) + '%')+'</td>';
 
 //							html += '    <td class="text-right colorSky">' + ((parseInt(suju2.m02)/parseInt(suju1.m02))*100).toFixed(0) + '%</td>';
 //							html += '    <td class="text-right colorSky">' + ((parseInt(suju2.m03)/parseInt(suju1.m03))*100).toFixed(0) + '%</td>';
@@ -2583,6 +2584,18 @@ getCompletedYearSummary = function()
 					$('#rpt').find('#rptContractStatus2 tbody[role=body_va]').yRowspan(1);
 				}
 			});
+
+			var cells = $(document).find("#rptContractStatus2 td, #rptContractStatus2 th");
+			$.each(cells, function(pIndex, pValue){
+				let value = $(pValue).html();
+				if(!isNaN(parseInt(value.replaceAll(",", "")))){
+					if(parseInt(value.replaceAll(",", "")) < 0){
+						$(pValue).addClass("color-red")
+					}
+
+				}
+			});
+
 			$("#popReport1").find("td").each(function(pIndex, pValue){
 				let value = $(pValue).html();
                 if(value == '0' || value == '0.0%' || value=='-Infinity%' || value=='Infinity%' || value=='NaN%'){
@@ -3670,7 +3683,7 @@ getLogit = function(s_pxcond_mt)
 							<td class="colorSky text-center">${pValue.dept_nm.replace("팀", "")}</td>
 							<td class="text-left" rowspan="2"><a href="/dashboard/logitech?cntrct_sn=${pValue.cntrct_sn}" target="_blank">${pValue.spt_nm}</a></td>
 							<td class="text-center" rowspan="2" style="line-height: 0.9!important;">${pValue.cntrwk_period}</td>
-							<td class="text-center" rowspan="2">${cntrct_amount.toFormat('NUMBER')}</td>
+							<td class="text-right" rowspan="2">${cntrct_amount.toFormat('NUMBER')}</td>
 							<td class="text-center">로지텍</td>
 							<td class="text-right">${logi_before.toFormat('NUMBER')}</td>
 							<td class="text-right">${logi_now.toFormat('NUMBER')}</td>

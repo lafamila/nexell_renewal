@@ -105,14 +105,23 @@ def get_completed_summary(params):
     tables = {(r['amt_ty_code'], r['dept_code']) : r for r in result}
     table_result = []
     for amt_ty_code, dept_code in itertools.product(amt_ty_codes, dept_codes):
+        if "purpose" in params:
+            if amt_ty_code in ('3', '5') and dept_code == 'ST':
+                continue
         if (amt_ty_code, dept_code) not in tables:
             table_result.append(new_row(amt_ty_code, code_nms[("AMT_TY_CODE", amt_ty_code)][0], dept_code, code_nms[("DEPT_CODE", dept_code)][0], code_nms[("DEPT_CODE", dept_code)][1]))
         else:
             table_result.append(tables[(amt_ty_code, dept_code)])
 
-    for r in table_result:
-        r['dept_count'] = len(dept_codes)
-
+    if "purpose" in params:
+        for r in table_result:
+            if r['amt_ty_code'] == '2':
+                r['dept_count'] = len(dept_codes)
+            else:
+                r['dept_count'] = len([dept for dept in dept_codes if dept != 'ST'])
+    else:
+        for r in table_result:
+            r['dept_count'] = len(dept_codes)
     return table_result
 
 def new_row(amt_ty_code, amt_ty_nm, dept_code, dept_nm, dept_ordr):

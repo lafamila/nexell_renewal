@@ -200,7 +200,6 @@
 												<button type="button" class="btn btn-table btn-success" title="복사" id="check-copy"><i class="fa fa-clone"></i></button>
 												<button type="button" class="btn btn-table btn-danger" title="삭제" id="check-delete"><i class="fa fa-trash-o"></i></button>
 											</div>
-
 										</th>
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
@@ -356,7 +355,7 @@ getFundList = function()
                 toastrError(pJqXHR);
             }
         },
-		order: [3, 'desc'],
+		order: [1, 'desc'],
         columns: [
             { data: 'ctmmny_sn', className: 'text-center', orderable: false,
                 render: function(data, type, row, meta) {

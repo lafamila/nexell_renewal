@@ -50,6 +50,9 @@ def insert_member(params):
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
 
+    if "out_de" in data and data["out_de"] == "":
+        data["out_de"] = None
+
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]
 
@@ -81,6 +84,7 @@ def get_member(member_sn):
                 , updater_id
                 , check_rate
                 , check_work
+                , check_todo
                 FROM member m
                 WHERE 1=1
                 AND ctmmny_sn = 1
@@ -221,6 +225,7 @@ def get_member_todo(params):
 				WHERE m.mber_sttus_code <> 'R'
 				AND m.dept_code IS NOT NULL
 				AND m.dept_code <> ''
+				AND m.check_todo = 1
 				ORDER BY code_ordr, m.ofcps_code, rspofc_code, ordr"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -280,19 +285,22 @@ def insert_vacation(params):
     st_de = datetime.datetime.strptime(params['s_de_start'], "%Y-%m-%d")
     ed_de = datetime.datetime.strptime(params['s_de_end'], "%Y-%m-%d")
     if params['vacation_type'] == 'y':
-        if params['vacation_type_detail'] == 't':
-            data['vacation_type'] = 1
-        elif params['vacation_type_detail'] == 'h1':
+        if params['vacation_type_detail'] == 'h1':
             data['vacation_type'] = 2
         elif params['vacation_type_detail'] == 'h2':
             data['vacation_type'] = 3
+        else:
+            data['vacation_type'] = 1
+
+
     elif params['vacation_type'] == 'b':
-        if params['vacation_type_detail'] == 't':
-            data['vacation_type'] = 4
-        elif params['vacation_type_detail'] == 'h1':
+        if params['vacation_type_detail'] == 'h1':
             data['vacation_type'] = 5
         elif params['vacation_type_detail'] == 'h2':
             data['vacation_type'] = 6
+        else:
+            data['vacation_type'] = 4
+
     else:
         data['vacation_type'] = 7
     data['rm'] = params['to_go']

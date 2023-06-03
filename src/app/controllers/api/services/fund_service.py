@@ -626,3 +626,50 @@ def get_fund_stat_summary2(params):
     g.curs.execute(query, data)
     result = g.curs.fetchone()
     return result
+
+def insert_memo(params):
+    data = {}
+    if "memo_ty" in params and params["memo_ty"]:
+        data["memo_ty"] = params["memo_ty"]
+
+    if "memo_id" in params and params["memo_id"]:
+        data["memo_id"] = params["memo_id"]
+
+    if "memo_de" in params and params["memo_de"]:
+        data["memo_de"] = params["memo_de"]
+
+    if "memo" in params:
+        data["memo"] = params["memo"]
+
+    if "regist_dtm" in params and params["regist_dtm"]:
+        data["regist_dtm"] = params["regist_dtm"]
+    else:
+        data["regist_dtm"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if "register_id" in params and params["register_id"]:
+        data["register_id"] = params["register_id"]
+    else:
+        data["register_id"] = session['member']['member_id']
+
+    columns = list(data.keys())
+    query = """INSERT INTO memo({}) VALUES ({})""".format(",".join(columns), ",".join(["%({})s".format(c) for c in columns]))
+    g.curs.execute(query, data)
+
+
+def get_memo_list2(params):
+    query = """SELECT memo_ty
+				, memo_id
+				, memo
+				FROM memo m
+				WHERE memo_sn IN (SELECT MAX(memo_sn) FROM memo WHERE memo_ty = %(s_memo_ty)s AND memo_de = %(s_memo_de)s GROUP BY memo_ty, memo_id)
+				AND memo_id <> ''
+				AND memo_de = %(s_memo_de)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_values(params):
+    query = "SELECT * FROM temp WHERE temp_dtm = %(rpt7_ddt_man)s"
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result

@@ -10,6 +10,11 @@
 <!--        <li style="">홈</li><li><span> 홈</span></li>-->
 <!--	</ol>-->
 <!--</div>-->
+
+<script src="/static/summernote/summernote-lite.js"></script>
+<script src="/static/summernote/summernote-ko-KR.js"></script>
+<link href="/static/summernote/summernote-lite.css" rel="stylesheet"/>
+
 <div id="content" style="padding-top:30px!important;height:calc(100vh - 138px);">
 
 	<!-- 화면 내용 -->
@@ -185,14 +190,20 @@
 					width:2px!important;
 					background:#555!important;
 				}
-				.table-tbody > .table-tr > .table-td{
+				.table-tbody > .table-tr > .table-td, .table-tbody > .table-tr-five > .table-td{
 					display: grid;
 					justify-content: center;
 					align-items: center;
 					font-weight:normal!important;
 				}
-				.table-tbody > .table-tr > .table-td:not(:last-child){
+				.table-tbody > .table-tr > .table-td:not(:last-child), .table-tbody > .table-tr-five > .table-td:not(:last-child){
 					border-right:1px solid #999;
+				}
+				.approval-tr:hover .table-td{
+					background-color: #ecf3f8;
+				}
+				.approval-tr, #approval_status_4 .table-tr{
+					cursor:pointer;
 				}
 			</style>
 			<div class="grid-container">
@@ -376,18 +387,46 @@
 
 	$(document).ready(function(){
 		$("#calendar").MEC({
-			events: []
+			events: [],
+			from_monday: true
 		});
 		$("#calTFooter").hide();
+		var dates = $(document).find("#calTbody .a-date");
+		if(dates.length > 0){
+			$.each(dates, function(pIndex, pTag){
+				if((pIndex %7) == 5){
+					$(pTag).css("color", "skyblue");
+				}
+				else if((pIndex % 7) == 6){
+					$(pTag).css("color", "red");
+
+				}
+			});
+		}
+		$(document).on("click", "#calendar .month-mover", function(){
+		var dates = $(document).find("#calTbody .a-date");
+		if(dates.length > 0){
+			$.each(dates, function(pIndex, pTag){
+				if((pIndex %7) == 5){
+					$(pTag).css("color", "skyblue");
+				}
+				else if((pIndex % 7) == 6){
+					$(pTag).css("color", "red");
+
+				}
+			});
+		}
+
+		})
 		getTodayWork();
 		getApprovalList("미결", "#approval_status_1", 5);
 		getApprovalList("진행", "#approval_status_2", 5);
 		getApprovalList("수신", "#approval_status_3");
 		getBBS();
-		getAlmostDoneProject();
+		// getAlmostDoneProject();
 
 		// if session['member']['dept_code'] == 'BI'
-		getBIMSProject();
+		// getBIMSProject();
 		//endif
 
 		$("#attendance").on("click", ()=>(location.href="/work/personal"));
@@ -458,7 +497,7 @@
 				<div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
 					<h5 class="sub-title" id="rptDate7"></h5>
 					<h5></h5>
-					<h5 class="sub-title" style="text-align: left!important;">(현)현장 , (영)영업 , (내)내근, (출)출장 / <span style="color:blue;font-size: 17px!important;">당일 9시 이전 기재 완료</span></h5>
+					<h5 class="sub-title" style="text-align: left!important;">(현)현장 , (영)영업 , (내)내근, (출)출장, (직)직근 / <span style="color:blue;font-size: 17px!important;">당일 9시 이전 기재 완료</span></h5>
 				</div>
 
 
@@ -524,7 +563,7 @@ getApprovalList = function(s_approval_status, target, size=4){
 			console.log(pResult);
 			$.each(pResult.data, function(pIndex, pValue){
 				if(size == 5){
-				html += `<div class="table-tr-five">
+				html += `<div class="table-tr-five approval-tr" data-sn="${pValue.approval_sn}">
 							<div class="table-td">${pValue.approval_ty_nm}</div>
 							<div class="table-td">${pValue.approval_title}</div>
 							<div class="table-td">${pValue.start_mber_nm}</div>
@@ -534,7 +573,7 @@ getApprovalList = function(s_approval_status, target, size=4){
 
 				}
 				else{
-				html += `<div class="table-tr">
+				html += `<div class="table-tr approval-tr" data-sn="${pValue.approval_sn}">
 							<div class="table-td">${pValue.approval_ty_nm}</div>
 							<div class="table-td">${pValue.approval_title}</div>
 							<div class="table-td">${pValue.start_mber_nm}</div>
@@ -548,6 +587,12 @@ getApprovalList = function(s_approval_status, target, size=4){
 	});
 
 }
+$(document).on("click", ".approval-tr", function(){
+	var approval_sn = $(this).data("sn");
+	var params = "";
+    params += "&approval_sn="+approval_sn;
+    window.open("/approval/report?"+params, "_blank");
+});
 getBIMSProject = function(){
 	var new_window_width = parseInt(screen.width/1.5);
 	var new_window_height = parseInt(screen.height) - 20;
@@ -919,7 +964,7 @@ $(function() {
 						<tr>
 							<th class="color-contract middle">내용</th>
 							<td class="hasinput">
-								<textarea style="width:100%;height:60vh;resize:none;border:none;" name="bbs_content" id="bbs_content"></textarea>
+								<textarea name="bbs_content" id="bbs_content"></textarea>
 							</td>
 						</tr>
 					</tbody>
@@ -934,6 +979,36 @@ $(function() {
 </div><!--modal-->
 <script>
 var BBS_TYPE = {1 : "공지사항", 2: "경조사", 3:"뉴스레터"}	;
+$(document).ready(function() {
+	//여기 아래 부분
+	$('#bbs_content').summernote({
+		  height: 600,                 // 에디터 높이
+	  lang: "ko-KR",
+	  // 에디터에 커서 이동 (input창의 autofocus라고 생각하시면 됩니다.)
+	  focus : true,
+	  toolbar: [
+		    // 글꼴 설정
+		    ['fontname', ['fontname']],
+		    // 글자 크기 설정
+		    ['fontsize', ['fontsize']],
+		    // 굵기, 기울임꼴, 밑줄,취소 선, 서식지우기
+		    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+		    // 글자색
+		    ['color', ['forecolor','color']],
+		    // 표만들기
+		    ['table', ['table']],
+		    // 글머리 기호, 번호매기기, 문단정렬
+		    ['para', ['ul', 'ol', 'paragraph']],
+		    // 줄간격
+		    ['height', ['height']],
+		    // 코드보기, 확대해서보기, 도움말
+		    ['view', ['codeview','fullscreen', 'help']]
+		  ],
+		  // 추가한 글꼴
+		fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋음체','바탕체'],
+		 // 추가한 폰트사이즈
+		fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']	});
+});
 getBBS = function()
 {
 	$.ajax({
@@ -975,7 +1050,7 @@ $(function() {
 				$("#popReport1").find("#btnDeleteBbs").data("sn", sn);
 				$("#popReport1").find("#bbs_type").yVal(pResult.bbs_type);
 				$("#popReport1").find("#bbs_title").val(pResult.bbs_title);
-				$("#popReport1").find("#bbs_content").val(pResult.bbs_content);
+				$("#popReport1").find("#bbs_content").summernote('code', pResult.bbs_content);
 				$("#popReport1").modal("show");
 
 			},
@@ -990,9 +1065,9 @@ $(function() {
 		if(status == "show"){
 			$("#btnSaveBbs").hide();
 			$("#popReport1").find("#btnDeleteBbs").show();
-			$("#popReport1").find("#bbs_type").attr("disabled", true);
-			$("#popReport1").find("#bbs_title").attr("disabled", true);
-			$("#popReport1").find("#bbs_content").attr("disabled", true);
+			$("#popReport1").find("#bbs_type").attr("readonly", true);
+			$("#popReport1").find("#bbs_title").attr("readonly", true);
+			$("#popReport1").find("#bbs_content").summernote('disable');
 		}
 		else{
 			$("#popReport1").find("#btnDeleteBbs").data("sn", '');
@@ -1000,10 +1075,10 @@ $(function() {
 			$("#btnSaveBbs").show();
 			$("#popReport1").find("#bbs_type").yVal('');
 			$("#popReport1").find("#bbs_title").val('');
-			$("#popReport1").find("#bbs_content").val('');
-			$("#popReport1").find("#bbs_type").attr("disabled", false);
-			$("#popReport1").find("#bbs_title").attr("disabled", false);
-			$("#popReport1").find("#bbs_content").attr("disabled", false);
+			$("#popReport1").find("#bbs_content").summernote('code', '');
+			$("#popReport1").find("#bbs_type").attr("readonly", false);
+			$("#popReport1").find("#bbs_title").attr("readonly", false);
+			$("#popReport1").find("#bbs_content").summernote('enable');
 		}
 	});
 	$('#popReport1').on('hidden.bs.modal', function(pEvent) {

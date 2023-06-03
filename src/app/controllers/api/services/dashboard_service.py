@@ -196,6 +196,7 @@ def get_completed_suju(params):
 				GROUP BY m.dept_code, c.bcnc_sn, cst.cntrct_sn,  cst.cost_date
 				ORDER BY code_ordr, dept_code, ordr, bcnc_nm, cntrct_de """.format(first_day, last_day)
     g.curs.execute(query)
+    print(query)
     result = g.curs.fetchall()
     return result
 
@@ -386,7 +387,7 @@ def get_kisung_suju(params):
 				) sj
 				JOIN code cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
-				ORDER BY cd.code_ordr, sj.sort"""
+				ORDER BY IF(sj.dept = 'ST', 0, 1), cd.code_ordr, sj.sort"""
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
@@ -681,7 +682,7 @@ def get_extra_goal_contract(params):
     query = """SELECT d.d_sn
                     , d.stdyy
                     , d.amt_ty_code
-                    , d.dept_code
+                    , IF(d.dept_code IN ('EL','CT', 'MA'), 'ETC', d.dept_code) AS dept_code
                     , 0 AS value
                     , d.cntrct_sn
                     , c.spt_nm AS cntrct_nm
@@ -738,7 +739,7 @@ def get_goal_contract(params):
 
     query = """SELECT g.stdyy AS stdyy
                     , g.amt_ty_code AS amt_ty_code
-                    , m.dept_code AS dept_code
+                    , IF(m.dept_code IN ('EL','CT', 'MA'), 'ETC', m.dept_code) AS dept_code
                     , `{0}m` AS value
                     , g.cntrct_sn AS cntrct_sn
                     , c.spt_nm AS cntrct_nm

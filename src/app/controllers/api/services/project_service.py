@@ -422,6 +422,9 @@ def update_contract(params):
             if data[key] == '':
                 data[key] = None
                 params[key] = None
+    if "spt_nm" not in params or "spt_nm" not in data:
+        data["spt_nm"] = params["cntrct_nm"]
+        params["spt_nm"] = params["cntrct_nm"]
     columns = list(data.keys())
     query = """UPDATE contract SET {} WHERE cntrct_sn=%(s_cntrct_sn)s""".format(",".join(["{0}=%({0})s".format(col) for col in columns]))
     g.curs.execute(query, params)

@@ -187,15 +187,15 @@ def get_work(params):
                     , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS `use`
                     , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2, 3, 5, 6)) AS `half`
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='rm2'), '') AS rm
-                    , IF(w.WSTime IS NULL OR w.WSTime='', 0,
+                    , IF(m.check_rate='1', IF(w.WSTime IS NULL OR w.WSTime='', 0,
                     CASE DAYOFWEEK(STR_TO_DATE(w.WorkDate, %s))-1
                         WHEN 0 THEN 0
                         WHEN 6 THEN 0
                         WHEN 1 THEN IF(SUBSTRING(w.WSTime, 9, 4) > '0900', 1, 0)
                         ELSE IF(SUBSTRING(w.WSTime, 9, 4) > '0840', 1, 0)
-                    END) AS today_rate
-                    , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%m/%%d')) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS use_dates
-                    , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%m/%%d')) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2,3,5,6)) AS half_dates
+                    END), 0) AS today_rate
+                    , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%c/%%e') ORDER BY vacation_de separator ',  ') FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS use_dates
+                    , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%c/%%e') ORDER BY vacation_de separator ',  ') FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2,3,5,6)) AS half_dates
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
     				, (SELECT code_ordr FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_ordr
                 FROM (SELECT mber_sn, mber_nm, ofcps_code, dept_code, enter_de, check_rate FROM member WHERE check_work='1' AND mber_sttus_code='H' AND dept_code <> '') m
@@ -208,10 +208,11 @@ def get_work(params):
                         ELSE IF(SUBSTRING(WSTime, 9, 4) > '0840', 1, 0)
                     END)) AS rate_tot
                     , Name AS name 
+                    , Sabun AS mber_sn
                     FROM T_SECOM_WORKHISTORY WHERE 1=1 AND WorkDate LIKE %s GROUP BY Name, Sabun) wt
-                ON m.mber_nm=wt.name
+                ON m.mber_sn=wt.mber_sn
                 LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
-                ON m.mber_nm=w.Name
+                ON m.mber_sn=w.Sabun
                 WHERE 1=1
                 ORDER BY code_ordr ASC, ofcps_ordr ASC
                     """.format(work_date, work_year)

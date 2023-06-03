@@ -91,7 +91,6 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 	}
 	.approval-ty-list > div{
 		height: 40px!important;
-		cursor:pointer;
 		display:grid;
 		grid-template-columns: 1fr 6fr 4fr 1fr 1fr 1fr;
 		border-bottom:1px solid #eee;
@@ -277,6 +276,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 									<col width="170">
 									<col width="*">
 									<col width="110">
+									<col width="110">
 									<col width="220">
 									<col width="110">
 									<col width="110">
@@ -306,6 +306,14 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 										</th>
 										<th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_approval_title" name="s_approval_title">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_start_dept_code" name="s_start_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+												{% endfor %}
+											</select>
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_start_mber_sn" name="s_start_mber_sn">
@@ -357,6 +365,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 										<th>문서구분</th>
 										<th>문서명</th>
 										<th>제목</th>
+										<th>기안부서</th>
 										<th>기안자</th>
 										<th>기안일</th>
 										<th>상태</th>
@@ -409,6 +418,7 @@ getApprovalList = function()
 {
     $.datatable1 = $('#dtList1').DataTable({
 		serverSide: true,
+		ordering: false,
 		pageLength: 15,
 		buttons: ['excelHtml5'],
         ajax: {
@@ -423,6 +433,7 @@ getApprovalList = function()
                     's_start_de_start': $('#dtList1').find('#s_start_de_start').val(),
 					's_start_de_end': $('#dtList1').find('#s_start_de_end').val(),
 					's_start_mber_sn': $('#dtList1').find('#s_start_mber_sn').val(),
+					's_start_dept_code': $('#dtList1').find('#s_start_dept_code').val(),
 					// 's_end_de_start': $('#dtList1').find('#s_end_de_start').val(),
 					// 's_end_de_end': $('#dtList1').find('#s_end_de_end').val(),
 					's_final_mber_sn': $('#dtList1').find('#s_final_mber_sn').val(),
@@ -442,15 +453,16 @@ getApprovalList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'approval_se_nm' },
-            { data: 'approval_ty_nm' },
-            { data: 'approval_title' },
-            { data: 'start_mber_nm' },
-            { data: 'start_de' },
-            { data: 'approval_status' },
-            { data: 'end_de' },
-            { data: 'final_mber_nm' },
-            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+            { data: 'approval_se_nm', className: 'text-center'},
+            { data: 'approval_ty_nm', className: 'text-center' },
+            { data: 'approval_title', className: 'text-center' },
+            { data: 'start_dept_nm' , className: 'text-center'},
+            { data: 'start_mber_nm' , className: 'text-center'},
+            { data: 'start_de' , className: 'text-center'},
+            { data: 'approval_status' , className: 'text-center'},
+            { data: 'end_de', className: 'text-center' },
+            { data: 'final_mber_nm', className: 'text-center' },
+            { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
 
@@ -464,7 +476,7 @@ getApprovalList = function()
 					return html;
 				}
 			},
-            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+            { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
 
@@ -478,7 +490,7 @@ getApprovalList = function()
 					return html;
 				}
 			},
-            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+            { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
 					{% if session['member']['auth_cd'] == 1 %}
@@ -665,9 +677,15 @@ $(function(){
 #popBox1 tbody{
     font-size:12px!important;
 }
+#popBox1 .selectable:hover{
+	background-color:#eee;
+}
+#popBox1 .selectable{
+	cursor:pointer;
+}
 
     </style>
-    <div class="modal-dialog modal-w900" style="margin: 0px!important;width:100vw!important;max-height:100vh;overflow-y:auto;" id="approval-tab-container">
+    <div class="modal-dialog modal-w900" style="top:50%;left:50%;transform:translate(-50%,-50%);margin: 0px!important;width:45vw!important;max-height:100vh;overflow-y:hidden;" id="approval-tab-container">
         <div class="modal-content">
 			<div class="jarviswidget jarviswidget-color-greenDark">
 				<header>
@@ -687,7 +705,7 @@ $(function(){
 
 							<!-- 프로젝트 -->
 							<div class="tab-pane fade active in" id="tabBox1" style="height:100%;">
-							<form id="frmBox1" style="height:100%;">
+							<form id="frmBox1" style="height:625px;">
 
 								<div class="approval-list-container">
 									<div class="approval-se-list">

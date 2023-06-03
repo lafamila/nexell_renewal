@@ -95,6 +95,7 @@ def get_approval(params):
 def get_approval_member(params):
     query = """SELECT am.mber_sn
                 , m.mber_nm AS mber_nm
+                , 'signature.jpg' AS sign_path
                 , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm                
                 , am.reg_type
                 , IFNULL(am.update_dtm, '') AS update_dtm
@@ -148,6 +149,8 @@ def get_approval_datatable(params):
 				, IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '') AS end_de
 				, (SELECT mber_nm FROM member WHERE mber_sn=last.mber_sn) AS final_mber_nm
 				, (SELECT mber_nm FROM member WHERE mber_sn=a.reg_mber) AS start_mber_nm
+				, (SELECT dept_code FROM member WHERE mber_sn=a.reg_mber) AS start_dept_code
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=a.reg_mber)) AS start_dept_nm
 				FROM (SELECT * FROM approval_member WHERE mber_sn=%s ) am
 				LEFT JOIN approval a 
 				ON am.approval_sn=a.approval_sn
@@ -156,9 +159,9 @@ def get_approval_datatable(params):
 				INNER JOIN 
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) mi ON a.approval_sn=mi.approval_sn
 				LEFT OUTER JOIN 
-				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='0' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) n ON a.approval_sn=n.approval_sn
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type IN (0, 1) AND approval_status_code='0' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) n ON a.approval_sn=n.approval_sn
 				LEFT OUTER JOIN 
-				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 AND approval_status_code='1' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) last ON a.approval_sn=last.approval_sn
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type IN (0, 1) AND approval_status_code='1' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) last ON a.approval_sn=last.approval_sn
 				WHERE 1=1				"""
 
     data = [session['member']['member_sn']]
@@ -169,6 +172,10 @@ def get_approval_datatable(params):
         query += " AND (SELECT estn_code_a FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) = %s"
         data.append(params["s_approval_tty_code"])
 
+    if "s_approval_se_code" in params and params['s_approval_se_code']:
+        query += " AND (SELECT estn_code_a FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) = %s"
+        data.append(params["s_approval_se_code"])
+
     if "s_approval_title" in params and params['s_approval_title']:
         query += " AND a.approval_title LIKE %s"
         data.append('%{}%'.format(params["s_approval_title"]))
@@ -176,6 +183,10 @@ def get_approval_datatable(params):
     if "s_start_mber_sn" in params and params['s_start_mber_sn']:
         query += " AND a.reg_mber=%s"
         data.append(params["s_start_mber_sn"])
+
+    if "s_start_dept_code" in params and params['s_start_dept_code']:
+        query += " AND (SELECT dept_code FROM member WHERE mber_sn=a.reg_mber)=%s"
+        data.append(params["s_start_dept_code"])
 
     if "s_approval_status" in params and params["s_approval_status"]:
         query += """ AND CASE 
@@ -188,6 +199,8 @@ def get_approval_datatable(params):
 				ELSE ''
 				END = %s """
         data.append(params["s_approval_status"])
+    params["custom_order"] = ["a.approval_sn DESC"]
+
     return dt_query(query, data, params)
 
 

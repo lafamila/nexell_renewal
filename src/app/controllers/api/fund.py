@@ -114,3 +114,25 @@ def ajax_get_fund_datatable2():
     result['summary2'] = fnd.get_fund_stat_summary2(params)
     result['status'] = True
     return jsonify(result)
+
+@bp.route('/ajax_insert_memo', methods=['GET'])
+def ajax_insert_memo():
+    params = request.args.to_dict()
+    fnd.insert_memo(params)
+    return jsonify({"status": True, "message" : "성공적으로 입력되었습니다."})
+
+@bp.route('/ajax_get_memo_list2', methods=['GET'])
+def ajax_get_memo_list2():
+    params = request.args.to_dict()
+    result = dict()
+    result['memo_list'] = fnd.get_memo_list2(params)
+    result['status'] = True
+    return jsonify(result)
+
+@bp.route('/ajax_get_values', methods=['GET'])
+def ajax_get_values():
+    params = request.args.to_dict()
+    result = dict()
+    result['temp'] = fnd.get_values(params)
+    result['status'] = True
+    return jsonify(result)

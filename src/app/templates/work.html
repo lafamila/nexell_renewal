@@ -163,8 +163,8 @@ tbody .btnUpdate, tbody .btn{
 									<col width="60">
 									<col width="60">
 									<col width="60">
-									<col width="240">
-									<col width="240">
+									<col width="300">
+									<col width="180">
 									<col width="180">
 <!--									<col width="130">-->
 
@@ -266,7 +266,7 @@ getWork = function(work_date)
 							<td class="${_class} text-center right_border">${pValue.rate_count}</td>
 							<td class="input-available text-center" data-column="tot2">${pValue.tot}</td>
 							<td class=" text-center ${_class_today1}" data-column="use">${pValue.use}</td>
-							<td class=" text-center ${_class_today2}" data-column="half">${pValue.half}</td>
+							<td class=" text-center ${_class_today2}" data-column="half">${(parseFloat(pValue.half)/2).toFixed(1)}</td>
 							<td class=" text-center right_border" data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
 							<td class="right_border">${pValue.use_dates}</td>
 							<td class="right_border">${pValue.half_dates}</td>
@@ -349,6 +349,7 @@ $(document).on("click", ".colorBtn", function(){
 });
 
 $(document).on("dblclick", ".input-available", function(){
+	var before = $(this).html();
 	var column = $(this).data("column");
 	var colored = $(this).hasClass("colored");
 	if(colored)
@@ -361,11 +362,11 @@ $(document).on("dblclick", ".input-available", function(){
 		return false;
 	}
 
-	var data = prompt("값을 입력하세요.");
 	if(!['rm2'].includes(column)){
+		var data = prompt("값을 입력하세요.", before.replaceAll(",", ""));
 		try{
-			if(/^-?\d+$/.test(data)){
-				data = parseInt(data);
+			if(/^(?:[+-])?\d+(?:\.\d)?$/.test(data)){
+				data = parseFloat(data);
 			}
 			else{
 				throw new Error(`Parameter is not a number : ${data}`);
@@ -374,6 +375,13 @@ $(document).on("dblclick", ".input-available", function(){
 			alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
 			return false;
 		}
+	}
+	else{
+		var data = prompt("값을 입력하세요.", before);
+		if(data == null){
+			return false;
+		}
+
 	}
 	var td = $(this);
 	var rowId = $(this).parent().attr("id");
@@ -397,7 +405,7 @@ $(document).on("dblclick", ".input-available", function(){
 					$(td).text(data.toString());
 				}
 				else{
-					$(td).text(data.toString().toFormat("NUMBER"));
+					$(td).text(data.toFixed(1));
 					let use = parseFloat($(td).parent().find(`td[data-column="use"]`).html().replace(",", "")); if(isNaN(use)) use=0.0;
 					let half = parseFloat($(td).parent().find(`td[data-column="half"]`).html().replace(",", "")); if(isNaN(half)) half=0.0;
 					$(td).parent().find(`td[data-column="remain"]`).html((data-use-half).toFixed(1))
@@ -722,35 +730,36 @@ $(function() {
 				});
 				$('#dtList2 tbody').html(html);
 
-				$('#dtList2').on('click', 'tbody tr', function(pEvent) {
-					if ($(this).parent().find('td.dataTables_empty').length > 0) {
-						return;
-					} else {
-						$(this).parent().find('tr.selected').removeClass('selected');
-						$(this).addClass('selected');
-					}
-				});
-
-				$('#dtList2').on('click', '.btnSelect', function(pEvent) {
-					let sn = $(this).data("sn");
-					var raw = $(this).closest("tr");
-					if(confirm("정말 삭제하시겠습니까?")){
-						$.ajax({
-							url : '/api/member/delete_vacation',
-							method:'GET',
-							data: {"vacation_sn" : sn},
-							success: function(){
-								$(raw).remove();
-								alert("성공적으로 삭제되었습니다.");
-							}
-						})
-
-					}
-				});
 
 			}
 		});
 	}
+	$('#dtList2').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+
+	$('#dtList2').on('click', '.btnSelect', function(pEvent) {
+		let sn = $(this).data("sn");
+		var raw = $(this).closest("tr");
+		if(confirm("정말 삭제하시겠습니까?")){
+			$.ajax({
+				url : '/api/member/delete_vacation',
+				method:'GET',
+				data: {"vacation_sn" : sn},
+				success: function(){
+					$(raw).remove();
+					alert("성공적으로 삭제되었습니다.");
+				}
+			})
+
+		}
+	});
+
 	$('#popBox1').on('hidden.bs.modal', function(pEvent)
 	{
 		$("#popBox1").find("input").val('');

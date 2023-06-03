@@ -62,7 +62,7 @@
                         cursor:pointer;
                     }
                 </style>
-                <div class="title"><h2 class="colorLS">23년 2월 기성현황 집계표</h2></div>
+                <div class="title"><h2 class="colorLS"><span id="year"></span>년 <span id="month"></span>월 기성현황 집계표</h2></div>
                 <table id="rptParnterStatus1">
                     <colgroup>
                         <col width="50">
@@ -150,6 +150,10 @@
     getReportTableNR = function(s_pxcond_mt){
         var params = '';
         params += '&s_pxcond_mt=' + s_pxcond_mt;
+        var year = s_pxcond_mt.split("-")[0].substr(2,2);
+        var month = parseInt(s_pxcond_mt.split("-")[1]);
+        $(document).find("#year").html(year);
+        $(document).find("#month").html(month+"");
         console.log('getReportNR', params);
         var temp = {"C" : {}, "E" : {}};
         $.ajax({

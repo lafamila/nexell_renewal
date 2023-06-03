@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import session
 from app.connectors import DB
 
 
@@ -37,7 +37,8 @@ def refresh_code_list():
                 inventory_list=get_inventory_name_list(),
                 contract_list=get_contract_list(),
                 contract_nr_list=get_contract_NR_list(),
-                amt_ty_code_list=get_code_list('amt_ty_code'.upper()))
+                amt_ty_code_list=get_code_list('amt_ty_code'.upper()),
+                menus=set_menu(session['member']['auth_cd']) if 'member' in session else None)
 
 
 
@@ -259,7 +260,5 @@ def set_menu(auth_cd):
         else:
             menus[r['parnts_menu_sn']].append(r)
     total_menus["sub_menu"] = menus
-    current_app.jinja_env.globals.update(
-        menus=total_menus
-    )
+    return total_menus
 

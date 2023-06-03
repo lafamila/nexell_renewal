@@ -898,6 +898,7 @@ def get_month_co_contract_list(params):
                     , c.spt_nm
                     , DATE_FORMAT(c.cntrct_de, '%%Y-%%m') AS cntrct_de
                     , m.mber_nm
+                    , m.mber_sn
                     , m.ofcps_code
                     , m.dept_code
                     , s.rate
@@ -935,6 +936,7 @@ def get_month_contract_list(params):
     				, m.dept_code
     				, m.mber_nm
     				, m.ofcps_code
+    				, m.mber_sn
     				, c.bcnc_sn
     				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr

@@ -106,7 +106,7 @@ def delete_approval():
             deletable = False
             msg = "최종 결재가 완료되지 않아 삭제가 불가능합니다."
         else:
-            if member_list[-1]["approval_status_code"] in 1:
+            if member_list[-1]["approval_status_code"] in (1, ):
                 deletable = True
                 msg = "성공적으로 삭제되었습니다."
             elif -1 in [m["approval_status_code"] for m in member_list]:

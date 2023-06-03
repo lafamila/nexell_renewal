@@ -31,7 +31,7 @@ tbody .btnUpdate, tbody .btn{
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">월별 수주 계획</li><li><span> 영업부</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">월별 수주 현황</li><li><span> 영업부</span></li>
 	</ol>
 
 
@@ -288,80 +288,311 @@ tbody .btnUpdate, tbody .btn{
 				});
 				$("#popBoxBiss").find("#cntrct_sn").html(option_html);
 				var ALREADY = {};
-				$.each(pResult.contract, function(pIndex, pValue) {
+				if(pResult.contract.length > 0){
+					console.log(pResult);
+					var mber_nm = pResult.contract[0].mber_nm;
+					var mber = pResult.contract[0].mber_sn;
+					var dept_nm = pResult.contract[0].dept_nm;
+					var dept = pResult.contract[0].dept_code;
+					var dept_total = {"goal" : {}, "real" : {}};
+					var member_total = {"goal" : {}, "real" : {}};
+					$.each(pResult.contract, function(pIndex, pValue) {
+						var mber_sn = pValue.mber_sn;
+						var dept_code = pValue.dept_code;
 
-					var pData = {"tot" : 0};
-					for(let i=1;i<=12;i++) pData[`${i}m`] = 0;
-					if(pValue.cntrct_de !== ""){
-						let year = pValue.cntrct_de.split("-")[0];
-						let month = pValue.cntrct_de.split("-")[1];
-						if(year == s_year){
-							pData[`${parseInt(month)}m`] = (pValue.cntrct_amount)/DELIMITER;
+						var pData = {"tot" : 0};
+						for(let i=1;i<=12;i++) pData[`${i}m`] = 0;
+						if(pValue.cntrct_de !== ""){
+							let year = pValue.cntrct_de.split("-")[0];
+							let month = pValue.cntrct_de.split("-")[1];
+							if(year == s_year){
+								pData[`${parseInt(month)}m`] = (pValue.cntrct_amount)/DELIMITER;
+							}
 						}
-					}
-					if(!ALREADY.hasOwnProperty(pValue.cntrct_sn)){
-						ALREADY[pValue.cntrct_sn] = 0;
-					}
-					else{
-						ALREADY[pValue.cntrct_sn] += 2;
-					}
-					for(let i=1;i<=12;i++) pData["tot"] += pData[`${i}m`];
+						if(!ALREADY.hasOwnProperty(pValue.cntrct_sn)){
+							ALREADY[pValue.cntrct_sn] = 0;
+						}
+						else{
+							ALREADY[pValue.cntrct_sn] += 2;
+						}
+						for(let i=1;i<=12;i++) pData["tot"] += pData[`${i}m`];
 
-					html += `<tr id="row${pValue.cntrct_sn}-${ALREADY[pValue.cntrct_sn]+1}" data-year="${s_year}">
-								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
-								<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
-								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
-								<td class="right_border middle text-left bold">${pValue.spt_nm}</td>
-								<td class="right_border middle text-center bold">계획</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="1m">${Math.round(pValue["1m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="2m">${Math.round(pValue["2m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="3m">${Math.round(pValue["3m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="4m">${Math.round(pValue["4m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="5m">${Math.round(pValue["5m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="6m">${Math.round(pValue["6m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="7m">${Math.round(pValue["7m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="8m">${Math.round(pValue["8m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="9m">${Math.round(pValue["9m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="10m">${Math.round(pValue["10m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="11m">${Math.round(pValue["11m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="12m">${Math.round(pValue["12m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-right bold" data-column="tot">${Math.round(pValue["tot"]/DELIMITER).toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(Math.round(pData.tot/DELIMITER)*100.0/pValue.tot).toFixed(2)+"%"}</td>
-							 </tr>
-							 <tr id="row${pValue.cntrct_sn}-${ALREADY[pValue.cntrct_sn]+2}" data-year="${s_year}">
-								<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
-								<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
-								<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
-								<td class="right_border middle text-left bold">${pValue.spt_nm}</td>
-								<td class="colorJ right_border middle text-center bold">달성</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${pData["1m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${pData["2m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${pData["3m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${pData["4m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${pData["5m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${pData["6m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${pData["7m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${pData["8m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${pData["9m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${pData["10m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${pData["11m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${pData["12m"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${pData["tot"].toString().toFormat('NUMBER')}</td>
-								<td class="colorBtn right_border middle text-center bold" data-column="rt">${(pData.tot*100.0/pValue.tot).toFixed(2)+"%"}</td>
-							 </tr>`;
-                });
-				$("#dtList1").find("tbody").html(html);
+						if(mber != mber_sn){
+							member_total['goal']['tot'] = 0;
+							for(let i=1;i<=12;i++) member_total['goal']['tot'] += member_total['goal'][`${i}`];
+							member_total['real']['tot'] = 0;
+							for(let i=1;i<=12;i++) member_total['real']['tot'] += member_total['real'][`${i}`];
+							html += `<tr">
+									<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+									<td class="right_border middle text-center bold">${mber_nm}</td>
+									<td class="colorSky right_border middle text-center bold">소계</td>
+									<td class="colorSky right_border middle text-left bold" rowspan="2"></td>
+									<td class="right_border middle text-center bold">계획</td>
+									<td class="right_border middle text-right bold" data-column="1m">${member_total['goal']['1'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="2m">${member_total['goal']['2'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="3m">${member_total['goal']['3'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="4m">${member_total['goal']['4'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="5m">${member_total['goal']['5'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="6m">${member_total['goal']['6'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="7m">${member_total['goal']['7'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="8m">${member_total['goal']['8'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="9m">${member_total['goal']['9'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="10m">${member_total['goal']['10'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="11m">${member_total['goal']['11'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="12m">${member_total['goal']['12'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="tot">${member_total['goal']['tot'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-center bold" data-column="rt" rowspan="2">${(member_total['real']['tot']*100.0/member_total['goal']['tot']).toFixed(2)+"%"}</td>
+								 </tr>
+								 <tr>
+									<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+									<td class="right_border middle text-center bold">${mber_nm}</td>
+									<td class="colorSky right_border middle text-center bold">소계</td>
+									<td class="colorJ right_border middle text-center bold">달성</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${member_total['real']['1'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${member_total['real']['2'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${member_total['real']['3'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${member_total['real']['4'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${member_total['real']['5'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${member_total['real']['6'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${member_total['real']['7'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${member_total['real']['8'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${member_total['real']['9'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${member_total['real']['10'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${member_total['real']['11'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${member_total['real']['12'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${member_total['real']['tot'].toString().toFormat('NUMBER')}</td>
+								 </tr>`;
+							$.each(["goal", "real"], function(pI, pP){
+								for(let i=1;i<=12;i++){
+									if(!dept_total[pP].hasOwnProperty(i)){
+										dept_total[pP][i] = 0;
+									}
+									dept_total[pP][i] += member_total[pP][i];
+								}
+							});
+							member_total = {"goal" : {}, "real" : {}};
+							mber = mber_sn;
+							mber_nm = pValue.mber_nm;
+						}
+
+
+						for(let i=1;i<=12;i++){
+							var value = Math.round(pValue[`${i}m`]/DELIMITER);
+							if(!member_total["goal"].hasOwnProperty(i)){
+								member_total["goal"][i] = 0;
+							}
+							member_total["goal"][i] += value;
+							var value = Math.round(pData[`${i}m`]);
+							if(!member_total["real"].hasOwnProperty(i)){
+								member_total["real"][i] = 0;
+							}
+							member_total["real"][i] += value;
+						}
+						if(dept != dept_code){
+							console.log("dept", dept_total);
+							dept_total['goal']['tot'] = 0;
+							for(let i=1;i<=12;i++) dept_total['goal']['tot'] += dept_total['goal'][`${i}`];
+							dept_total['real']['tot'] = 0;
+							for(let i=1;i<=12;i++) dept_total['real']['tot'] += dept_total['real'][`${i}`];
+							html += `<tr">
+									<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+									<td class="colorSky right_border middle text-center bold">팀계</td>
+									<td class="colorSky right_border middle text-center bold"></td>
+									<td class="colorSky right_border middle text-left bold" rowspan="2"></td>
+									<td class="right_border middle text-center bold">계획</td>
+									<td class="right_border middle text-right bold" data-column="1m">${dept_total['goal']['1'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="2m">${dept_total['goal']['2'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="3m">${dept_total['goal']['3'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="4m">${dept_total['goal']['4'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="5m">${dept_total['goal']['5'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="6m">${dept_total['goal']['6'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="7m">${dept_total['goal']['7'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="8m">${dept_total['goal']['8'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="9m">${dept_total['goal']['9'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="10m">${dept_total['goal']['10'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="11m">${dept_total['goal']['11'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="12m">${dept_total['goal']['12'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-right bold" data-column="tot">${dept_total['goal']['tot'].toString().toFormat('NUMBER')}</td>
+									<td class="right_border middle text-center bold" data-column="rt" rowspan="2">${(dept_total['real']['tot']*100.0/dept_total['goal']['tot']).toFixed(2)+"%"}</td>
+								 </tr>
+								 <tr>
+									<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+									<td class="colorSky right_border middle text-center bold">팀계</td>
+									<td class="colorSky right_border middle text-center bold"></td>
+									<td class="colorJ right_border middle text-center bold">달성</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${dept_total['real']['1'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${dept_total['real']['2'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${dept_total['real']['3'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${dept_total['real']['4'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${dept_total['real']['5'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${dept_total['real']['6'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${dept_total['real']['7'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${dept_total['real']['8'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${dept_total['real']['9'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${dept_total['real']['10'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${dept_total['real']['11'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${dept_total['real']['12'].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${dept_total['real']['tot'].toString().toFormat('NUMBER')}</td>
+								 </tr>`;
+							dept_total = {"goal" : {}, "real" : {}};
+							dept = dept_code;
+							dept_nm = pValue.dept_nm;
+
+						}
+
+
+						html += `<tr id="row${pValue.cntrct_sn}-${ALREADY[pValue.cntrct_sn]+1}" data-year="${s_year}" data-row="goal" data-mber="${pValue.mber_sn}" data-dept="${pValue.dept_code}">
+									<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
+									<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
+									<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
+									<td class="right_border middle text-left bold" rowspan="2">${pValue.spt_nm}</td>
+									<td class="right_border middle text-center bold">계획</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="1m">${Math.round(pValue["1m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="2m">${Math.round(pValue["2m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="3m">${Math.round(pValue["3m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="4m">${Math.round(pValue["4m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="5m">${Math.round(pValue["5m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="6m">${Math.round(pValue["6m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="7m">${Math.round(pValue["7m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="8m">${Math.round(pValue["8m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="9m">${Math.round(pValue["9m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="10m">${Math.round(pValue["10m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="11m">${Math.round(pValue["11m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="12m">${Math.round(pValue["12m"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-right bold" data-column="tot">${Math.round(pValue["tot"]/DELIMITER).toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn right_border middle text-center bold" data-column="rt" rowspan="2">${(pData.tot*100.0*DELIMITER/pValue.tot).toFixed(2)+"%"}</td>
+								 </tr>
+								 <tr id="row${pValue.cntrct_sn}-${ALREADY[pValue.cntrct_sn]+2}" data-year="${s_year}" data-row="real" data-mber="${pValue.mber_sn}" data-dept="${pValue.dept_code}">
+									<td class="colorG right_border middle text-center bold">${pValue.dept_nm}</td>
+									<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
+									<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
+									<td class="colorJ right_border middle text-center bold">달성</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${pData["1m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${pData["2m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${pData["3m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${pData["4m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${pData["5m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${pData["6m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${pData["7m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${pData["8m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${pData["9m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${pData["10m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${pData["11m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${pData["12m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${pData["tot"].toString().toFormat('NUMBER')}</td>
+								 </tr>`;
+					});
+					member_total['goal']['tot'] = 0;
+					for(let i=1;i<=12;i++) member_total['goal']['tot'] += member_total['goal'][`${i}`];
+					member_total['real']['tot'] = 0;
+					for(let i=1;i<=12;i++) member_total['real']['tot'] += member_total['real'][`${i}`];
+					html += `<tr">
+							<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+							<td class="right_border middle text-center bold">${mber_nm}</td>
+							<td class="colorSky right_border middle text-center bold">소계</td>
+							<td class="colorSky right_border middle text-left bold" rowspan="2"></td>
+							<td class="right_border middle text-center bold">계획</td>
+							<td class="right_border middle text-right bold" data-column="1m">${member_total['goal']['1'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="2m">${member_total['goal']['2'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="3m">${member_total['goal']['3'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="4m">${member_total['goal']['4'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="5m">${member_total['goal']['5'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="6m">${member_total['goal']['6'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="7m">${member_total['goal']['7'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="8m">${member_total['goal']['8'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="9m">${member_total['goal']['9'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="10m">${member_total['goal']['10'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="11m">${member_total['goal']['11'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="12m">${member_total['goal']['12'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="tot">${member_total['goal']['tot'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-center bold" data-column="rt" rowspan="2">${(member_total['real']['tot']*100.0/member_total['goal']['tot']).toFixed(2)+"%"}</td>
+						 </tr>
+						 <tr>
+							<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+							<td class="right_border middle text-center bold">${mber_nm}</td>
+							<td class="colorSky right_border middle text-center bold">소계</td>
+							<td class="colorJ right_border middle text-center bold">달성</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${member_total['real']['1'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${member_total['real']['2'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${member_total['real']['3'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${member_total['real']['4'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${member_total['real']['5'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${member_total['real']['6'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${member_total['real']['7'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${member_total['real']['8'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${member_total['real']['9'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${member_total['real']['10'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${member_total['real']['11'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${member_total['real']['12'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${member_total['real']['tot'].toString().toFormat('NUMBER')}</td>
+						 </tr>`;
+					$.each(["goal", "real"], function(pI, pP){
+						for(let i=1;i<=12;i++){
+							if(!dept_total[pP].hasOwnProperty(i)){
+								dept_total[pP][i] = 0;
+							}
+							dept_total[pP][i] += member_total[pP][i];
+						}
+					});
+
+					dept_total['goal']['tot'] = 0;
+					for(let i=1;i<=12;i++) dept_total['goal']['tot'] += dept_total['goal'][`${i}`];
+					dept_total['real']['tot'] = 0;
+					for(let i=1;i<=12;i++) dept_total['real']['tot'] += dept_total['real'][`${i}`];
+					html += `<tr">
+							<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+							<td class="colorSky right_border middle text-center bold">팀계</td>
+							<td class="colorSky right_border middle text-center bold"></td>
+							<td class="colorSky right_border middle text-left bold" rowspan="2"></td>
+							<td class="right_border middle text-center bold">계획</td>
+							<td class="right_border middle text-right bold" data-column="1m">${dept_total['goal']['1'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="2m">${dept_total['goal']['2'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="3m">${dept_total['goal']['3'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="4m">${dept_total['goal']['4'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="5m">${dept_total['goal']['5'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="6m">${dept_total['goal']['6'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="7m">${dept_total['goal']['7'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="8m">${dept_total['goal']['8'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="9m">${dept_total['goal']['9'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="10m">${dept_total['goal']['10'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="11m">${dept_total['goal']['11'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="12m">${dept_total['goal']['12'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-right bold" data-column="tot">${dept_total['goal']['tot'].toString().toFormat('NUMBER')}</td>
+							<td class="right_border middle text-center bold" data-column="rt" rowspan="2">${(dept_total['real']['tot']*100.0/dept_total['goal']['tot']).toFixed(2)+"%"}</td>
+						 </tr>
+						 <tr>
+							<td class="colorG right_border middle text-center bold">${dept_nm}</td>
+							<td class="colorSky right_border middle text-center bold">팀계</td>
+							<td class="colorSky right_border middle text-center bold"></td>
+							<td class="colorJ right_border middle text-center bold">달성</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${dept_total['real']['1'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${dept_total['real']['2'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${dept_total['real']['3'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${dept_total['real']['4'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${dept_total['real']['5'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${dept_total['real']['6'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${dept_total['real']['7'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${dept_total['real']['8'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${dept_total['real']['9'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${dept_total['real']['10'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${dept_total['real']['11'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${dept_total['real']['12'].toString().toFormat('NUMBER')}</td>
+							<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${dept_total['real']['tot'].toString().toFormat('NUMBER')}</td>
+						 </tr>`;
+					$("#dtList1").find("tbody").html(html);
+
+				}
 				$("#dtList1").find("tbody").yRowspan(0);
 				$("#dtList1").find("tbody").yRowspan(1);
 				$("#dtList1").find("tbody").yRowspan(2);
-				$("#dtList1").find("tbody").yRowspan(3);
-				$("#dtList1").find("tbody").yRowspan(18);
+
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(0, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(1, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(2, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(3, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClass(18, "bottom_border");
 				$(document).find("#dtList1 tbody[role='body']").yRowClassNext(3, "bottom_border");
+				$(document).find("#dtList1 tbody[role='body']").yRowClassNext(2, "bottom_border");
 				$(document).find(".colored").removeClass("colored");
 				$.each(pResult.colored, function(pIndex, pValue){
 					if(parseInt(pValue.month_class) == 1)

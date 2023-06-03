@@ -12,13 +12,17 @@ def index_page():
 @session_helper.session_check
 def report_page():
     params = request.args.to_dict()
-    if "approval_ty_code" in params:
+    if "approval_ty_code" in params and "approval_sn" in params:
+        approval = get_approval_by_sn(params)
+        approval_sn = params["approval_sn"]
+        init = "copy"
+    elif "approval_ty_code" in params:
         approval = get_approval_by_sn(params)
         approval_sn = None
-        init = True
+        init = "init"
     elif "approval_sn" in params:
         approval_sn = params["approval_sn"]
         approval_data = get_approval_ty_code_by_sn(params)
         approval = get_approval_by_sn(approval_data)
-        init = False
+        init = "show"
     return render_template("approval_report.html", title="전자결재 | 넥셀시스템", init=init, approval=approval, approval_sn=approval_sn, loginSN=session['member']['member_sn'], member_list_by_sn=get_member_list_by_sn(), **refresh_code_list())

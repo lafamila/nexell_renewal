@@ -70,7 +70,5 @@ app.register_blueprint(dev_api)
 app.jinja_env.globals.update(
     zip=zip,
     enumerate=enumerate,
-    set_menu=set_menu,
-    menus=list(),
 )
 

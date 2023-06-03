@@ -36,7 +36,7 @@
             <th class="color-contract">계약일</th>
             <td class="hasinput">
                 <div class="input-group">
-                    <input type="text" class="form-control datepicker" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrct_de" name="cntrct_de">
+                    <input type="text" class="form-control datepicker" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrct_de" name="cntrct_de">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>
@@ -53,9 +53,9 @@
             <th class="color-contract">공사기간</th>
             <td class="hasinput" colspan="3">
                 <div class="input-group">
-                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_bgnde" name="cntrwk_bgnde">
+                    <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_bgnde" name="cntrwk_bgnde">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_endde" name="cntrwk_endde">
+                    <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrwk_endde" name="cntrwk_endde">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>
@@ -116,7 +116,7 @@
             <th class="color-contract">준공예정일</th>
             <td class="hasinput" colspan="3">
                 <div class="input-group">
-                    <input type="text" class="form-control datepicker" style="width:100%!important;z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="expect_de" name="expect_de">
+                    <input type="text" class="form-control datepicker" style="width:100%!important;z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="expect_de" name="expect_de">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>
@@ -208,12 +208,12 @@
         <col width="150">
     </colgroup>
     <tbody>
-        <tr><th rowspan="2">본사담당</th>
-            <th>담당자명</th>
-            <th colspan="2">휴대폰</th>
-            <th rowspan="2">거래처담당</th>
-            <th>담당자명</th>
-            <th colspan="2">휴대폰</th>
+        <tr><th class="colorSky" rowspan="2">본사담당</th>
+            <th class="colorSky">담당자명</th>
+            <th class="colorSky" colspan="2">휴대폰</th>
+            <th class="colorSky" rowspan="2">거래처담당</th>
+            <th class="colorSky">담당자명</th>
+            <th class="colorSky" colspan="2">휴대폰</th>
         </tr>
         <tr>
             <td class="hasinput" colspan="1">
@@ -234,22 +234,22 @@
 
 
         <tr>
-            <th>장비/공사내역</th>
+            <th class="colorSky">장비/공사내역</th>
             <td class="hasinput" colspan="3">
                 <input type="hidden" class="form-control" id="eqpmn_dtls" name="eqpmn_dtls">
                 <input type="text" class="form-control" id="cntrwk_dtls" name="cntrwk_dtls">
             </td>
-            <th>계약DC(%)</th>
+            <th class="colorSky">계약DC(%)</th>
             <td class="hasinput" colspan="1">
                 <input type="number" class="form-control" id="cntrct_dscnt_rt" name="cntrct_dscnt_rt">
             </td>
-            <th>품의DC(%)</th>
+            <th class="colorSky">품의DC(%)</th>
             <td class="hasinput" colspan="1">
                 <input type="number" class="form-control" id="cnsul_dscnt_rt" name="cnsul_dscnt_rt">
             </td>
         </tr>
         <tr name="charger2">
-            <th>설치팀장</th>
+            <th class="colorSky">설치팀장</th>
             <td class="hasinput" colspan="1">
                 <input type="text" class="form-control" id="charger_nm6" name="charger_nm6">
                 <input type="hidden" id="charger_sn6" name="charger_sn6">
@@ -257,35 +257,35 @@
             <td class="hasinput" colspan="2">
                 <input type="text" class="form-control" id="charger_moblphon6" name="charger_moblphon6">
             </td>
-            <th>실적신고</th>
+            <th class="colorSky">실적신고</th>
             <td class="hasinput" colspan="1">
                 <input type="text" class="form-control" id="acmslt_sttemnt_at" name="acmslt_sttemnt_at">
             </td>
-            <th>건설공사대장</th>
+            <th class="colorSky">건설공사대장</th>
             <td class="hasinput" colspan="1">
                 <input type="text" class="form-control" id="cntwrk_regstr_ennc" name="cntwrk_regstr_ennc">
             </td>
         </tr>
         <tr>
-            <th>결제방법(1)</th>
+            <th class="colorSky">결제방법(1)</th>
             <td class="hasinput" colspan="7">
                 <input type="text" class="form-control" id="setle_mth" name="setle_mth">
             </td>
         </tr>
         <tr>
-            <th>결제방법(2)</th>
-            <th colspan="2">금액</th>
-            <th colspan="1">일자</th>
-            <th colspan="4">비고(특이사항)</th>
+            <th class="colorSky">결제방법(2)</th>
+            <th class="colorSky" colspan="2">금액</th>
+            <th class="colorSky" colspan="1">일자</th>
+            <th class="colorSky" colspan="4">비고(특이사항)</th>
         </tr>
         <tr>
-            <th>계약금</th>
+            <th class="colorSky">계약금</th>
             <td class="hasinput" colspan="2">
                 <input type="number" class="form-control" id="enty" name="enty">
             </td>
             <td class="hasinput" colspan="1">
                 <div class="input-group">
-                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
+                    <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="enty_de" name="enty_de">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>
@@ -294,13 +294,13 @@
             </td>
         </tr>
         <tr>
-            <th>중도금</th>
+            <th class="colorSky">중도금</th>
             <td class="hasinput" colspan="2">
                 <input type="number" class="form-control" id="prtpay" name="prtpay">
             </td>
             <td class="hasinput" colspan="1">
                 <div class="input-group">
-                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
+                    <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="prtpay_de" name="prtpay_de">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>
@@ -309,13 +309,13 @@
             </td>
         </tr>
         <tr>
-            <th>잔금</th>
+            <th class="colorSky">잔금</th>
             <td class="hasinput" colspan="2">
                 <input type="number" class="form-control" id="surlus" name="surlus">
             </td>
             <td class="hasinput" colspan="1">
                 <div class="input-group">
-                    <input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
+                    <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="surlus_de" name="surlus_de">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                 </div>
             </td>

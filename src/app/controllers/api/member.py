@@ -45,11 +45,9 @@ def ajax_qr_image_off():
     if result['status']:
         session['member'] = mber.get_member_info(member_sn)
         mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
-        set_menu(session['member']['auth_cd'])
     elif member_qr == '4321':
         session['member'] = mber.get_member_info(member_sn)
         mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
-        set_menu(session['member']['auth_cd'])
         return jsonify({"status" : True})
     return jsonify(result)
 

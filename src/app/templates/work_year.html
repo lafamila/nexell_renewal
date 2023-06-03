@@ -539,8 +539,8 @@ $(document).on("dblclick", ".input-available", function(){
 	if(column != 'rm'){
 		var data = prompt("값을 입력하세요.", before.replaceAll(",", ""));
 		try{
-			if(/^-?\d+$/.test(data)){
-				data = parseInt(data);
+			if(/^(?:[+-])?\d+(?:\.\d)?$/.test(data)){
+				data = parseFloat(data);
 			}
 			else{
 				throw new Error(`Parameter is not a number : ${data}`);
@@ -553,8 +553,12 @@ $(document).on("dblclick", ".input-available", function(){
 	}
 	else{
 		var data = prompt("값을 입력하세요.", before);
+		if(data == null){
+			return false;
+		}
 
 	}
+
 	var td = $(this);
 	var s_mber_sn = $(this).parent().data("mber");
 	var s_year = parseInt($(this).parent().data("year")) + parseInt($(this).data("diff")) - 1;
@@ -573,12 +577,12 @@ $(document).on("dblclick", ".input-available", function(){
 		success: function (pResult) {
 			if(pResult.status){
 				if(column != "rm"){
-					$(td).text(data.toString().toFormat("NUMBER"));
+					$(td).text(data.toFixed(1));
 					let diff = $(td).data("diff");
-					var total = parseInt($(td).parent().find(`td[data-col="tot"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(total)) total = 0;
-					var mod = parseInt($(td).parent().find(`td[data-col="mod"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(mod)) mod = 0;
-					var use = parseInt($(td).parent().find(`td[data-col="use"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(use)) use = 0;
-					$(td).parent().find(`td.rem`).eq(parseInt(diff)).text((total+mod-use).toString().toFormat("NUMBER"));
+					var total = parseFloat($(td).parent().find(`td[data-col="tot"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(total)) total = 0;
+					var mod = parseFloat($(td).parent().find(`td[data-col="mod"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(mod)) mod = 0;
+					var use = parseFloat($(td).parent().find(`td[data-col="use"][data-diff="${diff}"]`).text().replace(",","")); if(isNaN(use)) use = 0;
+					$(td).parent().find(`td.rem`).eq(parseInt(diff)).text((total+mod-use).toFixed(1));
 				}
 				else{
 					$(td).text(data);

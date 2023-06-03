@@ -207,17 +207,11 @@ function updateThumbnail(dropZoneElement, file) {
         </td>
       </tr>
     </tbody>
-    <tbody id="last">
-        <tr>
-            <td>
-
-            </td>
-        </tr>
-    </tbody>
 
 </table>
+<div id="last">
 
-</textarea>
+</div>
 <script>
     fnValidate = function(){
                   var result = true;
@@ -294,7 +288,7 @@ function updateThumbnail(dropZoneElement, file) {
               $.each(pResult, function(pIndex, path){
                 html += `<img src="/static/files/${path}" style="max-width:99vw;min-width:100%;height:auto;"/>`;
               });
-              $("#last").find("td").eq(0).html(html);
+              $("#last").html(html);
 
             },
             error: function(pResult){

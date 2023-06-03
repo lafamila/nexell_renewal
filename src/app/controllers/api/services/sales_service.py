@@ -826,7 +826,6 @@ def update_equipment_establish(params):
             if key.split("_")[0] not in company:
                 company[key.split("_")[0]] = dict()
             company[key.split("_")[0]]["_".join(key.split("_")[1:])] = params[key]
-    print(company)
     for idx, c in company.items():
         if idx.replace("company", "") == '':
             continue
