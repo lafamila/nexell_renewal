@@ -22,7 +22,7 @@
     </thead>
     <tbody>
         <tr>
-            <td class="colorSky text-center">판매처</td>
+            <td class="colorSky text-center">현장명</td>
             <td class="text-center hasinput">
                 <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
                     {% if not init %}
@@ -33,6 +33,10 @@
                     {% endif %}
                 </select>
             </td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">판매처</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_target" id="sale_target"></td>
         </tr>
         <tr>
             <td class="colorSky text-center">판매처담당자</td>
@@ -64,9 +68,14 @@
         <col width="120">
         <col width="120">
         <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col width="120">
     </colgroup>
     <thead>
-        <th class="sub-title colorN text-center" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
+        <th class="sub-title colorN text-center" colspan="18"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
 
             <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                 <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowStock">재고장비추가</button>
@@ -76,19 +85,31 @@
     </thead>
     <tbody role="header">
        <tr>
-            <th class="color-contract text-center">판매구분</th>
-            <th class="color-contract text-center">매입일</th>
-            <th class="color-contract text-center">매입처</th>
-            <th class="color-contract text-center">상품명</th>
-            <th class="color-contract text-center">모델명</th>
-            <th class="color-contract text-center">수량</th>
-            <th class="color-contract text-center">매입단가</th>
-            <th class="color-contract text-center">매입금액</th>
-            <th class="colorP text-center">판매처</th>
-            <th class="colorP text-center">판매금액</th>
-            <th class="colorP text-center">기타비용(배송/설치비)</th>
-            <th class="colorP text-center">VA</th>
-            <th class="colorP text-center">비고</th>
+            <th class="color-contract text-center" rowspan="3">판매구분</th>
+            <th class="color-contract text-center" rowspan="3" colspan="2">품명</th>
+            <th class="color-contract text-center" rowspan="3">모델명</th>
+            <th class="color-contract text-center" rowspan="3">매입처</th>
+            <th class="color-contract text-center" rowspan="3">수량</th>
+            <th class="color-contract text-center" rowspan="3">출고가</th>
+            <th class="color-contract text-center" colspan="4">매입</th>
+            <th class="colorP text-center" colspan="4">판매</th>
+            <th class="colorP text-center" colspan="2">VA</th>
+            <th class="colorP text-center" rowspan="3">비고</th>
+       </tr>
+       <tr>
+            <th class="color-contract text-center" rowspan="2">매입일</th>
+            <th class="color-contract text-center" rowspan="2">단가</th>
+            <th class="color-contract text-center" rowspan="2">금액</th>
+            <th class="color-contract text-center" rowspan="2">DC율</th>
+            <th class="colorP text-center" colspan="2">제품대</th>
+            <th class="colorP text-center" rowspan="2">기타비용<br>(배송,설치)</th>
+            <th class="colorP text-center" rowspan="2">계</th>
+            <th class="colorP text-center" rowspan="2">금액</th>
+            <th class="colorP text-center" rowspan="2">VA율</th>
+       </tr>
+       <tr>
+            <th class="colorP text-center">단가</th>
+            <th class="colorP text-center">금액</th>
         </tr>
     </tbody>
     <tbody role="equip_row" data-tr="equip_tr">
@@ -96,19 +117,17 @@
     </tbody>
     <tfoot>
         <tr>
-            <td class="colorG text-center">계</td>
-            <td class="colorG text-right"></td>
-            <td class="colorG text-right"></td>
-            <td class="colorG text-right"></td>
-            <td class="colorG text-right"></td>
+            <td class="colorG text-center" colspan="5">계</td>
             <td class="colorG text-center" data-column="total_dlnt"></td>
             <td class="colorG text-right"></td>
-            <td class="colorG text-right" data-column="total_pamount"></td>
             <td class="colorG text-right"></td>
-            <td class="colorG text-right" data-column="total_samount"></td>
+            <td class="colorG text-right" colspan="3" data-column="total_pamount"></td>
+            <td class="colorG text-right" colspan="2" data-column="total_samount"></td>
             <td class="colorG text-right" data-column="total_etc"></td>
+            <td class="colorG text-right" data-column="total_s"></td>
             <td class="colorG text-right" data-column="total_va"></td>
-            <td class="colorG"></td>
+            <td class="colorG text-center" data-column="total_va_rate"></td>
+            <td class="colorG text-right"></td>
         </tr>
     </tfoot>
 </table>
@@ -199,9 +218,11 @@
                     else{
                         $(row).find(`[name="prdlst_se_code[]"]`).yVal('9');
                     }
+                    $(row).find(`[name="prduct_ty_code[]"]`).yVal(pValue.prduct_ty_code);
                     $(row).find(`[name="bcnc_sn[]"]`).yVal('79');
                     $(row).find(`select[name="bcnc_sn[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
                     $(row).find(`select[name="prdlst_se_code[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
+                    $(row).find(`select[name="prduct_ty_code[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
                     $(row).find(`[name="model_no[]"]`).attr("readonly", true);
                     $(row).find(`[name="model_no[]"]`).val(pValue.modl_nm);
                     $(row).find(`[name="dlnt[]"]`).val("1");
@@ -235,7 +256,24 @@
                                 </select>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-center" data-type="date" name="ddt_man[]"/>
+                                <select class="form-control select2 init-select2" name="prdlst_se_code[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    {% for code in prdlst_se_code_list %}
+                                    <option value="{{code.value}}">{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <select class="form-control select2 init-select2" name="prduct_ty_code[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    {% for code in prduct_ty_code_list %}
+                                    <option value="{{code.value}}">{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" name="model_no[]"/>
+                                <input type="hidden" name="stock_sn[]" value=""/>
                             </td>
                             <td class="hasinput">
                                 <select class="form-control select2 init-select2" name="bcnc_sn[]" style="width:100%!important;">
@@ -246,39 +284,29 @@
                                 </select>
                             </td>
                             <td class="hasinput">
-                                <select class="form-control select2 init-select2" name="prdlst_se_code[]" style="width:100%!important;">
-                                    <option value="">[전체]</option>
-                                    {% for code in prdlst_se_code_list %}
-                                    <option value="{{code.value}}">{{code.label}}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td class="hasinput">
-                                <input type="text" class="form-control text-left" name="model_no[]"/>
-                                <input type="hidden" name="stock_sn[]" value=""/>
-                            </td>
-                            <td class="hasinput">
                                 <input type="text" class="form-control text-center" data-type="number" name="dlnt[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="dlivy_amt[]"/>
                             </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-center" data-type="date" name="ddt_man[]"/>
+                            </td>
+                            <td class="text-right" name="dlamt[]"></td>
                             <td class="text-right" name="pamount[]"></td>
                             <td class="hasinput">
-                                <select class="form-control select2 init-select2" name="s_bcnc_sn[]" style="width:100%!important;">
-                                    <option value=""></option>
-                                    {% for code in bcnc_list %}
-                                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
-                                    {% endfor %}
-                                </select>
+                                <input type="text" class="form-control text-center" data-type="rate" name="dc[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="s_dlamt[]"/>
                             </td>
+                            <td class="text-right" name="samount[]"></td>
                             <td class="hasinput">
                                 <input type="text" class="form-control text-right" data-type="number" name="etc[]"/>
                             </td>
+                            <td class="text-right" name="samount_tot[]"></td>
                             <td class="text-right" name="va[]"></td>
+                            <td class="text-right" name="va_rate[]"></td>
                             <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="rm[]"/>
                             </td>
@@ -307,27 +335,40 @@
         var total_pamount = 0;
         var total_etc = 0;
         var total_va = 0;
+        var total_s = 0;
         $(this).find("tr").each(function(pIndex, pRow){
             var dlnt = parseInt($(pRow).find("input[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
-            var dlamt = parseInt($(pRow).find("input[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
-            var samount = parseInt($(pRow).find("input[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var dlivy_amt = parseInt($(pRow).find("input[name='dlivy_amt[]']").val().replaceAll(",", "")); if(isNaN(dlivy_amt)) dlivy_amt = 0;
+            var dc = parseFloat($(pRow).find("input[name='dc[]']").val().replaceAll(",", "").replaceAll("%", "")); if(isNaN(dc)) dc = 100.0;
+            var dlamt = dlivy_amt *(100 - dc) / 100
+
+            var s_dlamt = parseInt($(pRow).find("input[name='s_dlamt[]']").val().replaceAll(",", "")); if(isNaN(s_dlamt)) s_dlamt = 0;
+            var samount = s_dlamt * dlnt;
             var etc = parseInt($(pRow).find("input[name='etc[]']").val().replaceAll(",", "")); if(isNaN(etc)) etc = 0;
             var pamount = dlamt * dlnt;
+            var samount_tot = samount - etc;
             var va = samount-pamount-etc;
 
             total_dlnt += dlnt;
             total_samount += samount;
             total_pamount += pamount;
+            total_s += samount_tot;
             total_etc += etc;
             total_va += va;
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='va_rate[]']").html((va * 100.0 / samount_tot).toFixed(1) + "%");
             $(pRow).find("[name='pamount[]']").html(pamount.toFormat('NUMBER'));
+            $(pRow).find("[name='dlamt[]']").html(dlamt.toFormat('NUMBER'));
+            $(pRow).find("[name='samount[]']").html(samount.toFormat('NUMBER'));
+            $(pRow).find("[name='samount_tot[]']").html(samount_tot.toFormat('NUMBER'));
         });
 
         $(this).parent().find("[data-column='total_pamount']").html(total_pamount.toFormat('NUMBER'));
         $(this).parent().find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
         $(this).parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_va_rate']").html((total_va * 100.0 / total_s).toFormat('NUMBER'));
         $(this).parent().find("[data-column='total_etc']").html(total_etc.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_s']").html(total_s.toFormat('NUMBER'));
         $(this).parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
     });
     {% if init %}

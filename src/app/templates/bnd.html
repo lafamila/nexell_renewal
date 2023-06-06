@@ -315,7 +315,9 @@ tbody .btnUpdate, tbody .btn{
 												<option value="-1">[전체]</option>
 											</select>
 										</th>
-										<th class="colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="4">현장명</th>
+										<th class="hasinput button" style="padding:0px!important;">
+											<input type="text" class="form-control" name="s_spt_nm" id="s_spt_nm"/>
+										</th>
                                         <th class="hasinput button" style="padding:0px!important;">
 											<select class="form-control select2 w100p s_resrv_type" name="s_resrv_type">
 												<option value="-1">[전체]</option>
@@ -345,6 +347,7 @@ tbody .btnUpdate, tbody .btn{
 									</tr>
 									<tr>
 										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="3">건설사</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="3">현장명</th>
 										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="3">계약분류</th>
                                         <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">담당</th>
                                         <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">본사</th>
@@ -489,6 +492,7 @@ tbody .btnUpdate, tbody .btn{
 	var s_resrv_type = $('#s_resrv_type').val();
 	var s_resrv_chrg = $('#s_resrv_chrg').val();
 	var s_resrv_c_chrg = $('#s_resrv_c_chrg').val();
+	var s_spt_nm = $('#s_spt_nm').val();
 
 	var params = '';
     if(s_resrv_bcnc != '' && s_resrv_bcnc != '-1'){
@@ -502,6 +506,9 @@ tbody .btnUpdate, tbody .btn{
     }
     if(s_resrv_c_chrg != '' && s_resrv_c_chrg != '-1'){
         params += '&s_resrv_c_chrg='+s_resrv_c_chrg;
+    }
+    if(s_spt_nm != ''){
+        params += '&s_spt_nm='+s_spt_nm;
     }
 	params += '&bnd_year='+bnd_year;
 	console.log(params);
@@ -571,19 +578,19 @@ tbody .btnUpdate, tbody .btn{
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.bsn_chrg_nm}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.chrg_nm}</td>
                             <td class="bold colorBtn top_border middle right_border ${_class}" style="text-align:right;">${Math.round(pValue.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border text-center ${_class} m-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center ${_class} m-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-right ${_class} m-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-right middle right_border ${_class} m-remain" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center middle right_border ${_class} m-next-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center ${_class} s-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center ${_class} s-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-right ${_class} s-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-right middle right_border ${_class} s-remain" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center middle right_border ${_class} s-next-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-center ${_class} t-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-right ${_class} t-t-date" style="text-align:left;"></td>
-                            <td class="bold colorBtn top_border text-right middle right_border ${_class} t-remain" style="text-align:left;"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} m-date" style="text-align:left;" data-column="1"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} m-t-date" style="text-align:left;" data-column="2"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} m-t-date" style="text-align:left;" data-column="3"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} m-remain" style="text-align:left;" data-column="4"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} m-next-date" style="text-align:left;" data-column="5"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} s-date" style="text-align:left;" data-column="6"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} s-t-date" style="text-align:left;" data-column="7"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} s-t-date" style="text-align:left;" data-column="8"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} s-remain" style="text-align:left;" data-column="9"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} s-next-date" style="text-align:left;" data-column="10"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} t-t-date" style="text-align:left;" data-column="11"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} t-t-date" style="text-align:left;" data-column="12"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} t-remain" style="text-align:left;" data-column="13"></td>
                             <td class="bold colorBtn top_border text-center middle right_border ${_class} input-available" style="text-align:left;" data-column="expect_de">${pValue.expect_de}</td>`;
               if(pValue.prjct_ty_code == 'BF'){
 				  var rate = parseInt(pValue.rate);
@@ -655,14 +662,14 @@ tbody .btnUpdate, tbody .btn{
 				$(row).find("td").eq(23).attr("rowspan", pRow.max_row.toString());
             	var html = `<tr class="row${cntrct_sn}">
 	                            <td class="bold colorBtn top_border text-center middle ${_class}"><span class="${count}"></span>${label}</td>
-								<td class="bold colorBtn ${_class} text-center m-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-center m-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-right m-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-center s-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-center s-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-right s-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-center t-t-date" style="text-align:left;"></td>
-								<td class="bold colorBtn ${_class} text-right t-t-date" style="text-align:left;border-right:1px solid #ddd!important;"></td>
+								<td class="bold colorBtn ${_class} text-center m-date" style="text-align:left;" data-column="1"></td>
+								<td class="bold colorBtn ${_class} text-center m-t-date" style="text-align:left;" data-column="2"></td>
+								<td class="bold colorBtn ${_class} text-right m-t-date" style="text-align:left;" data-column="3"></td>
+								<td class="bold colorBtn ${_class} text-center s-date" style="text-align:left;" data-column="6"></td>
+								<td class="bold colorBtn ${_class} text-center s-t-date" style="text-align:left;" data-column="7"></td>
+								<td class="bold colorBtn ${_class} text-right s-t-date" style="text-align:left;" data-column="8"></td>
+								<td class="bold colorBtn ${_class} text-center t-t-date" style="text-align:left;" data-column="11"></td>
+								<td class="bold colorBtn ${_class} text-right t-t-date" style="text-align:left;border-right:1px solid #ddd!important;" data-column="12"></td>
 							</tr>`;
             	for(let i=0;i<pRow.max_row-1;i++){
 	            	$(html).insertAfter(`#${cntrct_sn}`);
@@ -759,6 +766,20 @@ tbody .btnUpdate, tbody .btn{
 				}
 			});
             getReserveType(s_resrv_bcnc, s_resrv_type, s_resrv_chrg);
+   			$("#dtList1").find(".colorY").removeClass("colorY");
+            $.each(pResult.color, function(pIndex, pValue){
+
+	            var target = $("#dtList1").find(`tr.row${pValue.bnd_cntrct_sn} td[data-column="${pValue.bnd_column}"]`).eq(parseInt(pValue.bnd_row));
+	            if(target){
+	            	if(pValue.bnd_class == 1){
+	            		$(target).addClass("colorY");
+					}
+	            	else{
+	            		$(target).removeClass("colorY");
+
+					}
+				}
+			})
         }
 	});
   }
@@ -787,6 +808,52 @@ $(document).on("change", ".input-available-select", function(){
 		}
 	});
 
+});
+set_color = function(td){
+	var authors = ["*"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+
+	var bnd_year = $("#s_year").val();
+	var cntrct_sn = $(td).parent().attr("class").replaceAll("row", "");
+	var column = $(td).data("column");
+	var row = $(document).find(`tr.row${cntrct_sn} td[data-column="${column}"]`).index($(td));
+	var bnd_class = (!$(td).hasClass("colorY")) ? 1 : 0;
+	$.ajax({
+		url : '/api/common/bnd_set_color',
+		method: 'GET',
+		data : {"bnd_year":bnd_year, "bnd_cntrct_sn": cntrct_sn, "bnd_row" : row, "bnd_column" : column, "bnd_class" : bnd_class},
+		success: function(pResult){
+			if(bnd_class == 1){
+				$(td).addClass("colorY");
+			}
+			else{
+				$(td).removeClass("colorY");
+			}
+		},
+		error:function(pResult){
+			alert("심각한 에러가 발생했습니다.");
+		}
+	})
+}
+var timer;
+$(document).on("click", "td[data-column]", function(){
+	var td = $(this);
+	if(timer){
+		clearTimeout(timer);
+		timer = null;
+	}
+	else{
+		timer = setTimeout(function(){
+
+			set_color(td);
+            clearTimeout(timer);
+            timer = null;
+		}, 250);
+	}
 });
 $(document).on("dblclick", ".input-available", function(){
 	var column = $(this).data("column");
@@ -833,6 +900,24 @@ $(document).on("dblclick", ".input-available", function(){
 		}
 	});
 
+});
+window.spt_nm = "";
+$(document).on("keyup", "#s_spt_nm", function(e){
+	var spt_nm = $(this).val();
+	if(e.keyCode == 13){
+		if(spt_nm != window.spt_nm){
+			    var year = $("#s_year").val();
+				var now_year = (new Date()).toISOString().split("T")[0].split("-")[0];
+				if((parseInt(now_year)-5) >= parseInt(year)){
+					alert("검색 기간은 최대 5년입니다.");
+					return false;
+				}
+				//resetTable();
+				getBndList(year);
+				window.spt_nm = spt_nm;
+
+		}
+	}
 });
 </script>
 <script type="text/javascript">

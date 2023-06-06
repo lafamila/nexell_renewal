@@ -1,6 +1,6 @@
 from flask import session
 from app.connectors import DB
-
+from datetime import datetime
 
 def refresh_code_list():
     def wrapper(**params):
@@ -233,6 +233,60 @@ def get_code_list(parnts_code):
 def set_menu(auth_cd):
     db = DB()
     curs = db.cursor()
+
+    #########################
+    # auto handler check    #
+    #########################
+    # general sales project - bcnc check
+
+    bcnc_nm = "{}년{}월일반".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")))
+    row = curs.execute("SELECT bcnc_sn FROM bcnc WHERE bcnc_nm=%s AND bcnc_se_code='S'", bcnc_nm)
+    if not row:
+        curs.execute("INSERT bcnc(CTMMNY_SN, BCNC_SE_CODE, BCNC_NM, BCNC_TELNO, BCNC_ADRES, RPRSNTV_NM, BIZRNO, BSNM_SE_CODE, ESNTL_DELNG_NO, USE_AT, REGIST_DTM, REGISTER_ID) VALUES (1, 'S', %s, null, null, null, '해당사항없음', 1, null, 'Y', NOW(), 'nexelll')", bcnc_nm)
+        bcnc_sn = curs.lastrowid
+    else:
+        bcnc_sn = curs.fetchone()['bcnc_sn']
+
+    # general sales project - contract & project check
+    curs.execute("SHOW COLUMNS FROM contract")
+    result = curs.fetchall()
+    print(result)
+    total_columns = []
+    required = []
+    for r in result:
+        key = r['Field'].lower()
+        if r['Default'] is '' and r['Extra'] != 'auto_increment':
+            required.append(key)
+        if r['Extra'] != 'auto_increment':
+            total_columns.append(key)
+
+    data = {r.lower():None for r in required}
+
+    data["ctmmny_sn"] = 1
+    data["regist_dtm"] = datetime.now()
+    data["register_id"] = 'nexell'
+    data['progrs_sttus_code'] = 'P'
+
+    for dept_nm in ["공조1", "공조2", "빌트인"]:
+
+        data['cntrct_nm'] = "{}년{}월 {} 일반판매".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")), dept_nm)
+        data['spt_nm'] = data['cntrct_nm']
+        data['cntrct_de'] = datetime.now().strftime("%Y-%m-01")
+        data['prjct_ty_code'] = "NR" if dept_nm.startswith("공조") else "BD"
+        data['bcnc_sn'] = bcnc_sn
+        data['cntrct_no'] = ''
+        data['prjct_creat_at'] = 'Y'
+        row = curs.execute("SELECT cntrct_sn FROM contract WHERE bcnc_sn=%(bcnc_sn)s AND cntrct_no='' AND cntrct_nm=%(cntrct_nm)s", data)
+        if not row:
+            keys = list(data.keys())
+            sub_query = keys
+            params_query = ["%({})s".format(key) for key in keys]
+
+            query = """INSERT INTO contract({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+            curs.execute(query, data)
+
+    db.commit()
+
     curs.execute("""SELECT m.parnts_menu_sn
                 , m.menu_sn
                 , m.menu_nm

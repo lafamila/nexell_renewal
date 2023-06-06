@@ -230,6 +230,9 @@ def get_stock_datatable(params, prduct_se_code):
         else:
             query += " AND m.stock_sttus = 1 AND m.cntrct_sn=%s"
             data.append(sttus_code)
+
+    params["custom_order"] = ["IF(instl_de <> '', instl_de, IF(m.stock_sttus IN (1, 4), m.ddt_man, '')) DESC"]
+
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):

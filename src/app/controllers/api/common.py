@@ -77,6 +77,7 @@ def ajax_get_bcnc_list():
 def ajax_get_bnd():
     params = request.args.to_dict()
     result = dict()
+    result['color'] = cm.get_bnd_color(params)
     result['bnd'] = cm.get_bnd_data(params)
     result['data'] = cm.get_bnd_projects(params)
     result['rate'] = dict()
@@ -650,3 +651,9 @@ def delete_bbs():
     params = request.args.to_dict()
     result = cm.delete_bbs(params)
     return jsonify(result)
+
+@bp.route('/common/bnd_set_color', methods=['GET'])
+def bnd_set_color():
+    params = request.args.to_dict()
+    cm.set_bnd_color(params)
+    return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})

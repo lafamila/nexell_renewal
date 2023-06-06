@@ -466,7 +466,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 										}
 									}
 									$.each(value, function(pIndex, pValue){
-
+										console.log(key);
 										var tagName = $("#formContent").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
 										if(tagName == "INPUT"){
 											$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
@@ -531,7 +531,6 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                                         }
                                     }
                                     $.each(value, function(pIndex, pValue){
-
                                         var tagName = $("#formContent").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
                                         if(tagName == "INPUT"){
                                             $("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);

@@ -1085,3 +1085,55 @@ def update_direct(params):
 
 def update_account_expect_de(params):
     g.curs.execute("UPDATE account SET expect_de=%(expect_de)s WHERE cntrct_sn=%(cntrct_sn)s AND bcnc_sn=%(bcnc_sn)s AND expect_de=%(before)s", params)
+
+def insert_general_sales_NR(params):
+    for stock_sn, bcnc_sn, ddt_man, dlamt, dlnt, model_no, prdlst_se_code, s_bcnc_sn, samount, etc in zip(params['stock_sn[]'], params['bcnc_sn[]'], params['ddt_man[]'], params['dlamt[]'], params['dlnt[]'], params['model_no[]'], params['prdlst_se_code[]'], params['s_bcnc_sn[]'], params['samount[]'], params['etc[]']):
+        data = dict()
+        data['ctmmny_sn'] = 1
+        data['bcnc_sn'] = bcnc_sn
+        data['delng_ty_code'] = '1'
+        data['cntrct_sn'] = params['cntrct_sn']
+        data['prjct_sn'] = None
+        data['ddt_man'] = ddt_man
+        data['delng_se_code'] = 'P'
+        data['dlamt'] = int(dlamt.replace(",", "")) if dlamt.replace(",", "") != '' else 0
+        data['dlnt'] = int(dlnt.replace(",", "")) if dlnt.replace(",", "") != '' else 0
+        data['model_no'] = model_no
+        data['prdlst_se_code'] = prdlst_se_code
+        data['regist_dtm'] = datetime.datetime.now()
+        data['register_id'] = 'nexell'
+
+        keys = list(data.keys())
+
+        query = """INSERT INTO account({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+        g.curs.execute(query, data)
+        cnnc_sn = g.curs.lastrowid
+
+        if stock_sn != '':
+            query = """SELECT MAX(log_sn) AS log_sn FROM stock_log WHERE stock_sn=%s"""
+            g.curs.execute(query, stock_sn)
+            result = g.curs.fetchall()
+            if result and result[0]['log_sn'] is not None:
+                log_sn = result[0]['log_sn']
+            else:
+                log_sn = None
+            g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%s, 3, %s, %s, %s, %s)""", (stock_sn, data['cntrct_sn'], cnnc_sn, data['ddt_man'], log_sn))
+
+
+        data['delng_se_code'] = 'S'
+        data['delng_ty_code'] = '12'
+        data['bcnc_sn'] = s_bcnc_sn
+        samount = int(samount.replace(",", "")) if samount.replace(",", "") != '' else 0
+        etc = int(etc.replace(",", "")) if etc.replace(",", "") != '' else 0
+
+        data['dlamt'] = (samount - etc) / data['dlnt']
+        data['dlivy_de'] = data['ddt_man']
+        data['expect_de'] = params['expect_de']
+        data['cnnc_sn'] = cnnc_sn
+
+        keys = list(data.keys())
+
+        query = """INSERT INTO account({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+        g.curs.execute(query, data)
+
+

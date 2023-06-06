@@ -707,6 +707,10 @@ def get_bnd_projects(params):
         query += " AND bcnc_sn=%s"
         data.append(params["s_resrv_bcnc"])
 
+    if "s_spt_nm" in params and params['s_spt_nm']:
+        query += " AND c.spt_nm LIKE %s"
+        data.append("%{}%".format(params["s_spt_nm"]))
+
     if "s_resrv_chrg" in params and params['s_resrv_chrg']:
         query += " AND bsn_chrg_sn=%s"
         data.append(params["s_resrv_chrg"])
@@ -1824,3 +1828,18 @@ def get_bbs(params):
     return result
 def delete_bbs(params):
     g.curs.execute("DELETE FROM bbs WHERE bbs_sn=%(bbs_sn)s", params)
+
+def set_bnd_color(params):
+    row = g.curs.execute("SELECT bnd_sn FROM bnd_color WHERE bnd_year=%(bnd_year)s AND bnd_cntrct_sn=%(bnd_cntrct_sn)s AND bnd_column=%(bnd_column)s AND bnd_row=%(bnd_row)s", params)
+    if row:
+        data = g.curs.fetchone()
+        params['bnd_sn'] = data['bnd_sn']
+        g.curs.execute("UPDATE bnd_color SET bnd_class=%(bnd_class)s WHERE bnd_sn=%(bnd_sn)s", params)
+    else:
+        keys = list(params.keys())
+        g.curs.execute("INSERT bnd_color({}) VALUES({})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys])), params)
+
+def get_bnd_color(params):
+    g.curs.execute("SELECT bnd_cntrct_sn, bnd_column, bnd_row, bnd_class FROM bnd_color WHERE bnd_year=%(bnd_year)s", params)
+    result = g.curs.fetchall()
+    return result

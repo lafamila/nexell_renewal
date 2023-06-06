@@ -649,6 +649,12 @@ def insert_equipment():
     sales.insert_equipment(params)
     return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
+@bp.route('/insert_general_sales_NR', methods=['POST'])
+def insert_general_sales_NR():
+    params = request.get_json()
+    sales.insert_general_sales_NR(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
 @bp.route('/insert_equipment_BD_samsung', methods=['POST'])
 def insert_equipment_BD_samsung():
     params = request.get_json()
