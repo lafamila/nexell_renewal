@@ -140,6 +140,121 @@
 <!-- 레포트1 레이어 팝업 끝 -->
 
 <script>
+insertDirect = function(taxbil_sn, rcppay_de, amount)
+{
+	var params = '';
+	params += '&taxbil_sn='+taxbil_sn;
+	params += '&rcppay_de='+rcppay_de;
+	params += '&amount='+amount;
+	$.ajax({
+		url: '/api/sales/ajax_insert_direct',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            getSalesExpectReport($("#r3_s_ddt_man").val());
+		}
+	});
+}
+
+updateDirect = function(taxbil_sn, rcppay_de, amount)
+{
+	var params = '';
+	params += '&taxbil_sn='+taxbil_sn;
+	params += '&rcppay_de='+rcppay_de;
+	params += '&amount='+amount;
+	$.ajax({
+		url: '/api/sales/ajax_update_direct',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            getSalesExpectReport($("#r3_s_ddt_man").val());
+		}
+	});
+}
+
+updateAccount = function(cntrct_sn, bcnc_sn, before, expect_de)
+{
+	var params = '';
+	params += '&cntrct_sn='+cntrct_sn;
+	params += '&bcnc_sn='+bcnc_sn;
+	params += '&before='+before;
+	params += '&expect_de='+expect_de;
+	$.ajax({
+		url: '/api/sales/ajax_update_account_expect_de',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return true;
+		},
+		success: function(pResult) {
+            getSalesExpectReport($("#r3_s_ddt_man").val());
+		}
+	});
+}
+
+
+    $(document).on('dblclick', "td[name=am], td[name=de]", function(pEvent){
+        if($(this).attr('name') == "de"){
+            var td_de = $(this);
+            var td_am = $(this).next();
+        }else{
+            var td_de = $(this).prev();
+            var td_am = $(this);
+        }
+
+        var before = td_de.html();
+        var de = prompt('날짜를 입력하세요 (YYYY-MM-DD)');
+        if(de==null){
+            return;
+        }
+        else if(de.length == 8){
+            de = "20" + de;
+        }
+
+        if(before.length == 8){
+            before = "20" + before;
+        }
+        var amount = prompt('금액을 입력하세요');
+        if(amount==null){
+            return;
+        }
+        td_de.html(de);
+        td_am.html(amount.toFormat('NUMBER'));
+
+        if(before !== de){
+            insertDirect(td_am.data("sn"), de, amount);
+        }
+        else{
+            updateDirect(td_am.data("sn"), de, amount);
+        }
+    });
+    $(document).on('dblclick', "td[name=update_de]", function(pEvent){
+        var cntrct_sn = $(this).data("cntrct");
+        var bcnc_sn = $(this).data("bcnc");
+        var before = $(this).data("de");
+        var expect_de = prompt("날짜를 입력하세요");
+
+        if(expect_de==null){
+            return;
+        }
+        updateAccount(cntrct_sn, bcnc_sn, before, expect_de);
+    });
+
     getSalesExpectReport = function(expect_de){
         var params = '';
         params += '&expect_de='+expect_de;
@@ -161,6 +276,13 @@
 				var _class = "colorW";
 				$.each(pTable.longTermData, function(pIndex, pValue){
 					var color3 = $.dateDiff(pValue.rcppay_de) <= 3.0 ? ' colorButton' : ' ';
+                    var name = '';
+                    var am = '';
+                    if(pValue.taxbil_yn == 'N'){
+                        name = ' name="de" data-sn="'+pValue.taxbil_sn+'" ';
+                        am = ' name="am" data-sn="'+pValue.taxbil_sn+'" ';
+                    }
+                    var update = pValue.price_4 == '' ? ' name="update_de" data-cntrct="'+pValue.cntrct_sn+'" data-bcnc="'+pValue.bcnc_sn+'" data-de="'+pValue.sales_expect_de+'" ' : '';
 					html += `<tr class="${_class}">`;
 					html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dlivy_de+'</td>';
 					html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.bcnc_nm+'</td>';
@@ -172,9 +294,9 @@
 					html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_sum.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_4.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+ ((pValue.taxbil_sn == '') ? '' : (pValue.delng_se_nm.match(/\(([^)]+)\)/g) == null ? '매출' : pValue.delng_se_nm.match(/\(([^)]+)\)/g)[0].replaceAll("(", "").replaceAll(")", "")))+'</td>';
-					html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.expect_de.substr(2,5)+'</td>';
-					html += '    <td class="'+color3+'">'+pValue.rcppay_de.substr(2,8)+'</td>';
-					html += '    <td class="text-number '+color3+'">'+pValue.rcppay_amount.toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class="" '+update+'><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.expect_de.substr(2,5)+'</td>';
+					html += '    <td class="'+color3+'" '+name+'>'+pValue.rcppay_de.substr(2,8)+'</td>';
+					html += '    <td class="text-number '+color3+'" '+am+'>'+pValue.rcppay_amount.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'">'+pValue.diff.toString().toFormat('NUMBER')+'</td>';
 					html += '</tr>';
 				});
@@ -330,6 +452,14 @@
                             var _class = (pStatus == -1) ? "colorRY" : "colorW";
                             $.each(pResult[pStatus], function(pI, pValue){
                                 var color3 = $.dateDiff(pValue.rcppay_de) <= 3.0 ? ' colorButton' : ' ';
+                                var name = '';
+                                var am = '';
+                                if(pValue.taxbil_yn == 'N'){
+                                    name = ' name="de" data-sn="'+pValue.taxbil_sn+'" ';
+                                    am = ' name="am" data-sn="'+pValue.taxbil_sn+'" ';
+                                }
+                                var update = pValue.price_4 == '' ? ' name="update_de" data-cntrct="'+pValue.cntrct_sn+'" data-bcnc="'+pValue.bcnc_sn+'" data-de="'+pValue.sales_expect_de+'" ' : '';
+
                                 html += `<tr class="${_class}">`;
                                 html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dlivy_de+'</td>';
                                 html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.bcnc_nm+'</td>';
@@ -341,9 +471,9 @@
                                 html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_sum.toString().toFormat('NUMBER')+'</td>';
                                 html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.price_4.toString().toFormat('NUMBER')+'</td>';
                                 html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+ ((pValue.taxbil_sn == '') ? '' : (pValue.delng_se_nm.match(/\(([^)]+)\)/g) == null ? '매출' : pValue.delng_se_nm.match(/\(([^)]+)\)/g)[0].replaceAll("(", "").replaceAll(")", "")))+'</td>';
-                                html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.expect_de.substr(2,5)+'</td>';
-                                html += '    <td class="'+color3+'">'+pValue.rcppay_de.substr(2,8)+'</td>';
-                                html += '    <td class="text-number '+color3+'">'+pValue.rcppay_amount.toString().toFormat('NUMBER')+'</td>';
+                                html += '    <td class="" '+update+'><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.expect_de.substr(2,5)+'</td>';
+                                html += '    <td class="'+color3+'" '+name+'>'+pValue.rcppay_de.substr(2,8)+'</td>';
+                                html += '    <td class="text-number '+color3+'" '+am+'>'+pValue.rcppay_amount.toString().toFormat('NUMBER')+'</td>';
                                 html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.diff.toString().toFormat('NUMBER')+'</td>';
                                 html += '</tr>';
                             });

@@ -432,6 +432,15 @@ getProjectList = function()
                         html += '		<i class="fa fa-edit"></i>';
                         html += '	</button>';
                         html += '</div>';
+					{% elif session['member']['member_id'] == 'ma_keunmi' %}
+						if(row.progrs_sttus_code != 'C'){
+							html += '<div class="btn-group">';
+							html += '	<button class="btn btn-table btn-danger btnEnd" title="마감" data-dept_code="'+dept_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'" data-prjct_ty_code="'+row.prjct_ty_code+'">';
+							html += '		<i class="fa fa-trash"></i>';
+							html += '	</button>';
+							html += '</div>';
+
+						}
 					{% endif %}
 
 //                    }
@@ -486,6 +495,28 @@ getProjectList = function()
                 else{
                     alert("해당 부서만 수정 가능합니다.");
                 }
+
+			});
+			$(myList).on('click', '.btnEnd', function(pEvent) {
+				var dept_code = $(this).data('dept_code');
+				var cntrct_sn = $(this).data('cntrct_sn');
+				var prjct_sn = $(this).data('prjct_sn');
+				if(confirm("프로젝트 마감 후에는 수정할 수 없습니다. 마감하시겠습니까?")){
+					$.ajax({
+						url : '/api/project/ajax_end_project',
+						method : 'GET',
+						data : {"cntrct_sn" : cntrct_sn},
+						success: function(pResult){
+							alert("처리가 완료되었습니다.");
+							$.datatable1.ajax.reload();
+
+						},
+						error: function(pResult){
+							alert("마감처리에 실패하였습니다. 다시 시도해주세요.");
+						}
+					})
+
+				}
 
 			});
 

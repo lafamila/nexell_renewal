@@ -592,3 +592,9 @@ def ajax_insert_co_st():
     params = request.args.to_dict()
     prj.insert_co_st(params)
     return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
+
+@bp.route('/ajax_end_project', methods=['GET'])
+def ajax_end_project():
+    params = request.args.to_dict()
+    prj.end_project(params)
+    return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})

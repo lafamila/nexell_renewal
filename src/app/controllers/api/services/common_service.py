@@ -1128,13 +1128,31 @@ def get_money_data(params):
                 ON t.cntrct_sn=c.cntrct_sn
                 LEFT JOIN member m
                 ON c.spt_chrg_sn=m.mber_sn
-                LEFT OUTER JOIN (SELECT cnnc_sn
+                LEFT OUTER JOIN (
+                            SELECT cnnc_sn
+                                , MAX(rcppay_de) AS rcppay_de
+                                , SUM(price_1) AS price_1
+                                , SUM(price_2) AS price_2
+                                FROM
+                                ((SELECT cnnc_sn
                                 , MAX(rcppay_de) AS rcppay_de
                                 , SUM(IF(bil_exprn_de IS NULL, amount, 0)) AS price_1
                                 , SUM(IF(bil_exprn_de IS NULL, 0, amount)) AS price_2
                                  FROM rcppay 
                                  WHERE rcppay_se_code LIKE 'I%%' AND cnnc_sn IS NOT NULL
-                                 GROUP BY cnnc_sn) r 
+                                 GROUP BY cnnc_sn)
+                             UNION
+                                (
+                                SELECT taxbil_sn AS cnnc_sn
+                                , MAX(rcppay_de) AS rcppay_de
+                                , SUM(amount) AS price_1
+                                , 0 AS price_2
+                                FROM direct
+                                WHERE 1=1
+                                GROUP BY taxbil_sn
+                                )) rr
+                                GROUP BY cnnc_sn
+                                 ) r 
                 ON t.taxbil_sn=r.cnnc_sn
                 WHERE 1=1
                 AND c.progrs_sttus_code IN ('P', 'B')
@@ -1703,6 +1721,41 @@ def get_last(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+def get_goal_extra(params):
+    query = """SELECT g.stdyy
+    				, g.amt_ty_code
+    				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='AMT_TY_CODE' AND code=g.amt_ty_code) AS amt_ty_nm
+    				, m.dept_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+    				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_ordr
+    				, SUM(IFNULL(g.1m, 0)) AS 1m
+    				, SUM(IFNULL(g.2m, 0)) AS 2m
+    				, SUM(IFNULL(g.3m, 0)) AS 3m
+    				, SUM(IFNULL(g.4m, 0)) AS 4m
+    				, SUM(IFNULL(g.5m, 0)) AS 5m
+    				, SUM(IFNULL(g.6m, 0)) AS 6m
+    				, SUM(IFNULL(g.7m, 0)) AS 7m
+    				, SUM(IFNULL(g.8m, 0)) AS 8m
+    				, SUM(IFNULL(g.9m, 0)) AS 9m
+    				, SUM(IFNULL(g.10m, 0)) AS 10m
+    				, SUM(IFNULL(g.11m, 0)) AS 11m
+    				, SUM(IFNULL(g.12m, 0)) AS 12m
+    				FROM goal g
+    				LEFT JOIN member m
+    				ON m.mber_sn=g.mber_sn
+    				LEFT JOIN code c
+    				ON c.ctmmny_sn=1 AND c.parnts_code='DEPT_CODE' AND c.code=m.dept_code
+    				WHERE 1=1
+    				AND g.stdyy = %(year)s
+    				AND g.amt_ty_code IN (8, 9)
+    				GROUP BY amt_ty_code, dept_code
+    				ORDER BY amt_ty_code, dept_ordr"""
+    params["year"] = params["comp_year"].split("-")[0]
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 
 def get_goal(params):
     query = """SELECT g.stdyy

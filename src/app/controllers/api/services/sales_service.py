@@ -1055,3 +1055,33 @@ def insert_equipment_BD_samsung(params):
     VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(pamount)s, %(cntrct_amount)s, %(bcnc_sn)s, %(equip_sn)s, 1, %(dlivy_amt)s) """
     g.curs.executemany(query, real_data)
 
+
+def insert_direct(params):
+    if "taxbil_sn" in params:
+        taxbil_sns = params["taxbil_sn"].split(",")
+        total_data = list()
+        for taxbil_sn in taxbil_sns:
+            data = dict()
+            data["taxbil_sn"] = taxbil_sn
+            data["rcppay_de"] = params["rcppay_de"]
+            data["amount"] = params["amount"]
+            total_data.append(data)
+        query = "INSERT INTO direct(taxbil_sn, rcppay_de, amount) VALUES (%(taxbil_sn)s, %(rcppay_de)s, %(amount)s)"
+        g.curs.executemany(query, total_data)
+
+def update_direct(params):
+    if "taxbil_sn" in params:
+        taxbil_sns = params["taxbil_sn"].split(",")
+        total_data = list()
+        for taxbil_sn in taxbil_sns:
+            data = dict()
+            data["taxbil_sn"] = taxbil_sn
+            data["rcppay_de"] = params["rcppay_de"]
+            data["amount"] = params["amount"]
+            total_data.append(data)
+        query = "UPDATE direct SET amount=%(amount)s WHERE taxbil_sn=%(taxbil_sn)s AND rcppay_de= %(rcppay_de)s"
+        g.curs.executemany(query, total_data)
+
+
+def update_account_expect_de(params):
+    g.curs.execute("UPDATE account SET expect_de=%(expect_de)s WHERE cntrct_sn=%(cntrct_sn)s AND bcnc_sn=%(bcnc_sn)s AND expect_de=%(before)s", params)

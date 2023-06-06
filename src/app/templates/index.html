@@ -388,16 +388,16 @@
 	$(document).ready(function(){
 		$("#calendar").MEC({
 			events: [],
-			from_monday: true
+			// from_monday: true
 		});
 		$("#calTFooter").hide();
 		var dates = $(document).find("#calTbody .a-date");
 		if(dates.length > 0){
 			$.each(dates, function(pIndex, pTag){
-				if((pIndex %7) == 5){
+				if((pIndex %7) == 6){
 					$(pTag).css("color", "skyblue");
 				}
-				else if((pIndex % 7) == 6){
+				else if((pIndex % 7) == 0){
 					$(pTag).css("color", "red");
 
 				}
@@ -407,10 +407,10 @@
 		var dates = $(document).find("#calTbody .a-date");
 		if(dates.length > 0){
 			$.each(dates, function(pIndex, pTag){
-				if((pIndex %7) == 5){
+				if((pIndex %7) == 6){
 					$(pTag).css("color", "skyblue");
 				}
-				else if((pIndex % 7) == 6){
+				else if((pIndex % 7) == 0){
 					$(pTag).css("color", "red");
 
 				}
@@ -505,31 +505,32 @@
 					 <colgroup>
 						<col width="100">
 						<col width="150">
+						<col width="100">
 						<col width="600">
 						<col width="600">
 					</colgroup>
 					<tbody role="header">
 						<tr>
-							<th class="colorG" colspan="2">구 분</th>
+							<th class="colorG" colspan="3">구 분</th>
 							<th class="colorG" colspan="1">오전</th>
 							<th class="colorG" colspan="1">오후</th>
 						</tr>
 					</tbody>
 					<tbody role="top">
-						<th class="colorSky" colspan="2">소식알리미(공통)</th>
+						<th class="colorSky" colspan="3">소식알리미(공통)</th>
 						<th class="text-left colorW" colspan="1" name="todo_head" data-mber="-1" data-time="0" style="color:blue!important;"></th>
 						<th class="text-left colorW" colspan="1" name="todo_head" data-mber="-1" data-time="1" style="color:blue!important;"></th>
 
 					</tbody>
 					<tbody role="chair">
-						<th class="colorSky" colspan="2">대표이사</th>
+						<th class="colorSky" colspan="3">대표이사</th>
 						<th class="text-left colorW" colspan="1" name="todo_text" data-mber="4" data-time="0" style="color:blue!important;" ></th>
 						<th class="text-left colorW" colspan="1" name="todo_text" data-mber="4" data-time="1" style="color:blue!important;" ></th>
 
 					</tbody>    <tbody role="body">
 					</tbody>
 					<tbody role="foot">
-						<th class="colorSky" colspan="2">공지사항/협조사항(공통)</th>
+						<th class="colorSky" colspan="3">공지사항/협조사항(공통)</th>
 						<th class="text-left colorW" colspan="1" name="todo_foot" data-mber="-2" data-time="0" style="color:blue!important;"></th>
 						<th class="text-left colorW" colspan="1" name="todo_foot" data-mber="-2" data-time="1" style="color:blue!important;"></th>
 					</tbody>
@@ -723,6 +724,7 @@ getTodo = function(s_ddt_man)
                         html += '<tr>';
                     html += '    <td class="text-center colorSky">'+pValue.dept_nm+'</td>';
                     html += '    <td class="text-center">'+pValue.mber_nm+'</td>';
+                    html += '    <td class="text-center">'+pValue.ofcps_nm+'</td>';
 
                     var sn_m = parseInt(pValue.sn_m);
                     var sn_a = parseInt(pValue.sn_a);

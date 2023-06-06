@@ -2773,3 +2773,7 @@ def insert_co_st(params):
         params["m_sn"] = result['m_sn']
         query = """UPDATE month_st SET rate=%(percent)s WHERE m_sn=%(m_sn)s"""
     g.curs.execute(query, params)
+
+def end_project(params):
+    query = "UPDATE contract SET progrs_sttus_code='C' WHERE cntrct_sn=%(cntrct_sn)s"
+    g.curs.execute(query, params)

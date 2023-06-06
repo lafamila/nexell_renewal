@@ -425,6 +425,21 @@ def ajax_get_comp():
     result['row4'] = cm.get_kisung_va(params)
     result['row5'] = cm.get_last(params)
     result['goal'] = cm.get_goal(params)
+
+    extra_goal = cm.get_goal_extra(params)
+    extra_goal_dict = dict()
+    for e in extra_goal:
+        if e['dept_code'] not in extra_goal_dict:
+            extra_goal_dict[e['dept_code']] = dict()
+        extra_goal_dict[e['dept_code']][e['amt_ty_code']] = e
+
+    result['extra_goal'] = list()
+    done = []
+    for e in extra_goal:
+        if e['dept_code'] not in done:
+            result['extra_goal'].append(extra_goal_dict[e['dept_code']])
+            done.append(e['dept_code'])
+
     result['status'] = True
     return jsonify(result)
 

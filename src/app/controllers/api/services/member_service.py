@@ -215,6 +215,7 @@ def get_member_todo(params):
     query = """				SELECT m.mber_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, m.mber_sn
+                , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm                
 				, IF(m.dept_code = 'MA', 999, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code)) AS code_ordr
 				, (SELECT t.todo_text FROM todo t WHERE t.mber_sn=m.mber_sn AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)) AS text_m
 				, IFNULL((SELECT t.todo_sn FROM todo t WHERE t.mber_sn=m.mber_sn AND t.todo_time=0 AND t.todo_de=%(s_ddt_man)s AND t.todo_sn IN (SELECT MAX(todo_sn) FROM todo WHERE todo_de=%(s_ddt_man)s GROUP BY todo_time, mber_sn)), 0) AS sn_m
