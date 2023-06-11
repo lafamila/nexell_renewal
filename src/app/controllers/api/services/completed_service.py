@@ -330,7 +330,7 @@ def get_completed_reportNR_M2(params):
 				AND ct.cntrct_de < '{2}'
 				) t
 				GROUP BY bsn_dept_code, cntrct_execut_code, ct_se_code
-				ORDER BY bsn_dept_code """.format(first_year, last_year, last_day)
+				ORDER BY bsn_dept_code""".format(first_year, last_year, last_day)
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -428,7 +428,7 @@ def get_completed_reportNR(params):
 
     query += """ ) t
 				GROUP BY bsn_dept_code, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
-				ORDER BY bsn_dept_code, spt_chrg_sn, cntrct_bcnc_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn """
+				ORDER BY bsn_dept_code, spt_chrg_nm,  cntrct_bcnc_nm, spt_nm, cntrct_sn, cntrct_bcnc_sn, cntrct_execut_code, ct_se_code, purchsofc_sn """
 
     g.curs.execute(query, params)
     result = g.curs.fetchall()

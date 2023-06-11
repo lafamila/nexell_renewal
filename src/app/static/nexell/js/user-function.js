@@ -62,6 +62,7 @@ function toastrError(pJqXHR) {
     message += '알 수 없는 오류가 발생하였습니다.';
     message += '\n';
     message += '오류가 지속될 경우 관리자에게 연락하시기 바랍니다.';
+    message += `\nMessage : ${pJqXHR.responseText}`;
     toastrMessage('error', message);
     console.error('error', pJqXHR);
 }

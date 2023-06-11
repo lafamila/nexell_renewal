@@ -9,6 +9,9 @@
     .jarviswidget td:last-child, .jarviswidget th:last-child {
         border-right:1px solid #ddd;
     }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+        vertical-align:middle!important;
+    }
 </style>
 <table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
@@ -43,6 +46,10 @@
             <td class="hasinput"><input type="text" class="form-control text-center" name="sale_charger" id="sale_charger"></td>
         </tr>
         <tr>
+            <td class="colorSky text-center">설치장소</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_place" id="sale_place"></td>
+        </tr>
+        <tr>
             <td class="colorSky text-center">납품기간</td>
             <td class="hasinput">
                 <input type="text" class="form-control datepicker" style="display:inline-block;width:89px!important;" data-type="date" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="e_opt_period_start" name="e_opt_period_start" placeholder="[시작일자]">
@@ -59,6 +66,8 @@
         <col width="120">
         <col width="120">
         <col width="120">
+        <col width="180">
+        <col width="60">
         <col width="120">
         <col width="120">
         <col width="120">
@@ -69,10 +78,8 @@
         <col width="120">
         <col width="120">
         <col width="120">
-        <col width="120">
-        <col width="120">
-        <col width="120">
-        <col width="120">
+        <col width="80">
+        <col width="160">
     </colgroup>
     <thead>
         <th class="sub-title colorN text-center" colspan="18"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
@@ -86,9 +93,10 @@
     <tbody role="header">
        <tr>
             <th class="color-contract text-center" rowspan="3">판매구분</th>
-            <th class="color-contract text-center" rowspan="3" colspan="2">품명</th>
+            <th class="color-contract text-center" rowspan="3">품명</th>
             <th class="color-contract text-center" rowspan="3">모델명</th>
             <th class="color-contract text-center" rowspan="3">매입처</th>
+            <th class="color-contract text-center" rowspan="3">현장명</th>
             <th class="color-contract text-center" rowspan="3">수량</th>
             <th class="color-contract text-center" rowspan="3">출고가</th>
             <th class="color-contract text-center" colspan="4">매입</th>
@@ -131,7 +139,7 @@
         </tr>
     </tfoot>
 </table>
-<table class="table table-bordered table-form sub-table" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:50%!important;">
     <colgroup>
         <col width="25%">
         <col width="25%">
@@ -153,7 +161,7 @@
 
     </tbody>
 </table>
-<table class="table table-bordered table-form sub-table" style="width:35%!important;">
+<table class="table table-bordered table-form sub-table" style="width:50%!important;">
     <colgroup>
         <col width="25%">
         <col width="25%">
@@ -168,7 +176,7 @@
     <tbody>
         <tr>
             <td colspan="4" class="hasinput">
-                <textarea style="width:100%;height:280px;resize:none;border:none;" name="option_bigo"></textarea>
+                <textarea style="width:100%;height:160px;resize:none;border:none;" name="option_bigo"></textarea>
             </td>
         </tr>
     </tbody>
@@ -213,14 +221,23 @@
                     var row = rows[pIndex];
                     $(row).find(`input[type='hidden'][name='stock_sn[]']`).val(pValue.stock_sn);
                     if(prdlst_se_code.hasOwnProperty(pValue.prduct_ty_code+"")){
-                        $(row).find(`[name="prdlst_se_code[]"]`).yVal(prdlst_se_code[pValue.prduct_ty_code+""]);
+                        $(row).find(`[name="prdlst_se_code[]"]`).val(prdlst_se_code[pValue.prduct_ty_code+""]);
                     }
                     else{
-                        $(row).find(`[name="prdlst_se_code[]"]`).yVal('9');
+                        $(row).find(`[name="prdlst_se_code[]"]`).val('9');
                     }
                     $(row).find(`[name="prduct_ty_code[]"]`).yVal(pValue.prduct_ty_code);
                     $(row).find(`[name="bcnc_sn[]"]`).yVal('79');
                     $(row).find(`select[name="bcnc_sn[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
+                    $(row).find(`[name="cntrct_nm[]"]`).val(pValue.cntrct_nm);
+                    $(row).find(`[name="dc[]"]`).val(pValue.dc+"%");
+                    $(row).find(`[name="dlivy_amt[]"]`).val(pValue.dlivy_amt.toFormat('NUMBER'));
+                    if(pValue.dlivy_amt == 0 && pValue.dc == 0){
+                        $(row).find(`[name="dlivy_amt[]"]`).val(pValue.puchas_amount_one.toFormat('NUMBER'));
+                        $(row).find(`[name="dc[]"]`).val("0%");
+                    }
+                    $(row).find(`[name="ddt_man[]"]`).val(pValue.puchas_de);
+                    $(row).find(`[name="ddt_man[]"]`).attr("readonly", true);
                     $(row).find(`select[name="prdlst_se_code[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
                     $(row).find(`select[name="prduct_ty_code[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
                     $(row).find(`[name="model_no[]"]`).attr("readonly", true);
@@ -256,14 +273,6 @@
                                 </select>
                             </td>
                             <td class="hasinput">
-                                <select class="form-control select2 init-select2" name="prdlst_se_code[]" style="width:100%!important;">
-                                    <option value="">[전체]</option>
-                                    {% for code in prdlst_se_code_list %}
-                                    <option value="{{code.value}}">{{code.label}}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td class="hasinput">
                                 <select class="form-control select2 init-select2" name="prduct_ty_code[]" style="width:100%!important;">
                                     <option value="">[전체]</option>
                                     {% for code in prduct_ty_code_list %}
@@ -274,6 +283,7 @@
                             <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="model_no[]"/>
                                 <input type="hidden" name="stock_sn[]" value=""/>
+                                <input type="hidden" name="prdlst_se_code[]" value="9"/>
                             </td>
                             <td class="hasinput">
                                 <select class="form-control select2 init-select2" name="bcnc_sn[]" style="width:100%!important;">
@@ -282,6 +292,9 @@
                                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                                     {% endfor %}
                                 </select>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" name="cntrct_nm[]" readonly/>
                             </td>
                             <td class="hasinput">
                                 <input type="text" class="form-control text-center" data-type="number" name="dlnt[]"/>
@@ -308,7 +321,14 @@
                             <td class="text-right" name="va[]"></td>
                             <td class="text-right" name="va_rate[]"></td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" name="rm[]"/>
+                                <select class="form-control select2 init-select2" name="rm[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    <option value="0">가구사</option>
+                                    <option value="1">사내판매</option>
+                                    <option value="2">일반판매</option>
+                                    <option value="3">건설사판매</option>
+                                    <option value="4">장기재고</option>
+                                </select>
                             </td>
 
                         </tr>`;

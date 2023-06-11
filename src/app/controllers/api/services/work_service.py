@@ -179,14 +179,16 @@ def get_work(params):
                     , m.mber_sn
                     , m.mber_nm
                     , m.ofcps_code
+                    , m.enter_de
                     , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm
                     , m.dept_code
                     , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
                     , IF(m.check_rate='1', IFNULL(wt.rate_tot, 0), 0) AS rate_count
-                    , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='tot2'), (15 + FLOOR(DATEDIFF('{0}', m.enter_de)/730))) AS tot
+                    , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='tot2'), 0) AS tot
                     , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (1, 4, 7)) AS `use`
                     , (SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2, 3, 5, 6)) AS `half`
                     , IFNULL((SELECT work_data FROM work WHERE work_year='{1}' AND work_row=m.mber_sn AND work_month='rm2'), '') AS rm
+    				, IFNULL((SELECT COUNT(*) FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (8, 9)), 0) AS `out`                    
                     , IF(m.check_rate='1', IF(w.WSTime IS NULL OR w.WSTime='', 0,
                     CASE DAYOFWEEK(STR_TO_DATE(w.WorkDate, %s))-1
                         WHEN 0 THEN 0

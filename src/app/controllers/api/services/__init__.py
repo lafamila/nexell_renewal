@@ -250,7 +250,6 @@ def set_menu(auth_cd):
     # general sales project - contract & project check
     curs.execute("SHOW COLUMNS FROM contract")
     result = curs.fetchall()
-    print(result)
     total_columns = []
     required = []
     for r in result:
@@ -266,9 +265,20 @@ def set_menu(auth_cd):
     data["regist_dtm"] = datetime.now()
     data["register_id"] = 'nexell'
     data['progrs_sttus_code'] = 'P'
-
-    for dept_nm in ["공조1", "공조2", "빌트인"]:
-
+    dept_codes = ["TS1", "TS2", "BI"]
+    curs.execute("SELECT code, code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code IN ({})".format(",".join(["'{}'".format(d) for d in dept_codes])))
+    code_nms = curs.fetchall()
+    DEPT_CODES = {r['code']: r['code_nm'] for r in code_nms}
+    for dept_code in dept_codes:
+        dept_nm = DEPT_CODES[dept_code].replace("팀", "")
+        row = curs.execute("SELECT mber_sn FROM member WHERE dept_code=%s AND mber_sttus_code='H' AND RSPOFC_CODE=150", dept_code)
+        if not row:
+            data['bsn_chrg_sn'] = 73
+            data['spt_chrg_sn'] = 73
+        else:
+            team_leader = curs.fetchone()
+            data['bsn_chrg_sn'] = team_leader['mber_sn']
+            data['spt_chrg_sn'] = team_leader['mber_sn']
         data['cntrct_nm'] = "{}년{}월 {} 일반판매".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")), dept_nm)
         data['spt_nm'] = data['cntrct_nm']
         data['cntrct_de'] = datetime.now().strftime("%Y-%m-01")
@@ -284,6 +294,10 @@ def set_menu(auth_cd):
 
             query = """INSERT INTO contract({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
             curs.execute(query, data)
+            cntrct_sn = curs.lastrowid
+
+            query = """INSERT INTO project(ctmmny_sn, cntrct_sn, prjct_ty_code, regist_dtm, register_id) VALUES (1, %s, %s, NOW(), 'nexell')"""
+            curs.execute(query, (cntrct_sn, data['prjct_ty_code']))
 
     db.commit()
 

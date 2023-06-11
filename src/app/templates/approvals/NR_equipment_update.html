@@ -214,7 +214,7 @@
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="model_no_already[]"/>
-                <input type="hidden" name="delng_ty_code_already[]" value="61"/>
+                <input type="hidden" name="delng_ty_code_already[]" value="1"/>
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt_already[]"/>
@@ -255,7 +255,7 @@
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="model_no[]"/>
-                <input type="hidden" name="delng_ty_code[]" value="61"/>
+                <input type="hidden" name="delng_ty_code[]" value="1"/>
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt[]"/>
@@ -498,6 +498,7 @@
                     });
                     if(pResult.samsungList.length == 0){
                         $(document).find(`tr[data-row="equip_already_tr"]`).find("input, select").attr("disabled", true);
+
                     }
 
                     cloneRow("equip_other_already_tr", pResult.otherList.length-1);
@@ -562,6 +563,14 @@
                         });
                         $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
                     });
+                    {% if init %}
+                    if($(document).find(`[name='E_1${max_extra_sn == 0 ? "" : `_${max_extra_sn}`}']`).html().replaceAll(",", "") != "" && pResult.samsungList.length==0){
+                        $(document).find(`[name='E_1_alpha']`).attr("readonly", false);
+                    }
+                    if($(document).find(`[name='E_2${max_extra_sn == 0 ? "" : `_${max_extra_sn}`}']`).html().replaceAll(",", "") != "" && pResult.otherList.length==0){
+                        $(document).find(`[name='E_2_alpha']`).attr("readonly", false);
+                    }
+                    {% endif %}
                     var html = `<tbody role="ct_se_code_diff">
                                     <tr data-row="C">
                                         <th class="colorLP text-center middle" rowspan="2">차액</th>

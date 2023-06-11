@@ -22,9 +22,6 @@ tbody .btnUpdate, tbody .btn{
 		background: rgb(0,112,192)!important;
 		color: #fff!important;
 	}
-	tr[role='goal'] .colorSkyO, tr[role='goal'] .colorBO{
-		opacity:0.7!important;
-	}
 </style>
 <!--########################################################################-->
 <!--# RIBBON area start                                                    #-->
@@ -478,19 +475,19 @@ tbody .btnUpdate, tbody .btn{
 									<td class="right_border middle text-center bold">${pValue.mber_nm}</td>
 									<td class="right_border middle text-center bold">${pValue.bcnc_nm}</td>
 									<td class="colorJ right_border middle text-center bold">달성</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="1m">${pData["1m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="2m">${pData["2m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="3m">${pData["3m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="4m">${pData["4m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="5m">${pData["5m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="6m">${pData["6m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="7m">${pData["7m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="8m">${pData["8m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="9m">${pData["9m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="10m">${pData["10m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="11m">${pData["11m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="12m">${pData["12m"].toString().toFormat('NUMBER')}</td>
-									<td class="colorBtn colorJ right_border middle text-right bold" data-column="tot" style="border-right:2px solid #666!important;">${pData["tot"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="1m">${pData["1m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="2m">${pData["2m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="3m">${pData["3m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="4m">${pData["4m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="5m">${pData["5m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="6m">${pData["6m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="7m">${pData["7m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="8m">${pData["8m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="9m">${pData["9m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="10m">${pData["10m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="11m">${pData["11m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="12m">${pData["12m"].toString().toFormat('NUMBER')}</td>
+									<td class="colorBtn colorJ right_border middle text-right bold bottom_border" data-column="tot" style="border-right:2px solid #666!important;">${pData["tot"].toString().toFormat('NUMBER')}</td>
 								 </tr>`;
 					});
 					member_total['goal']['tot'] = 0;

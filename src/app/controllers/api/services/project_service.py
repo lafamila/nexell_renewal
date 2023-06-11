@@ -68,6 +68,7 @@ def get_project_datatable(params):
 				, c.cntrwk_endde
 				, c.etc_sttus
 				, m.dept_code
+				, (SELECT dept_code FROM member WHERE mber_sn=c.spt_chrg_sn) AS spt_dept_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, c.bsn_chrg_sn
 				, GET_MEMBER_NAME(c.bsn_chrg_sn, 'M') AS bsn_chrg_nm
@@ -2379,7 +2380,6 @@ def insert_b_option_bd_project(params):
         pParams['model_no'] = model_no
         if pParams['prjct_sn'] is None:
             pParams['prjct_sn'] = 0
-        print(pParams)
         if "cost_date" in params:
             pParams["cost_date"] = params["cost_date"]
             query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)

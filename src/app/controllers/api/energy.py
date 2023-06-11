@@ -24,30 +24,42 @@ def disconnect(response):
 
 @bp.route('/ajax_get_energy_datatable', methods=['POST'])
 def ajax_get_energy_datatable():
-    params = request.form.to_dict()
-    result = eng.get_energy_datatable(params)
-    result['summary'] = eng.get_energy_summary(params)
+    try:
+        params = request.form.to_dict()
+        result = eng.get_energy_datatable(params)
+        result['summary'] = eng.get_energy_summary(params)
 
-    return jsonify(result)
+        return jsonify(result)
+    except Exception as e:
+        return make_response(str(e), 500)
 
 @bp.route('/ajax_get_energy', methods=['GET'])
 def ajax_get_energy():
-    params = request.args.to_dict()
-    result = dict()
-    result['data'] = eng.get_energy(params)
-    return jsonify(result)
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = eng.get_energy(params)
+        return jsonify(result)
+    except Exception as e:
+        return make_response(str(e), 500)
 
 @bp.route('/ajax_get_plan_list', methods=['GET'])
 def ajax_get_plan_list():
-    params = request.args.to_dict()
-    result = dict()
-    result['data'] = eng.get_plan_list(params)
-    return jsonify(result)
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = eng.get_plan_list(params)
+        return jsonify(result)
+    except Exception as e:
+        return make_response(str(e), 500)
 
 @bp.route('/ajax_get_exp_list', methods=['GET'])
 def ajax_get_exp_list():
-    params = request.args.to_dict()
-    result = dict()
-    result['data'] = eng.get_exp_list(params)
-    result['plan'] = eng.get_plan_list(params)
-    return jsonify(result)
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = eng.get_exp_list(params)
+        result['plan'] = eng.get_plan_list(params)
+        return jsonify(result)
+    except Exception as e:
+        return make_response(str(e), 500)

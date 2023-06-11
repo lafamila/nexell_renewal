@@ -202,8 +202,8 @@
 												<option value="-1">[전체]</option>
 											</select>
 										</th>
-										<th class="colorB" style="text-align:center;" rowspan="2">수량</th>
 										<th class="colorB" style="text-align:center;" rowspan="2">단가/대</th>
+										<th class="colorB" style="text-align:center;" rowspan="2">수량</th>
 										<th class="colorB" style="text-align:center;" colspan="3">금액</th>
 										<th class="hasinput button">
 											<select class="form-control select2 w100p s_cowrk_nm" name="s_cowrk_nm">
@@ -276,8 +276,8 @@ getCowork = function(){
 						 	<td></td>
 						 	<td></td>
 						 	<td>${pValue.model_no}</td>
-						 	<td>${pValue.qy.toFormat('NUMBER')}</td>
 						 	<td>${Math.round(pValue.amount/1.1).toFormat('NUMBER')}</td>
+						 	<td>${pValue.qy.toFormat('NUMBER')}</td>
 						 	<td>${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
 						 	<td>0</td>
 						 	<td>${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>

@@ -2099,7 +2099,7 @@ getSalesExpectReport = function(expect_de){
 		async: false,
 		dataType: 'json',
 		success: function (pTable) {
-			console.log(pTable.longTermData);
+			console.log(pTable);
 			var pData = pTable.termData;
 			var keys = [-1, 0, 1, 2];
 			var pkeys = [-1, 0];
@@ -2127,8 +2127,10 @@ getSalesExpectReport = function(expect_de){
 				$.each(keys, function(pIndex, pStatus){
 					if(pResult.hasOwnProperty(pStatus)){
 						$.each(pResult[pStatus], function(pI, pValue){
-							price += pValue.price_sum;
-							rPrice += pValue.rcppay_amount;
+							var price_sum = pValue.price_sum == '' ? 0 : parseInt(pValue.price_sum);
+							var rcppay_amount = pValue.rcppay_amount == '' ? 0 : parseInt(pValue.rcppay_amount);
+							price += price_sum;
+							rPrice += rcppay_amount;
 						});
 					}
 				});

@@ -21,7 +21,13 @@ tbody .btnUpdate, tbody .btn{
 	.colorY{
 		background:rgb(255,204,153)!important;
 	}
-
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    line-height: 0.95 !important;
+}
+table th, table td {
+    padding: 4px!important;
+    text-align: center!important;
+}
 </style>
 <!--########################################################################-->
 <!--# RIBBON area start                                                    #-->
@@ -101,9 +107,6 @@ tbody .btnUpdate, tbody .btn{
 						</div>
 						<!-- end widget edit box -->
 						<style>
-                            .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-                                line-height: 0.95!important;
-                            }
                             .colorSkyB{
                                 background:rgb(146, 205, 220);
                                 font-weight: bold;
@@ -157,7 +160,12 @@ tbody .btnUpdate, tbody .btn{
 								<colgroup>
 									<col width="60">
 									<col width="60">
-									<col width="90">
+									<col width="60">
+									<col width="80">
+									<col width="80">
+									<col width="60">
+									<col width="60">
+									<col width="60">
 									<col width="60">
 									<col width="60">
 									<col width="60">
@@ -175,17 +183,22 @@ tbody .btnUpdate, tbody .btn{
 										<th class="colorSkyB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">부서</th>
 										<th class="colorSkyB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">직위</th>
 										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">성명</th>
+										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">입사일자</th>
+										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">년차</th>
 										<th class="tot right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">지&nbsp;&nbsp;&nbsp;각<br>(연간누계)</th>
-										<th class="colorSkyB right_border" style="text-align:center!important;" colspan="4">휴가</th>
+										<th class="colorSkyB bottom_border right_border" style="text-align:center;vertical-align:middle;" rowspan="2">발생일수</th>
+										<th class="colorSkyB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">조정일수</th>
+										<th class="colorSkyB right_border bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">총휴가일</th>
+										<th class="colorSkyB right_border" style="text-align:center!important;vertical-align:middle;" colspan="2">사용일수</th>
+										<th class="color-contract right_border bottom_border"  rowspan="2" style="text-align:center;vertical-align:middle;">잔여<br>휴가일</th>
+										<th class="colorSkyB right_border bottom_border"  rowspan="2" style="text-align:center;vertical-align:middle;">출장일수</th>
 										<th class="colorG bottom_border right_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">연차 사용일</th>
 										<th class="colorG bottom_border right_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">반차 사용일</th>
 										<th class="colorG bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">기타</th>
 									</tr>
 									<tr>
-										<th class="colorSkyB bottom_border" style="text-align:center;">총휴가일</th>
 										<th class="colorSkyB bottom_border" style="text-align:center;">연차</th>
 										<th class="colorSkyB bottom_border" style="text-align:center;">반차</th>
-										<th class="color-contract right_border bottom_border" style="text-align:center;">잔여<br>휴가일</th>
 									</tr>
                                 </thead>
                                 <tbody role='exec'>
@@ -259,15 +272,33 @@ getWork = function(work_date)
 						}
 					}
 				});
+				let std = new Date(today);
+				let now = new Date(pValue.enter_de);
+				let diff = std.getTime() - now.getTime();
+				let days = diff/1000/60/60/24;
+				let y = Math.floor(days/365);
+				days -= y*365;
+				let m = Math.floor(days/30);
+				days -= m*30;
+
+				var period = `${y}년 ${m}월`;
+				var period_title = `${y}년 ${m}월 ${days}일`;
+				var enter_de_str = pValue.enter_de.split("-")[0]+"-"+pValue.enter_de.split("-")[1];
+
 				html += `<tr id="${pValue.mber_sn}" data-year="${work_year}">
 							<td class="colorG middle text-center">${pValue.dept_nm}</td>
 							<td class="colorG middle text-center">${pValue.ofcps_nm}</td>
 							<td class=" ${_class_today1} ${_class_today2} text-center right_border">${pValue.mber_nm}</td>
+							<td class="text-center right_border" title="${pValue.enter_de}">${enter_de_str}</td>
+							<td class="text-center right_border" title="${period_title}">${period}</td>
 							<td class="${_class} text-center right_border">${pValue.rate_count}</td>
+							<td class="text-center right_border">15</td>
 							<td class="input-available text-center" data-column="tot2">${pValue.tot}</td>
+							<td class="text-center right_border" data-column="tot3">${parseInt(pValue.tot) + 15}</td>
 							<td class=" text-center ${_class_today1}" data-column="use">${pValue.use}</td>
-							<td class=" text-center ${_class_today2}" data-column="half">${(parseFloat(pValue.half)/2).toFixed(1)}</td>
-							<td class=" text-center right_border" data-column="remain">${(parseFloat(pValue.tot) - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
+							<td class=" text-center ${_class_today2} right_border" data-column="half">${(parseFloat(pValue.half)/2).toFixed(1)}</td>
+							<td class=" text-center right_border" data-column="remain">${(parseFloat(pValue.tot) + 15 - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
+							<td class=" text-center right_border">${pValue.out}</td>
 							<td class="right_border">${pValue.use_dates}</td>
 							<td class="right_border">${pValue.half_dates}</td>
 							<td class="colorBtn input-available" data-column="rm2">${pValue.rm}</td>
@@ -406,9 +437,11 @@ $(document).on("dblclick", ".input-available", function(){
 				}
 				else{
 					$(td).text(data.toFixed(1));
+					let tot = 15;
+					$(td).parent().find(`td[data-column="tot3"]`).html((15+data).toFixed(1));
 					let use = parseFloat($(td).parent().find(`td[data-column="use"]`).html().replace(",", "")); if(isNaN(use)) use=0.0;
 					let half = parseFloat($(td).parent().find(`td[data-column="half"]`).html().replace(",", "")); if(isNaN(half)) half=0.0;
-					$(td).parent().find(`td[data-column="remain"]`).html((data-use-half).toFixed(1))
+					$(td).parent().find(`td[data-column="remain"]`).html((15 + data-use-half).toFixed(1))
 				}
 			}
 		}

@@ -1209,7 +1209,7 @@ def get_cowork_data(params):
     if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
         query += " AND c.bsn_chrg_sn=%s"
         data.append(params["s_bsn_chrg_sn"])
-    query += " ORDER BY o.cntrct_de, c.cntrct_sn"
+    query += " ORDER BY o.cntrct_de DESC, c.cntrct_sn"
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -1255,7 +1255,7 @@ def insert_vacation(params):
         g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
 def get_blueprint_goal(params):
-    query = "SELECT stdyy, amount, hp FROM blueprint_goal WHERE stdyy=%(stdyy)s"
+    query = "SELECT stdyy, amount, hp, total FROM blueprint_goal WHERE stdyy=%(stdyy)s"
     g.curs.execute(query, params)
     result = g.curs.fetchone()
     return result
@@ -1263,6 +1263,7 @@ def get_blueprint_goal(params):
 def get_blueprint_total(params):
     query = """ SELECT SUM(b_10) AS b_10_total
                     , SUM(b_14) AS b_14_total
+                    , SUM(b_16) AS b_16_total
             """
     for i in range(2, 9):
         query += """, SUM(IF(b_{0} IS NULL OR b_{0} = '', 0 , 1)) AS b_{0}_total """.format(i)
@@ -1272,6 +1273,31 @@ def get_blueprint_total(params):
     g.curs.execute(query)
     result = g.curs.fetchone()
     return result
+def get_blueprint_year_total(params):
+    params['stdy'] = "{}%".format(params['stdyy'].split("-")[0])
+    query = """
+                SELECT b.b_sn
+                    , b.mber_sn
+                    , b.stdyy
+                    , (SELECT mber_nm FROM member WHERE mber_sn=b.mber_sn) AS mber_nm
+                    , b.b_type
+                    , IF(b_type = 0, '신규현장', '변경현장') AS b_type_nm
+                    , b.spt_nm
+                    , b.b_sn AS cntrct_sn
+                    , b.bcnc_nm
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=b.bsn_mber_sn)) AS dept_nm
+                    , (SELECT mber_nm FROM member WHERE mber_sn=b.bsn_mber_sn) AS bsn_mber_nm
+            """
+    for i in range(1, 17):
+        query += ", b.b_{0} AS b_{0}".format(i)
+    query += """ FROM blueprint b
+                WHERE 1=1
+                AND b.stdyy LIKE %(stdy)s
+                ORDER BY IF(mber_sn=22, 0, IF(mber_sn=23, 1, 2)), b.b_type, b.b_sn"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 
 def get_blueprint(params):
     query = """
@@ -1281,34 +1307,30 @@ def get_blueprint(params):
                     , (SELECT mber_nm FROM member WHERE mber_sn=b.mber_sn) AS mber_nm
                     , b.b_type
                     , IF(b_type = 0, '신규현장', '변경현장') AS b_type_nm
-                    , c.spt_nm
-                    , c.cntrct_sn
-                    , c.bcnc_sn
-                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
-                    , m.dept_code
-                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
-                    , (SELECT mber_nm FROM member WHERE mber_sn=m.mber_sn) AS bsn_mber_nm
+                    , b.spt_nm
+                    , b.b_sn AS cntrct_sn
+                    , b.bcnc_nm
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=b.bsn_mber_sn)) AS dept_nm
+                    , (SELECT mber_nm FROM member WHERE mber_sn=b.bsn_mber_sn) AS bsn_mber_nm
             """
     for i in range(1, 17):
         query += ", b.b_{0} AS b_{0}".format(i)
     query += """ FROM blueprint b
-                LEFT JOIN contract c ON b.cntrct_sn=c.cntrct_sn
-                LEFT JOIN member m ON c.bsn_chrg_sn=m.mber_sn
                 WHERE 1=1
                 AND b.stdyy=%(stdyy)s
-                ORDER BY mber_nm, b.b_type, b.b_sn"""
+                ORDER BY IF(mber_sn=22, 0, IF(mber_sn=23, 1, 2)), b.b_type, b.b_sn"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
 def insert_blueprint(params):
-    g.curs.execute("INSERT INTO blueprint(mber_sn, b_type, cntrct_sn, stdyy) VALUES (%(s_mber_sn)s, %(s_b_type)s, %(s_cntrct_sn)s, %(stdyy)s)", params)
+    g.curs.execute("INSERT INTO blueprint(mber_sn, b_type, spt_nm, stdyy, bcnc_nm, bsn_mber_sn) VALUES (%(s_mber_sn)s, %(s_b_type)s, %(s_spt_nm)s, %(stdyy)s, %(s_bcnc_nm)s, %(s_bsn_mber_sn)s)", params)
 def insert_blueprint_goal(params):
     row = g.curs.execute("SELECT * FROM blueprint_goal WHERE stdyy=%(stdyy)s", params)
     if row:
-        g.curs.execute("UPDATE blueprint_goal SET amount=%(amount)s, hp=%(hp)s WHERE stdyy=%(stdyy)s", params)
+        g.curs.execute("UPDATE blueprint_goal SET amount=%(amount)s, hp=%(hp)s, total=%(total)s WHERE stdyy=%(stdyy)s", params)
     else:
-        g.curs.execute("INSERT INTO blueprint_goal(stdyy, amount, hp) VALUES (%(stdyy)s, %(amount)s, %(hp)s)", params)
+        g.curs.execute("INSERT INTO blueprint_goal(stdyy, amount, hp, total) VALUES (%(stdyy)s, %(amount)s, %(hp)s, %(total)s)", params)
 def update_blueprint(params):
     g.curs.execute("UPDATE blueprint SET {0}=%(data)s WHERE b_sn=%(b_sn)s".format(params['column']), params)
 def delete_blueprint(params):

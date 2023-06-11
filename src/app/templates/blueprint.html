@@ -10,6 +10,9 @@
 <div id="popReport">
     <div>
         <div class="modal-content">
+			<div class="modal-header report">
+				<div class="title"><h2 class="colorLS" id="title"><span id="rpt9_date" style="font-size:28px!important;"></span> 설계진행현황</h2></div>
+			</div>
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
 					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
@@ -29,6 +32,9 @@
 			<div class="modal-body report">
 
                 <style>
+					.colorGray{
+						background-color: gray!important;
+					}
                     div.report.report-completed1 table th,
                     div.report.report-completed1 table td {
                         font-size: 12px!important;
@@ -63,12 +69,13 @@
                         line-height:1.0!important;
                     }
                 </style>
+			    <h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(단위 : 천원)</h3>
                 <table id="rptParnterStatus1">
                     <colgroup>
+                        <col width="80">
+                        <col width="60">
                         <col width="50">
-                        <col width="100">
-                        <col width="50">
-                        <col width="400">
+                        <col width="200">
 
                         <col width="100">
                         <col width="100">
@@ -81,14 +88,14 @@
                         <col width="50">
                         <col width="50">
                         <col width="50">
-                        <col width="80">
+                        <col width="50">
+                        <col width="50">
                         <col width="100">
                         <col width="50">
+                        <col width="80">
+                        <col width="80">
                         <col width="50">
-                        <col width="50">
-                        <col width="50">
-                        <col width="50">
-                        <col width="50">
+                        <col width="80">
                         <col width="50">
 
                     </colgroup>
@@ -105,7 +112,7 @@
                             <th class="colorN text-center middle" colspan="5">수주현황</th>
                             <th class="colorN text-center middle" colspan="3">설계사무소현황</th>
                             <th class="colorN text-center middle" colspan="3">스펙인현황</th>
-                            <th class="colorN text-center middle" rowspan="2" colspan="2">비고</th>
+                            <th class="colorN text-center middle" rowspan="2" colspan="2">비고(수주금액)</th>
                         </tr>
                         <tr>
                             <th class="colorN text-center middle">설계기간</th>
@@ -116,7 +123,7 @@
                             <th class="colorN text-center middle">MH</th>
                             <th class="colorN text-center middle">진행</th>
                             <th class="colorN text-center middle">낙주</th>
-                            <th class="colorN text-center middle">수주달성율</th>
+                            <th class="colorN text-center middle">수주<br>달성율</th>
                             <th class="colorN text-center middle">BO</th>
                             <th class="colorN text-center middle">설계사무소</th>
                             <th class="colorN text-center middle">연목표달성율</th>
@@ -140,6 +147,7 @@
     getBlueprint = function(){
         var params = '';
         params += "&stdyy="+$(document).find('#r3_s_ddt_man').val().split("-")[0]+"-"+$(document).find('#r3_s_ddt_man').val().split("-")[1];
+		$("#rpt9_date").html(parseInt($(document).find('#r3_s_ddt_man').val().split("-")[1])+"월");
         $.ajax({
             url: '/api/common/ajax_get_blueprint',
             type: 'GET',
@@ -154,6 +162,7 @@
                 var html = '';
                 if(pResult.length == 0){
                     html += '<tr><td class="text-center" colspan="24">데이터를 등록해주세요.</td></tr>';
+					$("#rptParnterStatus1").find("tbody").html(html);
                 }
                 else{
                     var mber_sn = null;
@@ -162,9 +171,9 @@
                     var b_type = null;
                     var order = 1;
                     var sum_data = [];
-					var SUM_COLUMNS = [2, 3, 4, 5, 6, 7, 8, 10, 14];
+					var SUM_COLUMNS = [2, 3, 4, 5, 6, 7, 8, 10, 14, 16];
 					var sum_idx = 0;
-                    sum_data.push({0 : new Array(9).fill(0), 1 : new Array(9).fill(0)});
+                    sum_data.push({0 : new Array(10).fill(0), 1 : new Array(10).fill(0)});
                     $.each(pResult, function(pIndex, pValue){
 						if(mber_sn == null && b_type == null){
                             order = 1;
@@ -191,10 +200,9 @@
 										<td class=" colorLG"></td>
 										<td class=" colorLG"></td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG">${D[8]}</td>
+										<td class=" colorLG text-right">${D[8]}</td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG"></td>
+										<td class=" colorLG text-right" colspan="2">${D[9]}</td>
 									 </tr>`;
 							order = 1;
 						}
@@ -218,12 +226,11 @@
 										<td class=" colorLG"></td>
 										<td class=" colorLG"></td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG">${D[8]}</td>
+										<td class=" colorLG text-right">${D[8]}</td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG"></td>
+										<td class=" colorLG text-right" colspan="2">${D[9]}</td>
 									 </tr>`;
-							sum_data.push({0 : new Array(9).fill(0), 1 : new Array(9).fill(0)});
+							sum_data.push({0 : new Array(10).fill(0), 1 : new Array(10).fill(0)});
 							sum_idx++;
 							order = 1;
 						}
@@ -237,7 +244,7 @@
                                     <td class="text-center middle">${pValue.bsn_mber_nm}</td>`;
                         for(let i=1;i<=16;i++) {
 							if(SUM_COLUMNS.includes(i)){
-								if(i != 14 && i != 10){
+								if(i != 14 && i != 16){
 									if(pValue['b_' + i] != ''){
 										sum_data[sum_idx][pValue.b_type][SUM_COLUMNS.indexOf(i)]++;
 									}
@@ -249,7 +256,8 @@
 								}
 
 							}
-							html += `   <td class="text-center middle input-available" data-column="b_${i}" data-row="${pValue.b_sn}">${pValue['b_' + i]}</td>`
+							var _class = (i==16 || i == 14) ? "text-right" : "text-center";
+							html += `   <td class="${_class} middle input-available" data-column="b_${i}" data-row="${pValue.b_sn}">${pValue['b_' + i]}</td>`
 						}
 
                         html += `   <td class="text-center middle" style="padding:0px!important;">
@@ -284,36 +292,75 @@
 								<td class=" colorLG"></td>
 								<td class=" colorLG"></td>
 								<td class=" colorLG"></td>
-								<td class=" colorLG">${D[8]}</td>
+								<td class=" colorLG text-right">${D[8]}</td>
 								<td class=" colorLG"></td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG"></td>
+								<td class=" colorLG text-right" colspan="2">${D[9]}</td>
 							 </tr>`;
-					var D = new Array(9).fill(0);
+					var D = new Array(10).fill(0);
 					$.each(sum_data, function(pIndex, pRow){ $.each(pRow, function(_, data){ $.each(data, function(i, d){ D[i] += d; }) }) });
 					html += `<tr>
-								<td class="text-center middle colorLG"></td>
-								<td class="text-center middle colorLG"></td>
-								<td class="text-center middle colorLG" colspan="5">합계</td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG">${D[0]}</td>
-								<td class=" colorLG">${D[1]}</td>
-								<td class=" colorLG">${D[2]}</td>
-								<td class=" colorLG">${D[3]}</td>
-								<td class=" colorLG">${D[4]}</td>
-								<td class=" colorLG">${D[5]}</td>
-								<td class=" colorLG">${D[6]}</td>
-								<td class=" colorLG">${(D[3] +D[4] +D[5]) != 0 ? ((D[3]+D[4])*100.0/(D[3] +D[4] +D[5])).toFixed(1)+"%" : "-"}</td>
-								<td class=" colorLG">${D[7]}</td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG">${pGoal != null ? (((D[7])*100.0/pGoal.amount).toFixed(1)+"%") : "-"}</td>
-								<td class=" colorLG">${D[8]}</td>
-								<td class=" colorLG">${pGoal != null ? (((D[8])*100.0/pGoal.hp).toFixed(1)+"%") : "-"}</td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG"></td>
+								<td class="text-center middle colorGray"></td>
+								<td class="text-center middle colorGray"></td>
+								<td class="text-center middle colorGray" colspan="5">합계</td>
+								<td class=" colorGray"></td>
+								<td class=" colorGray">${D[0]}</td>
+								<td class=" colorGray">${D[1]}</td>
+								<td class=" colorGray">${D[2]}</td>
+								<td class=" colorGray">${D[3]}</td>
+								<td class=" colorGray">${D[4]}</td>
+								<td class=" colorGray">${D[5]}</td>
+								<td class=" colorGray">${D[6]}</td>
+								<td class=" colorGray">${(D[3] +D[4] +D[5]) != 0 ? ((D[3]+D[4])*100.0/(D[3] +D[4] +D[5])).toFixed(1)+"%" : "-"}</td>
+								<td class=" colorGray">${D[7]}</td>
+								<td class=" colorGray"></td>
+								<td class=" colorGray">${pGoal != null ? (((D[7])*100.0/pGoal.amount).toFixed(1)+"%") : "-"}</td>
+								<td class=" colorGray"></td>
+								<td class=" colorGray text-right">${D[8]}</td>
+								<td class=" colorGray">${pGoal != null ? (((D[8])*100.0/pGoal.hp).toFixed(1)+"%") : "-"}</td>
+								<td class=" colorGray text-right">${D[9]}</td>
+								<td class=" colorGray">${pGoal != null ? (((D[9])*100.0/pGoal.total).toFixed(1)+"%") : "-"}</td>
 							 </tr>`;
 					//수주달성율/연목표달성율만 계산하면 끝!
+					var D = new Array(10).fill(0);
+					$.each(pData.total, function(pIndex, pValue){
+                        for(let i=1;i<=16;i++) {
+							if(SUM_COLUMNS.includes(i)){
+								if(i != 14 && i != 16){
+									if(pValue['b_' + i] != ''){
+										D[SUM_COLUMNS.indexOf(i)]++;
+									}
+
+								}
+								else{
+									var v = parseInt(pValue['b_' + i]); if(isNaN(v)) v = 0;
+									D[SUM_COLUMNS.indexOf(i)] += v;
+								}
+
+							}
+						}
+					})
+					html += `<tr>
+								<td class="text-center middle colorB"><span></span></td>
+								<td class="text-center middle colorB"><span></span></td>
+								<td class="text-center middle colorB" colspan="5">연계</td>
+								<td class=" colorB"></td>
+								<td class=" colorB">${D[0]}</td>
+								<td class=" colorB">${D[1]}</td>
+								<td class=" colorB">${D[2]}</td>
+								<td class=" colorB">${D[3]}</td>
+								<td class=" colorB">${D[4]}</td>
+								<td class=" colorB">${D[5]}</td>
+								<td class=" colorB">${D[6]}</td>
+								<td class=" colorB">${(D[3] +D[4] +D[5]) != 0 ? ((D[3]+D[4])*100.0/(D[3] +D[4] +D[5])).toFixed(1)+"%" : "-"}</td>
+								<td class=" colorB">${D[7]}</td>
+								<td class=" colorB"></td>
+								<td class=" colorB">${pGoal != null ? (((D[7])*100.0/pGoal.amount).toFixed(1)+"%") : "-"}</td>
+								<td class=" colorB"></td>
+								<td class=" colorB text-right">${D[8]}</td>
+								<td class=" colorB">${pGoal != null ? (((D[8])*100.0/pGoal.hp).toFixed(1)+"%") : "-"}</td>
+								<td class=" colorB text-right">${D[9]}</td>
+								<td class=" colorB">${pGoal != null ? (((D[9])*100.0/pGoal.total).toFixed(1)+"%") : "-"}</td>
+							 </tr>`;
 					$("#rptParnterStatus1").find("tbody").html(html);
 					$("#rptParnterStatus1").find("tbody").yRowspan(0);
 					$("#rptParnterStatus1").find("tbody").yRowspan(1);
@@ -473,11 +520,23 @@ $(document).on("dblclick", ".input-available", function(){
 										<tr class="required">
 											<th class="color-contract">현장명</th>
 											<td class="hasinput" colspan="2">
-												<select class="form-control select2" id="s_cntrct_sn" name="s_cntrct_sn">
-													<option value="">[계약을 선택해주세요.]</option>
-                                                    {% for code in contract_nr_list %}
-                                                    <option value="{{code.value}}">{{code.label}}</option>
-                                                    {% endfor %}
+												<input type="text" class="form-control" id="s_spt_nm" name="s_spt_nm"/>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">발주처</th>
+											<td class="hasinput" colspan="2">
+												<input type="text" class="form-control" id="s_bcnc_nm" name="s_bcnc_nm"/>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">프로젝트 담당자</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="s_bsn_mber_sn" name="s_bsn_mber_sn" >
+													<option value="">[프로젝트 담당자를 선택해주세요.]</option>
+													{% for code in member_list %}
+													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+													{% endfor %}
 												</select>
 											</td>
 										</tr>
@@ -511,13 +570,15 @@ $(document).on("dblclick", ".input-available", function(){
 		$("#popBox1").find("#s_mber_sn").yVal('');
 		$("#popBox1").find("#s_b_type").yVal('');
 		// $(modal).find("#cntrct_sn").select2('destroy');
-		$("#popBox1").find("#s_cntrct_sn").yVal('');
+		$("#popBox1").find("#s_spt_nm").val('');
+		$("#popBox1").find("#s_bcnc_nm").val('');
+		$("#popBox1").find("#s_bsn_mber_sn").yVal('');
 
 	}
 	$(document).on('click', '#btnSave', function(){
 		var params = $("#frmBox1").formSerialize();
         params += "&stdyy="+$(document).find('#r3_s_ddt_man').val().split("-")[0]+"-"+$(document).find('#r3_s_ddt_man').val().split("-")[1];
-		if($('#popBox1').find("#s_cntrct_sn").val() == ''){
+		if($('#popBox1').find("#s_spt_nm").val() == ''){
 			alert("계약을 선택해주세요.");
 			return false;
 		}
@@ -613,6 +674,12 @@ $(document).on("dblclick", ".input-available", function(){
                                                 <input type="number" class="form-control text-right" name="hp" id="hp" step="0.1"/>
 											</td>
 										</tr>
+										<tr class="required">
+											<th class="color-contract">연목표액</th>
+											<td class="hasinput" colspan="2">
+                                                <input type="number" class="form-control text-right" name="total" id="total" step="0.1"/>
+											</td>
+										</tr>
 
 									</tbody>
 								</table>
@@ -641,6 +708,10 @@ $(document).on("dblclick", ".input-available", function(){
 		}
 		if($('#popBox2').find("#amount").val() == ''){
 			alert("연목표 건수를 입력해주세요.");
+			return false;
+		}
+		if($('#popBox2').find("#total").val() == ''){
+			alert("연목표액을 입력해주세요.");
 			return false;
 		}
 		$.ajax({

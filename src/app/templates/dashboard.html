@@ -3590,7 +3590,7 @@ $(function() {
 </style>
 
 <div id="rpt9">
-<div class="title"><h2 class="colorLS" id="title">현장별 지급자재 현황</h2></div>
+<div class="title"><h2 class="colorLS" id="title"><span id="rpt9_date" style="font-size:28px!important;"></span> 현장별 지급자재 현황</h2></div>
 <style>
 
     #rpt9 .table>tbody>tr>td, #rpt9 .table>tbody>tr>th, #rpt9 .table>tfoot>tr>td, #rpt9 .table>tfoot>tr>th, #rpt9 .table>thead>tr>td, #rpt9 .table>thead>tr>th {
@@ -3663,7 +3663,7 @@ getLogit = function(s_pxcond_mt)
 {
     var params = '';
 	params += '&s_pxcond_mt='+s_pxcond_mt;
-
+	$("#rpt9_date").html(parseInt(s_pxcond_mt.split("-")[1])+"월");
 	$.ajax({
 		url: '/api/dashboard/ajax_get_logit',
 		type: 'GET',
@@ -3673,12 +3673,46 @@ getLogit = function(s_pxcond_mt)
 		processData: false,
 		success: function(pResult) {
 			var html = '';
+			var before = '';
+			var total_sum = [0, 0, 0, 0, 0];
+			var summation = [0, 0, 0, 0, 0];
 			$.each(pResult.data, function(pIndex, pValue){
 				var cntrct_amount = parseInt(pValue.cntrct_amount); if(isNaN(cntrct_amount)) cntrct_amount = 0;
 				var logi_before = parseInt(pValue.logi_before); if(isNaN(logi_before)) logi_before = 0;
 				var logi_now = parseInt(pValue.logi_now); if(isNaN(logi_now)) logi_now = 0;
 				var other_before = parseInt(pValue.other_before); if(isNaN(other_before)) other_before = 0;
 				var other_now = parseInt(pValue.other_now); if(isNaN(other_now)) other_now = 0;
+				if(pValue.dept_nm != before && before != ''){
+				html += `<tr>
+							<td class="colorSky text-center">${before.replace("팀", "")}</td>
+							<td class="colorSky text-center" rowspan="2">계</td>
+							<td class="colorSky text-left" rowspan="2"></td>
+							<td class="colorSky text-right" rowspan="2">${summation[0].toFormat('NUMBER')}</td>
+							<td class="colorSky text-center">로지텍</td>
+							<td class="colorSky text-right">${summation[1].toFormat('NUMBER')}</td>
+							<td class="colorSky text-right">${summation[2].toFormat('NUMBER')}</td>
+							<td class="colorSky text-right">${(summation[1] + summation[2]).toFormat('NUMBER')}</td>
+							<td class="colorSky text-right" rowspan="2">${(summation[1] + summation[2] + summation[3] + summation[4]).toFormat('NUMBER')}</td>
+							<td class="colorSky text-center" rowspan="2">${((summation[1] + summation[2] + summation[3] + summation[4])*100.0/summation[0]).toFixed(1)}%</td>
+							<td class="colorSky" rowspan="2" colspan="3"></td>
+						</tr>
+						<tr>
+							<td class="colorSky text-center">${before.replace("팀", "")}</td>
+							<td class="colorSky text-center">타사</td>
+							<td class="colorSky text-right">${summation[3].toFormat('NUMBER')}</td>
+							<td class="colorSky text-right">${summation[4].toFormat('NUMBER')}</td>
+							<td class="colorSky text-right">${(summation[3]+summation[4]).toFormat('NUMBER')}</td>
+						</tr>`;
+					for(let i=0;i<5;i++){
+						total_sum[i] += summation[i];
+					}
+					var sum = [0, 0, 0, 0, 0];
+				}
+				summation[0] += cntrct_amount;
+				summation[1] += logi_before;
+				summation[2] += logi_now;
+				summation[3] += other_before;
+				summation[4] += other_now;
 				html += `<tr>
 							<td class="colorSky text-center">${pValue.dept_nm.replace("팀", "")}</td>
 							<td class="text-left" rowspan="2"><a href="/dashboard/logitech?cntrct_sn=${pValue.cntrct_sn}" target="_blank">${pValue.spt_nm}</a></td>
@@ -3701,7 +3735,52 @@ getLogit = function(s_pxcond_mt)
 							<td class="text-right">${other_now.toFormat('NUMBER')}</td>
 							<td class="text-right">${(other_before+other_now).toFormat('NUMBER')}</td>
 						</tr>`;
+				before = pValue.dept_nm;
 			});
+			html += `<tr>
+						<td class="colorSky text-center">${before.replace("팀", "")}</td>
+						<td class="colorSky text-center" rowspan="2">계</td>
+						<td class="colorSky text-left" rowspan="2"></td>
+						<td class="colorSky text-right" rowspan="2">${summation[0].toFormat('NUMBER')}</td>
+						<td class="colorSky text-center">로지텍</td>
+						<td class="colorSky text-right">${summation[1].toFormat('NUMBER')}</td>
+						<td class="colorSky text-right">${summation[2].toFormat('NUMBER')}</td>
+						<td class="colorSky text-right">${(summation[1] + summation[2]).toFormat('NUMBER')}</td>
+						<td class="colorSky text-right" rowspan="2">${(summation[1] + summation[2] + summation[3] + summation[4]).toFormat('NUMBER')}</td>
+						<td class="colorSky text-center" rowspan="2">${((summation[1] + summation[2] + summation[3] + summation[4])*100.0/summation[0]).toFixed(1)}%</td>
+						<td class="colorSky" rowspan="2" colspan="3"></td>
+					</tr>
+					<tr>
+						<td class="colorSky text-center">${before.replace("팀", "")}</td>
+						<td class="colorSky text-center">타사</td>
+						<td class="colorSky text-right">${summation[3].toFormat('NUMBER')}</td>
+						<td class="colorSky text-right">${summation[4].toFormat('NUMBER')}</td>
+						<td class="colorSky text-right">${(summation[3]+summation[4]).toFormat('NUMBER')}</td>
+					</tr>`;
+				for(let i=0;i<5;i++){
+					total_sum[i] += summation[i];
+				}
+				var summation = [0, 0, 0, 0, 0];
+				html += `<tr>
+						<td class="colorB text-center">총계</td>
+						<td class="colorB text-center" rowspan="2"></td>
+						<td class="colorB text-left" rowspan="2"></td>
+						<td class="colorB text-right" rowspan="2">${total_sum[0].toFormat('NUMBER')}</td>
+						<td class="colorB text-center">로지텍</td>
+						<td class="colorB text-right">${total_sum[1].toFormat('NUMBER')}</td>
+						<td class="colorB text-right">${total_sum[2].toFormat('NUMBER')}</td>
+						<td class="colorB text-right">${(total_sum[1] + total_sum[2]).toFormat('NUMBER')}</td>
+						<td class="colorB text-right" rowspan="2">${(total_sum[1] + total_sum[2] + total_sum[3] + total_sum[4]).toFormat('NUMBER')}</td>
+						<td class="colorB text-center" rowspan="2">${((total_sum[1] + total_sum[2] + total_sum[3] + total_sum[4])*100.0/total_sum[0]).toFixed(1)}%</td>
+						<td class="colorB" rowspan="2" colspan="3"></td>
+					</tr>
+					<tr>
+						<td class="colorB text-center">총계</td>
+						<td class="colorB text-center">타사</td>
+						<td class="colorB text-right">${total_sum[3].toFormat('NUMBER')}</td>
+						<td class="colorB text-right">${total_sum[4].toFormat('NUMBER')}</td>
+						<td class="colorB text-right">${(total_sum[3]+total_sum[4]).toFormat('NUMBER')}</td>
+					</tr>`;
 			$("#logit tbody[role='body_logit']").html(html);
 			$("#logit tbody[role='body_logit']").yRowspan(0);
 		}

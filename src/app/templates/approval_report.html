@@ -443,7 +443,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                     $.ajax({
                         url : '/api/approval/get_approval',
                         method : 'GET',
-                        data : {"approval_sn" : approval_sn},
+                        data : {"approval_sn" : approval_sn, "init" : '{% if init in ("init","copy") %}1{% else %}0{% endif %}'},
                         success: function(pResult){
 							$("#formContent").html(pResult.html);
 							$("#approval_title").val(pResult.approval.approval_title);

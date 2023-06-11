@@ -385,6 +385,7 @@ getProjectList = function()
                         else if(pRow.dept_nm == "빌트인팀"){
                             dept_code = "BI";
                         }
+						dept_code += ","+pRow.spt_dept_code;
                         html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
                         html += '	<i class="fa fa-print"></i>'+pData;
                         html += '</button>';
@@ -489,7 +490,7 @@ getProjectList = function()
                     $('#popBox1').data('action', 'show');
                     $('#popBox1').data('actioncontract', 'show');
                 }
-                if(show || dept_code == myDeptCode){
+                if(show || dept_code.split(",").includes(myDeptCode)){
                     getProject(cntrct_sn, prjct_sn);
                 }
                 else{
@@ -525,7 +526,7 @@ getProjectList = function()
 				var prjct_ty_code = $(this).data('prjct_ty_code');
 				var cntrct_sn = $(this).data('cntrct_sn');
 				var prjct_sn = $(this).data('prjct_sn');
-                if(show || dept_code == myDeptCode){
+                if(show || dept_code.split(",").includes(myDeptCode)){
                     if (prjct_ty_code == 'NR') { //일반공무
                         getReportNR(cntrct_sn, prjct_sn);
                     } else if (prjct_ty_code == 'BD') { //빌트인직계약

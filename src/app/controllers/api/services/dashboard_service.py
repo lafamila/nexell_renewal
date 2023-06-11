@@ -196,7 +196,6 @@ def get_completed_suju(params):
 				GROUP BY m.dept_code, c.bcnc_sn, cst.cntrct_sn,  cst.cost_date
 				ORDER BY code_ordr, dept_code, ordr, bcnc_nm, cntrct_de """.format(first_day, last_day)
     g.curs.execute(query)
-    print(query)
     result = g.curs.fetchall()
     return result
 

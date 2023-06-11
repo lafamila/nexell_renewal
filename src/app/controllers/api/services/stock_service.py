@@ -336,6 +336,21 @@ def get_stock(params):
 				WHEN m.stock_sttus IN (2,3) THEN (SELECT spt_nm FROM contract WHERE cntrct_sn=m.cntrct_sn)
 				ELSE (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.stock_sttus)
 				END AS invn_sttus_nm
+				, p.ddt_man AS puchas_de
+				, CASE WHEN mi.stock_sttus = 1 THEN IFNULL(p.dlivy_amt, 0) 
+                    WHEN mi.stock_sttus = 2 THEN IFNULL(p.dlivy_amt, 0)
+                    ELSE 0
+                    END AS dlivy_amt
+				, CASE WHEN mi.stock_sttus = 1 THEN IFNULL(p.dscnt_rt,0) + IFNULL(p.add_dscnt_rt, 0)
+                    WHEN mi.stock_sttus = 2 THEN IFNULL(p.dscnt_rt,0) + IFNULL(p.add_dscnt_rt, 0)
+                    ELSE 0
+                    END AS dc
+				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                    WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                    ELSE 0
+                    END AS puchas_amount_one
+				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn), '')
+				  ELSE IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS cntrct_nm
 				, IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '') AS bcnc_nm
 				, 1 AS qy
 				, s.model_no AS modl_nm
@@ -343,6 +358,10 @@ def get_stock(params):
 				FROM stock s 
 				INNER JOIN 
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+				INNER JOIN
+				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
+				INNER JOIN
+				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
 				WHERE s.stock_sn=%(s_stock_sn)s"""
     params['reserv'] = "%예약%"
     g.curs.execute(query, params)
