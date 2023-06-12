@@ -208,7 +208,14 @@ def ajax_get_stock_month():
     try:
         params = request.args.to_dict()
         result = dict()
-        result['data'] = st.get_stock_month(params)
+        if "invn_type" in params:
+            result['data'] = st.get_stock_month(params)
+        else:
+            result['data'] = list()
+            for i in range(1, 3):
+                params['invn_type'] = i
+                result['data'].append(st.get_stock_month(params))
+
         result['status'] = True
         return jsonify(result)
     except Exception as e:

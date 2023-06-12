@@ -171,6 +171,7 @@ body.smart-style-6 .table thead tr {
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
 						<h2>재고 현황</h2>
 						<div class="widget-toolbar">
+							<button class="btn btn-info" data-toggle="modal" href="#popReport3"><i class="fa fa-print"> 월별재고현황</i></button>
 							<button class="btn btn-info" data-toggle="modal" href="#popReport1"><i class="fa fa-print"> 종합재고현황</i></button>
 <!--							<button class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 재고 등록</i></button>-->
 							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
@@ -1624,6 +1625,454 @@ $(function() {
 
 </script>
 {% include './stock_report.html' %}
+
+
+<div class="modal fade" data-backdrop="static" id="popReport3">
+    <div class="modal-dialog modal-w1200" style="width:50%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint3"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r2_s_ddt_man" name="r2_s_ddt_man">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt9">
+<div class="title"><h2 class="colorLS" id="titles">월별 재고 현황</h2></div>
+<style>
+
+    #rpt6 .table>tbody>tr>td, #rpt6 .table>tbody>tr>th, #rpt6 .table>tfoot>tr>td, #rpt6 .table>tfoot>tr>th, #rpt6 .table>thead>tr>td, #rpt6 .table>thead>tr>th {
+        line-height: 0.5 !important;
+    }
+
+</style>
+<style>
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #popReport1 div.report table th,
+    #popReport1 div.report table td {
+        font-size: 8px!important;
+        padding: 7px 5px!important;
+        line-height: 1.0!important;
+    }
+}
+</style>
+<h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(단위 : 개)</h3>
+<!-- 기성 현황 시작 -->
+<table id="stock_report_bi_summary" class="table table-bordered w100p">
+     <colgroup>
+        <col width="50">
+        <col width="50">
+
+        <col width="60">
+        <col width="60">
+        <col width="60">
+        <col width="60">
+
+        <col width="60">
+        <col width="60">
+        <col width="60">
+
+        <col width="60">
+
+        <col width="60">
+        <col width="60">
+        <col width="60">
+        <col width="60">
+
+        <col width="60">
+        <col width="60">
+        <col width="60">
+
+        <col width="60">
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="colorB" rowspan="3">년</th>
+            <th class="colorB" rowspan="3" style="border-right:2px solid #555!important;">월</th>
+            <th class="colorB" colspan="8" style="border-right:2px solid #555!important;">에어컨(이현)</th>
+            <th class="colorB" colspan="8" style="border-right:2px solid #555!important;">에어컨(이건/기타)</th>
+        </tr>
+		<tr>
+            <th class="colorB" colspan="4" style="border-right:2px solid #555!important;">입출고</th>
+            <th class="colorB" colspan="3" style="border-right:2px solid #555!important;">현재고</th>
+            <th class="colorB" rowspan="2" style="border-right:2px solid #555!important;">계</th>
+            <th class="colorB" colspan="4" style="border-right:2px solid #555!important;">입출고</th>
+            <th class="colorB" colspan="3" style="border-right:2px solid #555!important;">현재고</th>
+            <th class="colorB" rowspan="2" style="border-right:2px solid #555!important;">계</th>
+		</tr>
+		<tr>
+            <th class="colorB">회수</th>
+            <th class="colorB">전시</th>
+            <th class="colorB">판매</th>
+            <th class="colorB" style="border-right:2px solid #555!important;">폐기</th>
+            <th class="colorB">내기</th>
+            <th class="colorB">외기</th>
+            <th class="colorB" style="border-right:2px solid #555!important;">기타</th>
+            <th class="colorB">회수</th>
+            <th class="colorB">전시</th>
+            <th class="colorB">판매</th>
+            <th class="colorB" style="border-right:2px solid #555!important;">폐기</th>
+            <th class="colorB">내기</th>
+            <th class="colorB">외기</th>
+            <th class="colorB" style="border-right:2px solid #555!important;">기타</th>
+		</tr>
+    </thead>
+    <tbody role="body">
+        <tr data-row="0">
+            <th class="text-center middle stock_stdyy" rowspan="13"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">전월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="1">
+            <th class="text-center" style="border-right:2px solid #555!important;">1월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="2">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">2월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="3">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">3월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="4">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">4월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="5">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">5월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="6">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">6월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="7">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">7월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="8">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">8월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="9">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">9월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="10">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">10월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="11">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">11월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+        <tr data-row="12">
+            <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
+            <th class="text-center" style="border-right:2px solid #555!important;">12월</th>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+        </tr>
+	</tbody>
+<!--    <tfoot>-->
+<!--        <tr class="amount">-->
+<!--            <th class="colorSky text-center" colspan="2" style="border-right:2px solid #555!important;">합계</th>-->
+<!--            <td class="colorSky text-number" colspan="4" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="3" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="1" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="4" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="3" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="1" style="border-right:2px solid #555!important;"></td>-->
+<!--        </tr>-->
+<!--    </tfoot>-->
+
+</table>
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+
+<script>
+getStockMonth = function(s_ddt_man)
+{
+	var params = '';
+	params += '&s_ddt_man=' + s_ddt_man;
+
+	$.ajax({
+		url: '/api/stock/ajax_get_stock_month',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log('getStockMonth', pResult);
+			if (pResult.status) {
+				$("#stock_report_bi_summary").find("td").html('');
+				$("#stock_report_bi_summary").find(".stock_stdyy").html(s_ddt_man.split("-")[0]);
+				var total = [0, 0];
+				$.each(pResult.data, function(_, pData){
+					$.each(pData, function(pIndex, pValue){
+						var tr = $("#stock_report_bi_summary").find(`tbody tr[data-row="${pValue.stdmm}"]`);
+						var ant_t = 0;
+						for(let i=0;i<7;i++){
+							$(tr).find("td").eq(i+(7*_)+_).html(pValue['cnt'+(i+1)].toFormat('NUMBER'));
+							if(i>=4){
+								ant_t += pValue['cnt'+(i+1)];
+
+							}
+						}
+						$(tr).find("td").eq((7*(_+1))+_).html(ant_t.toFormat('NUMBER'));
+						total[_] += ant_t;
+					});
+				});
+				// $("#stock_report_bi_summary").find("tfoot td").eq(2).html(total[0].toFormat('NUMBER'));
+				// $("#stock_report_bi_summary").find("tfoot td").eq(5).html(total[1].toFormat('NUMBER'));
+			}
+		}
+	});
+}
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport3').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#r2_s_ddt_man').val() == '') {
+			modal.find('#r2_s_ddt_man').datepicker('setDate', 'today');
+		}
+		getStockMonth(modal.find('#r2_s_ddt_man').val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popReport3').on('change', '#r2_s_ddt_man', function(pEvent) {
+		getStockMonth($(this).val());
+	});
+
+
+});
+
+</script>
 
 
 

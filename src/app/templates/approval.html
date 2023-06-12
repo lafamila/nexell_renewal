@@ -556,14 +556,15 @@ getApprovalList = function()
 			$(myList).on('change', 'thead select', function(pEvent){
 				if($(this).attr("id") == "s_approval_se_code"){
 					let html = `<option value="">[전체]</option>`;
-					{% for code in approval_ty_code_list %}
+					$("#s_approval_tty_code").select2("destroy");
+					{% for code in approval_tty_code_list %}
 					html += `<option value="{{code.value}}" data-parent="{{code.etc1}}">{{code.value}}.{{code.label}}</option>`;
 					{% endfor %}
-					$("#s_approval_ty_code").html(html);
+					$("#s_approval_tty_code").html(html);
 
 					let se_code = $(this).val();
 					if(se_code != ''){
-						let options = $("#s_approval_ty_code").find("option");
+						let options = $("#s_approval_tty_code").find("option");
 						$.each(options, function(pIndex, pValue){
 							let parent_se_code = $(pValue).data("parent");
 							console.log(parent_se_code);
@@ -573,10 +574,9 @@ getApprovalList = function()
 						});
 					}
 					else{
-						$("#s_approval_ty_code").find("option").show();
+						$("#s_approval_tty_code").find("option").show();
 					}
-					$("#s_approval_ty_code").select2("destroy");
-					$("#s_approval_ty_code").select2();
+					$("#s_approval_tty_code").select2();
 				}
 				$.datatable1.ajax.reload();
 			});

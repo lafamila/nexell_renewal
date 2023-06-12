@@ -605,15 +605,18 @@ def get_built_month_sales(params):
     return result
 def get_stock_month(params):
     params['stdyy'] = params['s_ddt_man'].split("-")[0]
+    params['last'] = int(params['s_ddt_man'].split("-")[0]) - 1
     query = """SELECT stdyy
-                    , stdmm """
+                    , IF(stdyy=%(last)s, 0, stdmm) AS stdmm """
 
-    for i in range(1, 14):
+    for i in range(1, 8):
         query += " , cnt{} ".format(i)
 
     query +=    """ FROM bnd_stock_table
-                    WHERE stdyy=%(stdyy)s
-                    ORDER BY stdmm ASC"""
+                    WHERE (stdyy=%(stdyy)s OR (stdyy=%(last)s AND stdmm=12))
+                    AND invn_type=%(invn_type)s """
+
+    query +=    """ ORDER BY stdmm ASC"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result

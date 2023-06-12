@@ -254,7 +254,7 @@ def set_menu(auth_cd):
     required = []
     for r in result:
         key = r['Field'].lower()
-        if r['Default'] is '' and r['Extra'] != 'auto_increment':
+        if r['Default'] == '' and r['Extra'] != 'auto_increment':
             required.append(key)
         if r['Extra'] != 'auto_increment':
             total_columns.append(key)
