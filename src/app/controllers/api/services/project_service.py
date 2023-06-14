@@ -603,6 +603,16 @@ def insert_cost(params):
     query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(columns), ",".join(['%({})s'.format(col) for col in columns]))
     g.curs.execute(query, data)
 
+    if data['cntrct_execut_code'] == 'E' and int(data['ct_se_code']) == 5:
+        purchsofc_sn = data['purchsofc_sn']
+        row = g.curs.execute("SELECT * FROM outsrc WHERE cntrct_sn=%s AND prjct_sn=%s AND outsrc_fo_sn=%s", (data['cntrct_sn'], data['prjct_sn'], purchsofc_sn))
+        if row:
+            # outsrc_item에만 추가하면 됨
+            pass
+        else:
+            pass
+
+
 def update_cost(params):
     data = dict()
     keys = ['cntrct_sn', 'prjct_sn', 'cntrct_execut_code', 'ct_se_code', 'purchsofc_sn', 'prdlst_se_code', 'model_no', 'qy', 'puchas_amount', 'salamt', 'dscnt_rt', 'cost_date', 'add_dscnt_rt', 'extra_sn', 'fee_rt', 'dspy_se_code', 'dspy_de']
@@ -1434,13 +1444,13 @@ def get_outsrc_detail(params):
     result['outsrc'] = g.curs.fetchone()
     params['s_outsrc_sn'] = result['outsrc']['outsrc_sn']
 
-    query = """SELECT item_sn
-                , item_damt AS amount
-                , item_dlnt AS qy
-                , item_nm AS model_no
-                , (SELECT SUM(item_damt*item_dlnt) FROM outsrc_item WHERE outsrc_sn=o.outsrc_sn) AS total
-                FROM outsrc_item oi
-                LEFT JOIN outsrc o ON oi.outsrc_sn=o.outsrc_sn
+    query = """SELECT co.cntrwk_ct_sn AS item_sn
+                , co.puchas_amount AS amount
+                , co.qy AS qy
+                , co.model_no AS model_no
+                , (SELECT SUM(qy*puchas_amount) FROM cost WHERE cntrct_sn=%(s_cntrct_sn)s AND prjct_sn=%(s_prjct_sn)s AND purchsofc_sn=o.outsrc_sn) AS total
+                FROM cost co
+                LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_sn
                 WHERE 1=1
                 AND o.outsrc_sn = %(s_outsrc_sn)s"""
     g.curs.execute(query, params)
@@ -1985,11 +1995,24 @@ def delete_finals(params):
     g.curs.execute(query, params)
 
 def get_contract_no(params):
-    query = """SELECT * FROM contract WHERE cntrct_no LIKE %s"""
-    data = []
-    data.append("{}-{}-%".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m%d"), session['member']['dept_nm'].replace("팀", "")))
-    row = g.curs.execute(query, data)
-    return "{}-{}-{}".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m%d"), session['member']['dept_nm'].replace("팀", ""), row)
+
+    y, m, _ = list(map(int, params['today'].split("-")))
+    dept_code = session['member']['dept_code']
+    query = """SELECT cnt FROM contract_no WHERE stdyy=%s AND stdmm=%s AND dept_code=%s"""
+    row = g.curs.execute(query, (y, m, dept_code))
+    if row:
+        cnt = g.curs.fetchone()['cnt'] + 1
+        g.curs.execute("UPDATE contract_no SET cnt=%s WHERE stdyy=%s AND stdmm=%s AND dept_code=%s", (cnt, y, m, dept_code))
+    else:
+        cnt = 1
+        g.curs.execute("INSERT INTO contract_no(stdyy, stdmm, dept_code, cnt) VALUES(%s, %s, %s, %s)", (y, m, dept_code, cnt))
+    if session['member']['dept_nm'] == '':
+        dept = ''
+    elif dept_code.startswith("TS"):
+        dept = session['member']['dept_nm'][0]+dept_code.replace("TS", '')
+    else:
+        dept = session['member']['dept_nm'][0]
+    return "{}-{}-{}".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m"), dept, str(cnt).zfill(3))
 
 def insert_project(params):
     g.curs.execute("SHOW COLUMNS FROM contract")

@@ -1,6 +1,7 @@
 from flask import Blueprint, g, current_app, render_template, redirect, request, make_response, jsonify, send_file, Response, url_for, session
 from .services import member_service as mber
 from .services import approval_service as apvl
+from .services import project_service as prj
 from app.connectors import DB
 from app.helpers import session_helper
 from .services import set_menu
@@ -54,10 +55,15 @@ def get_approval_template():
 @bp.route('/ajax_insert_approval', methods=['POST'])
 def ajax_insert_approval():
     try:
+
         params = request.get_json()
+
+        if int(params['approval_ty_code']) in (1, 39, 40):
+            params['data']['cntrct_no'] = prj.get_contract_no({"today" : datetime.today().strftime("%Y-%m-%d")})
         apvl_sn = apvl.insert_approval(params)
         params['approval_sn'] = apvl_sn
         apvl.insert_approval_member(params)
+
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다.", "approval_sn" : apvl_sn})
     except Exception as e:
         return make_response(str(e), 500)

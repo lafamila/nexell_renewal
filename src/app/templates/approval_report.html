@@ -1009,9 +1009,6 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 			return false;
 		}
 		else{
-			if(loginSN == '66'){
-				params.approval_list.push({"mber_sn" : '66', "reg_type": '1'});
-			}
 		$.ajax({
 			url: '/api/approval/ajax_insert_approval',
 			type: 'POST',

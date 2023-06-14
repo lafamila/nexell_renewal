@@ -435,16 +435,16 @@
                }
     {% if init %}
     $(document).ready(function(){
-        var today = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
-        $.ajax({
-            url : '/api/project/get_contract_no',
-            method : 'GET',
-            data : {"today" : today},
-            success: function(pResult){
-                $("#cntrct_no").val(pResult);
-                $("#reg_dtm").val((new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0]);
-            }
-        });
+        // var today = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+        $("#reg_dtm").val((new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0]);
+        // $.ajax({
+        //     url : '/api/project/get_contract_no',
+        //     method : 'GET',
+        //     data : {"today" : today},
+        //     success: function(pResult){
+        //         $("#cntrct_no").val(pResult);
+        //     }
+        // });
         $(document).find(".datepicker").datepicker({
             beforeShow: function(dateText) {
                 $(this).data('before', $(this).val());

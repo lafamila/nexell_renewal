@@ -42,6 +42,17 @@ def get_biss_summery(params):
 def get_all_member_project(params):
     query = """SELECT c.spt_chrg_sn AS mber_sn
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
+				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_amt
+				, IFNULL((SELECT SUM(IFNULL(co.puchas_amount, 0) * IFNULL(co.qy, 0) * (100 - IFNULL(co.dscnt_rt, 0)) / 100) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_amt				
+				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_qy
+				, IFNULL((SELECT SUM(IFNULL(co.qy, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_qy				
+				, CASE WHEN c.prjct_ty_code ='BF' THEN c.rate 
+				WHEN c.prjct_ty_code = 'BD' THEN 0.0
+				ELSE (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1)
+				END AS new_rate				
+				, c.prjct_ty_code
 				FROM contract c
 				WHERE c.progrs_sttus_code IN ('P', 'S')
 				AND c.prjct_creat_at = 'Y'

@@ -581,8 +581,21 @@ getBissSummery = function()
                     if(!k_cnts.hasOwnProperty(pValue.mber_sn)){
                         k_cnts[pValue.mber_sn] = 0;
                     }
+					if(pValue.prjct_ty_code == 'BF'){
+						pValue.rate = pValue.new_rate;
+					}
+					else if(pValue.prjct_ty_code == 'BD'){
+					  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
+						  pValue.rate = 0.0;
+					  }
+					  else{
+						  pValue.rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
+					  }
+
+					}
+
                     var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
-                    if(rate == 0.0)
+                    if(rate < 5.0) //HERE
                         k_cnts[pValue.mber_sn]++;
                 });
                 var small_tot = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -2762,7 +2775,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
 				}
                 var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
 
-                if(rate == 0.0 && pValue.progrs_sttus_code == 'P'){
+                if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
                     pValue.progrs_sttus_code = 'K';
                     pValue.sttus_nm = '대기';
                 }
