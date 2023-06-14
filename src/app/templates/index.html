@@ -10,13 +10,25 @@
 <!--        <li style="">홈</li><li><span> 홈</span></li>-->
 <!--	</ol>-->
 <!--</div>-->
-
+<style>
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+</style>
 <script src="/static/summernote/summernote-lite.js"></script>
 <script src="/static/summernote/summernote-ko-KR.js"></script>
 <link href="/static/summernote/summernote-lite.css" rel="stylesheet"/>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
 
 <div id="content" style="padding-top:30px!important;height:calc(100vh - 138px);">
-
+	<input type="file" name="myFile" id="ex_filename" style="display:none;">
 	<!-- 화면 내용 -->
 	<section id="widget-grid" class="" style="height:100%;">
 
@@ -59,12 +71,12 @@
 					grid-template-columns: 1fr 1fr;
 					place-items: center center;
 				}
-				.profile > img{
+				.profile > div:first-child > img{
 					border-radius: 50%;
 					width: 80%;
 					aspect-ratio: 1.0;
 				}
-				.profile > div{
+				.profile > div:last-child{
 					width: 80%;
 					display:grid;
 					grid-template-rows: 1fr 1fr 1fr;
@@ -205,12 +217,46 @@
 				.approval-tr, #approval_status_4 .table-tr{
 					cursor:pointer;
 				}
+				#profile-img{
+					cursor:pointer;
+				}
+				.profile-img-container{
+					text-align:center;
+					position: relative;
+				}
+				.profile-img-container > div{
+					width: 80%;
+					background-color:rgba(0, 0, 0, 0.4);
+					position:absolute;
+					display:none;
+					height:100%;
+					left:50%;
+					border-radius:50%;
+					transform:translateX(-50%);
+					grid-template-rows: 1fr 1fr;
+
+				}
+				.profile-img-container > div > div{
+					display:grid;
+					justify-items: center;
+					align-items: center;
+					cursor:pointer;
+				}
+				.profile-img-container > div > div:first-child{
+					border-bottom:1px solid white;
+				}
 			</style>
 			<div class="grid-container">
 				<div class="left-container" style="font-weight: normal!important;">
 					<div class="profile-container">
 						<div class="profile">
-							<img src="https://www.w3schools.com/howto/img_avatar2.png" alt="Avatar">
+							<div class="profile-img-container">
+								<img id="profile-img" src="/static/files/{{session['member']['profile_path'] if session['member']['profile_path'] != '' else 'profile.png'}}" alt="Avatar">
+								<div style="top:0px;" id="profile-setup">
+									<div id="regist-profile">프로필 등록</div>
+									<div id="regist-sign">서명 등록</div>
+								</div>
+							</div>
 							<div>
 								<span style="font-size:15px!important;">{{session['member'].member_nm}}</span>
 								<span style="font-weight:normal!important;">부서 : <span style="font-weight:normal!important;">{{session['member'].dept_nm}}</span></span>
@@ -342,7 +388,110 @@
 	<!-- end widget grid -->
 
 </div>
+<script>
+	$(document).ready(function(){
+		var coveredOffset = $('#profile-img').offset(),
+			coveredWidth  = $('#profile-img').width(),
+			coveredHeight = $('#profile-img').height();
+		console.log(coveredOffset, coveredHeight, coveredHeight)
+		$(document).on('mousemove', function (event) {
+			if (event.pageX > coveredOffset.left && event.pageX < (coveredOffset.left + coveredWidth) && event.pageY > coveredOffset.top && event.pageY < (coveredOffset.top + coveredHeight)) {
+				$("#profile-setup").css("display", "grid");
+			}
+			else{
+				$("#profile-setup").css("display", "none");
 
+			}
+		});
+
+	});
+	$(document).on("click", "#regist-sign", function(e){
+		e.preventDefault();
+		window.clickFlag = 0;
+		$("#ex_filename").click();
+	});
+	$(document).on("click", "#regist-profile", function(e){
+		e.preventDefault();
+		window.clickFlag = 1;
+		$("#ex_filename").click();
+
+	});
+	$(document).on("change", "#ex_filename", function(){
+		const file = document.querySelector("#ex_filename").files[0];
+		const filesize = file.size;
+		var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : 0, "folder" : "{{session['member']['member_sn']}}"};
+		$.ajax({
+			url : '/api/common/get_upload_file_id',
+			method : 'POST',
+			data : params,
+			success: function(pResult){
+				let name = pResult.filename;
+				let chunk_size = pResult.filesize;
+				let file_sn = pResult.file_sn;
+				let ord = pResult.order;
+				let start = 0;
+				create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+			},
+			error: function(){
+				alert("오류가 발생했습니다.");
+					location.reload();
+				},
+			beforeSend: function(){
+
+
+			}
+		});
+	});
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+				$.ajax({
+					url : `/api/member/ajax_update_image`,
+					method : 'POST',
+					data : {"file_sn" : file_sn, "purpose": window.clickFlag, "mber_sn" : "{{session['member']['member_sn']}}"},
+					success: function(pResult) {
+						if(window.clickFlag == 0){
+							$("#my-spinner").hide();
+							alert("등록되었습니다.");
+							location.reload();
+						}
+						else{
+							$("#my-spinner").hide();
+							alert("프로필 반영을 위해 로그아웃이 필요합니다.");
+							$(document).find("#btnLogout").click();
+
+						}
+
+					},
+					error: function(pResult){
+						alert("오류가 발생했습니다.");
+						// location.reload();
+					}
+				})
+            }
+        }
+        oReq.send(form);
+    }
+</script>
 <script>
 	// var db_events = [{
 	// 	title: "Today",

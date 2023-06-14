@@ -16,6 +16,14 @@ def history_login(view_title, view_action, member_sn, member_id):
     row = g.curs.execute("""INSERT INTO history(client_sn, member_sn, view_title, view_path, view_action, regist_dtm, register_id) VALUES (1, %s, %s, '/', %s, NOW(), %s)""", (member_sn, view_title, view_action, member_id))
     return {"status": True}
 
+def update_image(params):
+    if int(params["purpose"]) == 0:
+        query = """UPDATE member SET sign_file_sn=%(file_sn)s WHERE mber_sn=%(mber_sn)s"""
+    else:
+        query = """UPDATE member SET prof_file_sn=%(file_sn)s WHERE mber_sn=%(mber_sn)s"""
+    g.curs.execute(query, params)
+
+
 def update_member(params):
     required = ("mber_password", )
     mber_sn = params["mber_sn"]
@@ -94,9 +102,19 @@ def get_member(member_sn):
     member = g.curs.fetchone()
     return member
 def get_member_info(member_sn):
-    row = g.curs.execute("""SELECT m.mber_sn AS member_sn, m.dept_code AS dept_code, m.mber_id AS member_id, m.mber_nm AS member_nm, m.author_sn AS auth_cd, m.ctmmny_sn AS client_sn, c.bizrno, (SELECT code_nm FROM code WHERE PARNTS_CODE='OFCPS_CODE' AND code=m.ofcps_code) AS member_level, (SELECT code_nm FROM code WHERE PARNTS_CODE='DEPT_CODE' AND code=m.dept_code) AS dept_nm 
-    , (SELECT MAX(regist_dtm) as login_dtm FROM history WHERE member_sn=m.mber_sn AND view_title='로그인' GROUP BY mber_sn, view_title) AS login_dtm
-    FROM member m LEFT JOIN ctmmny c ON m.ctmmny_sn = c.ctmmny_sn WHERE m.mber_sn=%s""", (member_sn, ))
+    row = g.curs.execute("""SELECT 
+                                m.mber_sn AS member_sn
+                                , m.dept_code AS dept_code
+                                , m.mber_id AS member_id
+                                , m.mber_nm AS member_nm
+                                , m.author_sn AS auth_cd
+                                , m.ctmmny_sn AS client_sn
+                                , c.bizrno
+                                , (SELECT code_nm FROM code WHERE PARNTS_CODE='OFCPS_CODE' AND code=m.ofcps_code) AS member_level
+                                , (SELECT code_nm FROM code WHERE PARNTS_CODE='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+                                , (SELECT MAX(regist_dtm) as login_dtm FROM history WHERE member_sn=m.mber_sn AND view_title='로그인' GROUP BY mber_sn, view_title) AS login_dtm
+                                , (IF(f.file_path IS NULL, 'profile.png', f.file_path)) as profile_path
+    FROM member m LEFT JOIN ctmmny c ON m.ctmmny_sn = c.ctmmny_sn LEFT OUTER JOIN files f ON f.f_sn=m.prof_file_sn WHERE m.mber_sn=%s""", (member_sn, ))
     member = g.curs.fetchone()
     ...
     for key in member:

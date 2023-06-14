@@ -2033,7 +2033,7 @@ $(function() {
 					background: #e6faff!important;
 				}
 				#rpt8 .table>tbody>tr>td, #rpt8 .table>tbody>tr>th, #rpt8 .table>tfoot>tr>td, #rpt8 .table>tfoot>tr>th, #rpt8 .table>thead>tr>td, #rpt8 .table>thead>tr>th {
-					line-height: 1.0 !important;
+					line-height: 0.5 !important;
 				}
 				body.smart-style-6 .modal .table>tbody>tr>td, body.smart-style-6 .modal .table>tfoot>tr>th, body.smart-style-6 .modal .table>tfoot>tr>td, body.smart-style-6 .modal .table>thead>tr>td {
 					padding: 7px!important;
@@ -2748,7 +2748,20 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
             var amount_tot = 0;
             var pData = pResult.data;
             $.each(pData, function(pIndex, pValue){
+				if(pValue.prjct_ty_code == 'BF'){
+					pValue.rate = pValue.new_rate;
+				}
+				else if(pValue.prjct_ty_code == 'BD'){
+				  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
+					  pValue.rate = 0.0;
+				  }
+				  else{
+					  pValue.rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
+				  }
+
+				}
                 var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
+
                 if(rate == 0.0 && pValue.progrs_sttus_code == 'P'){
                     pValue.progrs_sttus_code = 'K';
                     pValue.sttus_nm = '대기';
@@ -2768,18 +2781,6 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
             });
             pData.sort((a, b) => (a.ordr > b.ordr) ? 1 : -1 )
             $.each(pResult.data, function(pIndex, pValue){
-				if(pValue.prjct_ty_code == 'BF'){
-					pValue.rate = pValue.new_rate;
-				}
-				else if(pValue.prjct_ty_code == 'BD'){
-				  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
-					  pValue.rate = 0.0;
-				  }
-				  else{
-					  pValue.rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
-				  }
-
-				}
 				if(before != "" && before != pValue.sttus_nm){
 
                     html += '<tr>';

@@ -440,7 +440,7 @@ getMoneyData = function(s_mt){
 				var colored = tax_amount == 0 ? " colored" : "";
 				var year = $("#s_year").val().split("-")[0];
 				var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
-				colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 3) ? " colorY" : colored;
+				colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
 				html += `<tr data-cntrct="${pValue.cntrct_sn}" data-bcnc="${pValue.bcnc_sn}" data-row="row${pIndex+1}" data-raw="raw${pValue.cntrct_sn}">
 							<td data-side="S" class="${colored}">${pValue.bcnc_nm}</td>
 							<td data-side="S" class="${colored}">${pValue.cntrct_nm}</td>

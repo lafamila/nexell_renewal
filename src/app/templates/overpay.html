@@ -38,9 +38,9 @@
                     }
                 }
                 </style>
-                <div class="title"><h2 class="colorLS"><span id="rptTitle"></span>년 공조사업부 월별 집행현황</h2></div>
+                <div class="title"><h2 class="colorLS"><span id="rptTitle" style="font-size:28px!important;"></span>년 공조사업부 월별 집행현황</h2></div>
                 <!------------------------------------------------------------------------------------------->
-			    <h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(단위 : 원)</h3>
+			    <h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(단위 : 천원)</h3>
 				<table id="amountTable" class="table table-bordered w100p">
 					<tbody role="header">
 						<tr>
@@ -62,6 +62,7 @@
 					</tbody>
 					<tbody role="body">
 					</tbody>
+					<tbody role="detail"></tbody>
 					<tbody role="va">
 					</tbody>
 				</table>
@@ -124,9 +125,16 @@ getReport = function(s_pxcond_mt)
 			var dept_order = [];
 			var s_list = {};
 			var p_list = {};
+			var p_detail = {"74" : {}, "79" : {}, "100" : {}, "s34" : {}, "o0" : {}, "o1" : {}};
 			for(let i=1;i<=12;i++){
 				s_list[i.toString()] = 0;
 				p_list[i.toString()] = 0;
+				p_detail["74"][i.toString()] = 0;
+				p_detail["79"][i.toString()] = 0;
+				p_detail["100"][i.toString()] = 0;
+				p_detail["s34"][i.toString()] = 0;
+				p_detail["o0"][i.toString()] = 0;
+				p_detail["o1"][i.toString()] = 0;
 			}
 			$.each(pResult.contract, function(pIndex, pValue){
 				if(!count_dept_month.hasOwnProperty(pValue.dept_nm)){
@@ -153,19 +161,29 @@ getReport = function(s_pxcond_mt)
 					if(pResult.s12_account.hasOwnProperty(cntrct_sn)){
 						for(let i=1;i<=12;i++){
 							let month = i.toString();
-							p_total[month] += pResult.s12_account[cntrct_sn][month];
+							$.each(pResult.s12_account[cntrct_sn], function(pKey, pRow){
+								p_total[month] += pRow[month];
+								p_detail[pKey][month] += pRow[month];
+							});
 						}
 					}
 					if(pResult.s34_account.hasOwnProperty(cntrct_sn)){
 						for(let i=1;i<=12;i++){
 							let month = i.toString();
 							p_total[month] += pResult.s34_account[cntrct_sn][month];
+							p_detail["s34"][month] += pResult.s34_account[cntrct_sn][month];
 						}
 					}
 					if(pResult.outsrc_taxbill.hasOwnProperty(cntrct_sn)){
 						for(let i=1;i<=12;i++){
 							let month = i.toString();
-							p_total[month] += pResult.outsrc_taxbill[cntrct_sn][month];
+							$.each(pResult.outsrc_taxbill[cntrct_sn], function(pKey, pRow){
+								p_total[month] += pRow[month];
+								p_detail[`o${pKey}`][month] += pRow[month];
+								if(isNaN(p_total[month])){
+									console.log("o", cntrct_sn, pKey, month);
+								}
+							});
 						}
 					}
 					var tot_p = 0, tot_s = 0;
@@ -207,6 +225,77 @@ getReport = function(s_pxcond_mt)
 			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_list_total/1000).toFormat('NUMBER')}</td>`;
 			html += `</tr>`;
 			$(document).find("#amountTable tbody[role='body']").html(html);
+
+			var html = '';
+			var p_tot_temp = 0;
+			html += `<tr>`;
+			html += `    <td class="colorSky" rowspan="6"></td>`;
+			html += `    <td class="colorSky">장비(삼성)</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_detail["74"][month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_detail["74"][month]/1000).toFormat('NUMBER')}</td>`;
+				p_tot_temp += p_detail["74"][month];
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_tot_temp/1000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			var p_tot_temp = 0;
+			html += `<tr>`;
+			html += `    <td class="colorSky">장비(재고)</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_detail["79"][month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_detail["79"][month]/1000).toFormat('NUMBER')}</td>`;
+				p_tot_temp += p_detail["79"][month];
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_tot_temp/1000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			var p_tot_temp = 0;
+			html += `<tr>`;
+			html += `    <td class="colorSky">장비(타사)</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_detail["100"][month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_detail["100"][month]/1000).toFormat('NUMBER')}</td>`;
+				p_tot_temp += p_detail["100"][month];
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_tot_temp/1000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			var p_tot_temp = 0;
+			html += `<tr>`;
+			html += `    <td class="colorSky">자재/로지텍</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_detail["s34"][month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_detail["s34"][month]/1000).toFormat('NUMBER')}</td>`;
+				p_tot_temp += p_detail["s34"][month];
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_tot_temp/1000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			var p_tot_temp = 0;
+			html += `<tr>`;
+			html += `    <td class="colorSky">설치비/기타</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_detail["o1"][month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_detail["o1"][month]/1000).toFormat('NUMBER')}</td>`;
+				p_tot_temp += p_detail["o1"][month];
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_tot_temp/1000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+			var p_tot_temp = 0;
+			html += `<tr>`;
+			html += `    <td class="colorSky">간접비</td>`;
+			for(let i=1;i<=12;i++){
+				let month = i.toString();
+				let _class = p_detail["o0"][month] < 0 ? " red" : "";
+				html += `<td class="text-right ${_class}">${Math.round(p_detail["o0"][month]/1000).toFormat('NUMBER')}</td>`;
+				p_tot_temp += p_detail["o0"][month];
+			}
+			html += `    <td class="text-right" style="border-left:2px solid #333!important;">${Math.round(p_tot_temp/1000).toFormat('NUMBER')}</td>`;
+			html += `</tr>`;
+
+			$(document).find("#amountTable tbody[role='detail']").html(html);
 
 			var html = '';
 			html += `<tr>`;

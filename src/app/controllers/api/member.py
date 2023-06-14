@@ -170,3 +170,12 @@ def insert_vacation():
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
         return make_response(str(e), 500)
+
+@bp.route('/ajax_update_image', methods=['POST'])
+def ajax_update_image():
+    try:
+        params = request.form.to_dict()
+        mber.update_image(params)
+        return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
+    except Exception as e:
+        return make_response(str(e), 500)

@@ -70,7 +70,7 @@
                     }
                 </style>
 			    <h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(단위 : 천원)</h3>
-                <table id="rptParnterStatus1">
+                <table id="rptParnterStatus1" class="floating-thead">
                     <colgroup>
                         <col width="80">
                         <col width="60">
@@ -142,6 +142,71 @@
         </div><!--modal-content-->
     </div><!--modal-dialog-->
 </div>
+<script type="text/javascript">
+$(function () {
+  $('table.floating-thead').each(function() {
+    if( $(this).css('border-collapse') == 'collapse') {
+      $(this).css('border-collapse','separate').css('border-spacing',0);
+    }
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+  });
+
+  $(window).scroll(function() {
+    var scrollTop = $(window).scrollTop(),
+      scrollLeft = $(window).scrollLeft();
+    $('table.floating-thead').each(function(i,v) {
+      var thead = $(this).find('thead:last'),
+        clone = $(this).find('thead:first'),
+        top = $(this).offset().top,
+        bottom = top + $(this).height() - thead.height();
+
+      if( scrollTop < top-180 || scrollTop > bottom ) {
+        clone.hide();
+        return true;
+      }
+      if( clone.is('visible') ) return true;
+      var fixP = 0;
+      clone.find('th').each(function(i) {
+        if(thead.find('th').eq(i).html() == '계'){
+            fixP = -1;
+        }
+        $(this).width( thead.find('th').eq(i).width() +fixP);
+        console.log(fixP);
+      });
+      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+    });
+  });
+});
+
+$(function() {
+	/**************************************************************************
+     *
+     */
+    //$('#dtList1 tbody').yRowspan(0);
+	$('.datepicker-s').datepicker({
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+	});
+	var date = $('.datepicker-s').val();
+	if (date == '') {
+		$('.datepicker-s').datepicker('setDate', 'today');
+		var date = $('.datepicker-s').val();
+	}
+	$(document).on('change', '.datepicker-s', function(pEvent){
+		var date = $(this).val();
+		if ($(this).data('before')) {
+			if ($(this).data('before') != $(this).val()) {
+				getWork(date);
+			}
+		} else {
+			getWork(date);
+		}
+	});
+
+	getWork(date);
+});
+</script>
 
 <script>
     getBlueprint = function(){

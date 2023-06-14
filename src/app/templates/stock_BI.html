@@ -1626,7 +1626,7 @@ $(function() {
 {% include './stock_report.html' %}
 
 <div class="modal fade" data-backdrop="static" id="popReport3">
-    <div class="modal-dialog modal-w1200" style="width:35%!important;">
+    <div class="modal-dialog modal-w1200" style="width:65%!important;">
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
@@ -1645,12 +1645,16 @@ $(function() {
 
 
 <div id="rpt9">
-<div class="title"><h2 class="colorLS" id="titles">월별 재고 현황</h2></div>
+<div class="title"><h2 class="colorLS" id="titles">빌트인 월별 재고 현황</h2></div>
 <style>
 
     #rpt6 .table>tbody>tr>td, #rpt6 .table>tbody>tr>th, #rpt6 .table>tfoot>tr>td, #rpt6 .table>tfoot>tr>th, #rpt6 .table>thead>tr>td, #rpt6 .table>thead>tr>th {
         line-height: 0.5 !important;
     }
+	#popReport3 .colorB{
+		background-color:skyblue!important;
+		color:black!important;
+	}
 
 </style>
 <style>
@@ -1664,7 +1668,7 @@ $(function() {
     }
 }
 </style>
-<h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(단위 : 개)</h3>
+<h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;margin-right:35px!important;">( 단위 : 개 )</h3>
 <!-- 기성 현황 시작 -->
 <table id="stock_report_bi_summary" class="table table-bordered w100p">
      <colgroup>
@@ -1941,7 +1945,7 @@ $(function() {
 
 
 <div class="modal fade" data-backdrop="static" id="popReport4">
-    <div class="modal-dialog modal-w1200" style="width:50%!important;">
+    <div class="modal-dialog modal-w1200" style="width:75%!important;">
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
@@ -1966,6 +1970,10 @@ $(function() {
     #rpt6 .table>tbody>tr>td, #rpt6 .table>tbody>tr>th, #rpt6 .table>tfoot>tr>td, #rpt6 .table>tfoot>tr>th, #rpt6 .table>thead>tr>td, #rpt6 .table>thead>tr>th {
         line-height: 0.5 !important;
     }
+	#popReport4 .colorB{
+		background-color:skyblue!important;
+		color:black!important;
+	}
 
 </style>
 <style>
@@ -1979,7 +1987,7 @@ $(function() {
     }
 }
 </style>
-<h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">(수량 : 개, 금액 : 원)</h3>
+<h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;margin-right:35px!important;">( 수량 : 개, 금액 : 원 )</h3>
 <!-- 기성 현황 시작 -->
 <table id="stock_report_bi_sales_report" class="table table-bordered w100p">
      <colgroup>

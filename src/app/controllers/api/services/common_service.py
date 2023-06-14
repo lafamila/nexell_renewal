@@ -363,6 +363,41 @@ def get_s12_account_list(params, s_dlivy_de=True):
     result = g.curs.fetchall()
     return result
 
+
+def get_s12_account_detail_list(params, s_dlivy_de=True):
+    query = """SELECT DATE_FORMAT(s.dlivy_de, %s) AS s_dlivy_de
+				, c.cntrct_sn
+				, IFNULL(SUM((s.dlnt * p.dlamt)), 0) AS p_total
+				, p.bcnc_sn
+				FROM account s
+				LEFT JOIN account p
+				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+				LEFT JOIN contract c
+				ON s.cntrct_sn=c.cntrct_sn
+                LEFT OUTER JOIN member m
+				ON m.mber_sn=c.spt_chrg_sn
+				WHERE s.ctmmny_sn = 1
+				AND s.delng_se_code = 'S'
+				AND p.delng_ty_code IN ('1', '2')
+				AND s.delng_ty_code <> 14
+                AND (c.progrs_sttus_code IN ('P') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))
+
+""".format(params['s_year'])
+    if s_dlivy_de:
+        query += "				AND s.dlivy_de BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'".format(
+            params['s_year'])
+    data = ['%m']
+    if "s_dept_code" in params and params["s_dept_code"]:
+        if params["s_dept_code"] == "TS":
+            query += " AND m.dept_code LIKE %s "
+            data.append("TS%")
+        else:
+            query += " AND m.dept_code='BI' "
+    query += " GROUP BY s_dlivy_de, c.cntrct_sn, p.bcnc_sn"
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
 def get_s34_account_list(params):
     query = """SELECT DATE_FORMAT(a.dlivy_de, %s) AS s_dlivy_de
 				, c.cntrct_sn
@@ -523,6 +558,34 @@ def get_outsrc_taxbill_list(params):
         else:
             query += " AND m.dept_code='BI' "
     query += " GROUP BY s_dlivy_de, c.cntrct_sn"
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_outsrc_taxbill_detail_list(params):
+    query = """SELECT DATE_FORMAT(t.pblicte_de, %s) AS s_dlivy_de
+    				, SUM(t.splpc_am + IFNULL(t.vat, 0)) AS total
+    				, c.cntrct_sn
+    				, IF(t.pblicte_trget_sn = '116', 0, 1) AS bcnc_sn
+    				FROM taxbil t
+                    LEFT JOIN contract c
+                    ON t.cntrct_sn=c.cntrct_sn
+                    LEFT OUTER JOIN member m
+                    ON m.mber_sn=c.spt_chrg_sn
+    				WHERE t.ctmmny_sn = 1
+    				AND t.delng_se_code = 'P' 
+    				AND t.pblicte_de BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'
+                    AND (c.progrs_sttus_code IN ('P') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))				
+""".format(params['s_year'])
+
+    data = ['%m']
+    if "s_dept_code" in params and params["s_dept_code"]:
+        if params["s_dept_code"] == "TS":
+            query += " AND m.dept_code LIKE %s "
+            data.append("TS%")
+        else:
+            query += " AND m.dept_code='BI' "
+    query += " GROUP BY s_dlivy_de, c.cntrct_sn, IF(t.pblicte_trget_sn = '116', 0, 1)"
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result

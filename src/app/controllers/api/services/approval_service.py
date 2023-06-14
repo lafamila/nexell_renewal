@@ -95,14 +95,17 @@ def get_approval(params):
 def get_approval_member(params):
     query = """SELECT am.mber_sn
                 , m.mber_nm AS mber_nm
-                , 'signature.jpg' AS sign_path
+                , IF(f.file_path IS NULL, 'signature.jpg', f.file_path) AS sign_path
                 , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm                
                 , am.reg_type
                 , IFNULL(am.update_dtm, '') AS update_dtm
                 , am.approval_status_code
+                , am.memo
                 FROM approval_member am
                 LEFT JOIN member m
                 ON m.mber_sn=am.mber_sn
+                LEFT OUTER JOIN files f
+                ON m.sign_file_sn=f.f_sn
                 WHERE 1=1
                 AND am.approval_sn=%(approval_sn)s
                 AND (am.mber_sn NOT IN (SELECT mber_sn FROM member WHERE author_sn=1) OR (am.mber_sn IN (SELECT mber_sn FROM member WHERE author_sn=1) AND am.reg_type=1))
@@ -123,6 +126,9 @@ def update_approval(params):
     if "memo" in params and params["memo"]:
         query += ", memo=%s"
         data.append(params['memo'])
+    if "comment" in params and params["comment"].strip() != '':
+        query += ", memo=%s"
+        data.append(params['comment'].strip())
     query += " WHERE mber_sn=%s AND approval_sn=%s"
     data.append(session['member']['member_sn'])
     data.append(params['approval_sn'])

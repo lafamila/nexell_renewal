@@ -162,7 +162,7 @@ def get_stock_datatable(params, prduct_se_code):
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
 				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
-				INNER JOIN
+				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
 				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='P') p_last ON m.delng_sn=p_last.delng_sn
@@ -240,7 +240,8 @@ def get_stock_summary(params, prduct_se_code):
                 , count(*) as cnt
                 , m.stock_sttus
                 , count(distinct m.cntrct_sn) AS cntrct_count
-                , sum(CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                , sum(CASE WHEN m.stock_sttus = 3 THEN IFNULL(sa_last.dlamt, 0)
+                    WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
                     WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
                     ELSE 0
                     END) as amount
@@ -252,10 +253,14 @@ def get_stock_summary(params, prduct_se_code):
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
 				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
-				INNER JOIN
+				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
+				LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='P') p_last ON m.delng_sn=p_last.delng_sn
+				LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='S') sa_last ON sa_last.cnnc_sn=p_last.delng_sn
 				WHERE s.prduct_se_code = %s
-				AND m.ddt_man BETWEEN '{0}' AND '{1}'
+				AND IF(m.stock_sttus IN (1, 4), m.ddt_man, sa_last.dlivy_de) BETWEEN '{0}' AND '{1}'
 """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
     # query += "GROUP BY prduct_se_nm, prduct_ty_nm, modl_nm, bigo, puchas_de, puchas_se_code, puchas_amount_one, bcnc_nm, cntrct_nm, instl_de, wrhousng_de, invn_sttus_nm, rm "
     data = [prduct_se_code]

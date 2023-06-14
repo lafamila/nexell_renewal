@@ -93,7 +93,10 @@ span[name=blank]{
 .approval-line{
 	display:grid;
 	grid-template-rows: 1fr 22px;
+}
+#approval_member_0, #approval_member_1, #approval_member_2{
 	cursor:pointer;
+
 }
 .approval-line .approval-line-list:not(:first-child){
 	display:grid;
@@ -103,7 +106,7 @@ span[name=blank]{
 }
 .approval-line .approval-line-list:first-child{
 	display:grid;
-	grid-template-columns: 40px 1fr 40px 1fr;
+	grid-template-columns: 40px 1fr 40px 1fr 40px 1fr;
 	width:100%;
 	text-align:left!important;
 }
@@ -137,10 +140,24 @@ span[name=blank]{
 	font-size:13px;
 	font-weight:bold;
 }
+.approval-line .approval-line-list>div:nth-child(5){
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	background-color:#0070C0!important;
+	color:white;
+	font-size:13px;
+	font-weight:bold;
+}
 .approval-line .approval-line-list>div:nth-child(2)>div{
 	display:inline-grid;
 }
 .approval-line .approval-line-list>div:nth-child(4)>div{
+	display:inline-grid;
+}
+.approval-line .approval-line-list>div:nth-child(6)>div{
 	display:inline-grid;
 }
 .approval-member{
@@ -263,7 +280,18 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 							<div>
 								협조
 							</div>
-							<div style="display:inline-flex;border-right: 1px solid #333;" id="approval_member_0"></div>
+							<div style="display:inline-flex;" id="approval_member_0"></div>
+							<div>
+								코멘트
+							</div>
+							<div style="display:grid;grid-template-rows:1fr 1fr;border-right: 1px solid #333;" id="comment-container">
+								{% if init in ("init", "copy") %}
+								<textarea id="comment" style="background-color:#FAFAD2!important;width:100%;height:100%;resizable:false;" readonly></textarea>
+								{% else %}
+								<textarea id="comment-before" style="border:none;padding:5px;background-color:#FAFAD2!important;width:100%;height:100%;resizable:false;display:block;" placeholder="입력된 코멘트가 없습니다." readonly></textarea>
+								<textarea id="comment" style="border:none;padding:5px;width:100%;height:100%;resizable:false;display:block;" placeholder="코멘트를 입력할 수 있습니다."></textarea>
+								{% endif %}
+							</div>
 						</span>
 						<span class="approval-line-list" style="line-height: 1!important;">
 							<div>
@@ -279,7 +307,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                 {% if init in ("init", "copy") %}
 				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">
 					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목"/>
-					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
+					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 상신합니다."><i class="fa fa-save"> 저장</i></button>
 				</div>
                 {% else  %}
 				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 320px;">
@@ -398,7 +426,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 			}, 500);
 		});
 		{% if init in ("init", "copy") %}
-		$(".approval-line-container").on("click", function(){
+		$("#approval_member_0, #approval_member_1, #approval_member_2").on("click", function(){
 			$("#popBox1").modal("show");
 		});
 		$("#member_add").on("click", function(){
@@ -431,7 +459,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
 				var status_nm = '';
 				var html = `<div class="approval-member">
 								<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
-								<div><img src="/static/temp/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
+								<div><img src="/static/files/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
 								<div>1. ${pMember.mber_nm}</div>
 								<div style="display:grid;justify-content: center;align-items: center;"></div>
 							</div>`;
@@ -592,6 +620,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                             var html1 = '';
                             var html2 = '';
                             var loginSN = $("#loginSN").val();
+							var comment = '';
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
                                     var status = pMember.approval_status_code;
@@ -607,7 +636,7 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                                     }
                                     var html = `<div class="approval-member">
                                                     <div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
-                                                    <div><img src="/static/temp/signature.jpg" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/> </div>
+                                                    <div><img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/> </div>
                                                     <div>${pIndex+1}. ${pMember.mber_nm}</div>
                                                     <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0]+"<span style='text-align:center;'>"+pMember.update_dtm.split(" ")[1]+"</span>" : "&nbsp;"}</div>
                                                 </div>`;
@@ -620,14 +649,24 @@ body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.tabl
                                         // ${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}
                                         html1 += html;
                                     }
+									if(pMember.memo.trim() != ''){
+										comment += `${pMember.mber_nm} : ${pMember.memo}\n`;
+									}
                                 }
                                 else{
                                     html2 += `<span>${pMember.mber_nm};</span>`;
+									if(pMember.memo.trim() != ''){
+										comment += `${pMember.mber_nm} : ${pMember.memo}\n`;
+									}
                                 }
                             });
                             $(document).find("#approval_member_0").html(html0);
                             $(document).find("#approval_member_1").html(html1);
                             $(document).find("#approval_member_2").html(html2);
+							if(comment.trim() != ''){
+	                            $(document).find("#comment-before").val(comment);
+
+							}
 							{% if init == "show" %}
                             if(pResult.myTurn){
                                 //
@@ -673,7 +712,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 	if(password == null || password == undefined){
 		return false;
 	}
-	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : "{{ approval_sn }}"};
+	var params = {"password" : password, "approval_status_code" : value, "approval_sn" : "{{ approval_sn }}", "comment" : $("#comment").val()};
 
 	if(value == '-1'){
 		var memo = prompt("반려 사유를 입력해주세요.");
@@ -908,7 +947,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 				var status_nm = '';
 				var html = `<div class="approval-member">
 								<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
-								<div><img src="/static/temp/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
+								<div><img src="/static/files/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
 								<div>${pIndex+1}. ${pMember.mber_nm}</div>
 								<div style="display:grid;justify-content: center;align-items: center;"></div>
 							</div>`;

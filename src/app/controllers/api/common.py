@@ -453,15 +453,18 @@ def overpay_ajax_get_overpay():
                 result['taxbill'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
             result['taxbill'][cntrct_sn][s_dlivy_de] = amount
 
-        s12_account = cm.get_s12_account_list(params)
+        s12_account = cm.get_s12_account_detail_list(params)
         result['s12_account'] = dict()
         for s in s12_account:
             cntrct_sn = str(s['cntrct_sn'])
             s_dlivy_de = str(int(s['s_dlivy_de']))
             amount = s['p_total']
             if cntrct_sn not in result['s12_account']:
-                result['s12_account'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
-            result['s12_account'][cntrct_sn][s_dlivy_de] = amount
+                result['s12_account'][cntrct_sn] = {"74" : {str(_) : 0 for _ in range(1, 13)}, "79" : {str(_) : 0 for _ in range(1, 13)}, "100":{str(_) : 0 for _ in range(1, 13)}}
+            if s['bcnc_sn'] in (74, 79, 100):
+                result['s12_account'][cntrct_sn][str(s['bcnc_sn'])][s_dlivy_de] += amount
+            else:
+                result['s12_account'][cntrct_sn]["100"][s_dlivy_de] += amount
 
         s34_account = cm.get_s34_account_list(params)
         result['s34_account'] = dict()
@@ -473,15 +476,15 @@ def overpay_ajax_get_overpay():
                 result['s34_account'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
             result['s34_account'][cntrct_sn][s_dlivy_de] = amount
 
-        outsrc_taxbill = cm.get_outsrc_taxbill_list(params)
+        outsrc_taxbill = cm.get_outsrc_taxbill_detail_list(params)
         result['outsrc_taxbill'] = dict()
         for t in outsrc_taxbill:
             cntrct_sn = str(t['cntrct_sn'])
             s_dlivy_de = str(int(t['s_dlivy_de']))
             amount = t['total']
             if cntrct_sn not in result['outsrc_taxbill']:
-                result['outsrc_taxbill'][cntrct_sn] = {str(_) : 0 for _ in range(1, 13)}
-            result['outsrc_taxbill'][cntrct_sn][s_dlivy_de] = amount
+                result['outsrc_taxbill'][cntrct_sn] = [{str(_) : 0 for _ in range(1, 13)}, {str(_) : 0 for _ in range(1, 13)}]
+            result['outsrc_taxbill'][cntrct_sn][t['bcnc_sn']][s_dlivy_de] += amount
 
         a_e_cost_list = cm.get_a_e_cost_list(params)
         result['a_cost'] = dict()
@@ -703,9 +706,14 @@ def get_upload_file_id():
         ext = request.form.get("ext")
         order = request.form.get("order")
         now = datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = "{}_{}.{}".format(now, order, ext)
-        file_sn = cm.insert_file(filename)
+        folder = request.form.get("folder")
         os.makedirs("app/static/files/", exist_ok=True)
+        if folder:
+            os.makedirs("app/static/files/{}/".format(folder), exist_ok=True)
+            filename = "{}/{}_{}.{}".format(folder, now, order, ext)
+        else:
+            filename = "{}_{}.{}".format(now, order, ext)
+        file_sn = cm.insert_file(filename)
         return jsonify({"filename": filename, "filesize": CHUNK_SIZE, "file_sn" : file_sn, "order" : order})
     except Exception as e:
         return make_response(str(e), 500)

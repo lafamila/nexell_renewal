@@ -72,8 +72,10 @@ def get_member_list_by_sn():
     curs.execute("""SELECT m.mber_sn AS mber_sn
                     , m.mber_nm AS mber_nm
                     , (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_nm                
-                    , 'signature.jpg' AS sign_path
+                    , IF(f.file_path IS NULL, 'signature.jpg', f.file_path) AS sign_path
                     FROM member m
+                    LEFT OUTER JOIN files f
+                    ON f.f_sn=m.sign_file_sn
                     WHERE 1=1 """)
     result = curs.fetchall()
     curs.close()
@@ -239,67 +241,67 @@ def set_menu(auth_cd):
     #########################
     # general sales project - bcnc check
 
-    bcnc_nm = "{}년{}월일반".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")))
-    row = curs.execute("SELECT bcnc_sn FROM bcnc WHERE bcnc_nm=%s AND bcnc_se_code='S'", bcnc_nm)
-    if not row:
-        curs.execute("INSERT bcnc(CTMMNY_SN, BCNC_SE_CODE, BCNC_NM, BCNC_TELNO, BCNC_ADRES, RPRSNTV_NM, BIZRNO, BSNM_SE_CODE, ESNTL_DELNG_NO, USE_AT, REGIST_DTM, REGISTER_ID) VALUES (1, 'S', %s, null, null, null, '해당사항없음', 1, null, 'Y', NOW(), 'nexelll')", bcnc_nm)
-        bcnc_sn = curs.lastrowid
-    else:
-        bcnc_sn = curs.fetchone()['bcnc_sn']
-
-    # general sales project - contract & project check
-    curs.execute("SHOW COLUMNS FROM contract")
-    result = curs.fetchall()
-    total_columns = []
-    required = []
-    for r in result:
-        key = r['Field'].lower()
-        if r['Default'] == '' and r['Extra'] != 'auto_increment':
-            required.append(key)
-        if r['Extra'] != 'auto_increment':
-            total_columns.append(key)
-
-    data = {r.lower():None for r in required}
-
-    data["ctmmny_sn"] = 1
-    data["regist_dtm"] = datetime.now()
-    data["register_id"] = 'nexell'
-    data['progrs_sttus_code'] = 'P'
-    dept_codes = ["TS1", "TS2", "BI"]
-    curs.execute("SELECT code, code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code IN ({})".format(",".join(["'{}'".format(d) for d in dept_codes])))
-    code_nms = curs.fetchall()
-    DEPT_CODES = {r['code']: r['code_nm'] for r in code_nms}
-    for dept_code in dept_codes:
-        dept_nm = DEPT_CODES[dept_code].replace("팀", "")
-        row = curs.execute("SELECT mber_sn FROM member WHERE dept_code=%s AND mber_sttus_code='H' AND RSPOFC_CODE=150", dept_code)
-        if not row:
-            data['bsn_chrg_sn'] = 73
-            data['spt_chrg_sn'] = 73
-        else:
-            team_leader = curs.fetchone()
-            data['bsn_chrg_sn'] = team_leader['mber_sn']
-            data['spt_chrg_sn'] = team_leader['mber_sn']
-        data['cntrct_nm'] = "{}년{}월 {} 일반판매".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")), dept_nm)
-        data['spt_nm'] = data['cntrct_nm']
-        data['cntrct_de'] = datetime.now().strftime("%Y-%m-01")
-        data['prjct_ty_code'] = "NR" if dept_nm.startswith("공조") else "BD"
-        data['bcnc_sn'] = bcnc_sn
-        data['cntrct_no'] = ''
-        data['prjct_creat_at'] = 'Y'
-        row = curs.execute("SELECT cntrct_sn FROM contract WHERE bcnc_sn=%(bcnc_sn)s AND cntrct_no='' AND cntrct_nm=%(cntrct_nm)s", data)
-        if not row:
-            keys = list(data.keys())
-            sub_query = keys
-            params_query = ["%({})s".format(key) for key in keys]
-
-            query = """INSERT INTO contract({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
-            curs.execute(query, data)
-            cntrct_sn = curs.lastrowid
-
-            query = """INSERT INTO project(ctmmny_sn, cntrct_sn, prjct_ty_code, regist_dtm, register_id) VALUES (1, %s, %s, NOW(), 'nexell')"""
-            curs.execute(query, (cntrct_sn, data['prjct_ty_code']))
-
-    db.commit()
+    # bcnc_nm = "{}년{}월일반".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")))
+    # row = curs.execute("SELECT bcnc_sn FROM bcnc WHERE bcnc_nm=%s AND bcnc_se_code='S'", bcnc_nm)
+    # if not row:
+    #     curs.execute("INSERT bcnc(CTMMNY_SN, BCNC_SE_CODE, BCNC_NM, BCNC_TELNO, BCNC_ADRES, RPRSNTV_NM, BIZRNO, BSNM_SE_CODE, ESNTL_DELNG_NO, USE_AT, REGIST_DTM, REGISTER_ID) VALUES (1, 'S', %s, null, null, null, '해당사항없음', 1, null, 'Y', NOW(), 'nexelll')", bcnc_nm)
+    #     bcnc_sn = curs.lastrowid
+    # else:
+    #     bcnc_sn = curs.fetchone()['bcnc_sn']
+    #
+    # # general sales project - contract & project check
+    # curs.execute("SHOW COLUMNS FROM contract")
+    # result = curs.fetchall()
+    # total_columns = []
+    # required = []
+    # for r in result:
+    #     key = r['Field'].lower()
+    #     if r['Default'] == '' and r['Extra'] != 'auto_increment':
+    #         required.append(key)
+    #     if r['Extra'] != 'auto_increment':
+    #         total_columns.append(key)
+    #
+    # data = {r.lower():None for r in required}
+    #
+    # data["ctmmny_sn"] = 1
+    # data["regist_dtm"] = datetime.now()
+    # data["register_id"] = 'nexell'
+    # data['progrs_sttus_code'] = 'P'
+    # dept_codes = ["TS1", "TS2", "BI"]
+    # curs.execute("SELECT code, code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code IN ({})".format(",".join(["'{}'".format(d) for d in dept_codes])))
+    # code_nms = curs.fetchall()
+    # DEPT_CODES = {r['code']: r['code_nm'] for r in code_nms}
+    # for dept_code in dept_codes:
+    #     dept_nm = DEPT_CODES[dept_code].replace("팀", "")
+    #     row = curs.execute("SELECT mber_sn FROM member WHERE dept_code=%s AND mber_sttus_code='H' AND RSPOFC_CODE=150", dept_code)
+    #     if not row:
+    #         data['bsn_chrg_sn'] = 73
+    #         data['spt_chrg_sn'] = 73
+    #     else:
+    #         team_leader = curs.fetchone()
+    #         data['bsn_chrg_sn'] = team_leader['mber_sn']
+    #         data['spt_chrg_sn'] = team_leader['mber_sn']
+    #     data['cntrct_nm'] = "{}년{}월 {} 일반판매".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")), dept_nm)
+    #     data['spt_nm'] = data['cntrct_nm']
+    #     data['cntrct_de'] = datetime.now().strftime("%Y-%m-01")
+    #     data['prjct_ty_code'] = "NR" if dept_nm.startswith("공조") else "BD"
+    #     data['bcnc_sn'] = bcnc_sn
+    #     data['cntrct_no'] = ''
+    #     data['prjct_creat_at'] = 'Y'
+    #     row = curs.execute("SELECT cntrct_sn FROM contract WHERE bcnc_sn=%(bcnc_sn)s AND cntrct_no='' AND cntrct_nm=%(cntrct_nm)s", data)
+    #     if not row:
+    #         keys = list(data.keys())
+    #         sub_query = keys
+    #         params_query = ["%({})s".format(key) for key in keys]
+    #
+    #         query = """INSERT INTO contract({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    #         curs.execute(query, data)
+    #         cntrct_sn = curs.lastrowid
+    #
+    #         query = """INSERT INTO project(ctmmny_sn, cntrct_sn, prjct_ty_code, regist_dtm, register_id) VALUES (1, %s, %s, NOW(), 'nexell')"""
+    #         curs.execute(query, (cntrct_sn, data['prjct_ty_code']))
+    #
+    # db.commit()
 
     curs.execute("""SELECT m.parnts_menu_sn
                 , m.menu_sn

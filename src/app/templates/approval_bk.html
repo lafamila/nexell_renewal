@@ -1480,7 +1480,7 @@ getApproval = function(approval_sn){
 					}
 					var html = `<div class="approval-member">
 									<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
-									<div><img src="/static/temp/signature.jpg" width="46" height="46"/> </div>
+									<div><img src="/static/files/${pMember.sign_path}" width="46" height="46"/> </div>
 									<div>${pIndex+1}. ${pMember.mber_nm}</div>
 									<div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0] : "&nbsp;"}</div>
 								</div>`;

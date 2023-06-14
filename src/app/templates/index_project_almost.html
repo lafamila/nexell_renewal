@@ -109,6 +109,7 @@
 				var count_tot = 0;
 				var amount_tot = 0;
 				var pData = pResult.data;
+				console.log("lafamila", pData);
 				$.each(pData, function(pIndex, pValue){
 					var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
 					rate = pValue.new_rate == '' ? rate : parseFloat(pValue.new_rate);
