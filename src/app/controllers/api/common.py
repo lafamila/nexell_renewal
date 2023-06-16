@@ -33,6 +33,7 @@ def code_ajax_get_groupCode_datatable():
         result = cm.get_groupCode_datatable(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/code/ajax_get_code_datatable', methods=['POST'])
@@ -42,6 +43,7 @@ def code_ajax_get_code_datatable():
         result = cm.get_code_datatable(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/code/ajax_get_code', methods=['GET'])
@@ -51,6 +53,7 @@ def code_ajax_get_code():
         result = cm.get_code(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/code/ajax_insert_code', methods=['POST'])
@@ -60,6 +63,7 @@ def code_ajax_insert_code():
         cm.insert_code(params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/code/ajax_update_code', methods=['POST'])
@@ -69,6 +73,7 @@ def code_ajax_update_code():
         cm.update_code(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/code/ajax_delete_code', methods=['POST'])
@@ -78,6 +83,7 @@ def code_ajax_delete_code():
         cm.delete_code(params)
         return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -93,6 +99,7 @@ def ajax_get_bcnc_list():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/bnd/ajax_get_bnd', methods=['GET'])
@@ -188,6 +195,7 @@ def ajax_get_bnd():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/month/ajax_get_month_plan', methods=['GET'])
@@ -225,6 +233,7 @@ def ajax_get_month_plan():
         result['colored'] = cm.get_month_data(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/bcnc/ajax_get_month_sales', methods=['GET'])
@@ -288,6 +297,7 @@ def ajax_get_month_sales():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/bcnc/ajax_set_bcnc_data', methods=['GET'])
@@ -297,6 +307,7 @@ def ajax_set_bcnc_data():
         cm.set_bcnc_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/bnd/ajax_set_bnd_data', methods=['GET'])
@@ -306,6 +317,7 @@ def ajax_set_bnd_data():
         cm.set_bnd_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/money/ajax_set_money_data', methods=['GET'])
@@ -315,6 +327,7 @@ def ajax_set_money_data():
         cm.set_money_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/bnd/ajax_update_contract_rate', methods=['GET'])
@@ -324,6 +337,7 @@ def ajax_update_contract_rate():
         cm.ajax_update_contract_rate(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/month/ajax_set_month_data', methods=['GET'])
@@ -333,6 +347,7 @@ def ajax_set_month_data():
         cm.set_month_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/memo/ajax_get_memo_list', methods=['GET'])
@@ -344,6 +359,7 @@ def memo_ajax_get_memo_list():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -354,6 +370,7 @@ def memo_ajax_insert_memo():
         cm.insert_memo(params)
         return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -365,6 +382,7 @@ def partner_ajax_get_partner_datatable():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -378,6 +396,7 @@ def partner_ajax_get_partner():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/partner/ajax_insert_partner', methods=['POST'])
@@ -387,6 +406,7 @@ def partner_ajax_insert_partner():
         cm.insert_bcnc(params)
         return jsonify({"status": True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -397,6 +417,7 @@ def partner_ajax_update_partner():
         cm.update_bcnc(params)
         return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/partner/ajax_delete_partner', methods=['POST'])
@@ -406,6 +427,7 @@ def partner_ajax_delete_partner():
         cm.delete_bcnc(params)
         return jsonify({"status": True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/money/ajax_get_money_data', methods=['GET'])
@@ -416,8 +438,10 @@ def money_ajax_get_money_data():
         result['contract'] = cm.get_money_data(params)
         params['money_year'] = "-".join(params['s_mt'].split("-")[:2])
         result['money'] = cm.get_money_data_input(params)
+        result['pay'] = cm.get_pay_data(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/cowork/ajax_get_cowork_data', methods=['GET'])
@@ -434,6 +458,7 @@ def cowork_ajax_get_cowork_data():
         # result['outsrcList'] = outsrcList
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/overpay/ajax_get_overpay', methods=['GET'])
@@ -495,6 +520,7 @@ def overpay_ajax_get_overpay():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/comp/ajax_get_comp', methods=['GET'])
@@ -526,6 +552,7 @@ def ajax_get_comp():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/extra/ajax_get_extra', methods=['GET'])
@@ -537,6 +564,7 @@ def extra_ajax_get_extra():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/extra/ajax_insert_extra', methods=['GET'])
@@ -547,6 +575,7 @@ def extra_ajax_insert_extra():
 
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/five/ajax_get_five', methods=['GET'])
@@ -587,6 +616,7 @@ def five_ajax_get_five():
         result['years'] = years
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -597,6 +627,7 @@ def insert_vacation():
         cm.insert_vacation(params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/vacation/insert_vacation_out', methods=['POST'])
@@ -606,6 +637,7 @@ def insert_vacation_out():
         cm.insert_vacation_out(params, 8)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/vacation/insert_vacation_out_go', methods=['POST'])
@@ -615,6 +647,7 @@ def insert_vacation_out_go():
         cm.insert_vacation_out(params, 9)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/do_nothing', methods=['POST'])
@@ -633,6 +666,7 @@ def ajax_get_blueprint():
         result['total'] = cm.get_blueprint_year_total(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/insert_blueprint', methods=['GET'])
@@ -642,6 +676,7 @@ def insert_blueprint():
         result = cm.insert_blueprint(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/insert_blueprint_goal', methods=['GET'])
@@ -651,6 +686,7 @@ def insert_blueprint_goal():
         result = cm.insert_blueprint_goal(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/set_reserve_data', methods=['GET'])
@@ -660,6 +696,7 @@ def set_reserve_data():
         cm.set_reserve_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/update_blueprint', methods=['GET'])
@@ -669,6 +706,7 @@ def update_blueprint():
         result = cm.update_blueprint(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/delete_blueprint', methods=['GET'])
@@ -678,6 +716,7 @@ def delete_blueprint():
         result = cm.delete_blueprint(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/research/ajax_get_research', methods=['GET'])
@@ -689,6 +728,7 @@ def ajax_get_research():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/research/ajax_insert_research', methods=['GET'])
@@ -698,6 +738,7 @@ def ajax_insert_research():
         cm.insert_research(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/get_upload_file_id', methods=['POST'])
@@ -716,6 +757,7 @@ def get_upload_file_id():
         file_sn = cm.insert_file(filename)
         return jsonify({"filename": filename, "filesize": CHUNK_SIZE, "file_sn" : file_sn, "order" : order})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/chunk_upload', methods=['POST'])
@@ -734,6 +776,7 @@ def chunk_upload():
             return jsonify({"status" : False, "msg" : str(e)})
 
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/get_files_name', methods=['POST'])
@@ -748,6 +791,7 @@ def get_files_name():
                 result.append(row['file_path'])
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/reserve/get_reserve_list', methods=['GET'])
@@ -758,6 +802,7 @@ def get_reserve_list():
         result['data'] = prj.get_reserved_project_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/ajax_get_finance', methods=['GET'])
@@ -768,6 +813,7 @@ def ajax_get_finance():
         result['data'] = cm.get_finance(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/ajax_insert_finance', methods=['GET'])
@@ -777,6 +823,7 @@ def ajax_insert_finance():
         cm.insert_finance(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/reserve_out', methods=['GET'])
@@ -786,6 +833,7 @@ def reserve_out():
         cm.reserve_out(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/insert_bbs', methods=['POST'])
@@ -795,6 +843,7 @@ def insert_bbs():
         cm.insert_bbs(params)
         return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -805,6 +854,7 @@ def get_bbs_list():
         result = cm.get_bbs_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/get_bbs', methods=['GET'])
@@ -814,6 +864,7 @@ def get_bbs():
         result = cm.get_bbs(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/delete_bbs', methods=['GET'])
@@ -823,6 +874,7 @@ def delete_bbs():
         result = cm.delete_bbs(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/common/bnd_set_color', methods=['GET'])
@@ -832,4 +884,5 @@ def bnd_set_color():
         cm.set_bnd_color(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

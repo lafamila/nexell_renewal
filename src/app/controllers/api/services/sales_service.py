@@ -4,6 +4,7 @@ from .project_service import get_project_by_cntrct_nm, get_contract
 from collections import OrderedDict
 import datetime
 import calendar
+import json
 def get_sales_datatable(params):
     query = """SELECT a.ctmmny_sn
 				, a.cntrct_sn
@@ -11,7 +12,7 @@ def get_sales_datatable(params):
 				, a.delng_sn
 				, a.delng_se_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DELNG_SE_CODE' AND code=a.delng_se_code) AS delng_se_nm
-				, a.ddt_man
+				, IFNULL(a.ddt_man, '9999-99-99') AS ddt_man
 				, a.delng_ty_code AS delng_ty_code1
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='CT_SE_CODE' AND code=a.delng_ty_code) AS delng_ty_nm1
 				, a.delng_ty_code AS delng_ty_code2
@@ -42,7 +43,7 @@ def get_sales_datatable(params):
 				ON m.mber_sn=c.bsn_chrg_sn
 				WHERE 1=1
 				AND a.ctmmny_sn = 1
-				AND a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or a.ddt_man IS NULL)
 """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
 
     data = []
@@ -128,7 +129,7 @@ def get_sales_summary(params):
 				ON a.ctmmny_sn=c.ctmmny_sn AND a.cntrct_sn=c.cntrct_sn
 				WHERE 1=1
 				AND a.ctmmny_sn = 1
-				AND a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
+				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or a.ddt_man IS NULL)
 				""".format(params['s_ddt_man_start'], params['s_ddt_man_end'])
 
     data = []
@@ -330,6 +331,22 @@ def update_account(params):
     sub_query = ["{0}=%({0})s".format(key) for key in data]
     query = """UPDATE account SET {} WHERE delng_sn=%(s_delng_sn)s""".format(",".join(sub_query))
     g.curs.execute(query, params)
+    row = g.curs.execute("SELECT delng_sn, sales_type, json_data FROM account_temp WHERE delng_sn=%(s_delng_sn)s", params)
+    if row:
+        data = g.curs.fetchone()
+        json_data = json.loads(data['json_data'])
+        g.curs.execute("SELECT ddt_man FROM account WHERE delng_sn=%(s_delng_sn)s", params)
+        account = g.curs.fetchall(transform=False)[0]
+        if account['ddt_man'] is not None:
+            json_data['ddt_man'] = account['ddt_man']
+            if data['sales_type'] == 0:
+                g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%(stock_sn)s, 3, %(cntrct_sn)s, %(delng_sn)s, %(ddt_man)s, %(cnnc_sn)s)""", json_data)
+            else:
+                g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%(stock_sn)s, 3, %(cntrct_sn)s, %(delng_sn)s, %(ddt_man)s, %(cnnc_sn)s)""", json_data)
+                if json_data['rm'] != '' and json_data['stock_sn'] != '':
+                    query = """INSERT INTO bnd_sales_table_log(delng_sn, sale_type, dlnt, dlamt, ddt_man) VALUES(%(delng_sn)s, %(rm)s, %(dlnt)s, %(dlamt)s, %(ddt_man)s)"""
+                    g.curs.execute(query, json_data)
+            g.curs.execute("DELETE FROM account_temp WHERE delng_sn=%(s_delng_sn)s", params)
 
 def delete_account(params):
     query = """DELETE FROM account WHERE 1=1 AND delng_sn=%(s_delng_sn)s"""
@@ -1088,6 +1105,8 @@ def update_account_expect_de(params):
 
 def insert_general_sales_BD(params):
     for sale_type, stock_sn, bcnc_sn, ddt_man, dlivy_amt, dlnt, model_no, prdlst_se_code, s_dlamt, etc, dc, rm in zip(params['sale_type[]'], params['stock_sn[]'], params['bcnc_sn[]'], params['ddt_man[]'], params['dlivy_amt[]'], params['dlnt[]'], params['model_no[]'], params['prdlst_se_code[]'], params['s_dlamt[]'], params['etc[]'], params['dc[]'], params['rm[]']):
+        s_dlamt = int(s_dlamt.replace(",", "")) if s_dlamt.replace(",", "") != '' else 0
+
         data = dict()
         data['ctmmny_sn'] = 1
         data['bcnc_sn'] = bcnc_sn
@@ -1100,12 +1119,12 @@ def insert_general_sales_BD(params):
         data['dlnt'] = int(dlnt.replace(",", "")) if dlnt.replace(",", "") != '' else 0
         data['dscnt_rt'] = float(dc.replace("%", "")) if dc.replace("%", "") != '' else 0.0
         if stock_sn != '':
-            data['ddt_man'] = datetime.datetime.now().strftime("%Y-%m-%d")
+            data['ddt_man'] = None
             data['dscnt_rt'] = None
             data['dlivy_amt'] = None
             data['dlamt'] = 0
         else:
-            data['ddt_man'] = ddt_man
+            data['ddt_man'] = None
             data['dlamt'] = int(data['dlivy_amt'] * (100 - data['dscnt_rt']) / 100)
         data['model_no'] = model_no
         data['prdlst_se_code'] = prdlst_se_code
@@ -1126,7 +1145,10 @@ def insert_general_sales_BD(params):
                 log_sn = result[0]['log_sn']
             else:
                 log_sn = None
-            g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%s, 3, %s, %s, %s, %s)""", (stock_sn, data['cntrct_sn'], cnnc_sn, data['ddt_man'], log_sn))
+            json_data = {"stock_sn" : stock_sn, "cntrct_sn" : data["cntrct_sn"], "delng_sn" : cnnc_sn, "cnnc_sn" : log_sn, "rm" : rm, "dlnt" : data['dlnt'], "dlamt" : s_dlamt}
+            g.curs.execute("INSERT INTO account_temp(delng_sn, sales_type, json_data) VALUES (%s, 1, %s)", (cnnc_sn, json.dumps(json_data)))
+
+            # g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%s, 3, %s, %s, %s, %s)""", (stock_sn, data['cntrct_sn'], cnnc_sn, data['ddt_man'], log_sn))
 
 
         data['delng_se_code'] = 'S'
@@ -1138,11 +1160,10 @@ def insert_general_sales_BD(params):
 
         prjct = get_contract({"s_cntrct_sn" : data['cntrct_sn']})
         data['bcnc_sn'] = prjct['bcnc_sn']
-        s_dlamt = int(s_dlamt.replace(",", "")) if s_dlamt.replace(",", "") != '' else 0
         etc = int(etc.replace(",", "")) if etc.replace(",", "") != '' else 0
 
         data['dlamt'] = s_dlamt
-        data['dlivy_de'] = data['ddt_man']
+        data['dlivy_de'] = None
         data['cnnc_sn'] = cnnc_sn
 
         keys = list(data.keys())
@@ -1150,9 +1171,9 @@ def insert_general_sales_BD(params):
         query = """INSERT INTO account({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
         g.curs.execute(query, data)
 
-        if rm != '' and stock_sn != '':
-            query = """INSERT INTO bnd_sales_table_log(delng_sn, sale_type, dlnt, dlamt, ddt_man) VALUES(%s, %s, %s, %s, %s)"""
-            g.curs.execute(query, (cnnc_sn, rm, data['dlnt'], data['dlamt'], data['ddt_man']))
+        # if rm != '' and stock_sn != '':
+        #     query = """INSERT INTO bnd_sales_table_log(delng_sn, sale_type, dlnt, dlamt, ddt_man) VALUES(%s, %s, %s, %s, %s)"""
+        #     g.curs.execute(query, (cnnc_sn, rm, data['dlnt'], data['dlamt'], data['ddt_man']))
 
         data['cntrct_de'] = params['cntrct_de']
         query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, prdlst_se_code, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, register_id, regist_dtm)
@@ -1166,7 +1187,7 @@ def insert_general_sales_NR(params):
         data['delng_ty_code'] = '1'
         data['cntrct_sn'] = params['cntrct_sn']
         data['prjct_sn'] = get_project_by_cntrct_nm(data['cntrct_sn'])['prjct_sn']
-        data['ddt_man'] = ddt_man
+        data['ddt_man'] = None
         data['delng_se_code'] = 'P'
         data['dlamt'] = int(dlamt.replace(",", "")) if dlamt.replace(",", "") != '' else 0
         data['dlnt'] = int(dlnt.replace(",", "")) if dlnt.replace(",", "") != '' else 0
@@ -1189,7 +1210,9 @@ def insert_general_sales_NR(params):
                 log_sn = result[0]['log_sn']
             else:
                 log_sn = None
-            g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%s, 3, %s, %s, %s, %s)""", (stock_sn, data['cntrct_sn'], cnnc_sn, data['ddt_man'], log_sn))
+            json_data = {"stock_sn" : stock_sn, "cntrct_sn" : data["cntrct_sn"], "delng_sn" : cnnc_sn, "cnnc_sn" : log_sn}
+            g.curs.execute("INSERT INTO account_temp(delng_sn, sales_type, json_data) VALUES (%s, 0, %s)", (cnnc_sn, json.dumps(json_data)))
+            # g.curs.execute("""INSERT INTO stock_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man, cnnc_sn) VALUES(%s, 3, %s, %s, %s, %s)""", (stock_sn, data['cntrct_sn'], cnnc_sn, data['ddt_man'], log_sn))
 
 
         data['delng_se_code'] = 'S'
@@ -1203,12 +1226,11 @@ def insert_general_sales_NR(params):
         etc = int(etc.replace(",", "")) if etc.replace(",", "") != '' else 0
 
         data['dlamt'] = samount / data['dlnt']
-        data['dlivy_de'] = data['ddt_man']
+        data['dlivy_de'] = None
         data['cnnc_sn'] = cnnc_sn
 
         keys = list(data.keys())
 
         query = """INSERT INTO account({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
         g.curs.execute(query, data)
-
 

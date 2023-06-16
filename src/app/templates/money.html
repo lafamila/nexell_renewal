@@ -169,7 +169,8 @@
 									<col width="80">
 									<col width="140">
 
-									<col width="260">
+									<col width="180">
+									<col width="80">
 									<col width="50">
 									<col width="80">
 									<col width="50">
@@ -195,7 +196,8 @@
 										<th class="colorG right_border middle" style="text-align:center;" colspan="3">입금</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
 
-                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처/현장명</th>
+                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
+                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처</th>
 										<th class="color-contract right_border middle" style="text-align:center;" colspan="2">계획</th>
 										<th class="color-contract right_border middle" style="text-align:center;" colspan="3">지급</th>
 										<th class="color-contract right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
@@ -230,7 +232,7 @@
                                         <td class="text-number tot" id="tot7"></td>
                                         <td class="text-number tot right_border" id="tot8"></td>
                                         <td class="text-number tot right_border"></td>
-                                        <th class="tot right_border" style="text-align:center;">합계</th>
+                                        <th class="tot right_border" style="text-align:center;" colspan="2">합계</th>
                                         <td class="text-number tot"></td>
                                         <td class="text-number tot right_border" id="tot12"></td>
                                         <td class="text-number tot"></td>
@@ -282,8 +284,8 @@
 calcTotal = function(){
 	var tot5 = $(document).find("#dtList1 tbody").find("tr").calculation(5,5);
 	var tot78 = $(document).find("#dtList1 tbody").find("tr").calculation(7,8);
-	var tot12 = $(document).find("#dtList1 tbody").find("tr").calculation(12,12);
-	var tot1415 = $(document).find("#dtList1 tbody").find("tr").calculation(14,15);
+	var tot12 = $(document).find("#dtList1 tbody").find("tr").calculation(13,13);
+	var tot1415 = $(document).find("#dtList1 tbody").find("tr").calculation(15,16);
 	$(document).find("#dtList1 tfoot").find("#tot5").html(tot5[0].toFormat('NUMBER'));
 	$(document).find("#dtList1 tfoot").find("#tot7").html(tot78[0].toFormat('NUMBER'));
 	$(document).find("#dtList1 tfoot").find("#tot8").html(tot78[1].toFormat('NUMBER'));
@@ -412,6 +414,7 @@ getMoneyData = function(s_mt){
 			return true;
 		},
 		success: function(pResult) {
+			console.log(pResult);
 			var html = '';
 			var NAME = {"S" : "매출", "S1" : "수수료", "S2" : "M/H", "S3" : "재고판매", "S4" : "S/H"}
 			html += `<tr data-row="row0" data-raw="raw0">
@@ -426,6 +429,7 @@ getMoneyData = function(s_mt){
 						<td data-side="S" class="right_border text-right input-available" data-column="damt3" data-type="number"></td>
 						<td data-side="S" class="right_border input-available" data-column="rm1"></td>
 						<td data-side="T" class="right_border input-available" data-column="spt2"></td>
+						<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
 						<td data-side="T" class="text-center input-available" data-column="date1"></td>
 						<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
 						<td data-side="T" class="text-center input-available" data-column="date2"></td>
@@ -453,6 +457,7 @@ getMoneyData = function(s_mt){
 							<td data-side="S" class="${colored} right_border text-right">${pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER')}</td>
 							<td data-side="S" class="${colored} right_border input-available" data-column="rm1"></td>
 							<td data-side="T" class="right_border input-available" data-column="spt2"></td>
+							<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
 							<td data-side="T" class="text-center input-available" data-column="date1"></td>
 							<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
 							<td data-side="T" class="text-center input-available" data-column="date2"></td>
@@ -461,7 +466,29 @@ getMoneyData = function(s_mt){
 							<td data-side="T" class="input-available" data-column="rm2"></td>
 						 </tr>`;
 			});
-			html += `<tr data-row="row99999" data-raw="raw99999">
+			$(document).find("#dtList1 tbody").html(html);
+            $.each(pResult.pay, function(pIndex, pValue){
+
+				var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
+				var colored = tax_amount == 0 ? " colored" : "";
+				var year = $("#s_year").val().split("-")[0];
+				var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
+				colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
+				var tr = $(document).find("#dtList1 tbody").find('tr').eq(pIndex+1);
+				if(tr == undefined){
+					return false;
+				}
+				$(tr).find(`[data-column="spt2"]`).html(pValue.cntrct_nm);
+				$(tr).find(`[data-column="bcnc2"]`).html(pValue.bcnc_nm);
+				// $(tr).find(`[data-column="date1"]`).html();
+				$(tr).find(`[data-column="amt1"]`).html(tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER'));
+				$(tr).find(`[data-column="date2"]`).html(rcppay_de);
+				$(tr).find(`[data-column="amt2"]`).html(pValue.price_1 == 0 ? '' : Math.round(pValue.price_1/DELIMITER).toFormat('NUMBER'));
+				$(tr).find(`[data-column="amt3"]`).html(pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER'));
+
+			});
+
+			html = `<tr data-row="row99999" data-raw="raw99999">
 						<td data-side="S" class="input-available" data-column="bcnc1"></td>
 						<td data-side="S" class="input-available" data-column="spt1"></td>
 						<td data-side="S" class="text-center input-available" data-column="dept1"></td>
@@ -473,6 +500,7 @@ getMoneyData = function(s_mt){
 						<td data-side="S" class="right_border text-right input-available" data-column="damt3" data-type="number"></td>
 						<td data-side="S" class="right_border input-available" data-column="rm1"></td>
 						<td data-side="T" class="right_border input-available" data-column="spt2"></td>
+						<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
 						<td data-side="T" class="text-center input-available" data-column="date1"></td>
 						<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
 						<td data-side="T" class="text-center input-available" data-column="date2"></td>
@@ -481,23 +509,23 @@ getMoneyData = function(s_mt){
 						<td data-side="T" class="input-available" data-column="rm2"></td>
 					 </tr>`;
 
-			$(document).find("#dtList1 tbody").html(html);
-			$.each(pResult.money, function(pIndex, pValue){
-				var R = "row";
-				if(pValue.money_row.startsWith("raw")){
-					R = "raw";
-				}
-				var pTag = $(`tr[data-${R}="${pValue.money_row}"]`).find(`td[data-column="${pValue.money_month}"]`);
-				if($(pTag).data("type") == "number"){
-					if(parseInt(pValue.money_data) != 0)
-						$(pTag).text(pValue.money_data.toFormat('NUMBER'));
-					else
-						$(pTag).text('');
-				}
-				else{
-					$(pTag).text(pValue.money_data);
-				}
-			});
+			$(document).find("#dtList1 tbody").append(html);
+			// $.each(pResult.money, function(pIndex, pValue){
+			// 	var R = "row";
+			// 	if(pValue.money_row.startsWith("raw")){
+			// 		R = "raw";
+			// 	}
+			// 	var pTag = $(`tr[data-${R}="${pValue.money_row}"]`).find(`td[data-column="${pValue.money_month}"]`);
+			// 	if($(pTag).data("type") == "number"){
+			// 		if(parseInt(pValue.money_data) != 0)
+			// 			$(pTag).text(pValue.money_data.toFormat('NUMBER'));
+			// 		else
+			// 			$(pTag).text('');
+			// 	}
+			// 	else{
+			// 		$(pTag).text(pValue.money_data);
+			// 	}
+			// });
 			calcTotal();
 		}
 	});

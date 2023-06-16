@@ -31,6 +31,7 @@ def ajax_get_energy_datatable():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_energy', methods=['GET'])
@@ -41,6 +42,7 @@ def ajax_get_energy():
         result['data'] = eng.get_energy(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_plan_list', methods=['GET'])
@@ -51,6 +53,7 @@ def ajax_get_plan_list():
         result['data'] = eng.get_plan_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_exp_list', methods=['GET'])
@@ -62,4 +65,5 @@ def ajax_get_exp_list():
         result['plan'] = eng.get_plan_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

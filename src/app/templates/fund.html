@@ -207,10 +207,10 @@
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_prvent_sn" name="s_prvent_sn">
 												<option value="">[전체]</option>
-												{% for code in bcnc_list %}
+`												{% for code in bcnc_list %}
 												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
 												{% endfor %}
-											</select>
+`											</select>
 										</th>
 										<th class="hasinput">
 											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_rcppay_de_start" name="s_rcppay_de_start" placeholder="[시작일자]">

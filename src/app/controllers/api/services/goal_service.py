@@ -58,9 +58,9 @@ def get_contract_list_by_amt_regist(params):
                 """
     data = []
     if params["s_amt_ty_code"] == "2":
-        query += " AND (progrs_sttus_code IN ('B', 'P'))".format(params['s_year'])
+        query += " AND (progrs_sttus_code IN ('B', 'P', 'S'))".format(params['s_year'])
     else:
-        query += " AND (progrs_sttus_code IN ('B', 'P'))".format(params['s_year'])
+        query += " AND (progrs_sttus_code IN ('B', 'P', 'S'))".format(params['s_year'])
 
     if "s_bsn_chrg_sn" in params and params["s_bsn_chrg_sn"]:
         query += " AND c.bsn_chrg_sn=%s"

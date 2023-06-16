@@ -31,6 +31,7 @@ def ajax_get_project_datatable():
         result = apvl.get_approval_datatable(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_approval_ty_list', methods=['GET'])
@@ -40,6 +41,7 @@ def ajax_get_approval_ty_list():
         result = apvl.get_approval_ty_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -50,6 +52,7 @@ def get_approval_template():
         html = apvl.get_approval_template(params['url'])
         return jsonify({"html" : html})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_approval', methods=['POST'])
@@ -66,6 +69,7 @@ def ajax_insert_approval():
 
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다.", "approval_sn" : apvl_sn})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_approval', methods=['GET'])
@@ -116,6 +120,7 @@ def get_approval():
         result['cancelable'] = isCancelable
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/delete_approval', methods=['GET'])
@@ -173,6 +178,7 @@ def delete_approval():
             msg = "기안자가 아니면 삭제할 수 없습니다."
         return jsonify({"status" : deletable, "message" : msg})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/update_approval', methods=['POST'])
@@ -200,6 +206,7 @@ def update_approval():
             return jsonify({"status" : False, "message" : "비밀번호가 일치하지 않습니다."})
         return jsonify({"status" : True, "isEnd" : False, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/cancel_approval', methods=['POST'])
@@ -210,4 +217,5 @@ def cancel_approval():
         apvl.update_approval(params)
         return jsonify({"status": True, "message": "성공적으로 취소되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

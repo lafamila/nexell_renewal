@@ -76,6 +76,7 @@ def completed_ajax_get_completed_report_data():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_completed_reportNR', methods=['GET'])
@@ -96,6 +97,7 @@ def completed_ajax_get_completed_reportNR():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -108,6 +110,7 @@ def get_completed_info():
         result['data'] = cp.get_completed(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_completed', methods=['POST'])
@@ -118,4 +121,5 @@ def insert_completed():
         return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})
 
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

@@ -32,6 +32,7 @@ def ajax_get_card_datatable():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_card', methods=['GET'])
@@ -43,6 +44,7 @@ def ajax_get_card():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_card', methods=['POST'])
@@ -52,6 +54,7 @@ def ajax_insert_card():
         cd.insert_cardbil(params)
         return jsonify({"status": True, "message": "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -62,6 +65,7 @@ def ajax_update_card():
         cd.update_cardbil(params)
         return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -72,6 +76,7 @@ def ajax_delete_card():
         cd.delete_cardbil(params)
         return jsonify({"status": True, "message": "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_contract', methods=['GET'])
@@ -87,6 +92,7 @@ def ajax_get_contract():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -100,6 +106,7 @@ def ajax_get_card_dashboard():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_card_report', methods=['GET'])
@@ -119,6 +126,7 @@ def ajax_get_card_report():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_card_dashboard_year', methods=['GET'])
@@ -131,4 +139,5 @@ def ajax_get_card_dashboard_year():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

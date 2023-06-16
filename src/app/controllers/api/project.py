@@ -45,6 +45,7 @@ def ajax_get_contract():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -55,6 +56,7 @@ def ajax_delete_contract():
         prj.delete_contract(params)
         return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_contract', methods=['POST'])
@@ -64,6 +66,7 @@ def ajax_update_contract():
         prj.update_contract(params)
         return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_project', methods=['POST'])
@@ -73,6 +76,7 @@ def ajax_delete_project():
         prj.delete_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_project', methods=['POST'])
@@ -82,6 +86,7 @@ def ajax_update_project():
         prj.update_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_cost_list', methods=['GET'])
@@ -93,6 +98,7 @@ def ajax_get_cost_list():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_cost', methods=['GET'])
@@ -104,6 +110,7 @@ def ajax_get_cost():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_cost', methods=['POST'])
@@ -113,6 +120,7 @@ def ajax_insert_cost():
         prj.insert_cost(params)
         return jsonify({"status": True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_cost', methods=['POST'])
@@ -122,6 +130,7 @@ def ajax_update_cost():
         prj.update_cost(params)
         return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_cost', methods=['GET'])
@@ -131,6 +140,7 @@ def ajax_delete_cost():
         prj.delete_cost(params)
         return jsonify({"status": True, "message": "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_project', methods=['GET'])
@@ -145,6 +155,7 @@ def ajax_get_project():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -159,6 +170,7 @@ def ajax_get_project_datatable():
         result['member'] = mber.get_member(session["member"]["member_sn"])
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_reportNR', methods=['GET'])
@@ -225,6 +237,7 @@ def ajax_get_reportNR():
         result["status"] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -318,6 +331,7 @@ def ajax_get_reportBD():
 
         return result
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -407,6 +421,7 @@ def ajax_get_reportBF():
 
         return result
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_finals', methods=['POST'])
@@ -417,6 +432,7 @@ def ajax_get_finals():
         result['count'] = prj.get_finals_summary(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_finals', methods=['GET'])
@@ -426,6 +442,7 @@ def ajax_insert_finals():
         prj.insert_finals(params)
         return jsonify({"status": True, "message": "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_finals', methods=['GET'])
@@ -435,6 +452,7 @@ def ajax_update_finals():
         prj.update_finals(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -445,6 +463,7 @@ def ajax_delete_finals():
         prj.delete_finals(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_contract_no', methods=['GET'])
@@ -454,6 +473,7 @@ def get_contract_no():
         result = prj.get_contract_no(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_project', methods=['POST'])
@@ -463,6 +483,7 @@ def insert_project():
         prj.insert_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_b_projects', methods=['GET'])
@@ -472,6 +493,7 @@ def get_b_projects():
         result = prj.get_b_projects(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_p_projects', methods=['GET'])
@@ -481,6 +503,7 @@ def get_p_projects():
         result = prj.get_p_projects(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_all_projects', methods=['GET'])
@@ -490,6 +513,7 @@ def get_all_projects():
         result = prj.get_all_projects(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_b_project', methods=['POST'])
@@ -499,6 +523,7 @@ def insert_b_project():
         prj.insert_b_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_BD_b_project', methods=['POST'])
@@ -508,6 +533,7 @@ def insert_BD_b_project():
         prj.insert_b_bd_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_BF_b_project', methods=['POST'])
@@ -517,6 +543,7 @@ def insert_BF_b_project():
         prj.insert_b_bf_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_cost_bf_bd', methods=['GET'])
@@ -541,6 +568,7 @@ def get_cost_bf_bd():
         result['samsungList'] = prj.get_expect_equip_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -572,6 +600,7 @@ def get_costs_bd():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_outsrc_detail', methods=['GET'])
@@ -583,6 +612,7 @@ def get_outsrc_detail():
         result = prj.get_outsrc_detail(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/get_option_cost', methods=['GET'])
@@ -592,6 +622,7 @@ def get_option_cost():
         result = prj.get_option_cost_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_BF_option_cost', methods=['POST'])
@@ -604,6 +635,7 @@ def insert_BF_option_cost():
 
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -617,6 +649,7 @@ def insert_BD_option_cost():
 
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_option_cost', methods=['POST'])
@@ -626,6 +659,7 @@ def insert_option_cost():
         prj.insert_option_cost(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_BF_c_project', methods=['POST'])
@@ -639,6 +673,7 @@ def insert_BF_c_project():
         prj.insert_BF_c_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/update_BF_c_project', methods=['POST'])
@@ -650,6 +685,7 @@ def update_BF_c_project():
         prj.update_BF_c_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_BD_c_project', methods=['POST'])
@@ -663,6 +699,7 @@ def insert_BD_c_project():
         prj.insert_BF_c_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -677,6 +714,7 @@ def update_BD_c_project():
 
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_c_project', methods=['POST'])
@@ -686,6 +724,7 @@ def insert_c_project():
         prj.insert_c_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_biss', methods=['POST'])
@@ -695,6 +734,7 @@ def insert_biss():
         prj.update_biss(params)
         return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/update_c_project', methods=['POST'])
@@ -704,6 +744,7 @@ def update_c_project():
         prj.update_c_project(params)
         return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_flaw_co', methods=['GET'])
@@ -713,6 +754,7 @@ def ajax_update_flaw_co():
         prj.update_flaw_co(params)
         return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_co_st', methods=['GET'])
@@ -722,6 +764,7 @@ def ajax_insert_co_st():
         prj.insert_co_st(params)
         return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_end_project', methods=['GET'])
@@ -731,4 +774,56 @@ def ajax_end_project():
         prj.end_project(params)
         return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+@bp.route('/ajax_get_outsrc_list', methods=['GET'])
+def ajax_get_outsrc_list():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = prj.get_outsrc_list(params)
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+@bp.route('/ajax_get_outsrc', methods=['GET'])
+def ajax_get_outsrc():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = prj.get_outsrc(params)
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+@bp.route('/ajax_insert_outsrc', methods=['POST'])
+def ajax_insert_outsrc():
+    try:
+        params = request.form.to_dict()
+        prj.insert_outsrc(params)
+        return jsonify({"status": True, "message" : "성공적으로 추가되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+@bp.route('/ajax_update_outsrc', methods=['POST'])
+def ajax_update_outsrc():
+    try:
+        params = request.form.to_dict()
+        prj.update_outsrc(params)
+        return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+@bp.route('/ajax_delete_outsrc', methods=['GET'])
+def ajax_delete_outsrc():
+    try:
+        params = request.args.to_dict()
+        prj.delete_outsrc(params)
+        return jsonify({"status": True, "message" : "성공적으로 삭제되었습니다."})
+    except Exception as e:
+        print(e)
         return make_response(str(e), 500)

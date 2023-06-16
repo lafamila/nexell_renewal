@@ -258,7 +258,7 @@ tbody .btnUpdate, tbody .btnPrint{
 												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
 												{% endfor %}
 												<option value="BP" selected>BP.사전입찰/진행</option>
-												<option value="BPSN">BPSN.마감제외</option>
+												<option value="BPN">BPN.마감/목표제외</option>
 											</select>
 										</th>
 										<th class="hasinput text-right">
@@ -709,6 +709,9 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 						<li class="active" data-action="1">
 							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>계약 & 프로젝트</span></a>
 						</li>
+						<li data-action="2">
+							<a data-toggle="tab" href="#tabBox2" data-action="tab2"><i class="fa fa-lg fa-list"></i>&nbsp;<span>도급사</span></a>
+						</li>
 						<li data-action="3">
 							<a data-toggle="tab" href="#tabBox3" data-action="tab3"><i class="fa fa-lg fa-list"></i>&nbsp;<span>예정 공사비</span></a>
 						</li>
@@ -1035,6 +1038,100 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 								</table>
 							</form>
 							</div><!--tab-pane-->
+							<!-- 도급사 -->
+							<div class="tab-pane fade" id="tabBox2">
+							<form id="frmBox2">
+								<table class="table table-bordered table-hover" id="dtList2">
+									<colgroup>
+										<col width="50">
+										<col width="150">
+										<col width="126">
+										<col width="500">
+										<col width="*">
+										<col width="100">
+										<col width="110">
+										<col width="100">
+										<col width="110">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="10">
+												도급사
+												<input type="hidden" id="cntrct_sn" name="cntrct_sn">
+												<input type="hidden" id="prjct_sn" name="prjct_sn">
+												<input type="hidden" id="s_outsrc_sn" name="s_outsrc_sn">
+											</th>
+										</tr>
+										<!-- <tr><th class="hasinput" colspan="13">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;">
+													<p><i class="fa-fw fa fa-info"></i>
+														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
+													</p>
+												</div>
+											</th>
+										</tr> -->
+										<tr>
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+											<td class="hasinput">
+												<select class="form-control select2 w100p" id="outsrc_fo_sn" name="outsrc_fo_sn">
+													<option value="">[필수]</option>
+													{% for code in bcnc_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+											<td class="hasinput">
+												<div class="input-group">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" placeholder="[선택]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="out_cntrct_de" name="out_cntrct_de">
+													<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+												</div>
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeHolder="[선택]" id="pymnt_mth" name="pymnt_mth">
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeHolder="[선택]" id="outsrc_dtls" name="outsrc_dtls">
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeHolder="[선택]" id="rspnber_nm" name="rspnber_nm">
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeHolder="[선택]" id="rspnber_telno" name="rspnber_telno">
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeHolder="[선택]" id="charger_nm" name="charger_nm">
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeHolder="[선택]" id="charger_telno" name="charger_telno">
+											</td>
+											<td class="hasinput">
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSaveOutsrc"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushOutsrc" style="padding-left:11px;padding-right:11px;" id="btnRefreshOutsrc"><i class="fa fa-refresh"></i></button>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th class="text-center">No.</th>
+											<th>도급사</th>
+											<th>계약일</th>
+											<th>도급업체선정근거</th>
+											<th>이행증권내역</th>
+											<th>업무책임자</th>
+											<th>연락처</th>
+											<th>담당자</th>
+											<th>연락처</th>
+											<th>-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
 							<!-- 예정공사비 -->
 							<div class="tab-pane fade" id="tabBox3">
 							<form id="frmBox3">
@@ -1066,177 +1163,6 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 												<input type="hidden" id="cntrct_sn" name="cntrct_sn">
 												<input type="hidden" id="prjct_sn" name="prjct_sn">
 												<input type="hidden" id="s_cntrwk_ct_sn" name="s_cntrwk_ct_sn">
-											</th>
-										</tr>
-										<tr><th class="hasinput" colspan="19">
-												<div class="alert alert-block alert-warning-x" style="margin:0px;color:red!important;">
-													<p><i class="fa-fw fa fa-info"></i>
-														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
-													</p>
-													<p><i class="fa-fw fa fa-info"></i>
-														매입/매출 금액은 VAT가 포함된 금액을 입력하셔야 합니다.
-													</p>
-													<p><i class="fa-fw fa fa-info"></i>
-														장비비외의 비용(인건비등)에도 수량은 최소 1건이상으로 입력하셔야 합니다.
-													</p>
-												</div>
-											</th>
-										</tr>
-										<tr style="background:#ffedaa;">
-											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
-												입력
-											</td>
-											<td class="hasinput">
-												<select class="form-control select2" id="cntrct_execut_code" name="cntrct_execut_code">
-													<option value="">[필수]</option>
-													{% for code in cntrct_execut_code_list %}
-													<option value="{{code.value}}">{{code.label}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<td class="hasinput">
-												<select class="form-control select2" id="ct_se_code" name="ct_se_code">
-													<option value="">[필수]</option>
-													{% for code in ct_se_code_list %}
-													<option value="{{code.value}}">{{code.label}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<td class="hasinput">
-												<select class="form-control select2 w100p" id="purchsofc_sn" name="purchsofc_sn">
-													<option value="">[필수]</option>
-													{% for code in bcnc_list %}
-													<option value="{{code.value}}">{{code.label}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<td class="hasinput">
-												<select class="form-control select2" id="prdlst_se_code" name="prdlst_se_code">
-													<option value="">[선택]</option>
-													{% for code in prdlst_se_code_list %}
-													<option value="{{code.value}}">{{code.label}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<td class="hasinput">
-												<input type="text" class="form-control" placeholder="[선택]" id="model_no" name="model_no">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[필수]" id="qy" name="qy">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="puchas_amount" name="puchas_amount">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="puchas_amount_tot" name="puchas_amount_tot">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="salamt" name="salamt">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="salamt_tot" name="salamt_tot">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="dscnt_rt" name="dscnt_rt">
-											</td>
-                                            <td class="hasinput">
-												<div class="input-group">
-													<input type="text" class="form-control datepicker" style="z-index:1050!important;" placeholder="[필수]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cost_date" name="cost_date">
-													<!-- <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
-												</div>
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="add_dscnt_rt" name="add_dscnt_rt">
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="fee_rt" name="fee_rt">
-											</td>
-											<td class="hasinput">
-												<select class="form-control select2" id="dspy_se_code" name="dspy_se_code">
-													<option value="">[선택]</option>
-													{% for code in dspy_se_code_list %}
-													<option value="{{code.value}}">{{code.label}}</option>
-													{% endfor %}
-												</select>
-											</td>
-											<td class="hasinput">
-												<div class="input-group">
-													<input type="text" class="form-control datepicker" style="z-index:1050!important;" placeholder="[선택]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="dspy_de" name="dspy_de">
-													<!-- <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
-												</div>
-											</td>
-											<td class="hasinput">
-												<input type="number" class="form-control" placeholder="[선택]" id="extra_sn" name="extra_sn">
-											</td>
-											<td class="hasinput">
-												<div class="btn-group">
-													<button type="button" class="btn btn-primary" id="btnSaveCost"><i class="fa fa-save"></i></button>
-													<button type="button" class="btn btn-primary" id="btnRefrushCost" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<th style="vertical-align:middle;" class="text-center" rowspan="2">No.</th>
-											<th style="vertical-align:middle;" rowspan="2">계약집행구분</th>
-											<th style="vertical-align:middle;" rowspan="2">비용구분</th>
-											<th style="vertical-align:middle;" rowspan="2">거래처</th>
-											<th style="vertical-align:middle;" rowspan="2">품목</th>
-											<th style="vertical-align:middle;" rowspan="2">모델번호</th>
-											<th style="vertical-align:middle;" rowspan="2">수량</th>
-											<th colspan="2">매입(출고)</th>
-											<th colspan="2">매출(계약)</th>
-											<th style="vertical-align:middle;" rowspan="2">DC(%)</th>
-                                            <th style="vertical-align:middle;" rowspan="2">계약일자</th>
-											<th style="vertical-align:middle;" rowspan="2">추가<br>DC(%)</th>
-											<th style="vertical-align:middle;" rowspan="2">수수료<br>(%)</th>
-											<th style="vertical-align:middle;" rowspan="2">전시구분</th>
-											<th style="vertical-align:middle;" rowspan="2">전시일</th>
-											<th style="vertical-align:middle;" rowspan="2">추가</th>
-											<th style="vertical-align:middle;" rowspan="2">-</th>
-										</tr>
-										<tr>
-											<th>단가</th>
-											<th>금액</th>
-											<th>단가</th>
-											<th>금액</th>
-										</tr>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
-							</form>
-							</div><!--tab-pane-->
-							<!-- 예정공사비 -->
-							<div class="tab-pane fade" id="tabBox4">
-							<form id="frmBox4">
-								<table class="table table-bordered table-hover" id="dtList4">
-									<colgroup>
-										<col width="50">
-										<col width="94">
-										<col width="120">
-										<col width="120">
-										<col width="84">
-										<col width="*">
-										<col width="48">
-										<col width="107">
-										<col width="107">
-										<col width="107">
-										<col width="107">
-										<col width="60">
-                                        <col width="90">
-										<col width="70">
-										<col width="70">
-										<col width="84">
-										<col width="84">
-										<col width="60">
-										<col width="78">
-									</colgroup>
-									<thead>
-										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="19">
-												예정 공사비
-												<input type="hidden" id="cntrct_sn" name="cntrct_sn">
-												<input type="hidden" id="prjct_sn" name="prjct_sn">
-												<input type="hidden" id="s_outsrc_sn" name="s_outsrc_sn">
 											</th>
 										</tr>
 										<tr><th class="hasinput" colspan="19">
@@ -1523,6 +1449,7 @@ getProject = function(s_cntrct_sn, s_prjct_sn)
                 if (data.prjct_creat_at == 'N') {
 					$('#popBox1').modal('show');
                     $('#popEditTabs').find('a[href=#tabBox1]').parent().hide();
+                    $('#popEditTabs').find('a[href=#tabBox2]').parent().hide();
                     $('#popEditTabs').find('a[href=#tabBox3]').parent().show();
                     $('#popEditTabs').find('a[href=#tabBox3]').trigger('click');
 					$('#popBox1').find('#btnEdit').show();
@@ -1616,6 +1543,11 @@ $('#popBox1').on("click", "#popEditTabs a", function(){
 	if(action  == "tab1"){
 		$('#popBox1').find("#btnSaveKeepContract").show();
 		contractReadOnly(false);
+	}
+	else if (action === 'tab2') {
+		var cntrct_sn = $('#tabBox2').find('#cntrct_sn').val();
+		var prjct_sn = $('#tabBox2').find('#prjct_sn').val();
+		getOutsrcList(cntrct_sn, prjct_sn);
 	}
 	else if(action == "tab3"){
 		$('#popBox1').find("#btnSaveKeepContract").hide();
@@ -1738,6 +1670,316 @@ updateContract = function()
 		}
 	});
 }
+
+
+/******************************************************************************
+ *
+ */
+getOutsrcList = function(s_cntrct_sn, s_prjct_sn)
+{
+	if (s_cntrct_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+
+	$.ajax({
+		url: '/api/project/ajax_get_outsrc_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				var html = '';
+                var progrs_sttus_code = $('#popBox1').find('input:radio[name=progrs_sttus_code]:checked').val();
+                if(progrs_sttus_code == 'C'){
+                    $('#btnSaveOutsrc').hide();
+                }
+                else{
+                    $('#btnSaveOutsrc').show();
+
+                }
+
+				$.each(pResult.data, function(pIndex, pValue) {
+					// console.log(pValue);
+					html += '<tr>';
+					html += '    <td class="text-center" data-outsrc_sn="'+pValue.outsrc_sn+'">'+(pIndex+1)+'</td>';
+					html += '    <td>'+(pValue.outsrc_fo_nm)+'</td>';
+					html += '    <td>'+(pValue.cntrct_de.toFormat('DATE'))+'</td>';
+					html += '    <td>'+(pValue.pymnt_mth)+'</td>';
+					html += '    <td>'+(pValue.outsrc_dtls)+'</td>';
+					html += '    <td>'+(pValue.rspnber_nm)+'</td>';
+					html += '    <td>'+(pValue.rspnber_telno)+'</td>';
+					html += '    <td>'+(pValue.charger_nm)+'</td>';
+					html += '    <td>'+(pValue.charger_telno)+'</td>';
+					html += '    <td class="hasinput text-right">';
+
+                    if(progrs_sttus_code != 'C'){
+
+                        html += '        <div class="btn-group">';
+                        html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-outsrc_sn="'+pValue.outsrc_sn+'">';
+                        html += '		         <i class="fa fa-edit"></i>';
+                        html += '            </button>';
+                        html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-outsrc_sn="'+pValue.outsrc_sn+'">';
+                        html += '		         <i class="fa fa-trash-o"></i>';
+                        html += '            </button>';
+                        html += '        </div>';
+                    }
+					html += '    </td>';
+					html += '</tr>';
+				});
+				$('#dtList2 tbody').html(html);
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+getOutsrc = function(s_cntrct_sn, s_prjct_sn, s_outsrc_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+	params += '&s_outsrc_sn=' + s_outsrc_sn;
+
+	$.ajax({
+		url: '/api/project/ajax_get_outsrc',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+
+
+			if (pResult.status) {
+				var data = pResult.data;
+				$('#tabBox2').find('#s_outsrc_sn').yVal(data.outsrc_sn);
+				$('#tabBox2').find('#outsrc_fo_sn').yVal(data.outsrc_fo_sn);
+				$('#tabBox2').find('#out_cntrct_de').yVal(data.cntrct_de);
+				$('#tabBox2').find('#pymnt_mth').yVal(data.pymnt_mth);
+				$('#tabBox2').find('#outsrc_dtls').yVal(data.outsrc_dtls);
+				$('#tabBox2').find('#rspnber_nm').yVal(data.rspnber_nm);
+				$('#tabBox2').find('#rspnber_telno').yVal(data.rspnber_telno);
+				$('#tabBox2').find('#charger_nm').yVal(data.charger_nm);
+				$('#tabBox2').find('#charger_telno').yVal(data.charger_telno);
+				$('#tabBox2').find('#outsrc_fo_sn').yReadonly(true);
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+insertOutsrc = function()
+{
+	$.ajax({
+		url: '/api/project/ajax_insert_outsrc',
+		type: 'POST',
+		data: getFormData($('#frmBox2')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var outsrc_fo_sn = $('#tabBox2').find('#outsrc_fo_sn').val();
+			if (outsrc_fo_sn == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			// var cntrct_de = $('#tabBox2').find('#cntrct_de').val();
+			// if (cntrct_de == '') {
+			// 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			// 	return false;
+			// }
+			// var pymnt_mth = $('#tabBox2').find('#pymnt_mth').val();
+			// if (pymnt_mth == '') {
+			// 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			// 	return false;
+			// }
+			// var outsrc_dtls = $('#tabBox2').find('#outsrc_dtls').val();
+			// if (outsrc_dtls == '') {
+			// 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			// 	return false;
+			// }
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				$('#tabBox2').find('#outsrc_fo_sn').yVal(pResult.outsrc_fo_sn);
+				$('#tabBox2').find('#out_cntrct_de').yVal(pResult.cntrct_de);
+				$('#tabBox2').find('#pymnt_mth').yVal(pResult.pymnt_mth);
+				$('#tabBox2').find('#outsrc_dtls').yVal(pResult.outsrc_dtls);
+				$('#tabBox2').find('#rspnber_nm').yVal(pResult.rspnber_nm);
+				$('#tabBox2').find('#rspnber_telno').yVal(pResult.rspnber_telno);
+				$('#tabBox2').find('#charger_nm').yVal(pResult.charger_nm);
+				$('#tabBox2').find('#charger_telno').yVal(pResult.charger_telno);
+				var cntrct_sn = $('#tabBox2').find('#cntrct_sn').val();
+				var prjct_sn = $('#tabBox2').find('#prjct_sn').val();
+				getOutsrcList(cntrct_sn, prjct_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+updateOutsrc = function()
+{
+	$.ajax({
+		url: '/api/project/ajax_update_outsrc',
+		type: 'POST',
+		data: getFormData($('#frmBox2')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var outsrc_fo_sn = $('#tabBox2').find('#outsrc_fo_sn').val();
+			if (outsrc_fo_sn == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			// var cntrct_de = $('#tabBox2').find('#cntrct_de').val();
+			// if (cntrct_de == '') {
+			// 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			// 	return false;
+			// }
+			// var pymnt_mth = $('#tabBox2').find('#pymnt_mth').val();
+			// if (pymnt_mth == '') {
+			// 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			// 	return false;
+			// }
+			// var outsrc_dtls = $('#tabBox2').find('#outsrc_dtls').val();
+			// if (outsrc_dtls == '') {
+			// 	alert('필수 입력 항목을 입력하시기 바랍니다.');
+			// 	return false;
+			// }
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var cntrct_sn = $('#tabBox2').find('#cntrct_sn').val();
+				var prjct_sn = $('#tabBox2').find('#prjct_sn').val();
+				getOutsrcList(cntrct_sn, prjct_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
+deleteOutsrc = function(s_cntrct_sn, s_prjct_sn, s_outsrc_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+	params += '&s_outsrc_sn=' + s_outsrc_sn;
+
+	$.ajax({
+		url: '/api/project/ajax_delete_outsrc',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				$('#tabBox2').find('#outsrc_fo_sn').yVal('');
+				$('#tabBox2').find('#out_cntrct_de').yVal('');
+				$('#tabBox2').find('#pymnt_mth').yVal('');
+				$('#tabBox2').find('#outsrc_dtls').yVal('');
+				$('#tabBox2').find('#rspnber_nm').yVal('');
+				$('#tabBox2').find('#rspnber_telno').yVal('');
+				$('#tabBox2').find('#charger_nm').yVal('');
+				$('#tabBox2').find('#charger_telno').yVal('');
+				$('#tabBox2').find('#outsrc_fo_sn').yReadonly(false);
+				var cntrct_sn = $('#tabBox2').find('#cntrct_sn').val();
+				var prjct_sn = $('#tabBox2').find('#prjct_sn').val();
+				getOutsrcList(cntrct_sn, prjct_sn);
+			}
+		}
+	});
+}
+
+	$('#tabBox2').on('click', '#btnSaveOutsrc', function(pEvent) {
+		var outsrc_sn = $('#tabBox2').find('#s_outsrc_sn').val();
+		if (outsrc_sn === '') {
+			insertOutsrc();
+		} else {
+			updateOutsrc();
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#tabBox2').on('click', '#btnRefrushOutsrc', function(pEvent) {
+		$('#tabBox2').find('#action').html('입력');
+		$('#tabBox2').find('#s_outsrc_sn').yVal('');
+		$('#tabBox2').find('#outsrc_fo_sn').yVal('');
+		$('#tabBox2').find('#out_cntrct_de').yVal('');
+		$('#tabBox2').find('#pymnt_mth').yVal('');
+		$('#tabBox2').find('#outsrc_dtls').yVal('');
+		$('#tabBox2').find('#rspnber_nm').yVal('');
+		$('#tabBox2').find('#rspnber_telno').yVal('');
+		$('#tabBox2').find('#charger_nm').yVal('');
+		$('#tabBox2').find('#charger_telno').yVal('');
+		$('#tabBox2').find('#outsrc_fo_sn').yReadonly(false);
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#tabBox2').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox2').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var cntrct_sn = $(target).data('cntrct_sn');
+		var prjct_sn = $(target).data('prjct_sn');
+		var outsrc_sn = $(target).data('outsrc_sn');
+		getOutsrc(cntrct_sn, prjct_sn, outsrc_sn);
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#tabBox2').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var cntrct_sn = $(target).data('cntrct_sn');
+		var prjct_sn = $(target).data('prjct_sn');
+		var outsrc_sn = $(target).data('outsrc_sn');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deleteOutsrc(cntrct_sn, prjct_sn, outsrc_sn);
+		}
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#dtList2').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
 
 
 /*************************

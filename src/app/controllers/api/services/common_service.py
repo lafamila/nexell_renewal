@@ -1230,6 +1230,43 @@ def get_money_data(params):
     result = g.curs.fetchall()
     return result
 
+
+def get_pay_data(params):
+    query = """ SELECT c.cntrct_sn AS cntrct_sn
+                , c.spt_nm AS cntrct_nm
+				, t.delng_se_code AS delng_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DELNG_SE_CODE' AND code=t.delng_se_code) AS delng_se_nm
+                , t.pblicte_trget_sn AS bcnc_sn
+                , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+				, t.splpc_am + IFNULL(t.vat, 0) AS amount
+				, IFNULL(r.rcppay_de, '9999-99-99') AS rcppay_de
+				, IFNULL(r.price_1, 0) AS price_1
+				, IFNULL(r.price_2, 0) AS price_2		
+				, t.collct_de AS collct_de
+                , (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr						
+                FROM (SELECT * FROM taxbil WHERE delng_se_code LIKE 'P%%' AND DATE_FORMAT(collct_de, '%%Y-%%m') = %(s_mt)s) t
+                LEFT JOIN contract c
+                ON t.cntrct_sn=c.cntrct_sn
+                LEFT JOIN member m
+                ON c.spt_chrg_sn=m.mber_sn
+                LEFT OUTER JOIN (
+                                SELECT cnnc_sn
+                                , MAX(rcppay_de) AS rcppay_de
+                                , SUM(IF(bil_exprn_de IS NULL, amount, 0)) AS price_1
+                                , SUM(IF(bil_exprn_de IS NULL, 0, amount)) AS price_2
+                                 FROM rcppay 
+                                 WHERE rcppay_se_code = 'O' AND cnnc_sn IS NOT NULL
+                                 GROUP BY cnnc_sn) r 
+                ON t.taxbil_sn=r.cnnc_sn
+                WHERE 1=1
+                AND c.progrs_sttus_code IN ('P', 'B')
+                ORDER BY code_ordr, c.cntrct_nm, bcnc_nm
+            """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 def get_cowork_data(params):
     query = """SELECT c.cntrct_sn
                     , p.prjct_sn

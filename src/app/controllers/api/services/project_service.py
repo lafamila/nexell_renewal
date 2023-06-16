@@ -145,8 +145,8 @@ def get_project_datatable(params):
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
     if "s_progrs_sttus_code" in params and params['s_progrs_sttus_code']:
-        if params["s_progrs_sttus_code"] == "BPSN":
-            query += " AND c.progrs_sttus_code IN ('B', 'P', 'S', 'N')"
+        if params["s_progrs_sttus_code"] == "BPN":
+            query += " AND c.progrs_sttus_code IN ('B', 'P', 'N')"
         elif params["s_progrs_sttus_code"] == "BP":
             query += " AND c.progrs_sttus_code IN ('B', 'P')"
         else:
@@ -250,8 +250,8 @@ def get_contract_summary(params):
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
     if "s_progrs_sttus_code" in params and params['s_progrs_sttus_code']:
-        if params["s_progrs_sttus_code"] == "BPSN":
-            query += " AND c.progrs_sttus_code IN ('B', 'P', 'S', 'N')"
+        if params["s_progrs_sttus_code"] == "BPN":
+            query += " AND c.progrs_sttus_code IN ('B', 'P', 'N')"
         elif params["s_progrs_sttus_code"] == "BP":
             query += " AND c.progrs_sttus_code IN ('B', 'P')"
         else:
@@ -332,8 +332,8 @@ def get_contract_count_summary(params):
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
     if "s_progrs_sttus_code" in params and params['s_progrs_sttus_code']:
-        if params["s_progrs_sttus_code"] == "BPSN":
-            query += " AND c.progrs_sttus_code IN ('B', 'P', 'S', 'N')"
+        if params["s_progrs_sttus_code"] == "BPN":
+            query += " AND c.progrs_sttus_code IN ('B', 'P', 'N')"
         elif params["s_progrs_sttus_code"] == "BP":
             query += " AND c.progrs_sttus_code IN ('B', 'P')"
         else:
@@ -1450,9 +1450,12 @@ def get_outsrc_detail(params):
                 , co.model_no AS model_no
                 , (SELECT SUM(qy*puchas_amount) FROM cost WHERE cntrct_sn=%(s_cntrct_sn)s AND prjct_sn=%(s_prjct_sn)s AND purchsofc_sn=o.outsrc_sn) AS total
                 FROM cost co
-                LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_sn
+                LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_fo_sn AND co.cntrct_sn=o.cntrct_sn AND co.prjct_sn=o.prjct_sn
                 WHERE 1=1
-                AND o.outsrc_sn = %(s_outsrc_sn)s"""
+                AND o.outsrc_sn = %(s_outsrc_sn)s
+                AND co.cntrct_sn = %(s_cntrct_sn)s
+                AND co.prjct_sn = %(s_prjct_sn)s"""
+
     g.curs.execute(query, params)
     result['e5CostList'] = g.curs.fetchall()
 
@@ -2303,9 +2306,12 @@ def insert_c_extra_project(params):
             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : extra_sn, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
 
     for data in cost_data:
+        if int(data['ct_se_code']) == 1 and data['cntrct_execut_code'] == 'C':
+            g.curs.execute("SELECT bcnc_sn FROM contract WHERE cntrct_sn=%s", params['cntrct_sn'])
+            data['purchsofc_sn'] = g.curs.fetchone()['bcnc_sn']
+
         sub_query = [key for key in data]
         params_query = ["%({})s".format(key) for key in data]
-
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
 
@@ -2799,4 +2805,151 @@ def insert_co_st(params):
 
 def end_project(params):
     query = "UPDATE contract SET progrs_sttus_code='C' WHERE cntrct_sn=%(cntrct_sn)s"
+    g.curs.execute(query, params)
+
+def get_outsrc(params):
+    query = """SELECT cntrct_sn
+				, prjct_sn
+				, outsrc_sn
+				, outsrc_fo_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=o.outsrc_fo_sn) AS outsrc_fo_nm
+				, cntrct_de
+				, pymnt_mth
+				, outsrc_dtls
+				, rspnber_nm
+				, rspnber_telno
+				, charger_nm
+				, charger_telno
+				, regist_dtm
+				, register_id
+				, update_dtm
+				, updater_id
+				FROM outsrc o
+				WHERE 1=1
+				AND cntrct_sn = %(s_cntrct_sn)s
+				AND prjct_sn = %(s_prjct_sn)s
+				AND outsrc_sn = %(s_outsrc_sn)s """
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+def insert_outsrc(params):
+    data = dict()
+    if "cntrct_sn" in params and params["cntrct_sn"]:
+        data["cntrct_sn"] = params["cntrct_sn"]
+
+    if "prjct_sn" in params and params["prjct_sn"]:
+        data["prjct_sn"] = params["prjct_sn"]
+
+    if "outsrc_fo_sn" in params and params["outsrc_fo_sn"]:
+        data["outsrc_fo_sn"] = params["outsrc_fo_sn"]
+
+    if "out_cntrct_de" in params and params["out_cntrct_de"]:
+        data["cntrct_de"] = params["out_cntrct_de"]
+
+    if "pymnt_mth" in params and params["pymnt_mth"]:
+        data["pymnt_mth"] = params["pymnt_mth"]
+
+    if "outsrc_dtls" in params and params["outsrc_dtls"]:
+        data["outsrc_dtls"] = params["outsrc_dtls"]
+
+    if "rspnber_nm" in params and params["rspnber_nm"]:
+        data["rspnber_nm"] = params["rspnber_nm"]
+
+    if "rspnber_telno" in params and params["rspnber_telno"]:
+        data["rspnber_telno"] = params["rspnber_telno"]
+
+    if "charger_nm" in params and params["charger_nm"]:
+        data["charger_nm"] = params["charger_nm"]
+
+    if "charger_telno" in params and params["charger_telno"]:
+        data["charger_telno"] = params["charger_telno"]
+
+    if "regist_dtm" in params and params["regist_dtm"]:
+        data["regist_dtm"] = params["regist_dtm"]
+    else:
+        data["regist_dtm"] = datetime.now()
+
+    if "register_id" in params and params["register_id"]:
+        data["register_id"] = params["register_id"]
+    else:
+        data["register_id"] = session['member']['member_id']
+
+    keys = list(data.keys())
+    query = """INSERT INTO outsrc({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+
+    g.curs.execute(query, data)
+
+def update_outsrc(params):
+    data = dict()
+    if "cntrct_sn" in params and params["cntrct_sn"]:
+        data["cntrct_sn"] = params["cntrct_sn"]
+    else:
+        data["cntrct_sn"] = None
+
+    if "prjct_sn" in params and params["prjct_sn"]:
+        data["prjct_sn"] = params["prjct_sn"]
+    else:
+        data["prjct_sn"] = None
+
+    if "outsrc_fo_sn" in params and params["outsrc_fo_sn"]:
+        data["outsrc_fo_sn"] = params["outsrc_fo_sn"]
+    else:
+        data["outsrc_fo_sn"] = None
+
+    if "out_cntrct_de" in params and params["out_cntrct_de"]:
+        data["cntrct_de"] = params["out_cntrct_de"]
+    else:
+        data["cntrct_de"] = None
+
+    if "pymnt_mth" in params and params["pymnt_mth"]:
+        data["pymnt_mth"] = params["pymnt_mth"]
+    else:
+        data["pymnt_mth"] = None
+
+    if "outsrc_dtls" in params and params["outsrc_dtls"]:
+        data["outsrc_dtls"] = params["outsrc_dtls"]
+    else:
+        data["outsrc_dtls"] = None
+
+    if "rspnber_nm" in params and params["rspnber_nm"]:
+        data["rspnber_nm"] = params["rspnber_nm"]
+    else:
+        data["rspnber_nm"] = None
+
+    if "rspnber_telno" in params and params["rspnber_telno"]:
+        data["rspnber_telno"] = params["rspnber_telno"]
+    else:
+        data["rspnber_telno"] = None
+
+    if "charger_nm" in params and params["charger_nm"]:
+        data["charger_nm"] = params["charger_nm"]
+    else:
+        data["charger_nm"] = None
+
+    if "charger_telno" in params and params["charger_telno"]:
+        data["charger_telno"] = params["charger_telno"]
+    else:
+        data["charger_telno"] = None
+
+    if "update_dtm" in params and params["update_dtm"]:
+        data["update_dtm"] = params["update_dtm"]
+    else:
+        data["update_dtm"] = datetime.now()
+
+    if "updater_id" in params and params["updater_id"]:
+        data["updater_id"] = params["updater_id"]
+    else:
+        data["updater_id"] = session['member']['member_id']
+
+
+    keys = list(data.keys())
+
+
+    query = """UPDATE outsrc SET {} WHERE outsrc_sn=%(s_outsrc_sn)s""".format(",".join(["{0}=%({0})s".format(k) for k in keys]))
+    data["s_outsrc_sn"] = params["s_outsrc_sn"]
+    g.curs.execute(query, data)
+
+def delete_outsrc(params):
+    query = """DELETE FROM outsrc WHERE outsrc_sn=%(s_outsrc_sn)s"""
     g.curs.execute(query, params)

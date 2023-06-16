@@ -25,7 +25,7 @@
     </thead>
     <tbody>
         <tr>
-            <td class="colorSky text-center">현장명</td>
+            <td class="colorSky text-center">판매처(현장명)</td>
             <td class="text-center hasinput">
                 <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
                     {% if not init %}
@@ -36,14 +36,6 @@
                     {% endif %}
                 </select>
             </td>
-        </tr>
-        <tr>
-            <td class="colorSky text-center">판매처</td>
-            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_target" id="sale_target"></td>
-        </tr>
-        <tr>
-            <td class="colorSky text-center">판매처담당자</td>
-            <td class="hasinput"><input type="text" class="form-control text-center" name="sale_charger" id="sale_charger"></td>
         </tr>
         <tr>
             <td class="colorSky text-center">설치장소</td>
@@ -398,7 +390,7 @@
     window.projects = {};
     $(document).ready(function(){
         $.ajax({
-            url : '/api/project/get_p_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var html = `<option value="">[전체]</option>`;

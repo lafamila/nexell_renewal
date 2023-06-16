@@ -233,6 +233,7 @@ def get_stock_datatable(params, prduct_se_code):
 
     params["custom_order"] = ["IF(instl_de <> '', instl_de, IF(m.stock_sttus IN (1, 4), m.ddt_man, '')) DESC"]
 
+
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):
@@ -425,9 +426,9 @@ def get_stock_list(params, prduct_se_code, reserved=False):
                 , (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.cntrct_sn) AS etc3
                 , IF(m.stock_sttus=1, (SELECT ct.spt_nm FROM contract ct WHERE ct.cntrct_sn=mi.cntrct_sn), '') AS etc4
                 FROM stock s
-				INNER JOIN 
+				LEFT OUTER JOIN 
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
-				INNER JOIN
+				LEFT OUTER JOIN
 				stock_log mi ON m.cnnc_sn=mi.log_sn
 				WHERE 1=1
 				AND m.stock_sttus=1

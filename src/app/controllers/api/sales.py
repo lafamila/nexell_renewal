@@ -58,6 +58,7 @@ def ajax_get_sales_datatable():
         result['summary'] = sales.get_sales_summary(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_sales_approval_datatable', methods=['POST'])
@@ -67,6 +68,7 @@ def ajax_get_sales_approval_datatable():
         result = sales.get_sales_approval_datatable(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_inventory', methods=['GET'])
@@ -78,6 +80,7 @@ def ajax_get_inventory():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_sales', methods=['GET'])
@@ -89,6 +92,7 @@ def ajax_get_sales():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_sales', methods=['POST'])
@@ -160,6 +164,7 @@ def ajax_insert_sales():
 
         return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_sales', methods=['POST'])
@@ -172,6 +177,7 @@ def ajax_update_sales():
             st.update_stock_type(stock['stock_sn'], params['use_type'])
         return jsonify({"status": True, "message": "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_sales', methods=['POST'])
@@ -181,6 +187,7 @@ def ajax_delete_sales():
         sales.delete_account(params)
         return jsonify({"status": True, "message": "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_contract', methods=['GET'])
@@ -198,6 +205,7 @@ def ajax_get_contract():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -215,6 +223,7 @@ def ajax_get_sales_report():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -498,6 +507,7 @@ def ajax_get_sales_expect_report():
 
         return jsonify(table_data)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/equip_to_account', methods=['GET'])
@@ -540,6 +550,7 @@ def equip_to_account():
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_BF_ms_equip', methods=['POST'])
@@ -578,6 +589,7 @@ def insert_BF_ms_equip():
 
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -617,6 +629,7 @@ def insert_BD_ms_equip():
 
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -647,6 +660,7 @@ def insert_ms_equip():
 
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -692,6 +706,7 @@ def get_model_list():
                 result['after'].append(stock['stock_sn'])
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -703,6 +718,7 @@ def insert_equipment():
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -713,6 +729,7 @@ def insert_general_sales_NR():
         sales.insert_general_sales_NR(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_general_sales_BD', methods=['POST'])
@@ -722,6 +739,7 @@ def insert_general_sales_BD():
         sales.insert_general_sales_BD(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_equipment_BD_samsung', methods=['POST'])
@@ -731,6 +749,7 @@ def insert_equipment_BD_samsung():
         sales.insert_equipment_BD_samsung(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_equipment_samsung', methods=['POST'])
@@ -740,6 +759,7 @@ def insert_equipment_samsung():
         sales.insert_equipment_samsung(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_equipment_sub', methods=['POST'])
@@ -749,6 +769,7 @@ def insert_equipment_sub():
         sales.insert_equipment_sub(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_equipment_other_sub', methods=['POST'])
@@ -758,6 +779,7 @@ def insert_equipment_other_sub():
         sales.insert_equipment_other_sub(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/update_equipment', methods=['POST'])
@@ -768,6 +790,7 @@ def update_equipment():
         sales.insert_equipment(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/update_equipment_establish', methods=['POST'])
@@ -778,6 +801,7 @@ def update_equipment_establish():
         sales.update_equipment_establish(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -788,6 +812,7 @@ def ajax_insert_direct():
         sales.insert_direct(params)
         return jsonify({"status": True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_direct', methods=['GET'])
@@ -797,6 +822,7 @@ def ajax_update_direct():
         sales.update_direct(params)
         return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_account_expect_de', methods=['GET'])
@@ -806,4 +832,5 @@ def ajax_update_account_expect_de():
         sales.update_account_expect_de(params)
         return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

@@ -31,6 +31,7 @@ def ajax_get_tax_datatable():
         result['summary'] = tx.get_taxbil_summary(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_tax', methods=['GET'])
@@ -42,6 +43,7 @@ def ajax_get_tax():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_tax', methods=['POST'])
@@ -51,6 +53,7 @@ def ajax_insert_tax():
         tx.insert_taxbil(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -61,6 +64,7 @@ def ajax_update_tax():
         tx.update_taxbil(params)
         return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -71,6 +75,7 @@ def ajax_delete_tax():
         tx.delete_taxbil(params)
         return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_tax_list', methods=['GET'])
@@ -82,4 +87,5 @@ def ajax_get_tax_list():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

@@ -32,6 +32,7 @@ def ajax_get_inventory_datatable_search():
         result = st.get_stock_datatable_search(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -47,6 +48,7 @@ def get_stock_info():
             result.append(data)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_inventory_datatable_ts', methods=['POST'])
@@ -57,6 +59,7 @@ def ajax_get_inventory_datatable_ts():
         result['summary'] = st.get_stock_summary(params, 1)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_inventory_datatable_bi', methods=['POST'])
@@ -68,6 +71,7 @@ def ajax_get_inventory_datatable_bi():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_stock_log', methods=['GET'])
@@ -80,6 +84,7 @@ def ajax_get_stock_log():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_stock_list', methods=['GET'])
@@ -92,6 +97,7 @@ def ajax_get_stock_list():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_stock_list_bi', methods=['GET'])
@@ -104,6 +110,7 @@ def ajax_get_stock_list_bi():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_stock_list_ts', methods=['GET'])
@@ -116,6 +123,7 @@ def ajax_get_stock_list_ts():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_contract', methods=['GET'])
@@ -131,6 +139,7 @@ def ajax_get_contract():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_delete', methods=['POST'])
@@ -143,6 +152,7 @@ def ajax_insert_delete():
             st.update_stock_rm(item_sn, params['rm'])
         return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_memo', methods=['POST'])
@@ -154,6 +164,7 @@ def ajax_insert_memo():
             st.update_stock_rm(item_sn, params['rm'])
         return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -166,6 +177,7 @@ def ajax_insert_return():
             st.insert_log(item_sn, 1, params['invn_sttus_code'], None, params['ddt_man'])
         return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -179,6 +191,7 @@ def ajax_get_stock_report():
 
         return result
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_built_month', methods=['GET'])
@@ -190,6 +203,7 @@ def ajax_get_built_month():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_built_month_sales', methods=['GET'])
@@ -201,6 +215,7 @@ def ajax_get_built_month_sales():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_stock_month', methods=['GET'])
@@ -219,4 +234,5 @@ def ajax_get_stock_month():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

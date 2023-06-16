@@ -229,7 +229,7 @@ def get_completed_va(params):
 				, (SELECT (IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) - IFNULL(SUM(p.dlnt*p.dlamt),0)) FROM account p LEFT OUTER JOIN account s ON s.cnnc_sn=p.delng_sn WHERE p.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND p.delng_se_code = 'P' AND p.cntrct_sn IS NOT NULL AND p.bcnc_sn = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
 				FROM contract c
 				LEFT OUTER JOIN member m
-				ON c.bsn_chrg_sn=m.mber_sn
+				ON c.spt_chrg_sn=m.mber_sn
 				WHERE 1=1
 				ORDER BY dept_nm, bcnc_nm, spt_nm
 """.format(first_day, last_day)
@@ -254,7 +254,7 @@ def get_completed_sales(params):
 				LEFT JOIN contract c
 				ON t.cntrct_sn = c.cntrct_sn
 				LEFT JOIN member m
-				ON c.bsn_chrg_sn = m.mber_sn
+				ON c.spt_chrg_sn = m.mber_sn
 				LEFT JOIN code co
 				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
 				LEFT JOIN bcnc b

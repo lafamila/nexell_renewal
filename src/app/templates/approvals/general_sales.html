@@ -344,7 +344,7 @@
     window.projects = {};
     $(document).ready(function(){
         $.ajax({
-            url : '/api/project/get_p_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var html = `<option value="">[전체]</option>`;

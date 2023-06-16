@@ -34,6 +34,7 @@ def ajax_get_completed_sales():
         result['data'] = db.get_completed_sales(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_completed_suju', methods=['GET'])
@@ -46,6 +47,7 @@ def ajax_get_completed_suju():
         result['data'] = db.get_completed_suju(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_completed_suju_b', methods=['GET'])
@@ -58,6 +60,7 @@ def ajax_get_completed_suju_b():
         result['data'] = db.get_completed_suju_b(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -72,6 +75,7 @@ def ajax_get_completed_year_summary():
         result['data'].append(db.get_kisung_va(params))
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -87,6 +91,7 @@ def ajax_get_completed_summary():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -101,6 +106,7 @@ def ajax_get_biss_state():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_sales_summary', methods=['GET'])
@@ -114,6 +120,7 @@ def ajax_get_sales_summary():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -125,6 +132,7 @@ def ajax_get_projects_by_dept_member():
         result['data'] = db.get_projects_by_dept_member(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_month_report', methods=['GET'])
@@ -292,6 +300,7 @@ def ajax_get_month_report():
 
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_set_extra_goal_contract', methods=['GET'])
@@ -310,6 +319,7 @@ def ajax_set_extra_goal_contract():
             db.set_extra_goal_contract(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_extra_goal_contract', methods=['GET'])
@@ -323,6 +333,7 @@ def ajax_get_extra_goal_contract():
         result = db.get_extra_goal_contract(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_extra_goal_contract', methods=['GET'])
@@ -332,6 +343,7 @@ def ajax_delete_extra_goal_contract():
         db.delete_extra_goal_contract(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -342,6 +354,7 @@ def ajax_set_dashboard_data():
         db.set_dashboard_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_completed_va', methods=['GET'])
@@ -354,6 +367,7 @@ def ajax_get_completed_va():
         result['data'] = db.get_completed_va(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -372,6 +386,7 @@ def ajax_get_logit():
                 result['data'].append(l)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_logitech_detail', methods=['GET'])
@@ -385,4 +400,5 @@ def ajax_get_logitech_detail():
             result[d['p_type']].append(d)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

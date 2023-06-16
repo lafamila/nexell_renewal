@@ -32,6 +32,7 @@ def ajax_get_fund_datatable():
         result['nSummary'] = fnd.get_rcppay_summary(params, exist=False)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_fund', methods=['GET'])
@@ -43,6 +44,7 @@ def ajax_get_fund():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_fund', methods=['POST'])
@@ -52,6 +54,7 @@ def ajax_insert_fund():
         fnd.insert_rcppay(params)
         return jsonify({"status": True, "message": "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_fund', methods=['POST'])
@@ -61,6 +64,7 @@ def ajax_update_fund():
         fnd.update_rcppay(params)
         return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_fund', methods=['POST'])
@@ -70,6 +74,7 @@ def ajax_delete_fund():
         fnd.delete_rcppay(params)
         return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_fund_many', methods=['POST'])
@@ -79,6 +84,7 @@ def ajax_delete_fund_many():
         fnd.delete_rcppay_many(params)
         return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_copy_funds', methods=['POST'])
@@ -88,6 +94,7 @@ def ajax_copy_funds():
         fnd.copy_rcppays(params)
         return jsonify({"status" : True, "message" : "성공적으로 복사되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -109,6 +116,7 @@ def ajax_get_fund_report():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_contract', methods=['GET'])
@@ -124,6 +132,7 @@ def ajax_get_contract():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_fund_datatable1', methods=['POST'])
@@ -135,6 +144,7 @@ def ajax_get_fund_datatable1():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_fund_datatable2', methods=['POST'])
@@ -146,6 +156,7 @@ def ajax_get_fund_datatable2():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_memo', methods=['GET'])
@@ -155,6 +166,7 @@ def ajax_insert_memo():
         fnd.insert_memo(params)
         return jsonify({"status": True, "message" : "성공적으로 입력되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_memo_list2', methods=['GET'])
@@ -166,6 +178,7 @@ def ajax_get_memo_list2():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_values', methods=['GET'])
@@ -177,4 +190,5 @@ def ajax_get_values():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

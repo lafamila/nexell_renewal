@@ -29,6 +29,7 @@ def ajax_login():
         result = mber.member_check(member_id, member_pw)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_logout', methods=['POST'])
@@ -56,6 +57,7 @@ def ajax_qr_image_off():
             return jsonify({"status" : True})
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_change_password', methods=['POST'])
@@ -67,6 +69,7 @@ def ajax_change_password():
         result = mber.update_member_password(member['member_sn'], old_passwd, new_password)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_member_datatable', methods=['POST'])
@@ -76,6 +79,7 @@ def ajax_get_member_datatable():
         result = mber.get_datatable(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_member', methods=['GET'])
@@ -85,6 +89,7 @@ def ajax_get_member():
         result = mber.get_member(mber_sn)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_member', methods=['POST'])
@@ -94,6 +99,7 @@ def ajax_insert_member():
         mber.insert_member(params)
         return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_member', methods=['POST'])
@@ -103,6 +109,7 @@ def ajax_update_member():
         mber.update_member(params)
         return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -115,6 +122,7 @@ def ajax_get_member_todo():
         result['extra'] = mber.get_extra_todo(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_insert_todo', methods=['GET'])
@@ -124,6 +132,7 @@ def ajax_insert_todo():
         mber.insert_todo(params)
         return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_todo', methods=['GET'])
@@ -133,6 +142,7 @@ def ajax_update_todo():
         mber.update_todo(params)
         return jsonify({"status": True, "message": "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_delete_member', methods=['POST'])
@@ -142,6 +152,7 @@ def ajax_delete_member():
         mber.delete_member(params)
         return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/vacation_list', methods=['GET'])
@@ -151,6 +162,7 @@ def vacation_list():
         result = mber.get_vacation_list(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/delete_vacation', methods=['GET'])
@@ -160,6 +172,7 @@ def delete_vacation():
         result = mber.delete_vacation(params)
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/insert_vacation', methods=['POST'])
@@ -169,6 +182,7 @@ def insert_vacation():
         mber.insert_vacation(params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_update_image', methods=['POST'])
@@ -178,4 +192,5 @@ def ajax_update_image():
         mber.update_image(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

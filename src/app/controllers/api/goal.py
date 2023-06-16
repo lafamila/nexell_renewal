@@ -52,6 +52,7 @@ def ajax_get_goals_datatable():
         result['summary'] = gl.get_goals_summary(params)
         return result
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_contracts_by_member', methods=['POST'])
@@ -67,6 +68,7 @@ def ajax_get_contracts_by_member():
         result = [c for c in contracts if c["value"] in remain]
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_add_goal_member', methods=['GET'])
@@ -80,6 +82,7 @@ def ajax_add_goal_member():
         gl.insert_goals(params, [params["cntrct_sn"]])
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -90,6 +93,7 @@ def set_goal():
         gl.set_goals(params)
         return {"status" : True, "message" : "성공적으로 변경되었습니다."}
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/delete_goal', methods=['POST'])
@@ -99,4 +103,5 @@ def delete_goal():
         gl.delete_goal(params)
         return {"status" : True, "message" : "성공적으로 삭제되었습니다."}
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)

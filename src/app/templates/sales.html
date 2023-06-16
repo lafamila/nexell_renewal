@@ -363,7 +363,16 @@ getSalesList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'ddt_man' },
+            { data: 'ddt_man', render: function(data, type, row, meta){
+					if(data == '9999-99-99'){
+						return '';
+					}
+					else{
+						return data;
+					}
+
+				}
+			},
             { data: 'delng_se_nm' },
             { data: 'delng_ty_nm1' },
             { data: 'delng_ty_nm2' },
@@ -1065,7 +1074,7 @@ getInventoryDeleteList = function()
             $.each(pResult.data, function(pIndex, pValue){
 
                 html += '<option value="'+pValue.value+'" data-tp="'+pValue.use_type+'" data-invn_sttus_code="'+pValue.item_sttus_code+'" data-ty="'+pValue.ty+'" data-se="'+pValue.se+'" data-model="'+pValue.name.trim()+'">';
-                html += pValue.name + '('+pValue.etc3+')';
+                html += pValue.name + '('+pValue.etc3+', #'+pValue.value+')';
                 if(pValue.etc4 != ''){
 
                     html += ' / '+pValue.etc4;

@@ -34,6 +34,7 @@ def ajax_get_work():
         result['status'] = True
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_year_datatable', methods=['POST'])
@@ -45,6 +46,7 @@ def ajax_get_year_datatable():
         # result['data'] = []
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_personal', methods=['GET'])
@@ -90,6 +92,7 @@ def ajax_get_personal():
                         result['timer'][d] = "출근 미등록<br>퇴근 미등록"
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -100,6 +103,7 @@ def ajax_set_work_data():
         wk.set_work_data(params)
         return jsonify({"status" : True, "message" : "성공적으로 변경되었습니다."})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 @bp.route('/ajax_get_work_daily_datatable', methods=['POST'])
@@ -126,6 +130,7 @@ def ajax_get_work_daily_datatable():
                     d["end_time"] = "{}:{}:{}".format(d["end_time"][-6:-4], d["end_time"][-4:-2], d["end_time"][-2:])
         return jsonify(result)
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
 
 
@@ -137,4 +142,5 @@ def ajax_today():
         result = wk.get_today(params)
         return jsonify({"status" : True, "data" : result})
     except Exception as e:
+        print(e)
         return make_response(str(e), 500)
