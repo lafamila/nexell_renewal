@@ -822,7 +822,7 @@
             if(pValue.mh_approval_step == ''){
                 $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
                 $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
-                $(document).find("input[name=msh_approval_type][value='H']").yReadonly(true);
+                $(document).find("input[name=msh_approval_type][value='H']").yReadonly(false);
             }
             else if(pValue.mh_approval_step == 1){
                 $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);

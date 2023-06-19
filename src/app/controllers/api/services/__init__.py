@@ -170,6 +170,7 @@ def get_member_list():
 				AND ctmmny_sn = 1
 				AND mber_sttus_code = 'H'
 				AND dept_code != ''
+				AND mber_sn NOT IN (74, 81, 82, 44, 27, 54)
 				ORDER BY mber_nm""")
     result = curs.fetchall()
     curs.close()
