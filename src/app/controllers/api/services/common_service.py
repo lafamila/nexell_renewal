@@ -1185,6 +1185,7 @@ def get_money_data(params):
                 , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, MIN(t.collct_de) AS collct_de
+				, MAX(t.pblicte_de) AS pblicte_de
 				, SUM(t.splpc_am + IFNULL(t.vat, 0)) AS amount
 				, MIN(IFNULL(r.rcppay_de, '9999-99-99')) AS rcppay_de
 				, SUM(IFNULL(r.price_1, 0)) AS price_1
@@ -1239,11 +1240,12 @@ def get_pay_data(params):
                 , t.pblicte_trget_sn AS bcnc_sn
                 , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
-				, t.splpc_am + IFNULL(t.vat, 0) AS amount
-				, IFNULL(r.rcppay_de, '9999-99-99') AS rcppay_de
-				, IFNULL(r.price_1, 0) AS price_1
-				, IFNULL(r.price_2, 0) AS price_2		
-				, t.collct_de AS collct_de
+				, MIN(t.collct_de) AS collct_de
+				, MAX(t.pblicte_de) AS pblicte_de
+				, SUM(t.splpc_am + IFNULL(t.vat, 0)) AS amount
+				, MIN(IFNULL(r.rcppay_de, '9999-99-99')) AS rcppay_de
+				, SUM(IFNULL(r.price_1, 0)) AS price_1
+				, SUM(IFNULL(r.price_2, 0)) AS price_2		
                 , (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr						
                 FROM (SELECT * FROM taxbil WHERE delng_se_code LIKE 'P%%' AND DATE_FORMAT(collct_de, '%%Y-%%m') = %(s_mt)s) t
                 LEFT JOIN contract c
@@ -1261,6 +1263,7 @@ def get_pay_data(params):
                 ON t.taxbil_sn=r.cnnc_sn
                 WHERE 1=1
                 AND c.progrs_sttus_code IN ('P', 'B')
+                GROUP BY c.cntrct_sn, t.pblicte_trget_sn, t.delng_se_code, DATE_FORMAT(t.collct_de, '%%Y-%%m')
                 ORDER BY code_ordr, c.cntrct_nm, bcnc_nm
             """
     g.curs.execute(query, params)

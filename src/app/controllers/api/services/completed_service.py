@@ -17,7 +17,7 @@ def get_completed_summary(params):
 				, t.dept_code
 				, IF(dept_code='ETC', '기타', (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=t.dept_code)) AS dept_nm
 				, SUM(IFNULL(m_contract_amount, 0)) AS m_contract_amount
-				, IFNULL(SUM(y_contract_amount), 0) AS y_contract_amount
+				, SUM(IFNULL(y_contract_amount, 0)) AS y_contract_amount
 				, SUM(IFNULL(ty8_goal_amount, 0)) AS ty8_goal_amount
 				, SUM(IFNULL(ty9_goal_amount, 0)) AS ty9_goal_amount
 				, SUM(IFNULL(ty8_goal_amount_sum, 0)) AS ty8_goal_amount_sum

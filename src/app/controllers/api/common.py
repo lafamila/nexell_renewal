@@ -435,10 +435,20 @@ def money_ajax_get_money_data():
     try:
         params = request.args.to_dict()
         result = dict()
-        result['contract'] = cm.get_money_data(params)
+        contract = cm.get_money_data(params)
+        pay = cm.get_pay_data(params)
+        result['contract'] = list()
+        for _ in range(max(len(contract), len(pay))):
+            row = dict()
+            if _ < len(contract):
+                row['S'] = contract[_]
+            if _ < len(pay):
+                row['T'] = pay[_]
+            result['contract'].append(row)
+        # result['contract'] = cm.get_money_data(params)
         params['money_year'] = "-".join(params['s_mt'].split("-")[:2])
         result['money'] = cm.get_money_data_input(params)
-        result['pay'] = cm.get_pay_data(params)
+        # result['pay'] = cm.get_pay_data(params)
         return jsonify(result)
     except Exception as e:
         print(e)

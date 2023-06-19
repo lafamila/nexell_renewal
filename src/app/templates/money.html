@@ -163,6 +163,7 @@
 									<col width="80">
 									<col width="70">
 									<col width="70">
+									<col width="70">
 									<col width="80">
 									<col width="70">
 									<col width="80">
@@ -171,9 +172,10 @@
 
 									<col width="180">
 									<col width="80">
-									<col width="50">
+									<col width="70">
+									<col width="70">
 									<col width="80">
-									<col width="50">
+									<col width="70">
 									<col width="80">
 									<col width="80">
 									<col width="140">
@@ -184,32 +186,34 @@
 									<!-- 헤더 -->
 
                                     <tr>
-                                        <th class="colorG middle right_border bottom_border" style="text-align:center!important;" colspan="10">입금</th>
-                                        <th class="color-contract bottom_border middle" style="text-align:center!important;" colspan="7">지급 (관리-수기입력)</th>
+                                        <th class="colorG middle right_border bottom_border" style="text-align:center!important;" colspan="11">입금</th>
+                                        <th class="color-contract bottom_border middle" style="text-align:center!important;" colspan="9">지급 (관리-수기입력)</th>
                                     </tr>
 									<tr>
 										<th class="colorG middle bottom_border" style="text-align:center;min-width:110px;" rowspan="2">거래처</th>
 										<th class="colorG middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
 										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="2">부서</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">거래구분</th>
-										<th class="colorG right_border middle" style="text-align:center;" colspan="2">계획</th>
+										<th class="colorG right_border middle" style="text-align:center;" colspan="3">계획</th>
 										<th class="colorG right_border middle" style="text-align:center;" colspan="3">입금</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
 
-                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
+                                        <th class="color-contract middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
                                         <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처</th>
-										<th class="color-contract right_border middle" style="text-align:center;" colspan="2">계획</th>
+										<th class="color-contract right_border middle" style="text-align:center;" colspan="3">계획</th>
 										<th class="color-contract right_border middle" style="text-align:center;" colspan="3">지급</th>
 										<th class="color-contract right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
 <!--										<th style="text-align:center!important;">합계</th>-->
 									</tr>
                                     <tr>
+                                        <th class="colorG bottom_border" style="text-align:center;">발행</th>
                                         <th class="colorG bottom_border" style="text-align:center;">일자</th>
                                         <th class="colorG right_border bottom_border" style="text-align:center;">계산서 금액</th>
                                         <th class="colorG bottom_border" style="text-align:center;">일자</th>
                                         <th class="colorG bottom_border" style="text-align:center;">현금</th>
                                         <th class="colorG right_border bottom_border" style="text-align:center;">채권</th>
 
+                                        <th class="color-contract bottom_border" style="text-align:center;">발행</th>
                                         <th class="color-contract bottom_border" style="text-align:center;">일자</th>
                                         <th class="color-contract right_border bottom_border" style="text-align:center;">계산서 금액</th>
                                         <th class="color-contract bottom_border" style="text-align:center;">일자</th>
@@ -227,12 +231,14 @@
                                     <tr id="total">
                                         <th class="tot right_border" style="text-align:center;" colspan="4">합계</th>
                                         <td class="text-number tot"></td>
+                                        <td class="text-number tot"></td>
                                         <td class="text-number tot right_border" id="tot5"></td>
                                         <td class="text-number tot"></td>
                                         <td class="text-number tot" id="tot7"></td>
                                         <td class="text-number tot right_border" id="tot8"></td>
                                         <td class="text-number tot right_border"></td>
                                         <th class="tot right_border" style="text-align:center;" colspan="2">합계</th>
+                                        <td class="text-number tot"></td>
                                         <td class="text-number tot"></td>
                                         <td class="text-number tot right_border" id="tot12"></td>
                                         <td class="text-number tot"></td>
@@ -282,10 +288,10 @@
 
 <script>
 calcTotal = function(){
-	var tot5 = $(document).find("#dtList1 tbody").find("tr").calculation(5,5);
-	var tot78 = $(document).find("#dtList1 tbody").find("tr").calculation(7,8);
-	var tot12 = $(document).find("#dtList1 tbody").find("tr").calculation(13,13);
-	var tot1415 = $(document).find("#dtList1 tbody").find("tr").calculation(15,16);
+	var tot5 = $(document).find("#dtList1 tbody").find("tr").calculation(6,6);
+	var tot78 = $(document).find("#dtList1 tbody").find("tr").calculation(8,9);
+	var tot12 = $(document).find("#dtList1 tbody").find("tr").calculation(15,15);
+	var tot1415 = $(document).find("#dtList1 tbody").find("tr").calculation(17,18);
 	$(document).find("#dtList1 tfoot").find("#tot5").html(tot5[0].toFormat('NUMBER'));
 	$(document).find("#dtList1 tfoot").find("#tot7").html(tot78[0].toFormat('NUMBER'));
 	$(document).find("#dtList1 tfoot").find("#tot8").html(tot78[1].toFormat('NUMBER'));
@@ -300,17 +306,17 @@ calcTotal = function(){
 	$(document).find("#dtList2 tbody").find("#final3").html(final3.toFormat('NUMBER'));
 
 	$(document).find("#dtList1 tbody .custom-colored").removeClass("custom-colored");
-	$(document).find("#dtList1 tbody tr").each(function(pIndex, pRow){
-		if($(pRow).find(`td[data-column="date1"]`).html() != '' && $(pRow).find(`td[data-column="amt1"]`).html() == ''){
-			$(pRow).find(`td[data-column="spt2"]`).addClass("custom-colored");
-			$(pRow).find(`td[data-column="date1"]`).addClass("custom-colored");
-			$(pRow).find(`td[data-column="amt1"]`).addClass("custom-colored");
-			$(pRow).find(`td[data-column="date2"]`).addClass("custom-colored");
-			$(pRow).find(`td[data-column="amt2"]`).addClass("custom-colored");
-			$(pRow).find(`td[data-column="amt3"]`).addClass("custom-colored");
-			$(pRow).find(`td[data-column="rm2"]`).addClass("custom-colored");
-		}
-	});
+	// $(document).find("#dtList1 tbody tr").each(function(pIndex, pRow){
+	// 	if($(pRow).find(`td[data-column="date1"]`).html() != '' && $(pRow).find(`td[data-column="amt1"]`).html() == ''){
+	// 		$(pRow).find(`td[data-column="spt2"]`).addClass("custom-colored");
+	// 		$(pRow).find(`td[data-column="date1"]`).addClass("custom-colored");
+	// 		$(pRow).find(`td[data-column="amt1"]`).addClass("custom-colored");
+	// 		$(pRow).find(`td[data-column="date2"]`).addClass("custom-colored");
+	// 		$(pRow).find(`td[data-column="amt2"]`).addClass("custom-colored");
+	// 		$(pRow).find(`td[data-column="amt3"]`).addClass("custom-colored");
+	// 		$(pRow).find(`td[data-column="rm2"]`).addClass("custom-colored");
+	// 	}
+	// });
 
 
 
@@ -417,99 +423,128 @@ getMoneyData = function(s_mt){
 			console.log(pResult);
 			var html = '';
 			var NAME = {"S" : "매출", "S1" : "수수료", "S2" : "M/H", "S3" : "재고판매", "S4" : "S/H"}
-			html += `<tr data-row="row0" data-raw="raw0">
-						<td data-side="S" class="input-available" data-column="bcnc1"></td>
-						<td data-side="S" class="input-available" data-column="spt1"></td>
-						<td data-side="S" class="text-center input-available" data-column="dept1"></td>
-						<td data-side="S" class="text-center right_border input-available" data-column="type1"></td>
-						<td data-side="S" class="text-center input-available" data-column="de1"></td>
-						<td data-side="S" class="right_border text-right input-available" data-column="damt1" data-type="number"></td>
-						<td data-side="S" class="text-center input-available" data-column="de2"></td>
-						<td data-side="S" class=" text-right input-available" data-column="damt2" data-type="number"></td>
-						<td data-side="S" class="right_border text-right input-available" data-column="damt3" data-type="number"></td>
-						<td data-side="S" class="right_border input-available" data-column="rm1"></td>
-						<td data-side="T" class="right_border input-available" data-column="spt2"></td>
-						<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
-						<td data-side="T" class="text-center input-available" data-column="date1"></td>
-						<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
-						<td data-side="T" class="text-center input-available" data-column="date2"></td>
-						<td data-side="T" class="text-right input-available" data-column="amt2" data-type="number"></td>
-						<td data-side="T" class="right_border text-right input-available" data-column="amt3" data-type="number"></td>
-						<td data-side="T" class="input-available" data-column="rm2"></td>
-					 </tr>`;
+			// html += `<tr data-row="row0" data-raw="raw0">
+			// 			<td data-side="S" class="input-available" data-column="bcnc1"></td>
+			// 			<td data-side="S" class="input-available" data-column="spt1"></td>
+			// 			<td data-side="S" class="text-center input-available" data-column="dept1"></td>
+			// 			<td data-side="S" class="text-center right_border input-available" data-column="type1"></td>
+			// 			<td data-side="S" class="text-center input-available" data-column="de1"></td>
+			// 			<td data-side="S" class="right_border text-right input-available" data-column="damt1" data-type="number"></td>
+			// 			<td data-side="S" class="text-center input-available" data-column="de2"></td>
+			// 			<td data-side="S" class=" text-right input-available" data-column="damt2" data-type="number"></td>
+			// 			<td data-side="S" class="right_border text-right input-available" data-column="damt3" data-type="number"></td>
+			// 			<td data-side="S" class="right_border input-available" data-column="rm1"></td>
+			// 			<td data-side="T" class="right_border input-available" data-column="spt2"></td>
+			// 			<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
+			// 			<td data-side="T" class="text-center input-available" data-column="date1"></td>
+			// 			<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
+			// 			<td data-side="T" class="text-center input-available" data-column="date2"></td>
+			// 			<td data-side="T" class="text-right input-available" data-column="amt2" data-type="number"></td>
+			// 			<td data-side="T" class="right_border text-right input-available" data-column="amt3" data-type="number"></td>
+			// 			<td data-side="T" class="input-available" data-column="rm2"></td>
+			// 		 </tr>`;
 
-            $.each(pResult.contract, function(pIndex, pValue){
+            $.each(pResult.contract, function(pIndex, pRow){
+				var cntrct_sn1 = (pRow.hasOwnProperty('T')) ? pRow.T.cntrct_sn : '';
+				var bcnc_sn1 = (pRow.hasOwnProperty('T')) ? pRow.T.bcnc_sn : '';
+				var cntrct_sn2 = (pRow.hasOwnProperty('S')) ? pRow.S.cntrct_sn : '';
+				var bcnc_sn2 = (pRow.hasOwnProperty('S')) ? pRow.S.bcnc_sn : '';
+				html += `<tr data-cntrct1="${cntrct_sn1}" data-bcnc1="${bcnc_sn1}" data-cntrct2="${cntrct_sn2}" data-bcnc2="${bcnc_sn2}" data-row="row${pIndex+1}" data-raw="raw${cntrct_sn1}_${bcnc_sn1}_${cntrct_sn2}_${bcnc_sn2}">`;
+				if(pRow.hasOwnProperty('S')){
+					var pValue = pRow.S;
+					var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
+					var colored = tax_amount == 0 ? " colored" : "";
+					var year = $("#s_year").val().split("-")[0];
+					var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
+					colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
+					html += `	<td data-side="S" class="${colored}">${pValue.bcnc_nm}</td>
+								<td data-side="S" class="${colored}">${pValue.cntrct_nm}</td>
+								<td data-side="S" class="${colored} text-center">${pValue.dept_nm}</td>
+								<td data-side="S" class="${colored} text-center right_border">${(NAME.hasOwnProperty(pValue.delng_se_code) ? NAME[pValue.delng_se_code] : "")}</td>
+								<td data-side="S" class="${colored} text-center">${pValue.pblicte_de.split("-")[1]+"-"+pValue.pblicte_de.split("-")[2]}</td>
+								<td data-side="S" class="${colored} text-center">${pValue.collct_de.split("-")[1]+"-"+pValue.collct_de.split("-")[2]}</td>
+								<td data-side="S" class="${colored} right_border text-right">${tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER')}</td>
+								<td data-side="S" class="${colored} text-center">${rcppay_de}</td>
+								<td data-side="S" class="${colored} text-right">${pValue.price_1 == 0 ? '' : Math.round(pValue.price_1/DELIMITER).toFormat('NUMBER')}</td>
+								<td data-side="S" class="${colored} right_border text-right">${pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER')}</td>
+								<td data-side="S" class="${colored} right_border input-available" data-column="rm1"></td>`;
+				}
+				else{
+					for(let i=0;i<11;i++){
+						var _class = ([3, 6, 9, 10].includes(i)) ? "right_border" : "";
+						html += `<td class="${_class}"></td>`;
+					}
 
-				var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
-				var colored = tax_amount == 0 ? " colored" : "";
-				var year = $("#s_year").val().split("-")[0];
-				var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
-				colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
-				html += `<tr data-cntrct="${pValue.cntrct_sn}" data-bcnc="${pValue.bcnc_sn}" data-row="row${pIndex+1}" data-raw="raw${pValue.cntrct_sn}">
-							<td data-side="S" class="${colored}">${pValue.bcnc_nm}</td>
-							<td data-side="S" class="${colored}">${pValue.cntrct_nm}</td>
-							<td data-side="S" class="${colored} text-center">${pValue.dept_nm}</td>
-							<td data-side="S" class="${colored} text-center right_border">${(NAME.hasOwnProperty(pValue.delng_se_code) ? NAME[pValue.delng_se_code] : "")}</td>
-							<td data-side="S" class="${colored} text-center">${pValue.collct_de.split("-")[1]+"-"+pValue.collct_de.split("-")[2]}</td>
-							<td data-side="S" class="${colored} right_border text-right">${tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER')}</td>
-							<td data-side="S" class="${colored} text-center">${rcppay_de}</td>
-							<td data-side="S" class="${colored} text-right">${pValue.price_1 == 0 ? '' : Math.round(pValue.price_1/DELIMITER).toFormat('NUMBER')}</td>
-							<td data-side="S" class="${colored} right_border text-right">${pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER')}</td>
-							<td data-side="S" class="${colored} right_border input-available" data-column="rm1"></td>
-							<td data-side="T" class="right_border input-available" data-column="spt2"></td>
-							<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
-							<td data-side="T" class="text-center input-available" data-column="date1"></td>
-							<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
-							<td data-side="T" class="text-center input-available" data-column="date2"></td>
-							<td data-side="T" class="text-right input-available" data-column="amt2" data-type="number"></td>
-							<td data-side="T" class="right_border text-right input-available" data-column="amt3" data-type="number"></td>
-							<td data-side="T" class="input-available" data-column="rm2"></td>
-						 </tr>`;
+				}
+				if(pRow.hasOwnProperty('T')){
+					var pValue = pRow.T;
+					var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
+					var colored = tax_amount == 0 ? " colored" : "";
+					var year = $("#s_year").val().split("-")[0];
+					var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
+					html += `	<td data-side="T" class="${colored}">${pValue.cntrct_nm}</td>
+								<td data-side="T" class="${colored} right_border">${pValue.bcnc_nm}</td>
+								<td data-side="T" class="${colored} text-center">${pValue.pblicte_de.split("-")[1]+"-"+pValue.pblicte_de.split("-")[2]}</td>
+								<td data-side="T" class="${colored} text-center">${pValue.collct_de.split("-")[1]+"-"+pValue.collct_de.split("-")[2]}</td>
+								<td data-side="T" class="${colored} right_border text-right">${tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER')}</td>
+								<td data-side="T" class="${colored} text-center">${rcppay_de}</td>
+								<td data-side="T" class="${colored} text-right">${pValue.price_1 == 0 ? '' : Math.round(pValue.price_1/DELIMITER).toFormat('NUMBER')}</td>
+								<td data-side="T" class="${colored} right_border text-right">${pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER')}</td>
+								<td data-side="T" class="${colored} right_border input-available" data-column="rm2"></td>`;
+				}
+				else{
+					for(let i=0;i<9;i++){
+						var _class = ([1, 4, 7, 8].includes(i)) ? "right_border" : "";
+						html += `<td class="${_class}"></td>`;
+					}
+				}
+
+				html += `</tr>`;
 			});
 			$(document).find("#dtList1 tbody").html(html);
-            $.each(pResult.pay, function(pIndex, pValue){
+            // $.each(pResult.pay, function(pIndex, pValue){
+			//
+			// 	var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
+			// 	var colored = tax_amount == 0 ? " colored" : "";
+			// 	var year = $("#s_year").val().split("-")[0];
+			// 	var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
+			// 	colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
+			// 	var tr = $(document).find("#dtList1 tbody").find('tr').eq(pIndex+1);
+			// 	if(tr == undefined){
+			// 		return false;
+			// 	}
+			// 	$(tr).find(`[data-column="spt2"]`).html(pValue.cntrct_nm);
+			// 	$(tr).find(`[data-column="bcnc2"]`).html(pValue.bcnc_nm);
+			// 	// $(tr).find(`[data-column="date1"]`).html();
+			// 	$(tr).find(`[data-column="amt1"]`).html(tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER'));
+			// 	$(tr).find(`[data-column="date2"]`).html(rcppay_de);
+			// 	$(tr).find(`[data-column="amt2"]`).html(pValue.price_1 == 0 ? '' : Math.round(pValue.price_1/DELIMITER).toFormat('NUMBER'));
+			// 	$(tr).find(`[data-column="amt3"]`).html(pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER'));
+			//
+			// });
 
-				var tax_amount = pValue.amount - (pValue.price_1 + pValue.price_2);
-				var colored = tax_amount == 0 ? " colored" : "";
-				var year = $("#s_year").val().split("-")[0];
-				var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
-				colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
-				var tr = $(document).find("#dtList1 tbody").find('tr').eq(pIndex+1);
-				if(tr == undefined){
-					return false;
-				}
-				$(tr).find(`[data-column="spt2"]`).html(pValue.cntrct_nm);
-				$(tr).find(`[data-column="bcnc2"]`).html(pValue.bcnc_nm);
-				// $(tr).find(`[data-column="date1"]`).html();
-				$(tr).find(`[data-column="amt1"]`).html(tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER'));
-				$(tr).find(`[data-column="date2"]`).html(rcppay_de);
-				$(tr).find(`[data-column="amt2"]`).html(pValue.price_1 == 0 ? '' : Math.round(pValue.price_1/DELIMITER).toFormat('NUMBER'));
-				$(tr).find(`[data-column="amt3"]`).html(pValue.price_2 == 0 ? '' : Math.round(pValue.price_2/DELIMITER).toFormat('NUMBER'));
+			// html = `<tr data-row="row99999" data-raw="raw99999">
+			// 			<td data-side="S" class="input-available" data-column="bcnc1"></td>
+			// 			<td data-side="S" class="input-available" data-column="spt1"></td>
+			// 			<td data-side="S" class="text-center input-available" data-column="dept1"></td>
+			// 			<td data-side="S" class="text-center right_border input-available" data-column="type1"></td>
+			// 			<td data-side="S" class="text-center input-available" data-column="de1"></td>
+			// 			<td data-side="S" class="right_border text-right input-available" data-column="damt1" data-type="number"></td>
+			// 			<td data-side="S" class="text-center input-available" data-column="de2"></td>
+			// 			<td data-side="S" class=" text-right input-available" data-column="damt2" data-type="number"></td>
+			// 			<td data-side="S" class="right_border text-right input-available" data-column="damt3" data-type="number"></td>
+			// 			<td data-side="S" class="right_border input-available" data-column="rm1"></td>
+			// 			<td data-side="T" class="right_border input-available" data-column="spt2"></td>
+			// 			<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
+			// 			<td data-side="T" class="text-center input-available" data-column="date1"></td>
+			// 			<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
+			// 			<td data-side="T" class="text-center input-available" data-column="date2"></td>
+			// 			<td data-side="T" class="text-right input-available" data-column="amt2" data-type="number"></td>
+			// 			<td data-side="T" class="right_border text-right input-available" data-column="amt3" data-type="number"></td>
+			// 			<td data-side="T" class="input-available" data-column="rm2"></td>
+			// 		 </tr>`;
 
-			});
-
-			html = `<tr data-row="row99999" data-raw="raw99999">
-						<td data-side="S" class="input-available" data-column="bcnc1"></td>
-						<td data-side="S" class="input-available" data-column="spt1"></td>
-						<td data-side="S" class="text-center input-available" data-column="dept1"></td>
-						<td data-side="S" class="text-center right_border input-available" data-column="type1"></td>
-						<td data-side="S" class="text-center input-available" data-column="de1"></td>
-						<td data-side="S" class="right_border text-right input-available" data-column="damt1" data-type="number"></td>
-						<td data-side="S" class="text-center input-available" data-column="de2"></td>
-						<td data-side="S" class=" text-right input-available" data-column="damt2" data-type="number"></td>
-						<td data-side="S" class="right_border text-right input-available" data-column="damt3" data-type="number"></td>
-						<td data-side="S" class="right_border input-available" data-column="rm1"></td>
-						<td data-side="T" class="right_border input-available" data-column="spt2"></td>
-						<td data-side="T" class="right_border input-available" data-column="bcnc2"></td>
-						<td data-side="T" class="text-center input-available" data-column="date1"></td>
-						<td data-side="T" class="text-right right_border input-available" data-column="amt1" data-type="number"></td>
-						<td data-side="T" class="text-center input-available" data-column="date2"></td>
-						<td data-side="T" class="text-right input-available" data-column="amt2" data-type="number"></td>
-						<td data-side="T" class="right_border text-right input-available" data-column="amt3" data-type="number"></td>
-						<td data-side="T" class="input-available" data-column="rm2"></td>
-					 </tr>`;
-
-			$(document).find("#dtList1 tbody").append(html);
+			// $(document).find("#dtList1 tbody").append(html);
 			// $.each(pResult.money, function(pIndex, pValue){
 			// 	var R = "row";
 			// 	if(pValue.money_row.startsWith("raw")){
