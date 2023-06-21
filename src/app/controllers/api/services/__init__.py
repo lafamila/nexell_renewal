@@ -31,6 +31,7 @@ def refresh_code_list():
                 author_list=get_author_list(),
                 bcnc_list=get_bcnc_list(),
                 member_list=get_member_list(),
+                member_all_list=get_member_all_list(),
                 prduct_ty_code_list=get_code_list('prduct_ty_code'.upper()),
                 prduct_sse_code_list=get_code_list('prduct_sse_code'.upper()),
                 invn_sttus_code_list=get_code_list('invn_sttus_code'.upper()),
@@ -171,6 +172,28 @@ def get_member_list():
 				AND mber_sttus_code = 'H'
 				AND dept_code != ''
 				AND mber_sn NOT IN (74, 81, 82, 44, 27, 54)
+				ORDER BY mber_nm""")
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+def get_member_all_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT m.mber_sn AS value
+				, m.mber_nm AS label
+				, (SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS etc1
+				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS etc2
+				, CONCAT( IFNULL((SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code),''), ' '
+				, m.mber_nm, ' '
+				, IFNULL((SELECT code_nm FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code),'')
+				) AS etc3
+				FROM member m
+				WHERE 1=1
+				AND ctmmny_sn = 1
+				AND mber_sttus_code = 'H'
+				AND dept_code != ''
 				ORDER BY mber_nm""")
     result = curs.fetchall()
     curs.close()

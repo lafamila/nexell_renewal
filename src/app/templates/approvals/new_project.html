@@ -87,7 +87,7 @@
             <td class="hasinput" colspan="3">
                 <select class="form-control select2" id="spt_chrg_sn" name="spt_chrg_sn">
                     <option value=""></option>
-                    {% for code in member_list %}
+                    {% for code in member_all_list %}
                     <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
                     {% endfor %}
                 </select>
@@ -108,7 +108,7 @@
             <td class="hasinput" colspan="3">
                 <select class="form-control select2" id="bsn_chrg_sn" name="bsn_chrg_sn">
                     <option value=""></option>
-                    {% for code in member_list %}
+                    {% for code in member_all_list %}
                     <option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
                     {% endfor %}
                 </select>

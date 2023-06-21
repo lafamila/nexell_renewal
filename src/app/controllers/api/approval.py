@@ -62,7 +62,10 @@ def ajax_insert_approval():
         params = request.get_json()
 
         if int(params['approval_ty_code']) in (1, 39, 40):
-            params['data']['cntrct_no'] = prj.get_contract_no({"today" : datetime.today().strftime("%Y-%m-%d")})
+            if params['data']['prjct_creat_at'] == 'N' or params['data']['progrs_sttus_code'] == 'S':
+                params['data']['cntrct_no'] = ''
+            else:
+                params['data']['cntrct_no'] = prj.get_contract_no({"today" : datetime.today().strftime("%Y-%m-%d")})
         apvl_sn = apvl.insert_approval(params)
         params['approval_sn'] = apvl_sn
         apvl.insert_approval_member(params)

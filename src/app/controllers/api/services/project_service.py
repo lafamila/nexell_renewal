@@ -2001,14 +2001,14 @@ def get_contract_no(params):
 
     y, m, _ = list(map(int, params['today'].split("-")))
     dept_code = session['member']['dept_code']
-    query = """SELECT cnt FROM contract_no WHERE stdyy=%s AND stdmm=%s AND dept_code=%s"""
-    row = g.curs.execute(query, (y, m, dept_code))
+    query = """SELECT cnt FROM contract_no WHERE stdyy=%s AND dept_code=%s"""
+    row = g.curs.execute(query, (y, dept_code))
     if row:
         cnt = g.curs.fetchone()['cnt'] + 1
-        g.curs.execute("UPDATE contract_no SET cnt=%s WHERE stdyy=%s AND stdmm=%s AND dept_code=%s", (cnt, y, m, dept_code))
+        g.curs.execute("UPDATE contract_no SET cnt=%s WHERE stdyy=%s AND dept_code=%s", (cnt, y, dept_code))
     else:
         cnt = 1
-        g.curs.execute("INSERT INTO contract_no(stdyy, stdmm, dept_code, cnt) VALUES(%s, %s, %s, %s)", (y, m, dept_code, cnt))
+        g.curs.execute("INSERT INTO contract_no(stdyy, dept_code, cnt) VALUES(%s, %s, %s, %s)", (y, dept_code, cnt))
     if session['member']['dept_nm'] == '':
         dept = ''
     elif dept_code.startswith("TS"):
