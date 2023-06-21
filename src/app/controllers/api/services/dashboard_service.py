@@ -820,7 +820,7 @@ def get_logitech_report(params):
     LEFT JOIN member m ON c.bsn_chrg_sn = m.mber_sn
     WHERE 1=1
     AND c.progrs_sttus_code <> 'C'
-    ORDER BY ordr""".format(dtm)
+    ORDER BY ordr, c.cntrwk_bgnde""".format(dtm)
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result

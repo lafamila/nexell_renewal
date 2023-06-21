@@ -382,7 +382,7 @@ def ajax_get_logit():
         logitechs = db.get_logitech_report(params)
         result['data'] = list()
         for l in logitechs:
-            if l['logi_now'] != '' or l['other_now'] != '':
+            if l['logi_now'] != '' or l['other_now'] != '' or l['logi_before'] != '' or l['other_before'] != '':
                 result['data'].append(l)
         return jsonify(result)
     except Exception as e:

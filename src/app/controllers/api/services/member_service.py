@@ -93,6 +93,7 @@ def get_member(member_sn):
                 , check_rate
                 , check_work
                 , check_todo
+                , (SELECT file_path FROM files WHERE f_sn=m.prof_file_sn) AS mber_profile
                 FROM member m
                 WHERE 1=1
                 AND ctmmny_sn = 1

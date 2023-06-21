@@ -72,8 +72,8 @@ def get_sales_datatable(params):
         data.append(params["s_prdlst_se_code"])
 
     if "s_model_no" in params and params['s_model_no']:
-        query += " AND a.model_no=%s"
-        data.append(params["s_model_no"])
+        query += " AND a.model_no LIKE %s"
+        data.append("%{}%".format(params["s_model_no"]))
 
     if "s_spt_nm" in params and params['s_spt_nm']:
         query += " AND c.spt_nm LIKE %s"
@@ -158,8 +158,8 @@ def get_sales_summary(params):
         data.append(params["s_prdlst_se_code"])
 
     if "s_model_no" in params and params['s_model_no']:
-        query += " AND a.model_no=%s"
-        data.append(params["s_model_no"])
+        query += " AND a.model_no LIKE %s"
+        data.append("%{}%".format(params["s_model_no"]))
 
     if "s_spt_nm" in params and params['s_spt_nm']:
         query += " AND c.spt_nm LIKE %s"
@@ -475,6 +475,7 @@ def get_expect_s_list(params):
     query += """ LEFT JOIN (SELECT * FROM account WHERE delng_se_code='P') p 
             ON s.cnnc_sn=p.delng_sn
             WHERE 1=1
+            AND s.dlivy_de IS NOT NULL
             GROUP BY DATE_FORMAT(s.dlivy_de, '%%y-%%m'), s.bcnc_sn, s.cntrct_sn
             ORDER BY dlivy_de ASC
             """
@@ -776,6 +777,8 @@ def insert_equipment_sub(params):
     damt2s = params['damt2[]']
     bcnc_sns = params['bcnc_sn[]']
     for order_de, prdlst_se_code, pamt, samt, bcnc_sn in zip(order_des, prdlst_se_codes, damts, damt2s, bcnc_sns):
+        if order_de == '':
+            continue
         data['order_de'] = order_de
         data['prdlst_se_code'] = prdlst_se_code
         data['model_no'] = '자재'

@@ -207,20 +207,20 @@ getMemberList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'mber_sn' },
-            { data: 'mber_id' },
+            { data: 'mber_sn' , className: 'text-center'},
+            { data: 'mber_id' , className: 'text-center'},
             { data: 'mber_nm' },
-            { data: 'mber_telno' },
-            { data: 'mber_email' },
-            { data: 'dept_nm' },
-            { data: 'ofcps_nm' },
-            { data: 'rspofc_nm' },
-            { data: 'author_nm' },
-            { data: 'mber_sttus_nm' },
-            { data: 'enter_de' },
-            { data: 'out_de' },
-            { data: 'login_dtm' },
-            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+            { data: 'mber_telno' , className: 'text-center'},
+            { data: 'mber_email' , className: 'text-center'},
+            { data: 'dept_nm', className: 'text-center' },
+            { data: 'ofcps_nm' , className: 'text-center'},
+            { data: 'rspofc_nm' , className: 'text-center'},
+            { data: 'author_nm' , className: 'text-center'},
+            { data: 'mber_sttus_nm' , className: 'text-center'},
+            { data: 'enter_de' , className: 'text-center'},
+            { data: 'out_de' , className: 'text-center'},
+            { data: 'login_dtm' , className: 'text-center'},
+            { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
 					html += '<div class="btn-group">';
@@ -339,6 +339,11 @@ $(function() {
 										<col width="*">
 									</colgroup>
 									<tbody>
+										<tr><th style="vertical-align: middle;">프로필</th>
+											<td class="hasinput" colspan="1" style="text-align:center;">
+												<img src="/static/files/profile.png" height="150" id="mber_profile"/>
+											</td>
+										</tr>
 										<tr><th>아이디<em>*</em></th>
 											<td class="hasinput" colspan="1">
 												<input class="form-control" type="text" id="mber_id" name="mber_id">
@@ -502,6 +507,7 @@ isDataChange = false;
 formReset = function(pMode = '')
 {
 	if (pMode === 'insert') {
+		$('#popBox1').find('#mber_profile').val('/static/files/profile.png');
 		$('#popBox1').find('#mber_sn').val('');
 		$('#popBox1').find('#mber_id').val('');
 		$('#popBox1').find('#mber_password').val('');
@@ -549,6 +555,7 @@ getMember = function(s_mber_sn)
 			console.log(result);
 			if (result !== undefined && result !== '') {
 				$('#popBox1').find('#mber_sn').val(result.mber_sn);
+				$('#popBox1').find('#mber_profile').attr("src", (result.mber_profile != '') ? `/static/files/${result.mber_profile}` : '/static/files/profile.png');
 				$('#popBox1').find('#mber_id').val(result.mber_id);
 				$('#popBox1').find('#mber_nm').val(result.mber_nm);
 				$('#popBox1').find('#mber_telno').val(result.mber_telno);

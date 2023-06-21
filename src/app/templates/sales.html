@@ -32,7 +32,7 @@ tbody .btnUpdate, tbody .btnPrint{
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">매입 / 매출 관리 </li><li><span> 매입 / 매출</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">매입 / 매출 관리 </li><li><span> 관리</span></li>
 	</ol>
 </div>
 <!--########################################################################-->
@@ -363,7 +363,7 @@ getSalesList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'ddt_man', render: function(data, type, row, meta){
+            { data: 'ddt_man', className: 'text-center', render: function(data, type, row, meta){
 					if(data == '9999-99-99'){
 						return '';
 					}
@@ -373,15 +373,15 @@ getSalesList = function()
 
 				}
 			},
-            { data: 'delng_se_nm' },
-            { data: 'delng_ty_nm1' },
-            { data: 'delng_ty_nm2' },
-            { data: 'bcnc_nm' },
-            { data: 'prdlst_se_nm' },
-            { data: 'model_no' },
-            { data: 'spt_nm' },
-            { data: 'dept_nm' },
-            { data: 'dlnt', className: 'text-right',
+            { data: 'delng_se_nm', className: 'text-center' },
+            { data: 'delng_ty_nm1', className: 'text-center' },
+            { data: 'delng_ty_nm2', className: 'text-center' },
+            { data: 'bcnc_nm', className: 'text-center' },
+            { data: 'prdlst_se_nm', className: 'text-center' },
+            { data: 'model_no', className: 'text-center' },
+            { data: 'spt_nm', className: 'text-left' },
+            { data: 'dept_nm' , className: 'text-center'},
+            { data: 'dlnt', className: 'text-center',
 				render: function(data, type, row, meta) {
 					var result = 0;
 					if (data != '') {
@@ -408,7 +408,7 @@ getSalesList = function()
 					return result.toString().toFormat('NUMBER');
 				}
 			},
-            { data: 'dlivy_de' },
+            { data: 'dlivy_de' , className: 'text-center'},
 
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {

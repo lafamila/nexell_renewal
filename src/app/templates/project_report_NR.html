@@ -1799,17 +1799,30 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var html = '';
 				var etcRcppayList = pResult.etcRcppayList;
 				var amt_total = 0;
+				var c_opt_amount = 0;
+				var c_opt_date = [];
+
 				$.each(etcRcppayList, function(pIndex, pValue) {
 					var amt = parseInt(pValue.amount);
-					html += '<tr>';
-					html += '    <td class="">'+pValue.rcppay_de+'</td>';
-					html += '    <td class="">'+pValue.acntctgr_nm+'</td>';
-					html += '    <td class="text-left">'+pValue.rcppay_dtls+'</td>';
-					html += '    <td class="">'+pValue.papr_invstmnt_nm+'</td>';
-					html += '    <td class=" text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
-					html += '</tr>';
-					amt_total += parseInt(amt);
+					if(parseInt(pValue.acntctgr_code) != 504) {
+						html += '<tr>';
+						html += '    <td class="">' + pValue.rcppay_de + '</td>';
+						html += '    <td class="">' + pValue.acntctgr_nm + '</td>';
+						html += '    <td class="text-left">' + pValue.rcppay_dtls + '</td>';
+						html += '    <td class="">' + pValue.papr_invstmnt_nm + '</td>';
+						html += '    <td class=" text-number">' + amt.toString().toFormat('NUMBER') + '</td>';
+						html += '</tr>';
+						amt_total += parseInt(amt);
+					}
+					else{
+						c_opt_amount += parseInt(amt);
+						c_opt_date.push(pValue.rcppay_de);
+					}
 				});
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(8)').html(c_opt_amount.toFormat('NUMBER'));
+				$('#popReportNR').find(`[data-column='c_opt_amount']`).html(c_opt_amount.toFormat('NUMBER'));
+				$('#popReportNR').find(`[data-column='c_opt_pay_dtm']`).html(c_opt_date.join(","));
+
 
 //				var etcCardList = pResult.etcCardList;
 //                $.each(etcCardList, function(pIndex, pValue) {
@@ -1974,7 +1987,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 					var diff = e_opt_amount - c_opt_amount;
 					$(document).find(`#rptTableOpt tfoot [data-column='diff']`).html(diff.toFormat('NUMBER'));
-					$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(8)').html(c_opt_amount.toFormat('NUMBER'));
 				}
 
 				/* ********************************************************* */

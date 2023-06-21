@@ -72,7 +72,7 @@ tbody .btnUpdate, tbody .btnPrint{
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">세금계산서 관리 </li><li><span> 매입 / 매출</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">세금계산서 관리 </li><li><span> 관리</span></li>
 	</ol>
 </div>
 <!--########################################################################-->
@@ -423,13 +423,13 @@ getTaxList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'cntrct_no' }, //계약번호
-            { data: 'cntrct_nm' }, //계약명
-            { data: 'dept_nm' },
-            { data: 'delng_se_nm' }, //계약번호
-            { data: 'pblicte_trget_nm' },
-			{ data: 'pblicte_de' },
-			{ data: 'taxbil_yn' },
+            { data: 'cntrct_no', className: 'text-center' }, //계약번호
+            { data: 'cntrct_nm' , className: 'text-left'}, //계약명
+            { data: 'dept_nm' , className: 'text-center'},
+            { data: 'delng_se_nm', className: 'text-center' }, //계약번호
+            { data: 'pblicte_trget_nm' , className: 'text-center'},
+			{ data: 'pblicte_de' , className: 'text-center'},
+			{ data: 'taxbil_yn' , className: 'text-center'},
 			{ data: 'splpc_am', className: 'text-right',
 			    render: function(data, type, row, meta) {
 					return data.toFormat('NUMBER');

@@ -190,7 +190,7 @@
                                         <th class="color-contract bottom_border middle" style="text-align:center!important;" colspan="9">지급 (관리-수기입력)</th>
                                     </tr>
 									<tr>
-										<th class="colorG middle bottom_border" style="text-align:center;min-width:110px;" rowspan="2">거래처</th>
+										<th class="colorG middle bottom_border" style="text-align:center;min-width:110px;" rowspan="2">거래처명</th>
 										<th class="colorG middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
 										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="2">부서</th>
 										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">거래구분</th>
@@ -199,7 +199,7 @@
 										<th class="colorG right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
 
                                         <th class="color-contract middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">현장명</th>
-                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처</th>
+                                        <th class="color-contract right_border middle bottom_border" style="text-align:center;min-width:140px;" rowspan="2">거래처명</th>
 										<th class="color-contract right_border middle" style="text-align:center;" colspan="3">계획</th>
 										<th class="color-contract right_border middle" style="text-align:center;" colspan="3">지급</th>
 										<th class="color-contract right_border middle bottom_border" style="text-align:center!important;" rowspan="2">비고</th>
@@ -457,7 +457,7 @@ getMoneyData = function(s_mt){
 					var year = $("#s_year").val().split("-")[0];
 					var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
 					colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
-					html += `	<td data-side="S" class="${colored}">${pValue.bcnc_nm}</td>
+					html += `	<td data-side="S" class="${colored} text-center">${pValue.bcnc_nm}</td>
 								<td data-side="S" class="${colored}">${pValue.cntrct_nm}</td>
 								<td data-side="S" class="${colored} text-center">${pValue.dept_nm}</td>
 								<td data-side="S" class="${colored} text-center right_border">${(NAME.hasOwnProperty(pValue.delng_se_code) ? NAME[pValue.delng_se_code] : "")}</td>
@@ -483,7 +483,7 @@ getMoneyData = function(s_mt){
 					var year = $("#s_year").val().split("-")[0];
 					var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
 					html += `	<td data-side="T" class="${colored}">${pValue.cntrct_nm}</td>
-								<td data-side="T" class="${colored} right_border">${pValue.bcnc_nm}</td>
+								<td data-side="T" class="${colored} text-center right_border">${pValue.bcnc_nm}</td>
 								<td data-side="T" class="${colored} text-center">${pValue.pblicte_de.split("-")[1]+"-"+pValue.pblicte_de.split("-")[2]}</td>
 								<td data-side="T" class="${colored} text-center">${pValue.collct_de.split("-")[1]+"-"+pValue.collct_de.split("-")[2]}</td>
 								<td data-side="T" class="${colored} right_border text-right">${tax_amount == 0 ? '' : Math.round(tax_amount/DELIMITER).toFormat('NUMBER')}</td>

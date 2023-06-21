@@ -216,12 +216,12 @@ getWorkDailyList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'dept_nm' },
-            { data: 'ofcps_nm' },
-            { data: 'mber_nm' },
-            { data: 'status' },
-            { data: 'start_time' },
-            { data: 'end_time' },
+            { data: 'dept_nm' , className: 'text-center'},
+            { data: 'ofcps_nm' , className: 'text-center'},
+            { data: 'mber_nm' , className: 'text-left'},
+            { data: 'status' , className: 'text-center'},
+            { data: 'start_time' , className: 'text-center'},
+            { data: 'end_time' , className: 'text-center'},
         ],
 		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
 			var pData = pSettings.json.summary;

@@ -96,23 +96,23 @@
             <td class="text-number"></td>
         </tr>
     </tbody>
-    <tfoot>
-        <tr class="amount">
-            <th class="colorSky text-center" colspan="1" rowspan="2">총계</th>
-            <th class="colorSky text-center" colspan="1">금액</th>
-            <td class="colorSky text-number" colspan="1"></td>
-            <td class="colorSky text-number" colspan="1"></td>
-            <td class="colorSky text-number" colspan="1"></td>
-            <td class="colorSky text-number" colspan="1"></td>
-        </tr>
-        <tr class="dmt">
-            <th class="colorSky text-center" colspan="1">수량</th>
-            <td class="colorSky text-number" colspan="1"></td>
-            <td class="colorSky text-number" colspan="1"></td>
-            <td class="colorSky text-number" colspan="1"></td>
-            <td class="colorSky text-number" colspan="1"></td>
-        </tr>
-    </tfoot>
+<!--    <tfoot>-->
+<!--        <tr class="amount">-->
+<!--            <th class="colorSky text-center" colspan="1" rowspan="2">총계</th>-->
+<!--            <th class="colorSky text-center" colspan="1">금액</th>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--        </tr>-->
+<!--        <tr class="dmt">-->
+<!--            <th class="colorSky text-center" colspan="1">수량</th>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--        </tr>-->
+<!--    </tfoot>-->
 
 </table>
     <h3 style="float:right;margin-bottom:1px!important;margin-top:2px!important;">( 수량 : 개 )</h3>
@@ -156,9 +156,8 @@
 </div><!--modal-->
 <script type="text/javascript">
 window.dict = {"전시" : 0, "이현창고" : 1, "기타창고" : 2};
-getStockReport = function()
+getStockReport = function(_type)
 {
-
     var params = '';
 	$.ajax({
 		url: '/api/stock/ajax_get_stock_report',
@@ -195,14 +194,14 @@ getStockReport = function()
                 total_total_price += total_price;
                 total_total_qy += total_qy;
             }
-            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(0).html(total_prices[0].toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(1).html(total_prices[1].toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(2).html(total_prices[2].toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(3).html(total_total_price.toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(0).html(total_qys[0].toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(1).html(total_qys[1].toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(2).html(total_qys[2].toFormat('NUMBER'));
-            $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(3).html(total_total_qy.toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(0).html(total_prices[0].toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(1).html(total_prices[1].toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(2).html(total_prices[2].toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(0).find("td").eq(3).html(total_total_price.toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(0).html(total_qys[0].toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(1).html(total_qys[1].toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(2).html(total_qys[2].toFormat('NUMBER'));
+            // $("#stock_report_summary tfoot").find(`tr`).eq(1).find("td").eq(3).html(total_total_qy.toFormat('NUMBER'));
 
             var html = '';
             var cnt1 = 0;
@@ -210,18 +209,22 @@ getStockReport = function()
             var cnt3 = 0;
             var total = 0;
             $.each(pResult.list, function(pIndex, pValue){
-                html += `<tr>
-                            <td class="text-center">${pValue.prduct_se_nm}</td>
-                            <td class="text-center">${pValue.prduct_ty_nm}</td>
-                            <td class="text-right">${pValue.cnt1.toFormat('NUMBER')}</td>
-                            <td class="text-right">${pValue.cnt2.toFormat('NUMBER')}</td>
-                            <td class="text-right">${pValue.cnt3.toFormat('NUMBER')}</td>
-                            <td class="text-right">${(pValue.cnt1 + pValue.cnt2 + pValue.cnt3).toFormat('NUMBER')}</td>
-                         </tr>`;
-                cnt1 += pValue.cnt1;
-                cnt2 += pValue.cnt2;
-                cnt3 += pValue.cnt3;
-                total += (pValue.cnt1 + pValue.cnt2 + pValue.cnt3);
+                if( (_type == 'ts' && parseInt(pValue.prduct_se_code) == 1) || (_type == 'bi' && parseInt(pValue.prduct_se_code) == 2) ){
+
+                    html += `<tr>
+                                <td class="text-center">${pValue.prduct_se_nm}</td>
+                                <td class="text-center">${pValue.prduct_ty_nm}</td>
+                                <td class="text-right">${pValue.cnt1.toFormat('NUMBER')}</td>
+                                <td class="text-right">${pValue.cnt2.toFormat('NUMBER')}</td>
+                                <td class="text-right">${pValue.cnt3.toFormat('NUMBER')}</td>
+                                <td class="text-right">${(pValue.cnt1 + pValue.cnt2 + pValue.cnt3).toFormat('NUMBER')}</td>
+                             </tr>`;
+                    cnt1 += pValue.cnt1;
+                    cnt2 += pValue.cnt2;
+                    cnt3 += pValue.cnt3;
+                    total += (pValue.cnt1 + pValue.cnt2 + pValue.cnt3);
+
+                }
             });
             $("#stock_report_list tbody").html(html);
             $("#stock_report_list tfoot").find("td").eq(0).html(cnt1.toFormat('NUMBER'));
@@ -319,7 +322,17 @@ $(function() {
      *
      */
 	$('#popReport1').on('show.bs.modal', function(pEvent) {
-        getStockReport();
+        var _type = "{{_type}}";
+        if(_type == 'ts'){
+            $(document).find("#stock_report_summary tr[data-row='1']").hide();
+            $(document).find("#stock_report_summary tr[data-row='2']").show();
+        }
+        else{
+            $(document).find("#stock_report_summary tr[data-row='1']").show();
+            $(document).find("#stock_report_summary tr[data-row='2']").hide();
+
+        }
+        getStockReport(_type);
 	});
 
 

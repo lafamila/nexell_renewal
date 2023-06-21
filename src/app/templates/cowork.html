@@ -63,7 +63,7 @@
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">설치비 관리 </li><li><span> 종합관리</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">설치비 관리 </li><li><span> 공조</span></li>
 	</ol>
 </div>
 
@@ -268,20 +268,20 @@ getCowork = function(){
 			var html = '';
 			$.each(pResult.contract, function(pIndex, pValue){
 				html += `<tr data-row="${pValue.outsrc_sn}">
-						 	<td>${pValue.cntrct_de}</td>
-						 	<td>${pValue.bcnc_nm}</td>
-						 	<td>${pValue.spt_nm}</td>
-						 	<td>${pValue.dept_nm}</td>
-						 	<td>${pValue.bsn_chrg_nm}</td>
-						 	<td></td>
-						 	<td></td>
-						 	<td>${pValue.model_no}</td>
-						 	<td>${Math.round(pValue.amount/1.1).toFormat('NUMBER')}</td>
-						 	<td>${pValue.qy.toFormat('NUMBER')}</td>
-						 	<td>${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
-						 	<td>0</td>
-						 	<td>${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
-						 	<td>${pValue.outsrc_fo_nm}</td>
+						 	<td class="text-center">${pValue.cntrct_de}</td>
+						 	<td class="text-center">${pValue.bcnc_nm}</td>
+						 	<td class="text-left">${pValue.spt_nm}</td>
+						 	<td class="text-center">${pValue.dept_nm}</td>
+						 	<td class="text-center">${pValue.bsn_chrg_nm}</td>
+						 	<td class="text-center"></td>
+						 	<td class="text-center"></td>
+						 	<td class="text-center">${pValue.model_no}</td>
+						 	<td class="text-right">${Math.round(pValue.amount/1.1).toFormat('NUMBER')}</td>
+						 	<td class="text-center">${pValue.qy.toFormat('NUMBER')}</td>
+						 	<td class="text-right">${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
+						 	<td class="text-right">0</td>
+						 	<td class="text-right">${(Math.round(pValue.amount/1.1)*pValue.qy).toFormat('NUMBER')}</td>
+						 	<td class="text-center">${pValue.outsrc_fo_nm}</td>
 						 	<td></td>
 						 </tr>`;
 			});

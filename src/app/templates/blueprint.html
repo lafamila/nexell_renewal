@@ -23,7 +23,7 @@
                 </div>
 				<div class="pull-right" style="margin-right:10px;width:150px;">
 					<div class="input-group">
-						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r3_s_ddt_man" name="r3_s_ddt_man">
+						<input class="form-control datepicker" type="text" style="z-index:900!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r3_s_ddt_man" name="r3_s_ddt_man">
 						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 					</div>
 				</div>
@@ -32,6 +32,12 @@
 			<div class="modal-body report">
 
                 <style>
+					div.report table th.bottom_border, div.report table td.bottom_border{
+						border-bottom: 1px solid #eee!important;
+					}
+					div.report table th.right_border, div.report table td.right_border{
+						border-right: 1px solid #eee!important;
+					}
 					.colorGray{
 						background-color: gray!important;
 					}
@@ -119,20 +125,20 @@
                             <th class="colorN text-center middle" rowspan="2" colspan="2">비고(수주금액)</th>
                         </tr>
                         <tr>
-                            <th class="colorN text-center middle">설계기간</th>
-                            <th class="colorN text-center middle">최초설계</th>
-                            <th class="colorN text-center middle">도면수정</th>
+                            <th class="colorN text-center middle right_border">설계기간</th>
+                            <th class="colorN text-center middle right_border">최초설계</th>
+                            <th class="colorN text-center middle right_border">도면수정</th>
                             <th class="colorN text-center middle">설계견적</th>
-                            <th class="colorN text-center middle">수주</th>
-                            <th class="colorN text-center middle">MH</th>
-                            <th class="colorN text-center middle">진행</th>
-                            <th class="colorN text-center middle">낙주</th>
+                            <th class="colorN text-center middle right_border">수주</th>
+                            <th class="colorN text-center middle right_border">MH</th>
+                            <th class="colorN text-center middle right_border">진행</th>
+                            <th class="colorN text-center middle right_border">낙주</th>
                             <th class="colorN text-center middle">수주<br>달성율</th>
-                            <th class="colorN text-center middle">BO</th>
-                            <th class="colorN text-center middle">설계사무소</th>
+                            <th class="colorN text-center middle right_border">BO</th>
+                            <th class="colorN text-center middle right_border">설계사무소</th>
                             <th class="colorN text-center middle">연목표달성율</th>
-                            <th class="colorN text-center middle">No</th>
-                            <th class="colorN text-center middle">HP</th>
+                            <th class="colorN text-center middle right_border">No</th>
+                            <th class="colorN text-center middle right_border">HP</th>
                             <th class="colorN text-center middle">연목표달성율</th>
                         </tr>
                     </thead>
@@ -152,7 +158,7 @@ $(function () {
     if( $(this).css('border-collapse') == 'collapse') {
       $(this).css('border-collapse','separate').css('border-spacing',0);
     }
-    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',160).css('position','fixed') );
+    $(this).prepend( $(this).find('thead:first').clone().hide().css('top',115).css('position','fixed') );
   });
 
   $(window).scroll(function() {
@@ -164,20 +170,22 @@ $(function () {
         top = $(this).offset().top,
         bottom = top + $(this).height() - thead.height();
 
-      if( scrollTop < top-180 || scrollTop > bottom ) {
+      if( scrollTop < top-115 || scrollTop > bottom ) {
         clone.hide();
         return true;
       }
       if( clone.is('visible') ) return true;
       var fixP = 0;
       clone.find('th').each(function(i) {
-        if(thead.find('th').eq(i).html() == '계'){
-            fixP = -1;
-        }
+		  if(i == clone.find('th').length){
+			  fixP = 15;
+		  }
+		  else{
+			  fixP = 0;
+		  }
         $(this).width( thead.find('th').eq(i).width() +fixP);
-        console.log(fixP);
       });
-      clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+      clone.css("margin-left", -scrollLeft-3 ).css("z-index", "50").width( thead.width()+5 ).show();
     });
   });
 });
@@ -253,25 +261,25 @@ $(function() {
 						else if(mber_sn == pValue.mber_sn && b_type != pValue.b_type){
 							var D = sum_data[sum_idx][b_type]
 							html += `<tr>
-										<td class="text-center middle">${mber_nm}</td>
-										<td class="text-center middle">${b_type_nm}</td>
-										<td class="text-center middle colorLG" colspan="5">소계</td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG">${D[0]}</td>
-										<td class=" colorLG">${D[1]}</td>
+										<td class="text-center middle">${mber_nm}</td>계
+										<td class="text-center middle colorLG">소계</td>
+										<td class="text-center middle colorLG" colspan="5"></td>
+										<td class=" colorLG right_border"></td>
+										<td class=" colorLG right_border">${D[0]}</td>
+										<td class=" colorLG right_border">${D[1]}</td>
 										<td class=" colorLG">${D[2]}</td>
-										<td class=" colorLG">${D[3]}</td>
-										<td class=" colorLG">${D[4]}</td>
-										<td class=" colorLG">${D[5]}</td>
-										<td class=" colorLG">${D[6]}</td>
+										<td class=" colorLG right_border">${D[3]}</td>
+										<td class=" colorLG right_border">${D[4]}</td>
+										<td class=" colorLG right_border">${D[5]}</td>
+										<td class=" colorLG right_border">${D[6]}</td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG">${D[7]}</td>
+										<td class=" colorLG right_border">${D[7]}</td>
+										<td class=" colorLG right_border"></td>
 										<td class=" colorLG"></td>
+										<td class=" colorLG right_border"></td>
+										<td class=" colorLG right_border text-right">${D[8]}</td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG text-right">${D[8]}</td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG text-right" colspan="2">${D[9]}</td>
+										<td class=" colorLG text-right" colspan="2">${D[9].toFormat('NUMBER')}</td>
 									 </tr>`;
 							order = 1;
 						}
@@ -280,24 +288,24 @@ $(function() {
 							var D = sum_data[sum_idx][b_type]
 							html += `<tr>
 										<td class="text-center middle">${mber_nm}</td>
-										<td class="text-center middle">${b_type_nm}</td>
-										<td class="text-center middle colorLG" colspan="5">소계</td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG">${D[0]}</td>
-										<td class=" colorLG">${D[1]}</td>
+										<td class="text-center middle colorLG">소계</td>
+										<td class="text-center middle colorLG" colspan="5"></td>
+										<td class=" colorLG right_border"></td>
+										<td class=" colorLG right_border">${D[0]}</td>
+										<td class=" colorLG right_border">${D[1]}</td>
 										<td class=" colorLG">${D[2]}</td>
-										<td class=" colorLG">${D[3]}</td>
-										<td class=" colorLG">${D[4]}</td>
-										<td class=" colorLG">${D[5]}</td>
-										<td class=" colorLG">${D[6]}</td>
+										<td class=" colorLG right_border">${D[3]}</td>
+										<td class=" colorLG right_border">${D[4]}</td>
+										<td class=" colorLG right_border">${D[5]}</td>
+										<td class=" colorLG right_border">${D[6]}</td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG">${D[7]}</td>
+										<td class=" colorLG right_border">${D[7]}</td>
+										<td class=" colorLG right_border"></td>
 										<td class=" colorLG"></td>
+										<td class=" colorLG right_border"></td>
+										<td class=" colorLG right_border text-right">${D[8]}</td>
 										<td class=" colorLG"></td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG text-right">${D[8]}</td>
-										<td class=" colorLG"></td>
-										<td class=" colorLG text-right" colspan="2">${D[9]}</td>
+										<td class=" colorLG text-right" colspan="2">${D[9].toFormat('NUMBER')}</td>
 									 </tr>`;
 							sum_data.push({0 : new Array(10).fill(0), 1 : new Array(10).fill(0)});
 							sum_idx++;
@@ -305,12 +313,12 @@ $(function() {
 						}
                         html += `<tr>
                                     <td class="text-center middle">${pValue.mber_nm}</td>
-                                    <td class="text-center middle">${pValue.b_type_nm}</td>
-                                    <td class="text-center middle">${order}</td>
-                                    <td class="text-center middle">${pValue.spt_nm}</td>
-                                    <td class="text-center middle">${pValue.bcnc_nm}</td>
-                                    <td class="text-center middle">${pValue.dept_nm}</td>
-                                    <td class="text-center middle">${pValue.bsn_mber_nm}</td>`;
+                                    <td class="text-center middle bottom_border">${pValue.b_type_nm}</td>
+                                    <td class="text-center middle bottom_border">${order}</td>
+                                    <td class="text-center middle bottom_border">${pValue.spt_nm}</td>
+                                    <td class="text-center middle bottom_border">${pValue.bcnc_nm}</td>
+                                    <td class="text-center middle bottom_border">${pValue.dept_nm}</td>
+                                    <td class="text-center middle bottom_border">${pValue.bsn_mber_nm}</td>`;
                         for(let i=1;i<=16;i++) {
 							if(SUM_COLUMNS.includes(i)){
 								if(i != 14 && i != 16){
@@ -325,11 +333,12 @@ $(function() {
 								}
 
 							}
+							var _border_class = ([1,2,3,5,6,7,8,,10,11,13,14].includes(i)) ? "right_border" : "";
 							var _class = (i==16 || i == 14) ? "text-right" : "text-center";
-							html += `   <td class="${_class} middle input-available" data-column="b_${i}" data-row="${pValue.b_sn}">${pValue['b_' + i]}</td>`
+							html += `   <td class="${_class} middle input-available bottom_border ${_border_class}" data-column="b_${i}" data-row="${pValue.b_sn}">${(i != 16)?pValue['b_' + i]:pValue['b_' + i].toFormat('NUMBER')}</td>`
 						}
 
-                        html += `   <td class="text-center middle" style="padding:0px!important;">
+                        html += `   <td class="text-center middle bottom_border" style="padding:0px!important;">
                                         <div class="btn-group">
                                             <button class="btn btn-table btn-danger btnFinish" title="삭제" data-sn="${pValue.b_sn}">
                                             <i class="fa fa-trash"></i>
@@ -346,24 +355,24 @@ $(function() {
 					var D = sum_data[sum_idx][b_type]
 					html += `<tr>
 								<td class="text-center middle">${mber_nm}</td>
-								<td class="text-center middle">${b_type_nm}</td>
-								<td class="text-center middle colorLG" colspan="5">소계</td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG">${D[0]}</td>
-								<td class=" colorLG">${D[1]}</td>
+								<td class="text-center middle colorLG">소계</td>
+								<td class="text-center middle colorLG" colspan="5"></td>
+								<td class=" colorLG right_border"></td>
+								<td class=" colorLG right_border">${D[0]}</td>
+								<td class=" colorLG right_border">${D[1]}</td>
 								<td class=" colorLG">${D[2]}</td>
-								<td class=" colorLG">${D[3]}</td>
-								<td class=" colorLG">${D[4]}</td>
-								<td class=" colorLG">${D[5]}</td>
-								<td class=" colorLG">${D[6]}</td>
+								<td class=" colorLG right_border">${D[3]}</td>
+								<td class=" colorLG right_border">${D[4]}</td>
+								<td class=" colorLG right_border">${D[5]}</td>
+								<td class=" colorLG right_border">${D[6]}</td>
 								<td class=" colorLG"></td>
-								<td class=" colorLG">${D[7]}</td>
+								<td class=" colorLG right_border">${D[7]}</td>
+								<td class=" colorLG right_border"></td>
 								<td class=" colorLG"></td>
+								<td class=" colorLG right_border"></td>
+								<td class=" colorLG right_border text-right">${D[8]}</td>
 								<td class=" colorLG"></td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG text-right">${D[8]}</td>
-								<td class=" colorLG"></td>
-								<td class=" colorLG text-right" colspan="2">${D[9]}</td>
+								<td class=" colorLG text-right" colspan="2">${D[9].toFormat('NUMBER')}</td>
 							 </tr>`;
 					var D = new Array(10).fill(0);
 					$.each(sum_data, function(pIndex, pRow){ $.each(pRow, function(_, data){ $.each(data, function(i, d){ D[i] += d; }) }) });
@@ -371,22 +380,22 @@ $(function() {
 								<td class="text-center middle colorGray"></td>
 								<td class="text-center middle colorGray"></td>
 								<td class="text-center middle colorGray" colspan="5">합계</td>
-								<td class=" colorGray"></td>
-								<td class=" colorGray">${D[0]}</td>
-								<td class=" colorGray">${D[1]}</td>
+								<td class=" colorGray right_border"></td>
+								<td class=" colorGray right_border">${D[0]}</td>
+								<td class=" colorGray right_border">${D[1]}</td>
 								<td class=" colorGray">${D[2]}</td>
-								<td class=" colorGray">${D[3]}</td>
-								<td class=" colorGray">${D[4]}</td>
-								<td class=" colorGray">${D[5]}</td>
-								<td class=" colorGray">${D[6]}</td>
+								<td class=" colorGray right_border">${D[3]}</td>
+								<td class=" colorGray right_border">${D[4]}</td>
+								<td class=" colorGray right_border">${D[5]}</td>
+								<td class=" colorGray right_border">${D[6]}</td>
 								<td class=" colorGray">${(D[3] +D[4] +D[5]) != 0 ? ((D[3]+D[4])*100.0/(D[3] +D[4] +D[5])).toFixed(1)+"%" : "-"}</td>
-								<td class=" colorGray">${D[7]}</td>
-								<td class=" colorGray"></td>
+								<td class=" colorGray right_border">${D[7]}</td>
+								<td class=" colorGray right_border"></td>
 								<td class=" colorGray">${pGoal != null ? (((D[7])*100.0/pGoal.amount).toFixed(1)+"%") : "-"}</td>
-								<td class=" colorGray"></td>
-								<td class=" colorGray text-right">${D[8]}</td>
+								<td class=" colorGray right_border"></td>
+								<td class=" colorGray right_border text-right">${D[8]}</td>
 								<td class=" colorGray">${pGoal != null ? (((D[8])*100.0/pGoal.hp).toFixed(1)+"%") : "-"}</td>
-								<td class=" colorGray text-right">${D[9]}</td>
+								<td class=" colorGray text-right">${D[9].toFormat('NUMBER')}</td>
 								<td class=" colorGray">${pGoal != null ? (((D[9])*100.0/pGoal.total).toFixed(1)+"%") : "-"}</td>
 							 </tr>`;
 					//수주달성율/연목표달성율만 계산하면 끝!
@@ -412,22 +421,22 @@ $(function() {
 								<td class="text-center middle colorB"><span></span></td>
 								<td class="text-center middle colorB"><span></span></td>
 								<td class="text-center middle colorB" colspan="5">연계</td>
-								<td class=" colorB"></td>
-								<td class=" colorB">${D[0]}</td>
-								<td class=" colorB">${D[1]}</td>
+								<td class=" colorB right_border"></td>
+								<td class=" colorB right_border">${D[0]}</td>
+								<td class=" colorB right_border">${D[1]}</td>
 								<td class=" colorB">${D[2]}</td>
-								<td class=" colorB">${D[3]}</td>
-								<td class=" colorB">${D[4]}</td>
-								<td class=" colorB">${D[5]}</td>
-								<td class=" colorB">${D[6]}</td>
+								<td class=" colorB right_border">${D[3]}</td>
+								<td class=" colorB right_border">${D[4]}</td>
+								<td class=" colorB right_border">${D[5]}</td>
+								<td class=" colorB right_border">${D[6]}</td>
 								<td class=" colorB">${(D[3] +D[4] +D[5]) != 0 ? ((D[3]+D[4])*100.0/(D[3] +D[4] +D[5])).toFixed(1)+"%" : "-"}</td>
-								<td class=" colorB">${D[7]}</td>
-								<td class=" colorB"></td>
+								<td class=" colorB right_border">${D[7]}</td>
+								<td class=" colorB right_border"></td>
 								<td class=" colorB">${pGoal != null ? (((D[7])*100.0/pGoal.amount).toFixed(1)+"%") : "-"}</td>
-								<td class=" colorB"></td>
-								<td class=" colorB text-right">${D[8]}</td>
+								<td class=" colorB right_border"></td>
+								<td class=" colorB right_border text-right">${D[8]}</td>
 								<td class=" colorB">${pGoal != null ? (((D[8])*100.0/pGoal.hp).toFixed(1)+"%") : "-"}</td>
-								<td class=" colorB text-right">${D[9]}</td>
+								<td class=" colorB text-right">${D[9].toFormat('NUMBER')}</td>
 								<td class=" colorB">${pGoal != null ? (((D[9])*100.0/pGoal.total).toFixed(1)+"%") : "-"}</td>
 							 </tr>`;
 					$("#rptParnterStatus1").find("tbody").html(html);

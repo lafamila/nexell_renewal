@@ -31,7 +31,7 @@ tbody .btnUpdate, tbody .btn{
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">월별 매출현황({{dept_nm}})</li><li><span> 영업부</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">월별 매출현황</li><li><span> {{dept_nm}}</span></li>
 	</ol>
 
 
@@ -530,6 +530,49 @@ tbody .btnUpdate, tbody .btn{
 									<td class="bold right_border text-right middle no-padding-3">${Math.round(total[28]).toString().toFormat('NUMBER')}</td>
 							 </tr>`;
 				});
+				if("{{dept_code}}" == "BI"){
+
+				$.each(pResult.goal, function(pIndex, pValue){
+					var total_goal = 0;
+					for(let i=1;i<=12;i++) total_goal += pValue[`m${i}`];
+					html += `<tr data-row="calcTotal">
+									<td class="bold colorSky right_border text-center middle">종합<br>(자동)</td>
+									<td class="bold colorSky right_border text-center middle">장려금</td>
+									<td class="bold right_border text-center middle"></td>
+									<td class="bold right_border text-left middle" data-column="spt_nm"></td>
+									<td class="bold right_border text-right middle no-padding-3" data-column="cntrct_amount"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s1m">${Math.round(pValue.m1/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s2m">${Math.round(pValue.m2/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s3m">${Math.round(pValue.m3/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s4m">${Math.round(pValue.m4/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s5m">${Math.round(pValue.m5/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s6m">${Math.round(pValue.m6/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s7m">${Math.round(pValue.m7/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s8m">${Math.round(pValue.m8/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s9m">${Math.round(pValue.m9/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s10m">${Math.round(pValue.m10/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s11m">${Math.round(pValue.m11/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="s12m">${Math.round(pValue.m12/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold colorEG right_border text-right middle nozero no-padding-3">${Math.round(total_goal/1000).toString().toFormat('NUMBER')}</td>
+									<td class="bold right_border text-right middle nozero no-padding-3"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p1m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p2m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p3m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p4m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p5m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p6m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p7m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p8m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p9m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p10m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p11m"></td>
+									<td class="bold text-right middle nozero no-padding-3" data-column="p12m"></td>
+									<td class="bold colorEG right_border text-right middle nozero no-padding-3"></td>
+									<td class="bold right_border text-right middle no-padding-3">${Math.round(total_goal/1000).toString().toFormat('NUMBER')}</td>
+							 </tr>`;
+				});
+				}
+
 				$(document).find("#dtList1").find("tbody[role='calc']").html(html);
 				var html = '';
 				var trs = $(document).find("#dtList1 tbody[role='calc']").find(`tr[data-row="calcTotal"]`);

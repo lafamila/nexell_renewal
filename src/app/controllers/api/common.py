@@ -293,7 +293,7 @@ def ajax_get_month_sales():
 
         result['bcnc_data'] = cm.get_bcnc_data(params)
 
-
+        result['goal'] = cm.get_bcnc_goal(params)
 
         return jsonify(result)
     except Exception as e:

@@ -63,6 +63,7 @@ def ajax_delete_contract():
 def ajax_update_contract():
     try:
         params = request.form.to_dict()
+        print(params)
         prj.update_contract(params)
         return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:

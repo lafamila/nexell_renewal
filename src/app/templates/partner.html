@@ -179,14 +179,14 @@ getPartnerList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'bcnc_nm' },
-            { data: 'bizrno' },
-			{ data: 'bsnm_se_nm' },
-            { data: 'bcnc_se_nm' },
-            { data: 'rprsntv_nm' },
-            { data: 'bcnc_adres' },
-            { data: 'bcnc_telno' },
-            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+            { data: 'bcnc_nm' , className: 'text-center'},
+            { data: 'bizrno' , className: 'text-center'},
+			{ data: 'bsnm_se_nm' , className: 'text-center'},
+            { data: 'bcnc_se_nm', className: 'text-center' },
+            { data: 'rprsntv_nm' , className: 'text-center'},
+            { data: 'bcnc_adres' , className: 'text-left'},
+            { data: 'bcnc_telno' , className: 'text-center'},
+            { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
 					html += '<div class="btn-group">';

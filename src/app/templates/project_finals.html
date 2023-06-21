@@ -402,14 +402,13 @@ getFinalsList = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'dept_nm' },
-            { data: 'cntrct_de' },
-            { data: 'bcnc_nm' },
-            { data: 'spt_nm' },
-            { data: 'spt_chrg_nm' },
-            { data: 'prjct_ty_nm', className: 'text-left',
+            { data: 'dept_nm', className: 'text-center' },
+            { data: 'cntrct_de', className: 'text-center' },
+            { data: 'bcnc_nm', className: 'text-center' },
+            { data: 'spt_nm', className: 'text-left' },
+            { data: 'spt_chrg_nm' , className: 'text-center'},
+            { data: 'prjct_ty_nm', className: 'text-center',
 				render: function(pData, pType, pRow, pMeta) {
-                    console.log(pData);
 					var html = '';
                     var regExp = /\(([^)]+)\)/;
                     var matches = regExp.exec(pData);

@@ -627,8 +627,10 @@ div.report table th, div.report table td{
                             var html2 = '';
                             var loginSN = $("#loginSN").val();
 							var comment = '';
+							var count = 0;
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
+									count ++;
                                     var status = pMember.approval_status_code;
                                     var status_nm = '';
                                     if(status == 0){
@@ -643,7 +645,7 @@ div.report table th, div.report table td{
                                     var html = `<div class="approval-member">
                                                     <div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
                                                     <div><img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/> </div>
-                                                    <div>${pIndex+1}. ${pMember.mber_nm}</div>
+                                                    <div>${count}. ${pMember.mber_nm}</div>
                                                     <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0]+"<span style='text-align:center;'>"+pMember.update_dtm.split(" ")[1]+"</span>" : "&nbsp;"}</div>
                                                 </div>`;
                                     //${pMember.mber_nm}${status_nm}
@@ -821,7 +823,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 										</div>
 										<div style="max-height:480px;overflow-y:auto;">
 											{% for code in member_list %}
-												{% if code.value not in (73, 74) %}
+												{% if code.value not in (63, 74) %}
 												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
 												{% endif %}
 											{% endfor %}

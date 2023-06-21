@@ -340,8 +340,8 @@ getFundStatDatatables1 = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'rcppay_de' },
-            { data: 'acntctgr_code',
+            { data: 'rcppay_de' , className: 'text-center'},
+            { data: 'acntctgr_code', className: 'text-center',
 				render: function(data, type, row, meta) {
 					return row.acntctgr_nm;
 				}
@@ -441,9 +441,9 @@ getFundStatDatatables2 = function()
                     return meta.settings._iDisplayStart + meta.row + 1;
                 }
             },
-            { data: 'rcppay_de' },
-            { data: 'dept_nm' },
-            { data: 'acntctgr_nm' },
+            { data: 'rcppay_de', className: 'text-center' },
+            { data: 'dept_nm' , className: 'text-center'},
+            { data: 'acntctgr_nm' , className: 'text-center'},
 			{ data: 'i_amount', className: 'text-number',
 				render: function(data, type, row, meta) {
 					return data.toString().toFormat('NUMBER');
@@ -454,7 +454,7 @@ getFundStatDatatables2 = function()
 					return data.toString().toFormat('NUMBER');
 				}
 			},
-			{ data: 'types', className: 'text-left',
+			{ data: 'types', className: 'text-center',
 				render: function(data, type, row, meta) {
 					if(data == 'B') return "현금";
 					else return "카드";

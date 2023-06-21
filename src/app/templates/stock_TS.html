@@ -12,6 +12,11 @@ tbody .btnUpdate, tbody .btnPrint, .btnDelete{
     tbody{
         font-size:12px!important;
     }
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+
 </style>
 <style type="text/css">
 body.smart-style-6 .table>tbody>tr>th,
@@ -43,7 +48,7 @@ body.smart-style-6 .table thead tr {
 		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
 	</span>
 	<ol class="breadcrumb">
-		<li>창고관리(공조)</li><li>종합관리</li>
+		<li>창고관리</li><li>공조</li>
 	</ol>
 </div>
 <!--########################################################################-->
@@ -58,12 +63,12 @@ body.smart-style-6 .table thead tr {
 
 	<!-- 화면 제목 -->
 	<div class="row">
-		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
-			<h1 class="page-title txt-color-blueDark">
-				<i class="fa-fw fa fa-list-alt"></i>
-					창고 관리(공조) <span>> 종합관리</span>
-			</h1>
-		</div>
+<!--		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">-->
+<!--			<h1 class="page-title txt-color-blueDark">-->
+<!--				<i class="fa-fw fa fa-list-alt"></i>-->
+<!--					창고 관리(공조) <span>> 종합관리</span>-->
+<!--			</h1>-->
+<!--		</div>-->
 		<!-- right side of the page with the sparkline graphs -->
 		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
 		</div>
@@ -76,7 +81,7 @@ body.smart-style-6 .table thead tr {
 		</p>
 	</div>
 	<!-- 집계표 -->
-	<table class="table table-bordered table-summery" style="top:50px;right:14px;width:700px;z-index:902;" id="summary">
+	<table class="table table-bordered table-summery" style="top:30px;right:14px;width:700px;z-index:902;" id="summary">
 		<thead>
 <!--			<tr><th colspan="6">-->
 					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
@@ -371,7 +376,7 @@ getInventoryList = function()
 				}
             },
             { data: 'bcnc_nm' , className: 'text-center'},
-            { data: 'cntrct_nm' , className: 'text-center'},
+            { data: 'cntrct_nm' , className: 'text-left'},
             { data: 'instl_de' , className: 'text-center'},
             { data: 'wrhousng_de', className: 'text-center' },
             { data: 'invn_sttus_nm' , className: 'text-center'},

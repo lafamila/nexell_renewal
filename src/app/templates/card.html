@@ -271,11 +271,11 @@ getCardList = function()
                 }
             },
             // { data: 'cntrct_no' },
-            { data: 'card_nm' },
-            { data: 'card_de' },
-            { data: 'card_time' },
-            { data: 'frch_nm' },
-            { data: 'region' },
+            { data: 'card_nm', className: 'text-center' },
+            { data: 'card_de' , className: 'text-center'},
+            { data: 'card_time' , className: 'text-center'},
+            { data: 'frch_nm' , className: 'text-center'},
+            { data: 'region' , className: 'text-center'},
 			{ data: 'amount', className: 'text-right', orderable: true,
 			    render: function(data, type, row, meta) {
 					var result = '';
@@ -285,12 +285,12 @@ getCardList = function()
 					return result;
 				}
 			},
-            { data: 'papr_invstmnt_nm' },
-            { data: 'dept_nm' },
-			{ data: 'acntctgr_nm' },
-			{ data: 'card_dtls' },
-            { data: 'spt_nm' },
-            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+            { data: 'papr_invstmnt_nm', className: 'text-center' },
+            { data: 'dept_nm', className: 'text-center' },
+			{ data: 'acntctgr_nm' , className: 'text-center'},
+			{ data: 'card_dtls', className: 'text-center' },
+            { data: 'spt_nm', className: 'text-left' },
+            { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
 					html += '<div class="btn-group">';

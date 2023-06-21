@@ -361,7 +361,7 @@ getProjectList = function()
             },
             { data: 'cntrct_no', className: 'text-center' },
             { data: 'bcnc_nm', className: 'text-center' },
-            { data: 'spt_nm', className: 'text-center' },
+            { data: 'spt_nm', className: 'text-left' },
             { data: 'cntrct_amount', className: 'text-number', //계약금액
                 render: function(data, type, row, meta) {
                     return data.toString().toFormat('NUMBER');
@@ -385,6 +385,9 @@ getProjectList = function()
                         else if(pRow.dept_nm == "빌트인팀"){
                             dept_code = "BI";
                         }
+						if(pRow.prjct_ty_code=='RD')
+							pRow.prjct_ty_code = 'NR'
+
 						dept_code += ","+pRow.spt_dept_code;
                         html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
                         html += '	<i class="fa fa-print"></i>'+pData;
@@ -436,11 +439,10 @@ getProjectList = function()
 					{% elif session['member']['member_id'] == 'ma_keunmi' %}
 						if(row.progrs_sttus_code != 'C'){
 							html += '<div class="btn-group">';
-							html += '	<button class="btn btn-table btn-danger btnEnd" title="마감" data-dept_code="'+dept_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'" data-prjct_ty_code="'+row.prjct_ty_code+'">';
-							html += '		<i class="fa fa-trash"></i>';
+							html += '	<button class="btn btn-table btn-info btnEnd" title="마감" data-dept_code="'+dept_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'" data-prjct_ty_code="'+row.prjct_ty_code+'">';
+							html += '		<i class="fa fa-edit"></i>';
 							html += '	</button>';
 							html += '</div>';
-
 						}
 					{% endif %}
 
@@ -741,7 +743,6 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
                         <div class="tab-pane fade active in" id="tabBoxContract1">
                         <form id="frmBoxContract1">
                             <input type="hidden" id="s_cntrct_sn" name="s_cntrct_sn">
-                            <input type="hidden" id="progrs_sttus_code" name="progrs_sttus_code" value="P">
                             <input type="hidden" id="author" value="0">
 						<table class="table table-bordered table-form">
 							<colgroup>
@@ -1421,7 +1422,7 @@ getProject = function(s_cntrct_sn, s_prjct_sn)
                 $('#popBox1').find('input[name=cntrct_sn]').yVal(data.cntrct_sn);
 				$('#popBox1').find('input:radio[name=prjct_creat_at]').yVal(data.prjct_creat_at);
 				$('#popBox1').find('input:radio[name=prjct_creat_at]').yReadonly();
-				$('#popBox1').find('#progrs_sttus_code').val(data.progrs_sttus_code);
+				// $('#popBox1').find('#progrs_sttus_code').val(data.progrs_sttus_code);
 				$('#popBox1').find('#cntrct_no').val(data.cntrct_no);
 				$('#popBox1').find('#cntrct_nm').val(data.cntrct_nm);
 				$('#popBox1').find('#cntrct_de').val(data.cntrct_de);
@@ -1631,6 +1632,7 @@ updateContract = function()
 			return;
 		}
 	}
+	console.log(progrs_sttus_code, getFormData($('#frmBoxContract1')[0]));
 	$.ajax({
 		url: '/api/project/ajax_update_contract',
 		type: 'POST',

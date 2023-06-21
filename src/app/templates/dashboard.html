@@ -746,7 +746,7 @@ getSalesExpectReport = function(){
 				html += `<tr class="${_class}">`;
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dlivy_de+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.bcnc_nm+'</td>';
-				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.cntrct_nm+'</td>';
+				html += '    <td class="text-left"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.cntrct_nm+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dept_nm+'</td>';
 				html += '    <td class="text-number">'+price_1.toString().toFormat('NUMBER')+'</td>';
 				html += '    <td class="text-number">'+price_2.toString().toFormat('NUMBER')+'</td>';
@@ -1729,9 +1729,10 @@ getMonthReport = function(pxcond_mt){
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
+						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
-								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-left ${miss ? 'colorP' : ''}" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
@@ -1749,9 +1750,10 @@ getMonthReport = function(pxcond_mt){
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
+						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
-								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-left ${miss ? 'colorP' : ''}" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
@@ -1780,9 +1782,10 @@ getMonthReport = function(pxcond_mt){
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
+						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
-								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-left ${miss ? 'colorP' : ''}" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
@@ -1801,9 +1804,10 @@ getMonthReport = function(pxcond_mt){
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
 						var diff = (pR.amount-pR.value);
+						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
-								 	<td class="middle text-left" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
+								 	<td class="middle text-left ${miss ? 'colorP' : ''}" colspan="2">${pR.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")}</td>
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
@@ -2135,7 +2139,7 @@ getCompletedSujuB = function(s_pxcond_mt)
                     html += '    <td class="colorN3"></td>';
                     html += '    <td class="colorN3"></td>';
                     html += '    <td class="colorN3"></td>';
-                    html += '    <td class="colorN3">'+Math.round(before_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="colorN3 text-right">'+Math.round(before_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                     html += '</tr>';
                     total_count += before_count;
                     total_count2 += before_count2;
@@ -2156,13 +2160,13 @@ getCompletedSujuB = function(s_pxcond_mt)
                 html += '<tr>';
                 html += '    <td class="colorSky">'+pValue.code_nm+'</td>';
                 html += '    <td>'+pValue.bcnc_nm+'</td>';
-                html += '    <td>'+pValue.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")+'</td>';
+                html += '    <td class="text-left">'+pValue.cntrct_nm.replace(/(?<=\D|^)\d{2}\/\d{2}(?=\D|$)/g, "").replaceAll("()", "")+'</td>';
                 html += '    <td>'+extracted_de+'</td>';
                 html += '    <td>'+pValue.cntrwk_period+'</td>';
 				//
 
-                html += '    <td>'+pValue.home_count+'</td>';
-                html += '    <td>'+Math.round(pValue.price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-right">'+pValue.home_count.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-right">'+Math.round(pValue.price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
                 html += '</tr>';
                 before = pValue.code_nm;
                 if(pValue.ordr == '0')
@@ -2179,7 +2183,7 @@ getCompletedSujuB = function(s_pxcond_mt)
 			html += '    <td class="colorN3"></td>';
 			html += '    <td class="colorN3"></td>';
 			html += '    <td class="colorN3"></td>';
-			html += '    <td class="colorN3">'+Math.round(before_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+			html += '    <td class="colorN3 text-right">'+Math.round(before_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
             html += '</tr>';
             total_count += before_count;
             total_count2 += before_count2;
@@ -2192,7 +2196,7 @@ getCompletedSujuB = function(s_pxcond_mt)
             html += '    <td class="colorSky"></td>';
             html += '    <td class="colorSky"></td>';
             html += '    <td class="colorSky"></td>';
-            html += '    <td class="colorSky">'+Math.round(total_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="colorSky text-right">'+Math.round(total_price_2/DELIMITER).toString().toFormat('NUMBER')+'</td>';
             html += '</tr>';
 
             $("#rpt8").find("#suju tbody[role=body_suju]").html(html);
@@ -2818,7 +2822,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 html += '    <td class="text-center">'+pValue.sttus_nm+'</td>'
                 html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>'
                 html += '    <td class="text-center">'+pValue.prjct_ty_nm.split("(")[1].replaceAll(")", "").replaceAll("일반", "직계약")+'</td>'
-                html += '    <td class="text-center">'+pValue.spt_nm+'</td>'
+                html += '    <td class="text-left">'+pValue.spt_nm+'</td>'
                 html += '    <td class="text-right">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>'
                 html += '    <td class="text-center">'+pValue.cntrwk_period+'</td>'
                 html += `    <td class="text-center ${parseFloat(pValue.rate) >= 95.0 ? "colorP" : ""}">${rate}</td>`

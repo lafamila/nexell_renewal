@@ -44,7 +44,7 @@ table th, table td {
                 color : #374850!important;
             }
         </style>
-        <li style="font-size:17px !important;color:#1565C0!important;">근태현황관리 </li><li><span> 종합관리</span></li>
+        <li style="font-size:17px !important;color:#1565C0!important;">근태종합현황 </li><li><span> 근태관리</span></li>
 	</ol>
 </div>
 <!--########################################################################-->
@@ -91,7 +91,7 @@ table th, table td {
 				<div class="jarviswidget jarviswidget-color-darken">
 					<header>
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
-                        <h2><span id="year">2020</span>년 근태현황</h2>
+                        <h2><span id="year">2020</span>년 근태종합관리</h2>
 						<div class="widget-toolbar">
 							<input type="text" class="form-control datepicker-s" style="display:inline;width:96px!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_year" name="s_year" placeholder="[기준일자]">
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
@@ -299,9 +299,9 @@ getWork = function(work_date)
 							<td class=" text-center ${_class_today2} right_border" data-column="half">${(parseFloat(pValue.half)/2).toFixed(1)}</td>
 							<td class=" text-center right_border" data-column="remain">${(parseFloat(pValue.tot) + 15 - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
 							<td class=" text-center right_border">${pValue.out}</td>
-							<td class="right_border">${pValue.use_dates}</td>
-							<td class="right_border">${pValue.half_dates}</td>
-							<td class="colorBtn input-available" data-column="rm2">${pValue.rm}</td>
+							<td class="text-left right_border">${pValue.use_dates}</td>
+							<td class="text-left right_border">${pValue.half_dates}</td>
+							<td class="text-left colorBtn input-available" data-column="rm2">${pValue.rm}</td>
 						 </tr>`;
 			});
 			$(document).find("#dtList1 tbody").html(html);

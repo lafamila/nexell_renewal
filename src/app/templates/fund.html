@@ -372,15 +372,15 @@ getFundList = function()
 				}
 			},
             // { data: 'cntrct_no' },
-            { data: 'spt_nm' },
-            { data: 'prvent_nm' },
-			{ data: 'rcppay_de' },
-			{ data: 'acntctgr_nm' },
-            { data: 'bil_exprn_de' },
-            { data: 'rcppay_dtls' },
-            { data: 'papr_invstmnt_nm' },
-            { data: 'dept_nm' },
-            { data: 'rcppay_se_nm' },
+            { data: 'spt_nm' , className: 'text-left'},
+            { data: 'prvent_nm' , className: 'text-center'},
+			{ data: 'rcppay_de' , className: 'text-center'},
+			{ data: 'acntctgr_nm' , className: 'text-center'},
+            { data: 'bil_exprn_de' , className: 'text-center'},
+            { data: 'rcppay_dtls' , className: 'text-center'},
+            { data: 'papr_invstmnt_nm' , className: 'text-center'},
+            { data: 'dept_nm' , className: 'text-center'},
+            { data: 'rcppay_se_nm' , className: 'text-center'},
 			{ data: 'amount', className: 'text-right',
 			    render: function(data, type, row, meta) {
 					var result = '';
@@ -390,7 +390,7 @@ getFundList = function()
 					return result;
 				}
 			},
-            { data: 'acnut_nm' },
+            { data: 'acnut_nm' , className: 'text-center'},
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';

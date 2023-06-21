@@ -519,16 +519,16 @@ def get_s_taxbil_list(params):
                     LEFT OUTER JOIN member m
                     ON m.mber_sn=c.spt_chrg_sn
     				WHERE t.ctmmny_sn = 1
-     				AND t.delng_se_code = 'S' 
     				AND t.pblicte_de BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'
-                    AND (c.progrs_sttus_code IN ('P') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))				
     """.format(params['s_year'])
     data = ['%m']
     if "s_dept_code" in params and params["s_dept_code"]:
         if params["s_dept_code"] == "TS":
+            query += " AND t.delng_se_code = 'S' "
             query += " AND m.dept_code LIKE %s "
             data.append("TS%")
         else:
+            query += " AND t.delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') "
             query += " AND m.dept_code='BI' "
     query += " GROUP BY s_dlivy_de, c.cntrct_sn"
     g.curs.execute(query, data)
@@ -787,6 +787,40 @@ def get_bnd_projects(params):
     result = g.curs.fetchall()
     return result
 
+
+def get_bcnc_goal(params):
+    query = """SELECT g.mber_sn                
+                , IFNULL(g.1m, 0) AS m1
+                , IFNULL(g.2m, 0) AS m2
+                , IFNULL(g.3m, 0) AS m3
+                , IFNULL(g.4m, 0) AS m4
+                , IFNULL(g.5m, 0) AS m5
+                , IFNULL(g.6m, 0) AS m6
+                , IFNULL(g.7m, 0) AS m7
+                , IFNULL(g.8m, 0) AS m8
+                , IFNULL(g.9m, 0) AS m9
+                , IFNULL(g.10m, 0) AS m10
+                , IFNULL(g.11m, 0) AS m11
+                , IFNULL(g.12m, 0) AS m12
+                FROM goal g
+                LEFT JOIN member m ON g.mber_sn=m.mber_sn
+                WHERE g.amt_ty_code='9'
+                AND g.stdyy='{0}' """.format(params['s_year'])
+    data = []
+    if "s_dept_code" in params and params["s_dept_code"]:
+        if params["s_dept_code"] == "TS":
+            query += " AND m.dept_code LIKE %s "
+            data.append("TS%")
+        else:
+            query += " AND m.dept_code='BI' "
+
+    query += """
+                GROUP BY g.mber_sn
+        """
+    g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
 def get_bcnc_contract_list(params):
     query = """SELECT c.cntrct_sn				
                 , c.bcnc_sn
@@ -819,14 +853,15 @@ def get_bcnc_contract_list(params):
 				LEFT OUTER JOIN project p
 				ON p.cntrct_sn=c.cntrct_sn
                 WHERE 1=1
-                AND (c.progrs_sttus_code IN ('P') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))
                 """.format(params['s_year'])
     data = []
     if "s_dept_code" in params and params["s_dept_code"]:
         if params["s_dept_code"] == "TS":
+            query += " AND (c.progrs_sttus_code IN ('P') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))"
             query += " AND m.dept_code LIKE %s "
             data.append("TS%")
         else:
+            query += " AND (c.progrs_sttus_code IN ('P', 'B', 'N') OR (c.progrs_sttus_code='C' AND c.update_dtm BETWEEN '{0}-01-01 00:00:00' AND '{0}-12-31 23:59:59'))"
             query += " AND m.dept_code='BI' "
 
     query += " ORDER BY code_ordr ASC, ofcps_code ASC, spt_chrg_nm ASC, bcnc_nm ASC, spt_nm ASC"

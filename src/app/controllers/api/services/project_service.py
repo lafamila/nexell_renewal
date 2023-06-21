@@ -1135,7 +1135,7 @@ def get_etc_rcppay_report_list(params):
 				AND r.cntrct_sn = %(s_cntrct_sn)s
 				AND r.prjct_sn = %(s_prjct_sn)s
 				AND r.rcppay_se_code = 'O'
-				AND r.acntctgr_code NOT IN ('108', '638', '110', '504') 
+				AND r.acntctgr_code NOT IN ('108', '638', '110') 
 				UNION ALL
 				SELECT c.card_de AS rcppay_de
 				, c.acntctgr_code
@@ -1151,7 +1151,7 @@ def get_etc_rcppay_report_list(params):
 				FROM card c
 				WHERE c.ctmmny_sn = 1
 				AND c.cntrct_sn = %(s_cntrct_sn)s
-				AND c.acntctgr_code NOT IN ('108', '638', '110', '504') 
+				AND c.acntctgr_code NOT IN ('108', '638', '110') 
 				UNION ALL
 				SELECT s.dlivy_de AS rcppay_de
 				, '' AS acntctgr_code

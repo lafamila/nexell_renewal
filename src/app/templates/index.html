@@ -208,6 +208,11 @@
 					align-items: center;
 					font-weight:normal!important;
 				}
+				.table-tbody > .table-tr > .table-td.text-left, .table-tbody > .table-tr-five > .table-td.text-left{
+					justify-content: left;
+					padding-left:5px;
+				}
+
 				.table-tbody > .table-tr > .table-td:not(:last-child), .table-tbody > .table-tr-five > .table-td:not(:last-child){
 					border-right:1px solid #999;
 				}
@@ -715,7 +720,7 @@ getApprovalList = function(s_approval_status, target, size=4){
 				if(size == 5){
 				html += `<div class="table-tr-five approval-tr" data-sn="${pValue.approval_sn}">
 							<div class="table-td">${pValue.approval_ty_nm}</div>
-							<div class="table-td">${pValue.approval_title}</div>
+							<div class="table-td text-left">${pValue.approval_title}</div>
 							<div class="table-td">${pValue.start_mber_nm}</div>
 							<div class="table-td">${pValue.final_mber_nm}</div>
 							<div class="table-td">${pValue.start_de}</div>
@@ -725,7 +730,7 @@ getApprovalList = function(s_approval_status, target, size=4){
 				else{
 				html += `<div class="table-tr approval-tr" data-sn="${pValue.approval_sn}">
 							<div class="table-td">${pValue.approval_ty_nm}</div>
-							<div class="table-td">${pValue.approval_title}</div>
+							<div class="table-td text-left">${pValue.approval_title}</div>
 							<div class="table-td">${pValue.start_mber_nm}</div>
 							<div class="table-td">${pValue.start_de}</div>
 						</div>`;
@@ -848,7 +853,7 @@ getTodo = function(s_ddt_man)
 			var html = '';
             var before = '';
             $.each(pResult.data, function(pIndex, pValue){
-                if(pValue.mber_sn == '73' || pValue.mber_sn == '74' || pValue.mber_sn =='81'){
+                if(pValue.mber_sn == '63' || pValue.mber_sn == '74' || pValue.mber_sn =='81'){
                     return true;
                 }
                 if(pValue.mber_sn == '4'){
@@ -1174,7 +1179,7 @@ getBBS = function()
 			$.each(pResult, function(pIndex, pValue){
 				html += `<div class="table-tr">
 							<div class="table-td">${BBS_TYPE[pValue.bbs_type]}</div>
-							<div class="table-td bbs_link" data-sn="${pValue.bbs_sn}">${pValue.bbs_title}</div>
+							<div class="table-td text-left bbs_link" data-sn="${pValue.bbs_sn}">${pValue.bbs_title}</div>
 							<div class="table-td">${pValue.reg_nm}</div>
 							<div class="table-td">${pValue.reg_date}</div>
 						</div>`;
