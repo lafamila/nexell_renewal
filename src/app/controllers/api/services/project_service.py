@@ -41,23 +41,23 @@ def get_project_datatable(params):
 				, c.cntrct_de
 				, c.cntrct_nm
 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
-				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
 				ELSE 0
 				END AS cntrct_amount
 				, CASE WHEN c.prjct_ty_code IN ('NR') THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
-				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
+				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
 				ELSE 0
 				END AS amount
 				, c.bcnc_sn
@@ -189,7 +189,7 @@ def get_contract_summary(params):
 				ON c.cntrct_sn = p.cntrct_sn
 				LEFT OUTER JOIN member m
 				ON m.mber_sn=c.bsn_chrg_sn
-				LEFT OUTER JOIN cost co
+				LEFT OUTER JOIN (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co
 				ON c.cntrct_sn=co.cntrct_sn
 				AND co.cntrct_execut_code IN ('C')
 				WHERE 1=1
@@ -807,6 +807,11 @@ def get_max_extra_cost_list(params):
 				AND cntrct_sn = %(s_cntrct_sn)s
 				AND prjct_sn = %(s_prjct_sn)s
 				AND extra_sn > 0
+	"""
+    if "approval_sn" in params:
+        query += """ AND regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+
+    query += """
 				GROUP BY extra_sn, cntrct_execut_code, ct_se_code
 				ORDER BY extra_sn, cntrct_execut_code, ct_se_code"""
     g.curs.execute(query, params)
@@ -955,7 +960,11 @@ def get_c_cost_list(params):
 				AND cntrct_sn = %(s_cntrct_sn)s
 				AND prjct_sn = %(s_prjct_sn)s
 				AND cntrct_execut_code = 'C'
-				ORDER BY c.regist_dtm
+"""
+    if "approval_sn" in params:
+        query += " AND regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) "
+    query += """
+    ORDER BY c.regist_dtm
 """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -1041,7 +1050,8 @@ def get_g_cost_list(params):
 
 def get_extra_cost_list(params):
     query = """SELECT cntrct_execut_code
-				, 99 AS ct_se_code
+				, ct_se_code
+				, extra_sn
 				, SUM(CASE cntrct_execut_code
 				WHEN 'E' THEN puchas_amount * qy
 				WHEN 'C' THEN salamt*qy
@@ -1051,8 +1061,8 @@ def get_extra_cost_list(params):
 				AND cntrct_sn = %(s_cntrct_sn)s
 				AND prjct_sn = %(s_prjct_sn)s
 				AND extra_sn <> 0
-				GROUP BY cntrct_execut_code
-				ORDER BY cntrct_execut_code
+				GROUP BY cntrct_execut_code, ct_se_code, extra_sn
+				ORDER BY extra_sn, cntrct_execut_code
 """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -1188,6 +1198,7 @@ def get_s1_account_report_list(params):
 				, IF (s.prdlst_se_code = '3', s.dlnt, '') AS dlnt3
 				, IF (s.prdlst_se_code = '4', s.dlnt, '') AS dlnt4
 				, IF (s.prdlst_se_code = '9', s.dlnt, '') AS dlnt9
+				, (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=s.prdlst_se_code) AS prdlst_se_nm
 				, p.dlamt AS p_dlamt
 				, (s.dlnt * p.dlamt) AS p_total
 				, p.bcnc_sn AS p_bcnc_sn
@@ -1255,6 +1266,7 @@ def get_s3_account_report_list(params):
 				, a.bcnc_sn AS s_bcnc_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=a.ctmmny_sn AND bcnc_sn=a.bcnc_sn) AS s_bcnc_nm
 				, a.rm
+				, ac.ddt_man AS p_de
 				FROM account a
 				LEFT JOIN account ac
 				ON a.ctmmny_sn=ac.ctmmny_sn AND a.cntrct_sn=ac.cntrct_sn AND a.prjct_sn=ac.prjct_sn AND a.cnnc_sn=ac.delng_sn
@@ -2053,6 +2065,9 @@ def insert_project(params):
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
 
+    if "cntrct_no" not in data or data["cntrct_no"] == "":
+        data["cntrct_no"] = ""
+
     assert len(set(required) - set(data.keys())) == 0, str(set(required) - set(data.keys()))
 
     sub_query = [key for key in data]
@@ -2212,7 +2227,8 @@ def update_BF_c_project(params):
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
-    params['b7'] = int(params['Z_7'].replace(",", "")) - int(params['E_7'].replace(",", ""))
+
+    params['b7'] = (0 if params['Z_7'].replace(",", "") == '' else int(params['Z_7'].replace(",", ""))) - (0 if params['E_7'].replace(",", "") == '' else int(params['E_7'].replace(",", "")))
     g.curs.execute(query, params)
 
     g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
@@ -2378,6 +2394,8 @@ def insert_bd_expect_equipment(params):
         pParams["salamt"] = salamt
         pParams['model_no'] = model_no
         pParams["dlivy_amt"] = dlivy_amt
+        if qy <= 0:
+            continue
         g.curs.execute(query, pParams)
 
 def insert_b_option_bd_project(params):
@@ -2666,6 +2684,7 @@ def get_expect_equip_list(params):
                     , e.samt AS samount
                     , e.rm
                     , e.dlivy_amt
+                    , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm
                     , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
                     , IFNULL(q.dlnt, 0) AS sdlnt
                 FROM expect_equipment e
@@ -2688,6 +2707,7 @@ def get_expect_equip_other_list(params):
                     , e.dlamt
                     , e.samt AS samount
                     , e.rm
+                    , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm                    
                     , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
                     , IFNULL(q.dlnt, 0) AS sdlnt
                 FROM expect_equipment e

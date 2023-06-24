@@ -111,7 +111,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="expect_amount[]" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="rate" name="expect_cntrct_dlamt[]" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="expect_cntrct_dlamt[]" readonly>
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="expect_cntrct_amount[]" readonly>
@@ -156,7 +156,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="amount[]" readonly>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="rate" name="cntrct_dlamt[]">
+                <input type="text" class="form-control text-right" data-type="number" name="cntrct_dlamt[]">
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="cntrct_amount[]" readonly>
@@ -350,12 +350,20 @@
         $.ajax({
             url : '/api/project/get_cost_bf_bd',
             method: 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn},
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
             success: function(pResult){
                 console.log(pResult);
                 var cntrct_amount_total = 0, amount_total = 0;
                 $.each(pResult.cCostListByExtra, function(extra_sn, pRow){
                     var tbody = $("tbody[role='construct_row']").clone(true);
+                    {% if not init %}
+                        $(tbody).find("tr:not(:first-child)").remove();
+                    {% endif %}
+
                     var title = extra_sn == 0 ? "수주계약" : ("변경"+extra_sn);
                     $(tbody).attr("role", 'construct_row_'+extra_sn);
                     $(tbody).attr("data-role", 'construct_row');
@@ -372,8 +380,8 @@
                         $(`tbody[role='construct_row_${extra_sn}']`).find(`[name="cntrct_dlamt[]"]`).eq(pIndex).val(pValue.salamt.toFormat('NUMBER'));
                     });
                     $(`tbody[role='construct_row_${extra_sn}']`).find("input").attr("disabled", true);
-                });
 
+                });
 
                 $("tbody[role='construct_row']").trigger("change");
                 cloneRow("construct_expect_tr", pResult.cCostListExtra.length-1);

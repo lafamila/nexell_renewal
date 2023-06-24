@@ -272,7 +272,7 @@ def update_rcppay(params):
 
     for key in params:
         if key not in ("s_rcppay_sn", ):
-            if key in (None, ):
+            if key in ("cntrct_sn", "prjct_sn", "prvent_sn", "cnnc_sn", "bil_exprn_de", "rcppay_dtls", "papr_invstmnt_sn", ):
                 if params[key] == '':
                     params[key] = None
                     data[key] = None

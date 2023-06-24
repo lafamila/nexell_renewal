@@ -1046,6 +1046,8 @@ def insert_equipment_samsung(params):
     for d in data:
         if d['dlnt'] is not None:
             real_data.append(d)
+
+
     query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code) 
     VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """
     g.curs.executemany(query, real_data)

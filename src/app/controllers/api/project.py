@@ -194,7 +194,8 @@ def ajax_get_reportNR():
 
         result['rcppayList'] = prj.get_rcppay_report_list(params)
         result['etcRcppayList'] = prj.get_etc_rcppay_report_list(params)
-
+        result['equipList'] = prj.get_expect_equip_list(params)
+        result['equipOtherList'] = prj.get_expect_equip_other_list(params)
         result['s1AccountList'] = prj.get_s1_account_report_list(params)
         result['s2AccountList'] = prj.get_s2_account_report_list(params)
         result['s3AccountList'] = prj.get_s3_account_report_list(params)
@@ -576,6 +577,7 @@ def get_cost_bf_bd():
 @bp.route('/get_costs_bd', methods=['GET'])
 def get_costs_bd():
     try:
+
         params = request.args.to_dict()
         result = dict()
         prjct = prj.get_project_by_cntrct_nm(params["s_cntrct_sn"])
@@ -706,17 +708,17 @@ def insert_BD_c_project():
 
 @bp.route('/update_BD_c_project', methods=['POST'])
 def update_BD_c_project():
-    try:
-        params = request.get_json()
-        params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
-        prj.insert_b_option_bd_project(params)
-        prj.insert_bd_expect_equipment(params)
-        prj.update_BF_c_project(params)
+    # try:
+    params = request.get_json()
+    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    prj.insert_b_option_bd_project(params)
+    prj.insert_bd_expect_equipment(params)
+    prj.update_BF_c_project(params)
 
-        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 @bp.route('/insert_c_project', methods=['POST'])
 def insert_c_project():

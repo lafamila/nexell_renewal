@@ -360,9 +360,12 @@
         $.ajax({
             url : '/api/project/get_cost_bf_bd',
             method: 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn},
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
             success: function(pResult){
-                console.log(pResult);
                 var cntrct_amount_total = 0, cntrct_fee_amount_total = 0;
                 $.each(pResult.cCostListByExtra, function(extra_sn, pRow){
                     var tbody = $("tbody[role='construct_row']").clone(true);

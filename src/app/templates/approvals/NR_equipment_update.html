@@ -130,7 +130,7 @@
     </tbody>
     <tbody role="ct_se_code_extra_alpha">
         <tr data-row="C">
-            <th class="colorB text-center middle" rowspan="2">변경</th>
+            <th class="colorB text-center middle" rowspan="2">변경<span id="max_extra_sn"></span></th>
             <th class="colorSky text-center">변경 계약가</th>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_1_alpha"></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_2_alpha"></td>
@@ -473,7 +473,11 @@
         $.ajax({
                 url : '/api/project/get_costs_bd',
                 method : 'GET',
+        {% if init %}
                 data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
                 success: function(pResult){
                     console.log(pResult);
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
@@ -521,10 +525,11 @@
                     var max_extra_sn = 0;
                     $(document).find("#costTable tbody[role='ct_se_code_extra']").remove();
                     $(document).find("#costTable tbody[role='ct_se_code_diff']").remove();
+                    var html = '';
                     $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
                         max_extra_sn = extra_sn;
                         var pRow = pResult.extraCostList[extra_sn];
-                        var html = `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
+                        html = `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
                                         <tr data-row="C">
                                             <th class="colorB text-center middle" rowspan="2">변경-${extra_sn}</th>
                                             <th class="colorSky text-center">변경 계약가</th>
@@ -557,19 +562,19 @@
                                             <td class="text-center" data-column="row_total_${extra_sn}"></td>
                                         </tr>
                                     </tbody>`;
-                        $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
+                    });
+                    $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        var pRow = pResult.extraCostList[extra_sn];
                         $.each(pRow, function(pIndex, pValue){
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
                         });
                         $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
                     });
+                    $("#max_extra_sn").html(parseInt(max_extra_sn) == 0 ? "" : `-${(parseInt(max_extra_sn)+1)}`);
                     {% if init %}
-                    if($(document).find(`[name='E_1${max_extra_sn == 0 ? "" : `_${max_extra_sn}`}']`).html().replaceAll(",", "") != "" && pResult.samsungList.length==0){
                         $(document).find(`[name='E_1_alpha']`).attr("readonly", false);
-                    }
-                    if($(document).find(`[name='E_2${max_extra_sn == 0 ? "" : `_${max_extra_sn}`}']`).html().replaceAll(",", "") != "" && pResult.otherList.length==0){
                         $(document).find(`[name='E_2_alpha']`).attr("readonly", false);
-                    }
                     {% endif %}
                     var html = `<tbody role="ct_se_code_diff">
                                     <tr data-row="C">
@@ -917,7 +922,7 @@
             }
 
         });
-        var va_rates_td = $(document).find("td[data-column='va_rate']");
+        var va_rates_td = $(document).find(`td[data-column='va_rate${suffix}']`);
 
         var new_va_rate = parseFloat($(this).find(`[data-column='va_rate_${sn}']`).html().replaceAll("%", "").replaceAll(",", "")) - parseFloat($(va_rates_td).eq(va_rates_td.length - 1).html().replaceAll("%", ""));
         $(document).find("tbody[role='ct_se_code_diff'] tr[data-row='C'] td[data-column='row_total_diff']").html(sum_rows['C'].toFormat('NUMBER'));

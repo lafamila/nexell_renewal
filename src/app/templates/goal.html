@@ -338,7 +338,7 @@ tbody .btnUpdate, tbody .btn{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_mber_sn" name="s_mber_sn">
 												<option value="">[전체]</option>
-												{% for code in member_list %}
+												{% for code in member_all_list %}
 												<option value="{{code.value}}">{{code.label}}</option>
 												{% endfor %}
 											</select>
@@ -904,7 +904,7 @@ $(function() {
 											<td class="hasinput" colspan="2">
 												<select class="form-control select2" id="s_bsn_chrg_sn" name="s_bsn_chrg_sn" >
 													<option value="">[영업담당을 선택해주세요.]</option>
-													{% for code in member_list %}
+													{% for code in member_all_list %}
 													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
 													{% endfor %}
 												</select>
@@ -915,7 +915,7 @@ $(function() {
 											<td class="hasinput" colspan="2">
 												<select class="form-control select2" id="s_spt_chrg_sn" name="s_spt_chrg_sn" >
 													<option value="">[현장담당을 선택해주세요.]</option>
-													{% for code in member_list %}
+													{% for code in member_all_list %}
 													<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
 													{% endfor %}
 												</select>

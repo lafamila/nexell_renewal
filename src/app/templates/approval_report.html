@@ -473,6 +473,7 @@ div.report table th, div.report table td{
 
 
                 {% else %}
+					window.approval_sn = "{{approval_sn}}";
                     var approval_sn = "{{ approval_sn }}";
                     $.ajax({
                         url : '/api/approval/get_approval',
@@ -550,7 +551,7 @@ div.report table th, div.report table td{
 							{% else %}
                             $.each(app.approval_data, function(key, value){
                                 if(key.endsWith("[]")){
-                                    var pTag = $("#formContent").find(`[name='${key}']`);
+                                    var pTag = $("#formContent").find(`[name='${key}']:not(disabled)`);
                                     if(pTag.length == 0){
                                         $("#formContent").find("tbody[data-tr]").each(function(_, trTag){
                                             if ($.isFunction(cloneRow)) {

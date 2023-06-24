@@ -17,7 +17,7 @@ tbody .btnUpdate, tbody .btnPrint{
     #summery{
         top:63px;
         left:720px;
-        width:600px;
+        width:400px;
     }
     #temp{
         display:none;
@@ -27,7 +27,7 @@ tbody .btnUpdate, tbody .btnPrint{
     #summery{
         top:150px;
         left:13px;
-        width:600px;
+        width:400px;
     }
     #temp{
         display:block;
@@ -92,7 +92,7 @@ tbody .btnUpdate, tbody .btnPrint{
     <!-- 집계표 -->
 	<table class="table table-bordered table-summery" id="summery">
 		<thead>
-			<tr><th colspan="6">
+			<tr><th colspan="4">
 					<!-- 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 -->
 					계&nbsp;약&nbsp;/&nbsp;프&nbsp;로&nbsp;젝&nbsp;트&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표
 				</th>
@@ -102,8 +102,8 @@ tbody .btnUpdate, tbody .btnPrint{
 			<tr>
 				<th style="background:#fff;width:60px;text-align:center;">건수</th>
 				<td style="background:#fff;text-align:center;">0</td>
-				<th style="background:#fff;width:80px;text-align:center;">수주금액</th>
-				<td style="background:#fff;width:121px;text-align:right;">0</td>
+<!--				<th style="background:#fff;width:80px;text-align:center;">수주금액</th>-->
+<!--				<td style="background:#fff;width:121px;text-align:right;">0</td>-->
 				<th style="background:#fff;width:140px;text-align:center;">총 수주금액 계</th>
 				<td style="background:#fff;width:121px;text-align:right;">0</td>
 			</tr>
@@ -456,8 +456,8 @@ getProjectList = function()
 			var contract = pSettings.json.contract;
 			var count = pSettings.json.count;
             $('#summery').find('tbody td').eq(0).html(count.total_count.toString().toFormat('NUMBER'));
-			$('#summery').find('tbody td').eq(2).html(contract.total_amount.toString().toFormat('NUMBER'));
-            $('#summery').find('tbody td').eq(1).html(contract.amount.toString().toFormat('NUMBER'));
+			$('#summery').find('tbody td').eq(1).html(contract.total_amount.toString().toFormat('NUMBER'));
+            // $('#summery').find('tbody td').eq(1).html(contract.amount.toString().toFormat('NUMBER'));
         },
 		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
 			var myList = this;

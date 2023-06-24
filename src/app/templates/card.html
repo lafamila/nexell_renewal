@@ -236,6 +236,7 @@ getCardList = function()
     $.datatable1 = $('#dtList1').DataTable({
         serverSide: true,
 		pageLength: 300,
+		ordering: false,
         ajax: {
             url: '/api/card/ajax_get_card_datatable',
             type: 'POST',

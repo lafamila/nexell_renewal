@@ -69,6 +69,8 @@ def get_cardbil_datatable(params):
         query += " AND ca.dept_code=%s"
         data.append(params["s_dept_code"])
 
+    params["custom_order"] = ["card_de DESC", "card_time DESC"]
+
     return dt_query(query, data, params)
 
 def get_cardbil_summary(params):
@@ -189,7 +191,7 @@ def update_cardbil(params):
 
     for key in params:
         if key not in ("s_card_sn", ):
-            if key in ("cntrct_sn", ):
+            if key in ("cntrct_sn", "card_dtls"):
                 if params[key] == '':
                     params[key] = None
                     data[key] = None
