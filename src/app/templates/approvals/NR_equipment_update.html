@@ -795,7 +795,7 @@
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
             $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
         });
-        $(document).find(`[name='E_1_alpha']`).val(total_amount.toFormat('NUMBER'));
+
         $("tbody[role='equip_row']").parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
         $("tbody[role='equip_row']").parent().find("[data-column='total_cnt_dlnt']").html(total_cnt_dlnt.toFormat('NUMBER'));
         $("tbody[role='equip_row']").parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
@@ -832,7 +832,7 @@
             $(pRow).find("[name='va_other[]']").html(va.toFormat('NUMBER'));
             $(pRow).find("[name='amount_other[]']").html(amount.toFormat('NUMBER'));
         });
-        $(document).find(`[name='E_2_alpha']`).val(total_amount.toFormat('NUMBER'));
+
         $("tbody[role='equip_other_row']").parent().find("[data-column='total_amount_other']").html(total_amount.toFormat('NUMBER'));
         $("tbody[role='equip_other_row']").parent().find("[data-column='total_cnt_dlnt_other']").html(total_cnt_dlnt.toFormat('NUMBER'));
         $("tbody[role='equip_other_row']").parent().find("[data-column='total_va_other']").html(total_va.toFormat('NUMBER'));

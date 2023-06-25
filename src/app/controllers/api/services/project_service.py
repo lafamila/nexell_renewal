@@ -2690,7 +2690,11 @@ def get_expect_equip_list(params):
                 FROM expect_equipment e
                 LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(dlnt) as dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
                 ON e.equip_sn=q.cnnc_sn
-                WHERE 1=1
+                WHERE 1=1 """
+    if "approval_sn" in params:
+        query += """ AND e.reg_time < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+
+    query += """
                 AND e.delng_ty_code='1'
                 AND cntrct_sn = %(s_cntrct_sn)s"""
     g.curs.execute(query, params)

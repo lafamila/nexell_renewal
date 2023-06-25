@@ -2,7 +2,7 @@ from flask import session, jsonify, g, render_template
 from app.helpers.datatable_helper import dt_query
 import json
 from . import refresh_code_list
-
+import datetime
 def get_approval_template(url, init=True):
     return render_template("approvals/{}.html".format(url), init=init, **refresh_code_list())
 
@@ -118,7 +118,8 @@ def get_approval_member(params):
 def update_approval(params):
     data = [params['approval_status_code']]
     if int(data[0]) in (1, -1):
-        query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=NOW() """
+        query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=%s """
+        data.append(datetime.datetime.now())
     else:
         query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=%s """
         data.append(None)
