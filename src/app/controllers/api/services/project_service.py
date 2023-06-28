@@ -834,7 +834,7 @@ def get_c_cost_list_extra(params):
 				, c.puchas_amount
 				, c.salamt
 				, c.dscnt_rt
-				, c.add_dscnt_rt
+				, IFNULL(c.add_dscnt_rt, 0) AS add_dscnt_rt
 				, c.extra_sn
 				, c.fee_rt
 				, c.dspy_se_code
