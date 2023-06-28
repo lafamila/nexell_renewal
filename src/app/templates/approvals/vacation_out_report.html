@@ -317,7 +317,9 @@
     </tbody>
 
   </table>
+  <div id="images">
 
+  </div>
 </div>
 <script>
     function isValidDate(dateString) {
@@ -501,6 +503,10 @@
     });
     {% else %}
     $.fn.afterLoadApproval = function() {
+      $.each($(document).find(".table-textarea"), function(pIndex, pTag){
+        var sentence = $(pTag).val().split("\n").length;
+        $(pTag).attr("style", `height:${20*sentence}px!important;`);
+      });
       var params = {"f_sns" : []}
       $(document).find("[name='f_sn[]']").each(function(pIndex, pTag){
         var f_sn = $(pTag).val();
@@ -516,9 +522,16 @@
         success: function(pResult){
           var html = '';
           $.each(pResult, function(pIndex, path){
-            html += `<img src="/static/files/${path}" style="max-width:300px;max-height:300px;"/>`;
+            html += `<img src="/static/files/${path}" style="max-width:100%;"/>`;
           });
-          $("#last").find("tbody").eq(0).find("td").eq(1).html(html);
+          if(pResult.length > 0){
+            $("#last").find("tbody").eq(0).find("td").eq(1).html("하단 첨부");
+          }
+          else{
+            $("#last").find("tbody").eq(0).find("td").eq(1).html("");
+
+          }
+          $("#images").html(html);
 
         },
         error: function(pResult){

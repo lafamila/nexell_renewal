@@ -9,6 +9,11 @@
     .jarviswidget td:last-child, .jarviswidget th:last-child {
         border-right:1px solid #ddd;
     }
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+
 .drop-zone {
   max-width: 100%;
   height: 100%;
@@ -95,6 +100,36 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
   });
 });
 
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+                $(document).find(`[name='pdf_sn${parseInt(order)+1}']`).val(file_sn);
+                $("#my-spinner").hide();
+            }
+        }
+        oReq.send(form);
+    }
+
+
 /**
  * Updates the thumbnail on a drop zone element.
  *
@@ -102,36 +137,74 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
  * @param {File} file
  */
 function updateThumbnail(dropZoneElement, file) {
-  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
-
-  // First time - remove the prompt
+    $("#my-spinner").show();
   if (dropZoneElement.querySelector(".drop-zone__prompt")) {
     dropZoneElement.querySelector(".drop-zone__prompt").remove();
   }
 
-  // First time - there is no thumbnail element, so lets create it
-  if (!thumbnailElement) {
-    thumbnailElement = document.createElement("div");
-    thumbnailElement.classList.add("drop-zone__thumb");
-    dropZoneElement.appendChild(thumbnailElement);
-  }
+    let id = dropZoneElement.querySelector(".drop-zone__input").getAttribute("name");
+    var ordr = (id == "pdf1") ? 0 : 1;
+    const filesize = file.size;
+    var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : ordr};
+    $.ajax({
+        url : '/api/common/get_upload_file_id',
+        method : 'POST',
+        data : params,
+        success: function(pResult){
+            let name = pResult.filename;
+            let chunk_size = pResult.filesize;
+            let file_sn = pResult.file_sn;
+            let ord = pResult.order;
+            let start = 0;
+            create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+        },
+        error: function(){
+            alert("오류가 발생했습니다.");
+            location.reload();
+        },
+        beforeSend: function(){
 
-  thumbnailElement.dataset.label = file.name;
 
-  // Show thumbnail for image files
-  if (file.type.startsWith("image/")) {
-    const reader = new FileReader();
+        }
+    });
 
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
-    };
-  } else {
-    thumbnailElement.style.backgroundImage = null;
-  }
+  //
+  // // First time - remove the prompt
+  // if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+  //   dropZoneElement.querySelector(".drop-zone__prompt").remove();
+  // }
+  //
+  // // First time - there is no thumbnail element, so lets create it
+  // if (!thumbnailElement) {
+  //   thumbnailElement = document.createElement("div");
+  //   thumbnailElement.classList.add("drop-zone__thumb");
+  //   dropZoneElement.appendChild(thumbnailElement);
+  // }
+  //
+  // thumbnailElement.dataset.label = file.name;
+  //
+  // // Show thumbnail for image files
+  // if (file.type.startsWith("image/")) {
+  //   const reader = new FileReader();
+  //
+  //   reader.readAsDataURL(file);
+  //   reader.onload = () => {
+  //     thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+  //   };
+  // } else {
+  //   thumbnailElement.style.backgroundImage = null;
+  // }
 }
 
 </script>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
+
 <table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
@@ -177,24 +250,42 @@ function updateThumbnail(dropZoneElement, file) {
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
-        <col width="*"/>
+        <col width="50"/>
+        <col width="50"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center"><span>도급계약서 (업로드)</span></th>
+			<th class="sub-title colorN text-center" colspan="1"><span>도급계약서</span></th>
+			<th class="sub-title colorN text-center" colspan="1"><span>계약이행증권</span></th>
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr role="files_tr_first">
             <td class="text-center" style="height:200px!important;">
               <div class="drop-zone">
                 <span class="drop-zone__prompt">Drop file here or click to upload</span>
-                <input type="file" name="myFile" class="drop-zone__input">
+                <input type="file" id="pdf1" name="pdf1" class="drop-zone__input" accept="application/pdf">
               </div>
-
+            </td>
+            <td class="text-center" style="height:200px!important;">
+              <div class="drop-zone">
+                <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                <input type="file" id="pdf2" name="pdf2" class="drop-zone__input" accept="application/pdf">
+              </div>
             </td>
         </tr>
     </tbody>
+    <tbody role="files_row" style="display:none;">
+      <tr data-row="files_tr">
+        <td colspan="1">
+          <input type="hidden" name="pdf_sn1" value=""/>
+        </td>
+        <td colspan="1">
+          <input type="hidden" name="pdf_sn2" value=""/>
+        </td>
+      </tr>
+    </tbody>
+
 </table>
 <table class="table table-bordered table-form main-table" id="report_biss">
 	<colgroup>
@@ -283,5 +374,59 @@ function updateThumbnail(dropZoneElement, file) {
             $("#cntrwk_period").val(pValue.cntrwk_period);
         }
     });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+      var params = {"f_sns" : []}
+      var target = [];
+      $(document).find("[name='pdf_sn1'], [name='pdf_sn2']").each(function(pIndex, pTag){
+        var f_sn = $(pTag).val();
+        if(f_sn != '' && f_sn != undefined){
+
+            params.f_sns.push(f_sn);
+            target.push($(pTag).attr("name"));
+        }
+      });
+      console.log(params);
+      $.ajax({
+        url : '/api/common/get_files_name',
+        method : 'POST',
+        data: JSON.stringify(params),
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+        success: function(pResult){
+          var html = '<tr>';
+          $.each(pResult, function(pIndex, path){
+              if(target.length == 2){
+                  if(target[pIndex] == "pdf_sn1"){
+                      html += `<td colspan="1"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                  }
+                  else{
+                      html += `<td colspan="1"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                  }
+              }
+              else if(target.length == 1){
+                  if(target[pIndex] == "pdf_sn1"){
+                      html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                  }
+                  else{
+                      html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                  }
+              }
+          });
+          html += "</tr>"
+          if(target.length > 0){
+              $(html).insertAfter($(document).find(`tr[role="files_tr_first"]`));
+
+          }
+
+        },
+        error: function(pResult){
+
+        }
+      });
+
+
+    }
     {% endif %}
 </script>

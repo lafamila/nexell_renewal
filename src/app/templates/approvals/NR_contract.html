@@ -9,7 +9,20 @@
     .jarviswidget td:last-child, .jarviswidget th:last-child {
         border-right:1px solid #ddd;
     }
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+
 </style>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
+
 <table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
@@ -215,6 +228,19 @@
             <td class="text-center border_right" data-column="option_count"></td>
         </tr>
         <tr>
+            <td class="sub-title colorN text-center border_right" style="font-weight:bold;" colspan="4">파일 업로드</td>
+        </tr>
+        <tr role="files_tr_first">
+            <td class="colorSky text-center">계약서</td>
+            <td class="hasinput" colspan="1">
+                <input type="file" id="pdf1" name="pdf1" accept="application/pdf" />
+            </td>
+            <td class="colorSky text-center">계약이행증권</td>
+            <td class="hasinput" colspan="1">
+                <input type="file" id="pdf2" name="pdf2" accept="application/pdf" />
+            </td>
+        </tr>
+        <tr>
             <td class="sub-title colorN text-center border_right" style="font-weight:bold;" colspan="4">특이사항</td>
         </tr>
         <tr data-row="option_row">
@@ -222,6 +248,16 @@
                 <input type="text" class="form-control text-left" name="option_bigo">
             </td>
         </tr>
+    </tbody>
+    <tbody role="files_row" style="display:none;">
+      <tr data-row="files_tr">
+        <td colspan="2">
+          <input type="hidden" name="pdf_sn1" value=""/>
+        </td>
+        <td colspan="2">
+          <input type="hidden" name="pdf_sn2" value=""/>
+        </td>
+      </tr>
     </tbody>
 </table>
 <script>
@@ -297,6 +333,66 @@
         $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
     });
     {% if init %}
+    $(document).on("change", "#pdf1, #pdf2", function(){
+        $("#my-spinner").show();
+        var id = $(this).attr("id");
+        console.log(id);
+        var ordr = (id == "pdf1") ? 0 : 1;
+        const file = document.querySelector("#"+id).files[0];
+        const filesize = file.size;
+        var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : ordr};
+        $.ajax({
+            url : '/api/common/get_upload_file_id',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                let name = pResult.filename;
+                let chunk_size = pResult.filesize;
+                let file_sn = pResult.file_sn;
+                let ord = pResult.order;
+                let start = 0;
+                create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+            },
+            error: function(){
+                alert("오류가 발생했습니다.");
+                location.reload();
+            },
+            beforeSend: function(){
+
+
+            }
+        });
+
+    });
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+                $(document).find(`[name='pdf_sn${parseInt(order)+1}']`).val(file_sn);
+                $("#my-spinner").hide();
+            }
+        }
+        oReq.send(form);
+    }
+
     window.projects = {};
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
@@ -365,6 +461,56 @@
                 $("[data-column='option_count']").html(Math.round(parseInt(option_rate)*parseInt(home_count)/100).toFormat('NUMBER'));
             }
         }
+      var params = {"f_sns" : []}
+      var target = [];
+      $(document).find("[name='pdf_sn1'], [name='pdf_sn2']").each(function(pIndex, pTag){
+        var f_sn = $(pTag).val();
+        if(f_sn != '' && f_sn != undefined){
+
+            params.f_sns.push(f_sn);
+            target.push($(pTag).attr("name"));
+        }
+      });
+      console.log(params);
+      $.ajax({
+        url : '/api/common/get_files_name',
+        method : 'POST',
+        data: JSON.stringify(params),
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+        success: function(pResult){
+          var html = '<tr>';
+          $.each(pResult, function(pIndex, path){
+              if(target.length == 2){
+                  if(target[pIndex] == "pdf_sn1"){
+                      html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                  }
+                  else{
+                      html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                  }
+              }
+              else if(target.length == 1){
+                  if(target[pIndex] == "pdf_sn1"){
+                      html += `<td colspan="4"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                  }
+                  else{
+                      html += `<td colspan="4"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                  }
+              }
+          });
+          html += "</tr>"
+          if(target.length > 0){
+              $(html).insertAfter($(document).find(`tr[role="files_tr_first"]`));
+
+          }
+
+        },
+        error: function(pResult){
+
+        }
+      });
+
 
     }
     {% endif %}
