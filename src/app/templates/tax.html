@@ -161,7 +161,7 @@ tbody .btnUpdate, tbody .btnPrint{
 											<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
 												<option value="">[계약을 선택하세요]</option>
 												{% for code in contract_list %}
-												<option value="{{code.value}}">{{code.etc1}}.{{code.bcnc_nm}} {{code.label}}</option>
+												<option value="{{code.value}}" data-biss="{{code.biss_a}}">{{code.etc1}}.{{code.bcnc_nm}} {{code.label}}</option>
 												{% endfor %}
 											</select>
 											<input type="hidden" id="prjct_creat_at">
@@ -391,6 +391,26 @@ isDataChange = false;
 /******************************************************************************
  * 계약 목록을 조회한다.
  */
+// $(document).on("change", "#cntrct_sn", function(){
+// 	console.log($(this).val());
+// 	if($(this).val() != ''){
+// 		var biss = $(this).data("biss");
+// 		if(parseInt(biss) !== 1){
+// 			if(["P", "P1"].includes($("#delng_se_code").find("option:selected").val())){
+// 				$("#delng_se_code").yVal('');
+// 			}
+// 			$("#delng_se_code").find("option[value='P'], option[value='P1']").attr("disabled", true);
+//
+// 		}
+// 		else{
+// 			$("#delng_se_code").find("option[value='P'], option[value='P1']").attr("disabled", false);
+//
+// 		}
+// 	}
+// 	else{
+// 		$("#delng_se_code").find("option[value='P'], option[value='P1']").attr("disabled", false);
+// 	}
+// });
 getTaxList = function()
 {
     $.datatable1 = $('#dtList1').DataTable({

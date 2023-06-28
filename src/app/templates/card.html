@@ -129,7 +129,7 @@
 										<!-- <th class="hasinput">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_no" name="s_cntrct_no">
 										</th> -->
-                                        <th class="hasinput">
+                                        <th class="hasinput text-left">
 											<select class="form-control select2 w100p" id="s_card_code" name="s_card_code">
 												<option value="">[전체]</option>
 												{% for code in card_code_list %}
@@ -146,15 +146,15 @@
 												<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 											</div> -->
 										</th>
-                                        <th class="hasinput">
+                                        <th class="hasinput text-left">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_frch_nm" name="s_frch_nm">
 										</th>
-                                        <th class="hasinput">
+                                        <th class="hasinput text-left">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_region" name="s_region">
 										</th>
-                                        <th class="hasinput">
+                                        <th class="hasinput text-left">
 										</th>
-                                        <th class="hasinput">
+                                        <th class="hasinput text-left">
 											<select class="form-control select2 w100p" id="s_papr_invstmnt_sn" name="s_papr_invstmnt_sn">
 												<option value="">[전체]</option>
 												{% for code in member_list %}
@@ -162,7 +162,7 @@
 												{% endfor %}
 											</select>
 										</th>
-										<th class="hasinput">
+										<th class="hasinput text-left">
 											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
 												<option value="">[전체]</option>
 												{% for code in dept_code_list %}
@@ -170,7 +170,7 @@
 												{% endfor %}
 											</select>
 										</th>
-										<th class="hasinput">
+										<th class="hasinput text-left">
 											<select class="form-control select2 w100p" id="s_acntctgr_code" name="s_acntctgr_code">
 												<option value="">[전체]</option>
 												{% for code in acntctgr_code_list %}
@@ -178,10 +178,10 @@
 												{% endfor %}
 											</select>
 										</th>
-										<th class="hasinput">
+										<th class="hasinput text-left">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_card_dtls" name="s_card_dtls">
 										</th>
-                                        <th class="hasinput">
+                                        <th class="hasinput text-left">
 											<input type="text" class="form-control" placeholder="[전체]" id="s_spt_nm" name="s_spt_nm">
 										</th>
 										<th class="hasinput text-right">
@@ -193,19 +193,19 @@
                                 </thead>
 								<thead role="header">
 									<tr>
-										<th>No.</th>
+										<th class="text-center">No.</th>
 										<!-- <th>계약번호</th> -->
-                                        <th>카드사명</th>
-                                        <th>일자</th>
-                                        <th>시간</th>
-										<th>가맹점명</th>
-										<th>지역</th>
-										<th style="text-align:left!important;">지출금액</th>
-										<th>지출자</th>
-										<th>부서</th>
-										<th>계정과목</th>
-										<th>내역</th>
-										<th>계약명(현장명)</th>
+                                        <th class="text-center">카드사명</th>
+                                        <th class="text-center">일자</th>
+                                        <th class="text-center">시간</th>
+										<th class="text-center">가맹점명</th>
+										<th class="text-center">지역</th>
+										<th class="text-center">지출금액</th>
+										<th class="text-center">지출자</th>
+										<th class="text-center">부서</th>
+										<th class="text-center">계정과목</th>
+										<th class="text-center">내역</th>
+										<th class="text-center">계약명(현장명)</th>
 										<th class="text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
@@ -275,7 +275,7 @@ getCardList = function()
             { data: 'card_nm', className: 'text-center' },
             { data: 'card_de' , className: 'text-center'},
             { data: 'card_time' , className: 'text-center'},
-            { data: 'frch_nm' , className: 'text-center'},
+            { data: 'frch_nm' , className: 'text-left'},
             { data: 'region' , className: 'text-center'},
 			{ data: 'amount', className: 'text-right', orderable: true,
 			    render: function(data, type, row, meta) {
@@ -289,7 +289,7 @@ getCardList = function()
             { data: 'papr_invstmnt_nm', className: 'text-center' },
             { data: 'dept_nm', className: 'text-center' },
 			{ data: 'acntctgr_nm' , className: 'text-center'},
-			{ data: 'card_dtls', className: 'text-center' },
+			{ data: 'card_dtls', className: 'text-left' },
             { data: 'spt_nm', className: 'text-left' },
             { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {

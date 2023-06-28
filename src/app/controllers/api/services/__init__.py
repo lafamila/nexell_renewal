@@ -95,6 +95,7 @@ def get_contract_list():
 				cntrct_de
 				) AS etc3
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+				, biss_a
 				, prjct_creat_at
 				, (SELECT COUNT(prjct_sn) FROM project WHERE cntrct_sn=c.cntrct_sn) AS prjct_cnt
 				, c.spt_chrg_sn

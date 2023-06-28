@@ -457,8 +457,8 @@
                 var D_10 = 0;
                 $.each(pResult.eCostListExtra, function(pIndex, pValue){
                     if(pValue.ct_se_code == "61"){
-                        D_61 += pValue.puchas_amount;
-                        D_61_DC += (pValue.puchas_amount*pValue.add_dscnt_rt/100.0);
+                        D_61 += pValue.puchas_amount * ((100.0 - pValue.dscnt_rt) / 100.0) * pValue.qy;
+                        D_61_DC += (pValue.puchas_amount* pValue.qy*pValue.add_dscnt_rt/100.0);
                     }
                     else if(pValue.ct_se_code == "7"){
                         D_7 += pValue.puchas_amount;
@@ -471,9 +471,11 @@
                 $(`tbody[role="ct_se_code"]`).find(`[name="D_61_DC"]`).val(D_61_DC.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="D_7"]`).val(D_7.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="D_10"]`).val(D_10.toFormat('NUMBER'));
+                var D_63 = 0;
                 $.each(pResult.gCostList, function(pIndex, pValue){
-                     $(`tbody[role="ct_se_code"]`).find(`[name="D_63"]`).val(pValue.salamt.toFormat('NUMBER'));
+                    D_63 += pValue.salamt * pValue.qy;
                 });
+                $(`tbody[role="ct_se_code"]`).find(`[name="D_63"]`).val(D_63.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="total_cntrct_fee_amount"]`).val(cntrct_fee_amount_total.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="total_rate"]`).val((cntrct_fee_amount_total*100.0/cntrct_amount_total).toFixed(1)+"%");
                 $(`tbody[role="ct_se_code"]`).find(`[name="total_cntrct_amount"]`).val(cntrct_amount_total.toFormat('NUMBER'));

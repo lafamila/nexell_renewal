@@ -592,6 +592,13 @@
 		$("#popReport7").find("#s_ddt_man").datepicker('setDate', date);
 		$("#popReport7").modal("show");
 	});
+	$(document).on("touchstart", "#calendar button.a-date", function(){
+		var clicked = parseInt($(this).text().trim()).toString();
+		var monthYear = $("#monthYear").data("date");
+		var date = monthYear+"-"+(clicked.padStart(2, "0"));
+		$("#popReport7").find("#s_ddt_man").datepicker('setDate', date);
+		$("#popReport7").modal("show");
+	});
 </script>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 <!--<script src="//code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script>-->

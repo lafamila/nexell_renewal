@@ -1520,6 +1520,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    </th>';
 					html += '</tr>';
                     amt_tot += amount_total;
+					return false;
 				});
                 $('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(0)').html(amt_tot.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rcppay_status tbody[role=body]').html(html);

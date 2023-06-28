@@ -1088,6 +1088,7 @@ def insert_direct(params):
             data["rcppay_de"] = params["rcppay_de"]
             data["amount"] = params["amount"]
             total_data.append(data)
+            break
         query = "INSERT INTO direct(taxbil_sn, rcppay_de, amount) VALUES (%(taxbil_sn)s, %(rcppay_de)s, %(amount)s)"
         g.curs.executemany(query, total_data)
 
