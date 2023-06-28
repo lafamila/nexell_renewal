@@ -196,7 +196,46 @@ function updateThumbnail(dropZoneElement, file) {
         </tr>
     </tbody>
 </table>
+<table class="table table-bordered table-form main-table" id="report_biss">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tbody>
+		<tr>
+            <th class="color-contract text-center" rowspan="2" style="vertical-align: middle;">업체 및 BISS 확인사항</th>
+			<th class="color-contract text-center">계약이행증권</th>
+			<th class="color-contract text-center">국세,지방세</th>
+			<th class="color-contract text-center">직불적용(2억이상)</th>
+		</tr>
+		<tr>
+			<td class="hasinput">
+                <select class="form-control select2 w100p" id="biss_a" name="biss_a" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="-1">해당사항없음</option>
+                    <option value="1">O</option>
+                    <option value="0">X</option>
+                </select>
+            </td>
+			<td class="hasinput">
+                <select class="form-control select2 w100p" id="biss_b" name="biss_b" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="-1">해당사항없음</option>
+                    <option value="1">O</option>
+                    <option value="0">X</option>
+                </select>
+            </td>
+			<td class="hasinput">
+                <select class="form-control select2 w100p" id="biss_c" name="biss_c" style="width:100%;padding-top:0px!important;padding-bottom:0px!important;">
+                    <option value="-1">해당사항없음</option>
+                    <option value="1">O</option>
+                    <option value="0">X</option>
+                </select>
+            </td>
 
+		</tr>
+	</tbody>
+</table>
 <script>
     fnValidate = function(){
                     var result = true;
@@ -206,7 +245,7 @@ function updateThumbnail(dropZoneElement, file) {
     window.projects = {};
     $(document).ready(function(){
         $.ajax({
-            url : '/api/project/get_b_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
 

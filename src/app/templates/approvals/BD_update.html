@@ -384,7 +384,9 @@
                 });
 
                 $("tbody[role='construct_row']").trigger("change");
+                {% if init %}
                 cloneRow("construct_expect_tr", pResult.cCostListExtra.length-1);
+                {% endif %}
                 $.each(pResult.cCostListExtra, function(pIndex, pValue){
                     var amount = Math.round(pValue.puchas_amount * (100 - pValue.dscnt_rt) / 100.0 * pValue.qy);
                     var cntrct_amount = pValue.salamt * pValue.qy;

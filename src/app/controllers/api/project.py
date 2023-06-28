@@ -21,7 +21,8 @@ def connect():
 
 @bp.after_request
 def disconnect(response):
-    g.db.commit()
+    if response.status_code != 500:
+        g.db.commit()
 
     g.curs.close()
     g.db.close()
@@ -732,6 +733,16 @@ def insert_c_project():
 
 @bp.route('/insert_biss', methods=['POST'])
 def insert_biss():
+    try:
+        params = request.get_json()
+        prj.update_biss(params)
+        return jsonify({"status":True, "message" : "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/upload_project', methods=['POST'])
+def upload_project():
     try:
         params = request.get_json()
         prj.update_biss(params)

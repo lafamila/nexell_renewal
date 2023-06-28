@@ -15,7 +15,8 @@ def connect():
 
 @bp.after_request
 def disconnect(response):
-    g.db.commit()
+    if response.status_code != 500:
+        g.db.commit()
 
     g.curs.close()
     g.db.close()

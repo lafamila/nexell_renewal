@@ -962,7 +962,11 @@ def get_c_cost_list(params):
 				AND cntrct_execut_code = 'C'
 """
     if "approval_sn" in params:
-        query += " AND regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) "
+        g.curs.execute("SELECT prjct_ty_code FROM contract WHERE cntrct_sn=%(s_cntrct_sn)s", params)
+        prjct_ty_code = g.curs.fetchone()['prjct_ty_code']
+        print(prjct_ty_code)
+        # if 'BF' == prjct_ty_code:
+        query += " AND ((SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) IS NULL OR (regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn))) "
     query += """
     ORDER BY c.regist_dtm
 """
@@ -1352,7 +1356,29 @@ def get_model_cost_list(params):
                 WHERE 1=1
 				AND p.cntrct_sn = %(s_cntrct_sn)s
 				AND p.prjct_sn = %(s_prjct_sn)s
-            """
+				
+            UNION
+				SELECT t.pblicte_de AS dlivy_de
+				, IF(t.delng_se_code = 'S2', '모델하우스 정산금액' ,'설치비') AS model_no
+				, '-1' AS prdlst_se_code
+				, '기타' AS prdlst_se_nm
+				, IF(t.delng_se_code = 'S2', -1*(t.splpc_am + t.vat), (t.splpc_am + t.vat)) AS dlamt
+				, 1 AS dlnt
+				, t.pblicte_trget_sn AS bcnc_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=1 AND bcnc_sn=t.pblicte_trget_sn) AS bcnc_nm
+				, '' AS expect_de
+				, NULL AS delng_sn
+				FROM taxbil t
+				LEFT JOIN contract c
+				ON t.cntrct_sn = c.cntrct_sn
+				WHERE t.ctmmny_sn = '1'
+				AND t.cntrct_sn = %(s_cntrct_sn)s
+				AND t.prjct_sn = %(s_prjct_sn)s
+				AND c.prjct_ty_code = 'NR'
+				AND t.delng_se_code IN ('S2', 'P1')
+				
+			ORDER BY dlivy_de
+"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -2065,7 +2091,7 @@ def insert_project(params):
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
 
-    if "cntrct_no" not in data or data["cntrct_no"] == "":
+    if "cntrct_no" not in data or data["cntrct_no"] == "" or data["cntrct_no"] is None:
         data["cntrct_no"] = ""
 
     assert len(set(required) - set(data.keys())) == 0, str(set(required) - set(data.keys()))
@@ -2319,7 +2345,7 @@ def insert_c_extra_project(params):
             if value == '':
                 continue
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
-            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : extra_sn, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : extra_sn, "register_id" : session["member"]["member_id"]})
 
     for data in cost_data:
         if int(data['ct_se_code']) == 1 and data['cntrct_execut_code'] == 'C':
@@ -2727,6 +2753,12 @@ def get_expect_equip_other_list(params):
 def update_c_project(params):
     cntrct_sn1 = params['cntrct_sn_1']
     cntrct_sn2 = params['cntrct_sn_2']
+    g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'E' and cntrct_sn=%s", cntrct_sn1)
+    extra_sn1 = g.curs.fetchone()['m_extra_sn']
+    g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'E' and cntrct_sn=%s", cntrct_sn2)
+    extra_sn2 = g.curs.fetchone()['m_extra_sn']
+
+
     prjct_1 = get_project_by_cntrct_nm(cntrct_sn1)
     prjct_2 = get_project_by_cntrct_nm(cntrct_sn2)
     column = {"E" : "puchas_amount", "C" : "salamt"}
@@ -2737,19 +2769,19 @@ def update_c_project(params):
     e_99_2 = int(params['E_99_2'].replace(",", "")) if params['E_99_2'].replace(",", "") != '' else 0
     cost_data.append(
         {"cntrct_sn": cntrct_sn1, "prjct_sn": prjct_1["prjct_sn"], "cntrct_execut_code": 'C',
-         "ct_se_code": '99', "qy": 1, column['C']: c_99_1, "extra_sn": 0, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['C']: c_99_1, "extra_sn": extra_sn1, "regist_dtm": datetime.now(),
          "register_id": session["member"]["member_id"]})
     cost_data.append(
         {"cntrct_sn": cntrct_sn1, "prjct_sn": prjct_1["prjct_sn"], "cntrct_execut_code": 'E',
-         "ct_se_code": '99', "qy": 1, column['E']: e_99_1, "extra_sn": 0, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['E']: e_99_1, "extra_sn": extra_sn1, "regist_dtm": datetime.now(),
          "register_id": session["member"]["member_id"]})
     cost_data.append(
         {"cntrct_sn": cntrct_sn2, "prjct_sn": prjct_2["prjct_sn"], "cntrct_execut_code": 'C',
-         "ct_se_code": '99', "qy": 1, column['C']: c_99_2, "extra_sn": 0, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['C']: c_99_2, "extra_sn": extra_sn2, "regist_dtm": datetime.now(),
          "register_id": session["member"]["member_id"]})
     cost_data.append(
         {"cntrct_sn": cntrct_sn2, "prjct_sn": prjct_2["prjct_sn"], "cntrct_execut_code": 'E',
-         "ct_se_code": '99', "qy": 1, column['E']: e_99_2, "extra_sn": 0, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['E']: e_99_2, "extra_sn": extra_sn2, "regist_dtm": datetime.now(),
          "register_id": session["member"]["member_id"]})
 
     for data in cost_data:
@@ -2807,7 +2839,8 @@ def update_biss(params):
     data = dict()
     for i in range(10):
         key = "biss_{}".format(chr(ord('a')+i))
-        data[key] = params[key]
+        if key in params:
+            data[key] = params[key]
     keys = list(data.keys())
     query = """UPDATE contract SET {} WHERE cntrct_sn=%(cntrct_sn)s""".format(",".join(["{0}=%({0})s".format(k) for k in keys]))
     g.curs.execute(query, params)

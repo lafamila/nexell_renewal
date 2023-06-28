@@ -6,7 +6,8 @@ bp = Blueprint('approval', __name__, url_prefix='/approval')
 @bp.route('/')
 @session_helper.session_check
 def index_page():
-    return render_template('approval.html', title="전자결재 | 넥셀시스템", **refresh_code_list())
+    _type = request.args.get("type")
+    return render_template('approval.html', title="전자결재 | 넥셀시스템", **refresh_code_list(), _type=_type if _type is not None else "")
 
 @bp.route('/report')
 @session_helper.session_check

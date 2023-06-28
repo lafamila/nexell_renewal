@@ -9,6 +9,12 @@
     .jarviswidget td:last-child, .jarviswidget th:last-child {
         border-right:1px solid #ddd;
     }
+    #formContent tr[data-row='E'] th, #formContent tr[data-row='E'] td{
+        border-bottom:2px solid #555!important;
+    }
+    #formContent tr[data-row='C'] th[rowspan="2"], #formContent tr[data-row='C'] td[rowspan="2"]{
+        border-bottom:2px solid #555!important;
+    }
 </style>
 <table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
@@ -175,6 +181,7 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="150"/>
     </colgroup>
     <thead>
         <tr>
@@ -273,7 +280,11 @@
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
                     {% for code in bcnc_list %}
+                    {% if code.value == 74 %}
+                    <option value="{{code.value}}" selected>{{code.value}}.{{code.label}}</option>
+                    {% else %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </td>
@@ -308,6 +319,7 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="150"/>
     </colgroup>
     <thead>
         <tr>
@@ -645,7 +657,11 @@
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
                                                 {% for code in bcnc_list %}
+                                                {% if code.value == 74 %}
+                                                <option value="{{code.value}}" selected>{{code.value}}.{{code.label}}</option>
+                                                {% else %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endif %}
                                                 {% endfor %}
                                             </select>`);
                     }
@@ -979,11 +995,16 @@
     $(document).on("click", "#addRow", function(){
         cloneRow("equip_tr", 1);
     });
+    $(document).on("click", "#addRowOther", function(){
+        cloneRow("equip_other_tr", 1);
+    });
     window.projects = {};
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
-        $(document).find("tbody[role='equip_row'] input").attr("disabled", true);
-        $(document).find("tbody[role='equip_row'] select").attr("disabled", true);
+        $(document).find("tbody[role='equip_already_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_already_row'] select").attr("disabled", true);
+        $(document).find("tbody[role='equip_other_already_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_other_already_row'] select").attr("disabled", true);
         $.ajax({
             url : '/api/project/get_p_projects',
             method: 'GET',

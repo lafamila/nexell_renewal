@@ -118,8 +118,7 @@ def get_approval_member(params):
 def update_approval(params):
     data = [params['approval_status_code']]
     if int(data[0]) in (1, -1):
-        query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=%s """
-        data.append(datetime.datetime.now())
+        query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=NOW() """
     else:
         query = """UPDATE approval_member SET approval_status_code=%s, update_dtm=%s """
         data.append(None)

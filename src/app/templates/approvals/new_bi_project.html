@@ -471,12 +471,17 @@
     {% else %}
     $.fn.afterLoadApproval = function() {
         var prjct_creat_at = $('input[name=prjct_creat_at]:checked').val();
+        var progrs_sttus_code = $('input[name=progrs_sttus_code]:checked').val();
         if(prjct_creat_at == 'N'){
             $("#table-project").hide();
         }
         else{
             $("#table-project").show();
         }
+        if(prjct_creat_at == 'N' || progrs_sttus_code == 'S'){
+            $(document).find("#cntrct_no").val("");
+        }
+
     }
     {% endif %}
 </script>

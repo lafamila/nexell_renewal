@@ -194,9 +194,13 @@
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
             </td>
-            <td class="text-right" data-type="number" name="amount[]"></td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
+                <input type="hidden" class="form-control text-right" data-type="number" name="amount[]"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_amount[]" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="hidden" class="form-control text-right" data-type="number" name="samount[]"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_samount[]" readonly/>
             </td>
             <td class="text-right" data-type="number" name="va[]"></td>
             <td class="hasinput">
@@ -272,6 +276,10 @@
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
                     console.log(pResult);
+                    if(pResult.samsungList.length == 0){
+                        alert("장비현황 및 업체선정 또는 공사변경을 통한 장비 리스트 등록이 필요합니다.");
+                        location.reload();
+                    }
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
@@ -388,16 +396,19 @@
                 dlnt = cnt_dlnt - sdlnt;
                 $(pRow).find("[name='dlnt[]']").val(dlnt.toFormat('NUMBER'));
             }
-            var amount = cnt_dlnt*dlamt;
-            var va = samount-amount;
+            var samount_dlnt = samount / cnt_dlnt;
+            var now_samount = samount_dlnt * dlnt;
+            var amount = dlnt*dlamt;
+            var va = now_samount-amount;
             total_amount += amount;
-            total_samount += samount;
+            total_samount += now_samount;
             total_cnt_dlnt += cnt_dlnt;
             total_dlnt += dlnt;
             total_sdlnt += sdlnt;
             total_va += va;
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
-            $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
+            $(pRow).find("[name='now_amount[]']").val(amount.toFormat('NUMBER'));
+            $(pRow).find("[name='now_samount[]']").val(now_samount.toFormat('NUMBER'));
         });
         $(this).parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
         $(this).parent().find("[data-column='total_sdlnt']").html(total_sdlnt.toFormat('NUMBER'));

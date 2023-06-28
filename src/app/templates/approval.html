@@ -331,11 +331,11 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_approval_status" name="s_approval_status">
 												<option value="">[전체]</option>
-												<option value="상신">상신</option>
-												<option value="미결">미결</option>
-												<option value="진행">진행</option>
-												<option value="완결">완결</option>
-												<option value="반려">반려</option>
+												<option value="상신" {% if _type == "상신" %} selected {% endif %}>상신</option>
+												<option value="미결" {% if _type == "미결" or _type == "" %} selected {% endif %}>미결</option>
+												<option value="진행" {% if _type == "진행" %} selected {% endif %}>진행</option>
+												<option value="완결" {% if _type == "완결" %} selected {% endif %}>완결</option>
+												<option value="반려" {% if _type == "반려" %} selected {% endif %}>반려</option>
 <!--												{% for code in bcnc_list %}-->
 <!--												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>-->
 <!--												{% endfor %}-->
