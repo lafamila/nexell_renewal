@@ -88,6 +88,18 @@ def ajax_get_stock_log():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/ajax_delete_stock_log', methods=['GET'])
+def ajax_delete_stock_log():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        st.delete_stock_log(params)
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/ajax_get_stock_list', methods=['GET'])
 def ajax_get_stock_list():
     try:

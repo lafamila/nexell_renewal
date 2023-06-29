@@ -748,7 +748,12 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 						success : function(pResult){
 							if(pResult.status){
 								alert("성공적으로 처리되었습니다.");
-                                self.close();
+								var _window = window;
+								setTimeout( function(){
+									//location.reload(true);
+									_window.opener.reload();
+									self.close();
+								},500);
 
 							}
 						},

@@ -223,9 +223,6 @@ $(function() {
 	if (start == '') {
 		var end = $('.datepicker-e').val();
 		var endDate = new Date(end);
-        endDate.setFullYear(endDate.getFullYear()-1);
-        endDate.setMonth(0);
-        endDate.setDate(1);
 
 //		endDate.setDate(endDate.getDate() - (365*maxYears));
 		$('.datepicker-s').datepicker('setDate', endDate);

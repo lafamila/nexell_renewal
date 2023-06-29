@@ -431,11 +431,11 @@ getProjectList = function()
 
 //                    if(row.progrs_sttus_code !== 'C'){
 					{% if session['member']['auth_cd'] == 1 %}
-                        html += '<div class="btn-group">';
-                        html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-dept_code="'+dept_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'" data-prjct_ty_code="'+row.prjct_ty_code+'">';
-                        html += '		<i class="fa fa-edit"></i>';
-                        html += '	</button>';
-                        html += '</div>';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-dept_code="'+dept_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'" data-prjct_ty_code="'+row.prjct_ty_code+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '</div>';
 					{% elif session['member']['member_id'] == 'ma_keunmi' %}
 						if(row.progrs_sttus_code != 'C'){
 							html += '<div class="btn-group">';
@@ -444,6 +444,15 @@ getProjectList = function()
 							html += '	</button>';
 							html += '</div>';
 						}
+					{% else %}
+					if(row.prjct_creat_at == 'N'){
+						html += '<div class="btn-group">';
+						html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-dept_code="'+dept_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'" data-prjct_ty_code="'+row.prjct_ty_code+'">';
+						html += '		<i class="fa fa-edit"></i>';
+						html += '	</button>';
+						html += '</div>';
+
+					}
 					{% endif %}
 
 //                    }
@@ -759,9 +768,12 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 								<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-right:none;" colspan="1">계약</th>
                                     <th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="7">
                                     <span class="widget-toolbar" id="popEditToolbarContract">
+					{% if session['member']['auth_cd'] == 1 %}
+
                                         <button type="button" class="btn btn-primary" id="btnSaveKeepContract" title="저장 후 입력값을 유지합니다."><i class="fa fa-save"> 저장</i></button>
                                         <button type="button" class="btn btn-primary" id="btnEdit" title="값을 수정합니다."><i class="fa fa-edit"> 수정</i></button>
                                         <button type="button" class="btn btn-danger" id="btnDelete"><i class="fa fa-trash-o"> 삭제</i></button>
+					{% endif %}
 
                                     </span>
                                     </th>
@@ -1108,10 +1120,13 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 												<input type="text" class="form-control" placeHolder="[선택]" id="charger_telno" name="charger_telno">
 											</td>
 											<td class="hasinput">
+					{% if session['member']['auth_cd'] == 1 %}
+
 												<div class="btn-group">
 													<button type="button" class="btn btn-primary" id="btnSaveOutsrc"><i class="fa fa-save"></i></button>
 													<button type="button" class="btn btn-primary" id="btnRefrushOutsrc" style="padding-left:11px;padding-right:11px;" id="btnRefreshOutsrc"><i class="fa fa-refresh"></i></button>
 												</div>
+					{% endif %}
 											</td>
 										</tr>
 										<tr>
@@ -1267,10 +1282,12 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 												<input type="number" class="form-control" placeholder="[선택]" id="extra_sn" name="extra_sn">
 											</td>
 											<td class="hasinput">
+					{% if session['member']['auth_cd'] == 1 %}
 												<div class="btn-group">
 													<button type="button" class="btn btn-primary" id="btnSaveCost"><i class="fa fa-save"></i></button>
 													<button type="button" class="btn btn-primary" id="btnRefrushCost" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
 												</div>
+					{% endif %}
 											</td>
 										</tr>
 										<tr>
@@ -1632,7 +1649,6 @@ updateContract = function()
 			return;
 		}
 	}
-	console.log(progrs_sttus_code, getFormData($('#frmBoxContract1')[0]));
 	$.ajax({
 		url: '/api/project/ajax_update_contract',
 		type: 'POST',
@@ -1722,6 +1738,7 @@ getOutsrcList = function(s_cntrct_sn, s_prjct_sn)
 					html += '    <td class="hasinput text-right">';
 
                     if(progrs_sttus_code != 'C'){
+					{% if session['member']['auth_cd'] == 1 %}
 
                         html += '        <div class="btn-group">';
                         html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-outsrc_sn="'+pValue.outsrc_sn+'">';
@@ -1730,7 +1747,8 @@ getOutsrcList = function(s_cntrct_sn, s_prjct_sn)
                         html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-outsrc_sn="'+pValue.outsrc_sn+'">';
                         html += '		         <i class="fa fa-trash-o"></i>';
                         html += '            </button>';
-                        html += '        </div>';
+						html += '        </div>';
+					{% endif %}
                     }
 					html += '    </td>';
 					html += '</tr>';
@@ -2061,6 +2079,7 @@ getCostList = function(s_cntrct_sn, s_prjct_sn)
 					html += '    <td class="hasinput text-right">';
 
                     if(progrs_sttus_code != 'C'){
+					{% if session['member']['auth_cd'] == 1 %}
 
 					html += '        <div class="btn-group">';
 					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-cntrwk_ct_sn="'+pValue.cntrwk_ct_sn+'">';
@@ -2070,7 +2089,7 @@ getCostList = function(s_cntrct_sn, s_prjct_sn)
 					html += '		         <i class="fa fa-trash-o"></i>';
 					html += '            </button>';
 					html += '        </div>';
-
+					{% endif %}
                     }
 					html += '    </td>';
 					html += '</tr>';

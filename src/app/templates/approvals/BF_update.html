@@ -369,6 +369,10 @@
                 var cntrct_amount_total = 0, cntrct_fee_amount_total = 0;
                 $.each(pResult.cCostListByExtra, function(extra_sn, pRow){
                     var tbody = $("tbody[role='construct_row']").clone(true);
+                    {% if not init %}
+                        $(tbody).find("tr:not(:first-child)").remove();
+                    {% endif %}
+
                     var title = extra_sn == 0 ? "수주계약" : ("변경"+extra_sn);
                     $(tbody).attr("role", 'construct_row_'+extra_sn);
                     $(tbody).attr("data-role", 'construct_row');

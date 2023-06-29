@@ -495,6 +495,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">③ M,S/H 추가DC금액</th>
 			<th class="colorP">④ M,S/H 판매금액</th>
 			<th class="colorP">⑤ 옵션행사비</th>
+			<th class="colorP">⑥ 기타비용(총액 0.5%)</th>
 			<th class="colorP">이익금(VA)</th>
 			<th class="colorP">VA율(%)</th>
 		</tr>
@@ -503,6 +504,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<tr>
 			<td class="colorP text-number"></td>
 			<th class="text-number colorP"></th>
+			<td class="text-number"></td>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
@@ -2232,7 +2234,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 //					amt_total += parseInt(amt);
 //				});
 				$('#popReportBD').find('#report_e_etc tbody[role=body]').html(html);
-				$('#popReportBD').find('#report_e_etc tfoot th:eq(4)').html(amt_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_e_etc tfoot th:eq(1)').html(amt_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(6)').html(amt_total.toFormat('NUMBER'));
+
 				/* ********************************************************* */
 
 				/* M/SH, 옵션 */
@@ -2306,10 +2310,16 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt5 = 0;
 				}
-				var vaTotal = execAmt0 - execAmt1 - execAmt2 + execAmt3 + execAmt4 - execAmt5;
+                var execAmt6 = $(execData[6]).html().replaceAll(',', '');
+				if (execAmt6 != '') {
+					execAmt6 = parseInt(execAmt6);
+				} else {
+					execAmt6 = 0;
+				}
+				var vaTotal = execAmt0 - execAmt1 - execAmt2 + execAmt3 + execAmt4 - execAmt5 - execAmt6;
 				var vaRate = (vaTotal/execAmt0)*100;
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(6)').html(vaTotal.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(7)').html(vaRate.toFixed(1)+'%');
+				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(7)').html(vaTotal.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(8)').html(vaRate.toFixed(1)+'%');
 				/* ********************************************************* */
 
 				/* 특이사항 */

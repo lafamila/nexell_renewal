@@ -964,11 +964,10 @@ def get_c_cost_list(params):
     if "approval_sn" in params:
         g.curs.execute("SELECT prjct_ty_code FROM contract WHERE cntrct_sn=%(s_cntrct_sn)s", params)
         prjct_ty_code = g.curs.fetchone()['prjct_ty_code']
-        print(prjct_ty_code)
         # if 'BF' == prjct_ty_code:
         query += " AND ((SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) IS NULL OR (regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn))) "
     query += """
-    ORDER BY c.regist_dtm
+    ORDER BY c.regist_dtm, c.cntrwk_ct_sn
 """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -2369,7 +2368,6 @@ def delete_option_bd_project(params):
 def insert_b_option_bf_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
-    params['regist_dtm'] = datetime.now()
     params['register_id'] = session['member']['member_id']
     if "Z_10" in params:
         g.curs.execute(
@@ -2395,11 +2393,11 @@ def insert_b_option_bf_project(params):
         pParams['model_no'] = model_no
         if "cost_date" in params:
             pParams["cost_date"] = params["cost_date"]
-            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, regist_dtm, register_id)
-                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, %(cost_date)s, %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, %(cost_date)s, %(extra_sn)s, %(register_id)s)"""
         else:
-            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, regist_dtm, register_id)
-                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, fee_rt, cost_date, extra_sn, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '9', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(dscnt_rt)s, %(fee_rt)s, '0000-00-00', %(extra_sn)s, %(register_id)s)"""
         g.curs.execute(query, pParams)
 
 def insert_bd_expect_equipment(params):
@@ -2427,7 +2425,6 @@ def insert_bd_expect_equipment(params):
 def insert_b_option_bd_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
-    params['regist_dtm'] = datetime.now()
     params['register_id'] = session['member']['member_id']
     if "Z_10" in params:
         g.curs.execute(
@@ -2455,11 +2452,11 @@ def insert_b_option_bd_project(params):
             pParams['prjct_sn'] = 0
         if "cost_date" in params:
             pParams["cost_date"] = params["cost_date"]
-            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)
-                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, %(cost_date)s, %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, %(cost_date)s, %(extra_sn)s, %(register_id)s)"""
         else:
-            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, regist_dtm, register_id)
-                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, register_id)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'C', '1', '2', %(model_no)s, %(qy)s, %(puchas_amount)s, %(salamt)s, %(dscnt_rt)s, '0000-00-00', %(extra_sn)s, %(register_id)s)"""
         g.curs.execute(query, pParams)
 
 

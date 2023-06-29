@@ -234,7 +234,7 @@ def get_stock_datatable(params, prduct_se_code):
 
     params["custom_order"] = ["IF(instl_de <> '', instl_de, IF(m.stock_sttus IN (1, 4), m.ddt_man, '')) DESC"]
 
-
+    print(query)
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):
@@ -627,3 +627,14 @@ def get_stock_month(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+def delete_stock_log(params):
+    query = """SELECT log_sn, cnnc_sn FROM stock_log WHERE stock_sn=%(s_stock_sn)s ORDER BY log_sn DESC"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall(transform=False)
+    if result:
+        log_sn = result[0]['log_sn']
+        cnnc_sn = result[0]['cnnc_sn']
+        if cnnc_sn is None:
+            g.curs.execute("DELETE FROM stock WHERE stock_sn=%(s_stock_sn)s", params)
+        g.curs.execute("DELETE FROM stock_log WHERE log_sn=%s", log_sn)

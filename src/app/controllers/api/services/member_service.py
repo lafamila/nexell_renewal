@@ -222,9 +222,13 @@ def get_datatable(params):
     if "s_author_sn" in params and params['s_author_sn']:
         query += " AND author_sn=%s"
         data.append(params["s_author_sn"])
-    if "s_mber_sttus_code" in params and params['s_mber_sttus_code']:
-        query += " AND mber_sttus_code=%s"
-        data.append(params["s_mber_sttus_code"])
+
+    if "s_mber_sttus_code" in params and params["s_mber_sttus_code"]:
+        if params["s_mber_sttus_code"] == 'NR':
+            query += " and m.mber_sttus_code NOT IN ('R') "
+        else:
+            query += " and m.mber_sttus_code=%s"
+            data.append(params["s_mber_sttus_code"])
 
 
     return dt_query(query, data, params)

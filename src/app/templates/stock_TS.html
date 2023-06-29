@@ -1420,6 +1420,7 @@ $(function() {
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-danger" id="deleteLogBtn"><i class="fa fa-trash"> 삭제</i></button>
 					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
 				</div>
 			</div>
@@ -1547,10 +1548,44 @@ div.report table th, div.report table td {
 /******************************************************************************
  *
  */
+$(document).on("click", "#deleteLogBtn", function(){
+	var authors = ["ma_keunmi ", "nexelll"];
+	var loginId = $("#loginID").val();
+	if(!authors.includes("*") && !authors.includes(loginId)){
+		alert("권한이 없습니다.");
+		return false;
+	}
+	var s_stock_sn = $(this).data("sn");
+	if(s_stock_sn != '' && s_stock_sn != undefined){
+		if(confirm("마지막 내역부터 삭제됩니다.\n정말 삭제하시겠습니까?")){
+			var params = '';
+			params += '&s_stock_sn=' + s_stock_sn;
+			$.ajax({
+				url: '/api/stock/ajax_delete_stock_log',
+				type: 'GET',
+				data: params,
+				dataType: 'json',
+				contentType: false,
+				processData: false,
+				success: function(pResult) {
+					alert("성공적으로 삭제되었습니다.");
+					$('#popReport2').modal('hide');
+					$.datatable1.ajax.reload();
+				}
+			});
+
+		}
+
+	}
+
+
+});
+
 getReport = function(s_stock_sn)
 {
 	var params = '';
 	params += '&s_stock_sn=' + s_stock_sn;
+	$(document).find("#deleteLogBtn").data("sn", s_stock_sn);
 	$.ajax({
 		url: '/api/stock/ajax_get_stock_log',
 		type: 'GET',

@@ -414,6 +414,9 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 /******************************************************************************
  * 계약 목록을 조회한다.
  */
+reload = function(){
+	$.datatable1.ajax.reload();
+}
 getApprovalList = function()
 {
     $.datatable1 = $('#dtList1').DataTable({
