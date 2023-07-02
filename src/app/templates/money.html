@@ -170,7 +170,7 @@
 									<col width="80">
 									<col width="140">
 
-									<col width="180">
+									<col width="200">
 									<col width="80">
 									<col width="70">
 									<col width="70">
@@ -482,6 +482,7 @@ getMoneyData = function(s_mt){
 					var colored = tax_amount == 0 ? " colored" : "";
 					var year = $("#s_year").val().split("-")[0];
 					var rcppay_de = pValue.rcppay_de == '9999-99-99' ? '' : pValue.rcppay_de.split("-")[1]+"-"+pValue.rcppay_de.split("-")[2];
+					colored = (colored != "" && $.dateDiff(`${year}-${rcppay_de}`) < 4) ? " colorY" : colored;
 					html += `	<td data-side="T" class="${colored}">${pValue.cntrct_nm}</td>
 								<td data-side="T" class="${colored} text-center right_border">${pValue.bcnc_nm}</td>
 								<td data-side="T" class="${colored} text-center">${pValue.pblicte_de.split("-")[1]+"-"+pValue.pblicte_de.split("-")[2]}</td>

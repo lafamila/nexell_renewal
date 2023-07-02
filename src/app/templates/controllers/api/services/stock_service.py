@@ -138,15 +138,14 @@ def get_stock_datatable(params, prduct_se_code):
 				, s.use_flag as puchas_se_code
 				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
                     WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
-                    WHEN mi.stock_sttus = 3 THEN IFNULL(p.dlamt, 0)
                     ELSE 0
                     END AS puchas_amount_one
 				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn), '')
 				  ELSE IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS cntrct_nm
 				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '')
 				  ELSE IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS bcnc_nm
-				, CASE WHEN m.stock_sttus IN (2, 3) THEN sa_last.dlivy_de ELSE '' END AS instl_de
-				, IF(m.stock_sttus IN (1, 4), m.ddt_man, '') AS wrhousng_de
+				, CASE WHEN m.stock_sttus IN (2, 3) THEN sa.dlivy_de ELSE '' END AS instl_de
+				, m.ddt_man AS wrhousng_de
 				, s.rm AS rm
 				, s.use_type AS bigo
 				, m.stock_sttus AS invn_sttus_code
@@ -163,14 +162,10 @@ def get_stock_datatable(params, prduct_se_code):
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
 				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
-				LEFT OUTER JOIN
+				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
-				LEFT OUTER JOIN
-				(SELECT * FROM account WHERE delng_se_code='P') p_last ON m.delng_sn=p_last.delng_sn
-				LEFT OUTER JOIN
-				(SELECT * FROM account WHERE delng_se_code='S') sa_last ON sa_last.cnnc_sn=p_last.delng_sn
 				WHERE 1=1
-				AND IF(m.stock_sttus IN (1, 4), m.ddt_man, sa_last.dlivy_de) BETWEEN '{0}' AND '{1}'
+				AND m.ddt_man BETWEEN '{0}' AND '{1}'
 """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
     # query += "GROUP BY prduct_se_nm, prduct_ty_nm, modl_nm, bigo, puchas_de, puchas_se_code, puchas_amount_one, bcnc_nm, cntrct_nm, instl_de, wrhousng_de, invn_sttus_nm, rm "
     data = ["%예약%", "%예약%", "%예약%", prduct_se_code]
@@ -232,8 +227,6 @@ def get_stock_datatable(params, prduct_se_code):
             query += " AND m.stock_sttus = 1 AND m.cntrct_sn=%s"
             data.append(sttus_code)
 
-    params["custom_order"] = ["IF(instl_de <> '', instl_de, IF(m.stock_sttus IN (1, 4), m.ddt_man, '')) DESC, invn_sttus_nm"]
-
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):
@@ -241,8 +234,7 @@ def get_stock_summary(params, prduct_se_code):
                 , count(*) as cnt
                 , m.stock_sttus
                 , count(distinct m.cntrct_sn) AS cntrct_count
-                , sum(CASE WHEN m.stock_sttus = 3 THEN IFNULL(sa_last.dlamt, 0)
-                    WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                , sum(CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
                     WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
                     ELSE 0
                     END) as amount
@@ -254,14 +246,10 @@ def get_stock_summary(params, prduct_se_code):
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
 				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
-				LEFT OUTER JOIN
+				INNER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
-				LEFT OUTER JOIN
-				(SELECT * FROM account WHERE delng_se_code='P') p_last ON m.delng_sn=p_last.delng_sn
-				LEFT OUTER JOIN
-				(SELECT * FROM account WHERE delng_se_code='S') sa_last ON sa_last.cnnc_sn=p_last.delng_sn
 				WHERE s.prduct_se_code = %s
-				AND IF(m.stock_sttus IN (1, 4), m.ddt_man, sa_last.dlivy_de) BETWEEN '{0}' AND '{1}'
+				AND m.ddt_man BETWEEN '{0}' AND '{1}'
 """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
     # query += "GROUP BY prduct_se_nm, prduct_ty_nm, modl_nm, bigo, puchas_de, puchas_se_code, puchas_amount_one, bcnc_nm, cntrct_nm, instl_de, wrhousng_de, invn_sttus_nm, rm "
     data = [prduct_se_code]
@@ -331,7 +319,6 @@ def get_stock_summary(params, prduct_se_code):
 
 def get_stock(params):
     query = """SELECT s.stock_sn 
-                , m.stock_sttus AS stock_sttus
                 , prduct_se_code
 				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
 				, prduct_ty_code
@@ -339,24 +326,9 @@ def get_stock(params):
                 , CASE WHEN m.stock_sttus=1 AND (s.rm LIKE %(reserv)s) IS NOT TRUE THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.cntrct_sn)
 				WHEN m.stock_sttus=1 AND m.cntrct_sn = 2 AND s.rm LIKE %(reserv)s THEN '이현/예약'
 				WHEN m.stock_sttus=1 AND m.cntrct_sn = 3 AND s.rm LIKE %(reserv)s THEN '기타/예약'
-				WHEN m.stock_sttus IN (2,3) THEN (SELECT spt_nm FROM contract WHERE cntrct_sn=m.cntrct_sn)
+				WHEN m.stock_sttus IN (2,3) THEN (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=(m.stock_sttus-2))
 				ELSE (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.stock_sttus)
 				END AS invn_sttus_nm
-				, p.ddt_man AS puchas_de
-				, CASE WHEN mi.stock_sttus = 1 THEN IFNULL(p.dlivy_amt, 0) 
-                    WHEN mi.stock_sttus = 2 THEN IFNULL(p.dlivy_amt, 0)
-                    ELSE 0
-                    END AS dlivy_amt
-				, CASE WHEN mi.stock_sttus = 1 THEN IFNULL(p.dscnt_rt,0) + IFNULL(p.add_dscnt_rt, 0)
-                    WHEN mi.stock_sttus = 2 THEN IFNULL(p.dscnt_rt,0) + IFNULL(p.add_dscnt_rt, 0)
-                    ELSE 0
-                    END AS dc
-				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
-                    WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
-                    ELSE 0
-                    END AS puchas_amount_one
-				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn), '')
-				  ELSE IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS cntrct_nm
 				, IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '') AS bcnc_nm
 				, 1 AS qy
 				, s.model_no AS modl_nm
@@ -364,10 +336,6 @@ def get_stock(params):
 				FROM stock s 
 				INNER JOIN 
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
-				INNER JOIN
-				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
-				INNER JOIN
-				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
 				WHERE s.stock_sn=%(s_stock_sn)s"""
     params['reserv'] = "%예약%"
     g.curs.execute(query, params)
@@ -402,14 +370,12 @@ def get_stock_log(params):
     result = g.curs.fetchall()
     return result
 
-def get_stock_by_account(delng_sn, isReturn=True, isOut=False):
-    query = """SELECT x.stock_sn, x.log_sn
-                FROM stock_log x """
-    if isOut:
-        query += """ INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn"""
-    query += " WHERE x.delng_sn=%s"
+def get_stock_by_account(delng_sn, isReturn=True):
+    query = """SELECT stock_sn, log_sn
+                FROM stock_log
+                WHERE delng_sn=%s"""
     if isReturn:
-        query += """ AND x.stock_sttus=2 """
+        query += """ AND stock_sttus=2 """
     g.curs.execute(query, delng_sn)
     result = g.curs.fetchall()
     return result
@@ -426,9 +392,9 @@ def get_stock_list(params, prduct_se_code, reserved=False):
                 , (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=m.cntrct_sn) AS etc3
                 , IF(m.stock_sttus=1, (SELECT ct.spt_nm FROM contract ct WHERE ct.cntrct_sn=mi.cntrct_sn), '') AS etc4
                 FROM stock s
-				LEFT OUTER JOIN 
+				INNER JOIN 
 				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
-				LEFT OUTER JOIN
+				INNER JOIN
 				stock_log mi ON m.cnnc_sn=mi.log_sn
 				WHERE 1=1
 				AND m.stock_sttus=1
@@ -485,7 +451,6 @@ def insert_stock(params, use_flag):
     query = "INSERT INTO stock(prduct_se_code, prduct_ty_code, model_no, use_type, use_flag, rm) VALUES (%(prduct_se_code)s, %(prduct_ty_code)s, %(model_no)s, %(use_type)s, %(use_flag)s, %(rm)s)"
     g.curs.execute(query, params)
     return g.curs.lastrowid
-
 
 def insert_log(stock_sn, stock_sttus, cntrct_sn, delng_sn, ddt_man):
     query = "SELECT x.log_sn AS log_sn FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn WHERE x.stock_sn=%s"
@@ -570,70 +535,3 @@ def get_stock_report(params):
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
-
-def get_built_month(params):
-    params['stdyy'] = params['s_ddt_man'].split("-")[0]
-    query = """SELECT stdyy
-                    , stdmm
-                    , cnt_new
-                    , cnt_out_all
-                    , cnt_in_1
-                    , cnt_not_in_1
-                    , cnt_remain_1
-                    , cnt_in_2
-                    , cnt_not_in_2
-                    , cnt_remain_2
-                    FROM bnd_table
-                    WHERE stdyy=%(stdyy)s
-                    ORDER BY stdmm ASC"""
-    g.curs.execute(query, params)
-    result = g.curs.fetchall()
-    return result
-def get_built_month_sales(params):
-    params['stdyy'] = params['s_ddt_man'].split("-")[0]
-    query = """SELECT stdyy
-                    , stdmm
-                    , cnt1
-                    , amt1
-                    , cnt2
-                    , amt2
-                    , cnt3
-                    , amt3
-                    , cnt4
-                    , amt4
-                    , cnt5
-                    , amt5
-                    FROM bnd_sales_table
-                    WHERE stdyy=%(stdyy)s
-                    ORDER BY stdmm ASC"""
-    g.curs.execute(query, params)
-    result = g.curs.fetchall()
-    return result
-def get_stock_month(params):
-    params['stdyy'] = params['s_ddt_man'].split("-")[0]
-    params['last'] = int(params['s_ddt_man'].split("-")[0]) - 1
-    query = """SELECT stdyy
-                    , IF(stdyy=%(last)s, 0, stdmm) AS stdmm """
-
-    for i in range(1, 8):
-        query += " , cnt{} ".format(i)
-
-    query +=    """ FROM bnd_stock_table
-                    WHERE (stdyy=%(stdyy)s OR (stdyy=%(last)s AND stdmm=12))
-                    AND invn_type=%(invn_type)s """
-
-    query +=    """ ORDER BY stdmm ASC"""
-    g.curs.execute(query, params)
-    result = g.curs.fetchall()
-    return result
-
-def delete_stock_log(params):
-    query = """SELECT log_sn, cnnc_sn FROM stock_log WHERE stock_sn=%(s_stock_sn)s ORDER BY log_sn DESC"""
-    g.curs.execute(query, params)
-    result = g.curs.fetchall(transform=False)
-    if result:
-        log_sn = result[0]['log_sn']
-        cnnc_sn = result[0]['cnnc_sn']
-        if cnnc_sn is None:
-            g.curs.execute("DELETE FROM stock WHERE stock_sn=%(s_stock_sn)s", params)
-        g.curs.execute("DELETE FROM stock_log WHERE log_sn=%s", log_sn)

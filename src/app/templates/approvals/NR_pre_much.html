@@ -374,8 +374,8 @@
                                 <td class="text-right">${pValue.pymnt_mth.split("-")[0].toFormat('NUMBER')}</td>
                                 <td class="text-right">${pValue.pymnt_mth.split("-")[1].toFormat('NUMBER')}</td>
                                 <td class="text-right">${pValue.pymnt_mth.split("-")[2].toFormat('NUMBER')}</td>
-                                <td class="text-right">${(Math.round(eCost5.total*1.1) - pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0)).toFormat('NUMBER')}</td>
-                                <td class="colorP text-right">${Math.round(eCost5.total*1.1).toFormat('NUMBER')}</td>
+                                <td class="text-right">${pValue.pymnt_mth.split("-")[3].toFormat('NUMBER')}</td>
+                                <td class="colorP text-right">${(pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0)).toFormat('NUMBER')}</td>
                                 <td class="text-center" rowspan="4"></td>
                             </tr>`;
                     html += `<tr>

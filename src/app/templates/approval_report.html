@@ -2,6 +2,12 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 <style id="style">
+body.smart-style-6 .form-control{
+    border: 0px solid #ccc!important;
+}
+div.report table th, div.report table td {
+    border: 1px solid #999 !important;
+}
 body{
 	/*-webkit-print-color-adjust: exact;*/
 }
@@ -350,13 +356,16 @@ div.report table th, div.report table td{
 		 */
 		$('#btnPrint2').on('click', function(pEvent) {
 			var html = $('#popReportApproval').find('.modal-content').html();
-			console.log(html);
-
+            console.log(html);
 			html = `<style>${$("#style").html()}</style>` + html;
+            $(document).find("input:disabled").attr("disabled", false);
+            var data = $(document).find("#frmBox3").serializeObject();
+
+            // $(html).find("input:disabled").attr("disabled", false);
 			$('#_print').contents().find('body>div.report').html('');
 			$('#_print').contents().find('body>div.report').html(html);
 			$('#_print').contents().find('body>div.report').find("#approval_title").val(window.app.approval_title);
-			$.each(window.app.approval_data, function(key, value){
+			$.each(data, function(key, value){
 				if(key.endsWith("[]")){
 					var pTag = $('#_print').contents().find('body>div.report').find(`[name='${key}']`);
 					if(pTag.length == 0){
@@ -384,7 +393,7 @@ div.report table th, div.report table td{
 							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).find(`option`).prop("disabled", true);
 						}
 						else if(tagName == "TEXTAREA"){
-							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).html(pValue);
+							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).val(pValue);
 							$('#_print').contents().find('body>div.report').find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
 
 						}
@@ -418,7 +427,7 @@ div.report table th, div.report table td{
 						}
 					}
 					else if(tagName == "TEXTAREA"){
-						$(pTag).html(`${value}`);
+						$(pTag).val(`${value}`);
 						$(pTag).attr("readonly", true);
 
 					}
@@ -511,7 +520,7 @@ div.report table th, div.report table td{
 
 										}
 										else if(tagName == "TEXTAREA"){
-											$("#formContent").find(`[name='${key}']`).eq(pIndex).html(pValue);
+											$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
 
 										}
 									});
@@ -542,7 +551,7 @@ div.report table th, div.report table td{
 										}
 									}
 									else if(tagName == "TEXTAREA"){
-										$(pTag).html(`${value}`);
+										$(pTag).val(`${value}`);
 
 									}
 
@@ -576,7 +585,7 @@ div.report table th, div.report table td{
                                             $("#formContent").find(`[name='${key}']`).eq(pIndex).find(`option`).prop("disabled", true);
                                         }
                                         else if(tagName == "TEXTAREA"){
-                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).html(pValue);
+                                            $("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
                                             $("#formContent").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
 
                                         }
@@ -610,7 +619,7 @@ div.report table th, div.report table td{
                                         }
                                     }
                                     else if(tagName == "TEXTAREA"){
-                                        $(pTag).html(`${value}`);
+                                        $(pTag).val(`${value}`);
                                         $(pTag).attr("readonly", true);
 
                                     }
@@ -829,7 +838,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 										</div>
 										<div style="max-height:480px;overflow-y:auto;">
 											{% for code in member_list %}
-												{% if code.value not in (63, 74) %}
+												{% if code.value not in (73, 74) %}
 												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
 												{% endif %}
 											{% endfor %}

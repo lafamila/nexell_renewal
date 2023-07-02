@@ -42,17 +42,6 @@ def get_biss_summery(params):
 def get_all_member_project(params):
     query = """SELECT c.spt_chrg_sn AS mber_sn
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
-				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
-				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_amt
-				, IFNULL((SELECT SUM(IFNULL(co.puchas_amount, 0) * IFNULL(co.qy, 0) * (100 - IFNULL(co.dscnt_rt, 0)) / 100) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_amt				
-				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
-				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_qy
-				, IFNULL((SELECT SUM(IFNULL(co.qy, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_qy				
-				, CASE WHEN c.prjct_ty_code ='BF' THEN c.rate 
-				WHEN c.prjct_ty_code = 'BD' THEN 0.0
-				ELSE (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1)
-				END AS new_rate				
-				, c.prjct_ty_code
 				FROM contract c
 				WHERE c.progrs_sttus_code IN ('P', 'S')
 				AND c.prjct_creat_at = 'Y'
@@ -222,14 +211,14 @@ def get_completed_va(params):
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
 				, c.spt_nm
-				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
+				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
 				, (SELECT SUM(IFNULL(p.dlamt * p.dlnt, 0)) FROM account p LEFT JOIN account s ON p.delng_sn=s.cnnc_sn WHERE s.delng_ty_code NOT IN ('14') AND p.delng_se_code IN ('P', 'P1') AND p.ddt_man BETWEEN '{0}' AND '{1}' AND p.cntrct_sn=c.cntrct_sn) AS p1
 				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS p3
 				, 0 AS s2
 				, (SELECT (IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) - IFNULL(SUM(p.dlnt*p.dlamt),0)) FROM account p LEFT OUTER JOIN account s ON s.cnnc_sn=p.delng_sn WHERE p.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND p.delng_se_code = 'P' AND p.cntrct_sn IS NOT NULL AND p.bcnc_sn = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
 				FROM contract c
 				LEFT OUTER JOIN member m
-				ON c.spt_chrg_sn=m.mber_sn
+				ON c.bsn_chrg_sn=m.mber_sn
 				WHERE 1=1
 				ORDER BY dept_nm, bcnc_nm, spt_nm
 """.format(first_day, last_day)
@@ -254,12 +243,12 @@ def get_completed_sales(params):
 				LEFT JOIN contract c
 				ON t.cntrct_sn = c.cntrct_sn
 				LEFT JOIN member m
-				ON c.spt_chrg_sn = m.mber_sn
+				ON c.bsn_chrg_sn = m.mber_sn
 				LEFT JOIN code co
 				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
 				LEFT JOIN bcnc b
 				ON t.pblicte_trget_sn = b.bcnc_sn
-				WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4')
+				WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3')
 				AND t.pblicte_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
 				AND bcnc_nm <> ''
 				GROUP BY dept_nm, bcnc_nm, spt_nm, pblicte_de)
@@ -397,7 +386,7 @@ def get_kisung_suju(params):
 				) sj
 				JOIN code cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
-				ORDER BY IF(sj.dept = 'ST', 0, 1), cd.code_ordr, sj.sort"""
+				ORDER BY cd.code_ordr, sj.sort"""
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
@@ -604,19 +593,9 @@ def get_projects_by_dept_member(params):
 				, cntrwk_bgnde
 				, cntrwk_endde
 				, prjct_ty_code
-				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
-				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_amt
-				, IFNULL((SELECT SUM(IFNULL(co.puchas_amount, 0) * IFNULL(co.qy, 0) * (100 - IFNULL(co.dscnt_rt, 0)) / 100) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_amt				
-				, IFNULL((SELECT SUM(IFNULL(s.dlnt, 0)) FROM account s LEFT JOIN account p ON s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
-				WHERE s.cntrct_sn = c.cntrct_sn AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1', '2')), 0) AS out_qy
-				, IFNULL((SELECT SUM(IFNULL(co.qy, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code = 'C'), 0) AS cnt_qy				
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_TY_CODE' AND code=c.prjct_ty_code) AS prjct_ty_nm
 				, CONCAT(DATE_FORMAT(cntrwk_bgnde, '%%Y-%%m'),'~',DATE_FORMAT(cntrwk_endde, '%%Y-%%m')) AS cntrwk_period
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
-				, CASE WHEN c.prjct_ty_code ='BF' THEN c.rate 
-				WHEN c.prjct_ty_code = 'BD' THEN 0.0
-				ELSE (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1)
-				END AS new_rate
 				, (SELECT SUM(IFNULL(co.qy*co.puchas_amount, 0)) FROM cost co WHERE co.cntrct_sn=c.cntrct_sn AND co.cntrct_execut_code='E' AND co.ct_se_code NOT IN ('61','62', '63','7', '8', '10')) AS exec_sum
 				, (SELECT SUM(CASE WHEN co.ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'P', %(s_pxcond_mt)s)
 				WHEN co.ct_se_code IN ('3') THEN GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, co.purchsofc_sn, 'S', %(s_pxcond_mt)s)
@@ -636,7 +615,7 @@ def get_projects_by_dept_member(params):
 				, (SELECT IFNULL(SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code = 'C', IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))),0) FROM cost cst WHERE cst.cntrct_sn = c.cntrct_sn AND cst.cntrct_execut_code <> 'B') AS cntrct_amount
 				, m.dept_code
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
-				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_ordr				
+				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_ordr
 				FROM contract c
 				LEFT JOIN member m
 				ON c.spt_chrg_sn=m.mber_sn
@@ -675,7 +654,7 @@ def get_goal_89(params):
     query = """SELECT dashboard_row, dashboard_column, dashboard_data
                 FROM dashboard
                 WHERE dashboard_date='{0}' 
-                AND dashboard_column IN ('rmT', 'valueT', 'rmS', 'valueS')
+                AND dashboard_column IN ('rmT', 'valueT')
                 AND dashboard_row < 0""".format(params['s_pxcond_m'])
 
     g.curs.execute(query)
@@ -692,7 +671,7 @@ def get_extra_goal_contract(params):
     query = """SELECT d.d_sn
                     , d.stdyy
                     , d.amt_ty_code
-                    , IF(d.dept_code IN ('EL','CT', 'MA'), 'ETC', d.dept_code) AS dept_code
+                    , d.dept_code
                     , 0 AS value
                     , d.cntrct_sn
                     , c.spt_nm AS cntrct_nm
@@ -719,7 +698,7 @@ def get_extra_goal_contract(params):
                          AND co.cntrct_sn = c.cntrct_sn
                         GROUP BY co.cntrct_sn
                     ), 0)
-                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3' ,'S4') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
+                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
                     END AS amount
                     FROM dashboard_month d
                     LEFT JOIN contract c ON d.cntrct_sn=c.cntrct_sn   
@@ -735,6 +714,7 @@ def get_extra_goal_contract(params):
     if "s_s_amt_ty_code" in params:
         query += " AND d.amt_ty_code=%s"
         data.append(params['s_s_amt_ty_code'])
+    print(query)
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
@@ -749,7 +729,7 @@ def get_goal_contract(params):
 
     query = """SELECT g.stdyy AS stdyy
                     , g.amt_ty_code AS amt_ty_code
-                    , IF(m.dept_code IN ('EL','CT', 'MA'), 'ETC', m.dept_code) AS dept_code
+                    , m.dept_code AS dept_code
                     , `{0}m` AS value
                     , g.cntrct_sn AS cntrct_sn
                     , c.spt_nm AS cntrct_nm
@@ -776,7 +756,7 @@ def get_goal_contract(params):
                          AND co.cntrct_sn = c.cntrct_sn
                         GROUP BY co.cntrct_sn
                     ), 0)
-                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
+                    WHEN '3' THEN IFNULL((SELECT IFNULL(SUM(IFNULL(t.splpc_am, 0) + IFNULL(vat, 0)), 0) FROM taxbil t LEFT JOIN bcnc b ON t.pblicte_trget_sn=b.bcnc_sn WHERE t.delng_se_code IN ('S', 'S1', 'S2', 'S3') AND t.pblicte_de BETWEEN '{3}' AND '{4}' AND b.bcnc_nm <> '' AND t.cntrct_sn=c.cntrct_sn), 0)
                     END AS amount
                     FROM goal g
                     LEFT JOIN member m
@@ -805,24 +785,22 @@ def set_dashboard_data(params):
 def get_logitech_report(params):
     y, m, d = params['s_pxcond_mt'].split("-")
     dtm = "{}-{}".format(y.zfill(4), m.zfill(2))
-    ##    				AND a.delng_se_code = 'S'
-    				# AND ac.delng_ty_code = '4'
     query = """SELECT c.cntrct_sn
     , c.spt_nm
     , m.dept_code
     , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
     , CONCAT(DATE_FORMAT(c.cntrwk_bgnde, '%%y.%%m.%%d'),'<br> ~ <br>',DATE_FORMAT(c.cntrwk_endde, '%%y.%%m.%%d')) AS cntrwk_period
-    , IFNULL((SELECT SUM(IFNULL(co.qy, 1)*IFNULL(co.puchas_amount, 0)) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(IFNULL(extra_sn, 0)) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_execut_code='E' AND co.ct_se_code IN (3, 4) AND co.cntrct_sn=c.cntrct_sn), 0) AS cntrct_amount
+    , IFNULL((SELECT SUM(IFNULL(co.qy, 1)*IFNULL(co.puchas_amount, 0)) FROM cost co WHERE co.cntrct_execut_code='E' AND co.ct_se_code IN (3, 4) AND co.cntrct_sn=c.cntrct_sn), 0) AS cntrct_amount
     , (SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p LEFT JOIN (SELECT * FROM account WHERE delng_se_code='S') s ON s.cnnc_sn=p.delng_sn WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn=3 AND DATE_FORMAT(s.ddt_man, '%%Y-%%m')='{0}') AS logi_now
     , (SELECT SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p LEFT JOIN (SELECT * FROM account WHERE delng_se_code='S') s ON s.cnnc_sn=p.delng_sn WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn=3 AND DATE_FORMAT(s.ddt_man, '%%Y-%%m') < '{0}') AS logi_before
-    , (SELECT SUM(IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p WHERE p.cntrct_sn=c.cntrct_sn AND p.delng_ty_code='4' AND DATE_FORMAT(p.ddt_man, '%%Y-%%m') = '{0}') AS other_now
-    , (SELECT SUM(IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p WHERE p.cntrct_sn=c.cntrct_sn AND p.delng_ty_code='4' AND DATE_FORMAT(p.ddt_man, '%%Y-%%m') < '{0}') AS other_before
+    , (SELECT SUM(IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn NOT IN (3, 74, 79, 100) AND DATE_FORMAT(p.ddt_man, '%%Y-%%m') = '{0}') AS other_now
+    , (SELECT SUM(IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0)) FROM (SELECT * FROM account WHERE delng_se_code='P') p WHERE p.cntrct_sn=c.cntrct_sn AND p.bcnc_sn NOT IN (3, 74, 79, 100) AND DATE_FORMAT(p.ddt_man, '%%Y-%%m') < '{0}') AS other_before
     , (SELECT code_ordr FROM code WHERE code=m.dept_code AND parnts_code='DEPT_CODE') AS ordr
     FROM contract c
     LEFT JOIN member m ON c.bsn_chrg_sn = m.mber_sn
     WHERE 1=1
     AND c.progrs_sttus_code <> 'C'
-    ORDER BY ordr, c.cntrwk_bgnde""".format(dtm)
+    ORDER BY ordr""".format(dtm)
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
@@ -835,19 +813,8 @@ def get_logitech_detail(params):
                     FROM (SELECT * FROM account WHERE delng_se_code='P' and cntrct_sn=%(s_cntrct_sn)s) p
                     LEFT OUTER JOIN (SELECT * FROM account WHERE delng_se_code='S' and cntrct_sn=%(s_cntrct_sn)s) s
                     ON s.cnnc_sn=p.delng_sn
-                    WHERE p.bcnc_sn = '3'
+                    WHERE p.bcnc_sn NOT IN (74, 79, 100)
                     ORDER BY ddt_man ASC"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
-    query = """SELECT 'other' AS p_type
-                    , 0 AS logitech_value
-                    , IFNULL(p.dlnt, 0)*IFNULL(p.dlamt, 0) AS other_value
-                    , p.ddt_man as ddt_man
-                    FROM (SELECT * FROM account WHERE delng_se_code='P' and cntrct_sn=%(s_cntrct_sn)s) p
-                    LEFT OUTER JOIN (SELECT * FROM account WHERE delng_se_code='S' and cntrct_sn=%(s_cntrct_sn)s) s
-                    ON s.cnnc_sn=p.delng_sn
-                    WHERE p.delng_ty_code='4'
-                    ORDER BY ddt_man ASC"""
-    g.curs.execute(query, params)
-    result += g.curs.fetchall()
     return result
