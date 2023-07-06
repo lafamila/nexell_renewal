@@ -2,6 +2,7 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import datetime
+from pytz import timezone
 import calendar
 
 def get_rcppay_datatable(params):
@@ -255,7 +256,7 @@ def insert_rcppay(params):
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
@@ -285,7 +286,7 @@ def update_rcppay(params):
         params["ctmmny_sn"] = 1
 
     if "update_dtm" not in params:
-        params["update_dtm"] = datetime.datetime.now()
+        params["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "updater_id" not in params:
         params["updater_id"] = session["member"]["member_id"]
@@ -313,7 +314,7 @@ def copy_rcppays(params):
                 row[key.lower()] = value
 
         row['rcppay_de'] = params['rcppay_de']
-        row["regist_dtm"] = datetime.datetime.now()
+        row["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
         row["register_id"] = session["member"]["member_id"]
         rows.append(row)
 
@@ -644,7 +645,7 @@ def insert_memo(params):
     if "regist_dtm" in params and params["regist_dtm"]:
         data["regist_dtm"] = params["regist_dtm"]
     else:
-        data["regist_dtm"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d %H:%M:%S")
 
     if "register_id" in params and params["register_id"]:
         data["register_id"] = params["register_id"]

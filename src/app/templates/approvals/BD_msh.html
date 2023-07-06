@@ -864,6 +864,37 @@
 
     {% else %}
     $.fn.afterLoadApproval = function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        $.ajax({
+            url : '/api/sales/get_model_list',
+            method : 'GET',
+    {% if init %}
+            data : {"s_cntrct_sn" : cntrct_sn},
+    {% else %}
+            data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+    {% endif %}
+            success: function(pData){
+                console.log(pData);
+                var pResult = pData.model;
+                var checked = $(document).find("input[name=msh_approval_type]:checked").val();
+                var idx = {"m" : 0, "s" : 0};
+                if(checked == 'H'){
+                    $.each(pResult, function(pIndex, pValue){
+                        var _type = ["61", "62"].includes(pValue.delng_ty_code) ? "m" : "s";
+                        var return_before = 0;
+                        if(pData.modelList.hasOwnProperty(pValue.delng_sn)){
+                            return_before = pData.modelList[pValue.delng_sn].count;
+                        }
+                        $(document).find(`tr[data-row="${_type}_house_tr"]`).eq(idx[_type]).find(`[data-column="return_before"]`).html(return_before.toFormat('NUMBER'));
+                        idx[_type]++;
+                    });
+                }
+
+                $(document).find("tbody[role='m_house_row']").trigger("change");
+                $(document).find("tbody[role='s_house_row']").trigger("change");
+
+            }
+        });
 
     }
     {% endif %}

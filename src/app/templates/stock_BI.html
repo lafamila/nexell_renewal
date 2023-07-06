@@ -380,7 +380,13 @@ getInventoryList = function()
             { data: 'instl_de' , className: 'text-center'},
             { data: 'wrhousng_de', className: 'text-center' },
             { data: 'invn_sttus_nm' , className: 'text-center'},
-            { data: 'rm' , className: 'text-center'},
+            { data: 'rm' , className: 'text-center btn-rm',
+				render: function(data, type, row, meta) {
+            		var html = '';
+            		html += `<span class="btn-inside" data-sn="${row.stock_sn}" data-rm="${row.rm}">${data}</span>`;
+            		return html;
+				}
+			},
 
             { data: 'stock_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
@@ -475,9 +481,31 @@ getInventoryList = function()
 					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
 				});
 			});
+
 		},
     });
 }
+$(document).on("dblclick", ".btn-rm", function(){
+	var item_sn = $(this).find(".btn-inside").data("sn");
+	var before = $(this).find(".btn-inside").data("rm");
+	var rm = prompt("비고를 입력하세요.", before);
+	if(rm != null){
+		console.log({"item_sn[]" : [item_sn], "rm" : rm});
+		$.ajax({
+			url: '/api/stock/ajax_insert_memo',
+			type: 'POST',
+			data: {"item_sn[]" : [item_sn], "rm" : rm},
+			success: function(pResult) {
+				if (pResult.status) {
+					$.datatable1.ajax.reload();
+				} else {
+					fnAlert(pResult.error, 'error');
+				}
+			}
+		});
+
+	}
+});
 </script>
 <script type="text/javascript">
 $(function () {

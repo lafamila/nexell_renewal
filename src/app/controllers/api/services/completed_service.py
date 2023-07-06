@@ -4,6 +4,7 @@ import random
 import string
 import urllib
 import datetime
+from pytz import timezone
 from app.helpers.class_helper import Map
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
@@ -582,7 +583,7 @@ def get_partner_status_list(params):
     return result
 
 def get_completed_bcnc_data(params):
-    params['s_pxcond_mt'] = datetime.datetime.now().strftime("%Y-%m")
+    params['s_pxcond_mt'] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
     query = """SELECT GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'P', %(s_pxcond_mt)s) AS completed_1
                     , GET_TAXBIL_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'C', %(s_pxcond_mt)s) AS completed_2
                     , GET_PXCOND_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'S', %(s_pxcond_mt)s) AS completed_3

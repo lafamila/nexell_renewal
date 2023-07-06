@@ -6,7 +6,7 @@ from .services import set_menu
 import json
 import os
 from datetime import datetime
-
+from pytz import timezone
 bp = Blueprint('api_member', __name__, url_prefix='/api/member')
 @bp.before_request
 def connect():

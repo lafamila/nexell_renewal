@@ -2,6 +2,7 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import datetime
+from pytz import timezone
 import calendar
 
 def get_taxbil_datatable(params):
@@ -156,7 +157,7 @@ def insert_taxbil(params):
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
@@ -186,7 +187,7 @@ def update_taxbil(params):
         params["ctmmny_sn"] = 1
 
     if "update_dtm" not in params:
-        params["update_dtm"] = datetime.datetime.now()
+        params["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "updater_id" not in params:
         params["updater_id"] = session["member"]["member_id"]

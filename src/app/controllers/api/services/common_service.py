@@ -4,6 +4,7 @@ from collections import OrderedDict
 import datetime
 import calendar
 import dateutil
+from pytz import timezone
 
 def get_groupCode_datatable(params):
     query = """SELECT ctmmny_sn
@@ -173,7 +174,7 @@ def insert_code(params):
     if "regist_dtm" in params and params["regist_dtm"]:
         data["regist_dtm"] = params["regist_dtm"]
     else:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     data['register_id'] = None
     if "register_id" in params and params["register_id"]:
@@ -225,7 +226,7 @@ def update_code(params):
     if "update_dtm" in params and params["update_dtm"]:
         data["update_dtm"] = params["update_dtm"]
     else:
-        data["update_dtm"] = datetime.datetime.now()
+        data["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     data['updater_id'] = None
     if "updater_id" in params and params["updater_id"]:
@@ -1072,7 +1073,7 @@ def insert_memo(params):
                 data[key] = params[key]
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
@@ -1180,7 +1181,7 @@ def insert_bcnc(params):
         data["use_at"] = 'Y'
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]

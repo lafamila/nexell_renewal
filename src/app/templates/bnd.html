@@ -599,6 +599,7 @@ tbody .btnUpdate, tbody .btn{
 								<select class="select2" name="s_rate" style="width:100%;">
 									<option value="0" ${rate == 0 ? "selected" : ""}>0%</option>
 									<option value="90" ${rate == 90 ? "selected" : ""}>90%</option>
+									<option value="95" ${rate == 95 ? "selected" : ""}>95%</option>
 									<option value="100" ${rate == 100 ? "selected" : ""}>100%</option>
 								</select>
 							</td>`;
@@ -721,9 +722,7 @@ tbody .btnUpdate, tbody .btn{
 				});
             	if(rcppay.hasOwnProperty(cntrct_sn)){
 					var remain = Math.round((rcppay[cntrct_sn].M - mTotal)/1000);
-            		if(mTotal > 0) {
-						$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain.toFormat('NUMBER'));
-					}
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain.toFormat('NUMBER'));
             		if(remain == 0){
             			// $(document).find(`.row${cntrct_sn}`).find(".m-date").addClass("colorY");
             			// $(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
@@ -731,9 +730,7 @@ tbody .btnUpdate, tbody .btn{
             			// $(document).find(`.row${cntrct_sn}`).find(".m-next-date").addClass("colorY");
 					}
 					var remain = Math.round((rcppay[cntrct_sn].S - sTotal)/1000);
-            		if(sTotal > 0) {
-						$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain.toFormat('NUMBER'));
-					}
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain.toFormat('NUMBER'));
             		if(remain == 0){
             			// $(document).find(`.row${cntrct_sn}`).find(".s-date").addClass("colorY");
             			// $(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
@@ -741,9 +738,7 @@ tbody .btnUpdate, tbody .btn{
             			// $(document).find(`.row${cntrct_sn}`).find(".s-next-date").addClass("colorY");
 					}
 					var remain = Math.round((rcppay[cntrct_sn].T - tTotal)/1000);
-            		if(tTotal > 0) {
-						$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain.toFormat('NUMBER'));
-					}
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain.toFormat('NUMBER'));
             		if(remain == 0){
             			// $(document).find(`.row${cntrct_sn}`).find(".t-date").addClass("colorY");
             			// $(document).find(`.row${cntrct_sn}`).find(".t-t-date").addClass("colorY");
@@ -752,7 +747,19 @@ tbody .btnUpdate, tbody .btn{
 				}
 
 			});
-			$.each(pResult.data, function(pIndex, pValue){
+            var done_keys = Object.keys(pResult.taxbill);
+			$.each(rcppay, function(cntrct_sn, pRow){
+				if(!done_keys.includes(cntrct_sn)){
+					var remain = Math.round((pRow.M)/1000);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain.toFormat('NUMBER'));
+					var remain = Math.round((pRow.S)/1000);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain.toFormat('NUMBER'));
+					var remain = Math.round((pRow.T)/1000);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain.toFormat('NUMBER'));
+
+				}
+			});
+            $.each(pResult.data, function(pIndex, pValue){
 				var cntrct_sn = pValue.cntrct_sn;
 				if(!pResult.taxbill.hasOwnProperty(cntrct_sn) || pResult.taxbill[cntrct_sn].T.length == 0){
 					var remain = Math.round(pValue.cntrct_amount / 1000);

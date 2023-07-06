@@ -639,12 +639,15 @@
             if(!isNaN(parseInt(pValue.home_count))){
                 for(let i=0;i<7;i++){
                     if(parseInt(pValue.home_count) <= 500+i*250){
-                        window.home_count = 500+i*250;
+                        window.home_cnt = 500+i*250;
                         break;
                     }
                 }
+                if(!window.home_cnt){
+                    window.home_cnt = 2000;
+                }
                 $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
-                    if($(pTag).html() == window.home_count.toFormat('NUMBER')+"세대"){
+                    if($(pTag).html() == window.home_cnt.toFormat('NUMBER')+"세대"){
                         $(pTag).addClass("colorY");
                     }
                 });
@@ -659,9 +662,9 @@
             }
             var home_region = $("#home_region").val();
             $(document).find(`[data-region="${home_region}"][data-column="분양"]`).removeClass("colorY");
-            $(document).find(`[data-region="${home_region}"][data-rate="${$(this).data("before")}"][data-column="${window.home_count}"]`).removeClass("colorY");
+            $(document).find(`[data-region="${home_region}"][data-rate="${$(this).data("before")}"][data-column="${window.home_cnt}"]`).removeClass("colorY");
             $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="분양"]`).addClass("colorY");
-            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${window.home_count}"]`);
+            var target = $(document).find(`[data-region="${home_region}"][data-rate="${option_rate}"][data-column="${window.home_cnt}"]`);
             $(target).addClass("colorY");
             var done = false;
             if(target.length > 0){
@@ -739,6 +742,9 @@
                 home_count_col = 500+i*250;
                 break;
             }
+        }
+        if(home_count_col == ''){
+            home_count_col = 2000;
         }
         $(document).find("tr[data-row='option_header'] td").each(function(pIndex, pTag){
             if($(pTag).html() == home_count_col.toFormat('NUMBER')+"세대"){

@@ -1,4 +1,7 @@
 <style>
+body.smart-style-6 .table>tbody>tr>td.hasinput, body.smart-style-6 .table>tbody>tr>th.hasinput, body.smart-style-6 .table>tfoot>tr>td.hasinput, body.smart-style-6 .table>tfoot>tr>th.hasinput, body.smart-style-6 .table>thead>tr>td.hasinput, body.smart-style-6 .table>thead>tr>th.hasinput{
+	padding:3px!important;
+}
   .colorGray{
     background-color:#eee!important;
   }
@@ -136,6 +139,7 @@
       <col width="100"/>
       <col width="75"/>
       <col width="150"/>
+      <col width="50"/>
     </colgroup>
     <thead>
       <tr>
@@ -143,6 +147,7 @@
         <th class="colorGray text-center bold middle" rowspan="2">활동 내역</th>
         <th class="colorGray text-center bold" colspan="3">옵션 현황</th>
         <th class="colorGray text-center bold middle" rowspan="2">비고</th>
+        <th class="colorGray text-center bold middle" rowspan="2">-</th>
       </tr>
       <tr>
         <th class="colorGray text-center bold">방문</th>
@@ -169,6 +174,9 @@
         <td class="hasinput" rowspan="2">
           <textarea class="table-textarea" name="rm[]"></textarea>
         </td>
+        <td class="hasinput" rowspan="2">
+          <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+        </td>
       </tr>
       <tr data-row="schedule_tr">
         <td class="hasinput">
@@ -182,7 +190,7 @@
         <th class="colorGray text-right" data-column="total_cnt1"></th>
         <th class="colorGray text-right" data-column="total_cnt2" rowspan="2"></th>
         <th class="colorGray text-center" data-column="total_rate" rowspan="2"></th>
-        <th class="colorGray" rowspan="2"></th>
+        <th class="colorGray" rowspan="2" colspan="2"></th>
       </tr>
       <tr>
         <th class="colorGray text-center bold middle" colspan="2">총 세대 수</th>
@@ -395,14 +403,14 @@
 
     });
     $(document).on("change", "tbody[role='cost_tbody']", function(){
-        var card_sleep = parseInt($(this).find(`[name='card_sleep']`).val().replaceAll("," ,"")); if(isNaN(card_sleep)) card_sleep=0;
-        var money_sleep = parseInt($(this).find(`[name='money_sleep']`).val().replaceAll("," ,"")); if(isNaN(money_sleep)) money_sleep=0;
-        var card_etc = parseInt($(this).find(`[name='card_etc']`).val().replaceAll("," ,"")); if(isNaN(card_etc)) card_etc=0;
-        var money_etc = parseInt($(this).find(`[name='money_etc']`).val().replaceAll("," ,"")); if(isNaN(money_etc)) money_etc=0;
-        var card_transfer = parseInt($(this).find(`[name='card_transfer']`).val().replaceAll("," ,"")); if(isNaN(card_transfer)) card_transfer=0;
-        var money_transfer = parseInt($(this).find(`[name='money_transfer']`).val().replaceAll("," ,"")); if(isNaN(money_transfer)) money_transfer=0;
-        var card_eat = parseInt($(this).find(`[name='card_eat']`).val().replaceAll("," ,"")); if(isNaN(card_eat)) card_eat=0;
-        var money_eat = parseInt($(this).find(`[name='money_eat']`).val().replaceAll("," ,"")); if(isNaN(money_eat)) money_eat=0;
+        var card_sleep = parseInt($(this).find(`[name='card_sleep']`).val().trim().replaceAll("," ,"")); if(isNaN(card_sleep)) card_sleep=0;
+        var money_sleep = parseInt($(this).find(`[name='money_sleep']`).val().trim().replaceAll("," ,"")); if(isNaN(money_sleep)) money_sleep=0;
+        var card_etc = parseInt($(this).find(`[name='card_etc']`).val().trim().replaceAll("," ,"")); if(isNaN(card_etc)) card_etc=0;
+        var money_etc = parseInt($(this).find(`[name='money_etc']`).val().trim().replaceAll("," ,"")); if(isNaN(money_etc)) money_etc=0;
+        var card_transfer = parseInt($(this).find(`[name='card_transfer']`).val().trim().replaceAll("," ,"")); if(isNaN(card_transfer)) card_transfer=0;
+        var money_transfer = parseInt($(this).find(`[name='money_transfer']`).val().trim().replaceAll("," ,"")); if(isNaN(money_transfer)) money_transfer=0;
+        var card_eat = parseInt($(this).find(`[name='card_eat']`).val().trim().replaceAll("," ,"")); if(isNaN(card_eat)) card_eat=0;
+        var money_eat = parseInt($(this).find(`[name='money_eat']`).val().trim().replaceAll("," ,"")); if(isNaN(money_eat)) money_eat=0;
 
         $(this).find(`[data-column='total_sleep']`).html((card_sleep+money_sleep).toFormat('NUMBER'));
         $(this).find(`[data-column='total_etc']`).html((card_etc+money_etc).toFormat('NUMBER'));
@@ -483,10 +491,21 @@
         }
         oReq.send(form);
     }
-
+    {% if init %}
     $(document).on("click", "#addRow", function(){
         cloneRow("schedule_tr", 1);
     });
+    $(document).on("click", ".removeRow", function(){
+        if($(document).find(`tbody[role="schedule_row"]`).find(`tr[data-row="schedule_tr"]`).length == 2){
+          alert("더이상 삭제할 수 없습니다.");
+          return false;
+        }
+        $(this).closest(`tr[data-row="schedule_tr"]`).next().remove();
+        $(this).closest(`tr[data-row="schedule_tr"]`).remove();
+        $(document).find(`tbody[role="schedule_row"]`).trigger("change");
+
+    });
+    {% endif %}
     window.projects = {};
     $(document).ready(function(){
         var input = document.querySelector('input[data-type="number"]');

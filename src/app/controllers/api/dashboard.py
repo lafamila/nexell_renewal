@@ -9,7 +9,7 @@ from .services import set_menu
 import json
 import os
 from datetime import datetime
-
+from pytz import timezone
 bp = Blueprint('api_dashboard', __name__, url_prefix='/api/dashboard')
 @bp.before_request
 def connect():
@@ -30,7 +30,7 @@ def ajax_get_completed_sales():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         result['data'] = db.get_completed_sales(params)
         return jsonify(result)
@@ -43,7 +43,7 @@ def ajax_get_completed_suju():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         result['data'] = db.get_completed_suju(params)
         return jsonify(result)
@@ -56,7 +56,7 @@ def ajax_get_completed_suju_b():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         result['data'] = db.get_completed_suju_b(params)
         return jsonify(result)
@@ -85,7 +85,7 @@ def ajax_get_completed_summary():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         result['contractStatusList'] = cp.get_completed_summary(params)
         result['s_pxcond_mt'] = params['s_pxcond_mt']
@@ -141,7 +141,7 @@ def ajax_get_month_report():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         result['contractStatusList'] = cp.get_completed_summary(params)
         params["s_stdyy"], params["s_month"], _ = map(int, params['s_pxcond_mt'].split("-"))
@@ -309,7 +309,7 @@ def ajax_set_extra_goal_contract():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         params["s_stdyy"], params["s_month"], _ = map(int, params['s_pxcond_mt'].split("-"))
         params["s_pxcond_m"] = "-".join(params['s_pxcond_mt'].split("-")[:2])
         cntrct_sns = dict()
@@ -328,7 +328,7 @@ def ajax_get_extra_goal_contract():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         params["s_stdyy"], params["s_month"], _ = map(int, params['s_pxcond_mt'].split("-"))
         params["s_pxcond_m"] = "-".join(params['s_pxcond_mt'].split("-")[:2])
         result = db.get_extra_goal_contract(params)
@@ -363,7 +363,7 @@ def ajax_get_completed_va():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         result['data'] = db.get_completed_va(params)
         return jsonify(result)
@@ -378,7 +378,7 @@ def ajax_get_logit():
     try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-%m-%d")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         result = dict()
         logitechs = db.get_logitech_report(params)
         result['data'] = list()

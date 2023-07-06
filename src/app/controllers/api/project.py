@@ -11,7 +11,7 @@ from .services import set_menu
 import json
 import os
 from datetime import datetime
-
+from pytz import timezone
 bp = Blueprint('api_project', __name__, url_prefix='/api/project')
 
 @bp.before_request
@@ -64,7 +64,6 @@ def ajax_delete_contract():
 def ajax_update_contract():
     try:
         params = request.form.to_dict()
-        print(params)
         prj.update_contract(params)
         return jsonify({"status" : True, "message" : "성공적으로 수정되었습니다."})
     except Exception as e:
@@ -303,7 +302,7 @@ def ajax_get_reportBD():
         result['s7AccountList'] = prj.get_s7_account_report_list(params)
 
         #TODO : modelList api
-        result['sModelCostList'] = sales.get_model_list(params)
+        result['sModelCostList'] = sales.get_model_list(params, "report")
         result['modelList'] = dict()
         for d in result['sModelCostList']:
             stocks = st.get_stock_by_account(d['delng_sn'])
@@ -391,7 +390,7 @@ def ajax_get_reportBF():
         result['sOptionCostList'] = prj.get_option_cost_list(params)
 
         result['s6AccountList'] = prj.get_s6_account_report_list(params)
-        result['sModelCostList'] = sales.get_model_list(params)
+        result['sModelCostList'] = sales.get_model_list(params, "report")
         result['modelList'] = dict()
         for d in result['sModelCostList']:
             stocks = st.get_stock_by_account(d['delng_sn'])
@@ -671,7 +670,7 @@ def insert_BF_c_project():
     try:
         params = request.get_json()
         prj.delete_option_bf_project(params)
-        params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+        params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         prj.insert_b_option_bf_project(params)
 
         prj.insert_BF_c_project(params)
@@ -684,7 +683,7 @@ def insert_BF_c_project():
 def update_BF_c_project():
     try:
         params = request.get_json()
-        params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+        params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         prj.insert_b_option_bf_project(params)
         prj.update_BF_c_project(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
@@ -697,7 +696,7 @@ def insert_BD_c_project():
     try:
         params = request.get_json()
         prj.delete_option_bd_project(params)
-        params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+        params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
         prj.insert_b_option_bd_project(params)
         prj.insert_bd_expect_equipment(params)
         prj.insert_BF_c_project(params)
@@ -711,7 +710,7 @@ def insert_BD_c_project():
 def update_BD_c_project():
     # try:
     params = request.get_json()
-    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
     prj.insert_b_option_bd_project(params)
     prj.insert_bd_expect_equipment(params)
     prj.update_BF_c_project(params)

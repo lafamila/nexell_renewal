@@ -124,9 +124,9 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_prdlst_se_code" name="s_prdlst_se_code">
 												<option value="">[전체]</option>
-												{prdlst_se_code_list}
-												<option value="{value}">{value}.{label}</option>
-												{/prdlst_se_code_list}
+												{% for code in prdlst_se_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput">
@@ -138,9 +138,9 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_bcnc_sn" name="s_bcnc_sn">
 												<option value="">[전체]</option>
-												{bcnc_list}
+							                    {% for code in bcnc_list %}
 												<option value="{value}">{value}.{label}</option>
-												{/bcnc_list}
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput text-right">
@@ -152,7 +152,7 @@ tbody .btnUpdate, tbody .btnPrint{
 									<!-- 헤더 -->
 									<tr>
 										<th>No.</th>
-										<th>최근주문일자</th>
+										<th>출고일</th>
 										<th>주문요청일</th>
 										<th>현장명</th>
 										<th>매입품목</th>
@@ -292,9 +292,21 @@ getSalesApprovalList = function()
             { data: 'spt_nm' },
             { data: 'prdlst_se_nm' },
             { data: 'model_no' },
-            { data: 'dlnt' },
-            { data: 'before_dlnt' },
-            { data: 'pamt' },
+            { data: 'dlnt', className: 'text-center',
+				render: function(data, type, row, meta) {
+            		return data.toFormat('NUMBER');
+				}
+			},
+            { data: 'before_dlnt', className: 'text-center',
+				render: function(data, type, row, meta) {
+            		return data.toFormat('NUMBER');
+				}
+			},
+            { data: 'pamt', className: 'text-right',
+				render: function(data, type, row, meta) {
+            		return data.toFormat('NUMBER');
+				}
+			},
             { data: 'bcnc_nm' },
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {

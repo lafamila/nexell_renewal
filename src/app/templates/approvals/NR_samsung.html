@@ -273,13 +273,19 @@
         $.ajax({
                 url : '/api/project/get_costs_bd',
                 method : 'GET',
+        {% if init %}
                 data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
                 success: function(pResult){
                     console.log(pResult);
+                    {% if init %}
                     if(pResult.samsungList.length == 0){
                         alert("장비현황 및 업체선정 또는 공사변경을 통한 장비 리스트 등록이 필요합니다.");
                         location.reload();
                     }
+                    {% endif %}
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
@@ -392,10 +398,12 @@
             var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
             var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            {% if init %}
             if(dlnt + sdlnt > cnt_dlnt){
                 dlnt = cnt_dlnt - sdlnt;
                 $(pRow).find("[name='dlnt[]']").val(dlnt.toFormat('NUMBER'));
             }
+            {% endif %}
             var samount_dlnt = samount / cnt_dlnt;
             var now_samount = samount_dlnt * dlnt;
             var amount = dlnt*dlamt;

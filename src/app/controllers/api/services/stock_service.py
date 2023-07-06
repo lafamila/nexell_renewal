@@ -395,7 +395,10 @@ def get_stock_log(params):
 				(SELECT * FROM account WHERE delng_se_code='P') p ON l.delng_sn=p.delng_sn
 				LEFT OUTER JOIN
 				(SELECT * FROM account WHERE delng_se_code='S') s ON s.cnnc_sn=p.delng_sn
-				WHERE l.stock_sn=%(s_stock_sn)s    
+				WHERE l.stock_sn=%(s_stock_sn)s    """
+    if "approval_sn" in params:
+        query += """ AND l.reg_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+    query += """				
 				ORDER BY l.ddt_man ASC, l.log_sn ASC
     """
     g.curs.execute(query, params)

@@ -18,6 +18,7 @@
 			<div class="modal-body report" id="exportExcelBF">
 
 <style>
+
 div.report .sub-title {
     padding-top: 4px!important;
 }
@@ -46,7 +47,8 @@ div.report table:not(:last-child){
 	border-bottom: 0px solid #000!important;
 }
 div.report table:not(:first-child){
-	border-top: 2px solid #000!important;
+	/* BETWEEN TABLE, 2px */
+	border-top: 0px solid #000!important;
 }
 div.report table tbody:first-child{
 	border-top:0px solid #000!important;
@@ -488,7 +490,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">삼성전자 수주총액</th>
 			<th class="colorP">수수료율(%)</th>
 			<th class="colorP">① 당사수주(수수료) 총액</th>
-			<th class="colorP">② M,S/H 매입금액</th>
+			<th class="colorP">② M,S/H 설치·회수</th>
 			<th class="colorP">③ M,S/H 추가DC금액</th>
 			<th class="colorP">④ M,S/H 판매금액</th>
 			<th class="colorP">⑤ 옵션행사비</th>
@@ -650,7 +652,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="15">② M,S/H 매입 현황 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="15">② M,S/H 설치·회수 (관리) - VAT포함</th>
 		</tr>
 		</tr>
 	</tbody>
@@ -708,7 +710,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<th class="colorG text-center"></th>
 		<th class="colorG text-center"></th>
 		<th class="colorP text-right" data-column="total_amount"></th>
-		<th class="colorP text-right" data-column="total_dc"></th>
+		<th class="colorG text-right" data-column="total_dc"></th>
 		<th class="colorG text-right" data-column="total_ramount"></th>
 		<th class="colorG text-center"></th>
 		<th class="colorG text-center"></th>
@@ -757,7 +759,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
+			<th class="colorP text-number"></th>
 			<th class="colorG text-number"></th>
 		</tr>
 	</tbody>
@@ -769,7 +771,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
 			<th class="colorG text-number"></th>
-			<th class="colorG text-number"></th>
+			<th class="colorP text-number"></th>
 			<th class="colorG text-number"></th>
 		</tr>
 	</tbody>
@@ -1470,16 +1472,24 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
                 $('#popReportBF').find('#report_plan tbody[role=exec] td:eq(5)').html(p_sell_amt_total.toString().toFormat('NUMBER'));
 				eCostTotal = p_add_dc_amt_total;
+
+				real_amt_total = isNaN(real_amt_total) ? 0 : real_amt_total;
+				p_real_dsp_amt_total = isNaN(p_real_dsp_amt_total) ? 0 : p_real_dsp_amt_total;
+				p_option_amt_total = isNaN(p_option_amt_total) ? 0 : p_option_amt_total;
+				p_etc_amt_total = isNaN(p_etc_amt_total) ? 0 : p_etc_amt_total;
+				p_sell_amt_total = isNaN(p_sell_amt_total) ? 0 : p_sell_amt_total;
+
 				var tmp = real_amt_total - p_real_dsp_amt_total - p_option_amt_total - p_etc_amt_total + p_sell_amt_total;
 //				var va = (tmp/p_sum_total)*100;
 				var va = (tmp/cCostTotal)*100;
+
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(3)').html(p_dsp_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(4)').html(p_add_dc_amt_total.toString().toFormat('NUMBER'));
 //				$('#popReportBF').find('#report_plan tbody td:eq(6)').html(p_real_dsp_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(6)').html(p_option_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(7)').html(p_etc_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(9)').html(tmp.toString().toFormat('NUMBER'));
-				$('#popReportBF').find('#report_plan tbody[role=exec]  td:eq(10)').html(va.toFixed(1)+'%');
+				$('#popReportBF').find('#report_plan tbody[role=exec]  td:eq(10)').html((va == Infinity)? "-" : (va.toFixed(1)+'%'));
 				/* ********************************************************* */
 
                 				/* 계약조건 */
@@ -1858,7 +1868,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_ramount']").html((total_ramount[0] + total_ramount[1]).toFormat('NUMBER'));
 				$('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_return']").html((total_return[0] + total_return[1]).toFormat('NUMBER'));
 				$('#popReportBF').find('#report_exec tbody[role=body] tr td:eq(2)').html((total_amount[0]+total_amount[1]).toFormat('NUMBER'));
-				$('#popReportBF').find('#report_exec tbody[role=body] tr td:eq(3)').html((total_dc[0]+total_dc[1]).toFormat('NUMBER'));
 
 				// $('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
 
@@ -1866,6 +1875,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* 모델(샘플)하우스 추가 DC 현황 (관리) */
 				/* ********************************************************* */
 				var html = '';
+				var dc_total = 0;
 				var sTaxbilList = pResult.s2TaxbilList.M;
 				var splpc_am_total = 0, vat_total = 0, sum_total = 0;
 				$.each(sTaxbilList, function(pIndex, pValue) {
@@ -1928,6 +1938,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						html += '</tr>';
 					}
 				}
+				dc_total += amount_total;
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="m_rcppay"]').html(html);
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="m_rcppay_foot"] th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="m_rcppay_foot"] th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
@@ -1969,7 +1980,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var html = '';
 				var iRcppayList = pResult.i2RcppayList.S;
 				var iRcppay_sub = a_last_dlamt_total[1], iRcppay_rate = 0.0;
-				var amount_total = 0, sub_total = 0, rate_total = 0.0;
+				var amount_total = 0, sub_total = iRcppay_sub, rate_total = 0.0;
 				$.each(iRcppayList, function(pIndex, pValue) {
 					iRcppay_sub -= parseInt(pValue.amount);
 					iRcppay_rate = ((a_last_dlamt_total[1]-iRcppay_sub)/a_last_dlamt_total[1])*100;
@@ -1996,12 +2007,14 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						html += '</tr>';
 					}
 				}
+				dc_total += amount_total;
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="s_rcppay"]').html(html);
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(3)').html(rate_total.toFixed(1)+'%');
 
 				// $('#popReportBF').find('#report_exec tbody[role=body] td:eq(3)').html(amount_total.toString().toFormat('NUMBER'));
+				$('#popReportBF').find('#report_exec tbody[role=body] tr td:eq(3)').html(dc_total.toFormat('NUMBER'));
 
 				/* ********************************************************* */
 				/* M/SH, 옵션 */
@@ -2259,7 +2272,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var vaTotal = (totData1 + execAmt3 + execAmt4)-(execAmt2 + execAmt5 + execAmt6);
 				var vaRate = (vaTotal/totData1)*100;
 				$('#popReportBF').find('#report_exec tbody[role=body] td:eq(7)').html(vaTotal.toString().toFormat('NUMBER'));
-				$('#popReportBF').find('#report_exec tbody[role=body] td:eq(8)').html(vaRate.toFixed(1)+'%');
+				$('#popReportBF').find('#report_exec tbody[role=body] td:eq(8)').html(vaRate == Infinity ? '-' : (vaRate.toFixed(1)+'%'));
 				/* ********************************************************* */
 
 				/* 특이사항 */

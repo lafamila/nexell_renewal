@@ -9,6 +9,8 @@ import json
 import os
 from datetime import datetime
 
+from pytz import timezone
+
 bp = Blueprint('api_tax', __name__, url_prefix='/api/tax')
 @bp.before_request
 def connect():

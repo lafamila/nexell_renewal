@@ -11,7 +11,7 @@ import json
 import os
 from datetime import datetime
 from dateutil import relativedelta
-
+from pytz import timezone
 bp = Blueprint('api_sales', __name__, url_prefix='/api/sales')
 
 @bp.before_request
@@ -492,7 +492,7 @@ def ajax_get_sales_expect_report():
             if key == -1:
                 continue
             results = total_long_result[key]
-            func = lambda x: x['expect_de'] != '0000-00' and datetime.strptime(datetime.now().strftime("%Y-%m-01"), "%Y-%m-%d") > datetime.strptime(x['expect_de'], "%Y-%m")
+            func = lambda x: x['expect_de'] != '0000-00' and datetime.strptime(datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d") > datetime.strptime(x['expect_de'], "%Y-%m")
             finals += filter(func, results)
 
         finals_data = dict()
@@ -523,7 +523,7 @@ def equip_to_account():
         row['cntrct_sn'] = equipment['cntrct_sn']
         row['prjct_sn'] = prjct['prjct_sn']
         row['ctmmny_sn'] = 1
-        row['regist_dtm'] = datetime.now()
+        row['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
         row['register_id'] = session['member']['member_id']
         row['delng_se_code'] = 'P'
         row['ddt_man'] = params['dlivy_de']
@@ -576,9 +576,9 @@ def insert_BF_ms_equip():
                     for _ in range(int(dlnt)):
                         s_params = {"use_type" : "", "prduct_se_code" : "2", "prduct_ty_code" : prduct_ty_code, "model_no" : model_no}
                         stock_sn = st.insert_stock(s_params, 0)
-                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
                 else:
-                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
         else:
             sales.insert_ms_BF_equip(params)
@@ -616,9 +616,9 @@ def insert_BD_ms_equip():
                     for _ in range(int(dlnt)):
                         s_params = {"use_type" : "", "prduct_se_code" : "2", "prduct_ty_code" : prduct_ty_code, "model_no" : model_no}
                         stock_sn = st.insert_stock(s_params, 0)
-                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
                 else:
-                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
         else:
             sales.insert_ms_BF_equip(params)
@@ -647,9 +647,9 @@ def insert_ms_equip():
                     for _ in range(int(dlnt)):
                         s_params = {"use_type" : "", "prduct_se_code" : "1", "prduct_ty_code" : prduct_ty_code, "model_no" : model_no}
                         stock_sn = st.insert_stock(s_params, 0)
-                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
                 else:
-                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now())
+                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
         else:
             sales.insert_ms_equip(params)
@@ -675,7 +675,10 @@ def get_model_list():
         for d in result['model']:
             stocks = st.get_stock_by_account(d['delng_sn'])
             for stock in stocks:
-                detail = st.get_stock_log({"s_stock_sn" : stock['stock_sn']})
+                pParams = {"s_stock_sn" : stock['stock_sn']}
+                if "approval_sn" in params and params["approval_sn"]:
+                    pParams["approval_sn"] = params["approval_sn"]
+                detail = st.get_stock_log(pParams)
                 candidate = False
                 candidateDate = None
                 candidatePlace = None

@@ -619,9 +619,7 @@ $(function(){
 	if (start == '') {
 		var end = $('.datepicker-e').val();
 		var endDate = new Date(end);
-        endDate.setFullYear(endDate.getFullYear()-1);
-        endDate.setMonth(0);
-        endDate.setDate(1);
+		endDate.setDate(endDate.getDate() - (365*maxYears));
 
 //		endDate.setDate(endDate.getDate() - (365*maxYears));
 		$('.datepicker-s').datepicker('setDate', endDate);
@@ -1047,6 +1045,13 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 												<input type="text" class="form-control" id="surlus_rm" name="surlus_rm">
 											</td>
 										</tr>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="8">특이사항</th></tr>
+										<tr>
+											<td class="hasinput" colspan="8">
+												<textarea class="form-control" style="height:73px;resize:none;" id="partclr_matter" name="partclr_matter"></textarea>
+											</td>
+										</tr>
+
 									</tbody>
 								</table>
 							</form>

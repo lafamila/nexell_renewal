@@ -1,3 +1,12 @@
+<style>
+  .table-textarea{
+    width:100%;
+    height:100%;
+    border:none;
+    resize:none;
+  }
+
+</style>
 <table class="table table-bordered table-form">
     <colgroup>
       <col width="20%">
@@ -54,7 +63,16 @@
             </td>
         </tr>
     </tbody>
+    <tbody>
+        <tr>
+            <th class="color-contract text-center">상세내역</th>
+            <td class="hasinput">
+                <textarea class="table-textarea middle" name="detail"></textarea>
+            </td>
+        </tr>
+    </tbody>
 </table>
+
 <script>
     fnValidate = function(){
                     var result = true;
@@ -148,11 +166,7 @@ $(function() {
 	if (start == '') {
 		var end = $('.datepicker-e').val();
 		var endDate = new Date(end);
-        endDate.setFullYear(endDate.getFullYear()-1);
-        endDate.setMonth(0);
-        endDate.setDate(1);
-
-//		endDate.setDate(endDate.getDate() - (365*maxYears));
+        endDate.setDate(endDate.getDate() - 1);
 		$('.datepicker-s').datepicker('setDate', endDate);
 	}
 

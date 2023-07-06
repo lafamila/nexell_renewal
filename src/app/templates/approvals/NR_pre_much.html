@@ -115,7 +115,7 @@
             <th class="color-contract text-center">VA율</th>
         </tr>
     </tbody>
-    <tbody>
+    <tbody role="ct_se_code_contract">
         <tr>
             <td class="text-right" data-type='number' name="C_1"></td>
             <td class="text-right" data-type='number' name="C_5"></td>
@@ -191,8 +191,9 @@
 		</tr>
 	</tbody>
 </table>
+<!-- ---------------------------------------------------------------------- -->
 <table class="table table-bordered table-form sub-table" id="rptTable9">
-	<colgroup>
+    <colgroup>
 		<col width="85">
 		<col width="100">
 		<col width="214">
@@ -205,6 +206,30 @@
 	<thead>
 		<tr>
 			<th class="sub-title colorN text-center" colspan="8"><span>③ 설치비 산출 및 지급내역</span><span class="text-right">VAT포함</span></th>
+		</tr>
+	</thead>
+	<tbody role="body"></tbody>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8"><span>일용직</span></th>
+		</tr>
+	</tbody>
+</table>
+<!-- ---------------------------------------------------------------------- -->
+<table class="table table-bordered table-form sub-table" id="rptTable9_indirect">
+	<colgroup>
+		<col width="85">
+		<col width="100">
+		<col width="214">
+		<col width="214">
+		<col width="214">
+		<col width="185">
+		<col width="*">
+		<col width="*">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8"><span>④간접비</span></th>
 		</tr>
 	</thead>
 	<tbody role="body"></tbody>
@@ -329,34 +354,39 @@
                 html += '</tr> ';
 
                 var eCost5 = pResult.e5CostList[0];
+                var eCost5Total = 0;
+                $.each(pResult.e5CostList, function(pIndex, pV){
+                    eCost5Total += Math.round(pV.amount*pV.qy);
+                });
                 if (eCost5) {
-                    var eCost5_amt = eCost5.amount;
-                    var eCost5_amt_total = eCost5_amt * eCost5.qy;
-                    var eCost5_vat_total = Math.round(eCost5_amt_total / 10);
-                    var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
-                    html += '<tr> ';
-                    html += '	<td class="text-center" id="eCost5_qy" colspan="2">'+eCost5.model_no+'</td> ';
-                    html += '	<td class="text-number" id="eCost5_qy">'+eCost5.qy.toString().toFormat('NUMBER')+'</td> ';
-                    html += '	<td class="text-number" id="eCost5_amt">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
-                    html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
-                    html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
-                    html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
-                    html += '	<td class="text-number" rowspan="'+pResult.e5CostList.length+'">'+Math.round(eCost5.total*1.1).toString().toFormat('NUMBER')+'</td> ';
-                    html += '</tr> ';
+						var eCost5_amt = eCost5.amount / 1.1;
+						var eCost5_amt_total = eCost5_amt * eCost5.qy;
+						var eCost5_vat_total = Math.round(eCost5.amount / 11);
+						var eCost5_sum = eCost5.amount;
+						console.log('eCost5', eCost5, eCost5_amt);
+						html += '<tr> ';
+						html += '	<td class="text-center" id="eCost5_qy" colspan="2">'+eCost5.model_no+'</td> ';
+						html += '	<td class="text-number" id="eCost5_qy">'+eCost5.qy.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_amt">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" rowspan="'+pResult.e5CostList.length+'">'+eCost5Total.toString().toFormat('NUMBER')+'</td> ';
+						html += '</tr> ';
                     $.each(pResult.e5CostList, function(pIndex, pValue){
                         if (pIndex != 0) {
-                            var eCost5_amt = pValue.amount;
-                            var eCost5_amt_total = eCost5_amt * pValue.qy;
-                            var eCost5_vat_total = Math.round(eCost5_amt_total / 10);
-                            var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
-                            html += '<tr> ';
-                            html += '	<td class="text-center" colspan="2">'+pValue.model_no+'</td> ';
-                            html += '	<td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td> ';
-                            html += '	<td class="text-number">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
-                            html += '	<td class="text-number">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
-                            html += '	<td class="text-number">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
-                            html += '	<td class="text-number">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
-                            html += '</tr> ';
+								var eCost5_amt = pValue.amount / 1.1;
+								var eCost5_amt_total = eCost5_amt * pValue.qy;
+								var eCost5_vat_total = Math.round(eCost5_amt_total / 11);
+								var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
+								html += '<tr> ';
+								html += '	<td class="text-center" colspan="2">'+pValue.model_no+'</td> ';
+								html += '	<td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+								html += '	<td class="text-number">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+								html += '</tr> ';
                         }
                     });
                     html += `<tr>
@@ -378,14 +408,29 @@
                                 <td class="colorP text-right">${(pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0)).toFormat('NUMBER')}</td>
                                 <td class="text-center" rowspan="4"></td>
                             </tr>`;
-                    html += `<tr>
-                                <th class="color-contract">계약변경</th>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                            </tr>`;
+                    if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4) {
+                        html += '<tr>';
+                        html += '    <th class="color-contract">계약변경</th>';
+                        html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[2].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[3].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+
+                    }
+                    else{
+                        html += '<tr>';
+                        html += '    <th class="color-contract">계약변경</th>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '</tr>';
+
+                    }
+
                     html += `<tr>
                                 <th class="color-contract">집행</th>
                                 <td class="text-right"></td>
@@ -411,33 +456,33 @@
                 var splpc_am_total = 0, vat_total = 0, sum_total = 0;
                 html += '<table class="table table-bordered" style="width:100%;border:0px!important;">';
                 html += '<colgroup>';
-                html += '	<col width="143">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
+					html += '	<col width="129">';
+					html += '	<col width="160">';
+					html += '	<col width="160">';
+					html += '	<col width="160">';
+					html += '	<col width="*">';
                 html += '</colgroup>';
                 html += '<thead>';
                 html += '	<tr>';
-                html += '		<th class="colorG">세금계산서일자</th>';
-                html += '		<th class="colorG">공급가액</th>';
-                html += '		<th class="colorG">부가세</th>';
-                html += '		<th class="colorG">합계</th>';
-                html += '		<th class="colorG">발행업체</th>';
+					html += '		<th class="color-contract">세금계산서일자</th>';
+					html += '		<th class="color-contract">공급가액</th>';
+					html += '		<th class="color-contract">부가세</th>';
+					html += '		<th class="color-contract">합계</th>';
+					html += '		<th class="color-contract">발행업체</th>';
                 html += '	</tr>';
                 html += '</thead>';
                 html += '<tbody>';
                 $.each(pTaxbilList, function(pIndex, pValue) {
-                    html += '<tr>';
-                    html += '    <td>'+pValue.pblicte_de+'</td>';
-                    html += '    <td class="text-number">'+pValue.splpc_am.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number">'+pValue.vat.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number">'+(pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total)).toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td>'+pValue.pblicte_trget_nm+'</td>';
-                    html += '</tr>';
-                    splpc_am_total += parseInt(pValue.splpc_am);
-                    vat_total += pValue.vat == '' ? 0 : parseInt(pValue.vat);
-                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+						html += '<tr>';
+						html += '    <td>'+pValue.pblicte_de+'</td>';
+						html += '    <td class="text-number">'+pValue.splpc_am.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+pValue.vat.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+(pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total)).toString().toFormat('NUMBER')+'</td>';
+						html += '    <td>'+pValue.pblicte_trget_nm+'</td>';
+						html += '</tr>';
+						splpc_am_total += parseInt(pValue.splpc_am);
+						vat_total += pValue.vat == '' ? 0 : parseInt(pValue.vat);
+						sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                 });
                 if (pResult.taxbilList.length < pResult.rcppayList.length) {
                     var max = pResult.rcppayList.length - pResult.taxbilList.length
@@ -454,11 +499,11 @@
                 html += '</tbody>';
                 html += '<tfoot>';
                 html += '	<tr>';
-                html += '		<th class="colorG">합계</th>';
-                html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorG text-number"></th>';
+					html += '		<th class="colorG">합계</th>';
+					html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number"></th>';
                 html += '	</tr>';
                 html += '</tfoot>';
                 html += '</table>';
@@ -474,35 +519,36 @@
                 var amount_total = 0, sub_total = 0, rate_total = 0.0;
                 html += '<table class="table table-bordered" style="width:100%;border:0px!important;">';
                 html += '<colgroup>';
-                html += '	<col width="129">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
+					html += '	<col width="129">';
+					html += '	<col width="160">';
+					html += '	<col width="160">';
+					html += '	<col width="100">';
+					html += '	<col width="*">';
                 html += '</colgroup>';
                 html += '<thead>';
                 html += '	<tr>';
-                html += '		<th class="colorY">지급일자</th>';
-                html += '		<th class="colorY">금액</th>';
-                html += '		<th class="colorY">잔액</th>';
-                html += '		<th class="colorY">지급율</th>';
-                html += '		<th class="colorY">지급내역</th>';
+					html += '		<th class="colorLP">지급일자</th>';
+					html += '		<th class="colorLP">금액</th>';
+					html += '		<th class="colorLP">잔액</th>';
+					html += '		<th class="colorLP">지급율</th>';
+					html += '		<th class="colorLP">지급내역</th>';
                 html += '	</tr>';
                 html += '</thead>';
                 html += '<tbody>';
+                iRcppay_sub = sum_total;
                 $.each(oRcppayList, function(pIndex, pValue) {
-                    iRcppay_sub -= parseInt(pValue.amount);
-                    iRcppay_rate = ((eCostTotal-iRcppay_sub)/eCostTotal)*100;
-                    html += '<tr>';
-                    html += '    <td>'+pValue.rcppay_de+'</td>';
-                    html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number">'+iRcppay_sub.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number">'+iRcppay_rate.toFixed(1)+'%</td>';
-                    html += '    <td>'+pValue.rcppay_dtls+'</td>';
-                    html += '</tr>';
-                    amount_total += parseInt(pValue.amount);
-                    sub_total = iRcppay_sub;
-                    rate_total = iRcppay_rate;
+						iRcppay_sub -= parseInt(pValue.amount);
+						iRcppay_rate = ((sum_total-iRcppay_sub)/sum_total)*100;
+						html += '<tr>';
+						html += '    <td>'+pValue.rcppay_de+'</td>';
+						html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+iRcppay_sub.toString().toFormat('NUMBER')+'</td>';
+						html += '    <td class="text-number">'+iRcppay_rate.toFixed(1)+'%</td>';
+						html += '    <td>'+pValue.rcppay_dtls+'</td>';
+						html += '</tr>';
+						amount_total += parseInt(pValue.amount);
+						sub_total = iRcppay_sub;
+						rate_total = iRcppay_rate;
                 });
                 if (pResult.rcppayList.length < pResult.taxbilList.length) {
                     var max = pResult.taxbilList.length - pResult.rcppayList.length
@@ -519,144 +565,16 @@
                 html += '</tbody>';
                 html += '<tfoot>';
                 html += '	<tr>';
-                html += '		<th class="colorY">합계</th>';
-                html += '		<th class="colorY text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorY text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorY text-number">'+rate_total.toFixed(1)+'%'+'</th>';
-                html += '		<th class="colorY text-number"></th>';
-                html += '	</tr>';
-                html += '</tfoot>';
-                html += '</table>';
-                html += '</td></tr>';
-                html += '<tr><td colspan="8" class="text-center colorN" style="font-weight:bold;background:#0070C0;border-color:#0070C0;color:white;">일용직</td></tr>'
-                html += '<tr><td colspan="5" style="padding:0px!important;vertical-align:top!important;">';
-                //일용직
-                html += '<table class="table table-bordered" style="width:100%;border:0px!important;">';
-                html += '<colgroup>';
-                html += '	<col width="143">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '</colgroup>';
-                html += '<thead>';
-                html += '	<tr>';
-                html += '		<th class="colorG">세금계산서일자</th>';
-                html += '		<th class="colorG">공급가액</th>';
-                html += '		<th class="colorG">부가세</th>';
-                html += '		<th class="colorG">합계</th>';
-                html += '		<th class="colorG">발행업체</th>';
-                html += '	</tr>';
-                html += '</thead>';
-                html += '<tbody>';
-                html += '</tbody>';
-                html += '<tfoot>';
-                html += '	<tr>';
-                html += '		<th class="colorG">합계</th>';
-                html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorG text-number"></th>';
-                html += '	</tr>';
-                html += '</tfoot>';
-                html += '</table>';
-                html += '</td>';
-                html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
-                html += '<table class="table table-bordered" style="width:100%;border:0px!important;">';
-                html += '<colgroup>';
-                html += '	<col width="129">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '</colgroup>';
-                html += '<thead>';
-                html += '	<tr>';
-                html += '		<th class="colorY">지급일자</th>';
-                html += '		<th class="colorY">금액</th>';
-                html += '		<th class="colorY">잔액</th>';
-                html += '		<th class="colorY">지급율</th>';
-                html += '		<th class="colorY">지급내역</th>';
-                html += '	</tr>';
-                html += '</thead>';
-                html += '<tbody>';
-                html += '</tbody>';
-                html += '<tfoot>';
-                html += '	<tr>';
-                html += '		<th class="colorY">합계</th>';
-                html += '		<th class="colorY text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorY text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorY text-number">'+rate_total.toFixed(1)+'%'+'</th>';
-                html += '		<th class="colorY text-number"></th>';
+					html += '		<th class="colorG">합계</th>';
+					html += '		<th class="colorG text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number">'+rate_total.toFixed(1)+'%'+'</th>';
+					html += '		<th class="colorG text-number"></th>';
                 html += '	</tr>';
                 html += '</tfoot>';
                 html += '</table>';
                 html += '</td></tr>';
 
-                html += '<tr><td colspan="8" class="text-center colorN" style="font-weight:bold;background:#0070C0;border-color:#0070C0;color:white;">④ 간접비 (관리)</td></tr>'
-                html += '<tr><td colspan="5" style="padding:0px!important;vertical-align:top!important;">';
-                //간접비
-                html += '<table class="table table-bordered" style="width:100%;border:0px!important;">';
-                html += '<colgroup>';
-                html += '	<col width="143">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '</colgroup>';
-                html += '<thead>';
-                html += '	<tr>';
-                html += '		<th class="colorG">세금계산서일자</th>';
-                html += '		<th class="colorG">공급가액</th>';
-                html += '		<th class="colorG">부가세</th>';
-                html += '		<th class="colorG">합계</th>';
-                html += '		<th class="colorG">발행업체</th>';
-                html += '	</tr>';
-                html += '</thead>';
-                html += '<tbody>';
-                html += '</tbody>';
-                html += '<tfoot>';
-                html += '	<tr>';
-                html += '		<th class="colorG">합계</th>';
-                html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorG text-number"></th>';
-                html += '	</tr>';
-                html += '</tfoot>';
-                html += '</table>';
-                html += '</td>';
-                html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
-                html += '<table class="table table-bordered" style="width:100%;border:0px!important;">';
-                html += '<colgroup>';
-                html += '	<col width="129">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '	<col width="*">';
-                html += '</colgroup>';
-                html += '<thead>';
-                html += '	<tr>';
-                html += '		<th class="colorY">지급일자</th>';
-                html += '		<th class="colorY">금액</th>';
-                html += '		<th class="colorY">잔액</th>';
-                html += '		<th class="colorY">지급율</th>';
-                html += '		<th class="colorY">지급내역</th>';
-                html += '	</tr>';
-                html += '</thead>';
-                html += '<tbody>';
-                html += '</tbody>';
-                html += '<tfoot>';
-                html += '	<tr>';
-                html += '		<th class="colorY">합계</th>';
-                html += '		<th class="colorY text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorY text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
-                html += '		<th class="colorY text-number">'+rate_total.toFixed(1)+'%'+'</th>';
-                html += '		<th class="colorY text-number"></th>';
-                html += '	</tr>';
-                html += '</tfoot>';
-                html += '</table>';
-                html += '</td></tr>';
                 $(document).find('#rptTable9 tbody[role=body]').html(html);
             }
         })
@@ -667,10 +585,37 @@
                 method : 'GET',
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
+
                     $(document).find("#outsrc_sn").attr("disabled", false);
-                    $.each(pResult.aCostList, function(pIndex, pValue){
-                        $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
-                    });
+                    var C_total = 0;
+                    var E_total = 0;
+                    if(pResult.extraCostList){
+                        var max_sn = 0;
+                        $.each(pResult.extraCostList, function(pIndex, pValue){
+                            if(max_sn < pIndex)
+                                max_sn = pIndex;
+                        });
+                        $.each(pResult.extraCostList[max_sn], function(pIndex, pValue){
+                            if(pValue.cntrct_execut_code == 'C'){
+                                C_total += pValue.amount;
+                            }
+                            else{
+                                E_total += pValue.amount;
+                            }
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+                    }
+                    else{
+                        $.each(pResult.aCostList, function(pIndex, pValue){
+                            if(pValue.cntrct_execut_code == 'C'){
+                                C_total += pValue.amount;
+                            }
+                            else{
+                                E_total += pValue.amount;
+                            }
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+                    }
                     var totals = [];
                     $("tbody[role='ct_se_code_contract']").find("tr").each(function(pIndex, pRow){
                         var total = 0;
@@ -681,9 +626,11 @@
                         $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
                         totals.push(total);
                     });
-
-                    $("tbody[role='ct_se_code_contract']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
-                    $("tbody[role='ct_se_code_contract']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+                    console.log(totals);
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='C_total']").html((C_total).toFormat('NUMBER'));
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='E_total']").html((E_total).toFormat('NUMBER'));
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va']").html((C_total - E_total).toFormat('NUMBER'));
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va_rate']").html(((C_total - E_total)*100.0/C_total).toFixed(1)+"%");
 
                     var prjct_sn = pResult.prjct.prjct_sn;
                     $.ajax({
@@ -691,6 +638,7 @@
                         type: 'GET',
                         data: {"s_cntrct_sn" : cntrct_sn, "s_prjct_sn" : prjct_sn},
                         success: function(pData) {
+                            console.log(pData);
                             var cCostTotal = 0;
                             $.each(pData.aCostList, function(pI, pV){
                                 var amount = 0;
@@ -700,14 +648,33 @@
                                     cCostTotal += amount;
                                 }
                             });
-                            $.each(pData.extraCostList, function(pI, pV){
-                                var amount = 0;
-                                if (pV.amount != '') { amount = parseInt(pV.amount); }
-                                if (pV.cntrct_execut_code == 'C') // 계약
-                                {
-                                    cCostTotal += amount;
+                            var extraCostList = pData.extraCostList;
+                            if(extraCostList){
+                                cCostTotal = 0;
+                                var extraCosts = {};
+                                $.each(extraCostList, function(pIndex, pCost){
+                                    var extra_sn = pCost.extra_sn;
+                                    if(!extraCosts.hasOwnProperty(extra_sn)){
+                                        extraCosts[extra_sn] = [];
+                                    }
+                                    extraCosts[extra_sn].push(pCost);
+                                });
+                                console.log(extraCostList);
+                                var extra_sns = Object.keys(extraCosts);
+                                extra_sns.sort();
+                                for(let i=1;i<=extra_sns.length;i++){
+                                    var extra_sn = extra_sns[i-1];
+                                    var costs = extraCosts[extra_sn];
+                                    var costTotal = {"C" : 0, "E" : 0};
+                                    $.each(costs, function(pIndex, pCost){
+                                        costTotal[pCost.cntrct_execut_code] += (pCost.amount != '') ? parseInt(pCost.amount) : 0;
+                                    });
+                                    console.log(cCostTotal);
+                                    cCostTotal = costTotal["C"];
                                 }
-                            });
+
+                            }
+
                             var amt_tot = 0;
                             $.each(pData.rcppayList, function(pI, pV) {
                                 var amount_total = 0;

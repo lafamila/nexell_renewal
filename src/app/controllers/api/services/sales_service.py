@@ -3,6 +3,7 @@ from app.helpers.datatable_helper import dt_query
 from .project_service import get_project_by_cntrct_nm, get_contract
 from collections import OrderedDict
 import datetime
+from pytz import timezone
 import calendar
 import json
 def get_sales_datatable(params):
@@ -89,30 +90,32 @@ def get_sales_approval_datatable(params):
                     , prdlst_se_code
                     , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm
                     , model_no
-                    , cntrct_sn
+                    , e.cntrct_sn
                     , (SELECT spt_nm FROM contract WHERE cntrct_sn=e.cntrct_sn) AS spt_nm
                     , dlnt
                     , pamt
-                    , bcnc_sn
+                    , e.bcnc_sn
                     , before_dlnt
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
                     FROM equipment e
+                    LEFT OUTER JOIN contract c
+                    ON e.cntrct_sn=c.cntrct_sn
                     WHERE 1=1
                     AND ((e.dlivy_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or e.dlivy_de IS NULL)
                     AND before_dlnt < dlnt
                     """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
     data = []
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
-        query += " AND a.bcnc_sn=%s"
+        query += " AND e.bcnc_sn=%s"
         data.append(params["s_bcnc_sn"])
 
     if "s_prdlst_se_code" in params and params['s_prdlst_se_code']:
-        query += " AND a.prdlst_se_code=%s"
+        query += " AND e.prdlst_se_code=%s"
         data.append(params["s_prdlst_se_code"])
 
     if "s_model_no" in params and params['s_model_no']:
-        query += " AND a.model_no=%s"
-        data.append(params["s_model_no"])
+        query += " AND e.model_no LIKE %s"
+        data.append('%{}%'.format(params["s_model_no"]))
 
     if "s_spt_nm" in params and params['s_spt_nm']:
         query += " AND c.spt_nm LIKE %s"
@@ -127,6 +130,8 @@ def get_sales_summary(params):
 				FROM account a
 				LEFT OUTER JOIN contract c
 				ON a.ctmmny_sn=c.ctmmny_sn AND a.cntrct_sn=c.cntrct_sn
+				LEFT OUTER JOIN member m
+				ON c.bsn_chrg_sn=m.mber_sn
 				WHERE 1=1
 				AND a.ctmmny_sn = 1
 				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or a.ddt_man IS NULL)
@@ -300,7 +305,7 @@ def insert_account(params):
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
@@ -323,7 +328,7 @@ def update_account(params):
         params["ctmmny_sn"] = 1
 
     if "update_dtm" not in params:
-        params["update_dtm"] = datetime.datetime.now()
+        params["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "updater_id" not in params:
         params["updater_id"] = session["member"]["member_id"]
@@ -600,7 +605,7 @@ def get_expect_p_r_list(params):
 
 def insert_ms_BF_equip(params):
     if params['msh_approval_type'] in ('S', 'B'):
-        params['regist_dtm'] = datetime.datetime.now()
+        params['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
         params['register_id'] = session['member']['member_id']
         cntrct_sn = params["cntrct_sn"]
         if params['msh_approval_type'] == 'S':
@@ -629,7 +634,7 @@ def insert_ms_BF_equip(params):
 
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
         prjct_sn = prjct['prjct_sn']
-        ddt_man = datetime.datetime.now()
+        ddt_man = datetime.datetime.now(timezone('Asia/Seoul'))
         data = OrderedDict()
         for key in params:
             if key.endswith("[]"):
@@ -662,10 +667,10 @@ def insert_ms_BF_equip(params):
             row['cntrct_sn'] = cntrct_sn
             row['prjct_sn'] = prjct_sn
             row['ctmmny_sn'] = 1
-            row['regist_dtm'] = datetime.datetime.now()
+            row['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
             row['register_id'] = session['member']['member_id']
             row['delng_se_code'] = 'P'
-            row['ddt_man'] = datetime.datetime.now()
+            row['ddt_man'] = datetime.datetime.now(timezone('Asia/Seoul'))
 
         sub_query = [key for key in input_data[0]]
         params_query = ["%({})s".format(key) for key in input_data[0]]
@@ -717,7 +722,7 @@ def insert_ms_equip(params):
 
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
         prjct_sn = prjct['prjct_sn']
-        ddt_man = datetime.datetime.now()
+        ddt_man = datetime.datetime.now(timezone('Asia/Seoul'))
         data = OrderedDict()
         for key in params:
             if key.endswith("[]"):
@@ -743,10 +748,10 @@ def insert_ms_equip(params):
             row['cntrct_sn'] = cntrct_sn
             row['prjct_sn'] = prjct_sn
             row['ctmmny_sn'] = 1
-            row['regist_dtm'] = datetime.datetime.now()
+            row['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
             row['register_id'] = session['member']['member_id']
             row['delng_se_code'] = 'P'
-            row['ddt_man'] = datetime.datetime.now()
+            row['ddt_man'] = datetime.datetime.now(timezone('Asia/Seoul'))
             if 'delng_ty_code' not in row or row['delng_ty_code'] == '':
                 row['delng_ty_code'] = '61'
 
@@ -788,7 +793,7 @@ def insert_equipment_sub(params):
         data['bcnc_sn'] = bcnc_sn
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
-def get_model_list(params):
+def get_model_list(params, purpose=None):
     query = """SELECT p.delng_sn
                     , p.bcnc_sn
                     , p.prdlst_se_code
@@ -814,6 +819,8 @@ def get_model_list(params):
                     AND p.cntrct_sn=%(s_cntrct_sn)s
                     AND p.delng_ty_code IN ('61', '62', '64', '65')
                     """
+    if purpose is not None:
+        query += "                    ORDER BY dlivy_de ASC"
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -927,7 +934,7 @@ def insert_equipment(params):
             if value == '':
                 continue
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
-            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(), "register_id" : session["member"]["member_id"]})
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
 
 
     for data in cost_data:
@@ -982,7 +989,6 @@ def insert_equipment(params):
     equipments_other_dict = {}
     row_length = 0
     row_length_other = 0
-    print(params)
     for key in params:
         if key.endswith("[]") and not key.startswith("company") and not key.endswith("other[]"):
             equipments_dict[key] = params[key]
@@ -990,7 +996,6 @@ def insert_equipment(params):
         elif key.endswith("other[]") and not key.startswith('company'):
             equipments_other_dict[key] = params[key]
             row_length_other = len(params[key])
-
     equipments = []
     for _ in range(row_length):
         equipments.append({"cntrct_sn" : params["cntrct_sn"]})
@@ -1021,14 +1026,11 @@ def insert_equipment(params):
     equipments = [eq for eq in equipments if eq['bcnc_sn'] != '' and eq['dlamt'] != 0 and eq['model_no'] != '']
     equipments_other = [eq for eq in equipments_other if eq['bcnc_sn'] != '' and eq['dlamt'] != 0 and eq['model_no'] != '']
 
-    equipments = [eq for eq in equipments if eq['cnt_dlnt'] > 0]
     equipments_update = [eq for eq in equipments if eq['cnt_dlnt'] <= 0]
+    equipments = [eq for eq in equipments if eq['cnt_dlnt'] > 0]
 
-    equipments_other = [eq for eq in equipments_other if eq['cnt_dlnt'] > 0]
     equipments_other_update = [eq for eq in equipments_other if eq['cnt_dlnt'] <= 0]
-
-    print(equipments, equipments_update)
-    print(equipments_other, equipments_other_update)
+    equipments_other = [eq for eq in equipments_other if eq['cnt_dlnt'] > 0]
 
     query = """INSERT INTO expect_equipment(cntrct_sn, model_no, prdlst_se_code, bcnc_sn, delng_ty_code, cnt_dlnt, dlamt, samt, rm)
                 VALUES (%(cntrct_sn)s, %(model_no)s, %(prdlst_se_code)s, %(bcnc_sn)s, %(delng_ty_code)s, %(cnt_dlnt)s, %(dlamt)s, %(samount)s, %(rm)s)"""
@@ -1044,7 +1046,7 @@ def insert_equipment(params):
                 before = g.curs.fetchone()
                 cnt_dlnt_before = before['cnt_dlnt']
                 equip_sn = before['equip_sn']
-                query = """UPDATE expect_equipment SET cnt_dlnt=%(cnt_dlnt)s WHERE cntrct_sn=%(equip_sn)s"""
+                query = """UPDATE expect_equipment SET cnt_dlnt=%(cnt_dlnt)s WHERE equip_sn=%(equip_sn)s"""
                 g.curs.execute(query, {"cnt_dlnt" : int(cnt_dlnt_before) + int(eq['cnt_dlnt']), "equip_sn" : equip_sn})
 
     if equipments_other_update:
@@ -1062,7 +1064,7 @@ def insert_equipment(params):
 
 def insert_equipment_samsung(params):
     row_length = len(params['equip_sn[]'])
-    order_de = datetime.datetime.now().strftime("%Y-%m-%d")
+    order_de = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
     data = []
     for _ in range(row_length):
         data.append({"cntrct_sn" : params["cntrct_sn"], "order_de" : order_de})
@@ -1084,12 +1086,12 @@ def insert_equipment_samsung(params):
 
 
     query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code) 
-    VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """
+    VALUES(NOW(), %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """
     g.curs.executemany(query, real_data)
 
 def insert_equipment_BD_samsung(params):
     row_length = len(params['equip_sn[]'])
-    order_de = datetime.datetime.now().strftime("%Y-%m-%d")
+    order_de = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
     data = []
     for _ in range(row_length):
         data.append({"cntrct_sn" : params["cntrct_sn"], "order_de" : order_de})
@@ -1169,7 +1171,7 @@ def insert_general_sales_BD(params):
             data['dlamt'] = int(data['dlivy_amt'] * (100 - data['dscnt_rt']) / 100)
         data['model_no'] = model_no
         data['prdlst_se_code'] = prdlst_se_code
-        data['regist_dtm'] = datetime.datetime.now()
+        data['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
         data['register_id'] = 'nexell'
 
         keys = list(data.keys())
@@ -1198,6 +1200,8 @@ def insert_general_sales_BD(params):
             data['expect_de'] = params['expect_de']
         else:
             data['delng_ty_code'] = '14'
+            if data['prjct_sn'] is not None:
+                s_dlamt = data['dlamt']
 
         prjct = get_contract({"s_cntrct_sn" : data['cntrct_sn']})
         data['bcnc_sn'] = prjct['bcnc_sn']
@@ -1217,9 +1221,10 @@ def insert_general_sales_BD(params):
         #     g.curs.execute(query, (cnnc_sn, rm, data['dlnt'], data['dlamt'], data['ddt_man']))
 
         data['cntrct_de'] = params['cntrct_de']
-        query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, prdlst_se_code, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, register_id, regist_dtm)
-                                VALUES(%(cntrct_sn)s, %(prjct_sn)s, 'C', 1, 2, null, %(model_no)s, %(dlnt)s, %(dlivy_amt)s, %(dlamt)s, %(dscnt_rt)s, %(cntrct_de)s, 0, 'nexell', NOW())"""
-        g.curs.execute(query, data)
+        if sale_type == 'T' or data['prjct_sn'] is None:
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, prdlst_se_code, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, register_id, regist_dtm)
+                                    VALUES(%(cntrct_sn)s, %(prjct_sn)s, 'C', 1, 2, null, %(model_no)s, %(dlnt)s, %(dlivy_amt)s, %(dlamt)s, %(dscnt_rt)s, %(cntrct_de)s, 0, 'nexell', NOW())"""
+            g.curs.execute(query, data)
 def insert_general_sales_NR(params):
     for sale_type, stock_sn, bcnc_sn, ddt_man, dlamt, dlnt, model_no, prdlst_se_code, s_bcnc_sn, samount, etc in zip(params['sale_type[]'], params['stock_sn[]'], params['bcnc_sn[]'], params['ddt_man[]'], params['dlamt[]'], params['dlnt[]'], params['model_no[]'], params['prdlst_se_code[]'], params['s_bcnc_sn[]'], params['samount[]'], params['etc[]']):
         data = dict()
@@ -1234,7 +1239,7 @@ def insert_general_sales_NR(params):
         data['dlnt'] = int(dlnt.replace(",", "")) if dlnt.replace(",", "") != '' else 0
         data['model_no'] = model_no
         data['prdlst_se_code'] = prdlst_se_code
-        data['regist_dtm'] = datetime.datetime.now()
+        data['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
         data['register_id'] = 'nexell'
 
         keys = list(data.keys())

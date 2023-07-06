@@ -1,4 +1,7 @@
 <style>
+body.smart-style-6 .table>tbody>tr>td.hasinput, body.smart-style-6 .table>tbody>tr>th.hasinput, body.smart-style-6 .table>tfoot>tr>td.hasinput, body.smart-style-6 .table>tfoot>tr>th.hasinput, body.smart-style-6 .table>thead>tr>td.hasinput, body.smart-style-6 .table>thead>tr>th.hasinput{
+	padding:3px!important;
+}
   .colorGray{
     background-color:#eee!important;
   }
@@ -138,12 +141,14 @@
       <col width="100"/>
       <col width="100"/>
       <col width="100"/>
+      <col width="50"/>
     </colgroup>
     <thead>
       <tr>
         <th class="colorGray text-center bold middle" rowspan="3">일자</th>
         <th class="colorGray text-center bold middle" rowspan="3">활동 내역</th>
         <th class="colorGray text-center bold" colspan="6">옵션 현황</th>
+        <th class="colorGray text-center bold middle" rowspan="3">-</th>
       </tr>
       <tr>
         <th class="colorGray text-center bold" rowspan="2">방문</th>
@@ -183,6 +188,9 @@
         <td class="hasinput" rowspan="2">
           <textarea class="table-textarea text-center" name="cnt5[]" data-type="number"></textarea>
         </td>
+        <td class="hasinput" rowspan="2">
+          <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+        </td>
       </tr>
       <tr data-row="schedule_tr">
         <td class="hasinput">
@@ -199,6 +207,7 @@
         <th class="colorGray text-center" data-column="total_cnt3"></th>
         <th class="colorGray text-center" data-column="total_cnt4"></th>
         <th class="colorGray text-center" data-column="total_cnt5"></th>
+        <th class="colorGray text-center" rowspan="2"></th>
       </tr>
       <tr>
         <th class="colorGray text-center bold middle" colspan="2">총 세대 수
@@ -538,10 +547,20 @@
     }
 
 
-
+    {% if init %}
     $(document).on("click", "#addRow", function(){
         cloneRow("schedule_tr", 1);
     });
+    $(document).on("click", ".removeRow", function(){
+        if($(document).find(`tbody[role="schedule_row"]`).find(`tr[data-row="schedule_tr"]`).length == 2){
+          alert("더이상 삭제할 수 없습니다.");
+          return false;
+        }
+        $(this).closest(`tr[data-row="schedule_tr"]`).next().remove();
+        $(this).closest(`tr[data-row="schedule_tr"]`).remove();
+        $(document).find(`tbody[role="schedule_row"]`).trigger("change");
+    });
+    {% endif %}
     window.projects = {};
     $(document).ready(function(){
         var input = document.querySelector('input[data-type="number"]');

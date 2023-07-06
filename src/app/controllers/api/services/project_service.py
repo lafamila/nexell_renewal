@@ -2,6 +2,7 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 from datetime import datetime
+from pytz import timezone
 
 def get_project_datatable(params):
     query = """SELECT c.ctmmny_sn
@@ -447,7 +448,7 @@ def update_project(params):
         data["updater_id"] = session["member"]["member_id"]
 
     if "update_dtm" not in data:
-        data["update_dtm"] = datetime.now()
+        data["update_dtm"] = datetime.now(timezone('Asia/Seoul'))
 
     if "prjct_sn" not in data:
         data["prjct_sn"] = params['s_prjct_sn']
@@ -576,7 +577,7 @@ def insert_cost(params):
     if 'regist_dtm' in params and params['regist_dtm']:
         data['regist_dtm'] = params['regist_dtm']
     else:
-        data['regist_dtm'] = datetime.now()
+        data['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
 
     if 'register_id' in params and params['register_id']:
         data['register_id'] = params['register_id']
@@ -614,7 +615,7 @@ def update_cost(params):
     if 'update_dtm' in params and params['update_dtm']:
         data['update_dtm'] = params['update_dtm']
     else:
-        data['update_dtm'] = datetime.now()
+        data['update_dtm'] = datetime.now(timezone('Asia/Seoul'))
 
     if 'updater_id' in params and params['updater_id']:
         data['updater_id'] = params['updater_id']
@@ -749,14 +750,16 @@ def get_a_cost_list(params):
 				WHEN 'E' THEN SUM(puchas_amount * qy)
 				WHEN 'C' THEN SUM(salamt*qy)
 				END AS amount
+				, DATE_FORMAT(MIN(regist_dtm), '%%Y-%%m-%%d') AS dtm
 				FROM cost
 				WHERE 1=1
-				AND cntrct_sn = %(s_cntrct_sn)s
-				AND prjct_sn = %(s_prjct_sn)s
-				AND extra_sn = 0
-				GROUP BY cntrct_execut_code, ct_se_code
-				ORDER BY cntrct_execut_code, ct_se_code
-"""
+				AND cntrct_sn = %(s_cntrct_sn)s """
+    if "s_prjct_sn" in params and params["s_prjct_sn"]:
+        query += """ AND prjct_sn = %(s_prjct_sn)s """
+    query += """
+    				AND extra_sn = 0
+    				GROUP BY cntrct_execut_code, ct_se_code
+    				ORDER BY cntrct_execut_code, ct_se_code """
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -768,6 +771,7 @@ def get_b_cost_list(params):
 				WHEN 'D' THEN SUM(puchas_amount * qy)
 				WHEN 'B' THEN SUM(salamt*qy)
 				END AS amount
+				, DATE_FORMAT(MIN(regist_dtm), '%%Y-%%m-%%d') AS dtm
 				FROM cost
 				WHERE 1=1
 				AND cntrct_sn = %(s_cntrct_sn)s
@@ -1045,6 +1049,7 @@ def get_extra_cost_list(params):
 				WHEN 'E' THEN puchas_amount * qy
 				WHEN 'C' THEN salamt*qy
 				END) AS amount
+				, DATE_FORMAT(MIN(regist_dtm), '%%Y-%%m-%%d') AS dtm
 				FROM cost
 				WHERE 1=1
 				AND cntrct_sn = %(s_cntrct_sn)s
@@ -1472,7 +1477,7 @@ def get_outsrc_detail(params):
                 , co.qy AS qy
                 , co.model_no AS model_no
                 , (SELECT SUM(qy*puchas_amount) FROM cost WHERE cntrct_sn=%(s_cntrct_sn)s AND prjct_sn=%(s_prjct_sn)s AND purchsofc_sn=o.outsrc_sn) AS total
-                FROM cost co
+                FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co
                 LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_fo_sn AND co.cntrct_sn=o.cntrct_sn AND co.prjct_sn=o.prjct_sn
                 WHERE 1=1
                 AND o.outsrc_sn = %(s_outsrc_sn)s
@@ -1638,7 +1643,7 @@ def get_i_rcppay_report_list(params):
 				, r.prvent_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=r.ctmmny_sn AND bcnc_sn=r.prvent_sn) AS prvent_nm
 				, r.rcppay_dtls
-				, (SELECT SUM(co.salamt*co.qy) AS amount FROM cost co WHERE co.cntrct_sn=r.cntrct_sn AND co.purchsofc_sn=r.prvent_sn AND co.cntrct_execut_code='C') AS cntrct_amount
+				, (SELECT SUM(co.salamt*co.qy) AS amount FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn=r.cntrct_sn AND co.purchsofc_sn=r.prvent_sn AND co.cntrct_execut_code='C') AS cntrct_amount
 				FROM rcppay r
 				WHERE r.ctmmny_sn = 1
 				AND r.cntrct_sn = %(s_cntrct_sn)s
@@ -2067,7 +2072,7 @@ def insert_project(params):
 
     if "regist_dtm" not in data:
         if "reg_dtm" not in params:
-            data["regist_dtm"] = datetime.now()
+            data["regist_dtm"] = datetime.now(timezone('Asia/Seoul'))
         else:
             data["regist_dtm"] = datetime.strptime(params["reg_dtm"], "%Y-%m-%d")
     if "spt_nm" not in data:
@@ -2117,7 +2122,7 @@ def insert_project(params):
 
         if "regist_dtm" not in data:
             if "reg_dtm" not in params:
-                data["regist_dtm"] = datetime.now()
+                data["regist_dtm"] = datetime.now(timezone('Asia/Seoul'))
             else:
                 data["regist_dtm"] = datetime.strptime(params["reg_dtm"], "%Y-%m-%d")
 
@@ -2209,7 +2214,7 @@ def insert_BF_c_project(params):
     params['prjct_sn'] = prjct['prjct_sn']
     if params['prjct_sn'] is None:
         params['prjct_sn'] = 0
-    params['regist_dtm'] = datetime.now()
+    params['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
     params['register_id'] = session['member']['member_id']
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
@@ -2226,7 +2231,7 @@ def insert_BF_c_project(params):
 def update_BF_c_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
-    params['regist_dtm'] = datetime.now()
+    params['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
     params['register_id'] = session['member']['member_id']
     g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'E' and cntrct_sn=%s", params['cntrct_sn'])
     extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
@@ -2257,14 +2262,14 @@ def insert_c_project(params):
             if value == '':
                 continue
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
-            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
             # 간접비 실행
             if ct_se_code == '8':
                 cntrct_execut_code = 'E'
                 column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
                 cost_data.append({"cntrct_sn": params["cntrct_sn"], "prjct_sn": prjct["prjct_sn"],
                                   "cntrct_execut_code": cntrct_execut_code, "ct_se_code": ct_se_code, "qy": 1,
-                                  column: int(value), "extra_sn": 0, "regist_dtm": datetime.now(),
+                                  column: int(value), "extra_sn": 0, "regist_dtm": datetime.now(timezone('Asia/Seoul')),
                                   "register_id": session["member"]["member_id"]})
         elif key.startswith("E_"):
             cntrct_execut_code, ct_se_code  = key.split("_")
@@ -2272,7 +2277,7 @@ def insert_c_project(params):
             if value == '':
                 continue
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
-            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
 
 
     # M,S/H 와 옵션행사비 사전입찰 내역
@@ -2301,10 +2306,10 @@ def insert_c_project(params):
             total += data["salamt"]
     cost_data.append({"cntrct_sn": params["cntrct_sn"], "prjct_sn": prjct["prjct_sn"],
                                   "cntrct_execut_code": 'E', "ct_se_code": '10', "qy": 1,
-                                  "puchas_amount": int(total*0.005), "extra_sn": 0, "regist_dtm": datetime.now(),
+                                  "puchas_amount": int(total*0.005), "extra_sn": 0, "regist_dtm": datetime.now(timezone('Asia/Seoul')),
                                   "register_id": session["member"]["member_id"]})
 
-    cost_date = datetime.now()
+    cost_date = datetime.now(timezone('Asia/Seoul'))
     today = cost_date.strftime("%Y-%m-%d")
     for data in cost_data:
         data["cost_date"] = today
@@ -2314,7 +2319,7 @@ def insert_c_project(params):
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
 
-    params["cost_date"] = datetime.now().strftime("%Y-%m-%d")
+    params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
     g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
 def insert_c_extra_project(params):
     cost_data = []
@@ -2449,7 +2454,7 @@ def insert_b_option_bd_project(params):
 def insert_b_bd_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
-    params['regist_dtm'] = datetime.now()
+    params['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
     params['register_id'] = session['member']['member_id']
     for model_no, qy, puchas_amount, dlamt, salamt in zip(params['model_no[]'], params['qy[]'], params['dlivy_amt[]'], params['dlamt[]'], params['cntrct_dlamt[]']):
         if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '':
@@ -2491,7 +2496,7 @@ def insert_b_bd_project(params):
 def insert_b_bf_project(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
-    params['regist_dtm'] = datetime.now()
+    params['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
     params['register_id'] = session['member']['member_id']
     for model_no, qy, puchas_amount, dscnt_rt, fee_rt, amount in zip(params['model_no[]'], params['qy[]'], params['puchas_amount[]'], params['dc_rate[]'], params['rate[]'], params['amount[]']):
         if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '' and fee_rt == '':
@@ -2550,7 +2555,7 @@ def insert_b_project(params):
             if value == '':
                 continue
             column = "puchas_amount" if cntrct_execut_code == 'D' else "salamt"
-            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(), "register_id" : session["member"]["member_id"]})
+            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
 
     construct_data = []
     for n, c, a, t in zip(n_params["construct_name"], n_params["construct_count"], n_params["construct_amt"], n_params["construct_tax"]):
@@ -2683,6 +2688,8 @@ def get_option_cost_list(params):
     return result
 
 def get_expect_equip_list(params):
+
+
     query = """SELECT e.equip_sn
                     , e.model_no
                     , e.prdlst_se_code
@@ -2696,12 +2703,18 @@ def get_expect_equip_list(params):
                     , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm
                     , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
                     , IFNULL(q.dlnt, 0) AS sdlnt
+                    , IFNULL(q.before_dlnt, 0) AS before_dlnt
                 FROM expect_equipment e
-                LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(dlnt) as dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
-                ON e.equip_sn=q.cnnc_sn
-                WHERE 1=1 """
+"""
     if "approval_sn" in params:
-        query += """ AND e.reg_time < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND reg_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) GROUP BY cnnc_sn) q
+                        ON e.equip_sn=q.cnnc_sn
+                        WHERE 1=1 
+                        AND e.reg_time < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+    else:
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
+                        ON e.equip_sn=q.cnnc_sn
+                        WHERE 1=1 """
 
     query += """
                 AND e.delng_ty_code='1'
@@ -2723,8 +2736,9 @@ def get_expect_equip_other_list(params):
                     , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm                    
                     , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
                     , IFNULL(q.dlnt, 0) AS sdlnt
+                    , IFNULL(q.before_dlnt, 0) AS before_dlnt
                 FROM expect_equipment e
-                LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(dlnt) as dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
+                LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
                 ON e.equip_sn=q.cnnc_sn
                 WHERE 1=1
                 AND e.delng_ty_code='2'
@@ -2752,19 +2766,19 @@ def update_c_project(params):
     e_99_2 = int(params['E_99_2'].replace(",", "")) if params['E_99_2'].replace(",", "") != '' else 0
     cost_data.append(
         {"cntrct_sn": cntrct_sn1, "prjct_sn": prjct_1["prjct_sn"], "cntrct_execut_code": 'C',
-         "ct_se_code": '99', "qy": 1, column['C']: c_99_1, "extra_sn": extra_sn1, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['C']: c_99_1, "extra_sn": extra_sn1, "regist_dtm": datetime.now(timezone('Asia/Seoul')),
          "register_id": session["member"]["member_id"]})
     cost_data.append(
         {"cntrct_sn": cntrct_sn1, "prjct_sn": prjct_1["prjct_sn"], "cntrct_execut_code": 'E',
-         "ct_se_code": '99', "qy": 1, column['E']: e_99_1, "extra_sn": extra_sn1, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['E']: e_99_1, "extra_sn": extra_sn1, "regist_dtm": datetime.now(timezone('Asia/Seoul')),
          "register_id": session["member"]["member_id"]})
     cost_data.append(
         {"cntrct_sn": cntrct_sn2, "prjct_sn": prjct_2["prjct_sn"], "cntrct_execut_code": 'C',
-         "ct_se_code": '99', "qy": 1, column['C']: c_99_2, "extra_sn": extra_sn2, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['C']: c_99_2, "extra_sn": extra_sn2, "regist_dtm": datetime.now(timezone('Asia/Seoul')),
          "register_id": session["member"]["member_id"]})
     cost_data.append(
         {"cntrct_sn": cntrct_sn2, "prjct_sn": prjct_2["prjct_sn"], "cntrct_execut_code": 'E',
-         "ct_se_code": '99', "qy": 1, column['E']: e_99_2, "extra_sn": extra_sn2, "regist_dtm": datetime.now(),
+         "ct_se_code": '99', "qy": 1, column['E']: e_99_2, "extra_sn": extra_sn2, "regist_dtm": datetime.now(timezone('Asia/Seoul')),
          "register_id": session["member"]["member_id"]})
 
     for data in cost_data:
@@ -2908,7 +2922,7 @@ def insert_outsrc(params):
     if "regist_dtm" in params and params["regist_dtm"]:
         data["regist_dtm"] = params["regist_dtm"]
     else:
-        data["regist_dtm"] = datetime.now()
+        data["regist_dtm"] = datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" in params and params["register_id"]:
         data["register_id"] = params["register_id"]
@@ -2975,7 +2989,7 @@ def update_outsrc(params):
     if "update_dtm" in params and params["update_dtm"]:
         data["update_dtm"] = params["update_dtm"]
     else:
-        data["update_dtm"] = datetime.now()
+        data["update_dtm"] = datetime.now(timezone('Asia/Seoul'))
 
     if "updater_id" in params and params["updater_id"]:
         data["updater_id"] = params["updater_id"]

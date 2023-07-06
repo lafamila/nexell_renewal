@@ -1,5 +1,6 @@
 from flask import g
 import datetime
+from pytz import timezone
 def dt_query(query, data, params={}):
     result = dict()
     result['recordsTotal'] = g.curs.execute(query, data)

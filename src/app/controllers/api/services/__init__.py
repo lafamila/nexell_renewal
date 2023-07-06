@@ -1,7 +1,7 @@
 from flask import session
 from app.connectors import DB
 from datetime import datetime
-
+from pytz import timezone
 def refresh_code_list():
     def wrapper(**params):
         return params
@@ -266,7 +266,7 @@ def set_menu(auth_cd):
     #########################
     # general sales project - bcnc check
 
-    # bcnc_nm = "{}년{}월일반".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")))
+    # bcnc_nm = "{}년{}월일반".format(datetime.now(timezone('Asia/Seoul')).strftime("%y"), int(datetime.now(timezone('Asia/Seoul')).strftime("%m")))
     # row = curs.execute("SELECT bcnc_sn FROM bcnc WHERE bcnc_nm=%s AND bcnc_se_code='S'", bcnc_nm)
     # if not row:
     #     curs.execute("INSERT bcnc(CTMMNY_SN, BCNC_SE_CODE, BCNC_NM, BCNC_TELNO, BCNC_ADRES, RPRSNTV_NM, BIZRNO, BSNM_SE_CODE, ESNTL_DELNG_NO, USE_AT, REGIST_DTM, REGISTER_ID) VALUES (1, 'S', %s, null, null, null, '해당사항없음', 1, null, 'Y', NOW(), 'nexelll')", bcnc_nm)
@@ -289,7 +289,7 @@ def set_menu(auth_cd):
     # data = {r.lower():None for r in required}
     #
     # data["ctmmny_sn"] = 1
-    # data["regist_dtm"] = datetime.now()
+    # data["regist_dtm"] = datetime.now(timezone('Asia/Seoul'))
     # data["register_id"] = 'nexell'
     # data['progrs_sttus_code'] = 'P'
     # dept_codes = ["TS1", "TS2", "BI"]
@@ -306,9 +306,9 @@ def set_menu(auth_cd):
     #         team_leader = curs.fetchone()
     #         data['bsn_chrg_sn'] = team_leader['mber_sn']
     #         data['spt_chrg_sn'] = team_leader['mber_sn']
-    #     data['cntrct_nm'] = "{}년{}월 {} 일반판매".format(datetime.now().strftime("%y"), int(datetime.now().strftime("%m")), dept_nm)
+    #     data['cntrct_nm'] = "{}년{}월 {} 일반판매".format(datetime.now(timezone('Asia/Seoul')).strftime("%y"), int(datetime.now(timezone('Asia/Seoul')).strftime("%m")), dept_nm)
     #     data['spt_nm'] = data['cntrct_nm']
-    #     data['cntrct_de'] = datetime.now().strftime("%Y-%m-01")
+    #     data['cntrct_de'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01")
     #     data['prjct_ty_code'] = "NR" if dept_nm.startswith("공조") else "BD"
     #     data['bcnc_sn'] = bcnc_sn
     #     data['cntrct_no'] = ''

@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 from dateutil import relativedelta
 from collections import OrderedDict
-
+from pytz import timezone
 bp = Blueprint('api_completed', __name__, url_prefix='/api/completed')
 
 @bp.before_request

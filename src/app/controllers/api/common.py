@@ -10,7 +10,7 @@ import json
 import os
 from datetime import datetime
 from dateutil import relativedelta
-
+from pytz import timezone
 bp = Blueprint('api_common', __name__, url_prefix='/api')
 CHUNK_SIZE = 800000
 @bp.before_request
@@ -596,7 +596,7 @@ def five_ajax_get_five():
         result = dict()
         result['contractStatusList'] = list()
         if "s_pxcond_mt" not in params:
-            params['s_pxcond_mt'] = datetime.now().strftime("%Y-12-31")
+            params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-12-31")
         else:
             params['s_pxcond_mt'] = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d").strftime("%Y-12-31")
         s_pxcond_mt = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d")
@@ -757,7 +757,7 @@ def get_upload_file_id():
     try:
         ext = request.form.get("ext")
         order = request.form.get("order")
-        now = datetime.now().strftime("%Y%m%d%H%M%S")
+        now = datetime.now(timezone('Asia/Seoul')).strftime("%Y%m%d%H%M%S")
         folder = request.form.get("folder")
         os.makedirs("app/static/files/", exist_ok=True)
         if folder:

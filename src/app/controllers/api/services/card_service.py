@@ -3,6 +3,7 @@ from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import datetime
 import calendar
+from pytz import timezone
 
 def get_cardbil_datatable(params):
     query = """SELECT ca.ctmmny_sn
@@ -164,10 +165,10 @@ def insert_cardbil(params):
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "update_dtm" not in data:
-        data["update_dtm"] = datetime.datetime.now()
+        data["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
@@ -191,10 +192,17 @@ def update_cardbil(params):
 
     for key in params:
         if key not in ("s_card_sn", ):
-            if key in ("cntrct_sn", "card_dtls"):
+            if key in ("cntrct_sn", "card_dtls",'papr_invstmnt_sn'):
                 if params[key] == '':
-                    params[key] = None
-                    data[key] = None
+                    if key in ('cntrct_sn','papr_invstmnt_sn') :
+                        params[key] = 0
+                        data[key] = 0
+                    elif key in ('card_dtls', ):
+                        params[key] = ''
+                        data[key] = ''
+                    else:
+                        params[key] = None
+                        data[key] = None
                     continue
                 data[key] = params[key]
             elif params[key] != '':
@@ -204,7 +212,7 @@ def update_cardbil(params):
         params["ctmmny_sn"] = 1
 
     if "update_dtm" not in params:
-        params["update_dtm"] = datetime.datetime.now()
+        params["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "updater_id" not in params:
         params["updater_id"] = session["member"]["member_id"]

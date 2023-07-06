@@ -873,10 +873,18 @@ getTodo = function(s_ddt_man)
                     if(sn_m != 0){
                         $("#rpt7").find("#todo tbody[role=chair] th").eq(1).data('sn', sn_m);
                     }
+                    else{
+                        $("#rpt7").find("#todo tbody[role=chair] th").eq(1).data('sn', '-1');
+
+					}
                     var update_a = ' ';
                     if(sn_a != 0){
                         $("#rpt7").find("#todo tbody[role=chair] th").eq(2).data('sn', sn_a);
                     }
+                    else{
+                        $("#rpt7").find("#todo tbody[role=chair] th").eq(2).data('sn', '-1');
+
+					}
                 }
                 else{
                     if(before != '' && before != pValue.dept_nm)
@@ -914,10 +922,17 @@ getTodo = function(s_ddt_man)
                     if(sn_m != 0){
                         $("#rpt7").find("#todo tbody[role=top] th").eq(1).data('sn', sn_m);
                     }
+                    else{
+                    	$("#rpt7").find("#todo tbody[role=top] th").eq(1).data('sn', '-1');
+					}
                     var update_a = ' ';
                     if(sn_a != 0){
                         $("#rpt7").find("#todo tbody[role=top] th").eq(2).data('sn', sn_a);
                     }
+                    else{
+                        $("#rpt7").find("#todo tbody[role=top] th").eq(2).data('sn', '-1');
+
+					}
 
                 }
                 else{
@@ -929,10 +944,17 @@ getTodo = function(s_ddt_man)
                     if(sn_m != 0){
                         $("#rpt7").find("#todo tbody[role=foot] th").eq(1).data('sn', sn_m);
                     }
+                    else{
+                        $("#rpt7").find("#todo tbody[role=foot] th").eq(1).data('sn', '-1');
+
+					}
                     var update_a = ' ';
                     if(sn_a != 0){
                         $("#rpt7").find("#todo tbody[role=foot] th").eq(2).data('sn', sn_a);
                     }
+                    else{
+                        $("#rpt7").find("#todo tbody[role=foot] th").eq(2).data('sn', '-1');
+					}
 
                 }
 
@@ -972,7 +994,7 @@ $(function() {
             alert("본인 업무만 수정 가능합니다.");
             return false;
         }
-        if($(this).data('sn')){
+        if($(this).data('sn') && parseInt($(this).data('sn')) != -1){
             var todo_sn = $(this).data('sn');
             var todo_text = $(this).html();
             var mber_sn = $(this).data('mber');
@@ -1003,7 +1025,7 @@ $(function() {
             alert("본인 업무만 수정 가능합니다.");
             return false;
         }
-        if($( event.target ).data('sn')){
+        if($( event.target ).data('sn') && parseInt($(event.target).data('sn')) != -1){
             var todo_sn = $( event.target ).data('sn');
             var todo_text = $( event.target ).html();
             var mber_sn = $( event.target ).data('mber');
@@ -1028,7 +1050,8 @@ $(function() {
 
 
     $('#popReport7').find('#todo').on('dblclick', 'th[name=todo_head], th[name=todo_foot]', function(pEvent) {
-        if($(this).data('sn')){
+    	console.log($(this).data('sn'));
+        if($(this).data('sn') && parseInt($(this).data('sn')) != -1){
             var todo_sn = $(this).data('sn');
             var todo_text = $(this).html();
             var mber_sn = $(this).data('mber');

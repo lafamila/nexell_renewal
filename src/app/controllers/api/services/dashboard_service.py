@@ -4,6 +4,7 @@ import random
 import string
 import urllib
 import datetime
+from pytz import timezone
 import calendar
 from app.helpers.class_helper import Map
 from app.helpers.datatable_helper import dt_query
@@ -589,7 +590,7 @@ def get_projects_by_dept_member(params):
     if "s_pxcond_mt" in params and params["s_pxcond_mt"]:
         s_pxcond_mt = params["s_pxcond_mt"]
     else:
-        s_pxcond_mt = datetime.datetime.now().strftime("%Y-%m")
+        s_pxcond_mt = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
 
     data = dict()
     data["s_pxcond_mt"] = s_pxcond_mt

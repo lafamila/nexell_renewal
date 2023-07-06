@@ -3,6 +3,8 @@ from app.helpers.datatable_helper import dt_query
 import json
 from . import refresh_code_list
 import datetime
+from pytz import timezone
+
 def get_approval_template(url, init=True):
     return render_template("approvals/{}.html".format(url), init=init, **refresh_code_list())
 

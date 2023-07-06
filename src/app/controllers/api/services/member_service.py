@@ -4,6 +4,7 @@ import random
 import string
 import urllib
 import datetime
+from pytz import timezone
 from app.helpers.class_helper import Map
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
@@ -53,7 +54,7 @@ def insert_member(params):
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now()
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]

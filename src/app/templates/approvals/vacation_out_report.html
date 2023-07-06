@@ -368,7 +368,7 @@
 
     }
     $(document).on("change", "tbody[role='cost_tbody']", function(){
-        var card_sleep = parseInt($(this).find(`[name='card_sleep']`).val().replaceAll("," ,"")); if(isNaN(card_sleep)) card_eat=0;
+        var card_sleep = parseInt($(this).find(`[name='card_sleep']`).val().replaceAll("," ,"")); if(isNaN(card_sleep)) card_sleep=0;
         var money_sleep = parseInt($(this).find(`[name='money_sleep']`).val().replaceAll("," ,"")); if(isNaN(money_sleep)) money_sleep=0;
         var card_etc = parseInt($(this).find(`[name='card_etc']`).val().replaceAll("," ,"")); if(isNaN(card_etc)) card_etc=0;
         var money_etc = parseInt($(this).find(`[name='money_etc']`).val().replaceAll("," ,"")); if(isNaN(money_etc)) money_etc=0;
