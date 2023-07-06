@@ -271,7 +271,10 @@ div.report table th, div.report table td{
 					<h2 class="colorLS" id="approval-html-title" style="font-weight:bold;position:absolute;left:50%;transform:translateX(-50%);    display: inline-block!important;margin: 0px!important;padding: 12px 60px!important;border: 3px double #000!important;font-size: 28px!important;text-align: center!important;"></h2>
 				</div>
 				<div class="pull-right" style="margin-right:10px;">
+					{% if init not in ("init") %}
+
 					<button class="btn btn-warning" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+					{% endif %}
 					<button class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
 				</div>
 			</div>
@@ -297,7 +300,7 @@ div.report table th, div.report table td{
 								코멘트
 							</div>
 							<div style="display:grid;grid-template-rows:1fr 1fr;border-right: 1px solid #333;" id="comment-container">
-								{% if init in ("init", "copy") %}
+								{% if init in ("init") %}
 								<textarea id="comment" style="background-color:#FAFAD2!important;width:100%;height:100%;resizable:false;" readonly></textarea>
 								{% else %}
 								<textarea id="comment-before" style="border:none;padding:5px;background-color:#FAFAD2!important;width:100%;height:100%;resizable:false;display:block;" placeholder="입력된 코멘트가 없습니다." readonly></textarea>
@@ -316,7 +319,7 @@ div.report table th, div.report table td{
 				</div>
 			</div>
 			<div class="modal-header">
-                {% if init in ("init", "copy") %}
+                {% if init in ("init") %}
 				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">
 					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목"/>
 					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 상신합니다."><i class="fa fa-save"> 저장</i></button>
@@ -440,7 +443,7 @@ div.report table th, div.report table td{
 
 			}, 500);
 		});
-		{% if init in ("init", "copy") %}
+		{% if init in ("init") %}
 		$("#approval_member_0, #approval_member_1, #approval_member_2").on("click", function(){
 			$("#popBox1").modal("show");
 		});
@@ -487,77 +490,12 @@ div.report table th, div.report table td{
                     $.ajax({
                         url : '/api/approval/get_approval',
                         method : 'GET',
-                        data : {"approval_sn" : approval_sn, "init" : '{% if init in ("init","copy") %}1{% else %}0{% endif %}'},
+                        data : {"approval_sn" : approval_sn, "init" : '0'},
                         success: function(pResult){
 							$("#formContent").html(pResult.html);
 							$("#approval_title").val(pResult.approval.approval_title);
                             var app = pResult.approval;
 							window.app = pResult.approval;
-							{% if init == "copy" %}
-							$.each(app.approval_data, function(key, value){
-								if(key.endsWith("[]")){
-									var pTag = $("#formContent").find(`[name='${key}']`);
-									if(pTag.length == 0){
-										$("#formContent").find("tbody[data-tr]").each(function(_, trTag){
-											if ($.isFunction(cloneRow)) {
-												cloneRow($(trTag).data("tr"), 1);
-											}
-										});
-									}
-									if(pTag.length != value.length){
-										if ($.isFunction(cloneRow)) {
-											cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
-										}
-									}
-									$.each(value, function(pIndex, pValue){
-										console.log(key);
-										var tagName = $("#formContent").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
-										if(tagName == "INPUT"){
-											$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
-										}
-										else if(tagName == "SELECT"){
-											$("#formContent").find(`[name='${key}']`).eq(pIndex).find(`option[value='${pValue}']`).attr("selected", "selected");
-
-										}
-										else if(tagName == "TEXTAREA"){
-											$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
-
-										}
-									});
-								}
-								else{
-									var pTag = $("#formContent").find(`#${key}`);
-									var tagName = '';
-									var tagType = '';
-									if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
-
-										pTag = $("#formContent").find(`[name='${key}']`);
-										tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
-										tagType = $(pTag).eq(0).attr("type");
-									}
-									else{
-										tagName = $(pTag).prop("tagName").toUpperCase();
-										tagType = '';
-									}
-									if(tagName == "SELECT"){
-										$(pTag).find(`option[value='${value}']`).attr("selected", "selected");
-									}
-									else if(tagName == "INPUT"){
-										if($(pTag).attr("type") == "radio"){
-											$(pTag).yVal(`${value}`);
-										}
-										else{
-											$(pTag).val(`${value}`);
-										}
-									}
-									else if(tagName == "TEXTAREA"){
-										$(pTag).val(`${value}`);
-
-									}
-
-								}
-							});
-							{% else %}
                             $.each(app.approval_data, function(key, value){
                                 if(key.endsWith("[]")){
                                     var pTag = $("#formContent").find(`[name='${key}']:not(disabled)`);
@@ -626,7 +564,6 @@ div.report table th, div.report table td{
 
                                 }
                             });
-							{% endif %}
                             $("#formContent").find("tbody").trigger("change");
                             if ($.isFunction($.fn.afterLoadApproval)) {
                                 $("#formContent").afterLoadApproval();
@@ -638,6 +575,7 @@ div.report table th, div.report table td{
                             var loginSN = $("#loginSN").val();
 							var comment = '';
 							var count = 0;
+							var isProcessing = false;
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
 									count ++;
@@ -648,9 +586,11 @@ div.report table th, div.report table td{
                                     }
                                     else if(status == 1){
                                         status_nm = '(승인)';
+										isProcessing = true;
                                     }
                                     else{
                                         status_nm = '(반려)';
+										isProcessing = true;
                                     }
                                     var html = `<div class="approval-member">
                                                     <div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
@@ -701,7 +641,7 @@ div.report table th, div.report table td{
                             else{
                                 $("#btnApproveCancel").attr("disabled", true);
                             }
-                            if(pResult.isFirst){
+                            if(pResult.isFirst && !isProcessing){
                                 $("#btnApproveCopy").attr("disabled", false);
                             }
                             else{
@@ -996,11 +936,9 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 	{% if init == "show" %}
 	$(document).on("click", "#btnApproveCopy", function(){
 		var approval_sn = "{{ approval_sn }}";
-		var approval_ty_code = window.approval.approval_ty_code;
 		var params = "";
-		params += "&approval_ty_code="+approval_ty_code;
 	    params += "&approval_sn="+approval_sn;
-		window.open("/approval/report?"+params, "_blank");
+		window.open("/approval/copy?"+params, "_blank");
 
 	});
 	{% endif %}
@@ -1044,28 +982,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 			},
 			success: function(pResult){
 
-				{% if init == "copy" %}
-					var sn = "{{ approval_sn }}";
-					$.ajax({
-						url: '/api/approval/delete_approval',
-						method: 'GET',
-						data: {"approval_sn": sn},
-						success: function (pResult) {
-							if(pResult.status){
-								self.close();
-
-							}
-							else{
-								alert("기존 품의 삭제에 실패했습니다.");
-								self.close();
-							}
-						}
-					});
-
-				{% else %}
 					self.close();
-
-				{% endif %}
 				// getApproval(pResult.approval_sn);
 			}
 		});

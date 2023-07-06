@@ -759,7 +759,10 @@
 
     }
 
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("input[name=msh_approval_type]").yReadonly(true);
         $(document).find("tbody[role='ct_se_code'] input").attr("disabled", true);

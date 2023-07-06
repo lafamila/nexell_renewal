@@ -799,7 +799,7 @@ def get_max_extra_cost_list(params):
 				AND extra_sn > 0
 	"""
     if "approval_sn" in params:
-        query += """ AND regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+        query += """ AND regist_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
 
     query += """
 				GROUP BY extra_sn, cntrct_execut_code, ct_se_code
@@ -955,7 +955,7 @@ def get_c_cost_list(params):
         g.curs.execute("SELECT prjct_ty_code FROM contract WHERE cntrct_sn=%(s_cntrct_sn)s", params)
         prjct_ty_code = g.curs.fetchone()['prjct_ty_code']
         # if 'BF' == prjct_ty_code:
-        query += " AND ((SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) IS NULL OR (regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn))) "
+        query += " AND ((SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) IS NULL OR (regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn))) "
     query += """
     ORDER BY c.regist_dtm, c.cntrwk_ct_sn
 """
@@ -2707,10 +2707,10 @@ def get_expect_equip_list(params):
                 FROM expect_equipment e
 """
     if "approval_sn" in params:
-        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND reg_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) GROUP BY cnnc_sn) q
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND reg_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) GROUP BY cnnc_sn) q
                         ON e.equip_sn=q.cnnc_sn
                         WHERE 1=1 
-                        AND e.reg_time < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+                        AND e.reg_time < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
     else:
         query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
                         ON e.equip_sn=q.cnnc_sn
@@ -2719,6 +2719,7 @@ def get_expect_equip_list(params):
     query += """
                 AND e.delng_ty_code='1'
                 AND cntrct_sn = %(s_cntrct_sn)s"""
+    print(query, params)
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result

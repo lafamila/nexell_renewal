@@ -333,7 +333,10 @@ function updateThumbnail(dropZoneElement, file) {
                     return result;
                }
     {% if init %}
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $.ajax({
             url : '/api/project/get_all_projects',

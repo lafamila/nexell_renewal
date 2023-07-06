@@ -341,7 +341,10 @@
     $(document).on("click", "#addRow", function(){
         cloneRow("equip_tr", 1);
     });
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $.ajax({
             url : '/api/project/get_all_projects',

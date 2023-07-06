@@ -48,6 +48,8 @@ def get_approval_ty_code_by_sn(params):
     curs = db.cursor()
     curs.execute("""SELECT approval_sn
                         , approval_ty_code
+                        , approval_title
+                        , approval_data
                         FROM approval WHERE approval_sn=%(approval_sn)s""", params)
     result = curs.fetchone()
     curs.close()

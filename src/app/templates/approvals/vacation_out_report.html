@@ -460,7 +460,10 @@
     $(document).on("click", "#addRow", function(){
         cloneRow("schedule_tr", 1);
     });
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         var input = document.querySelector('input[data-type="number"]');
         if(input){

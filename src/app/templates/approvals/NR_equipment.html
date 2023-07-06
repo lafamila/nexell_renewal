@@ -1128,7 +1128,11 @@
     $(document).on("click", "#company3_addRowItem", function(){
         cloneRow("company3_tr", 1);
     });
-    window.projects = {};
+    console.log(window.projects);
+        if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
         $(document).find("tbody[role='equip_row'] input").attr("disabled", true);

@@ -461,7 +461,10 @@
                     return result;
                }
     {% if init %}
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("#report_biss input").attr("disabled", true);
         $.ajax({

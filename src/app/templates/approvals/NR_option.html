@@ -488,7 +488,10 @@ function dateDiff(_date1, _date2) {
         }
     });
     {% if init %}
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("input[name=opt_approval_type]").yReadonly(true);
         $(document).find("tbody[role='option_house'] input").attr("disabled", true);

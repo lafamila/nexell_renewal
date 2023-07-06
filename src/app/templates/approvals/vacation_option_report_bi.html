@@ -561,7 +561,10 @@ body.smart-style-6 .table>tbody>tr>td.hasinput, body.smart-style-6 .table>tbody>
         $(document).find(`tbody[role="schedule_row"]`).trigger("change");
     });
     {% endif %}
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         var input = document.querySelector('input[data-type="number"]');
         if(input){

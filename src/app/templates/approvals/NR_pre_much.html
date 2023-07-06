@@ -870,7 +870,10 @@
         cloneRow("much_tr", 1);
     });
 
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("#outsrc_sn").attr("disabled", true);
         $(document).find("tbody[role='much_row'] input").attr("disabled", true);

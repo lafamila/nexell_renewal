@@ -399,7 +399,10 @@
         oReq.send(form);
     }
 
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
         $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", true);

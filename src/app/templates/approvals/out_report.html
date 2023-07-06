@@ -165,7 +165,10 @@
                     return result;
                }
     {% if init %}
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).on("focusout", "input[data-type='number']", function(){
         var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
         $(this).val(value);

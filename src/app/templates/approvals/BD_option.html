@@ -673,7 +673,10 @@
             cloneRow("construct_tr", 1);
         }
     });
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code'] input").attr("disabled", true);
         $.ajax({

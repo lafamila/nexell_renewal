@@ -543,7 +543,7 @@
                     $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
                         max_extra_sn = extra_sn;
                         var pRow = pResult.extraCostList[extra_sn];
-                        html = `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
+                        html += `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
                                         <tr data-row="C">
                                             <th class="colorB text-center middle" rowspan="2">변경-${extra_sn}</th>
                                             <th class="colorSky text-center">변경 계약가</th>
@@ -1000,7 +1000,10 @@
     $(document).on("click", "#addRowOther", function(){
         cloneRow("equip_other_tr", 1);
     });
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
         $(document).find("tbody[role='equip_already_row'] input").attr("disabled", true);

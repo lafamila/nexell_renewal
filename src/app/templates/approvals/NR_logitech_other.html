@@ -321,7 +321,10 @@
         cloneRow("equip_tr", 1);
     });
 
-    window.projects = {};
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
     $(document).ready(function(){
         $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", true);
         $.ajax({

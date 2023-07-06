@@ -1,0 +1,731 @@
+{% extends 'common/report_base.html' %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<style id="style">
+body.smart-style-6 .form-control{
+    border: 0px solid #ccc!important;
+}
+div.report table th, div.report table td {
+    border: 1px solid #999 !important;
+}
+body{
+	/*-webkit-print-color-adjust: exact;*/
+}
+div.report .sub-title {
+	padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+	border-top: 0px solid #000!important;
+}
+div.report table tbody tr:first-child th, div.report table tbody tr:first-child td, div.report table thead tr:first-child th, div.report table thead tr:first-child td{
+	border-top:0px solid #555!important;
+}
+div.report table:not(:last-child){
+	border-bottom: 0px solid #000!important;
+}
+div.report table:not(:first-child){
+	border-top: 2px solid #000!important;
+}
+div.report table tbody:first-child{
+	border-top:0px solid #000!important;
+}
+div.report table th, div.report table td {
+	padding: 5px!important;
+}
+div.report table table tr td:last-child, div.report table table tr th:last-child{
+	border-right:0px solid #555!important;
+}
+div.report table table tr td:first-child, div.report table table tr th:first-child{
+	border-left:0px solid #555!important;
+}
+div.report table table thead, div.report table table tbody, div.report table table tbody[role=body], div.report table table tfoot{
+	border-right:0px solid #000!important;
+	border-left:0px solid #000!important;
+}
+#popReportApproval{
+	font-size: 12px !important;
+	line-height: 1.0 !important;
+}
+span[name=alte]{
+	font-size:15px!important;
+	font-weight:bold!important;
+}
+span[name=blank]{
+	display:inline;
+}
+@media (min-width: 100px) and (max-width: 1024px) {
+
+	span[name=alte]{
+	font-size:9px!important;
+	font-weight:bold!important;
+	}
+	span[name=blank]{
+	display:none;
+	}
+}
+
+.approval-member{
+	line-height:1!important;
+}
+.approval-line-container{
+	height:150px;
+	text-align:left!important;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+	display:grid;
+	grid-template-columns: 1fr;
+	background-color:white;
+	z-index:9999;
+	border-radius: 5px;
+	transition: width 0.4s ease-in-out;
+	margin-left:10px;
+	margin-right:10px;
+
+}
+.approval-line{
+	display:grid;
+	grid-template-rows: 1fr 22px;
+}
+#approval_member_0, #approval_member_1, #approval_member_2{
+	cursor:pointer;
+
+}
+.approval-line .approval-line-list:not(:first-child){
+	display:grid;
+	grid-template-columns: 40px 1fr;
+	width:100%;
+	text-align:left!important;
+}
+.approval-line .approval-line-list:first-child{
+	display:grid;
+	grid-template-columns: 40px 1.8fr 40px 0.6fr 45px 0.6fr;
+	width:100%;
+	text-align:left!important;
+}
+.approval-line .approval-line-list:not(:last-child){
+	border-bottom:1px solid #333;
+}
+.approval-line .approval-line-list:last-child {
+	border-bottom:1px solid #333;
+}
+.approval-line .approval-line-list:first-child {
+	border-top:1px solid #333;
+}
+.approval-line .approval-line-list>div:nth-child(1){
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	border-right:1px solid #333;
+	background-color:#0070C0!important;
+	color:white;
+	font-size:13px;
+	font-weight:bold;
+}
+.approval-line .approval-line-list>div:nth-child(3){
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	background-color:#0070C0!important;
+	color:white;
+	font-size:13px;
+	font-weight:bold;
+}
+.approval-line .approval-line-list>div:nth-child(5){
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	background-color:#0070C0!important;
+	color:white;
+	font-size:13px;
+	font-weight:bold;
+}
+.approval-line .approval-line-list>div:nth-child(2)>div{
+	display:inline-grid;
+}
+.approval-line .approval-line-list>div:nth-child(4)>div{
+	display:inline-grid;
+}
+.approval-line .approval-line-list>div:nth-child(6)>div{
+	display:inline-grid;
+}
+.approval-member{
+	width:90px;
+	border:1px solid #aaa;
+	display:grid;
+	grid-template-rows: 20px 56px 20px 30px;
+	/*grid-template-rows: 16px 48px 16px 1fr;*/
+}
+.approval-member>div{
+	padding-top:2px;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+}
+.approval-member>div:last-child{
+	font-size:7px;
+	line-height:1!important;
+}
+.approval-member>div:not(:last-child){
+	font-size:11px;
+	width:100%;
+	border-bottom:1px solid #333;
+}
+.member-list-item{
+	border-bottom:1px solid #333;
+	padding:2px;
+	cursor:pointer;
+	padding-left:10px!important;
+	padding-right:10px!important;
+}
+	.approval-left{
+		border-right:1px solid #ccc;
+	}
+	.approval-right{
+		border-left:1px solid #ccc;
+	}
+	.approval-left, .approval-right{
+		height:100%;
+	}
+	.approval-left > div, .approval-right > div{
+		margin:5px;
+		height: 32px;
+		display: grid;
+		grid-template-columns: 40px 1fr 60px 40px;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	.approval-left > div.badge{
+		cursor:pointer;
+		border: 2px solid rgba(12, 124, 213, 0.5);
+		border-radius:8px;
+		background-color: rgba(12, 124, 213, 0.5);
+	}
+	.approval-right > div.badge{
+		cursor:pointer;
+		border-radius:8px;
+	}
+	.approval-left > div > div, .approval-right > div > div{
+		padding:5px;
+	}
+	.close {position:relative;float:left;display:inline-block;text-align:center;padding:0px!important;}
+	.close:after {content: "\00d7";}
+body.smart-style-6 .table>tbody>tr>td.hasinput, body.smart-style-6 .table>tbody>tr>th.hasinput, body.smart-style-6 .table>tfoot>tr>td.hasinput, body.smart-style-6 .table>tfoot>tr>th.hasinput, body.smart-style-6 .table>thead>tr>td.hasinput, body.smart-style-6 .table>thead>tr>th.hasinput{
+	padding:0px!important;
+}
+body.smart-style-6 .table.table-form>tbody>tr>th, body.smart-style-6 .table.table-form>thead>tr>th {
+    background: #92CDDC;
+}
+
+#formContent select.form-control{
+	padding-top:0px!important;
+	padding-bottom:0px!important;
+	padding-right:4px!important;
+	padding-left:4px!important;
+}
+#formContent td, #formContent th{
+	vertical-align: middle!important;
+}
+div.report table th, div.report table td{
+	padding:4px!important;
+}
+
+</style>
+<input type="hidden" id="loginSN" value="{{ loginSN }}"/>
+<input type="hidden" id="approval_ty_code" value="{{ approval.approval_ty_code }}"/>
+<div id="popReportApproval">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header" style="height:74px;">
+				<div style="position:absolute;left:26px;">
+					<img src="/static/nexell/img/logo.ico" height="32" style="margin-bottom:2px;"/>
+					<span style="font-size:16px;">넥셀시스템</span>
+				</div>
+				<div class="title">
+					<h2 class="colorLS" id="approval-html-title" style="font-weight:bold;position:absolute;left:50%;transform:translateX(-50%);    display: inline-block!important;margin: 0px!important;padding: 12px 60px!important;border: 3px double #000!important;font-size: 28px!important;text-align: center!important;"></h2>
+				</div>
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+			</div>
+			<div class="modal-header" style="padding:0px!important;border-bottom:none!important;">
+				<div class="pull-right" style="margin-right:25px;margin-top:2px!important;">
+					<button class="btn btn-info" id="member_add" style="line-height:1.0;"><i class="fa fa-plus">&nbsp;결재라인지정</i></button>
+				</div>
+			</div>
+
+			<div class="modal-header" style="padding-top:2px!important;">
+				<div class="approval-line-container">
+					<div class="approval-line">
+						<span class="approval-line-list">
+							<div>
+								결재
+							</div>
+							<div style="display:inline-flex;" id="approval_member_1"></div>
+							<div>
+								협조
+							</div>
+							<div style="display:inline-flex;" id="approval_member_0"></div>
+							<div>
+								코멘트
+							</div>
+							<div style="display:grid;grid-template-rows:1fr 1fr;border-right: 1px solid #333;" id="comment-container">
+								<textarea id="comment" style="background-color:#FAFAD2!important;width:100%;height:100%;resizable:false;" readonly></textarea>
+							</div>
+						</span>
+						<span class="approval-line-list" style="line-height: 1!important;">
+							<div>
+								수신
+							</div>
+							<div style="display:inline-flex;border-right: 1px solid #333;align-items:center;" id="approval_member_2"></div>
+						</span>
+
+					</div>
+				</div>
+			</div>
+			<div class="modal-header">
+				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">
+					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목"/>
+					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 상신합니다."><i class="fa fa-save"> 저장</i></button>
+				</div>
+			</div>
+			<div class="modal-body report" id="exportExcelBD">
+				<form id="frmBox3">
+					<div id="formContent">
+
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	preventContractEvent = function(e){
+		e.preventDefault();
+		e.stopPropagation();
+
+	}
+	$(function() {
+		$("#approval_member_0, #approval_member_1, #approval_member_2").on("click", function(){
+			$("#popBox1").modal("show");
+		});
+		$("#member_add").on("click", function(){
+			$("#popBox1").modal("show");
+		});
+	});
+	$(document).ready(function(){
+		window.member_list = {{ member_list_by_sn | tojson | safe }};
+		window.approval = {{ approval | tojson | safe }};
+        window.approval_data = {{ approval_data | tojson | safe }};
+		if(window.projects == undefined){
+			window.projects = {};
+		}
+
+        $.ajax({
+            url : '/api/project/get_all_projects',
+            method: 'GET',
+            success: function(pResult){
+                $.each(pResult, function(pIndex, pValue){
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+				$.ajax({
+					url : '/api/approval/ajax_get_approval_template',
+					method : 'GET',
+					data : {"url" : window.approval.url},
+					success: function(pResult){
+						$("#approval-html-title").html(window.approval.title.split('').join('&nbsp;&nbsp;&nbsp;'));
+						$("#formContent").html(pResult.html);
+						var mber_sn = $("#loginSN").val();
+						var pMember = window.member_list[mber_sn];
+						var html = `<div data-sn="${mber_sn}" data-type="1" class="badge badge-pill badge-dark">
+										<div>1</div>
+										<div>${pMember.mber_nm}</div>
+										<div>결재</div>
+										<div class="close badge-close"></div>
+									</div>`;
+						$(".approval-left").append(html);
+
+						var status = 0;
+						var status_nm = '';
+						var html = `<div class="approval-member">
+										<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
+										<div><img src="/static/files/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
+										<div>1. ${pMember.mber_nm}</div>
+										<div style="display:grid;justify-content: center;align-items: center;"></div>
+									</div>`;
+						$("#approval_member_1").append(html);
+
+						$("#approval_title").val(window.approval_data.approval_title);
+						var app = window.approval_data;
+						$.each(app.approval_data, function(key, value){
+							if(key.endsWith("[]")){
+								var pTag = $("#formContent").find(`[name='${key}']:not(disabled)`);
+								if(pTag.length == 0){
+									$("#formContent").find("tbody[data-tr]").each(function(_, trTag){
+										if ($.isFunction(cloneRow)) {
+											cloneRow($(trTag).data("tr"), 1);
+										}
+									});
+									var pTag = $("#formContent").find(`[name='${key}']`);
+								}
+								if(pTag.length != value.length){
+									if ($.isFunction(cloneRow)) {
+										cloneRow($(pTag).closest("tr").data("row"), (value.length - pTag.length));
+									}
+								}
+								$.each(value, function(pIndex, pValue){
+									var tagName = $("#formContent").find(`[name='${key}']`).eq(0).prop("tagName").toUpperCase();
+									if(tagName == "INPUT"){
+										$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
+									}
+									else if(tagName == "SELECT"){
+										$("#formContent").find(`[name='${key}']`).eq(pIndex).select2();
+										$("#formContent").find(`[name='${key}']`).eq(pIndex).yVal(pValue);
+									}
+									else if(tagName == "TEXTAREA"){
+										$("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
+
+									}
+								});
+							}
+							else{
+								var pTag = $("#formContent").find(`#${key}`);
+								var tagName = '';
+								var tagType = '';
+								if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
+									pTag = $("#formContent").find(`[name='${key}']`);
+									tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
+									tagType = $(pTag).eq(0).attr("type");
+								}
+								else{
+									tagName = $(pTag).prop("tagName").toUpperCase();
+									tagType = '';
+								}
+								if(tagName == "SELECT"){
+									$(pTag).select2();
+									if($(pTag).attr("id") == "cntrct_sn"){
+										var html = '';
+					                    html += `<option value="${window.projects[value].cntrct_sn}">${window.projects[value].spt_nm}</option>`;
+										$(document).find("#cntrct_sn").html(html);
+									}
+									$(pTag).yVal(value);
+
+								}
+								else if(tagName == "INPUT"){
+									if($(pTag).attr("type") == "radio"){
+										$(pTag).yVal(`${value}`);
+									}
+									else{
+										$(pTag).val(`${value}`);
+									}
+								}
+								else if(tagName == "TEXTAREA"){
+									$(pTag).val(`${value}`);
+
+								}
+
+							}
+						});
+						$("#formContent").find("tbody").trigger("change");
+						if ($.isFunction($.fn.afterLoadApproval)) {
+							$("#formContent").afterLoadApproval();
+
+						}
+
+						$(document).find(".select2").select2();
+					},
+					error: function(){
+						alert("에러가 발생했습니다.");
+						location.reload();
+					}
+				})
+
+            }
+        });
+	});
+
+
+</script>
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="width:800px!important">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs2">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>결재 라인 지정</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;height:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox1" style="height:100%;">
+							<form id="frmBox1" style="height:100%;">
+								<div style="display:grid;grid-template-columns:1fr 63px 1fr 1fr">
+									<div style="display:grid;grid-template-rows:32px 480px;border-right:1px solid #333;">
+										<div>
+											<input type="text" class="form-control" id="member-search" placeholder="[검색]">
+										</div>
+										<div style="max-height:480px;overflow-y:auto;">
+											{% for code in member_list %}
+												{% if code.value not in (73, 74) %}
+												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
+												{% endif %}
+											{% endfor %}
+
+										</div>
+									</div>
+									<div style="position:relative;">
+										<div class="btn-group btn-group-justified" data-toggle="buttons" style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);display:grid;grid-template-rows:1fr 1fr 1fr">
+											<label class="btn btn-default active" style="width:100%;">
+												<input type="radio" name="member-approval-select" value="1" autocomplete="off" checked>결재
+											</label>
+											<label class="btn btn-default" style="width:100%;">
+												<input type="radio" name="member-approval-select" value="0" autocomplete="off" >협조
+											</label>
+											<label class="btn btn-default" style="width:100%;">
+												<input type="radio" name="member-approval-select" value="2" autocomplete="off" >수신
+											</label>
+										</div>
+									</div>
+									<div style="display:grid;grid-template-rows:32px 480px;border-left:1px solid #333;border-right:1px solid #333;">
+										<div style="background-color:#0070C0!important;color:white;display:flex;align-items: center;justify-content: center;">
+											결재/협조
+										</div>
+										<div style="max-height:480px;overflow-y:auto;" class="approval-left">
+
+										</div>
+
+									</div>
+									<div style="display:grid;grid-template-rows:32px 480px;border-right:1px solid #333;">
+										<div style="background-color:#0070C0!important;color:white;display:flex;align-items: center;justify-content: center;">
+											수신
+										</div>
+										<div style="max-height:480px;overflow-y:auto;" class="approval-right">
+
+										</div>
+
+									</div>
+								</div>
+
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script>
+	$(document).on("keydown", "#member-search", function(e){
+		if(e.keyCode == 13) {
+		  e.preventDefault();
+		  return false;
+		}
+	});
+	$(document).on("keyup", "#member-search", function(e){
+		var text = $(this).val();
+		if(text.length > 0){
+			$(document).find(".member-list-item").each(function(pIndex, pTag){
+				if($(pTag).text().includes(text)){
+					$(pTag).show();
+				}
+				else{
+					$(pTag).hide();
+				}
+			});
+		}
+		else{
+			$(document).find(".member-list-item").show();
+		}
+	});
+	$(document).on("click", ".member-list-item", function(){
+		var mber_sn = $(this).data("sn");
+		var mber_nm = $(this).data("nm");
+		var apvl_type = parseInt($("input[name='member-approval-select']:checked").val());
+		var apvl_nm = "";
+		if(apvl_type == 0){
+			apvl_nm = "협조";
+		}
+		else if(apvl_type == 1){
+			apvl_nm = "결재";
+		}
+		else{
+			apvl_nm = "수신";
+		}
+		var target = (apvl_type == 2) ? ".approval-right" : ".approval-left";
+		var duplicated = false;
+		$(document).find("div.badge").each(function(pIndex, pTag){
+			if(mber_sn == $(pTag).data("sn") && apvl_type == parseInt($(pTag).data("type"))){
+				duplicated = true;
+				return false;
+			}
+		});
+		if(duplicated){
+			alert("이미 선택되었습니다.");
+			return false;
+		}
+
+		let idx = $(target).find("div.badge").length+1;
+		let html = `<div data-sn="${mber_sn}" data-type="${apvl_type}" class="badge badge-pill badge-dark">
+						<div>${idx}</div>
+						<div>${mber_nm}</div>
+						<div>${apvl_nm}</div>
+						<div class="close badge-close"></div>
+					</div>`;
+		$(target).append(html);
+
+
+	});
+	$(document).on("click", ".badge-close", function(){
+		let container = $(this).parent().parent();
+		$(this).parent().remove();
+		let badges = $(container).find("div.badge");
+		$.each(badges, function(pIndex, pValue){
+			$(pValue).find("div").eq(0).text(pIndex+1);
+		});
+	});
+	$('#popBox1').on('hidden.bs.modal', function(pEvent) {
+		var member_list = $('#popBox1').find(".approval-left div.badge, .approval-right div.badge");
+		var html0 = '';
+		var html1 = '';
+		var html2 = '';
+		$.each(member_list, function(pIndex, pTag){
+			var reg_type = parseInt($(pTag).data("type"));
+			var mber_sn = parseInt($(pTag).data("sn"));
+			var pMember = window.member_list[mber_sn];
+			if(reg_type == 0 || reg_type == 1){
+				var status = 0;
+				var status_nm = '';
+				var html = `<div class="approval-member">
+								<div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
+								<div><img src="/static/files/${pMember.sign_path}" width="46" height="46" style="display:none;"/> </div>
+								<div>${pIndex+1}. ${pMember.mber_nm}</div>
+								<div style="display:grid;justify-content: center;align-items: center;"></div>
+							</div>`;
+				//${pMember.mber_nm}${status_nm}
+				if(reg_type == 0){
+					html0 += html;
+
+				}
+				else if(reg_type == 1){
+					// ${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}
+					html1 += html;
+				}
+			}
+			else{
+				html2 += `<span>${pMember.mber_nm};</span>`;
+			}
+		});
+		$(document).find("#approval_member_0").html(html0);
+		$(document).find("#approval_member_1").html(html1);
+		$(document).find("#approval_member_2").html(html2);
+
+	});
+
+    $(document).on('click', '#btnSave', function(){
+		var data = $("#frmBox3").serializeObject();
+		var params = {"data" : data, "approval_title" : $("#approval_title").val(), "approval_ty_code": $("#approval_ty_code").val(),"approval_list" : []}
+		$(".approval-right .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
+		});
+		var loginSN = $("#loginSN").val();
+		var pass=false;
+		$(".approval-left .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type});
+			if((parseInt(approval_type) == 1) && (loginSN == mber_sn)){
+				pass=true;
+			}
+		});
+		if($("#approval_title").val() == ''){
+			alert("품의 제목을 입력해주시기 바랍니다.");
+			return false;
+		}
+		if(loginSN != '66' && !pass){
+			alert("기안자는 반드시 결재자 리스트에 포함되어야합니다.");
+			return false;
+		}
+		else{
+		$.ajax({
+			url: '/api/approval/ajax_insert_approval',
+			type: 'POST',
+			data: JSON.stringify(params),
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			processData: false,
+			validate: function() {
+				return fnValidate();
+			},
+			success: function(pResult){
+					var sn = "{{ approval_sn }}";
+					$.ajax({
+						url: '/api/approval/delete_approval',
+						method: 'GET',
+						data: {"approval_sn": sn},
+						success: function (pResult) {
+							if(pResult.status){
+								self.close();
+
+							}
+							else{
+								alert("기존 품의 삭제에 실패했습니다.");
+								self.close();
+							}
+						}
+					});
+				// getApproval(pResult.approval_sn);
+			}
+		});
+
+		}
+	});
+
+
+</script>
+{% endblock %}
