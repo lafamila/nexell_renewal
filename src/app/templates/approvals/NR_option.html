@@ -230,7 +230,7 @@
             <th class="colorG"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
-            <th class="colorG"></th>
+            <th class="colorG" data-column="diff_rate"></th>
             <th class="colorG" data-column="diff"></th>
             <th class="colorG"></th>
             <th class="colorG"></th>
@@ -379,14 +379,11 @@
 </table>
 <script>
 function dateDiff(_date1, _date2) {
-    console.log(_date1, _date2);
     var diffDate_1 = new Date(_date1);
     var diffDate_2 = new Date(_date2);
 
     var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
-    console.log(diff);
     diff = Math.round(diff / (1000 * 3600 * 24));
-    console.log(diff);
 
     return diff;
 }
@@ -451,7 +448,12 @@ function dateDiff(_date1, _date2) {
         }
         var e_amount = parseInt($(this).find("input[name='e_opt_amount']").val().replaceAll(",", "")); if(isNaN(e_amount)) e_amount = 0;
         var c_amount = parseInt($(this).find("input[name='c_opt_amount']").val().replaceAll(",", "")); if(isNaN(c_amount)) c_amount = 0;
-        $(this).parent().find("[data-column='diff']").html((e_amount - c_amount).toFormat('NUMBER'));
+        $(this).parent().find("[data-column='diff']").html((c_amount - e_amount).toFormat('NUMBER'));
+
+        var e_rate = parseFloat($(this).find("input[name='e_opt_rate']").val().replaceAll("%", "").replaceAll(",", "")); if(isNaN(e_rate)) e_rate = 0.0;
+        var c_rate = parseFloat($(this).find("input[name='c_opt_rate']").val().replaceAll("%", "").replaceAll(",", "")); if(isNaN(c_rate)) c_rate = 0.0;
+        $(this).parent().find("[data-column='diff_rate']").html((c_rate - e_rate).toFixed(1)+"%");
+
     });
     $(document).find("input[name=opt_approval_type]").on("change", function(){
         var checked = $(document).find("input[name=opt_approval_type]:checked").val();
@@ -482,6 +484,7 @@ function dateDiff(_date1, _date2) {
                     }
                     $(document).find("tbody[role='option_row'] tr[row='E'] input").attr("disabled", true);
                     $(document).find("tbody[role='option_row'] tr[row='C'] input").attr("disabled", false);
+                    $(document).find("tbody[role='option_row']").trigger("change");
 
                 }
             })

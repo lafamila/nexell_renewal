@@ -867,7 +867,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				<th class="color-contract text-center">매입단가</th>
 				<th class="color-contract text-center">수량</th>
 				<th class="color-contract text-center">매입금액</th>
-				<th class="color-contract text-center">매입처</th>
+				<th class="color-contract text-center" style="border-right:2px solid #555!important;">매입처</th>
 				<th class="colorP text-center">회수예정(출+6개월)</th>
 				<th class="colorY text-center">회수일</th>
 				<th class="colorY text-center">회수수량</th>
@@ -883,7 +883,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					<th class="colorG text-center" colspan="4">합계</th>
 					<th class="colorG text-center" data-column="total_dlnt"></th>
 					<th class="colorP text-right" data-column="total_amount"></th>
-					<th class="colorG"></th>
+					<th class="colorG" style="border-right:2px solid #555!important;"></th>
 					<th class="colorG"></th>
 					<th class="colorG"></th>
 					<th class="colorG"></th>
@@ -1296,7 +1296,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 //				if (cCostTotal != 0) {
 					$('#popReportNR').find('#cCostTotal').html(cCostTotal.toString().toFormat('NUMBER'));
-					$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(0)').html(cCostTotalLast.toString().toFormat('NUMBER'));
+					$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(0)').html((extraCostList.length > 0 ? cCostTotalLast : cCostTotal).toString().toFormat('NUMBER'));
 //				}
 //				if (eCostTotal != 0) {
 					$('#popReportNR').find('#eCostTotal').html(eCostTotal.toString().toFormat('NUMBER'));
@@ -1426,7 +1426,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var sTaxbilList = pValue.sTaxbilList;
 					var iRcppayList = pValue.iRcppayList;
 					html += '<tr>';
-					html += '    <th style="width:53%;padding:0px!important;vertical-align:top!important;">';
+					html += '    <th style="width:53%;padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">';
 					html += '        <table style="border:0px!important;">';
 					html += '            <colgroup>';
 					html += '                <col width="143">';
@@ -1493,19 +1493,21 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '            </colgroup>';
 					html += '            <thead>';
 					html += '                <tr>';
-					html += '                    <th class="colorLP">입금일자</th>';
-					html += '                    <th class="colorLP">금액</th>';
-					html += '                    <th class="colorLP">잔액</th>';
-					html += '                    <th class="colorLP">수금율</th>';
-					html += '                    <th class="colorLP">수금내역</th>';
+					html += '                    <th class="colorY">입금일자</th>';
+					html += '                    <th class="colorY">금액</th>';
+					html += '                    <th class="colorY">잔액</th>';
+					html += '                    <th class="colorY">수금율</th>';
+					html += '                    <th class="colorY">수금내역</th>';
 					html += '                </tr>';
 					html += '            </thead>';
 					html += '            <tbody role="body">';
 
-					var iRcppay_sub = sum_total, iRcppay_rate = 0.0;
+					var cntrct_amount = parseInt($('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(0)').html().replaceAll(",", ""));
+					if(isNaN(cntrct_amount)) cntrct_amount = 0;
+					var iRcppay_sub = cntrct_amount, iRcppay_rate = 0.0;
 					var amount_total = 0, sub_total = 0, rate_total = 0.0;
 					$.each(iRcppayList, function(pIndex, pValue) {
-						if (pIndex == 0) { iRcppay_sub = pValue.cntrct_amount; }
+
 						iRcppay_sub -= parseInt(pValue.amount);
 						iRcppay_rate = ((pValue.cntrct_amount-iRcppay_sub)/pValue.cntrct_amount)*100;
 						html += '<tr class="colorW">';
@@ -2085,7 +2087,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				html += '</tr>';
 
 
-					html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-bottom:2px solid #555!important;">';
+					html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-bottom:2px solid #555!important;border-right:2px solid #555!important;">';
 					//매입계산서
 					var pTaxbilList = pValue.taxbilList;
 					var splpc_am_total = 0, vat_total = 0, sum_total = 0;
@@ -2163,11 +2165,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '</colgroup>';
 					html += '<thead>';
 					html += '	<tr>';
-					html += '		<th class="colorLP">지급일자</th>';
-					html += '		<th class="colorLP">금액</th>';
-					html += '		<th class="colorLP">잔액</th>';
-					html += '		<th class="colorLP">지급율</th>';
-					html += '		<th class="colorLP">지급내역</th>';
+					html += '		<th class="colorY">지급일자</th>';
+					html += '		<th class="colorY">금액</th>';
+					html += '		<th class="colorY">잔액</th>';
+					html += '		<th class="colorY">지급율</th>';
+					html += '		<th class="colorY">지급내역</th>';
 					html += '	</tr>';
 					html += '</thead>';
 					html += '<tbody>';
@@ -2378,7 +2380,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								<td class="text-right">${dlamt.toFormat('NUMBER')}</td>
 								<td class="text-center">${dlnt.toFormat('NUMBER')}</td>
 								<td class="text-right">${amount.toFormat('NUMBER')}</td>
-								<td class="text-center">${pValue.bcnc_nm}</td>
+								<td class="text-center" style="border-right:2px solid #555!important;">${pValue.bcnc_nm}</td>
 								<td class="text-center">${expect}</td>
 								<td class="text-center">${return_de}</td>
 								<td class="text-center">${return_dlnt.toFormat('NUMBER')}</td>
