@@ -1,5 +1,15 @@
 {% extends 'common/report_base.html' %}
 {% block content %}
+<script>
+	$(document).ready(function(){
+		$(document).on("keyup", "textarea[name=option_bigo]", function(){
+		  var textEle = $(document).find("textarea[name=option_bigo]");
+		  textEle[0].style.height = 'auto';
+		  var textEleHeight = textEle.prop('scrollHeight');
+		  textEle.css('height', textEleHeight);
+		});
+	});
+</script>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 <style id="style">
 body.smart-style-6 .form-control{
@@ -432,6 +442,8 @@ div.report table th, div.report table td{
 					else if(tagName == "TEXTAREA"){
 						$(pTag).val(`${value}`);
 						$(pTag).attr("readonly", true);
+						$(pTag).trigger("keyup");
+
 
 					}
 
@@ -526,6 +538,7 @@ div.report table th, div.report table td{
                                             $("#formContent").find(`[name='${key}']`).eq(pIndex).val(pValue);
                                             $("#formContent").find(`[name='${key}']`).eq(pIndex).attr("readonly", true);
 
+
                                         }
                                     });
                                 }
@@ -559,6 +572,7 @@ div.report table th, div.report table td{
                                     else if(tagName == "TEXTAREA"){
                                         $(pTag).val(`${value}`);
                                         $(pTag).attr("readonly", true);
+                                        $(pTag).trigger("keyup");
 
                                     }
 

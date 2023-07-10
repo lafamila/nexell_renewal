@@ -369,13 +369,18 @@
             url : '/api/project/get_b_projects',
             method: 'GET',
             success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
-                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
                 $(document).find("#cntrct_sn").html(html);
-
 
             }
         });

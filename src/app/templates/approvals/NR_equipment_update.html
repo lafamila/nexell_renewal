@@ -454,7 +454,7 @@
 
 
 
-<table class="table table-bordered table-form small-table" style="width:35%!important;">
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -500,7 +500,7 @@
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                     });
                     $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
-                    cloneRow("equip_already_tr", pResult.samsungList.length-1);
+                    cloneRow("equip_already_tr", pResult.samsungList.length-$(document).find(`tr[data-row="equip_already_tr"]`).length);
                     $.each(pResult.samsungList, function(pIndex, pValue){
                         var pRow = $(document).find("tbody[role='equip_already_row']").find("tr").eq(pIndex);
                         $(pRow).find(`[name="dlivy_de_already[]"]`).html(pValue.dlivy_de);
@@ -1014,9 +1014,15 @@
             url : '/api/project/get_p_projects',
             method: 'GET',
             success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
-                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
                 $(document).find("#cntrct_sn").html(html);

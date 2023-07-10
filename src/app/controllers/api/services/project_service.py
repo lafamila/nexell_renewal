@@ -952,11 +952,9 @@ def get_c_cost_list(params):
 				AND cntrct_execut_code = 'C'
 """
     if "approval_sn" in params:
-        g.curs.execute("SELECT prjct_ty_code FROM contract WHERE cntrct_sn=%(s_cntrct_sn)s", params)
-        prjct_ty_code = g.curs.fetchone()['prjct_ty_code']
-        # if 'BF' == prjct_ty_code:
-        query += " AND ((SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) IS NULL OR (regist_dtm < (SELECT MAX(update_dtm) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn))) "
+        query += " AND (regist_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn)) "
     query += """
+    
     ORDER BY c.regist_dtm, c.cntrwk_ct_sn
 """
     g.curs.execute(query, params)
@@ -993,6 +991,10 @@ def get_e_cost_list(params):
 				AND cntrct_sn = %(s_cntrct_sn)s
 				AND prjct_sn = %(s_prjct_sn)s
 				AND cntrct_execut_code = 'E'
+				"""
+    if "approval_sn" in params and params["approval_sn"]:
+        query += """AND c.regist_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+    query += """				
 				ORDER BY c.dspy_de
 """
     g.curs.execute(query, params)
@@ -1109,6 +1111,7 @@ def get_rcppay_report_list(params):
 				FROM cost co
 				WHERE co.cntrct_execut_code = 'C'
 				AND co.cntrct_sn = %(s_cntrct_sn)s
+				AND co.purchsofc_sn IS NOT NULL
 				GROUP BY co.purchsofc_sn
 """
     g.curs.execute(query, params)
@@ -2236,9 +2239,16 @@ def update_BF_c_project(params):
     g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'E' and cntrct_sn=%s", params['cntrct_sn'])
     extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
     params["extra_sn"] = extra_sn
+    query = """SELECT SUM(qy*puchas_amount) AS E_10 FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code='E' AND ct_se_code='10' AND extra_sn < %(extra_sn)s """
+    g.curs.execute(query, params)
+    costs = g.curs.fetchall()
+    if costs:
+        e_10 = costs[0]['E_10']
+    else:
+        e_10 = 0
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '10', '기타비용', 1, %(b10)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
-    params['b10'] = int(params['Z_10'].replace(",", "")) - int(params['E_10'].replace(",", ""))
+    params['b10'] = int(params['Z_10'].replace(",", "")) - e_10
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
@@ -2341,7 +2351,11 @@ def insert_c_extra_project(params):
         if int(data['ct_se_code']) == 1 and data['cntrct_execut_code'] == 'C':
             g.curs.execute("SELECT bcnc_sn FROM contract WHERE cntrct_sn=%s", params['cntrct_sn'])
             data['purchsofc_sn'] = g.curs.fetchone()['bcnc_sn']
-
+        else:
+            row = g.curs.execute("SELECT distinct purchsofc_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s", data)
+            costs = g.curs.fetchall()
+            if len(costs) == 1:
+                data['purchsofc_sn'] = costs[0]['purchsofc_sn']
         sub_query = [key for key in data]
         params_query = ["%({})s".format(key) for key in data]
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))

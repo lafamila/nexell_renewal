@@ -445,12 +445,12 @@
                         e_10 += pValue.puchas_amount*pValue.qy;
                     }
                 });
+                console.log(e_10);
                 $(`tbody[role="ct_se_code"]`).find(`[name="E_61"]`).val(e_61.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="E_61_DC"]`).val(e_61_dc.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="Z_61"]`).val(e_61.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="Z_61_DC"]`).val(e_61_dc.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="E_10"]`).val(e_10.toFormat('NUMBER'));
-                $(`tbody[role="ct_se_code"]`).find(`[name="Z_10"]`).val(e_10.toFormat('NUMBER'));
                 $.each(pResult.gCostList, function(pIndex, pValue){
                      $(`tbody[role="ct_se_code"]`).find(`[name="D_63"]`).val(pValue.salamt.toFormat('NUMBER'));
                      $(`tbody[role="ct_se_code"]`).find(`[name="E_63"]`).val(pValue.salamt.toFormat('NUMBER'));
@@ -658,13 +658,18 @@
             url : '/api/project/get_p_projects',
             method: 'GET',
             success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
-                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
                 $(document).find("#cntrct_sn").html(html);
-
 
             }
         });

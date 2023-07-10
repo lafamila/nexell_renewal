@@ -681,15 +681,15 @@ def insert_BF_c_project():
 
 @bp.route('/update_BF_c_project', methods=['POST'])
 def update_BF_c_project():
-    try:
-        params = request.get_json()
-        params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
-        prj.insert_b_option_bf_project(params)
-        prj.update_BF_c_project(params)
-        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # try:
+    params = request.get_json()
+    params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
+    prj.insert_b_option_bf_project(params)
+    prj.update_BF_c_project(params)
+    return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 @bp.route('/insert_BD_c_project', methods=['POST'])
 def insert_BD_c_project():

@@ -193,7 +193,7 @@
         padding:2px!important;
     }
 </style>
-<table class="table table-bordered table-form small-table" style="width:35%!important;">
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -304,7 +304,7 @@
                 $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
 
                 {% if init %}
-                cloneRow("equip_tr", pResult.samsungList.length-1);
+                cloneRow("equip_tr", pResult.samsungList.length-$(document).find(`tr[data-row="equip_tr"]`).length);
                 {% endif %}
 
                 $.each(pResult.samsungList, function(pIndex, pRow){
@@ -481,13 +481,18 @@
             url : '/api/project/get_p_projects',
             method: 'GET',
             success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
-                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
                 $(document).find("#cntrct_sn").html(html);
-
 
             }
         });

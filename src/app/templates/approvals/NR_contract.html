@@ -246,12 +246,24 @@
                 <input type="file" id="pdf2" name="pdf2" accept="application/pdf" />
             </td>
         </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
+    <colgroup>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+    </colgroup>
+    <thead>
         <tr>
-            <td class="sub-title colorN text-center border_right" style="font-weight:bold;" colspan="4">특이사항</td>
+			<th class="sub-title colorN text-center border_right" colspan="4"><span>특이사항</span></th>
         </tr>
+    </thead>
+    <tbody>
         <tr data-row="option_row">
             <td class="hasinput" colspan="4">
-                <input type="text" class="form-control text-left" name="option_bigo">
+                <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
             </td>
         </tr>
     </tbody>
@@ -410,13 +422,18 @@
             url : '/api/project/get_b_projects',
             method: 'GET',
             success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
-                    html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                    }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
                 $(document).find("#cntrct_sn").html(html);
-
 
             }
         });

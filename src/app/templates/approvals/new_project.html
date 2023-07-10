@@ -319,6 +319,25 @@
         </tr>
     </tbody>
 </table>
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="sub-title colorN text-center" colspan="4"><span>특이사항</span></th>
+        </tr>
+
+    </thead>
+  <tbody>
+    <tr>
+        <td class="text-center" colspan="4"><textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea></td>
+    </tr>
+  </tbody>
+</table>
 
 <script>
     fnValidate = function(){
@@ -357,8 +376,8 @@
                         $(document).find('#cntrct_nm').trigger('focus');
                         result = false;
                     }
-                    else if(cntrct_nm.length > 10){
-                        alert("현장명은 10글자 이내로 입력바랍니다.");
+                    else if(cntrct_nm.length > 15){
+                        alert("현장명은 15글자 이내로 입력바랍니다.");
                         $(document).find('#cntrct_nm').trigger('focus');
                         result = false;
                     }

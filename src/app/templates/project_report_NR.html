@@ -1509,7 +1509,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					$.each(iRcppayList, function(pIndex, pValue) {
 
 						iRcppay_sub -= parseInt(pValue.amount);
-						iRcppay_rate = ((pValue.cntrct_amount-iRcppay_sub)/pValue.cntrct_amount)*100;
+						iRcppay_rate = ((cntrct_amount-iRcppay_sub)/cntrct_amount)*100;
 						html += '<tr class="colorW">';
 						html += '    <td>'+pValue.rcppay_de+'</td>';
 						html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
@@ -1548,7 +1548,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    </th>';
 					html += '</tr>';
                     amt_tot += amount_total;
-					return false;
 				});
                 $('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(0)').html(amt_tot.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rcppay_status tbody[role=body]').html(html);
@@ -1691,7 +1690,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var indirect_sum_total = 0;
 				$.each(outsrcList, function(pIndex, pValue) {
 					if([146].includes(pValue.outsrc_fo_sn)){
-						daily_html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;">';
+						daily_html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">';
 						//매입계산서
 						var pTaxbilList = pValue.taxbilList;
 						var splpc_am_total = 0, vat_total = 0, sum_total = 0;
@@ -1769,11 +1768,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						daily_html += '</colgroup>';
 						daily_html += '<thead>';
 						daily_html += '	<tr>';
-						daily_html += '		<th class="colorLP">지급일자</th>';
-						daily_html += '		<th class="colorLP">금액</th>';
-						daily_html += '		<th class="colorLP">잔액</th>';
-						daily_html += '		<th class="colorLP">지급율</th>';
-						daily_html += '		<th class="colorLP">지급내역</th>';
+						daily_html += '		<th class="colorY">지급일자</th>';
+						daily_html += '		<th class="colorY">금액</th>';
+						daily_html += '		<th class="colorY">잔액</th>';
+						daily_html += '		<th class="colorY">지급율</th>';
+						daily_html += '		<th class="colorY">지급내역</th>';
 						daily_html += '	</tr>';
 						daily_html += '</thead>';
 						daily_html += '<tbody>';
@@ -1820,7 +1819,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						return true;
 					}
 					else if([116].includes(pValue.outsrc_fo_sn)){
-						indirect_html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;">';
+						indirect_html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">';
 						//매입계산서
 						var pTaxbilList = pValue.taxbilList;
 						var splpc_am_total = 0, vat_total = 0, sum_total = 0;
@@ -1898,11 +1897,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						indirect_html += '</colgroup>';
 						indirect_html += '<thead>';
 						indirect_html += '	<tr>';
-						indirect_html += '		<th class="colorLP">지급일자</th>';
-						indirect_html += '		<th class="colorLP">금액</th>';
-						indirect_html += '		<th class="colorLP">잔액</th>';
-						indirect_html += '		<th class="colorLP">지급율</th>';
-						indirect_html += '		<th class="colorLP">지급내역</th>';
+						indirect_html += '		<th class="colorY">지급일자</th>';
+						indirect_html += '		<th class="colorY">금액</th>';
+						indirect_html += '		<th class="colorY">잔액</th>';
+						indirect_html += '		<th class="colorY">지급율</th>';
+						indirect_html += '		<th class="colorY">지급내역</th>';
 						indirect_html += '	</tr>';
 						indirect_html += '</thead>';
 						indirect_html += '<tbody>';
@@ -1981,10 +1980,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						eCost5Total += Math.round(pV.amount*pV.qy);
 					});
 					if (eCost5) {
-						var eCost5_amt = eCost5.amount / 1.1;
+						var eCost5_amt = Math.round(eCost5.amount / 1.1);
 						var eCost5_amt_total = eCost5_amt * eCost5.qy;
-						var eCost5_vat_total = Math.round(eCost5.amount / 11);
-						var eCost5_sum = eCost5.amount;
+						var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
+						var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
 						console.log('eCost5', eCost5, eCost5_amt);
 						html += '<tr> ';
 						html += '	<td class="text-center" id="eCost5_qy">'+eCost5.model_no+'</td> ';
@@ -1997,9 +1996,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						html += '</tr> ';
 						$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pValue){
 							if (pIndex != 0) {
-								var eCost5_amt = pValue.amount / 1.1;
+
+								var eCost5_amt = Math.round(pValue.amount / 1.1);
 								var eCost5_amt_total = eCost5_amt * pValue.qy;
-								var eCost5_vat_total = Math.round(eCost5_amt_total / 11);
+								var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
 								var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
 								html += '<tr> ';
 								html += '	<td class="text-center">'+pValue.model_no+'</td> ';
@@ -2173,10 +2173,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '	</tr>';
 					html += '</thead>';
 					html += '<tbody>';
-					iRcppay_sub = sum_total;
+					iRcppay_sub = eCost5Total;
 					$.each(oRcppayList, function(pIndex, pValue) {
 						iRcppay_sub -= parseInt(pValue.amount);
-						iRcppay_rate = ((sum_total-iRcppay_sub)/sum_total)*100;
+						iRcppay_rate = ((eCost5Total-iRcppay_sub)/eCost5Total)*100;
 						html += '<tr>';
 						html += '    <td>'+pValue.rcppay_de+'</td>';
 						html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';

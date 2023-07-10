@@ -358,12 +358,12 @@ $(document).on("dblclick", ".input-available", function(){
 	}
 
 	var td = $(this);
+	var rowId_strs = $(this).parent().data("raw").replaceAll("raw", "").split("_");
 	if(side == 'S'){
-		var rowId = $(this).parent().data("raw");
-
+		var rowId = "S"+rowId_strs[0]+"_"+rowId_strs[1];
 	}
 	else{
-		var rowId = $(this).parent().data("row");
+		var rowId = "T"+rowId_strs[2]+"_"+rowId_strs[3];
 
 	}
 	var s_year = $("#s_year").val();
@@ -445,10 +445,10 @@ getMoneyData = function(s_mt){
 			// 		 </tr>`;
 
             $.each(pResult.contract, function(pIndex, pRow){
-				var cntrct_sn1 = (pRow.hasOwnProperty('T')) ? pRow.T.cntrct_sn : '';
-				var bcnc_sn1 = (pRow.hasOwnProperty('T')) ? pRow.T.bcnc_sn : '';
-				var cntrct_sn2 = (pRow.hasOwnProperty('S')) ? pRow.S.cntrct_sn : '';
-				var bcnc_sn2 = (pRow.hasOwnProperty('S')) ? pRow.S.bcnc_sn : '';
+				var cntrct_sn2 = (pRow.hasOwnProperty('T')) ? pRow.T.cntrct_sn : '';
+				var bcnc_sn2 = (pRow.hasOwnProperty('T')) ? pRow.T.bcnc_sn : '';
+				var cntrct_sn1 = (pRow.hasOwnProperty('S')) ? pRow.S.cntrct_sn : '';
+				var bcnc_sn1 = (pRow.hasOwnProperty('S')) ? pRow.S.bcnc_sn : '';
 				html += `<tr data-cntrct1="${cntrct_sn1}" data-bcnc1="${bcnc_sn1}" data-cntrct2="${cntrct_sn2}" data-bcnc2="${bcnc_sn2}" data-row="row${pIndex+1}" data-raw="raw${cntrct_sn1}_${bcnc_sn1}_${cntrct_sn2}_${bcnc_sn2}">`;
 				if(pRow.hasOwnProperty('S')){
 					var pValue = pRow.S;
@@ -546,22 +546,28 @@ getMoneyData = function(s_mt){
 			// 		 </tr>`;
 
 			// $(document).find("#dtList1 tbody").append(html);
-			// $.each(pResult.money, function(pIndex, pValue){
-			// 	var R = "row";
-			// 	if(pValue.money_row.startsWith("raw")){
-			// 		R = "raw";
-			// 	}
-			// 	var pTag = $(`tr[data-${R}="${pValue.money_row}"]`).find(`td[data-column="${pValue.money_month}"]`);
-			// 	if($(pTag).data("type") == "number"){
-			// 		if(parseInt(pValue.money_data) != 0)
-			// 			$(pTag).text(pValue.money_data.toFormat('NUMBER'));
-			// 		else
-			// 			$(pTag).text('');
-			// 	}
-			// 	else{
-			// 		$(pTag).text(pValue.money_data);
-			// 	}
-			// });
+			$.each(pResult.money, function(pIndex, pValue){
+				if(!pValue.money_row.includes("_") || (!pValue.money_row.startsWith("S") && !pValue.money_row.startsWith("T"))){
+					return true;
+				}
+				var R = pValue.money_row.substr(0, 1);
+				var column = (R == 'S') ? 'rm1' : 'rm2';
+				var index = (R == 'S') ? '1' : '2';
+				var cntrct_bcnc = pValue.money_row.replaceAll(R, "").split("_");
+				var cntrct_sn = cntrct_bcnc[0];
+				var bcnc_sn = cntrct_bcnc[1];
+				$(document).find(`tr[data-cntrct${index}="${cntrct_sn}"][data-bcnc${index}="${bcnc_sn}"] td[data-column="${column}"]`).html(pValue.money_data);
+				console.log(R);
+				// if($(pTag).data("type") == "number"){
+				// 	if(parseInt(pValue.money_data) != 0)
+				// 		$(pTag).text(pValue.money_data.toFormat('NUMBER'));
+				// 	else
+				// 		$(pTag).text('');
+				// }
+				// else{
+				// 	$(pTag).text(pValue.money_data);
+				// }
+			});
 			calcTotal();
 		}
 	});
