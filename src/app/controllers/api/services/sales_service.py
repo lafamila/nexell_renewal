@@ -1228,6 +1228,8 @@ def insert_general_sales_BD(params):
 def insert_general_sales_NR(params):
     for sale_type, stock_sn, bcnc_sn, ddt_man, dlamt, dlnt, model_no, prdlst_se_code, s_bcnc_sn, samount, etc in zip(params['sale_type[]'], params['stock_sn[]'], params['bcnc_sn[]'], params['ddt_man[]'], params['dlamt[]'], params['dlnt[]'], params['model_no[]'], params['prdlst_se_code[]'], params['s_bcnc_sn[]'], params['samount[]'], params['etc[]']):
         data = dict()
+        if sale_type == '' and bcnc_sn == '' and model_no == '':
+            continue
         data['ctmmny_sn'] = 1
         data['bcnc_sn'] = bcnc_sn
         data['delng_ty_code'] = '1'
