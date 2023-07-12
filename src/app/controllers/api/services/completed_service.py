@@ -409,7 +409,7 @@ def get_completed_reportNR(params):
 				WHEN co.cntrct_execut_code = 'A' THEN IFNULL(co.qy*co.salamt, 0)
 				ELSE IFNULL(co.qy*co.puchas_amount, 0)
 				END AS cntrct_amount
-				FROM cost co
+				FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn AND x.purchsofc_sn IS NOT NULL) co
 				JOIN contract ct
 				ON co.cntrct_sn=ct.cntrct_sn
 				LEFT OUTER JOIN member m

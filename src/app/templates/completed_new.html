@@ -349,7 +349,7 @@ getReportNR = function(s_pxcond_mt)
 					var rt2 = (e_amt4/e_amt3)*100; if (isNaN(rt2)) rt2 = 0.0;
 					html += '<tr>';
 					html += '    <td class="text-center colorSky">집행</td>';
-					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.mber_nm+'</td>';
+					html += '    <td class="text-center" style="border-right:2px solid black!important;" '+(pValue.mber_nm.endsWith("(공1)") ? 'title="공조1"': '')+'>'+pValue.mber_nm.replaceAll("(공1)", "")+'</td>';
 					html += '    <td class="text-number">'+e_amt1.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+e_amt2.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '' : (rt1.toFixed(1)+'%'))+'</td>';
@@ -767,7 +767,7 @@ getReportNR = function(s_pxcond_mt)
 				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt2.toFixed(1)+'%</td>';
 				html += '       <td class="text-number">'+c_sum_amount_total.toString().toFormat('NUMBER')+'</td>';
 				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+c_rt3.toFixed(1)+'%</td>';
-				html += '       <th class="colorZ" rowspan="2" colspan="3">매출차액</th>';
+				html += '       <th class="colorZ" rowspan="1" colspan="2">매출차액</th>';
 				var p_sub_amt = parseInt(c_excut_amount_total) - parseInt(e_excut_amount_total)
 				html += '       <td class="text-number" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
 				html += '	</tr>';
@@ -785,7 +785,7 @@ getReportNR = function(s_pxcond_mt)
 				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt2.toFixed(1)+'%</td>';
 				html += '       <td class="text-number">'+e_sum_amount_total.toString().toFormat('NUMBER')+'</td>';
 				html += '       <td class="text-number" style="border-right:2px solid black!important;">'+e_rt3.toFixed(1)+'%</td>';
-                html += '       <th class="colorZ" rowspan="2" colspan="3">수주잔고</th>';
+                html += '       <th class="colorZ" rowspan="1" colspan="2">수주잔고</th>';
 				var p_sub_amt = parseInt(c_cntrct_amount_total) - parseInt(c_sum_amount_total)
 				html += '       <td class="text-number" rowspan="1">'+p_sub_amt.toString().toFormat('NUMBER')+'</td>';
 

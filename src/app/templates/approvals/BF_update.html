@@ -437,8 +437,8 @@
                 var e_61_dc = 0;
                 var e_10 = 0;
                 $.each(pResult.eCostList, function(pIndex, pValue){
-                    if(["61", "62", "64", "65"].includes(pValue.ct_se_code)){
-                        e_61 += pValue.puchas_amount*pValue.qy;
+                    if(["61", "64"].includes(pValue.ct_se_code)){
+                        e_61 += Math.round(pValue.puchas_amount*pValue.qy*(100.0 - pValue.dscnt_rt)/100);
                         e_61_dc += (pValue.puchas_amount*pValue.qy*pValue.add_dscnt_rt/100.0);
                     }
                     else if(pValue.ct_se_code=='10'){

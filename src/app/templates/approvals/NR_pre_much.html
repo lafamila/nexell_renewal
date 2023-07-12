@@ -608,11 +608,11 @@
                 method : 'GET',
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
-
+                    console.log(pResult);
                     $(document).find("#outsrc_sn").attr("disabled", false);
                     var C_total = 0;
                     var E_total = 0;
-                    if(pResult.extraCostList){
+                    if(pResult.extraCostList.length > 0){
                         var max_sn = 0;
                         $.each(pResult.extraCostList, function(pIndex, pValue){
                             if(max_sn < pIndex)

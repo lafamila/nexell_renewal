@@ -2239,7 +2239,7 @@ def update_BF_c_project(params):
     g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code = 'E' and cntrct_sn=%s", params['cntrct_sn'])
     extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
     params["extra_sn"] = extra_sn
-    query = """SELECT SUM(qy*puchas_amount) AS E_10 FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code='E' AND ct_se_code='10' AND extra_sn < %(extra_sn)s """
+    query = """SELECT IFNULL(SUM(qy*puchas_amount), 0) AS E_10 FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code='E' AND ct_se_code='10' AND extra_sn < %(extra_sn)s """
     g.curs.execute(query, params)
     costs = g.curs.fetchall()
     if costs:
@@ -2248,7 +2248,7 @@ def update_BF_c_project(params):
         e_10 = 0
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '10', '기타비용', 1, %(b10)s, '0000-00-00', %(extra_sn)s, %(regist_dtm)s, %(register_id)s)"""
-    params['b10'] = int(params['Z_10'].replace(",", "")) - e_10
+    params['b10'] = int(params['Z_10'].replace(",", "")) - int(e_10)
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
