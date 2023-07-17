@@ -766,6 +766,17 @@ def insert_equipment_samsung():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/insert_equipment_other', methods=['POST'])
+def insert_equipment_other():
+    try:
+        params = request.get_json()
+        params["_type"] = "타사장비"
+        sales.insert_equipment_samsung(params)
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/insert_equipment_sub', methods=['POST'])
 def insert_equipment_sub():
     try:
@@ -791,6 +802,7 @@ def update_equipment():
     try:
         params = request.get_json()
         prj.insert_c_extra_project(params)
+        del params["option_bigo"]
         sales.insert_equipment(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:

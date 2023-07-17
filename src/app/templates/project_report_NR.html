@@ -343,6 +343,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 </table>
 <table id="report_patrol">
 	<colgroup>
+		<col width="80">
+		<col width="80">
 		<col width="100">
 		<col width="100">
 		<col width="100">
@@ -357,7 +359,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<col width="100">
 		<col width="100">
 		<col width="100">
-		<col width="100">
+		<col width="50">
 		<col width="100">
 
 	</colgroup>
@@ -370,18 +372,20 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="color-contract text-center">내역</th>
 			<th class="color-contract text-center">삼성장비</th>
 			<th class="color-contract text-center">타사장비</th>
-			<th class="color-contract text-center">설치비</th>
-			<th class="color-contract text-center">간접비</th>
+			<th class="colorG text-center" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;">장비비 계</th>
+			<th class="color-contract text-center">도급비</th>
 			<th class="color-contract text-center">로지텍자재</th>
 			<th class="color-contract text-center">타사자재</th>
+			<th class="colorG text-center" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;">설치비 계</th>
+			<th class="color-contract text-center">간접비</th>
 			<th class="color-contract text-center">기타(총액 0.5%)</th>
 			<th class="color-contract text-center">M,S/H(기준표)</th>
 			<th class="color-contract text-center">옵션행사비(기준표)</th>
 			<th class="color-contract text-center">설계변경</th>
 			<th class="color-contract text-center">총액</th>
-			<th class="colorLP text-center">이익금(VA)</th>
+			<th class="colorLP text-center" style="border-left: 2px solid #555!important;">이익금(VA)</th>
 			<th class="colorLP text-center">VA율</th>
-			<th class="color-contract text-center">비고</th>
+			<th class="color-contract text-center">품의일자</th>
 		</tr>
 	</thead>
 	<tbody role="patrol">
@@ -390,16 +394,18 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorSky">예정가</th>
 			<td class="text-number" id="aCost1"></td>
 			<td class="text-number" id="aCost2"></td>
+			<td class="text-number" id="aCost12Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
 			<td class="text-number" id="aCost5"></td>
-			<td class="text-number" id="aCost8"></td>
 			<td class="text-number" id="aCost3"></td>
 			<td class="text-number" id="aCost4"></td>
+			<td class="text-number" id="aCost345Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
+			<td class="text-number" id="aCost8"></td>
 			<td class="text-number" id="aCost10"></td>
 			<td class="text-number" id="aCost61"></td>
 			<td class="text-number" id="aCost7"></td>
 			<td class="text-number" id="aCost99"></td>
 			<td class="text-number" id="aCostTotal"></td>
-			<td class="text-number" id="sCostTotal" rowspan="2"></td>
+			<td class="text-number" id="sCostTotal" rowspan="2" style="border-left: 2px solid #555!important;"></td>
 			<td class="text-number" id="sCost11" rowspan="2"></td>
 			<td class="text-center" id="bCostDTM" rowspan="2"></td>
 		</tr>
@@ -407,10 +413,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorSky">실행가</th>
 			<td class="text-number" id="bCost1"></td>
 			<td class="text-number" id="bCost2"></td>
+			<td class="text-number" id="bCost12Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
 			<td class="text-number" id="bCost5"></td>
-			<td class="text-number" id="bCost8"></td>
 			<td class="text-number" id="bCost3"></td>
 			<td class="text-number" id="bCost4"></td>
+			<td class="text-number" id="bCost345Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
+			<td class="text-number" id="bCost8"></td>
 			<td class="text-number" id="bCost10"></td>
 			<td class="text-number" id="bCost61"></td>
 			<td class="text-number" id="bCost7"></td>
@@ -424,16 +432,18 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorSky">계약가</th>
 			<td class="text-number" id="cCost1"></td>
 			<td class="text-number" id="cCost2"></td>
+			<td class="text-number" id="cCost12Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
 			<td class="text-number" id="cCost5"></td>
-			<td class="text-number" id="cCost8"></td>
 			<td class="text-number" id="cCost3"></td>
 			<td class="text-number" id="cCost4"></td>
+			<td class="text-number" id="cCost345Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
+			<td class="text-number" id="cCost8"></td>
 			<td class="text-number" id="cCost10"></td>
 			<td class="text-number" id="cCost61"></td>
 			<td class="text-number" id="cCost7"></td>
 			<td class="text-number" id="cCost99"></td>
 			<td class="text-number" id="cCostTotal"></td>
-			<td class="text-number" id="tCostTotal" rowspan="2"></td>
+			<td class="text-number" id="tCostTotal" rowspan="2" style="border-left: 2px solid #555!important;"></td>
 			<td class="text-number" id="tCost11" rowspan="2"></td>
 			<td class="text-center" id="aCostDTM" rowspan="2"></td>
 		</tr>
@@ -441,10 +451,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorSky">실행가</th>
 			<td class="text-number" id="eCost1"></td>
 			<td class="text-number" id="eCost2"></td>
+			<td class="text-number" id="eCost12Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
 			<td class="text-number" id="eCost5"></td>
-			<td class="text-number" id="eCost8"></td>
 			<td class="text-number" id="eCost3"></td>
 			<td class="text-number" id="eCost4"></td>
+			<td class="text-number" id="eCost345Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
+			<td class="text-number" id="eCost8"></td>
 			<td class="text-number" id="eCost10"></td>
 			<td class="text-number" id="eCost61"></td>
 			<td class="text-number" id="eCost7"></td>
@@ -456,6 +468,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 <table id="report_exec">
 	<colgroup>
+		<col width="80">
+		<col width="100">
 		<col width="100">
 		<col width="100">
 		<col width="100">
@@ -469,7 +483,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<col width="100">
 		<col width="100">
 		<col width="120">
-		<col width="120">
+		<col width="50">
 	</colgroup>
 	<thead>
 		<tr>
@@ -483,10 +497,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">입금합계</th>
 			<th class="colorP">①삼성장비</th>
 			<th class="colorP">②타사장비</th>
-			<th class="colorP">③설치비</th>
-			<th class="colorP">④간접비</th>
-			<th class="colorP">⑤로지텍자재</th>
-			<th class="colorP">⑥타사자재</th>
+			<th class="colorG">장비비 계</th>
+			<th class="colorP">③도급비</th>
+			<th class="colorP">④로지텍자재</th>
+			<th class="colorP">⑤타사자재</th>
+			<th class="colorG">설치비 계</th>
+			<th class="colorP">⑥간접비</th>
 			<th class="colorP">⑦M,S/H 설치·회수</th>
 			<th class="colorP">⑧옵션행사비</th>
 			<th class="colorP">⑨기타(총액 0.5%)</th>
@@ -498,9 +514,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="text-number colorP"></th>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
+			<th class="text-number colorW"></th>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
+			<th class="text-number colorW"></th>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
 			<td class="text-number"></td>
@@ -729,24 +747,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		</tr>
 	</tbody>
 </table>
-<!-- ---------------------------------------------------------------------- -->
-<table id="rptTable9_indirect">
-	<colgroup>
-		<col width="200">
-		<col width="200">
-		<col width="200">
-		<col width="200">
-		<col width="200">
-		<col width="200">
-		<col width="400">
-	</colgroup>
-	<tbody>
-		<tr>
-			<th class="sub-title colorN text-center" colspan="7">④간접비</th>
-		</tr>
-	</tbody>
-	<tbody role="body"></tbody>
-</table>
 
 <table id="rptTable10">
 	<colgroup>
@@ -761,7 +761,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="8">⑤ 로지텍자재 (관리)</th>
+			<th class="sub-title colorN text-center" colspan="8">④ 로지텍자재 (관리)</th>
 		</tr>
 		<tr>
 			<th class="color-contract">출고일</th>
@@ -806,7 +806,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="10">⑥ 타사자재</th>
+			<th class="sub-title colorN text-center" colspan="10">⑤ 타사자재</th>
 		</tr>
 		<tr>
 			<th class="color-contract">출고일</th>
@@ -835,6 +835,26 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		</tr>
 	</tfoot>
 </table>
+
+<!-- ---------------------------------------------------------------------- -->
+<table id="rptTable9_indirect">
+	<colgroup>
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="200">
+		<col width="400">
+	</colgroup>
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="7">⑥간접비</th>
+		</tr>
+	</tbody>
+	<tbody role="body"></tbody>
+</table>
+
 <!-- ---------------------------------------------------------------------- -->
 <table>
 	<tbody role="header">
@@ -1101,6 +1121,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* ********************************************************* */
 				var bCostList = pResult.bCostList, cCostTotal = 0, eCostTotal = 0;
 				var bCostDTM = '9999-99-99';
+				var bTotals = {"A" : [0, 0], "B" : [0, 0]};
 				console.log('bCostList', bCostList);
 				$.each(bCostList, function(pIndex, pValue) {
 					var amount = 0;
@@ -1112,17 +1133,33 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					}
 					if (pValue.cntrct_execut_code == 'B') // 계약
 					{
+						if([1, 2].includes(parseInt(pValue.ct_se_code))){
+							bTotals["A"][0] += amount;
+						}
+						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){
+							bTotals["A"][1] += amount;
+						}
 						cCostTotal += amount;
 						$('#popReportNR').find('#aCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
 					}
 					else if (pValue.cntrct_execut_code == 'D') // 실행
 					{
+						if([1, 2].includes(parseInt(pValue.ct_se_code))){
+							bTotals["B"][0] += amount;
+						}
+						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){
+							bTotals["B"][1] += amount;
+						}
 						eCostTotal += amount;
 						$('#popReportNR').find('#bCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
 					}
 				});
 
 //				if (cCostTotal != 0) {
+					$('#popReportNR').find('#aCost12Total').html(bTotals["A"][0].toString().toFormat('NUMBER'));
+					$('#popReportNR').find('#aCost345Total').html(bTotals["A"][1].toString().toFormat('NUMBER'));
+					$('#popReportNR').find('#bCost12Total').html(bTotals["B"][0].toString().toFormat('NUMBER'));
+					$('#popReportNR').find('#bCost345Total').html(bTotals["B"][1].toString().toFormat('NUMBER'));
 					$('#popReportNR').find('#aCostTotal').html(cCostTotal.toString().toFormat('NUMBER'));
 					$('#popReportNR').find('#bCostDTM').html((bCostDTM == '9999-99-99') ? '' : bCostDTM);
 
@@ -1180,6 +1217,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* 프로젝트 진행 예정 보고서(영업) */
 				/* ********************************************************* */
 				var aCostList = pResult.aCostList, cCostTotal = 0, eCostTotal = 0, cCostTotalLast = 0;
+				var cTotals = {"C" : [0, 0], "E" : [0, 0]};
 				var aCostDTM = '9999-99-99';
 				console.log('aCostList', aCostList);
 				$.each(aCostList, function(pIndex, pValue) {
@@ -1192,16 +1230,33 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					}
 					if (pValue.cntrct_execut_code == 'C') // 계약
 					{
+						if([1, 2].includes(parseInt(pValue.ct_se_code))){
+							cTotals["C"][0] += amount;
+						}
+						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){
+							cTotals["C"][1] += amount;
+						}
 						cCostTotal += amount;
 						cCostTotalLast += amount;
 						$('#popReportNR').find('#cCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
 					}
 					else if (pValue.cntrct_execut_code == 'E') // 실행
 					{
+						if([1, 2].includes(parseInt(pValue.ct_se_code))){
+							cTotals["E"][0] += amount;
+						}
+						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){
+							cTotals["E"][1] += amount;
+						}
 						eCostTotal += amount;
 						$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
 					}
 				});
+				$('#popReportNR').find('#cCost12Total').html(cTotals["C"][0].toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#cCost345Total').html(cTotals["C"][1].toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#eCost12Total').html(cTotals["E"][0].toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#eCost345Total').html(cTotals["E"][1].toString().toFormat('NUMBER'));
+
 				$('#popReportNR').find('#aCostDTM').html((aCostDTM == '9999-99-99') ? '' : aCostDTM);
 
 				var extraCostList = pResult.extraCostList;
@@ -1228,16 +1283,18 @@ div.report table table thead, div.report table table tbody, div.report table tab
 											<th class="colorSky">변경 계약가</th>
 											<td class="text-number" data-column="cCost1"></td>
 											<td class="text-number" data-column="cCost2"></td>
+											<td class="text-number" data-column="cCost12Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
 											<td class="text-number" data-column="cCost5"></td>
-											<td class="text-number" data-column="cCost8"></td>
 											<td class="text-number" data-column="cCost3"></td>
 											<td class="text-number" data-column="cCost4"></td>
+											<td class="text-number" data-column="cCost345Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
+											<td class="text-number" data-column="cCost8"></td>
 											<td class="text-number" data-column="cCost10"></td>
 											<td class="text-number" data-column="cCost61"></td>
 											<td class="text-number" data-column="cCost7"></td>
 											<td class="text-number" data-column="cCost99"></td>
 											<td class="text-number" data-column="cCostTotal"></td>
-											<td class="text-number" data-column="tCostTotal" rowspan="2"></td>
+											<td class="text-number" data-column="tCostTotal" rowspan="2" style="border-left: 2px solid #555!important;"></td>
 											<td class="text-number" data-column="tCost11" rowspan="2"></td>
 											<td class="text-center" data-column="bCostDTM" rowspan="2"></td>
 										</tr>
@@ -1245,10 +1302,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 											<th class="colorSky">변경 실행가</th>
 											<td class="text-number" data-column="eCost1"></td>
 											<td class="text-number" data-column="eCost2"></td>
+											<td class="text-number" data-column="eCost12Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
 											<td class="text-number" data-column="eCost5"></td>
-											<td class="text-number" data-column="eCost8"></td>
 											<td class="text-number" data-column="eCost3"></td>
 											<td class="text-number" data-column="eCost4"></td>
+											<td class="text-number" data-column="eCost345Total" style="border-left: 2px solid #555!important;border-right: 2px solid #555!important;"></td>
+											<td class="text-number" data-column="eCost8"></td>
 											<td class="text-number" data-column="eCost10"></td>
 											<td class="text-number" data-column="eCost61"></td>
 											<td class="text-number" data-column="eCost7"></td>
@@ -1257,10 +1316,17 @@ div.report table table thead, div.report table table tbody, div.report table tab
 										</tr>
 									</tbody>`);
 						var costTotal = {"C" : 0, "E" : 0};
+						var totals = {"C" : [0, 0], "E" : [0, 0]};
 						var tCostDTM = '9999-99-99';
 						$.each(costs, function(pIndex, pCost){
 							$(tbody).find(`td[data-column="${pCost.cntrct_execut_code.toLowerCase()}Cost${pCost.ct_se_code}"]`).html(pCost.amount.toFormat('NUMBER'));
 							costTotal[pCost.cntrct_execut_code] += (pCost.amount != '') ? parseInt(pCost.amount) : 0;
+							if([1, 2].includes(parseInt(pCost.ct_se_code))){
+								totals[pCost.cntrct_execut_code][0] += (pCost.amount != '') ? parseInt(pCost.amount) : 0;
+							}
+							else if([3, 4, 5].includes(parseInt(pCost.ct_se_code))){
+								totals[pCost.cntrct_execut_code][1] += (pCost.amount != '') ? parseInt(pCost.amount) : 0;
+							}
 							if(pCost.amount != ''){
 								if(tCostDTM > pCost.dtm){
 									tCostDTM = pCost.dtm;
@@ -1270,6 +1336,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						$.each(costTotal, function(pIndex, pValue){
 							$(tbody).find(`td[data-column="${pIndex.toLowerCase()}CostTotal"]`).html(pValue.toFormat('NUMBER'));
 						});
+						$(tbody).find(`td[data-column="cCost12Total"]`).html(totals["C"][0].toFormat('NUMBER'));
+						$(tbody).find(`td[data-column="cCost345Total"]`).html(totals["C"][1].toFormat('NUMBER'));
+						$(tbody).find(`td[data-column="eCost12Total"]`).html(totals["E"][0].toFormat('NUMBER'));
+						$(tbody).find(`td[data-column="eCost345Total"]`).html(totals["E"][1].toFormat('NUMBER'));
 						$(tbody).find(`td[data-column="bCostDTM"]`).html((tCostDTM == '9999-99-99') ? '' : tCostDTM);
 						$(tbody).find(`td[data-column="tCostTotal"]`).html((costTotal.C - costTotal.E).toFormat('NUMBER'));
 						$(tbody).find(`td[data-column="tCost11"]`).html(((costTotal.C - costTotal.E)*100.0/costTotal.C).toFixed(1)+"%");
@@ -1694,6 +1764,14 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						//매입계산서
 						var pTaxbilList = pValue.taxbilList;
 						var splpc_am_total = 0, vat_total = 0, sum_total = 0;
+						var cntrct_amount = 0;
+						if(outsrcItem[146].hasOwnProperty("e5CostList")){
+							$.each(outsrcItem[146]['e5CostList'], function(pIndex, pV){
+								cntrct_amount += Math.round(pV.amount*pV.qy);
+							});
+
+						}
+
 						daily_html += '<table style="width:100%;border:0px!important;">';
 						daily_html += '<colgroup>';
 						daily_html += '	<col width="129">';
@@ -1752,11 +1830,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						//지급내역
 						daily_html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
 						var oRcppayList = pValue.rcppayList;
-						var eCostTotal = 0, iRcppay_sub = 0, iRcppay_rate = 0.0;
-						if (eCost5 != undefined) {
-							eCostTotal = eCost5.total;
-							iRcppay_sub = eCost5.total;
-						}
+						var eCostTotal = 0, iRcppay_sub = cntrct_amount, iRcppay_rate = 0.0;
+
 						var amount_total = 0, sub_total = 0, rate_total = 0.0;
 						daily_html += '<table style="width:100%;border:0px!important;">';
 						daily_html += '<colgroup>';
@@ -1778,7 +1853,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						daily_html += '<tbody>';
 						$.each(oRcppayList, function(pIndex, pValue) {
 							iRcppay_sub -= parseInt(pValue.amount);
-							iRcppay_rate = ((eCostTotal-iRcppay_sub)/eCostTotal)*100;
+							iRcppay_rate = ((cntrct_amount-iRcppay_sub)/cntrct_amount)*100;
 							daily_html += '<tr>';
 							daily_html += '    <td>'+pValue.rcppay_de+'</td>';
 							daily_html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
@@ -1823,6 +1898,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						//매입계산서
 						var pTaxbilList = pValue.taxbilList;
 						var splpc_am_total = 0, vat_total = 0, sum_total = 0;
+						var cntrct_amount = 0;
+						if(outsrcItem[116].hasOwnProperty("e5CostList")){
+							$.each(outsrcItem[116]['e5CostList'], function(pIndex, pV){
+								cntrct_amount += Math.round(pV.amount*pV.qy);
+							});
+
+						}
 						indirect_html += '<table style="width:100%;border:0px!important;">';
 						indirect_html += '<colgroup>';
 						indirect_html += '	<col width="129">';
@@ -1881,11 +1963,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						//지급내역
 						indirect_html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
 						var oRcppayList = pValue.rcppayList;
-						var eCostTotal = 0, iRcppay_sub = 0, iRcppay_rate = 0.0;
-						if (eCost5 != undefined) {
-							eCostTotal = eCost5.total;
-							iRcppay_sub = eCost5.total;
-						}
+						var eCostTotal = 0, iRcppay_sub = cntrct_amount, iRcppay_rate = 0.0;
 						var amount_total = 0, sub_total = 0, rate_total = 0.0;
 						indirect_html += '<table style="width:100%;border:0px!important;">';
 						indirect_html += '<colgroup>';
@@ -1907,7 +1985,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						indirect_html += '<tbody>';
 						$.each(oRcppayList, function(pIndex, pValue) {
 							iRcppay_sub -= parseInt(pValue.amount);
-							iRcppay_rate = ((eCostTotal-iRcppay_sub)/eCostTotal)*100;
+							iRcppay_rate = ((cntrct_amount-iRcppay_sub)/cntrct_amount)*100;
 							indirect_html += '<tr>';
 							indirect_html += '    <td>'+pValue.rcppay_de+'</td>';
 							indirect_html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
@@ -2216,7 +2294,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				});
 				$('#popReportNR').find('#rptTable9 tbody[role=body]').html(html);
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(3)').html(all_sum_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(4)').html(indirect_sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(6)').html(indirect_sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 로지텍자재 */
@@ -2250,7 +2328,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(2)').html(amt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(3)').html(vat_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 기타자재 */
@@ -2287,7 +2365,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(3)').html(p_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(4)').html(s_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(5)').html(va_total.toString().toFormat('NUMBER'));
-				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(6)').html(p_amt_total.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(p_amt_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 기타 */
@@ -2593,15 +2671,19 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt9 = 0;
 				}
+				var total12 = execAmt1 + execAmt2;
+				var total345 = execAmt3 + execAmt4 + execAmt5;
 				var vaTotal = execAmt0 - execAmt1 - execAmt2 - execAmt3 - execAmt4 - execAmt5 - execAmt6 - execAmt7 - execAmt8 - execAmt9;
 				var vaRate = (vaTotal/execAmt0)*100;
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(1)').html(total12.toString().toFormat('NUMBER'));
+				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(2)').html(total345.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(10)').html(vaTotal.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(11)').html(vaRate.toFixed(1)+'%');
 				/* ********************************************************* */
 
 				/* 특이사항 */
 				/* ********************************************************* */
-				$('#popReportNR').find('#partclr_matter').html(project.partclr_matter); //특이사항
+				$('#popReportNR').find('#partclr_matter').html(project.partclr_matter.replaceAll("\n", "<br>")); //특이사항
 				/* ********************************************************* */
 
 			}

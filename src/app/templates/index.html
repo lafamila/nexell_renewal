@@ -577,11 +577,11 @@
 		getApprovalList("진행", "#approval_status_2", 5);
 		getApprovalList("수신", "#approval_status_3");
 		getBBS();
-		// getAlmostDoneProject();
+		getAlmostDoneProject();
 
 		// if session['member']['dept_code'] == 'BI'
-		// getBIMSProject();
-		//endif
+		getBIMSProject();
+		// endif
 
 		$("#attendance").on("click", ()=>(location.href="/work/personal"));
 	});

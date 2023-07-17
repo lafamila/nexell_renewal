@@ -397,20 +397,20 @@ getCompletedSummary = function(s_pxcond_mt)
 					b_amt3 = Math.round(b_amt3/DELIMITER);
 					b_amt4 = Math.round(b_amt4/DELIMITER);
 					b_amt5 = Math.round(b_amt5/DELIMITER);
-					rt1 = (b_amt2 < 0) ? 100.0 + (b_amt2 - b_amt1)*100/b_amt2 : (b_amt1/b_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
-					rt2 = (b_amt4 < 0) ? 100.0 + (b_amt4 - b_amt3)*100/b_amt4 : (b_amt3/b_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
+					rt1 = (b_amt2 < 0) ? 100.0 + (b_amt1 - b_amt2)*100/Math.abs(b_amt2) : (b_amt1/b_amt2)*100; if (isNaN(rt1)) rt1 = 0.0;
+					rt2 = (b_amt4 < 0) ? 100.0 + (b_amt3 - b_amt4)*100/Math.abs(b_amt4) : (b_amt3/b_amt4)*100; if (isNaN(rt2)) rt2 = 0.0;
 					rt3 = (b_amt3/b_amt5)*100; if (isNaN(rt3)) rt3 = 0.0;
 					html += '<tr data-amt="'+pValue.amt_ty_code+'">';
 					html += '    <td class="text-center colorSky" style="vertical-align:middle;border-right:2px solid black!important;border-bottom:1px solid black!important;"><a data-toggle="modal" href="#popReport2" style="color:inherit;">'+pValue.amt_ty_nm+'</a></td>';
                     html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
                     html += '    <td class="text-number">'+b_amt2.toString().toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-number">'+b_amt1.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number">'+b_amt4.toString().toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-number">'+b_amt3.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number">'+b_amt5.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number total-rates" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+b_amt5+'"></td>';
                     html += '</tr>';
 					// 합계처리
@@ -428,12 +428,12 @@ getCompletedSummary = function(s_pxcond_mt)
 						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
                         html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky" id="suju_rates'+pValue.amt_ty_code+'">'+total5.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky"></td>';
                         html += '</tr>';
 						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
@@ -469,12 +469,12 @@ getCompletedSummary = function(s_pxcond_mt)
 					html += '    <td class="text-center" style="border-right:2px solid black!important;">'+pValue.dept_nm+'</td>';
 					html += '    <td class="text-number">'+k_amt2.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+k_amt1.toString().toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
+                    html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '-' : (rt1.toFixed(1)+'%'))+'</td>';
 					html += '    <td class="text-number">'+k_amt4.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-number">'+k_amt3.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '-' : (rt2.toFixed(1)+'%'))+'</td>';
 					html += '    <td class="text-number">'+k_amt5.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
+					html += '    <td class="text-number" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                     html += '    <td class="text-number total-rates" data-target="suju_rates'+pValue.amt_ty_code+'" data-amount="'+k_amt5+'"></td>';
 					html += '</tr>';
 					// 장려금금
@@ -510,12 +510,12 @@ getCompletedSummary = function(s_pxcond_mt)
 						html += '    <td class="text-center colorSky" style="border-right:2px solid black!important;">계</td>';
                         html += '    <td class="text-number colorSky">'+total2.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total1.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity || rt1 < 0)? '-' : (rt1.toFixed(1) + '%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt1 == Infinity)? '-' : (rt1.toFixed(1) + '%'))+'</td>';
                         html += '    <td class="text-number colorSky">'+total4.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number colorSky">'+total3.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity || rt2 < 0)? '-' : (rt2.toFixed(1) + '%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt2 == Infinity)? '-' : (rt2.toFixed(1) + '%'))+'</td>';
                         html += '    <td class="text-number colorSky" id="suju_rates'+pValue.amt_ty_code+'">'+total5.toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity || rt3 < 0)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number colorSky" style="border-right:2px solid black!important;">'+((rt3 == Infinity)? '-' : (rt3.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number colorSky"></td>';
                         html += '</tr>';
 						total1 = 0, total2 = 0, total3 = 0, total4 = 0, total5 = 0;
@@ -1547,13 +1547,13 @@ getMonthReport = function(pxcond_mt){
 							<td class="colorLY text-right middle" data-column="summary" colspan="2">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle fontColorN" data-column="summary" data-value="valueS"></td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
+							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(0) + '%'))}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
+							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(0) + '%'))}</td>
 							<td class="colorLY text-right middle ${diff < 0 ? 'color-red' : ''}" data-column="summary">${diff.toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>`;
+							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(0) + '%'))}</td>`;
 
 				var pValue2 = pData[dept_code]['3'];
 				b_amt1 = parseInt(pValue2.m_contract_amount); if (isNaN(b_amt1)) b_amt1 = 0;
@@ -1585,13 +1585,13 @@ getMonthReport = function(pxcond_mt){
 							<td class="colorLY text-right middle" data-column="summary" colspan="2">${Math.round(b_amt2/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle fontColorN" data-column="summary" data-value="valueT"></td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt1/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(1) + '%'))}</td>
+							<td class="colorLY text-right middle" data-column="summary">${((rt1 == Infinity) ? '' : (rt1.toFixed(0) + '%'))}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt4/1000).toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt3/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(1) + '%'))}</td>
+							<td class="colorLY text-right middle" data-column="summary">${((rt2 == Infinity) ? '' : (rt2.toFixed(0) + '%'))}</td>
 							<td class="colorLY text-right middle ${diff < 0 ? 'color-red' : ''}" data-column="summary"">${diff.toFormat('NUMBER')}</td>
 							<td class="colorLY text-right middle" data-column="summary">${Math.round(b_amt5/1000).toFormat('NUMBER')}</td>
-							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(1) + '%'))}</td>`;
+							<td class="colorLY text-right middle" data-column="summary">${((rt3 == Infinity) ? '' : (rt3.toFixed(0) + '%'))}</td>`;
 				html += `</tr>`;
 
 			});
@@ -1612,25 +1612,25 @@ getMonthReport = function(pxcond_mt){
 						<td class="colorLG text-right middle" colspan="2">${Math.round(total12 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle fontColorN" data-value="valueStot"></td>
 						<td class="colorLG text-right middle">${Math.round(total11 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt11.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt11 == Infinity) ? '' : (rt11.toFixed(0) + '%'))}</td>
 						<td class="colorLG text-right middle">${Math.round(total14 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total13 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt12 == Infinity) ? '' : (rt12.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt12 == Infinity) ? '' : (rt12.toFixed(0) + '%'))}</td>
 						<td class="colorLG text-right middle ${diff1 < 0 ? 'color-red' : ''}">${diff1.toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total15 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt13.toFixed(1) + '%'))}</td>;
+						<td class="colorLG text-right middle">${((rt13 == Infinity) ? '' : (rt13.toFixed(0) + '%'))}</td>;
 						<td class="colorSky text-center middle">매출</td>
 						<td class="colorLG text-center middle">소계</td>
 						<td class="colorLG text-right middle" colspan="2">${Math.round(total22 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle fontColorN" data-value="valueTtot"></td>
 						<td class="colorLG text-right middle">${Math.round(total21 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt21.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt21 == Infinity) ? '' : (rt21.toFixed(0) + '%'))}</td>
 						<td class="colorLG text-right middle">${Math.round(total24 /1000).toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total23 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt22 == Infinity) ? '' : (rt22.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt22 == Infinity) ? '' : (rt22.toFixed(0) + '%'))}</td>
 						<td class="colorLG text-right middle ${diff2 < 0 ? 'color-red' : ''}">${diff2.toFormat('NUMBER')}</td>
 						<td class="colorLG text-right middle">${Math.round(total25 /1000).toFormat('NUMBER')}</td>
-						<td class="colorLG text-right middle">${((rt23 == Infinity) ? '' : (rt23.toFixed(1) + '%'))}</td>
+						<td class="colorLG text-right middle">${((rt23 == Infinity) ? '' : (rt23.toFixed(0) + '%'))}</td>
 					 </tr>`;
 
 			$("#rpt99").find("#top-summary").find("tbody[role='body']").html(html);

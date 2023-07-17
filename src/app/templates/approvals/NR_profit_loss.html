@@ -233,15 +233,31 @@
                 console.log(pResult);
                 var C_cost = 0;
                 var E_cost = 0;
-                $.each(pResult.aCostList, function(pIndex, pValue){
-                    var amount = parseInt(pValue.amount); if(isNaN(amount)) amount = 0;
-                    if(pValue.cntrct_execut_code == 'C'){
-                        C_cost += amount;
-                    }
-                    else{
-                        E_cost += amount;
-                    }
-                });
+                if(Object.keys(pResult.extraCostList).length > 0){
+                    var max_sn = Math.max(...Object.keys(pResult.extraCostList).map(x => parseInt(x)));
+                    $.each(pResult.extraCostList[max_sn], function(pIndex, pValue){
+                        var amount = parseInt(pValue.amount); if(isNaN(amount)) amount = 0;
+                        if(pValue.cntrct_execut_code == 'C'){
+                            C_cost += amount;
+                        }
+                        else{
+                            E_cost += amount;
+                        }
+                    });
+
+                }
+                else{
+                    $.each(pResult.aCostList, function(pIndex, pValue){
+                        var amount = parseInt(pValue.amount); if(isNaN(amount)) amount = 0;
+                        if(pValue.cntrct_execut_code == 'C'){
+                            C_cost += amount;
+                        }
+                        else{
+                            E_cost += amount;
+                        }
+                    });
+
+                }
                 var totals = [C_cost, E_cost];
                 $("tbody").find(`[name='C_total${suffix}']`).html(C_cost.toFormat('NUMBER'));
                 $("tbody").find(`[name='C_total_total${suffix}']`).html(C_cost.toFormat('NUMBER'));

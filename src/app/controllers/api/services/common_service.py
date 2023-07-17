@@ -1365,6 +1365,16 @@ def insert_vacation_out(params, vacation_type):
             data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
             g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
+            g.curs.execute("SELECT todo_sn, todo_time FROM todo WHERE mber_sn=%s AND todo_de=%s", (data["mber_sn"], data["vacation_de"]))
+            result = g.curs.fetchall()
+            times = set([0, 1])
+            for r in result:
+                times = times - set([int(r['todo_time'])])
+                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", (params['rm'], r['todo_sn']))
+            for t in list(times):
+                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], t, params['rm'], data["vacation_de"], data["mber_sn"]))
+
+
 def insert_vacation(params):
     data = OrderedDict()
     data['mber_sn'] = params["mber_sn"]
@@ -1392,6 +1402,25 @@ def insert_vacation(params):
     for d in range((ed_de - st_de).days + 1):
         data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
         g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
+
+        if params['vacation_type'] in ("y", "b") and params['vacation_type_detail'] in ("h1", "h2"):
+            todo_time = 0 if params['vacation_type_detail'] == "h1" else 1
+            g.curs.execute("SELECT todo_sn FROM todo WHERE mber_sn=%s AND todo_de=%s AND todo_time=%s", (data["mber_sn"], data["vacation_de"], todo_time))
+            result = g.curs.fetchone()
+            if result:
+                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", (params['rm'], result['todo_sn']))
+            else:
+                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], todo_time, params['rm'], data["vacation_de"], data["mber_sn"]))
+        else:
+            g.curs.execute("SELECT todo_sn, todo_time FROM todo WHERE mber_sn=%s AND todo_de=%s", (data["mber_sn"], data["vacation_de"]))
+            result = g.curs.fetchall()
+            times = set([0, 1])
+            for r in result:
+                times = times - set([int(r['todo_time'])])
+                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", (params['rm'], r['todo_sn']))
+            for t in list(times):
+                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], t, params['rm'], data["vacation_de"], data["mber_sn"]))
+
 
 def get_blueprint_goal(params):
     query = "SELECT stdyy, amount, hp, total FROM blueprint_goal WHERE stdyy=%(stdyy)s"

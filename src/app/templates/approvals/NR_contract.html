@@ -221,7 +221,7 @@
         <tr data-row="option_header">
             <td class="colorSky text-center">옵션율</td>
             <td class="hasinput">
-                <select class="form-control select2 w100p" id="option_rate" name="option_rate" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;">
+                <select class="form-control select2 w100p" id="option_rate" name="option_rate" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;text-align:center!important;">
                     <option value=""></option>
                     <option value="70">70%</option>
                     <option value="80">80%</option>
@@ -308,7 +308,7 @@
                 $("tbody[role='ct_se_code']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
                 $("tbody[role='ct_se_code_contract']").find("[name='E_61']").html($("tbody[role='ct_se_code']").parent().find("[name='D_61']").html());
                 $("tbody[role='ct_se_code_contract']").find("[name='E_7']").html($("tbody[role='ct_se_code']").parent().find("[name='D_7']").html());
-
+                $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
             }
         });
 

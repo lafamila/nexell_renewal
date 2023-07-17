@@ -695,6 +695,10 @@
         var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
         $(this).val(value);
     });
+    $(document).on("focusout", "input[data-type='rate']", function(){
+        var value = parseFloat($(this).val().replaceAll(",", "").replaceAll("%", ""));
+        $(this).val(isNaN(value) ? '' : (value+"%"));
+    });
     $(document).on("focusout", "input", function(){
         $(this).closest("tbody").trigger("change");
     });

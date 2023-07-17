@@ -53,7 +53,8 @@
         </tr>
     </tbody>
 </table>
-<table class="table table-bordered table-form main-table">
+<!-- 공사변경 part0 (id="costTable")-->
+<table class="table table-bordered table-form main-table" id="costTable">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -95,36 +96,36 @@
             <th class="color-contract text-center">VA율</th>
         </tr>
     </tbody>
-    <tbody role="ct_se_code">
-        <tr data-row="B">
-            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+    <tbody role="ct_se_code_contract">
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">수주계약</th>
             <th class="colorSky text-center">예정가</th>
-            <td class="text-right" data-type='number' name="B_1"></td>
-            <td class="text-right" data-type='number' name="B_2"></td>
-            <td class="text-right" data-type='number' name="B_5"></td>
-            <td class="text-right" data-type='number' name="B_8"></td>
-            <td class="text-right" data-type='number' name="B_3"></td>
-            <td class="text-right" data-type='number' name="B_4"></td>
-            <td class="text-right" data-type='number' name="B_10"></td>
-            <td class="text-right" data-type='number' name="B_61"></td>
-            <td class="text-right" data-type='number' name="B_7"></td>
-            <td class="text-right" data-type='number' name="B_99"></td>
+            <td class="text-right" data-type='number' name="C_1"></td>
+            <td class="text-right" data-type='number' name="C_2"></td>
+            <td class="text-right" data-type='number' name="C_5"></td>
+            <td class="text-right" data-type='number' name="C_8"></td>
+            <td class="text-right" data-type='number' name="C_3"></td>
+            <td class="text-right" data-type='number' name="C_4"></td>
+            <td class="text-right" data-type='number' name="C_10"></td>
+            <td class="text-right" data-type='number' name="C_61"></td>
+            <td class="text-right" data-type='number' name="C_7"></td>
+            <td class="text-right" data-type='number' name="C_99"></td>
             <td class="text-center" data-column="row_total"></td>
             <td class="text-center" data-column="va" rowspan="2"></td>
             <td class="text-center" data-column="va_rate" rowspan="2"></td>
         </tr>
-        <tr data-row="D">
+        <tr data-row="E">
             <th class="colorSky text-center">실행가</th>
-            <td class="text-right" data-type='number' name="D_1"></td>
-            <td class="text-right" data-type='number' name="D_2"></td>
-            <td class="text-right" data-type='number' name="D_5"></td>
-            <td class="text-right" data-type='number' name="D_8"></td>
-            <td class="text-right" data-type='number' name="D_3"></td>
-            <td class="text-right" data-type='number' name="D_4"></td>
-            <td class="text-right" data-type='number' name="D_10"></td>
-            <td class="text-right" data-type='number' name="D_61"></td>
-            <td class="text-right" data-type='number' name="D_7"></td>
-            <td class="text-right" data-type='number' name="D_99"></td>
+            <td class="text-right" data-type='number' name="E_1"></td>
+            <td class="text-right" data-type='number' name="E_2"></td>
+            <td class="text-right" data-type='number' name="E_5"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
+            <td class="text-right" data-type='number' name="E_3"></td>
+            <td class="text-right" data-type='number' name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_10"></td>
+            <td class="text-right" data-type='number' name="E_61"></td>
+            <td class="text-right" data-type='number' name="E_7"></td>
+            <td class="text-right" data-type='number' name="E_99"></td>
             <td class="text-center" data-column="row_total"></td>
         </tr>
     </tbody>
@@ -270,31 +271,85 @@
         $.ajax({
             url : '/api/project/get_costs_bd',
             method : 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn},
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
             success: function(pResult){
                 $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                 $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
-                $.each(pResult.bCostList, function(pIndex, pValue){
-                    $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
-                });
-                var totals = [];
-                $("tbody[role='ct_se_code']").find("tr").each(function(pIndex, pRow){
-                    var total = 0;
-                    $(pRow).find("[data-type='number']").each(function(pI, pTag){
-                        var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
-                        total += value;
-                    });
-                    $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
-                    totals.push(total);
-                    if(pIndex == 0){
-                        $(document).find("[name='D_10']").html(Math.round(total*0.005).toFormat('NUMBER'));
-                    }
-                });
 
-                $("tbody[role='ct_se_code']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
-                $("tbody[role='ct_se_code']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
-                $("tbody[role='ct_se_code_contract']").find("[name='E_61']").html($("tbody[role='ct_se_code']").parent().find("[name='D_61']").html());
-                $("tbody[role='ct_se_code_contract']").find("[name='E_7']").html($("tbody[role='ct_se_code']").parent().find("[name='D_7']").html());
+
+                    // 공사변경 part1 START
+                    var max_extra_sn = 0;
+                    var html = '';
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        max_extra_sn = extra_sn;
+                        var pRow = pResult.extraCostList[extra_sn];
+                        html += `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
+                                        <tr data-row="C">
+                                            <th class="colorB text-center middle" rowspan="2">변경-${extra_sn}</th>
+                                            <th class="colorSky text-center">변경 계약가</th>
+                                            <td class="text-right" data-type='number' name="C_1_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_2_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_5_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_8_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_3_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_4_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_10_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_61_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_7_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_99_${extra_sn}"></td>
+                                            <td class="text-center" data-column="row_total_${extra_sn}"></td>
+                                            <td class="text-center" data-column="va_${extra_sn}" rowspan="2"></td>
+                                            <td class="text-center" data-column="va_rate_${extra_sn}" rowspan="2"></td>
+                                        </tr>
+                                        <tr data-row="E">
+                                            <th class="colorSky text-center">변경 실행가</th>
+                                            <td class="text-right" data-type='number' name="E_1_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_2_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_5_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_8_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_3_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_4_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_10_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_61_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_7_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_99_${extra_sn}"></td>
+                                            <td class="text-center" data-column="row_total_${extra_sn}"></td>
+                                        </tr>
+                                    </tbody>`;
+                    });
+                    $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        var pRow = pResult.extraCostList[extra_sn];
+                        $.each(pRow, function(pIndex, pValue){
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+                        $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
+                    });
+                    // 공사변경 part1 END
+                    $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
+                    $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
+                    $.each(pResult.aCostList, function(pIndex, pValue){
+                        $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                    });
+                    $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
+                    var totals = [];
+                    $("tbody[role='ct_se_code_contract']").find("tr").each(function(pIndex, pRow){
+                        var total = 0;
+                        $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                            var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                            total += value;
+                        });
+                        $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                        totals.push(total);
+                    });
+
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+                    $("tbody[role='ct_se_code_contract']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+
 				var html = '';
 				var etcRcppayList = pResult.etcRcppayList;
 				var amt_total = 0;

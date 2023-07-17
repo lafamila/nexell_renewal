@@ -612,11 +612,11 @@
                     $(document).find("#outsrc_sn").attr("disabled", false);
                     var C_total = 0;
                     var E_total = 0;
-                    if(pResult.extraCostList.length > 0){
+                    if(Object.keys(pResult.extraCostList).length > 0){
                         var max_sn = 0;
                         $.each(pResult.extraCostList, function(pIndex, pValue){
-                            if(max_sn < pIndex)
-                                max_sn = pIndex;
+                            if(max_sn < parseInt(pIndex))
+                                max_sn = parseInt(pIndex);
                         });
                         $.each(pResult.extraCostList[max_sn], function(pIndex, pValue){
                             if(pValue.cntrct_execut_code == 'C'){

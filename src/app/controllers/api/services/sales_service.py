@@ -694,8 +694,25 @@ def insert_ms_BF_equip(params):
 
         return delng_sns
     else:
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
         cntrct_sn = params["cntrct_sn"]
         g.curs.execute("UPDATE contract SET mh_approval_step=2 WHERE cntrct_sn=%s", (cntrct_sn,))
+
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "M,S/H 설치·회수", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+
 
 
 def insert_ms_equip(params):
@@ -766,9 +783,24 @@ def insert_ms_equip(params):
             delng_sns.append(delng_sn)
         return delng_sns
     else:
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
         cntrct_sn = params["cntrct_sn"]
         g.curs.execute("UPDATE contract SET mh_approval_step=2 WHERE cntrct_sn=%s", (cntrct_sn, ))
 
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "M,S/H 설치·회수", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
         # sub_query = [key for key in data]
         # params_query = ["%({})s".format(key) for key in data]
@@ -782,7 +814,7 @@ def insert_equipment_sub(params):
     damt2s = params['damt2[]']
     bcnc_sns = params['bcnc_sn[]']
     for order_de, prdlst_se_code, pamt, samt, bcnc_sn in zip(order_des, prdlst_se_codes, damts, damt2s, bcnc_sns):
-        if order_de == '':
+        if order_de == '' or prdlst_se_code == '':
             continue
         data['order_de'] = order_de
         data['prdlst_se_code'] = prdlst_se_code
@@ -792,6 +824,22 @@ def insert_equipment_sub(params):
         data['samt'] = int(samt.replace(",", "")) if samt != '' else None
         data['bcnc_sn'] = bcnc_sn
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
+
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "로지텍자재", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
 def get_model_list(params, purpose=None):
     query = """SELECT p.delng_sn
@@ -835,6 +883,8 @@ def insert_equipment_other_sub(params):
     damts = params['damt[]']
     bcnc_sns = params['bcnc_sn[]']
     for order_de, model_no, prdlst_se_code, damt, dlnt, bcnc_sn in zip(order_des, model_nos, prdlst_se_codes, damts, dlnts, bcnc_sns):
+        if order_de == '' or prdlst_se_code == '':
+            continue
         data['order_de'] = order_de
         data['prdlst_se_code'] = prdlst_se_code
         data['model_no'] = '자재'
@@ -844,6 +894,21 @@ def insert_equipment_other_sub(params):
         data['bcnc_sn'] = bcnc_sn
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "타사자재", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
 def update_equipment_establish(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
@@ -1060,6 +1125,21 @@ def insert_equipment(params):
                 query = """UPDATE expect_equipment SET cnt_dlnt=%(cnt_dlnt)s WHERE cntrct_sn=%(equip_sn)s"""
                 g.curs.execute(query, {"cnt_dlnt" : int(cnt_dlnt_before) + int(eq['cnt_dlnt']), "equip_sn" : equip_sn})
 
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "장비현황 및 업체선정", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
 
 def insert_equipment_samsung(params):
@@ -1089,6 +1169,23 @@ def insert_equipment_samsung(params):
     VALUES(NOW(), %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """
     g.curs.executemany(query, real_data)
 
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "삼성장비" if "_type" not in params else "타사장비", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+
+
 def insert_equipment_BD_samsung(params):
     row_length = len(params['equip_sn[]'])
     order_de = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
@@ -1113,6 +1210,22 @@ def insert_equipment_BD_samsung(params):
     query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code, dlivy_amt) 
     VALUES(%(order_de)s, %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(pamount)s, %(cntrct_amount)s, %(bcnc_sn)s, %(equip_sn)s, 1, %(dlivy_amt)s) """
     g.curs.executemany(query, real_data)
+
+    if "option_bigo" in params and params["option_bigo"].strip() != '':
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "삼성장비", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
 
 def insert_direct(params):

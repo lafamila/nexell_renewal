@@ -53,7 +53,7 @@
         </tr>
     </tbody>
 </table>
-<table class="table table-bordered table-form main-table">
+<table class="table table-bordered table-form main-table" id="costTable">
     <colgroup>
         <col width="100"/>
         <col width="100"/>
@@ -272,6 +272,56 @@
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
                     console.log(pResult);
+
+                    // 공사변경 part1 START
+                    var max_extra_sn = 0;
+                    var html = '';
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        max_extra_sn = extra_sn;
+                        var pRow = pResult.extraCostList[extra_sn];
+                        html += `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
+                                        <tr data-row="C">
+                                            <th class="colorB text-center middle" rowspan="2">변경-${extra_sn}</th>
+                                            <th class="colorSky text-center">변경 계약가</th>
+                                            <td class="text-right" data-type='number' name="C_1_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_2_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_5_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_8_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_3_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_4_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_10_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_61_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_7_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_99_${extra_sn}"></td>
+                                            <td class="text-center" data-column="row_total_${extra_sn}"></td>
+                                            <td class="text-center" data-column="va_${extra_sn}" rowspan="2"></td>
+                                            <td class="text-center" data-column="va_rate_${extra_sn}" rowspan="2"></td>
+                                        </tr>
+                                        <tr data-row="E">
+                                            <th class="colorSky text-center">변경 실행가</th>
+                                            <td class="text-right" data-type='number' name="E_1_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_2_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_5_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_8_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_3_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_4_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_10_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_61_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_7_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_99_${extra_sn}"></td>
+                                            <td class="text-center" data-column="row_total_${extra_sn}"></td>
+                                        </tr>
+                                    </tbody>`;
+                    });
+                    $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        var pRow = pResult.extraCostList[extra_sn];
+                        $.each(pRow, function(pIndex, pValue){
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+                        $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
+                    });
+                    // 공사변경 part1 END
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
@@ -371,6 +421,49 @@
             $(document).find("tbody[role='equip_row']").trigger("change");
         }
     }
+    // 공사변경 part2 START
+    $(document).on("change", "tbody[role='ct_se_code_extra']", function(){
+        var totals = [];
+        var sn = $(this).data("row");
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "INPUT"){
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find(`[data-column='row_total_${sn}']`).html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "INPUT"){
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find(`[data-column='row_total_${sn}']`).html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+        });
+
+        $(this).find(`[data-column='va_${sn}']`).html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find(`[data-column='va_rate_${sn}']`).html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+
+
+
+    });
+    // 공사변경 part2 END
+
+
     $(document).on("change", "tbody[role='equip_row']", function(){
         // var total_amount = 0;
         // var total_samount = 0;

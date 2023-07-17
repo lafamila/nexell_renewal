@@ -337,3 +337,5 @@ def insert_vacation(params):
             "INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]),
                                                           ",".join(["%({})s".format(key) for key in data.keys()])),
             data)
+
+
