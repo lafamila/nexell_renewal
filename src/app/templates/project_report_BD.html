@@ -391,7 +391,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="color-contract">기타비용</th>
 			<th class="color-contract">설계변경</th>
             <th class="colorLP">이익금(VA)</th>
-			<th class="colorLP">VA율(%)</th>
+			<th class="colorLP">VA율</th>
 			<th class="color-contract">품의일자</th>
 
 		</tr>
@@ -484,14 +484,26 @@ div.report table table thead, div.report table table tbody, div.report table tab
 <!-- ---------------------------------------------------------------------- -->
 <table id="report_exec">
 	<colgroup>
-		<col width="145">
-		<col width="*">
+		<col width="60">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="50">
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="10">결산내역 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="11">결산내역 (관리) - VAT포함</th>
 		</tr>
+	</tbody>
+	<tbody role="body">
 		<tr>
+			<th class="colorN" rowspan="2">결산내역</th>
 			<th class="colorP">계약총액</th>
 			<th class="colorP">입금합계</th>
 			<th class="colorP">① 장비 매입/출고 현황</th>
@@ -501,11 +513,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">⑤ 옵션행사비</th>
 			<th class="colorP">⑥ 기타비용(총액 0.5%)</th>
 			<th class="colorP">이익금(VA)</th>
-			<th class="colorP">VA율(%)</th>
+			<th class="colorP">VA율</th>
 		</tr>
-	</tbody>
-	<tbody role="body">
-		<tr>
+		<tr data-row="result">
 			<td class="colorP text-number"></td>
 			<th class="text-number colorP"></th>
 			<td class="text-number"></td>
@@ -760,7 +770,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<th class="colorG text-center"></th>
 		<th class="colorG text-center"></th>
 		<th class="colorG text-center" data-column="total_return"></th>
-		<th class="colorG text-center"></th>
+		<th class="colorG text-center" data-column="total_diff"></th>
 		<th class="colorG text-center"></th>
 	</tfoot>
 
@@ -1303,7 +1313,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					// $('#popReportBD').find('#report_plan tbody[role=exec] td:eq(0)').html('㉡ 계약현황');
 					$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(0)').html(base[0].s_sum_total.toString().toFormat('NUMBER'));
 					$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(1)').html(base[0].p_sum_total.toString().toFormat('NUMBER'));
-					$('#popReportBD').find('#report_exec tbody[role=body] td:eq(0)').html(s_sum_total.toString().toFormat('NUMBER'));
+					$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(0)').html(s_sum_total.toString().toFormat('NUMBER'));
 				}
 
 				/* ********************************************************* */
@@ -1679,7 +1689,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBD').find('#report_i_rcppay tfoot th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_i_rcppay tfoot th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_i_rcppay tfoot th:eq(3)').html(rate_total.toFixed(1)+'%');
-                $('#popReportBD').find('#report_exec tbody[role=body] th:eq(0)').html(amount_total.toString().toFormat('NUMBER'));
+                $('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] th:eq(0)').html(amount_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 모델(샘플)하우스 장비 매입 현황 (관리) */
@@ -1883,7 +1893,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 // 				$('#popReportBD').find('#report_s_account tfoot th:eq(6)').html(a_last_dlamt_total.toString().toFormat('NUMBER'));
 //                 $('#popReportBD').find('#report_s_account tfoot th:eq(7)').html((a_dlamt_total - a_last_dlamt_total).toString().toFormat('NUMBER'));
 //                 $('#popReportBD').find('#report_s_account tfoot th:eq(10)').html(wrhousng_tot.toString().toFormat('NUMBER'));
-// 				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(2)').html(a_dlamt_total.toString().toFormat('NUMBER'));
+// 				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(2)').html(a_dlamt_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				
@@ -1895,6 +1905,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var total_dc = [0, 0];
 				var total_ramount = [0, 0];
 				var total_return = [0, 0];
+				var total_diff = [0, 0];
 				$.each(model_cost_list, function(pIndex, pValue){
 					var return_de = '';
 					var return_dlnt = 0;
@@ -1915,6 +1926,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					total_dc[_type] += Math.round(pValue.dlnt*pValue.dlivy_amt * pValue.add_dscnt_rt / 100.0);
 					total_ramount[_type] += (amount - Math.round(pValue.dlnt*pValue.dlivy_amt * pValue.add_dscnt_rt / 100.0));
 					total_return[_type] += return_dlnt;
+					total_diff[_type] += diff;
 
 					var dlivy_year = pValue.dlivy_de.split("-")[0];
 					var dlivy_month = pValue.dlivy_de.split("-")[1];
@@ -1954,7 +1966,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 									<td class="colorG"></td>
 									<td class="colorG"></td>
 									<td class="colorG text-center">${total_return[0].toFormat('NUMBER')}</td>
-									<td class="colorG"></td>
+									<td class="colorG text-center">${total_diff[0].toFormat('NUMBER')}</td>
 									<td class="colorG"></td>
 								</tr>`;
 				var html_tot2 = `<tr>
@@ -1971,7 +1983,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 									<td class="colorG"></td>
 									<td class="colorG"></td>
 									<td class="colorG text-center">${total_return[1].toFormat('NUMBER')}</td>
-									<td class="colorG"></td>
+									<td class="colorG text-center">${total_diff[1].toFormat('NUMBER')}</td>
 									<td class="colorG"></td>
 								</tr>`;
 				$('#popReportBD').find('#rptTable14 tbody[role=m_house_row]').html(html[0]);
@@ -1985,7 +1997,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_dc']").html((total_dc[0] + total_dc[1]).toFormat('NUMBER'));
 				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_ramount']").html((total_ramount[0] + total_ramount[1]).toFormat('NUMBER'));
 				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_return']").html((total_return[0] + total_return[1]).toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] tr td:eq(2)').html((total_amount[0]+total_amount[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#rptTable14 tfoot').find("[data-column='total_diff']").html((total_diff[0] + total_diff[1]).toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] tr td:eq(2)').html((total_amount[0]+total_amount[1]).toFormat('NUMBER'));
 
 				/* 모델(샘플)하우스 추가 DC 현황 (관리) */
 				/* ********************************************************* */
@@ -2128,7 +2141,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBD').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(3)').html(rate_total.toFixed(1)+'%');
 
-				$('#popReportBD').find('#report_exec tbody[role=body] tr td:eq(3)').html(dc_total.toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] tr td:eq(3)').html(dc_total.toFormat('NUMBER'));
 
 
 				/* M/SH, 옵션 */
@@ -2254,7 +2267,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(5)').html(sub_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(6)').html(rate_total.toFixed(1)+'%');
 				$('#popReportBD').find('#report_i3_rcppay tfoot th:eq(2)').html(sum_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(4)').html(amount_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(4)').html(amount_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 장비 매입/출고 현황 (관리) */
@@ -2291,7 +2304,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBD').find('#report_s12_account tfoot th:eq(8)').html(s_amt_total_sum.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_s12_account tfoot th:eq(9)').html(va_sum.toString().toFormat('NUMBER'));
 
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(1)').html(p_amt_total_sum.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(1)').html(p_amt_total_sum.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
 
 				/* 기타 */
@@ -2319,7 +2332,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						c_opt_date.push(pValue.rcppay_de);
 					}
 				});
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(5)').html(c_opt_amount.toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(5)').html(c_opt_amount.toFormat('NUMBER'));
 				$('#popReportBD').find(`[data-column='c_opt_amount']`).html(c_opt_amount.toFormat('NUMBER'));
 				$('#popReportBD').find(`[data-column='c_opt_pay_dtm']`).html(c_opt_date.join(","));
 
@@ -2337,7 +2350,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 //				});
 				$('#popReportBD').find('#report_e_etc tbody[role=body]').html(html);
 				$('#popReportBD').find('#report_e_etc tfoot th:eq(1)').html(amt_total.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(6)').html(amt_total.toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(6)').html(amt_total.toFormat('NUMBER'));
 
 				/* ********************************************************* */
 
@@ -2375,7 +2388,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 				/* 결산내역 (관리) */
 				/* ********************************************************* */
-				var execData = $('#popReportBD').find('#report_exec tbody[role=body] td');
+				var execData = $('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td');
 				var execAmt0 = $(execData[0]).html().replaceAll(',', '');
 				if (execAmt0 != '') {
 					execAmt0 = parseInt(execAmt0);
@@ -2420,13 +2433,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				}
 				var vaTotal = execAmt0 - execAmt1 - execAmt2 + execAmt3 + execAmt4 - execAmt5 - execAmt6;
 				var vaRate = (vaTotal/execAmt0)*100;
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(7)').html(vaTotal.toString().toFormat('NUMBER'));
-				$('#popReportBD').find('#report_exec tbody[role=body] td:eq(8)').html(vaRate == Infinity ? '-' : (vaRate.toFixed(1)+'%'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(7)').html(vaTotal.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(8)').html(vaRate == Infinity ? '-' : (vaRate.toFixed(1)+'%'));
 				/* ********************************************************* */
 
 				/* 특이사항 */
 				/* ********************************************************* */
-				$('#popReportBD').find('#partclr_matter').html(project.partclr_matter); //특이사항
+				$('#popReportBD').find('#partclr_matter').html(project.partclr_matter.trim().replaceAll("\n", "<br>")); //특이사항
 				/* ********************************************************* */
 
                 var cells = $('#popReportBD').find('td, th');

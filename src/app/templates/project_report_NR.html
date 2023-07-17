@@ -365,7 +365,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="16" style="border-right:0px!important;">공사 현황 (영업) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="18" style="border-right:0px!important;">공사 현황 (영업) - VAT포함</th>
         </tr>
 		<tr>
 			<th class="colorN text-center">구분</th>
@@ -487,7 +487,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="14">결산내역 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="16">결산내역 (관리) - VAT포함</th>
 		</tr>
 	</thead>
 	<tbody role="body">
@@ -559,7 +559,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</tbody>
 	<tbody role="contract">
 		<tr>
-			<td colspan="4" class="hasTable" style="padding:0px!important;">
+			<td colspan="6" class="hasTable" style="padding:0px!important;">
 				<table id="rptTable7Contract" style="border:none!important;">
 					<colgroup>
 						<col width="145">
@@ -569,7 +569,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						<th class="color-contract" colspan="1">상품명</th>
 						<th class="color-contract" colspan="1">모델명</th>
 						<th class="color-contract" colspan="1">계약수량</th>
-						<th class="color-contract" colspan="1">기출고수량</th>
+						<th class="color-contract" colspan="1">매입단가</th>
+						<th class="color-contract" colspan="1">출고수량</th>
+						<th class="color-contract" colspan="1">매입금액</th>
+						<th class="color-contract" colspan="1">VA</th>
+					<!-- 매입단가-출고수량-매입금액-VA -->
 					</thead>
 					<tbody>
 
@@ -577,7 +581,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				</table>
 
 			</td>
-			<td colspan="6"></td>
+			<td colspan="4"></td>
 		</tr>
 	</tbody>
 	<tbody>
@@ -627,7 +631,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</tbody>
 	<tbody role="contract">
 		<tr>
-			<td colspan="4" class="hasTable" style="padding:0px!important;">
+			<td colspan="6" class="hasTable" style="padding:0px!important;">
 				<table id="rptTable8Contract" style="border:none!important;">
 					<colgroup>
 						<col width="145">
@@ -637,7 +641,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						<th class="color-contract" colspan="1">상품명</th>
 						<th class="color-contract" colspan="1">모델명</th>
 						<th class="color-contract" colspan="1">계약수량</th>
-						<th class="color-contract" colspan="1">기출고수량</th>
+						<th class="color-contract" colspan="1">매입단가</th>
+						<th class="color-contract" colspan="1">출고수량</th>
+						<th class="color-contract" colspan="1">매입금액</th>
+						<th class="color-contract" colspan="1">VA</th>
 					</thead>
 					<tbody>
 
@@ -645,7 +652,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				</table>
 
 			</td>
-			<td colspan="6"></td>
+			<td colspan="4"></td>
 		</tr>
 	</tbody>
 	<tbody>
@@ -906,7 +913,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					<th class="colorG" style="border-right:2px solid #555!important;"></th>
 					<th class="colorG"></th>
 					<th class="colorG"></th>
-					<th class="colorG"></th>
+					<th class="colorG text-center" data-column="total_return"></th>
 					<th class="colorG text-center" data-column="total_diff"></th>
 					<th class="colorG"></th>
 					<th class="colorG"></th>
@@ -1628,20 +1635,30 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var html = '';
 					var count = 0;
 					var before_dlnt = 0;
+					var pamount = 0, va = 0;
 					$.each(equipList, function(pIndex, pValue){
 						html += `<tr>
 									<td class="text-center">${pValue.prdlst_se_nm}</td>
 									<td class="text-center">${pValue.model_no}</td>
 									<td class="text-center">${pValue.cnt_dlnt.toFormat('NUMBER')}</td>
+									<td class="text-right">${pValue.dlamt.toFormat('NUMBER')}</td>
 									<td class="text-center">${pValue.before_dlnt.toFormat('NUMBER')}</td>
+									<td class="text-right">${(pValue.dlamt*pValue.cnt_dlnt).toFormat('NUMBER')}</td>
+									<td class="text-right">${((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt)).toFormat('NUMBER')}</td>
 								</tr>`;
+
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
+						pamount += pValue.dlamt*pValue.cnt_dlnt;
+						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
 					});
 					html += `<tr>
 								<td class="colorG" colspan="2">합계</td>
 								<td class="colorG text-center">${count.toFormat('NUMBER')}</td>
+								<td class="colorG text-center"></td>
 								<td class="colorG text-center">${before_dlnt.toFormat('NUMBER')}</td>
+								<td class="colorG text-right">${pamount.toFormat('NUMBER')}</td>
+								<td class="colorG text-right">${va.toFormat('NUMBER')}</td>
 							</tr>`
 					$('#popReportNR').find("#rptTable7Contract tbody").html(html);
 					$('#popReportNR').find("#rptTable7 tbody[role='contract']").show();
@@ -1694,20 +1711,29 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var html = '';
 					var count = 0;
 					var before_dlnt = 0;
+					var pamount = 0, va = 0;
 					$.each(equipList, function(pIndex, pValue){
 						html += `<tr>
 									<td class="text-center">${pValue.prdlst_se_nm}</td>
 									<td class="text-center">${pValue.model_no}</td>
 									<td class="text-center">${pValue.cnt_dlnt.toFormat('NUMBER')}</td>
+									<td class="text-right">${pValue.dlamt.toFormat('NUMBER')}</td>
 									<td class="text-center">${pValue.before_dlnt.toFormat('NUMBER')}</td>
+									<td class="text-right">${(pValue.dlamt*pValue.cnt_dlnt).toFormat('NUMBER')}</td>
+									<td class="text-right">${((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt)).toFormat('NUMBER')}</td>
 								</tr>`;
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
+						pamount += pValue.dlamt*pValue.cnt_dlnt;
+						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
 					});
 					html += `<tr>
 								<td class="colorG" colspan="2">합계</td>
 								<td class="colorG text-center">${count.toFormat('NUMBER')}</td>
+								<td class="colorG text-center"></td>
 								<td class="colorG text-center">${before_dlnt.toFormat('NUMBER')}</td>
+								<td class="colorG text-right">${pamount.toFormat('NUMBER')}</td>
+								<td class="colorG text-right">${va.toFormat('NUMBER')}</td>
 							</tr>`
 					$('#popReportNR').find("#rptTable8Contract tbody").html(html);
 					$('#popReportNR').find("#rptTable8 tbody[role='contract']").show();
@@ -2423,6 +2449,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var total_dlnt = 0;
 				var total_amount = 0;
 				var total_diff = 0;
+				var total_return = 0;
 				$.each(model_cost_list, function(pIndex, pValue){
 					var return_de = '';
 					var return_dlnt = 0;
@@ -2435,6 +2462,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var dlamt = parseInt(pValue.dlamt); if(isNaN(dlamt)) dlamt = 0;
 					var dlnt = parseInt(pValue.dlnt); if(isNaN(dlnt)) dlnt = 0;
 					var amount = dlamt*dlnt;
+					total_return += return_dlnt;
 					var diff = dlnt - return_dlnt;
 					if(pValue.delng_sn == ''){
 						diff = 0;
@@ -2473,6 +2501,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(7)').html(total_amount.toFormat('NUMBER'));
 
 				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
+				$('#popReportNR').find('#rptTable14 tfoot').find("[data-column='total_return']").html(total_return.toFormat('NUMBER'));
 				/*
 				var html = '';
 				var s61AccountList = pResult.s61AccountList;
@@ -2683,7 +2712,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 				/* 특이사항 */
 				/* ********************************************************* */
-				$('#popReportNR').find('#partclr_matter').html(project.partclr_matter.replaceAll("\n", "<br>")); //특이사항
+				$('#popReportNR').find('#partclr_matter').html(project.partclr_matter.trim().replaceAll("\n", "<br>")); //특이사항
 				/* ********************************************************* */
 
 			}
