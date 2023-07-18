@@ -1782,9 +1782,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
                 var all_sum_total = 0;
 				var index = 1;
 				var daily_html = "";
+				var daily_item_detail = [];
 				var indirect_html = "";
 				var indirect_sum_total = 0;
-				$.each(outsrcList, function(pIndex, pValue) {
+				$.each(outsrcList, function(pIndex, pValue){
 					if([146].includes(pValue.outsrc_fo_sn)){
 						daily_html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">';
 						//매입계산서
@@ -1793,6 +1794,20 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var cntrct_amount = 0;
 						if(outsrcItem[146].hasOwnProperty("e5CostList")){
 							$.each(outsrcItem[146]['e5CostList'], function(pIndex, pV){
+								var eCost5_amt = Math.round(pV.amount / 1.1);
+								var eCost5_amt_total = eCost5_amt * pV.qy;
+								var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
+								var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
+								var daily_item_html = '';
+								daily_item_html += '<tr> ';
+								daily_item_html += '	<td class="text-center">(일용직)'+pV.model_no+'</td> ';
+								daily_item_html += '	<td class="text-number">'+pV.qy.toString().toFormat('NUMBER')+'</td> ';
+								daily_item_html += '	<td class="text-number">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+								daily_item_html += '	<td class="text-number">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+								daily_item_html += '	<td class="text-number">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+								daily_item_html += '	<td class="text-number">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+								daily_item_html += '</tr> ';
+								daily_item_detail.push(daily_item_html);
 								cntrct_amount += Math.round(pV.amount*pV.qy);
 							});
 
@@ -2050,6 +2065,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						$('#popReportNR').find('#rptTable9_indirect tbody[role=body]').append(indirect_html);
 						return true;
 					}
+
+				});
+
+				$.each(outsrcList, function(pIndex, pValue) {
+					if([146, 116].includes(pValue.outsrc_fo_sn)){
+						return true;
+					}
 					html += '<tr>';
 					html += '    <th class="color-contract">도급계약사-'+index+'</th>';
 					html += '    <td colspan="3">'+pValue.outsrc_fo_nm+'</td>';
@@ -2083,6 +2105,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pV){
 						eCost5Total += Math.round(pV.amount*pV.qy);
 					});
+					if(outsrcItem.hasOwnProperty("146") && outsrcItem["146"].hasOwnProperty('e5CostList')){
+						$.each(outsrcItem["146"]['e5CostList'], function(pIndex, pV){
+							eCost5Total += Math.round(pV.amount*pV.qy);
+						});
+
+					}
 					if (eCost5) {
 						var eCost5_amt = Math.round(eCost5.amount / 1.1);
 						var eCost5_amt_total = eCost5_amt * eCost5.qy;
@@ -2096,7 +2124,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
 						html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
 						html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" rowspan="'+outsrcItem[pValue.outsrc_fo_sn]['e5CostList'].length+'">'+eCost5Total.toString().toFormat('NUMBER')+'</td> ';
+						html += '	<td class="text-number" rowspan="'+(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'].length+daily_item_detail.length)+'">'+eCost5Total.toString().toFormat('NUMBER')+'</td> ';
 						html += '</tr> ';
 						$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pValue){
 							if (pIndex != 0) {
@@ -2115,6 +2143,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								html += '</tr> ';
 							}
 						});
+						$.each(daily_item_detail, function(pIndex, pValue){
+							html += pValue;
+						});
+						daily_item_detail = [];
 					}
 					index++;
 				}

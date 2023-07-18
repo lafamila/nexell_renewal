@@ -1017,6 +1017,7 @@ def insert_equipment(params):
                 company[key.split("_")[0]] = dict()
             company[key.split("_")[0]]["_".join(key.split("_")[1:])] = params[key]
 
+    isThereDaily = []
     for idx, c in company.items():
         if idx.replace("company", "") == '':
             continue
@@ -1043,12 +1044,40 @@ def insert_equipment(params):
         g.curs.execute(query, c)
         outsrc_sn = g.curs.lastrowid
 
-        for item_nm, item_dlnt, item_damt in zip(c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+        for item_type, item_nm, item_dlnt, item_damt in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
             if item_nm != '':
+                if item_type == '':
+                    item_type = '0'
+
                 dlnt = int(item_dlnt.replace(",", ""))
                 damt = int(item_damt.replace(",", ""))
                 query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
                 g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
+                pParams = {}
+                for key in ["cntrct_sn", "prjct_sn", "name", "register_id"]:
+                    pParams[key] = c[key]
+                pParams["model_no"] = item_nm
+                pParams["cost_type"] = int(item_type)
+                pParams["qy"] = dlnt
+                pParams["puchas_amount"] = int(damt*1.1)
+                if int(item_type) == 3:
+                    isThereDaily.append(pParams)
+                    continue
+                query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
+                            VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', %(name)s, %(model_no)s, %(qy)s, %(puchas_amount)s, 0, NOW(), %(register_id)s, %(cost_type)s)"""
+                g.curs.execute(query, pParams)
+
+    if len(isThereDaily) > 0:
+        for i, c in enumerate(isThereDaily):
+            if i == 0:
+                query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
+                            VALUES(%(cntrct_sn)s, %(prjct_sn)s, 146, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), %(register_id)s)"""
+                g.curs.execute(query, c)
+                outsrc_sn = g.curs.lastrowid
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', '146', %(model_no)s, %(qy)s, %(puchas_amount)s, 0, NOW(), %(register_id)s, 3)"""
+            g.curs.execute(query, c)
+
 
     equipments_dict = {}
     equipments_other_dict = {}

@@ -514,6 +514,13 @@ def get_cost_list(params):
 				, IFNULL(c.dspy_se_code, '') AS dspy_se_code
 				, IFNULL((SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DSPY_SE_CODE' AND code=c.dspy_se_code), '') AS dspy_se_nm
 				, IFNULL(c.dspy_de, '') AS dspy_de
+				, c.cost_type AS cost_type
+				, CASE c.cost_type
+				    WHEN 0 THEN '주택'
+				    WHEN 1 THEN '빌딩'
+				    WHEN 2 THEN '기타'
+				    WHEN 3 THEN '일용직'
+				    ELSE '' END AS cost_type_nm
 				, c.regist_dtm
 				, c.register_id
 				, c.update_dtm
@@ -553,6 +560,7 @@ def get_cost(params):
 				, fee_rt
 				, dspy_se_code
 				, dspy_de
+				, cost_type
 				, regist_dtm
 				, register_id
 				, update_dtm
@@ -569,7 +577,7 @@ def get_cost(params):
 
 def insert_cost(params):
     data = dict()
-    keys = ['cntrct_sn', 'prjct_sn', 'cntrct_execut_code', 'ct_se_code', 'purchsofc_sn', 'prdlst_se_code', 'model_no', 'qy', 'puchas_amount', 'salamt', 'dscnt_rt', 'cost_date', 'add_dscnt_rt', 'extra_sn', 'fee_rt', 'dspy_se_code', 'dspy_de']
+    keys = ['cntrct_sn', 'prjct_sn', 'cntrct_execut_code', 'ct_se_code', 'purchsofc_sn', 'prdlst_se_code', 'model_no', 'qy', 'puchas_amount', 'salamt', 'dscnt_rt', 'cost_date', 'add_dscnt_rt', 'extra_sn', 'fee_rt', 'dspy_se_code', 'dspy_de', 'cost_type']
     for key in keys:
         if key in params and params[key]:
             data[key] = params[key]
@@ -602,7 +610,7 @@ def insert_cost(params):
 
 def update_cost(params):
     data = dict()
-    keys = ['cntrct_sn', 'prjct_sn', 'cntrct_execut_code', 'ct_se_code', 'purchsofc_sn', 'prdlst_se_code', 'model_no', 'qy', 'puchas_amount', 'salamt', 'dscnt_rt', 'cost_date', 'add_dscnt_rt', 'extra_sn', 'fee_rt', 'dspy_se_code', 'dspy_de']
+    keys = ['cntrct_sn', 'prjct_sn', 'cntrct_execut_code', 'ct_se_code', 'purchsofc_sn', 'prdlst_se_code', 'model_no', 'qy', 'puchas_amount', 'salamt', 'dscnt_rt', 'cost_date', 'add_dscnt_rt', 'extra_sn', 'fee_rt', 'dspy_se_code', 'dspy_de', 'cost_type']
     for key in keys:
         if key in params and params[key]:
             data[key] = params[key]

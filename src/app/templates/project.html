@@ -1163,6 +1163,7 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 										<col width="120">
 										<col width="120">
 										<col width="84">
+										<col width="60">
 										<col width="*">
 										<col width="48">
 										<col width="107">
@@ -1179,14 +1180,14 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 										<col width="78">
 									</colgroup>
 									<thead>
-										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="19">
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="20">
 												예정 공사비
 												<input type="hidden" id="cntrct_sn" name="cntrct_sn">
 												<input type="hidden" id="prjct_sn" name="prjct_sn">
 												<input type="hidden" id="s_cntrwk_ct_sn" name="s_cntrwk_ct_sn">
 											</th>
 										</tr>
-										<tr><th class="hasinput" colspan="19">
+										<tr><th class="hasinput" colspan="20">
 												<div class="alert alert-block alert-warning-x" style="margin:0px;color:red!important;">
 													<p><i class="fa-fw fa fa-info"></i>
 														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
@@ -1234,6 +1235,15 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 													{% for code in prdlst_se_code_list %}
 													<option value="{{code.value}}">{{code.label}}</option>
 													{% endfor %}
+												</select>
+											</td>
+											<td class="hasinput">
+												<select class="form-control select2" id="cost_type" name="cost_type">
+													<option value="4">[선택]</option>
+													<option value="0">주택</option>
+													<option value="1">빌딩</option>
+													<option value="2">기타</option>
+													<option value="3">일용직</option>
 												</select>
 											</td>
 											<td class="hasinput">
@@ -1301,6 +1311,7 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 											<th style="vertical-align:middle;" rowspan="2">비용구분</th>
 											<th style="vertical-align:middle;" rowspan="2">거래처</th>
 											<th style="vertical-align:middle;" rowspan="2">품목</th>
+											<th style="vertical-align:middle;" rowspan="2">설치분류</th>
 											<th style="vertical-align:middle;" rowspan="2">모델번호</th>
 											<th style="vertical-align:middle;" rowspan="2">수량</th>
 											<th colspan="2">매입(출고)</th>
@@ -2068,6 +2079,7 @@ getCostList = function(s_cntrct_sn, s_prjct_sn)
 					html += '    <td>'+(pValue.ct_se_nm)+'</td>';
 					html += '    <td>'+(pValue.purchsofc_nm)+'</td>';
 					html += '    <td>'+(pValue.prdlst_se_nm)+'</td>';
+					html += '    <td>'+(pValue.cost_type_nm)+'</td>';
 					html += '    <td>'+(pValue.model_no)+'</td>';
 					html += '    <td class="text-right">'+(pValue.qy.toFormat('NUMBER'))+'</td>';
 					html += '    <td class="text-right">'+(pValue.puchas_amount.toFormat('NUMBER'))+'</td>';
@@ -2131,6 +2143,7 @@ getCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 				$('#tabBox3').find('#ct_se_code').yVal(data.ct_se_code);
 				$('#tabBox3').find('#purchsofc_sn').yVal(data.purchsofc_sn);
 				$('#tabBox3').find('#prdlst_se_code').yVal(data.prdlst_se_code);
+				$('#tabBox3').find('#cost_type').yVal(data.cost_type);
 				$('#tabBox3').find('#model_no').yVal(data.model_no);
 				$('#tabBox3').find('#qy').yVal(data.qy);
 				$('#tabBox3').find('#puchas_amount').yVal(data.puchas_amount);
@@ -2228,6 +2241,7 @@ insertCost = function()
 					$('#tabBox3').find('#ct_se_code').yVal('');
 					$('#tabBox3').find('#purchsofc_sn').yVal('');
 					$('#tabBox3').find('#prdlst_se_code').yVal('');
+					$('#tabBox3').find('#cost_type').yVal('');
 					$('#tabBox3').find('#model_no').yVal('');
 					$('#tabBox3').find('#qy').yVal('');
 					$('#tabBox3').find('#puchas_amount').yVal('');
@@ -2360,6 +2374,7 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 				$('#tabBox3').find('#ct_se_code').yVal('');
 				$('#tabBox3').find('#purchsofc_sn').yVal('');
 				$('#tabBox3').find('#prdlst_se_code').yVal('');
+				$('#tabBox3').find('#cost_type').yVal('');
 				$('#tabBox3').find('#model_no').yVal('');
 				$('#tabBox3').find('#qy').yVal('');
 				$('#tabBox3').find('#puchas_amount').yVal('');
@@ -2403,6 +2418,7 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 		$('#tabBox3').find('#ct_se_code').yVal('');
 		$('#tabBox3').find('#purchsofc_sn').yVal('');
 		$('#tabBox3').find('#prdlst_se_code').yVal('');
+		$('#tabBox3').find('#cost_type').yVal('');
 		$('#tabBox3').find('#model_no').yVal('');
 		$('#tabBox3').find('#qy').yVal('');
 		$('#tabBox3').find('#puchas_amount').yVal('');

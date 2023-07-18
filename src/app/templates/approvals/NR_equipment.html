@@ -421,7 +421,16 @@
                     </thead>
                     <tbody role="company1_row">
                         <tr data-row="company1_tr">
-                            <td colspan="2" class="hasinput">
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company1_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="company1_item_name[]"/>
                             </td>
                             <td class="hasinput">
@@ -563,7 +572,16 @@
                     </thead>
                     <tbody role="company2_row">
                         <tr data-row="company2_tr">
-                            <td colspan="2" class="hasinput">
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company2_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="company2_item_name[]"/>
                             </td>
                             <td class="hasinput">
@@ -705,7 +723,16 @@
                     </thead>
                     <tbody role="company3_row">
                         <tr data-row="company3_tr">
-                            <td colspan="2" class="hasinput">
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company3_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="company3_item_name[]"/>
                             </td>
                             <td class="hasinput">
@@ -973,7 +1000,24 @@
                 var origin = trs.eq(0).clone(true);
                 $(origin).find("td:not(.hasinput)").html("");
                 $(origin).find("td.hasinput input").val("");
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="${company}_item_type[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    <option value="0">주택</option>
+                                                    <option value="1">빌딩</option>
+                                                    <option value="2">기타</option>
+                                                    <option value="3">일용직</option>
+                                                </select>`);
+                    }
+                });
+
                 $(document).find(`tbody[role='${company}_row']`).append($(origin));
+                {% if init %}
+                    $(document).find(".cloned").select2();
+                    $(document).find(".cloned").removeClass("cloned");
+                {% endif %}
             }
             $(document).find(`tbody[role='${company}_row']`).trigger("change");
         }
@@ -1043,7 +1087,7 @@
             total_amount += total;
         });
         $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
-        $(this).yRowspan(6);
+        $(this).yRowspan(7);
 
     });
     $(document).on("change", "tbody[role='ct_se_code_contract']", function(){
