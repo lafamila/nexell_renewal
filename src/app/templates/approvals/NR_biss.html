@@ -362,14 +362,27 @@
                                     cCostTotal += amount;
                                 }
                             });
+
+                            var max_extra_sn = 0;
                             $.each(pData.extraCostList, function(pI, pV){
-                                var amount = 0;
-                                if (pV.amount != '') { amount = parseInt(pV.amount); }
-                                if (pV.cntrct_execut_code == 'C') // 계약
-                                {
-                                    cCostTotal += amount;
+                                if(pV.extra_sn > max_extra_sn){
+                                    max_extra_sn = pV.extra_sn;
                                 }
                             });
+                            if(pData.extraCostList.length > 0) {
+                                cCostTotal = 0;
+                                $.each(pData.extraCostList, function (pI, pV) {
+                                    var amount = 0;
+                                    if (pV.amount != '') {
+                                        amount = parseInt(pV.amount);
+                                    }
+                                    if (pV.cntrct_execut_code == 'C') // 계약
+                                    {
+                                        if(pV.extra_sn == max_extra_sn)
+                                            cCostTotal += amount;
+                                    }
+                                });
+                            }
                             var amt_tot = 0;
                             $.each(pData.rcppayList, function(pI, pV) {
                                 var amount_total = 0;

@@ -190,8 +190,6 @@
 											</div>
 										</th>
 									</tr>
-                                </thead>
-								<thead role="header">
 									<tr>
 										<th class="text-center">No.</th>
 										<!-- <th>계약번호</th> -->
@@ -236,7 +234,6 @@ getCardList = function()
     $.datatable1 = $('#dtList1').DataTable({
         serverSide: true,
 		pageLength: 300,
-		ordering: false,
         ajax: {
             url: '/api/card/ajax_get_card_datatable',
             type: 'POST',
@@ -264,7 +261,7 @@ getCardList = function()
                 toastrError(pJqXHR);
             }
         },
-		order: [2, 'desc'],
+		order: [[2, 'desc'], [3, 'desc']],
         columns: [
             { data: 'ctmmny_sn', className: 'text-center', orderable: false,
                 render: function(data, type, row, meta) {
@@ -349,39 +346,39 @@ getCardList = function()
 				$('.dt-button.buttons-excel.buttons-html5').trigger('click');
 			});
 
-			  $('table.floating-thead').each(function() {
-				if( $(this).css('border-collapse') == 'collapse') {
-				  $(this).css('border-collapse','separate').css('border-spacing',0);
-				}
-				$(this).prepend( $(this).find('thead[role=header]:first').clone().hide().css('top',155).css('position','fixed') );
-			  });
-
-			  $(window).scroll(function() {
-				var scrollTop = $(window).scrollTop(),
-				  scrollLeft = $(window).scrollLeft();
-				$('table.floating-thead').each(function(i,v) {
-				  var thead = $(this).find('thead[role=header]:last'),
-					clone = $(this).find('thead[role=header]:first'),
-					top = $(this).offset().top,
-					bottom = top + $(this).height() - thead.height();
-
-				  if( scrollTop < top-40 || scrollTop > bottom ) {
-					clone.hide();
-					return true;
-				  }
-				  if( clone.is('visible') ) return true;
-				  var fixP = 0;
-				  clone.find('th').each(function(i) {
-					if(thead.find('th').eq(i).html() == '계'){
-						fixP = -1;
-					}
-					$(this).width( thead.find('th').eq(i).width() +fixP);
-					console.log(fixP);
-				  });
-				  clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
-				  clone.css("z-index", 500);
-				});
-			  });
+			  // $('table.floating-thead').each(function() {
+				// if( $(this).css('border-collapse') == 'collapse') {
+				//   $(this).css('border-collapse','separate').css('border-spacing',0);
+				// }
+				// $(this).prepend( $(this).find('thead[role=header]:first').clone().hide().css('top',155).css('position','fixed') );
+			  // });
+			  //
+			  // $(window).scroll(function() {
+				// var scrollTop = $(window).scrollTop(),
+				//   scrollLeft = $(window).scrollLeft();
+				// $('table.floating-thead').each(function(i,v) {
+				//   var thead = $(this).find('thead[role=header]:last'),
+				// 	clone = $(this).find('thead[role=header]:first'),
+				// 	top = $(this).offset().top,
+				// 	bottom = top + $(this).height() - thead.height();
+			  //
+				//   if( scrollTop < top-40 || scrollTop > bottom ) {
+				// 	clone.hide();
+				// 	return true;
+				//   }
+				//   if( clone.is('visible') ) return true;
+				//   var fixP = 0;
+				//   clone.find('th').each(function(i) {
+				// 	if(thead.find('th').eq(i).html() == '계'){
+				// 		fixP = -1;
+				// 	}
+				// 	$(this).width( thead.find('th').eq(i).width() +fixP);
+				// 	console.log(fixP);
+				//   });
+				//   clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+				//   clone.css("z-index", 500);
+				// });
+			  // });
 
 		},
     });

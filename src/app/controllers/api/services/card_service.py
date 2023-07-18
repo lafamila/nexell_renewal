@@ -70,7 +70,7 @@ def get_cardbil_datatable(params):
         query += " AND ca.dept_code=%s"
         data.append(params["s_dept_code"])
 
-    params["custom_order"] = ["card_de DESC", "card_time DESC"]
+    # params["custom_order"] = ["card_de DESC", "card_time DESC"]
 
     return dt_query(query, data, params)
 

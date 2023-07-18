@@ -207,7 +207,7 @@ def get_approval_datatable(params):
 				ELSE ''
 				END = %s """
         data.append(params["s_approval_status"])
-    params["custom_order"] = ["a.approval_sn DESC"]
+    params["custom_order"] = ["IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '9999-99-99') DESC", "a.approval_sn DESC"]
 
     return dt_query(query, data, params)
 

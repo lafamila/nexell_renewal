@@ -8,15 +8,25 @@ def dt_query(query, data, params={}):
 
 
     order_column = None
-    if "order[0][column]" in params:
-        order_column = params["order[0][column]"]
-        order_column = params["columns[{}][data]".format(order_column)]
-        order_dir = params["order[0][dir]"]
+    ordered = False
+    i = 0
+    while True:
+        if "order[{}][column]".format(i) in params:
+            order_column = params["order[{}][column]".format(i)]
+            order_column = params["columns[{}][data]".format(order_column)]
+            order_dir = params["order[{}][dir]".format(i)]
+            if not ordered :
+                query += " ORDER BY {} {}".format(order_column, order_dir)
+                ordered = True
+            else:
+                query += " , {} {}".format(order_column, order_dir)
+        else:
+            break
+        i+=1
 
-        query += " ORDER BY {} {}".format(order_column, order_dir)
-
-    elif "custom_order" in params:
+    if "order[0][column]" not in params and "custom_order" in params:
         query += " ORDER BY "+ ",".join(params["custom_order"])
+
 
     if "length" in params and int(params["length"]) > 0:
         query += " LIMIT {}, {}".format(params['start'], params['length'])

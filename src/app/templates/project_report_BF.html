@@ -1233,13 +1233,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* ********************************************************* */
 				/* 수주 품목 및 수수료 내역 (영업) */
 				/* ********************************************************* */
+				var base = {0 : {"real_amt_total" : 0, "p_sum_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_sell_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"}};
 				if(contract.progrs_sttus_code != 'B') {
 					var cCostList = pResult.cCostList;
 					console.log(cCostList);
 					var p_sum_total = 0, dlivy_sum = 0, fee_rt_avg = 0.0, real_amt_total = 0;
 					var qy_tot = 0;
 					var html = '';
-					var base = {0 : {"real_amt_total" : 0, "p_sum_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_sell_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"}};
 					$.each(cCostList, function (pIndex, pValue) {
 						var dscnt_rt = '';
 						if (pValue.dscnt_rt != '') dscnt_rt = parseFloat(pValue.dscnt_rt).toFixed(1) + '%';
@@ -1537,6 +1537,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 				});
 
+				console.log(base);
 				base[0].p_option_amt_total = (pResult.sOptionCostList!= null) ? parseInt(pResult.sOptionCostList.c_opt_amount) : base[0].p_option_amt_total;
 				if(isNaN(base[0].p_option_amt_total)) base[0].p_option_amt_total = 0;
 
@@ -1977,7 +1978,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_ramount']").html((total_ramount[0] + total_ramount[1]).toFormat('NUMBER'));
 				$('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_return']").html((total_return[0] + total_return[1]).toFormat('NUMBER'));
 				$('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_diff']").html((total_diff[0] + total_diff[1]).toFormat('NUMBER'));
-				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] tr td:eq(2)').html((total_amount[0]+total_amount[1]).toFormat('NUMBER'));
+				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(2)').html((total_amount[0]+total_amount[1]).toFormat('NUMBER'));
 
 				// $('#popReportBF').find('#rptTable14 tfoot').find("[data-column='total_diff']").html(total_diff.toFormat('NUMBER'));
 
@@ -2124,7 +2125,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBF').find('#report_i2_rcppay tbody[role="s_rcppay_foot"] th:eq(3)').html(rate_total.toFixed(1)+'%');
 
 				// $('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(3)').html(amount_total.toString().toFormat('NUMBER'));
-				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] tr td:eq(3)').html(dc_total.toFormat('NUMBER'));
+				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(3)').html(dc_total.toFormat('NUMBER'));
 
 				/* ********************************************************* */
 				/* M/SH, 옵션 */

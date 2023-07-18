@@ -2421,10 +2421,34 @@ def insert_c_extra_project(params):
             costs = g.curs.fetchall()
             if len(costs) == 1:
                 data['purchsofc_sn'] = costs[0]['purchsofc_sn'] if costs[0]['purchsofc_sn'] != '' else None
-        sub_query = [key for key in data]
-        params_query = ["%({})s".format(key) for key in data]
-        query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
-        g.curs.execute(query, data)
+
+        if data['cntrct_execut_code'] == 'C':
+            g.curs.execute("SELECT IFNULL(SUM(salamt*qy), 0) AS samt FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code='C' AND ct_se_code=%(ct_se_code)s AND extra_sn=%(extra_sn)s", {"cntrct_sn": data["cntrct_sn"], "ct_se_code" : data["ct_se_code"], "extra_sn" : extra_sn-1})
+            result = g.curs.fetchone()
+            if result is None:
+                samt = 0
+            else:
+                samt = result['samt']
+            data["salamt"] = data["salamt"] - samt
+            if data["salamt"] != 0:
+                data["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
+                sub_query = [key for key in data]
+                params_query = ["%({})s".format(key) for key in data]
+                query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+                g.curs.execute(query, data)
+
+            data["salamt"] = samt
+            data["cost_date"] = "0000-00-00"
+            sub_query = [key for key in data]
+            params_query = ["%({})s".format(key) for key in data]
+            query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+            g.curs.execute(query, data)
+
+        else:
+            sub_query = [key for key in data]
+            params_query = ["%({})s".format(key) for key in data]
+            query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+            g.curs.execute(query, data)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
@@ -3046,7 +3070,7 @@ def insert_co_st(params):
     g.curs.execute(query, params)
 
 def end_project(params):
-    query = "UPDATE contract SET progrs_sttus_code='C' WHERE cntrct_sn=%(cntrct_sn)s"
+    query = "UPDATE contract SET progrs_sttus_code='C', update_dtm=NOW(), updater_id='ma_keunmi' WHERE cntrct_sn=%(cntrct_sn)s"
     g.curs.execute(query, params)
 
 def get_outsrc(params):
