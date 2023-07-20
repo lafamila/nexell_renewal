@@ -2506,11 +2506,16 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					}
 					total_amount += amount;
 					total_diff += diff;
-					var dlivy_year = pValue.dlivy_de.split("-")[0];
-					var dlivy_month = pValue.dlivy_de.split("-")[1];
-					var dlivy = new Date(dlivy_year, parseInt(dlivy_month)-1+6, 15);
-					var expect_de = (new Date(dlivy.getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
-					var expect = expect_de.split("-")[0]+"-"+expect_de.split("-")[1];
+					if(pValue.dlivy_de != ''){
+						var dlivy_year = pValue.dlivy_de.split("-")[0];
+						var dlivy_month = pValue.dlivy_de.split("-")[1];
+						var dlivy = new Date(dlivy_year, parseInt(dlivy_month)-1+((_type == 1) ? 6 : 12), 15);
+						var expect_de = (new Date(dlivy.getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+						var expect = expect_de.split("-")[0]+"-"+expect_de.split("-")[1];
+					}
+					else{
+						var expect = "";
+					}
 					html += `<tr>
 								<td class="text-center">${pValue.dlivy_de}</td>
 								<td class="text-center">${pValue.prdlst_se_nm}</td>
