@@ -706,7 +706,7 @@ def insert_ms_BF_equip(params):
             before = result["partclr_matter"]
         else:
             before = ""
-        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
                                                   "M,S/H 설치·회수", params["option_bigo"])
 
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
@@ -795,7 +795,7 @@ def insert_ms_equip(params):
             before = result["partclr_matter"]
         else:
             before = ""
-        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
                                                   "M,S/H 설치·회수", params["option_bigo"])
 
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""

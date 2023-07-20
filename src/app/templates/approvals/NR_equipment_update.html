@@ -158,7 +158,7 @@
             <th class="colorSky text-center">변경 실행가</th>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_1_alpha" readonly></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_2_alpha" readonly></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_5_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_5_alpha" readonly></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_8_alpha"></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_3_alpha"></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_4_alpha"></td>
@@ -494,10 +494,14 @@
         {% endif %}
                 success: function(pResult){
                     console.log(pResult);
+                    var E_5_alpha = 0;
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        if(pValue.cntrct_execut_code == 'E' && parseInt(pValue.ct_se_code) == 5){
+                            E_5_alpha = parseInt(pValue.amount);
+                        }
                     });
                     $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
                     cloneRow("equip_already_tr", pResult.samsungList.length-$(document).find(`tr[data-row="equip_already_tr"]`).length);
@@ -582,6 +586,9 @@
                         var pRow = pResult.extraCostList[extra_sn];
                         $.each(pRow, function(pIndex, pValue){
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
+                            if(pValue.cntrct_execut_code == 'E' && parseInt(pValue.ct_se_code) == 5){
+                                E_5_alpha = parseInt(pValue.amount);
+                            }
                         });
                         $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
                     });
@@ -589,6 +596,7 @@
                     {% if init %}
                         $(document).find(`[name='E_1_alpha']`).attr("readonly", false);
                         $(document).find(`[name='E_2_alpha']`).attr("readonly", false);
+                        $(document).find(`[name='E_5_alpha']`).val(E_5_alpha.toFormat('NUMBER'));
                     {% endif %}
                     var html = `<tbody role="ct_se_code_diff">
                                     <tr data-row="C">
