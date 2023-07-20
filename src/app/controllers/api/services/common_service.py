@@ -1411,18 +1411,18 @@ def insert_vacation(params):
             g.curs.execute("SELECT todo_sn FROM todo WHERE mber_sn=%s AND todo_de=%s AND todo_time=%s", (data["mber_sn"], data["vacation_de"], todo_time))
             result = g.curs.fetchone()
             if result:
-                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", (("오전반차({})" if todo_time == 0 else "오후반차({})").format(params['rm']), result['todo_sn']))
+                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", ("오전반차" if todo_time == 0 else "오후반차", result['todo_sn']))
             else:
-                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], todo_time, ("오전반차({})" if todo_time == 0 else "오후반차({})").format(params['rm']), data["vacation_de"], data["mber_sn"]))
+                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], todo_time, "오전반차" if todo_time == 0 else "오후반차", data["vacation_de"], data["mber_sn"]))
         else:
             g.curs.execute("SELECT todo_sn, todo_time FROM todo WHERE mber_sn=%s AND todo_de=%s", (data["mber_sn"], data["vacation_de"]))
             result = g.curs.fetchall()
             times = set([0, 1])
             for r in result:
                 times = times - set([int(r['todo_time'])])
-                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", ("연차휴가({})".format(params['rm']), r['todo_sn']))
+                g.curs.execute("UPDATE todo SET todo_text=%s WHERE todo_sn=%s", ("연차휴가", r['todo_sn']))
             for t in list(times):
-                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], t, "연차휴가({})".format(params['rm']), data["vacation_de"], data["mber_sn"]))
+                g.curs.execute("INSERT INTO todo(mber_sn, todo_time, todo_text, todo_de, regist_dtm, regist_sn) VALUES (%s, %s, %s, %s, NOW(), %s)", (data["mber_sn"], t, "연차휴가", data["vacation_de"], data["mber_sn"]))
 
 
 def get_blueprint_goal(params):
