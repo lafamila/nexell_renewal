@@ -133,6 +133,10 @@
         </tr>
     </tbody>
 </table>
+<table class="table" id="establish-virtual" style="display:none!important;">
+    <tbody data-tr="establish_tbody">
+    </tbody>
+</table>
 <table class="table table-bordered table-form main-table" id="establish">
     <colgroup>
         <col width="100"/>
@@ -155,380 +159,6 @@
 			<th class="sub-title colorN text-center" colspan="14"><span>설치비 기성산출</span></th>
         </tr>
     </thead>
-    <tbody role="body1" style="display:none;">
-        <tr>
-            <th class="color-contract text-center" rowspan="6">시스템에어컨</th>
-            <th class="color-contract text-center">공정</th>
-            <th class="color-contract text-center">스리브 및 골조</th>
-            <th class="color-contract text-center">배관(냉매,드레인)</th>
-            <th class="color-contract text-center">기밀,통수</th>
-            <th class="color-contract text-center">전원,통신</th>
-            <th class="color-contract text-center">실내기</th>
-            <th class="color-contract text-center">실외기</th>
-            <th class="color-contract text-center">시운전</th>
-            <th class="color-contract text-center">계</th>
-            <th class="color-contract text-center" rowspan="3">발주처<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_1_a" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_1_b" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할율</th>
-            <td class="text-center">5%</td>
-            <td class="text-center">45%</td>
-            <td class="text-center">10%</td>
-            <td class="text-center">3%</td>
-            <td class="text-center">12%</td>
-            <td class="text-center">15%</td>
-            <td class="text-center">10%</td>
-            <td class="text-center">100%</td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">실내기수량</th>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공사수량</th>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_1" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_2" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_3" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_4" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_5" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_6" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_1_7" data-type="number"/>
-            </td>
-            <td></td>
-            <th class="color-contract text-center" rowspan="3">발주처<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_1_a_now" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_1_b_now" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공정율</th>
-            <td class="text-center" name="rate_1_1"></td>
-            <td class="text-center" name="rate_1_2"></td>
-            <td class="text-center" name="rate_1_3"></td>
-            <td class="text-center" name="rate_1_4"></td>
-            <td class="text-center" name="rate_1_5"></td>
-            <td class="text-center" name="rate_1_6"></td>
-            <td class="text-center" name="rate_1_7"></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할 적용율</th>
-            <td class="text-center" name="apply_rate_1_1"></td>
-            <td class="text-center" name="apply_rate_1_2"></td>
-            <td class="text-center" name="apply_rate_1_3"></td>
-            <td class="text-center" name="apply_rate_1_4"></td>
-            <td class="text-center" name="apply_rate_1_5"></td>
-            <td class="text-center" name="apply_rate_1_6"></td>
-            <td class="text-center" name="apply_rate_1_7"></td>
-            <td class="colorG text-center" name="apply_rate_1_total"></td>
-        </tr>
-    </tbody>
-    <tbody role="body2" style="display:none;">
-        <tr>
-            <th class="color-contract text-center" rowspan="6">전열교환기</th>
-            <th class="color-contract text-center">공정</th>
-            <th class="color-contract text-center">스리브 및 골조</th>
-            <th class="color-contract text-center">크린호스&amp;스파이럴덕트</th>
-            <th class="color-contract text-center">플랫덕트&amp;후레시블덕트</th>
-            <th class="color-contract text-center">장비설치</th>
-            <th class="color-contract text-center">시운전</th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center">계</th>
-            <th class="color-contract text-center" rowspan="3">발주처<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_2_a" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_2_b" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할율</th>
-            <td class="text-center">5%</td>
-            <td class="text-center">45%</td>
-            <td class="text-center">15%</td>
-            <td class="text-center">20%</td>
-            <td class="text-center">15%</td>
-            <td></td>
-            <td></td>
-            <td class="text-center">100%</td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">실내기수량</th>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공사수량</th>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_2_1" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_2_2" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_2_3" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_2_4" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_2_5" data-type="number"/>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <th class="color-contract text-center" rowspan="3">발주처<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_2_a_now" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_2_b_now" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공정율</th>
-            <td class="text-center" name="rate_2_1"></td>
-            <td class="text-center" name="rate_2_2"></td>
-            <td class="text-center" name="rate_2_3"></td>
-            <td class="text-center" name="rate_2_4"></td>
-            <td class="text-center" name="rate_2_5"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할 적용율</th>
-            <td class="text-center" name="apply_rate_2_1"></td>
-            <td class="text-center" name="apply_rate_2_2"></td>
-            <td class="text-center" name="apply_rate_2_3"></td>
-            <td class="text-center" name="apply_rate_2_4"></td>
-            <td class="text-center" name="apply_rate_2_5"></td>
-            <td></td>
-            <td></td>
-            <td class="colorG text-center" name="apply_rate_2_total"></td>
-        </tr>
-    </tbody>
-    <tbody role="body3" style="display:none;">
-        <tr>
-            <th class="color-contract text-center" rowspan="6">매립배관</th>
-            <th class="color-contract text-center">공정</th>
-            <th class="color-contract text-center">매립배관(냉매,드레인)</th>
-            <th class="color-contract text-center">매립박스</th>
-            <th class="color-contract text-center">기밀,통수</th>
-            <th class="color-contract text-center">커버,단열</th>
-            <th class="color-contract text-center">마감</th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center">계</th>
-            <th class="color-contract text-center" rowspan="3">발주처<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_3_a" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_3_b" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할율</th>
-            <td class="text-center">50%</td>
-            <td class="text-center">15%</td>
-            <td class="text-center">10%</td>
-            <td class="text-center">10%</td>
-            <td class="text-center">15%</td>
-            <td></td>
-            <td></td>
-            <td class="text-center">100%</td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">실내기수량</th>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td class="text-center"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공사수량</th>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_3_1" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_3_2" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_3_3" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_3_4" data-type="number"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-center" name="qy_3_5" data-type="number"/>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <th class="color-contract text-center" rowspan="3">발주처<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_3_a_now" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_3_b_now" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공정율</th>
-            <td class="text-center" name="rate_3_1"></td>
-            <td class="text-center" name="rate_3_2"></td>
-            <td class="text-center" name="rate_3_3"></td>
-            <td class="text-center" name="rate_3_4"></td>
-            <td class="text-center" name="rate_3_5"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할 적용율</th>
-            <td class="text-center" name="apply_rate_3_1"></td>
-            <td class="text-center" name="apply_rate_3_2"></td>
-            <td class="text-center" name="apply_rate_3_3"></td>
-            <td class="text-center" name="apply_rate_3_4"></td>
-            <td class="text-center" name="apply_rate_3_5"></td>
-            <td></td>
-            <td></td>
-            <td class="colorG text-center" name="apply_rate_3_total"></td>
-        </tr>
-    </tbody>
-    <tbody role="body4" style="display:none;">
-        <tr>
-            <th class="color-contract text-center" rowspan="6">기타공종</th>
-            <th class="color-contract text-center">공정</th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center"></th>
-            <th class="color-contract text-center">계</th>
-            <th class="color-contract text-center" rowspan="3">발주처<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_4_a" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>계약금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_4_b" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할율</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">실내기수량</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공사수량</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <th class="color-contract text-center" rowspan="3">발주처<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_4_a_now" readonly/>
-            </th>
-            <th class="color-contract text-center" rowspan="3">도급팀<br>기성금액</th>
-            <th class="hasinput" rowspan="3">
-                <input type="text" class="form-control text-right" data-type="number" name="body_4_b_now" readonly/>
-            </th>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">공정율</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th class="color-contract text-center">보할 적용율</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="colorG"></td>
-        </tr>
-    </tbody>
 </table>
 <table class="table table-bordered table-form">
     <colgroup>
@@ -567,81 +197,50 @@
             <td class="text-right" name="a_now_total"></td>
             <td class="text-center colorG" name="a_rate"></td>
             <td class="text-right" name="a_before_total"></td>
-            <td></td>
+            <td class="text-right" name="a_now_diff"></td>
             <td class="text-right" name="b_total"></td>
             <td class="text-right" name="b_now_total"></td>
             <td class="text-center colorG" name="b_rate"></td>
             <td class="text-right" name="b_before_total"></td>
-            <td></td>
+            <td class="text-right" name="b_now_diff"></td>
         </tr>
     </tbody>
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
+        <col width="400"/>
         <col width="80"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
+        <col width="400"/>
         <col width="80"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
-        <col width="100"/>
+        <col width="400"/>
         <col width="80"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15"><span>건설사 청구 금액</span></th>
+			<th class="sub-title colorN text-center" colspan="6"><span>건설사 청구 금액</span></th>
         </tr>
         <tr>
-            <th class="color-contract text-center" colspan="5">전월 누계 청구 금액</th>
-            <th class="color-contract text-center" colspan="5">금월 청구 금액</th>
-            <th class="color-contract text-center" colspan="5">누계 금액</th>
+            <th class="color-contract text-center" colspan="2">전월 누계 청구 금액</th>
+            <th class="color-contract text-center" colspan="2">금월 청구 금액</th>
+            <th class="color-contract text-center" colspan="2">누계 금액</th>
         </tr>
         <tr>
-            <th class="color-contract text-center">장비비</th>
-            <th class="color-contract text-center">도급비</th>
-            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">계</th>
             <th class="color-contract text-center">기성률</th>
-            <th class="color-contract text-center">장비비</th>
-            <th class="color-contract text-center">도급비</th>
-            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">계</th>
             <th class="color-contract text-center">기성률</th>
-            <th class="color-contract text-center">장비비</th>
-            <th class="color-contract text-center">도급비</th>
-            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">계</th>
             <th class="color-contract text-center">기성률</th>
         </tr>
     </thead>
     <tbody role="bcnc">
         <tr>
-            <td class="text-right" name="bcnc_completed_1"></td>
-            <td class="text-right" name="bcnc_completed_2"></td>
-            <td class="text-right" name="bcnc_completed_3"></td>
             <td class="text-right" name="bcnc_completed_total"></td>
             <td class="colorP text-center" name="bcnc_completed_rate"></td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" name="bcnc_now_1"/>
+                <input type="text" class="form-control text-right" name="bcnc_now_total"/>
             </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-right" name="bcnc_now_2"/>
-            </td>
-            <td class="hasinput">
-                <input type="text" class="form-control text-right" name="bcnc_now_3"/>
-            </td>
-            <td class="text-right" name="bcnc_now_total"></td>
             <td class="colorP text-center" name="bcnc_now_rate"></td>
-            <td class="text-right" name="bcnc_total_1"></td>
-            <td class="text-right" name="bcnc_total_2"></td>
-            <td class="text-right" name="bcnc_total_3"></td>
             <td class="colorY text-right" name="bcnc_total_total"></td>
             <td class="colorP text-center" name="bcnc_total_rate"></td>
         </tr>
@@ -826,9 +425,13 @@
         $.ajax({
                 url : '/api/project/get_costs_bd',
                 method : 'GET',
+        {% if init %}
                 data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
                 success: function(pResult){
-                    console.log("get_costs_bd", pResult);
+                    console.log(pResult);
                     var c_12 = 0;
                     $.each(pResult.aCostList, function(pIndex, pValue){
                         if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
@@ -836,86 +439,122 @@
                         }
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                     });
-                    $(document).find(`[name="C_1"]`).html(c_12.toFormat('NUMBER'));
+                    if(Object.keys(pResult.extraCostList).length > 0){
+                        c_12 = 0;
+                        var max_sn = Math.max(...Object.keys(pResult.extraCostList).map(x => parseInt(x)));
+                        $.each(pResult.extraCostList[max_sn], function(pIndex, pValue){
+                            if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                c_12 += pValue.amount;
+                            }
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
 
+                    }
+                    $(document).find(`[name="C_1"]`).html(c_12.toFormat('NUMBER'));
                     $(document).find("tbody[role='ct_se_code']").trigger("change");
+
                     {% if init %}
                     var html = `<option value="">[전체]</option>`;
                     $.each(pResult.outsrcList, function(pIndex, pValue){
-                        html += `<option value="${pValue.outsrc_fo_sn}">${pValue.outsrc_fo_nm}</option>`;
+                        if(parseInt(pValue.outsrc_fo_sn) != 146){
+                            html += `<option value="${pValue.outsrc_fo_sn}">${pValue.outsrc_fo_nm}</option>`;
+                        }
                     });
                     $(document).find("#outsrc_fo_sn").html(html);
+                    {% else %}
+                    var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
+                    get_completed_info(cntrct_sn, outsrc_fo_sn);
+
+
                     {% endif %}
-                    window.outsrcItems = pResult.outsrcItem;
-                    {% if not init %}
-                        $(document).find("#outsrc_fo_sn").trigger("change");
-                        // var cntrct_sn = $("#cntrct_sn").find(":selected").val();
-                        // var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
-                        // get_completed_info(cntrct_sn, outsrc_fo_sn);
-                    {% endif %}
+
+
                 }
         });
     }
     get_completed_info = function(cntrct_sn, outsrc_fo_sn){
-        var items = window.outsrcItems[parseInt(outsrc_fo_sn)].e5CostList;
-        var has_home_dvm = false;
-        $.each(items, function(pIndex, pValue){
-            if(pValue.model_no == "홈DVM"){
-                has_home_dvm = true;
-            }
-        });
-        var map = {"DVM" : 1, "전열교환기" : 2, "매립배관" : 3};
-        if(has_home_dvm){
-            map = {"홈DVM" : 1, "전열교환기" : 2, "매립배관" : 3};
-        }
-        var outsrc_cntrct_amount = 0;
-        $.each(items, function(pIndex, pValue){
-            var idx = 4;
-            if(map.hasOwnProperty(pValue.model_no)){
-                idx = map[pValue.model_no];
-            }
-            if(idx != 4){
-                $(document).find(`tbody[role="body${idx}"]`).show();
-                $(document).find(`tbody[role="body${idx}"]`).find("tr").eq(2).find("td.text-center").html(pValue.qy.toFormat('NUMBER'));
-                $(document).find(`[name="body_${idx}_b"]`).val((pValue.qy*pValue.amount).toFormat('NUMBER'));
-            }
-            outsrc_cntrct_amount += (pValue.qy*pValue.amount);
-            $(document).find(`[name="outsrc_cntrct_amount"]`).html(outsrc_cntrct_amount.toFormat('NUMBER'));
-        });
+
         $.ajax({
-            url : '/api/completed/get_completed_info',
+            url : '/api/project/get_costs_bd',
             method : 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn, "s_outsrc_fo_sn" : outsrc_fo_sn},
+    {% if init %}
+            data : {"s_cntrct_sn" : cntrct_sn},
+    {% else %}
+            data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+    {% endif %}
             success: function(pResult){
+
                 console.log(pResult);
-                $(document).find(`[name="bcnc_completed_1"]`).html((pResult.bcnc.completed_1 + pResult.data.bcnc_1).toFormat('NUMBER'));
-                $(document).find(`[name="bcnc_completed_2"]`).html((pResult.bcnc.completed_2 + pResult.data.bcnc_2).toFormat('NUMBER'));
-                $(document).find(`[name="a_before_total"]`).html((pResult.bcnc.completed_2 + pResult.data.bcnc_2).toFormat('NUMBER'));
-                $(document).find(`[name="b_before_total"]`).html((pResult.data.est_1 + pResult.data.est_2 + pResult.data.est_3 + pResult.data.logi_1 + pResult.data.logi_2).toFormat('NUMBER'));
-                $(document).find(`[name="bcnc_completed_3"]`).html((pResult.bcnc.completed_3 + pResult.data.bcnc_3).toFormat('NUMBER'));
-                var bcnc_total = (pResult.bcnc.completed_1+pResult.bcnc.completed_2+pResult.bcnc.completed_3) + (pResult.data.bcnc_1 + pResult.data.bcnc_2 + pResult.data.bcnc_3);
-                $(document).find(`[name="bcnc_completed_total"]`).html(bcnc_total.toFormat('NUMBER'));
-                $(document).find(`[name="bcnc_completed_rate"]`).html((bcnc_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
-                $(document).find(`[name="completed_est_1"]`).html(pResult.data.est_1.toFormat('NUMBER'));
-                $(document).find(`[name="completed_est_2"]`).html(pResult.data.est_2.toFormat('NUMBER'));
-                $(document).find(`[name="completed_est_3"]`).html(pResult.data.est_3.toFormat('NUMBER'));
-                $(document).find(`[name="completed_logi_1"]`).html(pResult.data.logi_1.toFormat('NUMBER'));
-                $(document).find(`[name="completed_logi_2"]`).html(pResult.data.logi_2.toFormat('NUMBER'));
-                $(document).find("tbody").trigger("change");
-                {% if init %}
-                    for(let i=1;i<=4;i++){
-                        if(pResult.data[`body${i}`] != ''){
-                            $(document).find(`[name="body_${i}_a"]`).val(pResult.data[`body${i}`].toFormat('NUMBER'));
-                            $(document).find(`[name="body_${i}_a"]`).attr("readonly", true);
+                var items = pResult.outsrcItem[parseInt(outsrc_fo_sn)].e5CostList;
+                console.log(items);
+                var rows = cloneRow("establish_tbody", items.length - $(document).find("#establish tbody").length);
+                var TYPES = {0 : "주택", 1 : "빌딩", 2 : "기타", 3 : "기타"};
+                var LABELS = ["스리브 및 골조", "배관(냉매,드레인)", "기밀,통수", "전원,통신", "실내기", "실외기", "시운전"];
+                var RATES = ["5%", "45%", "10%", "3%", "12%", "15%", "10%"];
+                $.each(items, function(pIndex, pRow){
+                    var cost_type = TYPES[pRow.cost_type];
+                    var tbody = $(document).find("#establish tbody").eq(pIndex);
+                    $(tbody).find("[data-column='cost_type']").html(cost_type);
+                    if([0, 1].includes(pRow.cost_type)){
+                        for(let i=1;i<8;i++){
+                            $(tbody).find(`[name="label_${i}[]"]`).val(LABELS[i-1]);
+                            $(tbody).find(`[name="label_${i}[]"]`).attr("readonly", true);
+                            $(tbody).find(`[name="rate_${i}[]"]`).val(RATES[i-1]);
+                            $(tbody).find(`[name="rate_${i}[]"]`).attr("readonly", true);
                         }
-                        else{
-                            $(document).find(`[name="body_${i}_a"]`).attr("readonly", false);
-                        }
+                        $(tbody).find(`[data-column="qy"]`).html(pRow.qy.toFormat('NUMBER'));
                     }
+                    /*
+                    * TODO : item_sn을 이용해 저장된 라벨 목록이 있는지 확인후에 가져올것
+                    *  else if(pRow.item_sn is in SOMETHING){
+                    *  }
+                    * */
+
+                });
+                $.ajax({
+                    url : '/api/completed/get_completed_info',
+                    method : 'GET',
+                {% if init %}
+                    data : {"s_cntrct_sn" : cntrct_sn, "s_outsrc_fo_sn" : outsrc_fo_sn},
+                {% else %}
+                    data : {"s_cntrct_sn" : cntrct_sn, "s_outsrc_fo_sn" : outsrc_fo_sn, "approval_sn" : window.approval_sn},
                 {% endif %}
+                    success: function(pResult){
+                        console.log(pResult);
+                        $(document).find(`[name="a_before_total"]`).html((pResult.bcnc.completed_2).toFormat('NUMBER'));
+                        // $(document).find(`[name="b_before_total"]`).html((pResult.data.est_1 + pResult.data.est_2 + pResult.data.est_3 + pResult.data.logi_1 + pResult.data.logi_2).toFormat('NUMBER'));
+                        var bcnc_total = (pResult.bcnc.completed_1+pResult.bcnc.completed_2+pResult.bcnc.completed_3);
+                        $(document).find(`[name="bcnc_completed_total"]`).html(bcnc_total.toFormat('NUMBER'));
+                        $(document).find(`[name="bcnc_completed_rate"]`).html((bcnc_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
+
+                        // $(document).find(`[name="completed_est_1"]`).html(pResult.data.est_1.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_est_2"]`).html(pResult.data.est_2.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_est_3"]`).html(pResult.data.est_3.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_logi_1"]`).html(pResult.data.logi_1.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_logi_2"]`).html(pResult.data.logi_2.toFormat('NUMBER'));
+                        $(document).find("tbody").trigger("change");
+                        // {% if init %}
+                        //     for(let i=1;i<=4;i++){
+                        //         if(pResult.data[`body${i}`] != ''){
+                        //             $(document).find(`[name="body_${i}_a"]`).val(pResult.data[`body${i}`].toFormat('NUMBER'));
+                        //             $(document).find(`[name="body_${i}_a"]`).attr("readonly", true);
+                        //         }
+                        //         else{
+                        //             $(document).find(`[name="body_${i}_a"]`).attr("readonly", false);
+                        //         }
+                        //     }
+                        // {% endif %}
+                    }
+                });
+
             }
         });
+
+
+
     }
+
+
     getValue = function(tag, isHTML=true){
         if(isHTML){
             var value = parseInt($(tag).html().replaceAll(",", ""));
@@ -949,22 +588,12 @@
 
     });
     $(document).on("change", "tbody[role='bcnc']", function(){
-        var bcnc_now1 = getValue($(this).find(`[name="bcnc_now_1"]`), false);
-        var bcnc_now2 = getValue($(this).find(`[name="bcnc_now_2"]`), false);
-        var bcnc_now3 = getValue($(this).find(`[name="bcnc_now_3"]`), false);
-        var bcnc_now_total = bcnc_now1 + bcnc_now2 + bcnc_now3;
-        $(this).find(`[name="bcnc_now_total"]`).html(bcnc_now_total.toFormat('NUMBER'));
+        var bcnc_now_total = getValue($(this).find(`[name="bcnc_now_total"]`), false);
         $(this).find(`[name="bcnc_now_rate"]`).html((bcnc_now_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
-        var bcnc1 = getValue($(this).find(`[name="bcnc_completed_1"]`));
-        var bcnc2 = getValue($(this).find(`[name="bcnc_completed_2"]`));
-        var bcnc3 = getValue($(this).find(`[name="bcnc_completed_3"]`));
-        $(this).find(`[name="bcnc_total_1"]`).html((bcnc_now1 + bcnc1).toFormat('NUMBER'));
-        $(this).find(`[name="bcnc_total_2"]`).html((bcnc_now2 + bcnc2).toFormat('NUMBER'));
-        $(this).find(`[name="bcnc_total_3"]`).html((bcnc_now3 + bcnc3).toFormat('NUMBER'));
-        var bcnc_total_total = bcnc_now_total + bcnc1 + bcnc2 + bcnc3;
+        var bcnc_completed_total = getValue($(this).find(`[name="bcnc_completed_total"]`));
+        var bcnc_total_total = bcnc_now_total + bcnc_completed_total;
         $(this).find(`[name="bcnc_total_total"]`).html(bcnc_total_total.toFormat('NUMBER'));
         $(this).find(`[name="bcnc_total_rate"]`).html((bcnc_total_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
-
     });
     $(document).on("change", "tbody[role='logi']", function(){
         var outsrc_cntrct_amount = getValue($(this).find(`[name="outsrc_cntrct_amount"]`));
@@ -1017,39 +646,192 @@
 
     });
     $(document).on("change", "#establish tbody", function(){
-        var idx = $(this).attr("role").replaceAll("body", "");
         var target = $(this);
         var tot = 0;
         $(target).find("tr").eq(3).find("td.hasinput input").each(function(pIndex, pTag){
-            var r = parseInt($(target).find("tr").eq(1).find("td.text-center").eq(pIndex).html().replace("%", ""));
-            var total = getValue($(target).find("tr").eq(2).find("td.text-center").eq(pIndex));
+            var r = parseFloat($(target).find(`[name="rate_${pIndex+1}[]"]`).val().replace("%", ""));
+            var total = getValue($(target).find("tr").eq(2).find(`[data-column="qy"]`).eq(pIndex));
             var now = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(now)) now = 0;
-            $(target).find(`td[name="rate_${idx}_${pIndex+1}"]`).html((now*100.0/total).toFixed(1)+"%");
-            $(target).find(`td[name="apply_rate_${idx}_${pIndex+1}"]`).html((r*now/total).toFixed(1)+"%");
+            if(now > total){
+                $(pTag).val(total.toFormat('NUMBER'));
+                now = total;
+            }
+            $(target).find(`td[name="rate_${pIndex+1}"]`).html((now*100.0/total).toFixed(1)+"%");
+            $(target).find(`td[name="apply_rate_${pIndex+1}"]`).html((r*now/total).toFixed(1)+"%");
             tot += (r*now/total);
         })
-        $(target).find(`[name="apply_rate_${idx}_total"]`).html(tot.toFixed(1)+"%");
-        $(target).find(`[name="body_${idx}_a_now"]`).val(Math.round(getValue($(target).find(`[name="body_${idx}_a"]`), false) * tot / 100.0).toFormat('NUMBER'));
-        $(target).find(`[name="body_${idx}_b_now"]`).val(Math.round(getValue($(target).find(`[name="body_${idx}_b"]`), false) * tot / 100.0).toFormat('NUMBER'));
+        $(target).find(`[name="apply_rate_total"]`).html(tot.toFixed(1)+"%");
+        $(target).find(`[name="body_a_now[]"]`).val(Math.round(getValue($(target).find(`[name="body_a[]"]`), false) * tot / 100.0).toFormat('NUMBER'));
+        $(target).find(`[name="body_b_now[]"]`).val(Math.round(getValue($(target).find(`[name="body_b[]"]`), false) * tot / 100.0).toFormat('NUMBER'));
         var a_sum = 0, a_now_sum = 0, b_sum = 0, b_now_sum = 0;
-        for(let i=1;i<=4;i++){
-            a_sum += getValue($(document).find(`[name="body_${i}_a"]`), false);
-            a_now_sum += getValue($(document).find(`[name="body_${i}_a_now"]`), false);
-            b_sum += getValue($(document).find(`[name="body_${i}_b"]`), false);
-            b_now_sum += getValue($(document).find(`[name="body_${i}_b_now"]`), false);
-        }
+        $.each($(document).find("#establish tbody"), function(pIndex, pTbody){
+            a_sum += getValue($(pTbody).find(`[name="body_a[]"]`), false);
+            a_now_sum += getValue($(pTbody).find(`[name="body_a_now[]"]`), false);
+            b_sum += getValue($(pTbody).find(`[name="body_b[]"]`), false);
+            b_now_sum += getValue($(pTbody).find(`[name="body_b_now[]"]`), false);
+        });
+        var a_before_total = getValue($(document).find("[name='a_before_total']"));
+        var b_before_total = getValue($(document).find("[name='b_before_total']"));
+        var a_now_diff = a_now_sum - a_before_total;
+        var b_now_diff = b_now_sum - b_before_total;
         $(document).find("[name='a_total']").html(a_sum.toFormat('NUMBER'));
         $(document).find("[name='a_now_total']").html(a_now_sum.toFormat('NUMBER'));
         $(document).find("[name='a_rate']").html((a_now_sum*100.0/a_sum).toFixed(1) + "%");
+        $(document).find("[name='a_now_diff']").html(a_now_diff.toFormat('NUMBER'));
         $(document).find("[name='b_total']").html(b_sum.toFormat('NUMBER'));
         $(document).find("[name='b_now_total']").html(b_now_sum.toFormat('NUMBER'));
         $(document).find("[name='b_rate']").html((b_now_sum*100.0/b_sum).toFixed(1) + "%");
+        $(document).find("[name='b_now_diff']").html(b_now_diff.toFormat('NUMBER'));
 
     });
     fnValidate = function(){
                     var result = true;
                     return result;
                }
+    cloneRow = function(selector, count){
+        var cloned_row = [];
+        if(selector == "establish_tbody"){
+            for(let i=0;i<count;i++){
+                var html = '';
+                html += `<tbody role="body1">
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center" rowspan="6" data-column="cost_type"></th>
+                                <th class="color-contract text-center">공정</th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_1[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_2[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_3[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_4[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_5[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_6[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_7[]"/>
+                                </th>
+                                <th class="color-contract text-center">계</th>
+                                <th class="color-contract text-center" rowspan="3">발주처<br>계약금액</th>
+                                <th class="hasinput" rowspan="3">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_a[]"/>
+                                </th>
+                                <th class="color-contract text-center" rowspan="3">도급팀<br>계약금액</th>
+                                <th class="hasinput" rowspan="3">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_b[]"/>
+                                </th>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">보할율</th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_1[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_2[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_3[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_4[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_5[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_6[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_7[]"/>
+                                </th>
+                                <td class="text-center">100%</td>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">실내기수량</th>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td></td>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">공사수량</th>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_1[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_2[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_3[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_4[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_5[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_6[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_7[]" data-type="number"/>
+                                </td>
+                                <td></td>
+                                <th class="color-contract text-center" rowspan="3">발주처<br>기성금액</th>
+                                <th class="hasinput" rowspan="3">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_a_now[]" readonly/>
+                                </th>
+                                <th class="color-contract text-center" rowspan="3">도급팀<br>기성금액</th>
+                                <th class="hasinput" rowspan="3">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_b_now[]" readonly/>
+                                </th>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">공정율</th>
+                                <td class="text-center" name="rate_1"></td>
+                                <td class="text-center" name="rate_2"></td>
+                                <td class="text-center" name="rate_3"></td>
+                                <td class="text-center" name="rate_4"></td>
+                                <td class="text-center" name="rate_5"></td>
+                                <td class="text-center" name="rate_6"></td>
+                                <td class="text-center" name="rate_7"></td>
+                                <td></td>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">보할 적용율</th>
+                                <td class="text-center" name="apply_rate_1"></td>
+                                <td class="text-center" name="apply_rate_2"></td>
+                                <td class="text-center" name="apply_rate_3"></td>
+                                <td class="text-center" name="apply_rate_4"></td>
+                                <td class="text-center" name="apply_rate_5"></td>
+                                <td class="text-center" name="apply_rate_6"></td>
+                                <td class="text-center" name="apply_rate_7"></td>
+                                <td class="colorG text-center" name="apply_rate_total"></td>
+                            </tr>
+                        </tbody>`;
+                var tag = $($.parseHTML(html));
+                $(document).find(`#establish`).append($(tag));
+                {% if init %}
+                $(tag).find(".init-select2").select2();
+                $(tag).find(".init-select2").removeClass("init-select2");
+                {% endif %}
+                cloned_row.push($(tag));
+            }
+        }
+        return cloned_row;
+    }
+
     {% if init %}
     		if(window.projects == undefined){
 			window.projects = {};
@@ -1113,16 +895,6 @@
             get_completed(cntrct_sn);
         }
     });
-
-    {% else %}
-    $.fn.afterLoadApproval = function() {
-        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
-        get_completed(cntrct_sn);
-        var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
-
-    }
-
-    {% endif %}
     $(document).on("change", "#outsrc_fo_sn", function(){
         var cntrct_sn = $("#cntrct_sn").find(":selected").val();
         var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
@@ -1131,5 +903,15 @@
             get_completed_info(cntrct_sn, outsrc_fo_sn);
         }
     });
+
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
+        get_completed(cntrct_sn);
+
+    }
+
+    {% endif %}
 
 </script>

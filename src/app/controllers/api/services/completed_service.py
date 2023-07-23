@@ -583,7 +583,11 @@ def get_partner_status_list(params):
     return result
 
 def get_completed_bcnc_data(params):
-    params['s_pxcond_mt'] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
+    if "approval_sn" not in params:
+        params['s_pxcond_mt'] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
+    else:
+        g.curs.execute("SELECT DATE_FORMAT(reg_time, '%%Y-%%m') AS reg_time FROM approval WHERE approval_sn=%(approval_sn)s", params)
+        params['s_pxcond_mt'] = g.curs.fetchone()['reg_time']
     query = """SELECT GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'P', %(s_pxcond_mt)s) AS completed_1
                     , GET_TAXBIL_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'C', %(s_pxcond_mt)s) AS completed_2
                     , GET_PXCOND_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'S', %(s_pxcond_mt)s) AS completed_3
@@ -594,26 +598,27 @@ def get_completed_bcnc_data(params):
     return result
 
 def get_completed(params):
-    query = """SELECT MAX(body1) AS body1
-                    , MAX(body2) AS body2
-                    , MAX(body3) AS body3
-                    , MAX(body4) AS body4
-                    , SUM(IFNULL(bcnc_1, 0)) AS bcnc_1
-                    , SUM(IFNULL(bcnc_2, 0)) AS bcnc_2
-                    , SUM(IFNULL(bcnc_3, 0)) AS bcnc_3
-                    , SUM(IFNULL(est_1, 0)) AS est_1
-                    , SUM(IFNULL(est_2, 0)) AS est_2
-                    , SUM(IFNULL(est_3, 0)) AS est_3
-                    , SUM(IFNULL(logi_1, 0)) AS logi_1
-                    , SUM(IFNULL(logi_2, 0)) AS logi_2
-                FROM completed 
-                WHERE 1=1
-                AND cntrct_sn=%(s_cntrct_sn)s 
-                AND outsrc_fo_sn=%(s_outsrc_fo_sn)s 
-                GROUP BY cntrct_sn, outsrc_fo_sn"""
-    g.curs.execute(query, params)
-    result = g.curs.fetchone()
-    return result
+    # query = """SELECT MAX(body1) AS body1
+    #                 , MAX(body2) AS body2
+    #                 , MAX(body3) AS body3
+    #                 , MAX(body4) AS body4
+    #                 , SUM(IFNULL(bcnc_1, 0)) AS bcnc_1
+    #                 , SUM(IFNULL(bcnc_2, 0)) AS bcnc_2
+    #                 , SUM(IFNULL(bcnc_3, 0)) AS bcnc_3
+    #                 , SUM(IFNULL(est_1, 0)) AS est_1
+    #                 , SUM(IFNULL(est_2, 0)) AS est_2
+    #                 , SUM(IFNULL(est_3, 0)) AS est_3
+    #                 , SUM(IFNULL(logi_1, 0)) AS logi_1
+    #                 , SUM(IFNULL(logi_2, 0)) AS logi_2
+    #             FROM completed
+    #             WHERE 1=1
+    #             AND cntrct_sn=%(s_cntrct_sn)s
+    #             AND outsrc_fo_sn=%(s_outsrc_fo_sn)s
+    #             GROUP BY cntrct_sn, outsrc_fo_sn"""
+    # g.curs.execute(query, params)
+    # result = g.curs.fetchone()
+    # return result
+    return []
 
 def insert_completed(params):
     data = {}

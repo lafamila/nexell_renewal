@@ -2902,7 +2902,6 @@ def get_expect_equip_list(params):
     query += """
                 AND e.delng_ty_code='1'
                 AND cntrct_sn = %(s_cntrct_sn)s"""
-    print(query, params)
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
