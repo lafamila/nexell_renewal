@@ -912,6 +912,11 @@ def insert_equipment_other_sub(params):
 
 def update_equipment_establish(params):
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    row = g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code IN ('C', 'E') and cntrct_sn=%s", params['cntrct_sn'])
+    if row:
+        extra_sn = g.curs.fetchone()['m_extra_sn']
+    else:
+        extra_sn = 0
     company = {}
     for key in params:
         if key.startswith("company"):
@@ -952,6 +957,8 @@ def update_equipment_establish(params):
             c['outsrc_dtls'] = "{}-{}-{}-{}".format(human, direct, daily, s)
         else:
             c['outsrc_dtls'] = None
+
+        c['register_id'] = session['member']['member_id']
         query = """SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s"""
         g.curs.execute(query, c)
         outsrcs = g.curs.fetchall()
@@ -965,25 +972,77 @@ def update_equipment_establish(params):
             outsrc_sn = outsrc['outsrc_sn']
             query = """DELETE FROM outsrc_item WHERE outsrc_sn=%s"""
             g.curs.execute(query, (outsrc_sn, ))
-            for item_nm, item_dlnt, item_damt in zip(c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+            for item_type, item_nm, item_dlnt, item_damt in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
                 if item_nm != '':
+                    if item_type == '':
+                        item_type = '0'
+
                     dlnt = int(item_dlnt.replace(",", ""))
                     damt = int(item_damt.replace(",", ""))
                     query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
                     g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
+                    pParams = {}
+                    for key in ["cntrct_sn", "prjct_sn", "name", "register_id"]:
+                        pParams[key] = c[key]
+                    pParams["model_no"] = item_nm
+                    pParams["cost_type"] = int(item_type)
+                    pParams["qy"] = dlnt
+                    pParams["puchas_amount"] = int(damt*1.1)
+                    pParams["extra_sn"] = extra_sn
+                    if int(item_type) == 3:
+                        row = g.curs.execute(
+                            "SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=146", c)
+                        if row == 0:
+                            query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
+                                        VALUES(%(cntrct_sn)s, %(prjct_sn)s, 146, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), %(register_id)s)"""
+                            g.curs.execute(query, c)
+                            outsrc_sn = g.curs.lastrowid
+                        else:
+                            outsrc_sn = g.curs.fetchone()['outsrc_sn']
+
+                    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
+                                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', %(name)s, %(model_no)s, %(qy)s, %(puchas_amount)s, %(extra_sn)s, NOW(), %(register_id)s, %(cost_type)s)"""
+                    g.curs.execute(query, pParams)
+
+
         else:
-            c['register_id'] = session['member']['member_id']
             query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
                         VALUES(%(cntrct_sn)s, %(prjct_sn)s, %(name)s, %(date)s, %(pymnt_mth)s, %(owner)s, %(owner_telno)s, %(dam)s, %(dam_telno)s, NOW(), %(register_id)s)"""
             g.curs.execute(query, c)
             outsrc_sn = g.curs.lastrowid
 
-            for item_nm, item_dlnt, item_damt in zip(c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+            for item_type, item_nm, item_dlnt, item_damt in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
                 if item_nm != '':
+
+                    if item_type == '':
+                        item_type = '0'
+
                     dlnt = int(item_dlnt.replace(",", ""))
                     damt = int(item_damt.replace(",", ""))
                     query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
                     g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
+                    pParams = {}
+                    for key in ["cntrct_sn", "prjct_sn", "name", "register_id"]:
+                        pParams[key] = c[key]
+                    pParams["model_no"] = item_nm
+                    pParams["cost_type"] = int(item_type)
+                    pParams["qy"] = dlnt
+                    pParams["puchas_amount"] = int(damt * 1.1)
+                    pParams["extra_sn"] = extra_sn
+                    if int(item_type) == 3:
+                        row = g.curs.execute(
+                            "SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=146", c)
+                        if row == 0:
+                            query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
+                                        VALUES(%(cntrct_sn)s, %(prjct_sn)s, 146, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), %(register_id)s)"""
+                            g.curs.execute(query, c)
+                            outsrc_sn = g.curs.lastrowid
+                        else:
+                            outsrc_sn = g.curs.fetchone()['outsrc_sn']
+
+                    query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
+                                VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', %(name)s, %(model_no)s, %(qy)s, %(puchas_amount)s, %(extra_sn)s, NOW(), %(register_id)s, %(cost_type)s)"""
+                    g.curs.execute(query, pParams)
 
 
 def insert_equipment(params):
@@ -1070,12 +1129,16 @@ def insert_equipment(params):
     if len(isThereDaily) > 0:
         for i, c in enumerate(isThereDaily):
             if i == 0:
-                query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
-                            VALUES(%(cntrct_sn)s, %(prjct_sn)s, 146, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), %(register_id)s)"""
-                g.curs.execute(query, c)
-                outsrc_sn = g.curs.lastrowid
+                row = g.curs.execute("SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=146", c)
+                if row == 0:
+                    query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
+                                VALUES(%(cntrct_sn)s, %(prjct_sn)s, 146, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), %(register_id)s)"""
+                    g.curs.execute(query, c)
+                    outsrc_sn = g.curs.lastrowid
+                else:
+                    outsrc_sn = g.curs.fetchone()['outsrc_sn']
             query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
-                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', '146', %(model_no)s, %(qy)s, %(puchas_amount)s, 0, NOW(), %(register_id)s, 3)"""
+                        VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', %(name)s, %(model_no)s, %(qy)s, %(puchas_amount)s, 0, NOW(), %(register_id)s, 3)"""
             g.curs.execute(query, c)
 
 

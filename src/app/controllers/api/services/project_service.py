@@ -1489,6 +1489,7 @@ def get_outsrc_detail(params):
                 , co.puchas_amount AS amount
                 , co.qy AS qy
                 , co.model_no AS model_no
+                , co.cost_type AS cost_type
                 , (SELECT SUM(qy*puchas_amount) FROM cost WHERE cntrct_sn=%(s_cntrct_sn)s AND prjct_sn=%(s_prjct_sn)s AND purchsofc_sn=o.outsrc_sn) AS total
                 FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co
                 LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_fo_sn AND co.cntrct_sn=o.cntrct_sn AND co.prjct_sn=o.prjct_sn
@@ -1573,6 +1574,7 @@ def get_outsrc_report_list(params):
                     END AS amount
                     , qy AS qy
                     , model_no
+                    , cost_type
                     , (SELECT SUM(puchas_amount*qy)
                     FROM cost
                     WHERE cntrct_sn=c.cntrct_sn
@@ -2445,6 +2447,8 @@ def insert_c_extra_project(params):
             g.curs.execute(query, data)
 
         else:
+            if int(data['ct_se_code']) == 5 and data['cntrct_execut_code'] == 'E':
+                continue
             sub_query = [key for key in data]
             params_query = ["%({})s".format(key) for key in data]
             query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))

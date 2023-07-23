@@ -159,13 +159,13 @@
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_1_alpha" readonly></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_2_alpha" readonly></td>
             <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_5_alpha" readonly></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_8_alpha"></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_3_alpha"></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_4_alpha"></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_10_alpha"></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_61_alpha"></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_7_alpha"></td>
-            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_99_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_8_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_3_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_4_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_10_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_61_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_7_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_99_alpha" readonly></td>
             <td class="text-center" data-column="row_total_alpha"></td>
         </tr>
     </tbody>
@@ -256,7 +256,16 @@
                     </thead>
                     <tbody role="company1_row">
                         <tr data-row="company1_tr">
-                            <td colspan="2" class="hasinput">
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company1_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="company1_item_name[]"/>
                             </td>
                             <td class="hasinput">
@@ -403,7 +412,17 @@
                     </thead>
                     <tbody role="company2_row">
                         <tr data-row="company2_tr">
-                            <td colspan="2" class="hasinput">
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company2_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+
+                            <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="company2_item_name[]"/>
                             </td>
                             <td class="hasinput">
@@ -550,7 +569,17 @@
                     </thead>
                     <tbody role="company3_row">
                         <tr data-row="company3_tr">
-                            <td colspan="2" class="hasinput">
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company3_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+
+                            <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="company3_item_name[]"/>
                             </td>
                             <td class="hasinput">
@@ -679,8 +708,9 @@
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
                     $.each(pResult.aCostList, function(pIndex, pValue){
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
-                        if(pValue.cntrct_execut_code != 'E' || parseInt(pValue.ct_se_code) != 5) {
-                            last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
+                        if(pValue.cntrct_execut_code != 'E' || ![3,4,5].includes(parseInt(pValue.ct_se_code))) {
+                            if(!isNaN(parseInt(pValue.amount)))
+                                last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
                         }
                     });
                     $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
@@ -730,8 +760,9 @@
                         var pRow = pResult.extraCostList[extra_sn];
                         $.each(pRow, function(pIndex, pValue){
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
-                            if(pValue.cntrct_execut_code != 'E' || parseInt(pValue.ct_se_code) != 5) {
-                                last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
+                            if(pValue.cntrct_execut_code != 'E' || ![3,4,5].includes(parseInt(pValue.ct_se_code))) {
+                                if(!isNaN(parseInt(pValue.amount)))
+                                    last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
                             }
                         });
                         $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
@@ -739,7 +770,6 @@
                     $("#max_extra_sn").html(parseInt(max_extra_sn) == 0 ? "" : `-${(parseInt(max_extra_sn)+1)}`);
                     {% if init %}
                         $(document).find(`tbody[role="ct_se_code_extra_alpha"] input`).attr("readonly", true);
-                        $(document).find(`[name='E_5_alpha']`).attr("readonly", false);
                         $.each(last_data, function(pI, pV){
                             $(document).find(`[name='${pI}_alpha']`).val(pV.toFormat('NUMBER'));
                         });
@@ -795,6 +825,7 @@
                         }
                         var eCost5Total = 0;
                         $.each(pResult.outsrcItem[pValue.outsrc_fo_sn].e5CostList, function(pI, pR){
+                            $(document).find(`[name='${company}_item_type[]']`).eq(pI).yVal(pR.cost_type);
                             $(document).find(`[name='${company}_item_name[]']`).eq(pI).val(pR.model_no);
                             $(document).find(`[name='${company}_item_dlnt[]']`).eq(pI).val(pR.qy.toFormat('NUMBER'));
                             $(document).find(`[name='${company}_item_damt[]']`).eq(pI).val(pR.amount.toFormat('NUMBER'));
@@ -836,8 +867,26 @@
                 var origin = trs.eq(0).clone(true);
                 $(origin).find("td:not(.hasinput)").html("");
                 $(origin).find("td.hasinput input").val("");
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="${company}_item_type[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    <option value="0">주택</option>
+                                                    <option value="1">빌딩</option>
+                                                    <option value="2">기타</option>
+                                                    <option value="3">일용직</option>
+                                                </select>`);
+                    }
+                });
+
                 $(document).find(`tbody[role='${company}_row']`).append($(origin));
+
             }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
             $(document).find(`tbody[role='${company}_row']`).trigger("change");
         }
     }
@@ -866,7 +915,7 @@
             total_amount += total;
         });
         $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
-        $(this).yRowspan(6);
+        $(this).yRowspan(7);
 
     });
     $(document).on("change", "tbody[role='ct_se_code_contract']", function(){
