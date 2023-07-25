@@ -2448,11 +2448,25 @@ def insert_c_extra_project(params):
 
         else:
             if int(data['ct_se_code']) == 5 and data['cntrct_execut_code'] == 'E':
-                continue
-            sub_query = [key for key in data]
-            params_query = ["%({})s".format(key) for key in data]
-            query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
-            g.curs.execute(query, data)
+                #             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : extra_sn, "register_id" : session["member"]["member_id"]})
+                g.curs.execute(
+                    "SELECT cntrct_sn, prjct_sn, purchsofc_sn, model_no, cost_type, cntrct_execut_code, ct_se_code, qy, puchas_amount FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code='E' AND ct_se_code=%(ct_se_code)s AND extra_sn=%(extra_sn)s",
+                    {"cntrct_sn": data["cntrct_sn"], "ct_se_code": data["ct_se_code"], "extra_sn": extra_sn - 1})
+                costs = g.curs.fetchall(transform=False)
+                for cost in costs:
+                    cost['register_id'] = session["member"]["member_id"]
+                    cost["extra_sn"] = extra_sn
+                    sub_query = [key for key in cost]
+                    params_query = ["%({})s".format(key) for key in cost]
+                    query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+                    g.curs.execute(query, cost)
+
+
+            else:
+                sub_query = [key for key in data]
+                params_query = ["%({})s".format(key) for key in data]
+                query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+                g.curs.execute(query, data)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""

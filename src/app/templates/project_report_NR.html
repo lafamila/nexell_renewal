@@ -1274,7 +1274,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){
 							cTotals["E"][1] += amount;
 						}
-						eCostTotal += amount;
+						if(parseInt(pValue.ct_se_code) != 9){
+							eCostTotal += amount;
+						}
 						$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
 					}
 				});

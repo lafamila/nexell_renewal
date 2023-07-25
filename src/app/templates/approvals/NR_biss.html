@@ -400,13 +400,20 @@
                             $.each(pData.s2AccountList, function(pI, pV){
                                 p_sum_total_other += parseInt(pV.p_total);
                             });
-                            var all_sum_total = 0;
+                            var all_sum_total = 0, indirect_sum_total = 0;
                             $.each(pData.outsrcList, function(pI, pV) {
                                 var sum_total = 0;
+
                                 $.each(pV.taxbilList, function(pIndex, pValue){
                                     sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                                 });
-                                all_sum_total += sum_total;
+                                if([116].includes(pV.outsrc_fo_sn)){
+                                    indirect_sum_total += sum_total;
+                                }
+                                else{
+                                    all_sum_total += sum_total;
+
+                                }
                             });
                             var sum_total = 0;
                             $.each(pData.s3AccountList, function(pI, pV){
@@ -440,6 +447,7 @@
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(2)').html(p_sum_total_other.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(3)').html(all_sum_total.toString().toFormat('NUMBER'));
+            				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(4)').html(indirect_sum_total.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
 	            			$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(6)').html(sum_total_other.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(7)').html(msh_total_amount.toFormat('NUMBER'));

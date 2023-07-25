@@ -500,7 +500,8 @@
                     $.each(pResult.aCostList, function(pIndex, pValue){
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                         if(pValue.cntrct_execut_code == 'E' && [3,4,5].includes(parseInt(pValue.ct_se_code))){
-                            E_alpha[parseInt(pValue.ct_se_code)] = parseInt(pValue.amount);
+                            var amount = isNaN(parseInt(pValue.amount)) ? 0 : parseInt(pValue.amount);
+                            E_alpha[parseInt(pValue.ct_se_code)] = amount;
                         }
                     });
                     $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
@@ -587,7 +588,8 @@
                         $.each(pRow, function(pIndex, pValue){
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
                             if(pValue.cntrct_execut_code == 'E' && [3,4,5].includes(parseInt(pValue.ct_se_code))){
-                                E_alpha[parseInt(pValue.ct_se_code)] = parseInt(pValue.amount);
+                                var amount = isNaN(parseInt(pValue.amount)) ? 0 : parseInt(pValue.amount);
+                                E_alpha[parseInt(pValue.ct_se_code)] = amount;
                             }
                         });
                         $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");

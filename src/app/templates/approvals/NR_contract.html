@@ -498,6 +498,8 @@
         }
       });
       console.log(params);
+      // $("#pdf1").prop("disabled", true);
+      // $("#pdf2").prop("disabled", true);
       $.ajax({
         url : '/api/common/get_files_name',
         method : 'POST',
@@ -511,17 +513,21 @@
               if(target.length == 2){
                   if(target[pIndex] == "pdf_sn1"){
                       html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                      $("#pdf1").hide();
                   }
                   else{
                       html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                      $("#pdf2").hide();
                   }
               }
               else if(target.length == 1){
                   if(target[pIndex] == "pdf_sn1"){
                       html += `<td colspan="4"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                      $("#pdf1").hide();
                   }
                   else{
                       html += `<td colspan="4"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                      $("#pdf2").hide();
                   }
               }
           });
