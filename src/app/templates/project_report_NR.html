@@ -559,20 +559,27 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</tbody>
 	<tbody role="contract">
 		<tr>
-			<td colspan="6" class="hasTable" style="padding:0px!important;">
+			<th colspan="10" class="color-contract text-center">계약장비내역</th>
+		</tr>
+		<tr>
+			<td colspan="10" class="hasTable" style="padding:0px!important;">
 				<table id="rptTable7Contract" style="border:none!important;">
 					<colgroup>
 						<col width="145">
 						<col width="*">
 					</colgroup>
 					<thead>
+						<th class="color-contract" colspan="1">마지막 출고일</th>
 						<th class="color-contract" colspan="1">상품명</th>
 						<th class="color-contract" colspan="1">모델명</th>
 						<th class="color-contract" colspan="1">계약수량</th>
 						<th class="color-contract" colspan="1">매입단가</th>
-						<th class="color-contract" colspan="1">출고수량</th>
+						<th class="color-contract" colspan="1">기출고수량</th>
 						<th class="color-contract" colspan="1">매입금액</th>
+						<th class="color-contract" colspan="1">매출금액</th>
 						<th class="color-contract" colspan="1">VA</th>
+						<th class="color-contract" colspan="1">매입처</th>
+						<th class="color-contract" colspan="1">비고</th>
 					<!-- 매입단가-출고수량-매입금액-VA -->
 					</thead>
 					<tbody>
@@ -581,10 +588,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				</table>
 
 			</td>
-			<td colspan="4"></td>
 		</tr>
 	</tbody>
 	<tbody>
+		<tr>
+			<th colspan="10" class="color-contract text-center">출고장비내역</th>
+		</tr>
+
 		<tr>
 			<th class="color-contract" colspan="1">출고일</th>
 			<th class="color-contract" colspan="1">상품명</th>
@@ -631,20 +641,27 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</tbody>
 	<tbody role="contract">
 		<tr>
-			<td colspan="6" class="hasTable" style="padding:0px!important;">
+			<th colspan="10" class="color-contract text-center">계약장비내역</th>
+		</tr>
+		<tr>
+			<td colspan="10" class="hasTable" style="padding:0px!important;">
 				<table id="rptTable8Contract" style="border:none!important;">
 					<colgroup>
 						<col width="145">
 						<col width="*">
 					</colgroup>
 					<thead>
+						<th class="color-contract" colspan="1">마지막 출고일</th>
 						<th class="color-contract" colspan="1">상품명</th>
 						<th class="color-contract" colspan="1">모델명</th>
 						<th class="color-contract" colspan="1">계약수량</th>
 						<th class="color-contract" colspan="1">매입단가</th>
-						<th class="color-contract" colspan="1">출고수량</th>
+						<th class="color-contract" colspan="1">기출고수량</th>
 						<th class="color-contract" colspan="1">매입금액</th>
+						<th class="color-contract" colspan="1">매출금액</th>
 						<th class="color-contract" colspan="1">VA</th>
+						<th class="color-contract" colspan="1">매입처</th>
+						<th class="color-contract" colspan="1">비고</th>
 					</thead>
 					<tbody>
 
@@ -652,10 +669,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				</table>
 
 			</td>
-			<td colspan="4"></td>
 		</tr>
 	</tbody>
 	<tbody>
+		<tr>
+			<th colspan="10" class="color-contract text-center">계약장비내역</th>
+		</tr>
 		<tr>
 			<th class="color-contract" colspan="1">출고일</th>
 			<th class="color-contract" colspan="1">상품명</th>
@@ -1635,30 +1654,38 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var html = '';
 					var count = 0;
 					var before_dlnt = 0;
-					var pamount = 0, va = 0;
+					var pamount = 0, va = 0, samount = 0;
 					$.each(equipList, function(pIndex, pValue){
 						html += `<tr>
+									<td class="text-center">${pValue.dlivy_de}</td>
 									<td class="text-center">${pValue.prdlst_se_nm}</td>
 									<td class="text-center">${pValue.model_no}</td>
 									<td class="text-center">${pValue.cnt_dlnt.toFormat('NUMBER')}</td>
 									<td class="text-right">${pValue.dlamt.toFormat('NUMBER')}</td>
 									<td class="text-center">${pValue.before_dlnt.toFormat('NUMBER')}</td>
 									<td class="text-right">${(pValue.dlamt*pValue.cnt_dlnt).toFormat('NUMBER')}</td>
+									<td class="text-right">${pValue.samount.toFormat('NUMBER')}</td>
 									<td class="text-right">${((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt)).toFormat('NUMBER')}</td>
+									<td class="text-center">${pValue.bcnc_nm}</td>
+									<td class="text-center"></td>
 								</tr>`;
 
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
 						pamount += pValue.dlamt*pValue.cnt_dlnt;
+						samount += isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.smaount);
 						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
 					});
 					html += `<tr>
-								<td class="colorG" colspan="2">합계</td>
+								<td class="colorG" colspan="3">합계</td>
 								<td class="colorG text-center">${count.toFormat('NUMBER')}</td>
 								<td class="colorG text-center"></td>
 								<td class="colorG text-center">${before_dlnt.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${pamount.toFormat('NUMBER')}</td>
+								<td class="colorG text-right">${samount.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${va.toFormat('NUMBER')}</td>
+								<td class="colorG text-right"></td>
+								<td class="colorG text-right"></td>
 							</tr>`
 					$('#popReportNR').find("#rptTable7Contract tbody").html(html);
 					$('#popReportNR').find("#rptTable7 tbody[role='contract']").show();
@@ -1711,29 +1738,37 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var html = '';
 					var count = 0;
 					var before_dlnt = 0;
-					var pamount = 0, va = 0;
+					var pamount = 0, va = 0, samount = 0;
 					$.each(equipList, function(pIndex, pValue){
 						html += `<tr>
+									<td class="text-center">${pValue.dlivy_de}</td>
 									<td class="text-center">${pValue.prdlst_se_nm}</td>
 									<td class="text-center">${pValue.model_no}</td>
 									<td class="text-center">${pValue.cnt_dlnt.toFormat('NUMBER')}</td>
 									<td class="text-right">${pValue.dlamt.toFormat('NUMBER')}</td>
 									<td class="text-center">${pValue.before_dlnt.toFormat('NUMBER')}</td>
 									<td class="text-right">${(pValue.dlamt*pValue.cnt_dlnt).toFormat('NUMBER')}</td>
+									<td class="text-right">${pValue.samount.toFormat('NUMBER')}</td>
 									<td class="text-right">${((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt)).toFormat('NUMBER')}</td>
+									<td class="text-center">${pValue.bcnc_nm}</td>
+									<td class="text-center"></td>
 								</tr>`;
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
 						pamount += pValue.dlamt*pValue.cnt_dlnt;
+						samount += isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.smaount);
 						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
 					});
 					html += `<tr>
-								<td class="colorG" colspan="2">합계</td>
+								<td class="colorG" colspan="3">합계</td>
 								<td class="colorG text-center">${count.toFormat('NUMBER')}</td>
 								<td class="colorG text-center"></td>
 								<td class="colorG text-center">${before_dlnt.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${pamount.toFormat('NUMBER')}</td>
+								<td class="colorG text-right">${samount.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${va.toFormat('NUMBER')}</td>
+								<td class="colorG text-right"></td>
+								<td class="colorG text-right"></td>
 							</tr>`
 					$('#popReportNR').find("#rptTable8Contract tbody").html(html);
 					$('#popReportNR').find("#rptTable8 tbody[role='contract']").show();
@@ -2509,7 +2544,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					if(pValue.dlivy_de != ''){
 						var dlivy_year = pValue.dlivy_de.split("-")[0];
 						var dlivy_month = pValue.dlivy_de.split("-")[1];
-						var dlivy = new Date(dlivy_year, parseInt(dlivy_month)-1+((_type == 1) ? 6 : 12), 15);
+						var dlivy = new Date(dlivy_year, parseInt(dlivy_month)-1+6, 15);
 						var expect_de = (new Date(dlivy.getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
 						var expect = expect_de.split("-")[0]+"-"+expect_de.split("-")[1];
 					}

@@ -2877,6 +2877,7 @@ def get_expect_equip_list(params):
                     , e.model_no
                     , e.prdlst_se_code
                     , e.bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
                     , e.delng_ty_code
                     , e.cnt_dlnt
                     , e.dlamt
@@ -2911,6 +2912,7 @@ def get_expect_equip_other_list(params):
                     , e.model_no
                     , e.prdlst_se_code
                     , e.bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
                     , e.delng_ty_code
                     , e.cnt_dlnt
                     , e.dlamt
