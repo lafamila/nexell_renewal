@@ -1275,18 +1275,22 @@ getReportCards = function(card_de)
                     }
                     order[k] = v;
                 });
-                const ordered = [];
-                Object.values(order).sort().forEach(function(values) {
-                  var key = 0;
-                  $.each(order, function(k,v){
-                      if(v == values){
-                          key = k;
-                      }
-                  });
-                  ordered.push(key);
-                });
+                var ordered_list = [];
+				console.log(order);
+				for (var o in order) {
+					ordered_list.push([o, order[o]]);
+				}
+				ordered_list.sort(function(a, b) {
+					return a[1] - b[1];
+				});
+				console.log(ordered_list);
+				var ordered = [];
+				$.each(ordered_list, function(pIndex, pValue){
+					ordered.push(pValue[0]);
+				});
                 var count = 0;
-                $.each(ordered, function(pIndex, pValue){
+                $.each(ordered, function(pIndex, pData){
+					var pValue = pData[0];
                    if(pValue != "")
                        count += 1;
                 });

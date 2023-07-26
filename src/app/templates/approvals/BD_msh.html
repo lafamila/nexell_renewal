@@ -707,7 +707,7 @@
             data : {"stock_sns" : params},
             success: function(pResult){
                 console.log(pResult);
-                var rows = cloneRow(`${target}_house_tr`, pResult.length - $(document).find(`tbody[role="${target}_house_row"]`).find("tr").length);
+                var rows = cloneRow(`${target}_house_tr`, pResult.length);
                 $.each(pResult, function(pIndex, pValue){
                     var row = rows[pIndex];
                     $(row).find(`input[type='hidden'][name='${target}_stock_sn[]']`).val(pValue.stock_sn);

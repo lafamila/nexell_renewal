@@ -724,6 +724,9 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 						<li data-action="3">
 							<a data-toggle="tab" href="#tabBox3" data-action="tab3"><i class="fa fa-lg fa-list"></i>&nbsp;<span>예정 공사비</span></a>
 						</li>
+						<li data-action="4">
+							<a data-toggle="tab" href="#tabBox4" data-action="tab4"><i class="fa fa-lg fa-list"></i>&nbsp;<span>공사비 산출</span></a>
+						</li>
 					</ul>
 					<div class="jarviswidget-ctrls" role="menu">
 						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
@@ -1338,6 +1341,72 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 							</form>
 							</div><!--tab-pane-->
 
+							<!-- 공사비산출(사전입찰) -->
+							<div class="tab-pane fade" id="tabBox4">
+							<form id="frmBox4">
+								<table class="table table-bordered table-hover" id="dtList4">
+									<colgroup>
+										<col width="50">
+										<col width="*">
+										<col width="120">
+										<col width="120">
+										<col width="78">
+									</colgroup>
+									<thead>
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="5">
+												공사비 산출
+												<input type="hidden" id="cntrct_sn" name="cntrct_sn">
+												<input type="hidden" id="prjct_sn" name="prjct_sn">
+												<input type="hidden" id="s_construct_sn" name="s_construct_sn">
+											</th>
+										</tr>
+										<tr><th class="hasinput" colspan="5">
+												<div class="alert alert-block alert-warning-x" style="margin:0px;color:red!important;">
+													<p><i class="fa-fw fa fa-info"></i>
+														해당 공사비 산출 목록은 공사현황의 값과 무관합니다.
+													</p>
+													<p><i class="fa-fw fa fa-info"></i>
+														대당단가는 세액을 제외한 공급가액을 입력해야합니다.
+													</p>
+												</div>
+											</th>
+										</tr>
+										<tr style="background:#ffedaa;">
+											<td class="hasinput" style="text-align:center;font-weight:bold;color:#00f;" id="action">
+												입력
+											</td>
+											<td class="hasinput">
+												<input type="text" class="form-control" placeholder="[필수]" id="construct_name" name="construct_name">
+											</td>
+											<td class="hasinput">
+												<input type="number" class="form-control" placeholder="[필수]" id="construct_count" name="construct_count">
+											</td>
+											<td class="hasinput">
+												<input type="number" class="form-control" placeholder="[필수]" id="construct_amt" name="construct_amt">
+											</td>
+											<td class="hasinput">
+					{% if session['member']['auth_cd'] == 1 %}
+												<div class="btn-group">
+													<button type="button" class="btn btn-primary" id="btnSaveConstruct"><i class="fa fa-save"></i></button>
+													<button type="button" class="btn btn-primary" id="btnRefrushConstruct" style="padding-left:11px;padding-right:11px;"><i class="fa fa-refresh"></i></button>
+												</div>
+					{% endif %}
+											</td>
+										</tr>
+										<tr>
+											<th style="vertical-align:middle;" class="text-center">No.</th>
+											<th style="vertical-align:middle;">모델명</th>
+											<th style="vertical-align:middle;">수량</th>
+											<th style="vertical-align:middle;">대당단가</th>
+											<th style="vertical-align:middle;">-</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
 						</div><!--tab-content-->
 					</div><!--widget-body-->
 				</div><!--content-->
@@ -1484,6 +1553,7 @@ getProject = function(s_cntrct_sn, s_prjct_sn)
 					$('#popBox1').modal('show');
                     $('#popEditTabs').find('a[href=#tabBox1]').parent().hide();
                     $('#popEditTabs').find('a[href=#tabBox2]').parent().hide();
+                    $('#popEditTabs').find('a[href=#tabBox4]').parent().hide();
                     $('#popEditTabs').find('a[href=#tabBox3]').parent().show();
                     $('#popEditTabs').find('a[href=#tabBox3]').trigger('click');
 					$('#popBox1').find('#btnEdit').show();
@@ -1579,6 +1649,8 @@ $('#popBox1').on("click", "#popEditTabs a", function(){
 		contractReadOnly(false);
 	}
 	else if (action === 'tab2') {
+		$('#popBox1').find("#btnSaveKeepContract").hide();
+		contractReadOnly(true);
 		var cntrct_sn = $('#tabBox2').find('#cntrct_sn').val();
 		var prjct_sn = $('#tabBox2').find('#prjct_sn').val();
 		getOutsrcList(cntrct_sn, prjct_sn);
@@ -1589,6 +1661,13 @@ $('#popBox1').on("click", "#popEditTabs a", function(){
 		var cntrct_sn = $('#tabBox3').find('#cntrct_sn').val();
 		var prjct_sn = $('#tabBox3').find('#prjct_sn').val();
 		getCostList(cntrct_sn, prjct_sn);
+	}
+	else if(action == "tab4"){
+		$('#popBox1').find("#btnSaveKeepContract").hide();
+		contractReadOnly(true);
+		var cntrct_sn = $('#tabBox3').find('#cntrct_sn').val();
+		var prjct_sn = $('#tabBox3').find('#prjct_sn').val();
+		getConstructList(cntrct_sn, prjct_sn);
 
 	}
 })
@@ -2118,6 +2197,73 @@ getCostList = function(s_cntrct_sn, s_prjct_sn)
 	});
 }
 
+getConstructList = function(s_cntrct_sn, s_prjct_sn)
+{
+	if (s_cntrct_sn == "") {
+		return;
+	}
+
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+
+	$.ajax({
+		url: '/api/project/ajax_get_construct_list',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			console.log("get_construct_list", pResult);
+			if (pResult.status) {
+				var html = '';
+                var progrs_sttus_code = $('#popBox1').find('input:radio[name=progrs_sttus_code]:checked').val();
+
+                if(progrs_sttus_code == 'C'){
+                    $('#btnSaveConstruct').hide();
+                }
+                else{
+                    $('#btnSaveConstruct').show();
+
+                }
+                var author = $('#popBox1').find('input:radio[name=author]:checked').val();
+
+                if(author == '0'){
+                    $('#btnSaveConstruct').hide();
+                }
+				$.each(pResult.data, function(pIndex, pValue) {
+
+					html += '<tr>';
+					html += '    <td class="text-center" data-construct_sn="'+pValue.construct_sn+'">'+(pIndex+1)+'</td>';
+					html += '    <td>'+(pValue.construct_name)+'</td>';
+					html += '    <td class="text-right">'+(pValue.construct_count.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="text-right">'+(pValue.construct_amt.toFormat('NUMBER'))+'</td>';
+					html += '    <td class="hasinput text-right">';
+
+                    if(progrs_sttus_code != 'C'){
+					{% if session['member']['auth_cd'] == 1 %}
+
+					html += '        <div class="btn-group">';
+					html += '	         <button type="button" class="btn btn-table btn-info btnUpdate" title="수정" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-construct_sn="'+pValue.construct_sn+'">';
+					html += '		         <i class="fa fa-edit"></i>';
+					html += '            </button>';
+					html += '	         <button type="button" class="btn btn-table btn-danger btnDelete" style="padding-left:8px;"title="삭제" data-cntrct_sn="'+pValue.cntrct_sn+'" data-prjct_sn="'+pValue.prjct_sn+'" data-construct_sn="'+pValue.construct_sn+'">';
+					html += '		         <i class="fa fa-trash-o"></i>';
+					html += '            </button>';
+					html += '        </div>';
+					{% endif %}
+                    }
+					html += '    </td>';
+					html += '</tr>';
+				});
+				$('#dtList4 tbody').html(html);
+
+			}
+		}
+	});
+}
+
 /******************************************************************************
  *
  */
@@ -2160,6 +2306,34 @@ getCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 				// $('#tabBox3').find('#cntrct_execut_code').yReadonly(true);
 				// $('#tabBox3').find('#ct_se_code').yReadonly(true);
 				// $('#tabBox3').find('#purchsofc_sn').yReadonly(true);
+			}
+		}
+	});
+}
+/******************************************************************************
+ *
+ */
+getConstruct = function(s_cntrct_sn, s_prjct_sn, s_construct_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+	params += '&s_construct_sn=' + s_construct_sn;
+
+	$.ajax({
+		url: '/api/project/ajax_get_construct',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				var data = pResult.data;
+
+				$('#tabBox4').find('#s_construct_sn').yVal(data.construct_sn);
+				$('#tabBox4').find('#construct_name').yVal(data.construct_name);
+				$('#tabBox4').find('#construct_count').yVal(data.construct_count);
+				$('#tabBox4').find('#construct_amt').yVal(data.construct_amt);
 			}
 		}
 	});
@@ -2268,6 +2442,58 @@ insertCost = function()
 
 /******************************************************************************
  *
+ *//******************************************************************************
+ *
+ */
+insertConstruct = function()
+{
+	$.ajax({
+		url: '/api/project/ajax_insert_construct',
+		type: 'POST',
+		data: getFormData($('#frmBox4')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var construct_name = $('#tabBox4').find('#construct_name').val();
+			if (construct_name == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			var construct_count = $('#tabBox4').find('#construct_count').val();
+			if (construct_count == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			var construct_amt = $('#tabBox4').find('#construct_amt').val();
+			if (construct_amt == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				if (!confirm('계속 등록하시겠습니까?')) {
+					$('#tabBox4').find('#s_construct_sn').yVal('');
+					$('#tabBox4').find('#construct_name').yVal('');
+					$('#tabBox4').find('#construct_count').yVal('');
+					$('#tabBox4').find('#construct_amt').yVal('');
+				}
+				var cntrct_sn = $('#tabBox4').find('#cntrct_sn').val();
+				var prjct_sn = $('#tabBox4').find('#prjct_sn').val();
+				getConstructList(cntrct_sn, prjct_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
  */
 updateCost = function()
 {
@@ -2352,6 +2578,51 @@ updateCost = function()
 /******************************************************************************
  *
  */
+updateConstruct = function()
+{
+	$.ajax({
+		url: '/api/project/ajax_update_construct',
+		type: 'POST',
+		data: getFormData($('#frmBox4')[0]),
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			var construct_name = $('#tabBox4').find('#construct_name').val();
+			if (construct_name == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			var construct_count = $('#tabBox4').find('#construct_count').val();
+			if (construct_count == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+			var construct_amt = $('#tabBox4').find('#construct_amt').val();
+			if (construct_amt == '') {
+				alert('필수 입력 항목을 입력하시기 바랍니다.');
+				return false;
+			}
+
+			return true;
+		},
+		success: function(pResult) {
+			// console.log(pResult);
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				var cntrct_sn = $('#tabBox4').find('#cntrct_sn').val();
+				var prjct_sn = $('#tabBox4').find('#prjct_sn').val();
+				getConstructList(cntrct_sn, prjct_sn);
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+/******************************************************************************
+ *
+ */
 deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 {
 	var params = '';
@@ -2399,12 +2670,52 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 	});
 }
 
+/******************************************************************************
+ *
+ */
+deleteConstruct = function(s_cntrct_sn, s_prjct_sn, s_construct_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+	params += '&s_construct_sn=' + s_construct_sn;
+
+	$.ajax({
+		url: '/api/project/ajax_delete_construct',
+		type: 'GET',
+		data: params,
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+			if (pResult.status) {
+				fnAlert(pResult.message);
+				$('#tabBox4').find('#action').html('입력');
+				$('#tabBox4').find('#s_construct_sn').yVal('');
+				$('#tabBox4').find('#construct_name').yVal('');
+				$('#tabBox4').find('#construct_count').yVal('');
+				$('#tabBox4').find('#construct_amt').yVal('');
+				var cntrct_sn = $('#tabBox4').find('#cntrct_sn').val();
+				var prjct_sn = $('#tabBox4').find('#prjct_sn').val();
+				getConstructList(cntrct_sn, prjct_sn);
+			}
+		}
+	});
+}
+
 	$('#tabBox3').on('click', '#btnSaveCost', function(pEvent) {
 		var cntrwk_ct_sn = $('#tabBox3').find('#s_cntrwk_ct_sn').val();
 		if (cntrwk_ct_sn === '') {
 			insertCost();
 		} else {
 			updateCost();
+		}
+	});
+	$('#tabBox4').on('click', '#btnSaveConstruct', function(pEvent) {
+		var s_construct_sn = $('#tabBox4').find('#s_construct_sn').val();
+		if (s_construct_sn === '') {
+			insertConstruct();
+		} else {
+			updateConstruct();
 		}
 	});
 
@@ -2434,11 +2745,27 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 		$('#tabBox3').find('#ct_se_code').yReadonly(false);
 		$('#tabBox3').find('#purchsofc_sn').yReadonly(false);
 	});
+	$('#tabBox4').on('click', '#btnRefrushConstruct', function(pEvent) {
+		$('#tabBox4').find('#action').html('입력');
+		$('#tabBox4').find('#s_construct_sn').yVal('');
+		$('#tabBox4').find('#construct_name').yVal('');
+		$('#tabBox4').find('#construct_count').yVal('');
+		$('#tabBox4').find('#construct_amt').yVal('');
+	});
 
     /**************************************************************************
      *
      */
 	$('#dtList3').on('click', 'tbody tr', function(pEvent) {
+		if ($(this).parent().find('td.dataTables_empty').length > 0) {
+			return;
+		} else {
+			$(this).parent().find('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+
+	$('#dtList4').on('click', 'tbody tr', function(pEvent) {
 		if ($(this).parent().find('td.dataTables_empty').length > 0) {
 			return;
 		} else {
@@ -2458,6 +2785,14 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 		var cntrwk_ct_sn = $(target).data('cntrwk_ct_sn');
 		getCost(cntrct_sn, prjct_sn, cntrwk_ct_sn);
 	});
+	$('#tabBox4').on('click', '.btnUpdate', function(pEvent) {
+		$('#tabBox4').find('#action').html('수정');
+		var target = pEvent.currentTarget;
+		var cntrct_sn = $(target).data('cntrct_sn');
+		var prjct_sn = $(target).data('prjct_sn');
+		var construct_sn = $(target).data('construct_sn');
+		getConstruct(cntrct_sn, prjct_sn, construct_sn);
+	});
 
     /**************************************************************************
      *
@@ -2470,6 +2805,17 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 
 		if (confirm('삭제하시겠습니까?')) {
 			deleteCost(cntrct_sn, prjct_sn, cntrwk_ct_sn);
+		}
+	});
+
+	$('#tabBox4').on('click', '.btnDelete', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var cntrct_sn = $(target).data('cntrct_sn');
+		var prjct_sn = $(target).data('prjct_sn');
+		var construct_sn = $(target).data('construct_sn');
+
+		if (confirm('삭제하시겠습니까?')) {
+			deleteConstruct(cntrct_sn, prjct_sn, construct_sn);
 		}
 	});
 
@@ -2569,9 +2915,11 @@ deleteCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 
 	}
 	$(document).on('click', '#btnSaveBiss', function(){
-		var authors = ["*"];
+		var session = {{session | tojson | safe}};
+		var authors = [""];
 		var loginId = $("#loginID").val();
-		if(!authors.includes("*") && !authors.includes(loginId)){
+		console.log(session.member.auth_cd, 1, "1");
+		if(!authors.includes("*") && !authors.includes(loginId) && ![1, 2, 3, 6].includes(session.member.auth_cd)){
 			alert("권한이 없습니다.");
 			return false;
 		}

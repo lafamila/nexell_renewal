@@ -162,14 +162,14 @@ getWorkPersonal = function(){
 		  if(pResult.data.length > 0){
 
 			var pData = pResult.data[0];
-			$(document).find("#dtList0 tbody").find("td").eq(0).find("input").val(parseInt(pData.last_tot).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(1).find("input").val(parseInt(pData.last_mod).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(2).find("input").val(parseInt(pData.last_use).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(3).find("input").val((parseInt(pData.last_tot) + parseInt(pData.last_mod) - parseInt(pData.last_use)).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(4).find("input").val(parseInt(pData.tot).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(5).find("input").val(parseInt(pData.mod).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(6).find("input").val(parseInt(pData.use).toFormat('NUMBER'));
-			$(document).find("#dtList0 tbody").find("td").eq(7).find("input").val((parseInt(pData.tot) + parseInt(pData.mod) - parseInt(pData.use)).toFormat('NUMBER'));
+			$(document).find("#dtList0 tbody").find("td").eq(0).find("input").val(parseFloat(pData.last_tot).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(1).find("input").val(parseFloat(pData.last_mod).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(2).find("input").val(parseFloat(pData.last_use).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(3).find("input").val((parseFloat(pData.last_tot) + parseFloat(pData.last_mod) - parseFloat(pData.last_use)).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(4).find("input").val(parseFloat(pData.tot).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(5).find("input").val(parseFloat(pData.mod).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(6).find("input").val(parseFloat(pData.use).toFixed(1));
+			$(document).find("#dtList0 tbody").find("td").eq(7).find("input").val((parseFloat(pData.tot) + parseFloat(pData.mod) - parseFloat(pData.use)).toFixed(1));
           }
 
 		}

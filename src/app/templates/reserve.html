@@ -125,6 +125,9 @@ tbody .btnUpdate, tbody .btn{
 							<!-- <button type="button" class="btn btn-warning" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"> 등록</i></button> -->
 							<button type="button" class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
 							<button type="button" class="btn btn-info" id="btnScreen"><i class="fa fa-print"> 출력 </i></button>
+							<div class="btn-group">
+								<button type="button" id="buttonAdd" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="init" data-actioncontract="insert"><i class="fa fa-plus"></i></button>
+							</div>
 						</div>
 						<div class="widget-toolbar">
 						</div>
@@ -280,7 +283,7 @@ tbody .btnUpdate, tbody .btn{
 								<td class="middle input-available text-left" data-column="rm">${pValue.rm}</td>
 								<td class="middle text-center" style="padding:0px!important;">
 									<div class="btn-group">
-										<button class="btn btn-table btn-danger btnFinish" title="삭제" data-sn="${pValue.cntrct_sn}">
+										<button class="btn btn-table btn-danger btnFinish" title="삭제" data-sn="${pValue.cntrct_sn}" data-outsrc_fo_sn="${pValue.outsrc_fo_sn}">
 										<i class="fa fa-trash"></i>
 										</button>
 									</div>
@@ -302,10 +305,11 @@ tbody .btnUpdate, tbody .btn{
 			return false;
 		}
 		var cntrct_sn = $(this).data("sn");
+		var outsrc_fo_sn = $(this).data("outsrc_fo_sn");
 		$.ajax({
 			url : '/api/common/reserve_out',
 			method: 'GET',
-			data : {"cntrct_sn" : cntrct_sn}
+			data : {"cntrct_sn" : cntrct_sn, "outsrc_fo_sn" : outsrc_fo_sn}
 		}).done(function(pResult){
 			$(btn).closest("tr").remove();
 			alert("처리가 완료되었습니다.");
@@ -351,4 +355,157 @@ tbody .btnUpdate, tbody .btn{
 
 	});
 </script>
+
+<div class="modal fade" data-backdrop="static" id="popBox1">
+    <style type="text/css">
+#popBox1 tbody .btnUpdate, #popBox1 tbody .btnPrint{
+    line-height: 1.42857143 !important;
+    padding: 5px 7px!important;
+    margin:  0px !important;
+}
+#popBox1 tbody{
+    font-size:12px!important;
+}
+
+    </style>
+    <div class="modal-dialog modal-w900" style="width:800px!important" id="approval-tab-container">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs" id="popEditTabs2">
+						<li class="active" data-action="1">
+							<a data-toggle="tab" href="#tabBox1" data-action="tab1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>프로젝트 등록</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+
+				</header>
+				<div role="content" style="min-height:110px;height:auto;">
+					<div class="widget-body no-padding" style="height:100%;">
+						<div class="tab-content" style="height:100%;">
+
+							<!-- 프로젝트 -->
+							<div class="tab-pane fade active in" id="tabBox1" style="height:100%;">
+							<form id="frmBox1" style="height:100%;">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="175">
+										<col width="390">
+										<col width="60">
+									</colgroup>
+									<tbody>
+										<tr>
+											<th class="" style="background:#0070C0;border-color:#0070C0;color:white;border-left:none;padding:0;" colspan="3">
+											<span class="widget-toolbar" id="popEditToolbarContract">
+												<button type="button" class="btn btn-primary" id="btnSave" title="저장합니다."><i class="fa fa-save"> 저장</i></button>
+
+											</span>
+											</th>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="cntrct_sn" name="cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+											</select>
+											</td>
+										</tr>
+										<tr class="required">
+											<th class="color-contract">거래처명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="outsrc_fo_sn" name="outsrc_fo_sn">
+													<option value="">[거래처를 선택해주세요.]</option>
+											</select>
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+
+							</form>
+							</div><!--tab-pane-->
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+<script>
+	var isDataChange = false;
+	init = function(){
+		$("#popBox1").find("#cntrct_sn").yVal('');
+		$("#popBox1").find("#outsrc_fo_sn").html(`<option value="">[거래처를 선택해주세요.]</option>`);
+		$("#popBox1").find("#outsrc_fo_sn").yVal('');
+
+	}
+	$(document).on('click', '#btnSave', function(){
+		var params = $("#frmBox1").formSerialize();
+		if($('#popBox1').find("#cntrct_sn").val() == ''){
+			alert("계약을 선택해주세요.");
+			return false;
+		}
+		if($('#popBox1').find("#outsrc_fo_sn").val() == ''){
+			alert("거래처를 선택해주세요.");
+			return false;
+		}
+
+		$.ajax({
+			url: '/api/common/reserve_out_add',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			contentType: false,
+			processData: false,
+			success: function (pResult) {
+				isDataChange = true;
+				init();
+			}
+
+		});
+	});
+
+	$('#popBox1').on('shown.bs.modal', function(pEvent)
+	{
+		init();
+	});
+
+	$('#popBox1').on('hidden.bs.modal', function(pEvent)
+	{
+		if (isDataChange) {
+			getReserveProject();
+			isDataChange = false;
+		}
+	});
+	$(document).on("change", "#cntrct_sn", function(){
+		var cntrct_sn = $("#cntrct_sn").val();
+		if(cntrct_sn != ''){
+			$.ajax({
+				url:'/api/reserve/ajax_get_outsrcs_by_contract',
+				method: 'POST',
+				data : {"cntrct_sn" : cntrct_sn},
+				success : function(pResult){
+					var html = '<option value="">[거래처를 선택해주세요.]</option>';
+					$.each(pResult, function(pIndex, pValue){
+						html += `<option value="${pValue.value}">${pValue.label}</option>`
+					});
+					$("#popBox1").find("#outsrc_fo_sn").html(html);
+				}
+			})
+		}
+		else{
+			$("#popBox1").find("#outsrc_fo_sn").html(`<option value="">[거래처를 선택해주세요.]</option>`);
+
+		}
+	});
+</script>
+
+
 {% endblock %}

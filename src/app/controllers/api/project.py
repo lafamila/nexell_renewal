@@ -102,12 +102,36 @@ def ajax_get_cost_list():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/ajax_get_construct_list', methods=['GET'])
+def ajax_get_construct_list():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = prj.get_construct_list(params)
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/ajax_get_cost', methods=['GET'])
 def ajax_get_cost():
     try:
         params = request.args.to_dict()
         result = dict()
         result['data'] = prj.get_cost(params)
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_get_construct', methods=['GET'])
+def ajax_get_construct():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = prj.get_construct(params)
         result['status'] = True
         return jsonify(result)
     except Exception as e:
@@ -124,6 +148,16 @@ def ajax_insert_cost():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/ajax_insert_construct', methods=['POST'])
+def ajax_insert_construct():
+    try:
+        params = request.form.to_dict()
+        prj.insert_construct(params)
+        return jsonify({"status": True, "message" : "성공적으로 추가되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/ajax_update_cost', methods=['POST'])
 def ajax_update_cost():
     try:
@@ -134,11 +168,31 @@ def ajax_update_cost():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/ajax_update_construct', methods=['POST'])
+def ajax_update_construct():
+    try:
+        params = request.form.to_dict()
+        prj.update_construct(params)
+        return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/ajax_delete_cost', methods=['GET'])
 def ajax_delete_cost():
     try:
         params = request.args.to_dict()
         prj.delete_cost(params)
+        return jsonify({"status": True, "message": "성공적으로 삭제되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_delete_construct', methods=['GET'])
+def ajax_delete_construct():
+    try:
+        params = request.args.to_dict()
+        prj.delete_construct(params)
         return jsonify({"status": True, "message": "성공적으로 삭제되었습니다."})
     except Exception as e:
         print(e)
@@ -184,7 +238,7 @@ def ajax_get_reportNR():
         result['project'] = prj.get_project(params)
         result['charger'] = chrg.get_charger_list(params)
 
-        result['construct'] = prj.get_construct(params)
+        result['construct'] = prj.get_construct_list(params)
 
         result['aCostList'] = prj.get_a_cost_list(params)
         result['bCostList'] = prj.get_b_cost_list(params)
@@ -204,6 +258,7 @@ def ajax_get_reportNR():
         result['sModelCostList'] = prj.get_model_cost_list(params)
         result['sOptionCostList'] = prj.get_option_cost_list(params)
         result['outsrcList'] = prj.get_outsrc_report_list(params)
+        result['dailyList'] = prj.get_daily_report_list(params)
         result['outsrcItem'] = dict()
         for outsrc in result['outsrcList']:
             s_params = {key:value for key, value in params.items()}

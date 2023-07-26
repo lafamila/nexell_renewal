@@ -594,20 +594,21 @@ def get_built_month(params):
     return result
 def get_built_month_sales(params):
     params['stdyy'] = params['s_ddt_man'].split("-")[0]
-    query = """SELECT stdyy
-                    , stdmm
-                    , cnt1
-                    , amt1
-                    , cnt2
-                    , amt2
-                    , cnt3
-                    , amt3
-                    , cnt4
-                    , amt4
-                    , cnt5
-                    , amt5
-                    FROM bnd_sales_table
-                    WHERE stdyy=%(stdyy)s
+    query = """SELECT YEAR(ddt_man) AS stdyy
+                    , MONTH(ddt_man) AS stdmm
+                    , SUM(IF(sale_type = 0, dlnt, 0)) AS cnt1
+                    , ROUND(SUM(IF(sale_type = 0, dlnt*dlamt, 0))) AS amt1
+                    , SUM(IF(sale_type = 1, dlnt, 0)) AS cnt2
+                    , ROUND(SUM(IF(sale_type = 1, dlnt*dlamt, 0))) AS amt2
+                    , SUM(IF(sale_type = 2, dlnt, 0)) AS cnt3
+                    , ROUND(SUM(IF(sale_type = 2, dlnt*dlamt, 0))) AS amt3
+                    , SUM(IF(sale_type = 3, dlnt, 0)) AS cnt4
+                    , ROUND(SUM(IF(sale_type = 3, dlnt*dlamt, 0))) AS amt4
+                    , SUM(IF(sale_type = 4, dlnt, 0)) AS cnt5
+                    , ROUND(SUM(IF(sale_type = 4, dlnt*dlamt, 0))) AS amt5
+                    FROM bnd_sales_table_log
+                    WHERE YEAR(ddt_man)=%(stdyy)s
+                    GROUP BY YEAR(ddt_man), MONTH(ddt_man)
                     ORDER BY stdmm ASC"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()

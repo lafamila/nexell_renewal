@@ -2003,8 +2003,38 @@ def insert_finance(params):
     g.curs.execute(query, params)
 
 def reserve_out(params):
-    query = """INSERT INTO reserve_out(cntrct_sn) VALUES(%(cntrct_sn)s)"""
+    query = """SELECT status FROM reserve_out WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=%(outsrc_fo_sn)s"""
     g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    if result:
+        if result[0]['status'] == 1:
+            query = """UPDATE reserve_out SET status=0 WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=%(outsrc_fo_sn)s"""
+            g.curs.execute(query, params)
+    else:
+        query = """INSERT INTO reserve_out(cntrct_sn, outsrc_fo_sn, status) VALUES(%(cntrct_sn)s, %(outsrc_fo_sn)s, 0)"""
+        g.curs.execute(query, params)
+
+def reserve_out_add(params):
+    query = """SELECT status FROM reserve_out WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=%(outsrc_fo_sn)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    if result:
+        if result[0]['status'] == 0:
+            query = """UPDATE reserve_out SET status=1 WHERE cntrct_sn=%(cntrct_sn)s AND outsrc_fo_sn=%(outsrc_fo_sn)s"""
+            g.curs.execute(query, params)
+    else:
+        query = """INSERT INTO reserve_out(cntrct_sn, outsrc_fo_sn, status) VALUES(%(cntrct_sn)s, %(outsrc_fo_sn)s, 1)"""
+        g.curs.execute(query, params)
+
+def get_outsrcs_by_contract(params):
+    query = """SELECT o.outsrc_fo_sn AS value
+    				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=1 AND bcnc_sn=o.outsrc_fo_sn) AS label    				
+    				FROM outsrc o
+    				WHERE o.cntrct_sn = %(cntrct_sn)s
+    """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
 
 def insert_bbs(params):
     query = """INSERT INTO bbs(bbs_type, bbs_title, bbs_content, reg_sn) VALUES(%(bbs_type)s, %(bbs_title)s, %(bbs_content)s, %(reg_sn)s)"""

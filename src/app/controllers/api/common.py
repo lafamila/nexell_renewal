@@ -816,6 +816,16 @@ def get_reserve_list():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/reserve/ajax_get_outsrcs_by_contract', methods=['POST'])
+def ajax_get_outsrcs_by_contract():
+    try:
+        params = request.form.to_dict()
+        outsrcs = cm.get_outsrcs_by_contract(params)
+        return jsonify(outsrcs)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/common/ajax_get_finance', methods=['GET'])
 def ajax_get_finance():
     try:
@@ -842,6 +852,16 @@ def reserve_out():
     try:
         params = request.args.to_dict()
         cm.reserve_out(params)
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/common/reserve_out_add', methods=['GET'])
+def reserve_out_add():
+    try:
+        params = request.args.to_dict()
+        cm.reserve_out_add(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
         print(e)

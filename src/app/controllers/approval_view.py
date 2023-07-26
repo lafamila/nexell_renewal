@@ -33,4 +33,4 @@ def report_copy_page():
     approval_data = get_approval_ty_code_by_sn(params)
     approval_data['approval_data'] = json.loads(approval_data['approval_data'])
     approval = get_approval_by_sn(approval_data)
-    return render_template("approval_report_copy.html", title="전자결재 | 넥셀시스템", approval=approval, approval_data=approval_data, loginSN=session['member']['member_sn'], member_list_by_sn=get_member_list_by_sn(), **refresh_code_list())
+    return render_template("approval_report_copy.html", title="전자결재 | 넥셀시스템", approval=approval, approval_sn=approval_sn, approval_data=approval_data, loginSN=session['member']['member_sn'], member_list_by_sn=get_member_list_by_sn(), **refresh_code_list())

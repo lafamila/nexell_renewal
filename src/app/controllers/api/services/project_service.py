@@ -340,14 +340,14 @@ def get_construct(params):
     				, construct_name
     				, construct_count
     				, construct_amt
-    				, construct_tax
     				, cntrct_sn
     				FROM construct
     				WHERE 1=1
-    				AND cntrct_sn = %s
+                    AND cntrct_sn = %(s_cntrct_sn)s
+                    AND construct_sn = %(s_construct_sn)s
     """
-    g.curs.execute(query, params['s_cntrct_sn'])
-    result = g.curs.fetchall()
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
     return result
 
 def get_contract(params):
@@ -541,6 +541,22 @@ def get_cost_list(params):
     result = g.curs.fetchall()
     return result
 
+
+def get_construct_list(params):
+    query = """SELECT cntrct_sn
+				, construct_name
+				, construct_sn
+				, construct_amt
+				, construct_count
+				FROM construct
+				WHERE 1=1
+				AND cntrct_sn = %(s_cntrct_sn)s """
+
+    query += """ ORDER BY construct_sn"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 def get_cost(params):
     query = """SELECT cntrct_sn
 				, prjct_sn
@@ -608,6 +624,18 @@ def insert_cost(params):
             pass
 
 
+def insert_construct(params):
+    data = dict()
+    keys = ['cntrct_sn', 'construct_name', 'construct_count', 'construct_amt']
+    for key in keys:
+        if key in params and params[key]:
+            data[key] = params[key]
+
+    columns = list(data.keys())
+    query = """INSERT INTO construct({}) VALUES ({})""".format(",".join(columns), ",".join(['%({})s'.format(col) for col in columns]))
+    g.curs.execute(query, data)
+
+
 def update_cost(params):
     data = dict()
     keys = ['cntrct_sn', 'prjct_sn', 'cntrct_execut_code', 'ct_se_code', 'purchsofc_sn', 'prdlst_se_code', 'model_no', 'qy', 'puchas_amount', 'salamt', 'dscnt_rt', 'cost_date', 'add_dscnt_rt', 'extra_sn', 'fee_rt', 'dspy_se_code', 'dspy_de', 'cost_type']
@@ -639,8 +667,24 @@ def update_cost(params):
     data['s_cntrwk_ct_sn'] = params['s_cntrwk_ct_sn']
     g.curs.execute(query, data)
 
+def update_construct(params):
+    data = dict()
+    keys = ['cntrct_sn', 'construct_name', 'construct_count', 'construct_amt']
+    for key in keys:
+        if key in params and params[key]:
+            data[key] = params[key]
+
+    columns = list(data.keys())
+    query = """UPDATE construct SET {} WHERE construct_sn=%(s_construct_sn)s""".format(",".join(["{0}=%({0})s".format(col) for col in columns]))
+    data['s_construct_sn'] = params['s_construct_sn']
+    g.curs.execute(query, data)
+
 def delete_cost(params):
     query = """DELETE FROM cost WHERE cntrwk_ct_sn = %(s_cntrwk_ct_sn)s"""
+    g.curs.execute(query, params)
+
+def delete_construct(params):
+    query = """DELETE FROM construct WHERE construct_sn = %(s_construct_sn)s"""
     g.curs.execute(query, params)
 
 def get_project_list(params):
@@ -1628,6 +1672,44 @@ def get_outsrc_report_list(params):
         g.curs.execute(query, pParams)
         result[i]['rcppayList'] = g.curs.fetchall()
 
+    return result
+
+def get_daily_report_list(params):
+    result = dict()
+    query = """SELECT t.pblicte_de
+    				, t.splpc_am
+    				, t.vat
+    				, (t.splpc_am + t.vat) AS total
+    				, t.pblicte_trget_sn
+    				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=t.ctmmny_sn AND bcnc_sn=t.pblicte_trget_sn) AS pblicte_trget_nm
+    				, t.rm
+    				FROM taxbil t
+    				WHERE t.ctmmny_sn = 1
+    				AND t.cntrct_sn = %(s_cntrct_sn)s
+    				AND t.prjct_sn = %(s_prjct_sn)s
+    				AND t.delng_se_code = 'P' 
+    				AND t.pblicte_trget_sn = 146
+    				ORDER BY t.pblicte_de, t.pblicte_trget_sn"""
+    g.curs.execute(query, params)
+    result["taxbilList"] = g.curs.fetchall()
+
+    query = """SELECT r.rcppay_de
+    				, r.amount
+    				, r.acnut_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='ACNUT_CODE' AND code=r.acnut_code) AS acnut_nm
+    				, r.prvent_sn
+    				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=r.ctmmny_sn AND bcnc_sn=r.prvent_sn) AS prvent_nm
+    				, r.rcppay_dtls
+    				FROM rcppay r
+    				WHERE r.ctmmny_sn = 1
+    				AND r.cntrct_sn = %(s_cntrct_sn)s
+    				AND r.prjct_sn = %(s_prjct_sn)s
+    				AND r.rcppay_se_code = 'O' 
+    				AND r.acntctgr_code = '638' 
+    				AND r.prvent_sn = 146
+    				ORDER BY r.rcppay_de"""
+    g.curs.execute(query, params)
+    result['rcppayList'] = g.curs.fetchall()
     return result
 
 def get_s_taxbil_report_list(params):
@@ -2725,8 +2807,8 @@ def insert_b_project(params):
             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
 
     construct_data = []
-    for n, c, a, t in zip(n_params["construct_name"], n_params["construct_count"], n_params["construct_amt"], n_params["construct_tax"]):
-        construct_data.append({"cntrct_sn" : params["cntrct_sn"], "construct_name" : n, "construct_count" : c, "construct_amt" : a, "construct_tax" : t})
+    for n, c, a in zip(n_params["construct_name"], n_params["construct_count"], n_params["construct_amt"]):
+        construct_data.append({"cntrct_sn" : params["cntrct_sn"], "construct_name" : n, "construct_count" : c, "construct_amt" : a})
 
     if construct_data:
         sub_query = [key for key in construct_data[0]]
@@ -3011,14 +3093,18 @@ def get_reserved_project_list(params):
                     , c.spt_nm
                     FROM contract c
                     LEFT OUTER JOIN project p ON c.cntrct_sn=p.cntrct_sn
-                    WHERE c.progrs_sttus_code IN ('C', 'N')
-                    AND c.cntrct_sn NOT IN (SELECT cntrct_sn FROM reserve_out)"""
+                    WHERE ((c.progrs_sttus_code IN ('C', 'N')) OR (c.cntrct_sn IN (SELECT distinct cntrct_sn FROM reserve_out WHERE status=1)))"""
     data = []
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
         query += " AND c.bcnc_sn=%s"
         data.append(params["s_bcnc_sn"])
     g.curs.execute(query, data)
     projects = g.curs.fetchall()
+
+    g.curs.execute("SELECT status, cntrct_sn, outsrc_fo_sn FROM reserve_out WHERE 1=1")
+    reserve_out_list = g.curs.fetchall()
+    out_list = [(r['cntrct_sn'], r['outsrc_fo_sn']) for r in reserve_out_list if r['status'] == 0]
+    in_list = [(r['cntrct_sn'], r['outsrc_fo_sn']) for r in reserve_out_list if r['status'] == 1]
     result = []
     for r in projects:
 
@@ -3042,7 +3128,9 @@ def get_reserved_project_list(params):
             row['cntrct_amount'] = sum([t['splpc_am']+(t['vat'] if t['vat'] != '' else 0) for t in taxbilList])
             rcppayList = outsrc['rcppayList']
             row['rcppay_amount'] = sum([t['amount'] for t in rcppayList])
-            if row['cntrct_amount'] > row['rcppay_amount']:
+            if (row['cntrct_sn'], row['outsrc_fo_sn']) in out_list:
+                continue
+            elif (row['cntrct_sn'], row['outsrc_fo_sn']) in in_list or row['cntrct_amount'] > row['rcppay_amount']:
                 row['diff'] = row['cntrct_amount'] - row['rcppay_amount']
                 result.append(row)
     return result
