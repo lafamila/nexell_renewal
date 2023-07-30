@@ -68,6 +68,16 @@ def insert_member(params):
     query = """INSERT INTO member({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
     g.curs.execute(query, data)
 
+def get_team_leader(dept_code):
+    row = g.curs.execute("SELECT mber_sn FROM member WHERE dept_code=%s AND mber_sttus_code='H' AND RSPOFC_CODE=150",
+                       dept_code)
+    if not row:
+        return 73
+    else:
+        team_leader = g.curs.fetchone()
+        return int(team_leader['mber_sn'])
+
+
 def get_member(member_sn):
     query = """SELECT ctmmny_sn
                 , mber_sn

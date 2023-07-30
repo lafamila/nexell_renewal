@@ -1064,7 +1064,11 @@ def insert_equipment(params):
     for data in cost_data:
         sub_query = [key for key in data]
         params_query = ["%({})s".format(key) for key in data]
-
+        query = """SELECT cntrwk_ct_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s AND extra_sn=0"""
+        row = g.curs.execute(query, data)
+        if row:
+            cntrwk_ct_sn = g.curs.fetchone()['cntrwk_ct_sn']
+            g.curs.execute("DELETE FROM cost WHERE cntrwk_ct_sn=%s", (cntrwk_ct_sn, ))
         query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
         g.curs.execute(query, data)
 

@@ -548,6 +548,7 @@ div.report table th, div.report table td{
                                     var tagType = '';
                                     if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
                                         pTag = $("#formContent").find(`[name='${key}']`);
+                                        console.log(key);
                                         tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
                                         tagType = $(pTag).eq(0).attr("type");
                                     }
@@ -998,7 +999,15 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 
 					self.close();
 				// getApproval(pResult.approval_sn);
-			}
+			},
+			error:function(request,status,error){
+				if(request.status == 501){
+					alert(request.responseText);
+				}
+				else{
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+		    }
 		});
 
 		}
