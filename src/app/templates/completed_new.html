@@ -7,6 +7,14 @@
 <!--# page layer start                                                     #-->
 <!--########################################################################-->
 <!-- 레포트1 레이어 팝업 시작 -->
+<style>
+    .input-available{
+        cursor:pointer;
+    }
+    .input-available:hover{
+        background-color:rgba(0,112,192, 0.5)!important;
+    }
+</style>
 <div id="popReport">
     <div>
         <div class="modal-content">
@@ -160,6 +168,8 @@ getReportNR = function(s_pxcond_mt)
 		success: function(pResult) {
 			console.log('getReportNR', pResult); //rptCompletedArea
 			if (pResult.status) {
+                var loginSN = $("#loginSN").val();
+
                 var DELIMITER=1;
 				var pxcond_mt = $('#popReport').find('#s_pxcond_mt').val();
 				var pxcond_mt_arr = pxcond_mt.split('-');
@@ -578,7 +588,20 @@ getReportNR = function(s_pxcond_mt)
                         html += '    <td class="text-number'+cbg+isNewContract+isNewConstruct+isChangedContractAmount+'" style="border-right:2px solid black!important;">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number'+cbg+'">'+(parseInt(pValue.complete_amount) == 0 ? '' : pValue.complete_amount).toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number'+cbg+'" style="border-right:2px solid black!important;">'+(rt1==0.0?'-' : (rt1.toFixed(1)+'%'))+'</td>';
-                        html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
+
+
+                        if(pValue.CNTRCT_EXECUT_CODE == 'E' && (['1','2','3','4'].includes(pValue.ct_se_code))){
+                            html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
+                        }
+                        else if(pValue.spt_chrg_sn != parseInt(loginSN)){
+                            html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
+                        }
+                        else{
+
+                            html += `    <td class="text-number ${isFailedExpect} input-available" data-amount="${pValue.cntrct_amount}" data-cntrct_sn="${pValue.CNTRCT_SN}" data-prjct_sn="${pValue.prjct_sn}" data-bcnc_sn="${pValue.PURCHSOFC_SN}" data-cntrct_execut_code="${pValue.CNTRCT_EXECUT_CODE}" data-ct_se_code="${pValue.ct_se_code}" style="${(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')}">${(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))}</td>`;
+                        }
+
+
                         html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'border-right:2px solid black!important;">'+(rt2==0.0?'':(rt2.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number'+cbg+'">'+(sum==0?'':sum).toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number'+cbg+isOverpay+'" style="border-right:2px solid black!important;">'+(rt3==0.0?'-':(rt3.toFixed(1)+'%'))+'</td>';
@@ -972,7 +995,42 @@ getReportNR = function(s_pxcond_mt)
 </script>
 
 <script>
+    $(document).on("dblclick", ".input-available", function(){
+        var cntrct_sn = $(this).data("cntrct_sn");
+        var prjct_sn = $(this).data("prjct_sn");
+        var bcnc_sn = $(this).data("bcnc_sn");
+        var cntrct_execut_code = $(this).data("cntrct_execut_code");
+        var ct_se_code = $(this).data("ct_se_code");
+        var pxcond_mt = $(document).find('#s_pxcond_mt').val();
+        var data = prompt("값을 입력하세요.");
+        var target = $(this);
+        var cntrct_amount = $(this).data("amount");
+        try{
+            if(/^-?\d+$/.test(data)){
+                data = parseInt(data);
+            }
+            else{
+                throw new Error(`Parameter is not a number : ${data}`);
+            }
+        }catch(e){
+            alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+            return false;
+        }
+        var params = {"cntrct_sn" : cntrct_sn, "prjct_sn" : prjct_sn, "bcnc_sn" : bcnc_sn, "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "pxcond_mt" : pxcond_mt, "excut_amount" : data};
+        $.ajax({
+            url : '/api/completed/ajax_insert_completed',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                $(target).html(data.toFormat('NUMBER'));
+                var rt2 = (data/cntrct_amount)*100.0; if (isNaN(rt2)) { rt2 = 0.0; } if(rt2 == Infinity) rt2 = 0.0;
+                $(target).next().html(rt2.toFixed(1)+"%");
 
+            }
+
+        });
+
+    });
 	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
 		getReportNR($(this).val());
 	});

@@ -360,6 +360,7 @@ def get_completed_reportNR(params):
 				, t.cntrct_de
 				, t.progrs_sttus_code
 				, t.cntrct_sn
+				, t.prjct_sn
 				, t.cntrct_execut_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='CNTRCT_EXECUT_CODE' AND code=t.cntrct_execut_code) AS cntrct_execut_nm
 				, t.ct_se_code
@@ -399,6 +400,7 @@ def get_completed_reportNR(params):
 				, ct.cntrwk_bgnde
 				, ct.cntrwk_endde
 				, co.cntrct_sn
+				, p.prjct_sn
 				, co.cntrct_execut_code
 				, CASE WHEN co.cntrct_execut_code = 'C' THEN '0'
 				ELSE co.ct_se_code
@@ -414,6 +416,8 @@ def get_completed_reportNR(params):
 				ON co.cntrct_sn=ct.cntrct_sn
 				LEFT OUTER JOIN member m
 				ON ct.bsn_chrg_sn=m.mber_sn
+				LEFT OUTER JOIN project p
+				ON ct.cntrct_sn=p.cntrct_sn
 				WHERE 1=1
 				AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
 				AND co.cost_date <= '{1}'
@@ -650,3 +654,69 @@ def insert_completed(params):
     query = """INSERT INTO completed({}) VALUES({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
     g.curs.execute(query, data)
 
+def insert_pxcond(params):
+    data = {}
+
+    if "cntrct_sn" in params and params["cntrct_sn"]:
+        data["cntrct_sn"] = params["cntrct_sn"]
+
+    if "prjct_sn" in params and params["prjct_sn"]:
+        data["prjct_sn"] = params["prjct_sn"]
+
+    if "pxcond_mt" in params and params["pxcond_mt"]:
+        data["pxcond_mt"] = "{}-01".format("-".join(params["pxcond_mt"].split("-")[:2]))
+
+    if "bcnc_sn" in params and params["bcnc_sn"]:
+        data["bcnc_sn"] = params["bcnc_sn"]
+
+    if "cntrct_execut_code" in params and params["cntrct_execut_code"]:
+        data["cntrct_execut_code"] = params["cntrct_execut_code"]
+
+    if "ct_se_code" in params and params["ct_se_code"]:
+        data["ct_se_code"] = params["ct_se_code"]
+
+    if "excut_amount" in params and params["excut_amount"]:
+        data["excut_amount"] = params["excut_amount"]
+
+
+    if "regist_dtm" not in data:
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
+
+    if "register_id" not in data:
+        data["register_id"] = session["member"]["member_id"]
+
+    data['ctmmny_sn'] = 1
+    data["rate"] = None
+    data["rm"] = None
+
+    sub_query = [key for key in data]
+    params_query = ["%({})s".format(key) for key in data]
+
+    query = """INSERT INTO pxcond({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    g.curs.execute(query, data)
+    return g.curs.lastrowid
+
+
+def delete_pxcond(params):
+    data = {}
+    if "cntrct_sn" in params and params["cntrct_sn"]:
+        data["cntrct_sn"] = params["cntrct_sn"]
+
+    if "prjct_sn" in params and params["prjct_sn"]:
+        data["prjct_sn"] = params["prjct_sn"]
+
+    if "pxcond_mt" in params and params["pxcond_mt"]:
+        data["pxcond_mt"] = "{}-01".format("-".join(params["pxcond_mt"].split("-")[:2]))
+
+    if "bcnc_sn" in params and params["bcnc_sn"]:
+        data["bcnc_sn"] = params["bcnc_sn"]
+
+    if "cntrct_execut_code" in params and params["cntrct_execut_code"]:
+        data["cntrct_execut_code"] = params["cntrct_execut_code"]
+
+    if "ct_se_code" in params and params["ct_se_code"]:
+        data["ct_se_code"] = params["ct_se_code"]
+
+    keys = list(data.keys())
+    query = "DELETE FROM pxcond WHERE {}".format(" AND ".join(["{0}=%({0})s".format(k) for k in keys]))
+    g.curs.execute(query, data)

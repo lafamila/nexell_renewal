@@ -124,3 +124,14 @@ def insert_completed():
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+@bp.route('/ajax_insert_completed', methods=['POST'])
+def ajax_insert_completed():
+    try:
+        params = request.form.to_dict()
+        cp.delete_pxcond(params)
+        cp.insert_pxcond(params)
+        return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
