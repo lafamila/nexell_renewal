@@ -29,3 +29,21 @@ def search_page():
     if not response:
         response = "0"
     return render_template("stock_search.html", title="창고검색 | 넥셀시스템", params=params, add_params=add_params, response=response, **refresh_code_list())
+
+@bp.route('/search/dp')
+@session_helper.session_check
+def search_dp_page():
+    params = request.args.get("before")
+    if not params:
+        params = ""
+
+    add_params = request.args.get("after")
+    if not add_params:
+        add_params = ""
+
+    response = request.args.get("response")
+    if not response:
+        response = "0"
+
+    cntrct_sn = request.args.get("cntrct_sn")
+    return render_template("stock_search_dp.html", title="창고검색 | 넥셀시스템", params=params, cntrct_sn=cntrct_sn, add_params=add_params, response=response, **refresh_code_list())

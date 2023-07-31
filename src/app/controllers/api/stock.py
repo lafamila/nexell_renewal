@@ -38,6 +38,17 @@ def ajax_get_inventory_datatable_search():
         return make_response(str(e), 500)
 
 
+@bp.route('/ajax_get_inventory_dp_datatable_search', methods=['POST'])
+def ajax_get_inventory_dp_datatable_search():
+    try:
+        params = request.form.to_dict()
+        result = st.get_stock_dp_datatable_search(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
 @bp.route('/get_stock_info', methods=['GET'])
 def get_stock_info():
     try:

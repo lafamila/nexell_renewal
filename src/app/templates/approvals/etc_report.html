@@ -203,7 +203,7 @@ function updateThumbnail(dropZoneElement, file) {
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center"><span>이미지 (업로드)</span></th>
+			<th class="sub-title colorN text-center"><span>이미지/PDF (업로드)</span></th>
         </tr>
     </thead>
     <tbody id="dropbox">
@@ -303,7 +303,12 @@ function updateThumbnail(dropZoneElement, file) {
             success: function(pResult){
               var html = '';
               $.each(pResult, function(pIndex, path){
-                html += `<img src="/static/files/${path}" style="max-width:99vw;min-width:100%;height:auto;"/>`;
+                  if(path.endsWith("pdf")){
+                        html += `<a target="_blank" href="/static/files/${path}">첨부파일</a>`;
+                  }
+                  else{
+                        html += `<img src="/static/files/${path}" style="max-width:99vw;min-width:100%;height:auto;"/>`;
+                  }
               });
               $("#last").html(html);
 

@@ -2,6 +2,50 @@ from flask import session, jsonify, g
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 
+def get_stock_dp_datatable_search(params):
+    query = """SELECT '1' AS ctmmny_sn
+    				, s.stock_sn AS stock_sn
+    				, prduct_se_code AS prduct_se_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_SSE_CODE' AND code=s.prduct_se_code) AS prduct_se_nm
+    				, prduct_ty_code as prduct_ty_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='PRDUCT_TY_CODE' AND code=s.prduct_ty_code) AS prduct_ty_nm
+    				, s.model_no AS modl_nm
+    				, m.delng_sn AS delng_sn
+    				, m.cntrct_sn AS cntrct_sn
+    				, p.ddt_man AS puchas_de
+    				, s.use_flag as puchas_se_code
+    				, CASE WHEN mi.stock_sttus = 1 THEN IF(p.dlivy_amt IS NULL, p.dlamt, IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                        WHEN mi.stock_sttus = 2 THEN IF(p.dlivy_amt IS NULL, IFNULL(p.dlamt, 0), IFNULL(p.dlivy_amt, 0) * (100 - IFNULL(p.dscnt_rt,0) - IFNULL(p.add_dscnt_rt, 0))/100)
+                        ELSE 0
+                        END AS puchas_amount_one
+    				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn), '')
+    				  ELSE IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS cntrct_nm
+    				, CASE WHEN m.stock_sttus IN (2, 3) THEN IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=m.cntrct_sn), '')
+    				  ELSE IFNULL((SELECT b.bcnc_nm FROM bcnc b JOIN contract ct ON b.bcnc_sn=ct.bcnc_sn WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') END AS bcnc_nm
+    				, CASE WHEN m.stock_sttus IN (2, 3) THEN sa.dlivy_de ELSE '' END AS instl_de
+    				, m.ddt_man AS wrhousng_de
+    				, s.rm AS rm
+    				, s.use_type AS bigo
+    				, m.stock_sttus AS invn_sttus_code
+    				, (SELECT code_nm FROM code WHERE parnts_code='INVN_STTUS_CODE' AND code=(m.stock_sttus-2)) AS invn_sttus_nm
+    				FROM (SELECT * FROM stock WHERE 1=1) s
+    				INNER JOIN
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+    				INNER JOIN
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
+    				INNER JOIN
+    				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
+    				WHERE 1=1 AND m.cntrct_sn=%s AND m.stock_sttus=2"""
+    data = [params["cntrct_sn"]]
+    if "before" in params and params["before"]:
+        befores = params["before"].split(",")
+        query += " AND s.stock_sn NOT IN ({})".format(",".join(["%s"]*len(befores)))
+        data += befores
+
+    return dt_query(query, data, params)
+
 def get_stock_datatable_search(params):
     query = """SELECT '1' AS ctmmny_sn
     				, s.stock_sn AS stock_sn				

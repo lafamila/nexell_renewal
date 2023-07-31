@@ -493,6 +493,16 @@ tbody .btnUpdate, tbody .btn{
 	var s_resrv_chrg = $('#s_resrv_chrg').val();
 	var s_resrv_c_chrg = $('#s_resrv_c_chrg').val();
 	var s_spt_nm = $('#s_spt_nm').val();
+	var m_dlivy_de_start = $('#m_dlivy_de_start').val();
+	var m_dlivy_de_end = $('#m_dlivy_de_end').val();
+	var m_pblict_de_start = $('#m_pblict_de_start').val();
+	var m_pblict_de_end = $('#m_pblict_de_end').val();
+	var s_dlivy_de_start = $('#s_dlivy_de_start').val();
+	var s_dlivy_de_end = $('#s_dlivy_de_end').val();
+	var s_pblict_de_start = $('#s_pblict_de_start').val();
+	var s_pblict_de_end = $('#s_pblict_de_end').val();
+	var t_pblict_de_start = $('#t_pblict_de_start').val();
+	var t_pblict_de_end = $('#t_pblict_de_end').val();
 
 	var params = '';
     if(s_resrv_bcnc != '' && s_resrv_bcnc != '-1'){
@@ -511,6 +521,16 @@ tbody .btnUpdate, tbody .btn{
         params += '&s_spt_nm='+s_spt_nm;
     }
 	params += '&bnd_year='+bnd_year;
+	params += '&m_dlivy_de_start='+m_dlivy_de_start;
+	params += '&m_dlivy_de_end='+m_dlivy_de_end;
+	params += '&m_pblict_de_start='+m_pblict_de_start;
+	params += '&m_pblict_de_end='+m_pblict_de_end;
+	params += '&s_dlivy_de_start='+s_dlivy_de_start;
+	params += '&s_dlivy_de_end='+s_dlivy_de_end;
+	params += '&s_pblict_de_start='+s_pblict_de_start;
+	params += '&s_pblict_de_end='+s_pblict_de_end;
+	params += '&t_pblict_de_start='+t_pblict_de_start;
+	params += '&t_pblict_de_end='+t_pblict_de_end;
 	console.log(params);
 	//직계약 현장 - 판매/수수료 값 : 입금현황에 있는 모든 세금계산서 날짜 및 금액 나열
 	  // 수주 총액과 비교한게 잔액..인데 입금현황에 있는 세금계산서 모두 + 세금계산서 없이 입금된 값들 모두

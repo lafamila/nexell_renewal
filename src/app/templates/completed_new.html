@@ -593,7 +593,7 @@ getReportNR = function(s_pxcond_mt)
                         if(pValue.CNTRCT_EXECUT_CODE == 'E' && (['1','2','3','4'].includes(pValue.ct_se_code))){
                             html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
                         }
-                        else if(pValue.spt_chrg_sn != parseInt(loginSN)){
+                        else if((pValue.spt_chrg_sn != parseInt(loginSN)) && "{{session['member']['auth_cd']}}" != "1"){
                             html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
                         }
                         else{

@@ -78,6 +78,7 @@
 
             <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                 <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowStock">재고장비추가</button>
+<!--                <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowDpStock">전시장비추가</button>-->
                 <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
             </div>
         </th>
@@ -200,9 +201,32 @@
         }
         var popup = window.open("/stock/search?" + params, "stock_search", `width=${new_window_width},height=${new_window_height},left=${positionX}`);
     });
+    $(document).on("click", "#addRowDpStock", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn == ''){
+            alert("현장을 선택해주세요.");
+            return false;
+        }
+
+        var new_window_width = parseInt(screen.width) - 100;
+        var new_window_height = parseInt(screen.height) - 100;
+        var positionX = 50;
+        var stock_sns = [];
+        $(document).find(`[name="stock_dp_sn[]"]`).each(function (pIndex, pTag) {
+            if($(pTag).val() != '')
+                stock_sns.push($(pTag).val());
+        });
+        var params = "&response="+($(this).attr("id") == "addRowStock" ? "0" : "1");
+        if (stock_sns.length > 0) {
+            params += "&before=" + stock_sns.join(",");
+        }
+        params += "&cntrct_sn=" + cntrct_sn
+        var popup = window.open("/stock/search/dp?" + params, "stock_dp_search", `width=${new_window_width},height=${new_window_height},left=${positionX}`);
+    });
 
     var prdlst_se_code = {"1" : "1", "2" : "2", "3" : "4", "4" : "3"};
     cloneRowStock = function(params, response){
+
         $.ajax({
             url : '/api/stock/get_stock_info',
             method: 'GET',
@@ -211,7 +235,13 @@
                 var rows = cloneRow(`equip_tr`, pResult.length);
                 $.each(pResult, function(pIndex, pValue){
                     var row = rows[pIndex];
-                    $(row).find(`input[type='hidden'][name='stock_sn[]']`).val(pValue.stock_sn);
+                    if(parseInt(response) == 0) {
+                        $(row).find(`input[type='hidden'][name='stock_sn[]']`).val(pValue.stock_sn);
+                    }
+                    else{
+                        $(row).find(`input[type='hidden'][name='stock_dp_sn[]']`).val(pValue.stock_sn);
+
+                    }
                     if(prdlst_se_code.hasOwnProperty(pValue.prduct_ty_code+"")){
                         $(row).find(`[name="prdlst_se_code[]"]`).val(prdlst_se_code[pValue.prduct_ty_code+""]);
                     }
@@ -275,6 +305,7 @@
                             <td class="hasinput">
                                 <input type="text" class="form-control text-left" name="model_no[]"/>
                                 <input type="hidden" name="stock_sn[]" value=""/>
+<!--                                <input type="hidden" name="stock_dp_sn[]" value=""/>-->
                                 <input type="hidden" name="prdlst_se_code[]" value="9"/>
                             </td>
                             <td class="hasinput">
