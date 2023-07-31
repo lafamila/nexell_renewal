@@ -11,6 +11,7 @@
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn" id="renewal"><i class="fa fa-frown-o" aria-hidden="true"></i></button>
 					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
 					<button class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
 				</div>
@@ -1166,6 +1167,34 @@ div.report table table thead, div.report table table tbody, div.report table tab
 //                $('#popReportBD').find('#biss_g').html(biss2text(contract.biss_g));
 //                $('#popReportBD').find('#biss_h').html(biss2text(contract.biss_h));
 //                $('#popReportBD').find('#biss_i').html(biss2text(contract.biss_i));
+
+				if(contract.renewal == 0){
+					$('#renewal').removeClass("btn-success").addClass("btn-danger");
+					$('#renewal').find("i").removeClass("fa-smile-o").addClass("fa-frown-o");
+				}
+				else{
+					$('#renewal').removeClass("btn-danger").addClass("btn-success");
+					$('#renewal').find("i").removeClass("fa-frown-o").addClass("fa-smile-o");
+				}
+				$(document).on("click", "#renewal", function(){
+					var renewal = $('#renewal').hasClass("btn-danger") ? 1 : 0;
+					var params = {"cntrct_sn" : contract.cntrct_sn, "renewal" : renewal};
+					$.ajax({
+						url : '/api/project/ajax_update_renewal',
+						method : 'POST',
+						data : params,
+						success: function(){
+							$('#renewal').toggleClass("btn-danger").toggleClass("btn-success");
+							$('#renewal').find("i").toggleClass("fa-frown-o").toggleClass("fa-smile-o");
+						},
+						error: function(){
+							alert("에러가 발생했습니다. 다시 시도해주세요.");
+						}
+					})
+
+
+				});
+
 
 				$('#popReportBD').find('#spt_adres').html(contract.spt_adres); //현장주소
 				$('#popReportBD').find('#eqpmn_dtls').html(project.eqpmn_dtls); //장비내역

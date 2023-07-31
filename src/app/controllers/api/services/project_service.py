@@ -393,6 +393,7 @@ def get_contract(params):
 				, biss_j
 				, home_count
 				, home_region
+				, renewal
 				FROM contract c
 				WHERE 1=1
 				AND ctmmny_sn = 1
@@ -1538,6 +1539,7 @@ def get_outsrc_detail(params):
                 FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co
                 LEFT JOIN outsrc o ON co.purchsofc_sn=o.outsrc_fo_sn AND co.cntrct_sn=o.cntrct_sn AND co.prjct_sn=o.prjct_sn
                 WHERE 1=1
+                AND co.cost_type IN (0, 1, 2, 3)
                 AND o.outsrc_sn = %(s_outsrc_sn)s
                 AND co.cntrct_sn = %(s_cntrct_sn)s
                 AND co.prjct_sn = %(s_prjct_sn)s"""
@@ -1633,6 +1635,7 @@ def get_outsrc_report_list(params):
                     AND prjct_sn = %(s_prjct_sn)s
                     AND cntrct_execut_code = 'E'
                     AND ct_se_code IN ('5')
+                    AND cost_type IN (0, 1, 2, 3)
                     AND purchsofc_sn = %(outsrc_fo_sn)s"""
         g.curs.execute(query, pParams)
         result[i]['e5CostList'] = g.curs.fetchall()
@@ -2529,19 +2532,21 @@ def insert_c_extra_project(params):
             g.curs.execute(query, data)
 
         else:
+            print(int(data['ct_se_code']), data['cntrct_execut_code'], params["establish"])
             if int(data['ct_se_code']) == 5 and data['cntrct_execut_code'] == 'E':
                 #             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : extra_sn, "register_id" : session["member"]["member_id"]})
-                g.curs.execute(
-                    "SELECT cntrct_sn, prjct_sn, purchsofc_sn, model_no, cost_type, cntrct_execut_code, ct_se_code, qy, puchas_amount FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code='E' AND ct_se_code=%(ct_se_code)s AND extra_sn=%(extra_sn)s",
-                    {"cntrct_sn": data["cntrct_sn"], "ct_se_code": data["ct_se_code"], "extra_sn": extra_sn - 1})
-                costs = g.curs.fetchall(transform=False)
-                for cost in costs:
-                    cost['register_id'] = session["member"]["member_id"]
-                    cost["extra_sn"] = extra_sn
-                    sub_query = [key for key in cost]
-                    params_query = ["%({})s".format(key) for key in cost]
-                    query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
-                    g.curs.execute(query, cost)
+                if params["establish"] == False:
+                    g.curs.execute(
+                        "SELECT cntrct_sn, prjct_sn, purchsofc_sn, model_no, cost_type, cntrct_execut_code, ct_se_code, qy, puchas_amount FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code='E' AND ct_se_code=%(ct_se_code)s AND extra_sn=%(extra_sn)s",
+                        {"cntrct_sn": data["cntrct_sn"], "ct_se_code": data["ct_se_code"], "extra_sn": extra_sn - 1})
+                    costs = g.curs.fetchall(transform=False)
+                    for cost in costs:
+                        cost['register_id'] = session["member"]["member_id"]
+                        cost["extra_sn"] = extra_sn
+                        sub_query = [key for key in cost]
+                        params_query = ["%({})s".format(key) for key in cost]
+                        query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+                        g.curs.execute(query, cost)
 
 
             else:
@@ -3325,4 +3330,8 @@ def update_outsrc(params):
 
 def delete_outsrc(params):
     query = """DELETE FROM outsrc WHERE outsrc_sn=%(s_outsrc_sn)s"""
+    g.curs.execute(query, params)
+
+def update_renewal(params):
+    query = """UPDATE contract SET renewal=%(renewal)s WHERE cntrct_sn=%(cntrct_sn)s"""
     g.curs.execute(query, params)

@@ -801,6 +801,7 @@ def insert_equipment_other_sub():
 def update_equipment():
     try:
         params = request.get_json()
+        params["establish"] = False
         prj.insert_c_extra_project(params)
         del params["option_bigo"]
         sales.insert_equipment(params)
@@ -813,6 +814,7 @@ def update_equipment():
 def update_equipment_establish():
     try:
         params = request.get_json()
+        params["establish"] = True
         prj.insert_c_extra_project(params)
         sales.update_equipment_establish(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})

@@ -895,3 +895,13 @@ def ajax_delete_outsrc():
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+@bp.route('/ajax_update_renewal', methods=['POST'])
+def ajax_update_renewal():
+    try:
+        params = request.form.to_dict()
+        prj.update_renewal(params)
+        return jsonify({"status": True, "message" : "성공적으로 삭제되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)

@@ -828,8 +828,8 @@
                             $(document).find(`[name='${company}_item_type[]']`).eq(pI).yVal(pR.cost_type);
                             $(document).find(`[name='${company}_item_name[]']`).eq(pI).val(pR.model_no);
                             $(document).find(`[name='${company}_item_dlnt[]']`).eq(pI).val(pR.qy.toFormat('NUMBER'));
-                            $(document).find(`[name='${company}_item_damt[]']`).eq(pI).val(pR.amount.toFormat('NUMBER'));
-                            eCost5Total += Math.round(1.1 * parseInt(pR.qy) * parseInt(pR.amount));
+                            $(document).find(`[name='${company}_item_damt[]']`).eq(pI).val(Math.round(pR.amount/1.1).toFormat('NUMBER'));
+                            eCost5Total += Math.round(parseInt(pR.qy) * parseInt(pR.amount));
                         });
                         if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
                             $(document).find(`[name='${company}_human']`).val(pValue.pymnt_mth.split("-")[0].toFormat('NUMBER'));

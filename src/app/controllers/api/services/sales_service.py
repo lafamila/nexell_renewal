@@ -1003,6 +1003,19 @@ def update_equipment_establish(params):
                     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
                                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', %(name)s, %(model_no)s, %(qy)s, %(puchas_amount)s, %(extra_sn)s, NOW(), %(register_id)s, %(cost_type)s)"""
                     g.curs.execute(query, pParams)
+            if s != 0:
+                pParams = {}
+                for key in ["cntrct_sn", "prjct_sn", "name", "register_id"]:
+                    pParams[key] = c[key]
+                pParams["model_no"] = ""
+                pParams["cost_type"] = 4
+                pParams["qy"] = 1
+                pParams["puchas_amount"] = -1 * s
+                pParams["extra_sn"] = extra_sn
+
+                query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, extra_sn, regist_dtm, register_id, cost_type)
+                            VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'E', '5', %(name)s, %(model_no)s, %(qy)s, %(puchas_amount)s, %(extra_sn)s, NOW(), %(register_id)s, %(cost_type)s)"""
+                g.curs.execute(query, pParams)
 
 
         else:

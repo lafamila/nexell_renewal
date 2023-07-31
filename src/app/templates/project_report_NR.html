@@ -11,6 +11,8 @@
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
+<!--					<button type="button" class="btn btn-success" id="renewal"><i class="fa fa-smile-o" aria-hidden="true"></i></button>-->
+					<button type="button" class="btn" id="renewal"><i class="fa fa-frown-o" aria-hidden="true"></i></button>
 					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
 					<button type="button" class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
 				</div>
@@ -1110,6 +1112,33 @@ div.report table table thead, div.report table table tbody, div.report table tab
                 $('#popReportNR').find('#biss_i').html(biss2text(contract.biss_i));
                 $('#popReportNR').find('#biss_j').html(biss2text(contract.biss_j));
 
+				if(contract.renewal == 0){
+					$('#renewal').removeClass("btn-success").addClass("btn-danger");
+					$('#renewal').find("i").removeClass("fa-smile-o").addClass("fa-frown-o");
+				}
+				else{
+					$('#renewal').removeClass("btn-danger").addClass("btn-success");
+					$('#renewal').find("i").removeClass("fa-frown-o").addClass("fa-smile-o");
+				}
+				$(document).on("click", "#renewal", function(){
+					var renewal = $('#renewal').hasClass("btn-danger") ? 1 : 0;
+					var params = {"cntrct_sn" : contract.cntrct_sn, "renewal" : renewal};
+					$.ajax({
+						url : '/api/project/ajax_update_renewal',
+						method : 'POST',
+						data : params,
+						success: function(){
+							$('#renewal').toggleClass("btn-danger").toggleClass("btn-success");
+							$('#renewal').find("i").toggleClass("fa-frown-o").toggleClass("fa-smile-o");
+						},
+						error: function(){
+							alert("에러가 발생했습니다. 다시 시도해주세요.");
+						}
+					})
+
+
+				});
+
 
 				$('#popReportNR').find('#spt_adres').html(contract.spt_adres); //현장주소
 				$('#popReportNR').find('#eqpmn_dtls').html(project.eqpmn_dtls); //장비내역
@@ -1271,13 +1300,15 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						if([1, 2].includes(parseInt(pValue.ct_se_code))){
 							cTotals["E"][0] += amount;
 						}
-						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){
+						else if([3, 4].includes(parseInt(pValue.ct_se_code))){ // 5: 도급비는 아래 도급비 총액에서 합산
 							cTotals["E"][1] += amount;
 						}
 						if(parseInt(pValue.ct_se_code) != 9){
 							eCostTotal += amount;
 						}
-						$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+						if(parseInt(pValue.ct_se_code) !== 5){
+							$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
+						}
 					}
 				});
 				$('#popReportNR').find('#cCost12Total').html(cTotals["C"][0].toString().toFormat('NUMBER'));
@@ -1823,6 +1854,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var daily_item_detail = [];
 				var indirect_html = "";
 				var indirect_sum_total = 0;
+				var eCost5 = 0;
 				$.each(outsrcList, function(pIndex, pValue){
 					if([146].includes(pValue.outsrc_fo_sn)){
 						//매입계산서
@@ -2087,6 +2119,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    <td class="text-right" rowspan="4"></td>';
 					html += '</tr>';
 					daily_total += parseInt(pValue.pymnt_mth.split("-")[2]);
+					eCost5 += (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
 				}
 				else{
 					html += '<tr>';
@@ -2111,8 +2144,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '</tr>';
 					if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4) {
 						daily_total -= parseInt(pValue.pymnt_mth.split("-")[2]);
+						eCost5 -= (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
+
 					}
 					daily_total += parseInt(pValue.outsrc_dtls.split("-")[2]);
+					eCost5 += (parseInt(pValue.outsrc_dtls.split("-")[0]) + parseInt(pValue.outsrc_dtls.split("-")[1]) + parseInt(pValue.outsrc_dtls.split("-")[2]));
 
 
 				}
