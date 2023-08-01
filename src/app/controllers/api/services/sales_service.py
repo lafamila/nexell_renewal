@@ -1273,6 +1273,9 @@ def insert_equipment_samsung(params):
         if d['dlnt'] is not None:
             real_data.append(d)
 
+    # for r in real_data:
+    #     if r['equip_sn'] == '':
+    #         r['equip_sn'] = None
 
     query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code) 
     VALUES(NOW(), %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """

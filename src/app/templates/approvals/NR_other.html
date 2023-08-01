@@ -143,22 +143,23 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="200"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
             </th>
         </tr>
     </thead>
     <tbody role="header">
         <tr>
-            <th class="color-contract text-center">출고일</th>
+            <th class="color-contract text-center">마지막 출고일</th>
             <th class="color-contract text-center">상품명</th>
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">계약수량</th>
             <th class="color-contract text-center">매입단가</th>
             <th class="color-contract text-center">기출고수량</th>
-            <th class="color-contract text-center">출고수량</th>
+            <th class="color-contract text-center">출고요청수량</th>
             <th class="color-contract text-center">매입금액</th>
             <th class="color-contract text-center">매출금액</th>
             <th class="color-contract text-center">VA</th>
@@ -276,6 +277,12 @@
                 data : {"s_cntrct_sn" : cntrct_sn},
                 success: function(pResult){
                     console.log(pResult);
+                    {% if init %}
+                    if(pResult.otherList.length == 0){
+                        alert("장비현황 및 업체선정 또는 공사변경을 통한 장비 리스트 등록이 필요합니다.");
+                        location.reload();
+                    }
+                    {% endif %}
 
                     // 공사변경 part1 START
                     var max_extra_sn = 0;
@@ -347,7 +354,7 @@
                     $("tbody[role='ct_se_code_contract']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
 
                     {% if init %}
-                    cloneRow("equip_tr", pResult.otherList.length-1);
+                    cloneRow("equip_tr", pResult.otherList.length-$(document).find(`tr[data-row="equip_tr"]`).length);
                     {% endif %}
 
                     $.each(pResult.otherList, function(pIndex, pRow){
