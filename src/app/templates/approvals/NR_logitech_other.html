@@ -637,7 +637,13 @@
         success: function(pResult){
           var html = '';
           $.each(pResult, function(pIndex, path){
-            html += `<img src="/static/files/${path}" style="max-width:100%;"/>`;
+              if(path.endsWith("pdf")){
+                html += `<a href="/static/files/${path}" target="_blank">첨부파일</a>`;
+              }
+              else{
+                html += `<img src="/static/files/${path}" style="max-width:100%;"/>`;
+
+              }
           });
           if(pResult.length > 0){
             $("#last").find("tbody").eq(0).find("td").eq(1).html("하단 첨부");

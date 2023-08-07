@@ -523,6 +523,7 @@ def get_cost_list(params):
 				    WHEN 3 THEN '일용직'
 				    ELSE '' END AS cost_type_nm
 				, c.regist_dtm
+				, DATE_FORMAT(c.regist_dtm, '%%Y-%%m-%%d') as reg_de
 				, c.register_id
 				, c.update_dtm
 				, c.updater_id
@@ -582,6 +583,7 @@ def get_cost(params):
 				, register_id
 				, update_dtm
 				, updater_id
+				, DATE_FORMAT(regist_dtm, '%%Y-%%m-%%d') AS reg_de
 				FROM cost
 				WHERE 1=1
 				AND cntrct_sn = %(s_cntrct_sn)s
@@ -599,8 +601,8 @@ def insert_cost(params):
         if key in params and params[key]:
             data[key] = params[key]
 
-    if 'regist_dtm' in params and params['regist_dtm']:
-        data['regist_dtm'] = params['regist_dtm']
+    if 'reg_de' in params and params['reg_de']:
+        data['regist_dtm'] = params['reg_de']+" 00:00:00"
     else:
         data['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
 
@@ -648,6 +650,8 @@ def update_cost(params):
                 data[key] = None
             else:
                 data[key] = '0000-00-00'
+    if 'reg_de' in params and params["reg_de"]:
+        data["regist_dtm"] = params["reg_de"] + " 00:00:00"
 
     if 'update_dtm' in params and params['update_dtm']:
         data['update_dtm'] = params['update_dtm']

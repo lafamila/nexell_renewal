@@ -1180,17 +1180,18 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 										<col width="84">
 										<col width="84">
 										<col width="60">
+										<col width="84">
 										<col width="78">
 									</colgroup>
 									<thead>
-										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="20">
+										<tr><th class="" style="background:#0070C0;border-color:#0070C0;color:white;" colspan="21">
 												예정 공사비
 												<input type="hidden" id="cntrct_sn" name="cntrct_sn">
 												<input type="hidden" id="prjct_sn" name="prjct_sn">
 												<input type="hidden" id="s_cntrwk_ct_sn" name="s_cntrwk_ct_sn">
 											</th>
 										</tr>
-										<tr><th class="hasinput" colspan="20">
+										<tr><th class="hasinput" colspan="21">
 												<div class="alert alert-block alert-warning-x" style="margin:0px;color:red!important;">
 													<p><i class="fa-fw fa fa-info"></i>
 														기성현황 기준으로 해당하는 항목만 작성하시기 바랍니다.
@@ -1300,6 +1301,12 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 												<input type="number" class="form-control" placeholder="[선택]" id="extra_sn" name="extra_sn">
 											</td>
 											<td class="hasinput">
+												<div class="input-group">
+													<input type="text" class="form-control datepicker" style="z-index:1050!important;" placeholder="[선택]" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="reg_de" name="reg_de">
+													<!-- <span class="input-group-addon"><i class="fa fa-calendar"></i></span> -->
+												</div>
+											</td>
+											<td class="hasinput">
 					{% if session['member']['auth_cd'] == 1 %}
 												<div class="btn-group">
 													<button type="button" class="btn btn-primary" id="btnSaveCost"><i class="fa fa-save"></i></button>
@@ -1326,6 +1333,7 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 											<th style="vertical-align:middle;" rowspan="2">전시구분</th>
 											<th style="vertical-align:middle;" rowspan="2">전시일</th>
 											<th style="vertical-align:middle;" rowspan="2">추가</th>
+											<th style="vertical-align:middle;" rowspan="2">등록일</th>
 											<th style="vertical-align:middle;" rowspan="2">-</th>
 										</tr>
 										<tr>
@@ -2172,6 +2180,7 @@ getCostList = function(s_cntrct_sn, s_prjct_sn)
 					html += '    <td>'+(pValue.dspy_se_nm)+'</td>';
 					html += '    <td>'+(pValue.dspy_de.toFormat('DATE'))+'</td>';
 					html += '    <td>'+extra_sn+'</td>';
+					html += '    <td>'+(pValue.reg_de.toFormat('DATE'))+'</td>';
 					html += '    <td class="hasinput text-right">';
 
                     if(progrs_sttus_code != 'C'){
@@ -2303,6 +2312,7 @@ getCost = function(s_cntrct_sn, s_prjct_sn, s_cntrwk_ct_sn)
 				$('#tabBox3').find('#fee_rt').yVal(data.fee_rt);
 				$('#tabBox3').find('#dspy_se_code').yVal(data.dspy_se_code);
 				$('#tabBox3').find('#dspy_de').yVal(data.dspy_de);
+				$('#tabBox3').find('#reg_de').yVal(data.reg_de);
 				// $('#tabBox3').find('#cntrct_execut_code').yReadonly(true);
 				// $('#tabBox3').find('#ct_se_code').yReadonly(true);
 				// $('#tabBox3').find('#purchsofc_sn').yReadonly(true);
@@ -2429,6 +2439,7 @@ insertCost = function()
 					$('#tabBox3').find('#fee_rt').yVal('');
 					$('#tabBox3').find('#dspy_se_code').yVal('');
 					$('#tabBox3').find('#dspy_de').yVal('');
+					$('#tabBox3').find('#reg_de').yVal('');
 				}
 				var cntrct_sn = $('#tabBox3').find('#cntrct_sn').val();
 				var prjct_sn = $('#tabBox3').find('#prjct_sn').val();

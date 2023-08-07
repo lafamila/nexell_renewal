@@ -1131,6 +1131,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					$('#renewal').removeClass("btn-danger").addClass("btn-success");
 					$('#renewal').find("i").removeClass("fa-frown-o").addClass("fa-smile-o");
 				}
+
+				{% if session["member"]["auth_cd"] == 1 or session["member"]["member_sn"] in (4, 21, 26, 63) %}
 				$(document).on("click", "#renewal", function(){
 					var renewal = $('#renewal').hasClass("btn-danger") ? 1 : 0;
 					var params = {"cntrct_sn" : contract.cntrct_sn, "renewal" : renewal};
@@ -1149,7 +1151,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 
 				});
-
+				{% endif %}
 
 				$('#popReportBF').find('#spt_adres').html(contract.spt_adres); //현장주소
 				$('#popReportBF').find('#eqpmn_dtls').html(project.eqpmn_dtls); //장비내역

@@ -885,11 +885,12 @@ def insert_equipment_other_sub(params):
     for order_de, model_no, prdlst_se_code, damt, dlnt, bcnc_sn in zip(order_des, model_nos, prdlst_se_codes, damts, dlnts, bcnc_sns):
         if order_de == '' or prdlst_se_code == '':
             continue
+        print(order_de, model_no, prdlst_se_code, damt, dlnt, bcnc_sn)
         data['order_de'] = order_de
         data['prdlst_se_code'] = prdlst_se_code
         data['model_no'] = '자재'
-        data['dlnt'] = dlnt
-        data['pamt'] = int(damt.replace(",", ""))*dlnt if damt != '' else None
+        data['dlnt'] = int(dlnt.replace(",", ""))
+        data['pamt'] = int(damt.replace(",", ""))*int(dlnt.replace(",", "")) if damt != '' else None
         data['samt'] = data['pamt']
         data['bcnc_sn'] = bcnc_sn
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)

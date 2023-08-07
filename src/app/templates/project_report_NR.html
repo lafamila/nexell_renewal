@@ -1120,6 +1120,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					$('#renewal').removeClass("btn-danger").addClass("btn-success");
 					$('#renewal').find("i").removeClass("fa-frown-o").addClass("fa-smile-o");
 				}
+				{% if session["member"]["auth_cd"] == 1 or session["member"]["member_sn"] in (4, 21, 26, 63) %}
 				$(document).on("click", "#renewal", function(){
 					var renewal = $('#renewal').hasClass("btn-danger") ? 1 : 0;
 					var params = {"cntrct_sn" : contract.cntrct_sn, "renewal" : renewal};
@@ -1138,6 +1139,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 
 				});
+				{% endif %}
 
 
 				$('#popReportNR').find('#spt_adres').html(contract.spt_adres); //현장주소
@@ -1300,15 +1302,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						if([1, 2].includes(parseInt(pValue.ct_se_code))){
 							cTotals["E"][0] += amount;
 						}
-						else if([3, 4].includes(parseInt(pValue.ct_se_code))){ // 5: 도급비는 아래 도급비 총액에서 합산
+						else if([3, 4, 5].includes(parseInt(pValue.ct_se_code))){ // 5: 도급비는 아래 도급비 총액에서 합산
 							cTotals["E"][1] += amount;
 						}
 						if(parseInt(pValue.ct_se_code) != 9){
 							eCostTotal += amount;
 						}
-						if(parseInt(pValue.ct_se_code) !== 5){
-							$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
-						}
+						$('#popReportNR').find('#eCost'+pValue.ct_se_code).html(pValue.amount.toString().toFormat('NUMBER'));
 					}
 				});
 				$('#popReportNR').find('#cCost12Total').html(cTotals["C"][0].toString().toFormat('NUMBER'));
