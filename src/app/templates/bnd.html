@@ -996,111 +996,111 @@ $(function () {
     });
   });
 });
-$(document).on("change", ".datepicker_form", function(e){
-	var year = $("#s_year").val().substring(0, 2);
-	var trs = $("#dtList1").find(`tbody[role='exec'] tr`);
-	var forms = $(document).find(".datepicker_form");
-	$.each(trs, function(pIndex, pRow){
-		if($(pRow).attr("id") == undefined){
-			return true;
-		}
-		var rows = $(document).find(`tr.row${$(pRow).attr("id")}`);
-		var data = {"m-date" : [], "m-t-date" : [], "s-date" : [], "s-t-date" : [], "t-t-date" : []};
-		$.each(rows, function(_, pR){
-			data['m-date'].push($(pR).find(".m-date").eq(0).html());
-			data['m-t-date'].push($(pR).find(".m-t-date").eq(0).html());
-			data['s-date'].push($(pR).find(".s-date").eq(0).html());
-			data['s-t-date'].push($(pR).find(".s-t-date").eq(0).html());
-			data['t-t-date'].push($(pR).find(".t-t-date").eq(0).html());
-		});
-		var founded = {"m_dlivy_de" : true, "m_pblict_de" : true, "s_dlivy_de" : true, "s_pblict_de" : true, "t_pblict_de" : true}
-		$.each(founded, function(pFilter, _){
-			var st_data = $(`#${pFilter}_start`).val();
-			var ed_data = $(`#${pFilter}_end`).val();
-			var target_class = $(`#${pFilter}_start`).data("target");
-			var start_pass = false;
-			var end_pass = false;
-			if(st_data != ''){
-				for(let i=0;i<data[target_class].length;i++){
-					if(data[target_class][i] != ''){
-						var date = year+data[target_class][i].replace("/", "-")+"-01";
-						console.log(date, year+st_data+"-01");
-						if((new Date(date)).getTime() >= (new Date(year+st_data+"-01")).getTime()){
-							start_pass = true;
-							break;
-						}
-					}
-				}
-			}
-			else{
-				start_pass = true;
-			}
-			if(ed_data != ''){
-				for(let i=0;i<data[target_class].length;i++){
-					if(data[target_class][i] != ''){
-						var date = year+data[target_class][i].replace("/", "-")+"-01";
-						if((new Date(date)).getTime() <= (new Date(year+ed_data+"-01")).getTime()){
-							end_pass = true;
-							break;
-						}
-					}
-				}
-			}
-			else{
-				end_pass = true;
-			}
-			if(start_pass && end_pass){
-				founded[pFilter] = true;
-			}
-			else{
-				founded[pFilter] = false;
-			}
-
-		});
-		var last_pass = true;
-		$.each(founded, function(pFilter, _){
-			if(!_){
-				last_pass = false;
-				return false;
-			}
-		});
-		if(last_pass){
-			$.each(rows, function(pIndex, pTr){
-				$(pTr).css("display", "table-row");
-			});
-			var rowspans = {};
-			$.each($(document).find(`[data-column="label"]`), function(pIndex, pTd){
-				if($(pTd).parent().css("display") == "table-row"){
-					var count = $(pTd).data("count");
-					var code = $(pTd).data("code");
-					if(!rowspans.hasOwnProperty(`${code}_${count}`)){
-						rowspans[`${code}_${count}`] = 0;
-					}
-					rowspans[`${code}_${count}`]++;
-				}
-				$(pTd).hide();
-			});
-			var done = {};
-			$.each($(document).find(`[data-column="label"]`), function(pIndex, pTd){
-				var count = $(pTd).data("count");
-				var code = $(pTd).data("code");
-				if($(pTd).parent().css("display") == "table-row"){
-					if(!done.hasOwnProperty(`${code}_${count}`)){
-						$(pTd).attr("rowspan", rowspans[`${code}_${count}`]);
-						$(pTd).show();
-						done[`${code}_${count}`] = true;
-					}
-				}
-			});
-		}
-		else{
-			$.each(rows, function(pIndex, pTr){
-				$(pTr).css("display", "none");
-			});
-
-		}
-	});
-});
+// $(document).on("change", ".datepicker_form", function(e){
+// 	var year = $("#s_year").val().substring(0, 2);
+// 	var trs = $("#dtList1").find(`tbody[role='exec'] tr`);
+// 	var forms = $(document).find(".datepicker_form");
+// 	$.each(trs, function(pIndex, pRow){
+// 		if($(pRow).attr("id") == undefined){
+// 			return true;
+// 		}
+// 		var rows = $(document).find(`tr.row${$(pRow).attr("id")}`);
+// 		var data = {"m-date" : [], "m-t-date" : [], "s-date" : [], "s-t-date" : [], "t-t-date" : []};
+// 		$.each(rows, function(_, pR){
+// 			data['m-date'].push($(pR).find(".m-date").eq(0).html());
+// 			data['m-t-date'].push($(pR).find(".m-t-date").eq(0).html());
+// 			data['s-date'].push($(pR).find(".s-date").eq(0).html());
+// 			data['s-t-date'].push($(pR).find(".s-t-date").eq(0).html());
+// 			data['t-t-date'].push($(pR).find(".t-t-date").eq(0).html());
+// 		});
+// 		var founded = {"m_dlivy_de" : true, "m_pblict_de" : true, "s_dlivy_de" : true, "s_pblict_de" : true, "t_pblict_de" : true}
+// 		$.each(founded, function(pFilter, _){
+// 			var st_data = $(`#${pFilter}_start`).val();
+// 			var ed_data = $(`#${pFilter}_end`).val();
+// 			var target_class = $(`#${pFilter}_start`).data("target");
+// 			var start_pass = false;
+// 			var end_pass = false;
+// 			if(st_data != ''){
+// 				for(let i=0;i<data[target_class].length;i++){
+// 					if(data[target_class][i] != ''){
+// 						var date = year+data[target_class][i].replace("/", "-")+"-01";
+// 						console.log(date, year+st_data+"-01");
+// 						if((new Date(date)).getTime() >= (new Date(year+st_data+"-01")).getTime()){
+// 							start_pass = true;
+// 							break;
+// 						}
+// 					}
+// 				}
+// 			}
+// 			else{
+// 				start_pass = true;
+// 			}
+// 			if(ed_data != ''){
+// 				for(let i=0;i<data[target_class].length;i++){
+// 					if(data[target_class][i] != ''){
+// 						var date = year+data[target_class][i].replace("/", "-")+"-01";
+// 						if((new Date(date)).getTime() <= (new Date(year+ed_data+"-01")).getTime()){
+// 							end_pass = true;
+// 							break;
+// 						}
+// 					}
+// 				}
+// 			}
+// 			else{
+// 				end_pass = true;
+// 			}
+// 			if(start_pass && end_pass){
+// 				founded[pFilter] = true;
+// 			}
+// 			else{
+// 				founded[pFilter] = false;
+// 			}
+//
+// 		});
+// 		var last_pass = true;
+// 		$.each(founded, function(pFilter, _){
+// 			if(!_){
+// 				last_pass = false;
+// 				return false;
+// 			}
+// 		});
+// 		if(last_pass){
+// 			$.each(rows, function(pIndex, pTr){
+// 				$(pTr).css("display", "table-row");
+// 			});
+// 			var rowspans = {};
+// 			$.each($(document).find(`[data-column="label"]`), function(pIndex, pTd){
+// 				if($(pTd).parent().css("display") == "table-row"){
+// 					var count = $(pTd).data("count");
+// 					var code = $(pTd).data("code");
+// 					if(!rowspans.hasOwnProperty(`${code}_${count}`)){
+// 						rowspans[`${code}_${count}`] = 0;
+// 					}
+// 					rowspans[`${code}_${count}`]++;
+// 				}
+// 				$(pTd).hide();
+// 			});
+// 			var done = {};
+// 			$.each($(document).find(`[data-column="label"]`), function(pIndex, pTd){
+// 				var count = $(pTd).data("count");
+// 				var code = $(pTd).data("code");
+// 				if($(pTd).parent().css("display") == "table-row"){
+// 					if(!done.hasOwnProperty(`${code}_${count}`)){
+// 						$(pTd).attr("rowspan", rowspans[`${code}_${count}`]);
+// 						$(pTd).show();
+// 						done[`${code}_${count}`] = true;
+// 					}
+// 				}
+// 			});
+// 		}
+// 		else{
+// 			$.each(rows, function(pIndex, pTr){
+// 				$(pTr).css("display", "none");
+// 			});
+//
+// 		}
+// 	});
+// });
 $(document).on('click', "#s_submit", function(pEvent){
 
     var year = $("#s_year").val();

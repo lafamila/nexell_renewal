@@ -6,6 +6,36 @@ import calendar
 import dateutil
 from pytz import timezone
 
+def get_bbs_datatable(params):
+    query = """SELECT bbs_sn
+                    , bbs_type
+                    , bbs_title
+                    , reg_sn
+                    , (SELECT mber_nm FROM member WHERE mber_sn=reg_sn) AS reg_nm
+                    , DATE_fORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_dtm
+                    FROM bbs
+                    WHERE 1=1 """
+    data = []
+
+    if "s_reg_dtm_start" in params and params["s_reg_dtm_start"]:
+        query += " AND reg_dtm BETWEEN %s AND %s"
+        data.append(params["s_reg_dtm_start"])
+        data.append(params["s_reg_dtm_end"])
+
+    if "s_bbs_type" in params and params["s_bbs_type"]:
+        query += " AND bbs_type=%s "
+        data.append(params["s_bbs_type"])
+
+    if "s_bbs_title" in params and params["s_bbs_title"]:
+        query += " AND bbs_title LIKE %s "
+        data.append("%{}%".format(params['s_bbs_title']))
+
+    if "s_reg_sn" in params and params["s_reg_sn"]:
+        query += " AND reg_sn = %s "
+        data.append(params['s_reg_sn'])
+
+    return dt_query(query, data, params)
+
 def get_groupCode_datatable(params):
     query = """SELECT ctmmny_sn
 				, parnts_code
@@ -717,6 +747,25 @@ def get_bnd_rates(params):
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
+
+def get_authorMenu_list(params):
+    query = """SELECT ctmmny_sn
+                    , author_sn
+                    , menu_sn
+                    , use_at
+                    FROM author_menu 
+                    WHERE 1=1
+                    AND author_sn=%(s_author_sn)s"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def update_authorMenu(params):
+    query = """UPDATE author_menu
+                SET use_at = %(use_at)s
+                WHERE author_sn = %(author_sn)s
+                AND menu_sn = %(menu_sn)s"""
+    g.curs.execute(query, params)
 
 def get_bnd_projects(params):
     query = """SELECT c.cntrct_sn
@@ -2039,6 +2088,10 @@ def get_outsrcs_by_contract(params):
 def insert_bbs(params):
     query = """INSERT INTO bbs(bbs_type, bbs_title, bbs_content, reg_sn) VALUES(%(bbs_type)s, %(bbs_title)s, %(bbs_content)s, %(reg_sn)s)"""
     params["reg_sn"] = session["member"]['member_sn']
+    g.curs.execute(query, params)
+
+def update_bbs(params):
+    query = """UPDATE bbs SET bbs_type=%(bbs_type)s, bbs_title=%(bbs_title)s, bbs_content=%(bbs_content)s WHERE bbs_sn=%(bbs_sn)s"""
     g.curs.execute(query, params)
 
 def get_bbs_list(params):

@@ -39,9 +39,32 @@ def refresh_code_list():
                 contract_list=get_contract_list(),
                 contract_nr_list=get_contract_NR_list(),
                 amt_ty_code_list=get_code_list('amt_ty_code'.upper()),
+                menu_total_list=get_menu_total_list(),
                 menus=set_menu(session['member']['auth_cd']) if 'member' in session else None)
 
 
+def get_menu_total_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT menu_sn
+                        , menu_nm
+                        , parnts_menu_sn
+                        , menu_icon
+                        , menu_level
+                        , menu_ordr
+                        FROM menu WHERE use_at='Y'
+                        ORDER BY menu_level, parnts_menu_sn, menu_ordr""")
+
+    result = curs.fetchall()
+    total_menus = {}
+    for r in result:
+        if int(r['parnts_menu_sn']) == 0:
+            total_menus[int(r['menu_sn'])] = [r, []]
+        else:
+            total_menus[int(r['parnts_menu_sn'])][1].append(r)
+    curs.close()
+    db.close()
+    return total_menus
 
 def get_approval_ty_code_by_sn(params):
     db = DB()

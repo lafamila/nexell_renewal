@@ -14,6 +14,7 @@ from .controllers.card_view import bp as card_bp
 from .controllers.completed_view import bp as completed_bp
 from .controllers.energy_view import bp as energy_bp
 from .controllers.common_view import bp as common_bp
+from .controllers.bbs_view import bp as bbs_bp
 from .controllers.api.member import bp as member_api_bp
 from .controllers.api.dashboard import bp as dashboard_api_bp
 from .controllers.api.project import bp as project_api_bp
@@ -65,6 +66,8 @@ app.register_blueprint(energy_bp)
 app.register_blueprint(energy_api_bp)
 app.register_blueprint(common_bp)
 app.register_blueprint(common_api_bp)
+app.register_blueprint(bbs_bp)
+# app.register_blueprint(bbs_api_bp)
 app.register_blueprint(dev_api)
 
 app.jinja_env.globals.update(

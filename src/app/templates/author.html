@@ -1,0 +1,253 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+
+
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+.well .menu-group {
+	display: inline-block;
+    vertical-align: top;
+    min-width: 180px;
+	text-align: left;
+}
+.fa.fa-vset {
+	vertical-align: unset;
+}
+
+.list-group-item.level1 {
+}
+
+.list-group-item.level2 {
+	padding-left: 37px;
+}
+
+.list-group-item.level3 {
+	padding-left: 53px;
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    border-color: #648db1;
+}
+
+.btn.active {
+	font-weight: bold!important;
+    color: #fff!important;
+    background: #6aa7bf!important;
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #000;
+    background-color: #ffe3b9;
+    border-color: #3276b1;
+}
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb">
+		<li>홈</li><li>시스템</li><li>권한 관리</li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					권한 관리 <span>> 시스템</span>
+			</h1>
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info">
+		<p><i class="fa-fw fa fa-info"></i>
+			메뉴 접근 권한을 그룹별로 설정합니다.
+		</p>
+	</div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+						<h2>권한별 메뉴 목록</h2>
+						<div class="widget-toolbar">
+							<!-- <button class="btn btn-warning" data-toggle="modal" href="#popEdit"><i class="fa fa-plus"> 권한 등록</i></button> -->
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<div class="btn-group btn-group-justified" id="author">
+								{% for code in author_list %}
+								<a href="javascript:void(0);" class="btn btn-info" data-author_sn="{{code.value}}">{{code.label}}</a>
+								{% endfor %}
+							</div>
+							<div class="well" id="menu" style="border:0px;text-align:center;padding-top:40px;">
+							<form id="frmBox1">
+								<input type="hidden" id="author_sn" name="author_sn">
+								<input type="hidden" id="menu_sn" name="menu_sn">
+								<input type="hidden" id="use_at" name="use_at">
+								{% for parnts_menu_sn in menu_total_list %}
+									<div class="menu-group">
+										<div class="list-group">
+											<a href="#{{menu_total_list[parnts_menu_sn][0]['menu_sn']}}" data-menu_sn="{{menu_total_list[parnts_menu_sn][0]['menu_sn']}}" data-menu_ordr="1" class="list-group-item level1 disabled"><i class="fa fa-lg {{menu_total_list[parnts_menu_sn][0]['menu_icon']}} fa-vset"></i> {{menu_total_list[parnts_menu_sn][0]['menu_nm']}}</a>
+											{% for menu in menu_total_list[parnts_menu_sn][1] %}
+											<a href="#{{menu['menu_sn']}}" data-menu_sn="{{menu['menu_sn']}}" data-menu_ordr="2" class="list-group-item level2 disabled">└ {{menu['menu_nm']}}</a>
+
+											{% endfor %}
+										</div>
+									</div>
+								{% endfor %}
+
+							</form>
+							</div>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# page script start                                                    #-->
+<!--########################################################################-->
+<script type="text/javascript">
+$(function() {
+
+	/******************************************************************************
+	 *
+	 */
+	getAuthorMenu = function(s_author_sn)
+	{
+		var params = '';
+		params += '&s_author_sn=' + s_author_sn;
+
+		$.ajax({
+			url: '/api/author/ajax_get_authorMenu_list',
+			type: 'GET',
+			data: params,
+			dataType: 'json',
+			success: function(pResult) {
+				console.log(pResult);
+				if (pResult.status) {
+					var list = pResult.list;
+					$('#menu a').removeClass('active');
+					$.each(list, function(pKey, pValue){
+						var menu_sn = pValue.menu_sn;
+						var use_at = pValue.use_at;
+						if (use_at === 'Y') {
+							$('#menu').find('a[href=#'+menu_sn+']').addClass('active');
+						}
+					});
+				}
+			}
+		});
+	}
+
+	/******************************************************************************
+	 *
+	 */
+	updateAuthorMenu = function(pTarget)
+	{
+		$.ajax({
+			url: '/api/author/ajax_update_authorMenu',
+			type: 'POST',
+			data: getFormData($('#frmBox1')[0]),
+			contentType: false,
+			processData: false,
+			success: function(pResult) {
+				console.log(pResult);
+				if (pResult.status) {
+					$(pTarget).toggleClass('active');
+					fnAlert(pResult.message);
+				}
+			}
+		});
+	}
+
+	/******************************************************************************
+	 *
+	 */
+	$('#author').on('click', 'a', function(pEvent){
+		$('#author a').removeClass('active');
+		$(this).addClass('active');
+
+		var author_sn = $(this).data('author_sn');
+		$('#author_sn').val(author_sn);
+		$('#menu a').removeClass('disabled');
+		getAuthorMenu(author_sn);
+	});
+
+	/******************************************************************************
+	 *
+	 */
+	$('#menu').on('click', 'a', function(pEvent) {
+		var current = pEvent.currentTarget;
+		var author_sn = $('#author_sn').val();
+		var menu_sn = $(current).data('menu_sn');
+		if (author_sn !== '') {
+			$('#menu_sn').val(menu_sn);
+			$('#use_at').val($(this).hasClass('active')?'N':'Y');
+			updateAuthorMenu(this);
+		}
+	});
+});
+</script>
+
+{% endblock %}

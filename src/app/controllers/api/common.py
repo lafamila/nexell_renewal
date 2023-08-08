@@ -27,6 +27,40 @@ def disconnect(response):
     g.db.close()
     return response
 
+@bp.route('/author/ajax_get_authorMenu_list', methods=['GET'])
+def ajax_get_authorMenu_list():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['list'] = cm.get_authorMenu_list(params)
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/author/ajax_update_authorMenu', methods=['POST'])
+def ajax_update_authorMenu():
+    try:
+        params = request.form.to_dict()
+        cm.update_authorMenu(params)
+        return jsonify({"status": True, "message": "성공적으로 추가되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+@bp.route('/bbs/ajax_get_bbs_datatable', methods=['POST'])
+def bbs_ajax_get_bbs_datatable():
+    try:
+        params = request.form.to_dict()
+        result = cm.get_bbs_datatable(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
 @bp.route('/code/ajax_get_groupCode_datatable', methods=['POST'])
 def code_ajax_get_groupCode_datatable():
     try:
@@ -107,6 +141,16 @@ def ajax_get_bcnc_list():
 def ajax_get_bnd():
     try:
         params = request.args.to_dict()
+        for _t in ["m", "s"]:
+            for _d in ["start", "end"]:
+                if "{}_dlivy_de_{}".format(_t, _d) not in params:
+                    params["{}_dlivy_de_{}".format(_t, _d)] = ''
+
+        for _t in ["m", "s", "t"]:
+            for _d in ["start", "end"]:
+                if "{}_pblict_de_{}".format(_t, _d) not in params:
+                    params["{}_pblict_de_{}".format(_t, _d)] = ''
+
         result = dict()
         result['color'] = cm.get_bnd_color(params)
         result['bnd'] = cm.get_bnd_data(params)
@@ -194,6 +238,108 @@ def ajax_get_bnd():
                 result['account'][cntrct_sn]["max_row"] = max(len(result['account'][cntrct_sn]["M"]), len(result['account'][cntrct_sn]["S"]))
 
 
+        out_cntrct_sns = []
+        for r in result['data']:
+            cntrct_sn = str(r['cntrct_sn'])
+
+            for t in ["m", "s"]:
+                if params["{}_dlivy_de_start".format(t)] != '' and params["{}_dlivy_de_end".format(t)] != '':
+                    st_date = datetime.strptime("20{}-01".format(params["{}_dlivy_de_start".format(t)]), "%Y-%m-%d")
+                    ed_date = datetime.strptime("20{}-01".format(params["{}_dlivy_de_end".format(t)]), "%Y-%m-%d")
+                    try:
+                        is_alright = False
+                        m_list = result['account'][cntrct_sn][t.upper()]
+                        for m in m_list:
+                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            if m_date >= st_date and m_date <= ed_date:
+                                is_alright = True
+                            else:
+                                continue
+                        if not is_alright:
+                            out_cntrct_sns.append(cntrct_sn)
+                    except:
+                        out_cntrct_sns.append(cntrct_sn)
+                elif params["{}_dlivy_de_start".format(t)]:
+                    st_date = datetime.strptime("20{}-01".format(params["{}_dlivy_de_start".format(t)]), "%Y-%m-%d")
+                    try:
+                        is_alright = False
+                        m_list = result['account'][cntrct_sn][t.upper()]
+                        for m in m_list:
+                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            if m_date >= st_date:
+                                is_alright = True
+                            else:
+                                continue
+
+                        if not is_alright:
+                            out_cntrct_sns.append(cntrct_sn)
+                    except Exception as e:
+                        out_cntrct_sns.append(cntrct_sn)
+                elif params["{}_dlivy_de_end".format(t)] != '':
+                    ed_date = datetime.strptime("20{}-01".format(params["{}_dlivy_de_end".format(t)]), "%Y-%m-%d")
+                    try:
+                        is_alright = False
+                        m_list = result['account'][cntrct_sn][t.upper()]
+                        for m in m_list:
+                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            if m_date <= ed_date:
+                                is_alright = True
+                            else:
+                                continue
+                        if not is_alright:
+                            out_cntrct_sns.append(cntrct_sn)
+                    except:
+                        out_cntrct_sns.append(cntrct_sn)
+
+            for t in ["m", "s", "t"]:
+                if params["{}_pblict_de_start".format(t)] != '' and params["{}_pblict_de_end".format(t)] != '':
+                    st_date = datetime.strptime("20{}-01".format(params["{}_pblict_de_start".format(t)]), "%Y-%m-%d")
+                    ed_date = datetime.strptime("20{}-01".format(params["{}_pblict_de_end".format(t)]), "%Y-%m-%d")
+                    try:
+                        is_alright = False
+                        m_list = result['taxbill'][cntrct_sn][t.upper()]
+                        for m in m_list:
+                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            if m_date >= st_date and m_date <= ed_date:
+                                is_alright = True
+                            else:
+                                continue
+                        if not is_alright:
+                            out_cntrct_sns.append(cntrct_sn)
+                    except Exception as e:
+                        out_cntrct_sns.append(cntrct_sn)
+                elif params["{}_pblict_de_start".format(t)] != '':
+                    st_date = datetime.strptime("20{}-01".format(params["{}_pblict_de_start".format(t)]), "%Y-%m-%d")
+                    try:
+                        is_alright = False
+                        m_list = result['taxbill'][cntrct_sn][t.upper()]
+                        for m in m_list:
+                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            if m_date >= st_date:
+                                is_alright = True
+                            else:
+                                continue
+                        if not is_alright:
+                            out_cntrct_sns.append(cntrct_sn)
+                    except Exception as e:
+                        out_cntrct_sns.append(cntrct_sn)
+                elif params["{}_pblict_de_end".format(t)] != '':
+                    ed_date = datetime.strptime("20{}-01".format(params["{}_pblict_de_end".format(t)]), "%Y-%m-%d")
+                    try:
+                        is_alright = False
+                        m_list = result['taxbill'][cntrct_sn][t.upper()]
+                        for m in m_list:
+                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            if m_date <= ed_date:
+                                is_alright = True
+                            else:
+                                continue
+                        if not is_alright:
+                            out_cntrct_sns.append(cntrct_sn)
+                    except Exception as e:
+                        out_cntrct_sns.append(cntrct_sn)
+
+        result['data'] = [r for r in result['data'] if str(r['cntrct_sn']) not in out_cntrct_sns]
         return jsonify(result)
     except Exception as e:
         print(e)
@@ -872,6 +1018,17 @@ def insert_bbs():
     try:
         params = request.form.to_dict()
         cm.insert_bbs(params)
+        return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+@bp.route('/common/update_bbs', methods=['POST'])
+def update_bbs():
+    try:
+        params = request.form.to_dict()
+        cm.update_bbs(params)
         return jsonify({"status": True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
         print(e)

@@ -1,0 +1,473 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+</style>
+
+<style>
+    #summery{
+        top:63px;
+        left:720px;
+        width:400px;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summery{
+        top:150px;
+        left:13px;
+        width:400px;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">공지사항 관리 </li><li><span> 시스템</span></li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					계약 및 프로젝트 등록 <span>> 계약 및 프로젝트</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+
+    <!-- 집계표 -->
+<!--	<table class="table table-bordered table-summery" id="summery">-->
+<!--		<thead>-->
+<!--			<tr><th colspan="4">-->
+<!--					&lt;!&ndash; 집&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;표 &ndash;&gt;-->
+<!--					계&nbsp;약&nbsp;/&nbsp;프&nbsp;로&nbsp;젝&nbsp;트&nbsp;&nbsp;&nbsp;&nbsp;집&nbsp;계&nbsp;표-->
+<!--				</th>-->
+<!--			</tr>-->
+<!--		</thead>-->
+<!--		<tbody>-->
+<!--			<tr>-->
+<!--				<th style="background:#fff;width:60px;text-align:center;">건수</th>-->
+<!--				<td style="background:#fff;text-align:center;">0</td>-->
+<!--&lt;!&ndash;				<th style="background:#fff;width:80px;text-align:center;">수주금액</th>&ndash;&gt;-->
+<!--&lt;!&ndash;				<td style="background:#fff;width:121px;text-align:right;">0</td>&ndash;&gt;-->
+<!--				<th style="background:#fff;width:140px;text-align:center;">총 수주금액 계</th>-->
+<!--				<td style="background:#fff;width:121px;text-align:right;">0</td>-->
+<!--			</tr>-->
+<!--		</tbody>-->
+<!--	</table>-->
+
+    <div id="temp">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>공지사항 목록</h2>
+						<div class="widget-toolbar">
+<!--                            <button class="btn btn-info" data-toggle="modal" href="#popReport7"><i class="fa fa-print"> 업무일지</i></button>-->
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<!-- <table class="table table-bordered" style="">
+								<colgroup>
+									<col width="667">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="120">
+									<col width="*">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="text-center"></th>
+										<th class="text-center" style="background:#ccc;">집계표</th>
+										<th class="text-center">건수</td>
+										<td class="text-center" style="background:#fff;">0</td>
+										<th class="text-center">합계</td>
+										<td class="text-number" style="background:#fff;">0</td>
+										<th class="text-center"></th>
+									</tr>
+								</thead>
+							</table> -->
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="150">
+									<col width="*">
+									<col width="120">
+									<col width="136">
+									<col width="80">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_bbs_type" name="s_bbs_type">
+												<option value="">[전체]</option>
+												<option value="1">공지사항</option>
+												<option value="2">경조사</option>
+												<option value="3">뉴스레터</option>
+											</select>
+										</th>
+										<th class="hasinput">
+											<input type="text" class="form-control" placeholder="[전체]" id="s_bbs_title" name="s_bbs_title">
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_reg_sn" name="s_reg_sn">
+												<option value="">[전체]</option>
+												{% for code in member_list %}
+												<option value="{{code.value}}">{{code.label}} {{code.etc1}}</option>
+												{% endfor %}
+											</select>
+										</th>
+                                        <th class="hasinput">
+											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_reg_dtm_start" name="s_reg_dtm_start" placeholder="[시작일자]">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_reg_dtm_end" name="s_reg_dtm_end" placeholder="[종료일자]">
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>분류</th>
+										<th>제목</th>
+										<th>작성자</th>
+										<th>작성일</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" id="addBbsBtn"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# page script start                                                    #-->
+<!--########################################################################-->
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+getProjectList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		pageLength: 15,
+		buttons: ['excelHtml5'],
+        ajax: {
+            url: '/api/bbs/ajax_get_bbs_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_bbs_type': $('#dtList1').find('#s_bbs_type').val(),
+					's_bbs_title': $('#dtList1').find('#s_bbs_title').val(),
+					's_reg_sn': $('#dtList1').find('#s_reg_sn').val(),
+					's_reg_dtm_start': $('#dtList1').find('#s_reg_dtm_start').val(),
+					's_reg_dtm_end': $('#dtList1').find('#s_reg_dtm_end').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'desc'],
+		// columnDefs: [
+        //     { targets: 4, visible: false }
+        // ],
+        columns: [
+            { data: 'bbs_sn', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return meta.settings._iDisplayStart + meta.row + 1;
+                }
+            },
+            { data: 'bbs_type', className: 'text-center', //계약금액
+                render: function(data, type, row, meta) {
+                    if(parseInt(data) == 1){
+                      return "공지사항";
+                    }
+                    if(parseInt(data) == 2){
+                      return "경조사";
+                    }
+                    if(parseInt(data) == 3){
+                      return "뉴스레터";
+                    }
+                    return "";
+                }
+            },
+            { data: 'bbs_title', className: 'text-left' },
+            { data: 'reg_nm', className: 'text-center' },
+            { data: 'reg_dtm', className: 'text-center' },
+            { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-bbs_sn="'+row.bbs_sn+'">';
+					html += '		<i class="fa fa-edit"></i>';
+					html += '	</button>';
+					html += '	<button class="btn btn-table btn-danger btnDelete" title="삭제" data-bbs_sn="'+row.bbs_sn+'">';
+					html += '		<i class="fa fa-trash"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+		],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+            // $('#summery').find('tbody td').eq(1).html(contract.amount.toString().toFormat('NUMBER'));
+        },
+		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
+			var myList = this;
+
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+				var bbs_sn = $(this).data('bbs_sn');
+                var params = '';
+                params += '&bbs_sn=' + bbs_sn;
+
+                window.open("/bbs/report?"+params, "_blank");
+
+			});
+
+			$(myList).on('click', '.btnDelete', function(pEvent) {
+				var bbs_sn = $(this).data('bbs_sn');
+				if(bbs_sn != '' && bbs_sn != undefined){
+					if(confirm("정말 삭제하시겠습니까?")){
+						$.ajax({
+							url : '/api/common/delete_bbs',
+							method : 'GET',
+							data : {"bbs_sn" : bbs_sn},
+							success : function(pResult){
+								alert("삭제되었습니다.");
+								$.datatable1.ajax.reload();
+							},
+							error: function(pResult){
+								alert("에러가 발생했습니다.");
+							}
+						})
+
+					}
+				}
+
+			});
+			$(myList).on('click', '#addBbsBtn', function(pEvent) {
+                window.open("/bbs/report", "_blank");
+
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+
+	/**************************************************************************
+	* 계약일자 캘린더 셋팅
+	*/
+	var maxYears = 5;
+	$('.datepicker-e').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+			var minDate = new Date($(this).val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+	});
+
+	var end = $('.datepicker-e').val();
+	if (end == '') {
+		$('.datepicker-e').datepicker('setDate', 'today');
+	}
+
+	$('.datepicker-s').datepicker({
+		beforeShow: function(dateText) {
+			$(this).data('before', $(this).val());
+
+			var minDate = new Date($('.datepicker-e').val());
+			minDate.setDate(minDate.getDate() - (365*maxYears));
+			$(".datepicker-s").datepicker( "option", "minDate", minDate );
+		},
+		onSelect: function(dateText) {
+			$(this).change();
+		},
+		onClose: function(dateText) {
+		},
+	});
+
+	var start = $('.datepicker-s').val();
+	if (start == '') {
+		var end = $('.datepicker-e').val();
+		var endDate = new Date(end);
+		endDate.setDate(endDate.getDate() - (365*maxYears));
+
+//		endDate.setDate(endDate.getDate() - (365*maxYears));
+		$('.datepicker-s').datepicker('setDate', endDate);
+	}
+
+
+	/******************************************************************************
+	*
+	*/
+	// var selected_count = 0;
+	// $('.select2-multiple').select2({
+    // 	// templateSelection: function(selected, total) {
+	// 	templateResult: function(state) {
+	// 		return '';
+	// 	},
+    // 	// templateSelection: function(state) {
+	// 	// 	var selected = $('#s_progrs_sttus_code option:selected').length;
+	// 	// 	console.log($(this).parent());
+    //   	// 	return selected+'개 선택';
+    // 	// }
+  	// });
+	/**************************************************************************
+     *
+     */
+	getProjectList();
+});
+
+$(document).keyup(function(e) {
+    if (e.keyCode == 27) { // escape key maps to keycode `27`
+        $("button[data-dismiss=modal]").trigger('click');
+    }
+});
+</script>
+{% endblock %}

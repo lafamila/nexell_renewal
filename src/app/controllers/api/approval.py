@@ -77,12 +77,11 @@ def ajax_insert_approval():
             required_member = mber.get_team_leader(member['dept_code'])
             if required_member not in approval_list:
                 return make_response("해당 품의의 결재자 리스트에는 각 팀의 팀장이 반드시 포함되어야 합니다.", 501)
-        elif int(params['approval_ty_code']) in (9, 13, 18, 32):
+        elif int(params['approval_ty_code']) in (3, 35, 42, 9, 46, 14, 18, 32):
             required_member = 63
             if required_member not in approval_list:
                 return make_response("해당 품의의 최상위 결재자[황승태]가 리스트에 존재하지 않습니다.", 501)
-        elif int(params['approval_ty_code']) in (20, 22, 23, 24, 25):
-
+        elif int(params['approval_ty_code']) in (20, 53, 54, 21, 33, 55, 22, 56, 57, 23, 58, 59, 24, 60, 61, 25, 62, 63):
             if member['rspofc_code'] != '' and int(member['rspofc_code']) == 200:
                 required_member = 63
                 if required_member not in approval_list:

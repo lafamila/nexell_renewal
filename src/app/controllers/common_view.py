@@ -13,6 +13,11 @@ def bnd_page():
 def code_page():
     return render_template('code.html', title="코드관리 | 넥셀시스템", **refresh_code_list())
 
+@bp.route('/author')
+@session_helper.session_check
+def author_page():
+    return render_template('author.html', title="권한관리 | 넥셀시스템", **refresh_code_list())
+
 @bp.route('/bcnc/<dept_code>')
 @session_helper.session_check
 def bcnc_page(dept_code):
