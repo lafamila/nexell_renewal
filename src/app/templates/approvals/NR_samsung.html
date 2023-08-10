@@ -513,6 +513,10 @@
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
             $(pRow).find("[name='now_amount[]']").val(amount.toFormat('NUMBER'));
             $(pRow).find("[name='now_samount[]']").val(now_samount.toFormat('NUMBER'));
+            if($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "") == ''){
+                $(pRow).find("[name='now_amount[]']").val('');
+                $(pRow).find("[name='now_samount[]']").val('');
+            }
         });
         $(this).parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
         $(this).parent().find("[data-column='total_sdlnt']").html(total_sdlnt.toFormat('NUMBER'));

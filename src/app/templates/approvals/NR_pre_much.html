@@ -85,16 +85,18 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15"><span>공사비 현황</span></th>
+			<th class="sub-title colorN text-center" colspan="17"><span>공사비 현황</span></th>
         </tr>
     </thead>
     <tbody role="header">
         <tr>
             <th class="color-contract text-center" colspan="4">계약현황</th>
-            <th class="color-contract text-center" colspan="9">실행현황</th>
+            <th class="color-contract text-center" colspan="11">실행현황</th>
             <th class="color-contract text-center" colspan="2">VA</th>
         </tr>
         <tr>
@@ -108,8 +110,10 @@
             <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">로지텍자재</th>
             <th class="color-contract text-center">기타자재</th>
+            <th class="color-contract text-center">M,S/H</th>
+            <th class="color-contract text-center">옵션행사비</th>
             <th class="color-contract text-center">기타비용</th>
-            <th class="color-contract text-center">영업비</th>
+            <th class="color-contract text-center">설계변경</th>
             <th class="color-contract text-center">계</th>
             <th class="color-contract text-center">이익금</th>
             <th class="color-contract text-center">VA율</th>
@@ -127,6 +131,8 @@
             <td class="text-right" data-type='number' name="E_8"></td>
             <td class="text-right" data-type='number' name="E_3"></td>
             <td class="text-right" data-type='number' name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_61"></td>
+            <td class="text-right" data-type='number' name="E_7"></td>
             <td class="text-right" data-type='number' name="E_10"></td>
             <td class="text-right" data-type='number' name="E_99"></td>
             <td class="text-right" data-type='number' data-column="E_total"></td>
@@ -164,10 +170,10 @@
 			<th class="colorP text-center">입금합계</th>
 			<th class="colorP text-center">①삼성장비</th>
 			<th class="colorP text-center">②타사장비</th>
-			<th class="colorP text-center">③설치비</th>
-			<th class="colorP text-center">④간접비</th>
-			<th class="colorP text-center">⑤로지텍자재</th>
-			<th class="colorP text-center">⑥타사자재</th>
+			<th class="colorP text-center">③도급비</th>
+			<th class="colorP text-center">④로지텍자재</th>
+			<th class="colorP text-center">⑤타사자재</th>
+			<th class="colorP text-center">⑥간접비</th>
 			<th class="colorP text-center">⑦M,S/H</th>
 			<th class="colorP text-center">⑧옵션행사비</th>
 			<th class="colorP text-center">⑨기타(총액 0.5%)</th>
@@ -558,10 +564,10 @@
                 html += '	</tr>';
                 html += '</thead>';
                 html += '<tbody>';
-                iRcppay_sub = sum_total;
+                iRcppay_sub = eCost5Total;
                 $.each(oRcppayList, function(pIndex, pValue) {
 						iRcppay_sub -= parseInt(pValue.amount);
-						iRcppay_rate = ((sum_total-iRcppay_sub)/sum_total)*100;
+						iRcppay_rate = ((eCost5Total-iRcppay_sub)/eCost5Total)*100;
 						html += '<tr>';
 						html += '    <td>'+pValue.rcppay_de+'</td>';
 						html += '    <td class="text-number">'+pValue.amount.toString().toFormat('NUMBER')+'</td>';
@@ -718,12 +724,23 @@
                                 p_sum_total_other += parseInt(pV.p_total);
                             });
                             var all_sum_total = 0;
+                            var indirect_total = 0;
+                            console.log(pData.outsrcList);
                             $.each(pData.outsrcList, function(pI, pV) {
                                 var sum_total = 0;
+                                var indirect_sum_total = 0;
                                 $.each(pV.taxbilList, function(pIndex, pValue){
-                                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                    if(pValue.pblicte_trget_sn != 116){
+
+                                        sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                    }
+                                    else{
+                                        indirect_sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+
+                                    }
                                 });
                                 all_sum_total += sum_total;
+                                indirect_total += indirect_sum_total;
                             });
                             var sum_total = 0;
                             $.each(pData.s3AccountList, function(pI, pV){
@@ -757,8 +774,9 @@
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(1)').html(p_sum_total.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(2)').html(p_sum_total_other.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(3)').html(all_sum_total.toString().toFormat('NUMBER'));
-            				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(sum_total.toString().toFormat('NUMBER'));
-	            			$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(6)').html(sum_total_other.toString().toFormat('NUMBER'));
+            				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
+	            			$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(sum_total_other.toString().toFormat('NUMBER'));
+	            			$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(6)').html(indirect_total.toString().toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(7)').html(msh_total_amount.toFormat('NUMBER'));
         					$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(8)').html(c_opt_amount.toFormat('NUMBER'));
             				$(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(9)').html(rcppay_amt_total.toString().toFormat('NUMBER'));

@@ -84,14 +84,16 @@ def get_project_datatable(params):
 				, c.register_id
 				, c.update_dtm
 				, c.updater_id
+				, c.renewal
 				FROM contract c
 				LEFT OUTER JOIN member m
 				ON m.mber_sn=c.bsn_chrg_sn
 				LEFT OUTER JOIN project p
 				ON p.cntrct_sn=c.cntrct_sn
 				WHERE 1=1
-				AND ((c.cntrct_de BETWEEN '{0} 00:00:00'
-				AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))
+				# AND ((c.cntrct_de BETWEEN '{0} 00:00:00'
+				# AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))
+				AND (c.cntrct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
 """.format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
 
     data = []
@@ -182,7 +184,9 @@ def get_contract_summary(params):
 				ON m.mber_sn=c.bsn_chrg_sn
 				WHERE 1=1
 				AND c.ctmmny_sn = 1
-				AND ((c.cntrct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))""".format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
+				# AND ((c.cntrct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))
+				AND (c.cntrct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
+				""".format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
 
 
     data = []
@@ -262,8 +266,10 @@ def get_contract_count_summary(params):
 				ON p.cntrct_sn=c.cntrct_sn
 				WHERE 1=1
 				AND c.ctmmny_sn = 1
-				AND ((c.cntrct_de BETWEEN '{0} 00:00:00'
-				AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))""".format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
+				# AND ((c.cntrct_de BETWEEN '{0} 00:00:00'
+				# AND '{1} 23:59:59') OR ((SELECT COUNT(co.cntrwk_ct_sn) FROM cost co WHERE 1=1 AND co.cntrct_execut_code IN ('A', 'C') AND co.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND co.cntrct_sn = c.cntrct_sn GROUP BY co.cntrct_sn) > 0))
+				AND (c.cntrct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59')
+				""".format(params['s_cntrct_de_start'], params['s_cntrct_de_end'])
 
 
 

@@ -813,7 +813,7 @@
                     {% if init %}
                     $.each(pResult.outsrcList, function(pIndex, pValue){
                         var company = `company${pIndex+1}`;
-                        $(document).find(`tbody[role='${company}']`).show();
+                        $(document).find(`tbody[role='company${pIndex+1}']`).show();
                         $(document).find(`[name='${company}_name']`).yVal(pValue.outsrc_fo_sn);
                         $(document).find(`[name='${company}_date']`).val(pValue.cntrct_de);
                         $(document).find(`[name='${company}_owner']`).val(pValue.rspnber_nm);
@@ -848,9 +848,16 @@
                         $(document).find(`[name='${company}_daily_change']`).attr("disabled", false);
                         $(document).find(`[name='${company}_sum_change']`).attr("disabled", false);
                         $(document).find(`tbody[role='${company}_row']`).trigger("change");
-                        $(document).find(`tbody[role='${company}']`).show();
 
                     });
+                    {% else %}
+                    console.log(pResult.outsrcList);
+                    $.each(pResult.outsrcList, function(pIndex, pValue){
+                        var company = `company${pIndex+1}`;
+                        $(document).find(`tbody[role='company${pIndex+1}']`).show();
+
+                    });
+
                     {% endif %}
                 }
             });

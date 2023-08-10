@@ -1706,7 +1706,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
 						pamount += pValue.dlamt*pValue.cnt_dlnt;
-						samount += isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.smaount);
+						samount += (isNaN(parseInt(pValue.samount)) ? 0 : pValue.samount);
 						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
 					});
 					html += `<tr>
@@ -1789,7 +1789,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
 						pamount += pValue.dlamt*pValue.cnt_dlnt;
-						samount += isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.smaount);
+						samount += isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount);
 						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
 					});
 					html += `<tr>
