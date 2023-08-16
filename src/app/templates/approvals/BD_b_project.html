@@ -66,10 +66,11 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="1"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" style="" colspan="10"><span>직납 품목 세부 내역 - VAT포함</span>
+			<th class="sub-title colorN text-center" style="" colspan="11"><span>직납 품목 세부 내역 - VAT포함</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
@@ -86,6 +87,7 @@
             <th class="color-contract text-center">계약단가</th>
             <th class="color-contract text-center">계약총액</th>
             <th class="color-contract text-center">이익금(VA)</th>
+            <th class="color-contract text-center">-</th>
         </tr>
     </thead>
     <tbody role="construct_row">
@@ -117,6 +119,9 @@
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="va[]" readonly>
+            </td>
+            <td class="hasinput">
+                <button class="btn btn-table btn-warning removeRow" title="삭제"><i class="fa fa-minus"></i></button>
             </td>
         </tr>
     </tbody>
@@ -539,4 +544,18 @@
 
     }
     {% endif %}
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+            if($(this).closest("tbody").find("tr").length > 1){
+                var tbody = $(this).closest("tbody");
+                $(this).closest("tr").remove();
+                $(tbody).trigger("change");
+            }
+            else{
+                alert("더이상 삭제할 수 없습니다.")
+            }
+        {% endif %}
+        return false;
+    });
+
 </script>

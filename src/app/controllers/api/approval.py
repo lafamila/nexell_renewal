@@ -70,6 +70,7 @@ def ajax_insert_approval():
 
         member_list = params['approval_list']
         approval_list = [int(m['mber_sn']) for m in member_list if int(m['reg_type']) == 1]
+        coop_list = [int(m['mber_sn']) for m in member_list if int(m['reg_type']) == 0]
         member = mber.get_member(session['member']['member_sn'])
         if int(session['member']['member_sn']) == 66:
             pass
@@ -81,6 +82,10 @@ def ajax_insert_approval():
             required_member = 63
             if required_member not in approval_list:
                 return make_response("해당 품의의 최상위 결재자[황승태]가 리스트에 존재하지 않습니다.", 501)
+            if int(params['approval_ty_code']) == 14:
+                required_member = 21
+                if required_member not in coop_list:
+                    return make_response("해당 품의는 필수 협조자[이학용]가 지정되어야 합니다.")
         elif int(params['approval_ty_code']) in (20, 53, 54, 21, 33, 55, 22, 56, 57, 23, 58, 59, 24, 60, 61, 25, 62, 63):
             if member['rspofc_code'] != '' and int(member['rspofc_code']) == 200:
                 required_member = 63
@@ -96,10 +101,22 @@ def ajax_insert_approval():
                 required_member = 63
                 if required_member not in approval_list:
                     return make_response("해당 품의의 최상위 결재자[황승태]가 리스트에 존재하지 않습니다.", 501)
+            if int(params['approval_ty_code']) in (20, 53, 54, 21, 55, 33):
+                required_member = 19
+                if required_member not in coop_list:
+                    return make_response("해당 품의는 필수 협조자[권은미]가 지정되어야 합니다.")
+
+
+
         else:
             required_member = 4
             if required_member not in approval_list:
                 return make_response("해당 품의의 최상위 결재자[황영구]가 리스트에 존재하지 않습니다.", 501)
+            if int(params['approval_ty_code']) == 13:
+                required_member = 11
+                if required_member not in coop_list:
+                    return make_response("해당 품의는 필수 협조자[이점수]가 지정되어야 합니다.")
+
 
         apvl_sn = apvl.insert_approval(params)
         params['approval_sn'] = apvl_sn

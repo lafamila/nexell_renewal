@@ -111,8 +111,19 @@
 				var pData = pResult.data;
 				console.log("lafamila", pData);
 				$.each(pData, function(pIndex, pValue){
+					if(pValue.prjct_ty_code == 'BF'){
+						pValue.rate = pValue.new_rate;
+					}
+					else if(pValue.prjct_ty_code == 'BD'){
+					  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
+						  pValue.rate = 0.0;
+					  }
+					  else{
+						  pValue.rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
+					  }
+
+					}
 					var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
-					rate = pValue.new_rate == '' ? rate : parseFloat(pValue.new_rate);
 					if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
 						pValue.progrs_sttus_code = 'K';
 						pValue.sttus_nm = '대기';
@@ -155,6 +166,7 @@
 					var complete_sum = pValue.complete_sum == '' ? 0 : parseInt(pValue.complete_sum);
 					var now_sum = pValue.now_sum == '' ? 0 : parseInt(pValue.now_sum);
 					var rate = pValue.rate == '' ? '0.0%' : parseFloat(pValue.rate).toFixed(1)+'%';
+					if(parseFloat(rate.replaceAll("%", "")) < 95.0) return true;
 					html += '<tr>';
 					html += '    <td class="text-center" style="vertical-align:middle;">'+pValue.dept_nm+'</td>';
 					html += '    <td class="text-center" style="vertical-align:middle;">'+pValue.sttus_nm+'</td>'

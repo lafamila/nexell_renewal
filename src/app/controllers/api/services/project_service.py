@@ -422,6 +422,7 @@ def update_contract(params):
         params["spt_nm"] = params["cntrct_nm"]
     columns = list(data.keys())
     query = """UPDATE contract SET {} WHERE cntrct_sn=%(s_cntrct_sn)s""".format(",".join(["{0}=%({0})s".format(col) for col in columns]))
+    print(query, params)
     g.curs.execute(query, params)
 
 def update_project(params):
@@ -2604,7 +2605,7 @@ def insert_b_option_bf_project(params):
         params["extra_sn"] = 0
 
     for model_no, qy, puchas_amount, dscnt_rt, fee_rt, amount in zip(params['model_no[]'], params['qy[]'], params['puchas_amount[]'], params['dc_rate[]'], params['rate[]'], params['amount[]']):
-        if model_no == '' and qy == '' and puchas_amount == '' and dscnt_rt == '' and fee_rt == '':
+        if model_no == '' and qy == '' and puchas_amount == '' and (dscnt_rt == '' or dscnt_rt.replace("%", "") == "NaN") and fee_rt == '':
             continue
         qy = int(qy.replace(",", ""))
         amount = int(amount.replace(",", ""))

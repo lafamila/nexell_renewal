@@ -647,7 +647,7 @@ def get_projects_by_dept_member(params):
 				"""
     if "s_dept_code" in data:
         if data["s_dept_code"] == "all":
-            query += " AND (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) >= 95.0"
+            query += " AND (m.dept_code LIKE 'TS%%' OR m.dept_code = 'BI') "
         else:
             query += " AND m.dept_code = %(s_dept_code)s "
     if "s_mber_sn" in data:
