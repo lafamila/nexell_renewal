@@ -1378,6 +1378,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var totals = {"C" : [0, 0], "E" : [0, 0]};
 						var tCostDTM = '9999-99-99';
 						$.each(costs, function(pIndex, pCost){
+							console.log(pCost);
 							$(tbody).find(`td[data-column="${pCost.cntrct_execut_code.toLowerCase()}Cost${pCost.ct_se_code}"]`).html(pCost.amount.toFormat('NUMBER'));
 							costTotal[pCost.cntrct_execut_code] += (pCost.amount != '') ? parseInt(pCost.amount) : 0;
 							if([1, 2].includes(parseInt(pCost.ct_se_code))){
@@ -1744,7 +1745,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    <td class=" text-number">'+pValue.s_total.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+va.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
-					html += '    <td class=""></td>';
+					html += '    <td class="text-left">'+pValue.s_rm+'</td>';
 					html += '</tr>';
 					if (pValue.dlnt1 != '') dlnt1_total += parseInt(pValue.dlnt1);
 					if (pValue.dlnt2 != '') dlnt2_total += parseInt(pValue.dlnt2);
@@ -1826,7 +1827,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    <td class=" text-number">'+pValue.s_total.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+va.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class="">'+pValue.p_bcnc_nm+'</td>';
-					html += '    <td class=""></td>';
+					html += '    <td class="text-left">'+pValue.s_rm+'</td>';
 					html += '</tr>';
 					dlnt_total += parseInt(pValue.dlnt);
 					p_sum_total += parseInt(pValue.p_total);

@@ -1270,6 +1270,7 @@ def get_s1_account_report_list(params):
 				, (s.dlnt * s.dlamt) AS s_total
 				, s.bcnc_sn AS s_bcnc_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=s.ctmmny_sn AND bcnc_sn=s.bcnc_sn) AS s_bcnc_nm
+				, IFNULL(s.rm, '') AS s_rm
 				FROM account s
 				LEFT JOIN account p
 				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
@@ -1298,6 +1299,7 @@ def get_s2_account_report_list(params):
 				, (a.dlnt * a.dlamt) AS s_total
 				, a.bcnc_sn AS s_bcnc_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=a.ctmmny_sn AND bcnc_sn=a.bcnc_sn) AS s_bcnc_nm
+				, IFNULL(a.rm, '') AS s_rm
 				FROM account a
 				LEFT JOIN account ac
 				ON a.ctmmny_sn=ac.ctmmny_sn AND a.cntrct_sn=ac.cntrct_sn AND a.prjct_sn=ac.prjct_sn AND a.cnnc_sn=ac.delng_sn
@@ -2543,7 +2545,6 @@ def insert_c_extra_project(params):
             g.curs.execute(query, data)
 
         else:
-            print(int(data['ct_se_code']), data['cntrct_execut_code'], params["establish"])
             if int(data['ct_se_code']) == 5 and data['cntrct_execut_code'] == 'E':
                 #             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : extra_sn, "register_id" : session["member"]["member_id"]})
                 if params["establish"] == False:

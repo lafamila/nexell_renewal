@@ -758,6 +758,7 @@
                     $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
                     $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
                         var pRow = pResult.extraCostList[extra_sn];
+                        last_data = {};
                         $.each(pRow, function(pIndex, pValue){
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
                             if(pValue.cntrct_execut_code != 'E' || ![3,4,5].includes(parseInt(pValue.ct_se_code))) {

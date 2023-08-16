@@ -182,7 +182,7 @@
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="model_no[]"/>
-                <input type="hidden" name="delng_ty_code[]" value="61"/>
+                <input type="hidden" name="delng_ty_code[]" value="1"/>
                 <input type="hidden" name="equip_sn[]" value=""/>
             </td>
             <td class="hasinput">
@@ -411,7 +411,7 @@
                 $(origin).find("td:not(.hasinput)").html("");
                 $(origin).find("td.hasinput input").val("");
                 //재고장비는 62
-                $(origin).find("input[type='hidden'][name='delng_ty_code[]']").val('61');
+                $(origin).find("input[type='hidden'][name='delng_ty_code[]']").val('1');
                 $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
 
                     if (pIndex == 0) {

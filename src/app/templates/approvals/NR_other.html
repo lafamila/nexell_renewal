@@ -73,7 +73,8 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
+			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span>
+            </th>
         </tr>
     </thead>
     <tbody role="header">
@@ -148,6 +149,9 @@
     <thead>
         <tr>
 			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                </div>
             </th>
         </tr>
     </thead>
@@ -180,7 +184,7 @@
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="model_no[]"/>
-                <input type="hidden" name="delng_ty_code[]" value="61"/>
+                <input type="hidden" name="delng_ty_code[]" value="2"/>
                 <input type="hidden" name="equip_sn[]" value=""/>
             </td>
             <td class="hasinput">
@@ -278,10 +282,10 @@
                 success: function(pResult){
                     console.log(pResult);
                     {% if init %}
-                    if(pResult.otherList.length == 0){
-                        alert("장비현황 및 업체선정 또는 공사변경을 통한 장비 리스트 등록이 필요합니다.");
-                        location.reload();
-                    }
+                    // if(pResult.otherList.length == 0){
+                    //     alert("장비현황 및 업체선정 또는 공사변경을 통한 장비 리스트 등록이 필요합니다.");
+                    //     location.reload();
+                    // }
                     {% endif %}
 
                     // 공사변경 part1 START
@@ -403,8 +407,10 @@
                 var origin = trs.eq(0).clone(true);
                 $(origin).find("td:not(.hasinput)").html("");
                 $(origin).find("td.hasinput input").val("");
+                $(origin).find("td.hasinput input").attr("readonly", false);
+                $(origin).find("td.hasinput select").attr("readonly", false);
                 //재고장비는 62
-                $(origin).find("input[type='hidden'][name='delng_ty_code[]']").val('61');
+                $(origin).find("input[type='hidden'][name='delng_ty_code[]']").val('2');
                 $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
 
                     if (pIndex == 0) {
@@ -495,7 +501,13 @@
             }
             {% endif %}
             var samount_dlnt = samount / cnt_dlnt;
-            var now_samount = samount_dlnt * dlnt;
+            var now_samount = 0;
+            if($(pRow).find("[name='samount[]']").val().replaceAll(",", "") != ''){
+                now_samount = samount_dlnt * dlnt;
+            }
+            else{
+                now_samount = parseInt($(pRow).find("[name='now_samount[]']").val().replaceAll(",", "")); if(isNaN(now_samount)) now_samount = 0;
+            }
             var amount = dlnt*dlamt;
             var va = now_samount-amount;
             total_amount += amount;
@@ -546,6 +558,10 @@
 
 
     {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("equip_tr", 1);
+    });
+
     		if(window.projects == undefined){
 			window.projects = {};
 		}
