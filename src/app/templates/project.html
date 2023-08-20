@@ -1817,6 +1817,7 @@ getOutsrcList = function(s_cntrct_sn, s_prjct_sn)
 	var params = '';
 	params += '&s_cntrct_sn=' + s_cntrct_sn;
 	params += '&s_prjct_sn=' + s_prjct_sn;
+	params += '&purpose=total';
 
 	$.ajax({
 		url: '/api/project/ajax_get_outsrc_list',

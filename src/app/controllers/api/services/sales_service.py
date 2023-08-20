@@ -960,7 +960,7 @@ def update_equipment_establish(params):
             c['outsrc_dtls'] = None
 
         c['register_id'] = session['member']['member_id']
-        query = """SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s"""
+        query = """SELECT outsrc_sn FROM outsrc WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND outsrc_fo_sn NOT IN (116, 146)"""
         g.curs.execute(query, c)
         outsrcs = g.curs.fetchall()
         if int(idx.replace("company", ""))-1 < len(outsrcs):
@@ -973,12 +973,15 @@ def update_equipment_establish(params):
             outsrc_sn = outsrc['outsrc_sn']
             query = """DELETE FROM outsrc_item WHERE outsrc_sn=%s"""
             g.curs.execute(query, (outsrc_sn, ))
-            for item_type, item_nm, item_dlnt, item_damt in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+            for item_type, item_nm, item_dlnt, item_damt, item_total in zip(c['item_type[]'], c['item_name[]'],
+                                                                            c['item_dlnt[]'], c['item_damt[]'],
+                                                                            c['item_total[]']):
                 if item_nm != '':
                     if item_type == '':
                         item_type = '0'
 
                     dlnt = int(item_dlnt.replace(",", ""))
+                    total = int(item_total.replace(",", ""))
                     damt = int(item_damt.replace(",", ""))
                     query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
                     g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
@@ -988,7 +991,7 @@ def update_equipment_establish(params):
                     pParams["model_no"] = item_nm
                     pParams["cost_type"] = int(item_type)
                     pParams["qy"] = dlnt
-                    pParams["puchas_amount"] = int(damt*1.1)
+                    pParams["puchas_amount"] = total / dlnt
                     pParams["extra_sn"] = extra_sn
                     if int(item_type) == 3:
                         row = g.curs.execute(
@@ -1025,13 +1028,15 @@ def update_equipment_establish(params):
             g.curs.execute(query, c)
             outsrc_sn = g.curs.lastrowid
 
-            for item_type, item_nm, item_dlnt, item_damt in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+            for item_type, item_nm, item_dlnt, item_damt, item_total in zip(c['item_type[]'], c['item_name[]'],
+                                                                            c['item_dlnt[]'], c['item_damt[]'],
+                                                                            c['item_total[]']):
                 if item_nm != '':
-
                     if item_type == '':
                         item_type = '0'
 
                     dlnt = int(item_dlnt.replace(",", ""))
+                    total = int(item_total.replace(",", ""))
                     damt = int(item_damt.replace(",", ""))
                     query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
                     g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
@@ -1041,7 +1046,7 @@ def update_equipment_establish(params):
                     pParams["model_no"] = item_nm
                     pParams["cost_type"] = int(item_type)
                     pParams["qy"] = dlnt
-                    pParams["puchas_amount"] = int(damt * 1.1)
+                    pParams["puchas_amount"] = total / dlnt
                     pParams["extra_sn"] = extra_sn
                     if int(item_type) == 3:
                         row = g.curs.execute(
@@ -1121,12 +1126,14 @@ def insert_equipment(params):
         g.curs.execute(query, c)
         outsrc_sn = g.curs.lastrowid
 
-        for item_type, item_nm, item_dlnt, item_damt in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]']):
+        for item_type, item_nm, item_dlnt, item_damt, item_total in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]'], c['item_total[]']):
             if item_nm != '':
                 if item_type == '':
                     item_type = '0'
 
                 dlnt = int(item_dlnt.replace(",", ""))
+                total = int(item_total.replace(",", ""))
+
                 damt = int(item_damt.replace(",", ""))
                 query = """INSERT INTO outsrc_item(outsrc_sn, item_nm, item_dlnt, item_damt) VALUES (%s, %s, %s, %s)"""
                 g.curs.execute(query, (outsrc_sn, item_nm, dlnt, damt))
@@ -1136,7 +1143,7 @@ def insert_equipment(params):
                 pParams["model_no"] = item_nm
                 pParams["cost_type"] = int(item_type)
                 pParams["qy"] = dlnt
-                pParams["puchas_amount"] = int(damt*1.1)
+                pParams["puchas_amount"] = total / dlnt
                 if int(item_type) == 3:
                     isThereDaily.append(pParams)
                     continue
@@ -1250,6 +1257,8 @@ def insert_equipment(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
 
 
 def insert_equipment_samsung(params):

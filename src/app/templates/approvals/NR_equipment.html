@@ -434,14 +434,16 @@
                                 <input type="text" class="form-control text-left" name="company1_item_name[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" data-type="number" name="company1_item_dlnt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="company1_item_dlnt[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" data-type="number" name="company1_item_damt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="company1_item_damt[]"/>
                             </td>
                             <td class="text-right" data-column="company1_item_amount[]"></td>
                             <td class="text-right" data-column="company1_item_tax[]"></td>
-                            <td class="text-right" data-column="company1_item_total[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company1_item_total[]"/>
+                            </td>
                             <td class="colorP text-right" data-column="company1_item_pink[]" colspan="2"></td>
                         </tr>
                     </tbody>
@@ -585,14 +587,16 @@
                                 <input type="text" class="form-control text-left" name="company2_item_name[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" data-type="number" name="company2_item_dlnt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="company2_item_dlnt[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" data-type="number" name="company2_item_damt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="company2_item_damt[]"/>
                             </td>
                             <td class="text-right" data-column="company2_item_amount[]"></td>
                             <td class="text-right" data-column="company2_item_tax[]"></td>
-                            <td class="text-right" data-column="company2_item_total[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company2_item_total[]"/>
+                            </td>
                             <td class="colorP text-right" data-column="company2_item_pink[]" colspan="2"></td>
                         </tr>
                     </tbody>
@@ -736,14 +740,16 @@
                                 <input type="text" class="form-control text-left" name="company3_item_name[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" data-type="number" name="company3_item_dlnt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="company3_item_dlnt[]"/>
                             </td>
                             <td class="hasinput">
-                                <input type="text" class="form-control text-left" data-type="number" name="company3_item_damt[]"/>
+                                <input type="text" class="form-control text-right" data-type="number" name="company3_item_damt[]"/>
                             </td>
                             <td class="text-right" data-column="company3_item_amount[]"></td>
                             <td class="text-right" data-column="company3_item_tax[]"></td>
-                            <td class="text-right" data-column="company3_item_total[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company3_item_total[]"/>
+                            </td>
                             <td class="colorP text-right" data-column="company3_item_pink[]" colspan="2"></td>
                         </tr>
                     </tbody>
@@ -1078,13 +1084,29 @@
         $(this).find("tr").each(function(pIndex, pRow){
             var dlnt = parseInt($(pRow).find(`input[name='${company}_item_dlnt[]']`).val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var damt = parseInt($(pRow).find(`input[name='${company}_item_damt[]']`).val().replaceAll(",", "")); if(isNaN(damt)) damt = 0;
+            var total = parseInt($(pRow).find(`input[name='${company}_item_total[]']`).val().replaceAll(",", "")); if(isNaN(total)) total = 0;
+
+            if($(pRow).find(`input[name='${company}_item_damt[]']`).val() != '' &&  $(pRow).find(`input[name='${company}_item_total[]']`).val() == ''){
+                var amount = dlnt*damt;
+                var tax = Math.round(amount*0.1);
+                var total = amount + tax;
+                $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
+                $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
+                $(pRow).find(`input[name='${company}_item_total[]']`).val(total.toFormat('NUMBER'));
+                total_amount += total;
+            }
+            else{
+                var tax = Math.round(total / 11);
+                var amount = Math.round(total / 1.1);
+                var damt = Math.round(amount / dlnt);
+                $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
+                $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
+                $(pRow).find(`input[name='${company}_item_damt[]']`).val(damt.toFormat('NUMBER'));
+            }
+
             var amount = dlnt*damt;
             var tax = Math.round(amount*0.1);
             var total = amount + tax;
-            $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
-            $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
-            $(pRow).find(`[data-column='${company}_item_total[]']`).html(total.toFormat('NUMBER'));
-            total_amount += total;
         });
         $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
         $(this).yRowspan(7);

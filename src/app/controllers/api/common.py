@@ -901,6 +901,9 @@ def ajax_insert_research():
 @bp.route('/common/get_upload_file_id', methods=['POST'])
 def get_upload_file_id():
     try:
+        origin_filename = request.form.get("origin_filename")
+        if origin_filename is None:
+            origin_filename = ""
         ext = request.form.get("ext")
         order = request.form.get("order")
         now = datetime.now(timezone('Asia/Seoul')).strftime("%Y%m%d%H%M%S")
@@ -912,7 +915,7 @@ def get_upload_file_id():
         else:
             filename = "{}_{}.{}".format(now, order, ext)
         file_sn = cm.insert_file(filename)
-        return jsonify({"filename": filename, "filesize": CHUNK_SIZE, "file_sn" : file_sn, "order" : order})
+        return jsonify({"filename": filename, "filesize": CHUNK_SIZE, "file_sn" : file_sn, "order" : order, "origin_filename" : origin_filename})
     except Exception as e:
         print(e)
         return make_response(str(e), 500)

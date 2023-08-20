@@ -476,7 +476,7 @@
                 var cntrct_amount_total = 0, cntrct_fee_amount_total = 0;
                 cloneRow("construct_expect_tr", pResult.cCostListExtra.length-1);
                 $.each(pResult.cCostListExtra, function(pIndex, pValue){
-                    var cntrct_amount = pValue.puchas_amount * (pValue.dscnt_rt / 100.0) * pValue.qy;
+                    var cntrct_amount = Math.round(pValue.puchas_amount * ((100 - pValue.dscnt_rt) / 100.0) * pValue.qy);
                     var cntrct_fee_amount = cntrct_amount * (pValue.fee_rt / 100.0);
                     cntrct_amount_total += cntrct_amount;
                     cntrct_fee_amount_total += cntrct_fee_amount;
@@ -487,22 +487,41 @@
                     $("tbody[role='construct_expect_row']").find(`[name="expect_rate[]"]`).eq(pIndex).val(pValue.fee_rt+"%");
                 });
                 $("tbody[role='construct_expect_row']").trigger("change");
+                var D_61 = 0, D_61_DC = 0, D_7 = 0, E_7 = 0, D_10 = 0;
                 $.each(pResult.eCostListExtra, function(pIndex, pValue){
                     if(pValue.ct_se_code == "61"){
 
-                        $(`tbody[role="ct_se_code"]`).find(`[name="D_61"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
-                        $(`tbody[role="ct_se_code"]`).find(`[name="D_61_DC"]`).val((pValue.puchas_amount*pValue.add_dscnt_rt/100.0).toFormat('NUMBER'));
+                        D_61 += !isNaN(parseInt(pValue.puchas_amount)) ? Math.round(pValue.puchas_amount * ((100-pValue.dscnt_rt)/100))*pValue.qy : 0;
+                        D_61_DC += !isNaN(Math.round((pValue.puchas_amount*pValue.add_dscnt_rt/100.0))) ? Math.round(pValue.puchas_amount*pValue.add_dscnt_rt/100.0)*pValue.qy: 0;
                     }
                     else if(pValue.ct_se_code == "7"){
-                        $(`tbody[role="ct_se_code"]`).find(`[name="D_7"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                        D_7 +=  !isNaN(parseInt(pValue.puchas_amount)) ? parseInt(pValue.puchas_amount)*pValue.qy : 0;
+                        E_7 +=  !isNaN(parseInt(pValue.puchas_amount)) ? parseInt(pValue.puchas_amount)*pValue.qy : 0;
                     }
                     else if(pValue.ct_se_code == "10"){
-                        $(`tbody[role="ct_se_code"]`).find(`[name="D_10"]`).val(pValue.puchas_amount.toFormat('NUMBER'));
+                        D_10 += !isNaN(parseInt(pValue.puchas_amount)) ? parseInt(pValue.puchas_amount)*pValue.qy : 0;
                     }
                 });
+                $(`tbody[role="ct_se_code"]`).find(`[name="D_61"]`).val(D_61.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="D_61_DC"]`).val(D_61_DC.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="D_7"]`).val(D_7.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="E_7"]`).val(E_7.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="D_10"]`).val(D_10.toFormat('NUMBER'));
+                var e_61 = 0;
+                var e_61_dc = 0;
+                $.each(pResult.eCostList, function(pIndex, pValue){
+                    if(["61", "62", "64", "65"].includes(pValue.ct_se_code)){
+                        e_61 += Math.round(pValue.puchas_amount* ((100-pValue.dscnt_rt)/100))*pValue.qy;
+                        e_61_dc += (pValue.puchas_amount*pValue.add_dscnt_rt/100.0)*pValue.qy;
+                    }
+                });
+                $(`tbody[role="ct_se_code"]`).find(`[name="E_61"]`).val(e_61.toFormat('NUMBER'));
+                $(`tbody[role="ct_se_code"]`).find(`[name="E_61_DC"]`).val(e_61_dc.toFormat('NUMBER'));
                 $.each(pResult.gCostList, function(pIndex, pValue){
                      $(`tbody[role="ct_se_code"]`).find(`[name="D_63"]`).val(pValue.salamt.toFormat('NUMBER'));
+                     $(`tbody[role="ct_se_code"]`).find(`[name="E_63"]`).val(pValue.salamt.toFormat('NUMBER'));
                 });
+
                 $(`tbody[role="ct_se_code"]`).find(`[name="total_cntrct_fee_amount"]`).val(cntrct_fee_amount_total.toFormat('NUMBER'));
                 $(`tbody[role="ct_se_code"]`).find(`[name="total_rate"]`).val((cntrct_fee_amount_total*100.0/cntrct_amount_total).toFixed(1)+"%");
                 $(`tbody[role="ct_se_code"]`).find(`[name="total_cntrct_amount"]`).val(cntrct_amount_total.toFormat('NUMBER'));

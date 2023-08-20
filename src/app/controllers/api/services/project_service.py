@@ -1517,6 +1517,8 @@ def get_outsrc_list(params):
     				WHERE o.cntrct_sn = %(s_cntrct_sn)s
     				AND o.prjct_sn = %(s_prjct_sn)s
     """
+    if "purpose" not in params:
+        query += " AND o.outsrc_fo_sn NOT IN (116, 146)"
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -2361,6 +2363,9 @@ def insert_BF_c_project(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
+
 
 
 def update_BF_c_project(params):
@@ -2405,6 +2410,8 @@ def update_BF_c_project(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"], ))
 
 
 def insert_c_project(params):
@@ -2494,6 +2501,8 @@ def insert_c_project(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
 
 
 def insert_c_extra_project(params):
@@ -2582,6 +2591,8 @@ def insert_c_extra_project(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
 
 
 def delete_option_bf_project(params):
@@ -2744,6 +2755,8 @@ def insert_b_bd_project(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
 
 
 def insert_b_bf_project(params):
@@ -2803,6 +2816,8 @@ def insert_b_bf_project(params):
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
 
 
 def insert_b_project(params):
@@ -2856,6 +2871,8 @@ def insert_b_project(params):
         if prjct["prjct_sn"] is not None:
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
 
 def insert_option_cost(params):
     prefix = "e_" if params['opt_approval_type'] == 'S' else "c_"

@@ -66,6 +66,7 @@
     height:100%;
     border:none;
     resize:none;
+    vertical-align:middle!important;
   }
   #report table td, #report table th{
     height: 35px!important;
@@ -135,6 +136,7 @@
       <col width="540"/>
       <col width="100"/>
       <col width="150"/>
+      <col width="50"/>
     </colgroup>
     <thead>
       <tr>
@@ -142,6 +144,7 @@
         <th class="colorGray text-center bold">시간</th>
         <th class="colorGray text-center bold" colspan="2">내용</th>
         <th class="colorGray text-center bold">비고</th>
+        <th class="colorGray text-center bold">-</th>
       </tr>
     </thead>
     <tbody role="schedule_row">
@@ -160,6 +163,10 @@
         </td>
         <td class="hasinput">
             <input type="text" class="text-center form-control" name="rm1[]"/>
+        </td>
+        <td class="hasinput" rowspan="3">
+          <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+
         </td>
       </tr>
       <tr data-row="schedule_tr">
@@ -299,8 +306,6 @@
       <tr>
         <td class="text-center">현장 전경 사진</td>
         <td class="hasinput">
-            <input class="upload-name" value="사진을 첨부해주세요." disabled="disabled">
-            <label for="ex_filename">첨부하기</label>
             <input type="file" id="ex_filename" name="ex_filename" class="upload-hidden" accept="image/*" multiple="multiple">
         </td>
         <td class="hasinput">
@@ -320,8 +325,26 @@
   <div id="images">
 
   </div>
+
+  <div class="" style="width:120px;position:fixed;right:10px;bottom:10px;">
+    <h6>첨부파일 리스트</h6>
+    <ol id="file-list-ol">
+    </ol>
+  </div>
 </div>
 <script>
+  $(document).on("click", "#file-list-ol .file-list", function(){
+    var idx = $(document).find("#file-list-ol .file-list").index($(this));
+    if($(document).find("[name='f_sn[]']").length > 1){
+      $(document).find(`tr[data-row="images_tr"]`).eq(idx).remove();
+      $(this).remove();
+    }
+    else{
+      $(document).find(`[name='f_sn[]']`).eq(idx).val('');
+      $(this).remove();
+
+    }
+  });
     function isValidDate(dateString) {
       var regEx = /^\d{4}-\d{2}-\d{2}$/;
       if(!dateString.match(regEx)) return false;  // Invalid format
@@ -387,13 +410,13 @@
     });
     {% if init %}
     $(document).on("change", "#ex_filename", function(){
-      cloneRow("images_tr", document.querySelector("#ex_filename").files.length-1);
+      cloneRow("images_tr", document.querySelector("#ex_filename").files.length + $(document).find(".file-list").length - $(document).find("[name='f_sn[]']").length);
       window.length = document.querySelector("#ex_filename").files.length;
       $("#my-spinner").show();
       for(let i=0;i<document.querySelector("#ex_filename").files.length;i++){
         const file = document.querySelector("#ex_filename").files[i];
         const filesize = file.size;
-        var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : i};
+        var params = {"origin_filename" : file.name, "filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : i};
         $.ajax({
             url : '/api/common/get_upload_file_id',
             method : 'POST',
@@ -402,9 +425,10 @@
                 let name = pResult.filename;
                 let chunk_size = pResult.filesize;
                 let file_sn = pResult.file_sn;
+                let file_origin = pResult.origin_filename;
                 let ord = pResult.order;
                 let start = 0;
-                create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+                create_chunk(ord, file_sn, file_origin, name, file, chunk_size, start, 0);
             },
             error: function(){
                 alert("오류가 발생했습니다.");
@@ -421,7 +445,7 @@
       }
 
     });
-    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+    function create_chunk(order, file_sn, file_origin, name, file, chunk_size, start, idx){
         let chunk_end = Math.min(start + chunk_size , file.size );
         const chunk = file.slice(start, chunk_end);
         const form = new FormData();
@@ -440,14 +464,15 @@
                 return;
             }
             if(start + chunk_size < file.size){
-                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+                create_chunk(order, file_sn, file_origin, name, file, chunk_size, start+chunk_size, idx+1);
             }
             else{
               //cloneRow할자리
               console.log(order);
               console.log($(document).find("[name='f_sn[]']"));
               console.log($(document).find("[name='f_sn[]']").eq(order));
-              $(document).find("[name='f_sn[]']").eq(order).val(file_sn);
+              $(document).find("[name='f_sn[]']").eq(order+$(document).find(".file-list").length).val(file_sn);
+              $(document).find("#file-list-ol").append(`<li class="file-list">${file_origin}</li>`);
               window.length--;
               if(window.length == 0){
                 $("#my-spinner").hide();
@@ -459,6 +484,17 @@
 
     $(document).on("click", "#addRow", function(){
         cloneRow("schedule_tr", 1);
+    });
+    $(document).on("click", ".removeRow", function(){
+        if($(document).find(`tbody[role="schedule_row"]`).find(`tr[data-row="schedule_tr"]`).length == 3){
+          alert("더이상 삭제할 수 없습니다.");
+          return false;
+        }
+        $(this).closest(`tr[data-row="schedule_tr"]`).next().next().remove();
+        $(this).closest(`tr[data-row="schedule_tr"]`).next().remove();
+        $(this).closest(`tr[data-row="schedule_tr"]`).remove();
+        $(document).find(`tbody[role="schedule_row"]`).trigger("change");
+
     });
     		if(window.projects == undefined){
 			window.projects = {};

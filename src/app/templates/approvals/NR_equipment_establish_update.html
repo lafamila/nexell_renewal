@@ -856,7 +856,15 @@
                     $.each(pResult.outsrcList, function(pIndex, pValue){
                         var company = `company${pIndex+1}`;
                         $(document).find(`tbody[role='company${pIndex+1}']`).show();
-
+                        $(`tbody[role='${company}_row']`).find("tr").each(function(pIndex, pRow){
+                            var name = $(pRow).find(`input[name='${company}_item_name[]']`).val();
+                            var dlnt = $(pRow).find(`input[name='${company}_item_dlnt[]']`).val();
+                            var damt = $(pRow).find(`input[name='${company}_item_damt[]']`).val();
+                            if(name == '' && dlnt == '' && damt == ''){
+                                $(pRow).remove();
+                            }
+                        });
+                        $(`tbody[role='${company}_row']`).trigger("change");
                     });
 
                     {% endif %}

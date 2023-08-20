@@ -315,7 +315,7 @@ div.report table th, div.report table td{
 				</div>
 			</div>
 			<div class="modal-header">
-				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">
+				<div style="margin-left:10px;margin-right:10px;display:grid;grid-template-columns: 1fr 63px;">장
 					<input type="text" name="approval_title" id="approval_title" style="width:100%;height:32px!important;" class="form-control" placeholder="제목"/>
 					<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 상신합니다."><i class="fa fa-save"> 저장</i></button>
 				</div>
@@ -521,7 +521,7 @@ div.report table th, div.report table td{
 										<div style="max-height:480px;overflow-y:auto;">
 											{% for code in member_list %}
 												{% if code.value not in (73, 74) %}
-												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
+												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}" data-code="{{code.dept_code}}">{{code.label}} {{code.etc1}}</div>
 												{% endif %}
 											{% endfor %}
 
@@ -539,7 +539,18 @@ div.report table th, div.report table td{
 												<input type="radio" name="member-approval-select" value="2" autocomplete="off" >수신
 											</label>
 										</div>
+
+										<span class="dept-group-btn" style="position:absolute;left:50%;bottom:90px;transform:translateX(-50%);font-size:9px!important;font-weight:bold!important;">부서별</span>
+										<div class="btn-group btn-group-justified dept-group-btn" data-toggle="buttons" style="position:absolute;left:50%;bottom:0px;transform:translate(-50%, 0%);display:grid;grid-template-rows:1fr 1fr 1fr;max-height:90px!important;overflow-y:auto;">
+											{% for code in dept_code_list %}
+											<label class="btn btn-default" style="text-align:left!important;padding-top:0px!important;padding-bottom:0px!important;width:90%;height:16px!important;font-size:6px!important;" disabled="true">
+												<input type="radio" name="dept-code-select" value="{{code.value}}" autocomplete="off">{{code.label}}
+											</label>
+											{% endfor %}
+										</div>
+
 									</div>
+
 									<div style="display:grid;grid-template-rows:32px 480px;border-left:1px solid #333;border-right:1px solid #333;">
 										<div style="background-color:#0070C0!important;color:white;display:flex;align-items: center;justify-content: center;">
 											결재/협조
@@ -570,6 +581,38 @@ div.report table th, div.report table td{
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
+
+	$(document).on("change", "input[name='member-approval-select']", function(){
+		var apvl_type = parseInt($("input[name='member-approval-select']:checked").val());
+		if(apvl_type == 2){
+			$(document).find(".dept-group-btn").find("label").attr("disabled", false);
+		}
+		else{
+			$(document).find(".dept-group-btn").find("label").attr("disabled", true);
+		}
+
+	});
+	$(document).on("change", "input[name='dept-code-select']", function(){
+		var dept_code = $(document).find("input[name='dept-code-select']:checked").val();
+		$(document).find(`.member-list-item[data-code='${dept_code}']`).each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var apvl_type = 2;
+			var target = ".approval-right";
+			var duplicated = false;
+			$(document).find("div.badge").each(function(pIndex, pT){
+				if(mber_sn == $(pT).data("sn") && apvl_type == parseInt($(pT).data("type"))){
+					duplicated = true;
+					return false;
+				}
+			});
+			if(!duplicated){
+				$(pTag).trigger("click");
+			}
+		});
+		$(document).find("input[name='dept-code-select']:checked").closest("label").removeClass("active");
+		$(document).find("input[name='dept-code-select']:checked").attr("checked", false);
+	});
+
 	$(document).on("keydown", "#member-search", function(e){
 		if(e.keyCode == 13) {
 		  e.preventDefault();

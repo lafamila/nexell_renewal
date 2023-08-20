@@ -56,6 +56,17 @@ def get_approval_template():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/ajax_update_approval_member', methods=['POST'])
+def ajax_update_approval_member():
+    try:
+        params = request.get_json()
+        apvl.insert_approval_member(params)
+        return jsonify({"status" : True, "message" : "성공적으로 입력되었습니다.", "approval_sn" : params["approval_sn"]})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
 @bp.route('/ajax_insert_approval', methods=['POST'])
 def ajax_insert_approval():
     try:

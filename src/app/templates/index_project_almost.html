@@ -175,7 +175,7 @@
 					html += '    <td class="text-center">'+pValue.spt_nm+'</td>'
 					html += '    <td class="text-right">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>'
 					html += '    <td class="text-center">'+pValue.cntrwk_period+'</td>'
-					html += `    <td class="text-center ${parseFloat(pValue.rate) >= 95.0 ? "colorP" : ""}">${rate}</td>`
+					html += `    <td class="text-center ${(parseFloat(pValue.rate) >= 100.0) ? "colorY" : (parseFloat(pValue.rate) >= 95.0 ? "colorP" : "")}">${rate}</td>`
 					html += '</tr>';
 					count += 1;
 					amount += pValue.cntrct_amount == '' ? 0 : parseInt(pValue.cntrct_amount);

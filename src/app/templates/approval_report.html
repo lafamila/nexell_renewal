@@ -645,6 +645,14 @@ div.report table th, div.report table td{
                                 //
                                 $("#btnApprove").attr("disabled", false);
                                 $("#btnNotApprove").attr("disabled", false);
+								$("#approval_member_0, #approval_member_1, #approval_member_2").on("click", function(){
+									$("#popBox1").modal("show");
+								});
+								$("#member_add").on("click", function(){
+									$("#popBox1").modal("show");
+								});
+
+
                             }
                             else{
                                 $("#btnApprove").attr("disabled", true);
@@ -696,6 +704,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 			return false;
 		}
 	}
+	$(document).find("#btnApprove, #btnNotApprove, #btnApproveCancel").attr("disabled", true);
 	$.ajax({
 		url : '/api/approval/update_approval',
 		method : 'POST',
@@ -777,6 +786,11 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 					<div class="jarviswidget-ctrls" role="menu">
 						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
 					</div>
+					{% if init == "show" %}
+					<div class="jarviswidget-ctrls" role="menu">
+						<button type="button" class="btn btn-primary" id="btnSaveMember" title="결재자 리스트를 추가합니다."><i class="fa fa-save"> 저장</i></button>
+					</div>
+					{% endif %}
 
 				</header>
 				<div role="content" style="min-height:110px;height:auto;">
@@ -794,7 +808,7 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 										<div style="max-height:480px;overflow-y:auto;">
 											{% for code in member_list %}
 												{% if code.value not in (73, 74) %}
-												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}">{{code.label}} {{code.etc1}}</div>
+												<div class="member-list-item" data-sn="{{code.value}}" data-nm="{{code.label}} {{code.etc1}}" data-code="{{code.dept_code}}">{{code.label}} {{code.etc1}}</div>
 												{% endif %}
 											{% endfor %}
 
@@ -812,6 +826,16 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 												<input type="radio" name="member-approval-select" value="2" autocomplete="off" >수신
 											</label>
 										</div>
+
+										<span class="dept-group-btn" style="position:absolute;left:50%;bottom:90px;transform:translateX(-50%);font-size:9px!important;font-weight:bold!important;">부서별</span>
+										<div class="btn-group btn-group-justified dept-group-btn" data-toggle="buttons" style="position:absolute;left:50%;bottom:0px;transform:translate(-50%, 0%);display:grid;grid-template-rows:1fr 1fr 1fr;max-height:90px!important;overflow-y:auto;">
+											{% for code in dept_code_list %}
+											<label class="btn btn-default" style="text-align:left!important;padding-top:0px!important;padding-bottom:0px!important;width:90%;height:16px!important;font-size:6px!important;" disabled="true">
+												<input type="radio" name="dept-code-select" value="{{code.value}}" autocomplete="off">{{code.label}}
+											</label>
+											{% endfor %}
+										</div>
+
 									</div>
 									<div style="display:grid;grid-template-rows:32px 480px;border-left:1px solid #333;border-right:1px solid #333;">
 										<div style="background-color:#0070C0!important;color:white;display:flex;align-items: center;justify-content: center;">
@@ -843,6 +867,81 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
+	$(document).on("click", "#btnSaveMember", function(){
+		var approval_sn = "{{approval_sn}}";
+		var params = {"approval_sn" : approval_sn, "approval_list" : []}
+		$(".approval-right .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type})
+		});
+		var loginSN = $("#loginSN").val();
+		var pass=false;
+		$(".approval-left .badge").each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var approval_type = $(pTag).data("type");
+			params.approval_list.push({"mber_sn" : mber_sn, "reg_type": approval_type});
+			if((parseInt(approval_type) == 1) && (loginSN == mber_sn)){
+				pass=true;
+			}
+		});
+		$.ajax({
+			url: '/api/approval/ajax_update_approval_member',
+			type: 'POST',
+			data: JSON.stringify(params),
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			processData: false,
+			validate: function() {
+				return true;
+			},
+			success: function(pResult){
+				alert("추가되었습니다.");
+				location.reload();
+				// getApproval(pResult.approval_sn);
+			},
+			error:function(request,status,error){
+				if(request.status == 501){
+					alert(request.responseText);
+				}
+				else{
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				}
+		    }
+		});
+
+	});
+	$(document).on("change", "input[name='member-approval-select']", function(){
+		var apvl_type = parseInt($("input[name='member-approval-select']:checked").val());
+		if(apvl_type == 2){
+			$(document).find(".dept-group-btn").find("label").attr("disabled", false);
+		}
+		else{
+			$(document).find(".dept-group-btn").find("label").attr("disabled", true);
+		}
+
+	});
+	$(document).on("change", "input[name='dept-code-select']", function(){
+		var dept_code = $(document).find("input[name='dept-code-select']:checked").val();
+		$(document).find(`.member-list-item[data-code='${dept_code}']`).each(function(pIndex, pTag){
+			var mber_sn = $(pTag).data("sn");
+			var apvl_type = 2;
+			var target = ".approval-right";
+			var duplicated = false;
+			$(document).find("div.badge").each(function(pIndex, pT){
+				if(mber_sn == $(pT).data("sn") && apvl_type == parseInt($(pT).data("type"))){
+					duplicated = true;
+					return false;
+				}
+			});
+			if(!duplicated){
+				$(pTag).trigger("click");
+			}
+		});
+		$(document).find("input[name='dept-code-select']:checked").closest("label").removeClass("active");
+		$(document).find("input[name='dept-code-select']:checked").attr("checked", false);
+	});
+
 	$(document).on("keydown", "#member-search", function(e){
 		if(e.keyCode == 13) {
 		  e.preventDefault();
