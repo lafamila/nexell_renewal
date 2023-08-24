@@ -61,7 +61,7 @@
                     {% if not init %}
                         <option value=""></option>
                         {% for code in contract_list %}
-                        <option value="{{code.value}}">{{code.label}}</option>
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
                         {% endfor %}
                     {% endif %}
                 </select>
@@ -156,7 +156,7 @@
                     {% if not init %}
                         <option value=""></option>
                         {% for code in contract_list %}
-                        <option value="{{code.value}}">{{code.label}}</option>
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
                         {% endfor %}
                     {% endif %}
                 </select>

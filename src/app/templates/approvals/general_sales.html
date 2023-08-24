@@ -28,7 +28,7 @@
                     {% if not init %}
                         <option value=""></option>
                         {% for code in contract_list %}
-                        <option value="{{code.value}}">{{code.label}}</option>
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
                         {% endfor %}
                     {% endif %}
                 </select>
@@ -354,10 +354,10 @@
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
                     if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
-                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
                     }
                     else{
-                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
                     }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });

@@ -137,7 +137,7 @@ def update_approval(params):
     g.curs.execute(query, data)
 
 def get_approval_datatable(params):
-    query = """SELECT a.approval_sn
+    query = """SELECT distinct a.approval_sn
 				, a.approval_ty_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code) AS approval_ty_nm
 				, (SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TTY_CODE' AND code=(SELECT estn_code_a FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=a.approval_ty_code)) AS approval_se_code

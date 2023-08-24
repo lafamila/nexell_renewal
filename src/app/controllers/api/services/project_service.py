@@ -3105,8 +3105,8 @@ def update_c_project(params):
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
-        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
-        g.curs.execute(query, (prjct["prjct_sn"],))
+        prjct1 = get_project_by_cntrct_nm(params["cntrct_sn_1"])
+        g.curs.execute(query, (prjct1["prjct_sn"],))
         result = g.curs.fetchone()
         if result and result["partclr_matter"]:
             before = result["partclr_matter"]
@@ -3116,8 +3116,23 @@ def update_c_project(params):
                                                   "손익보전", params["option_bigo"])
 
         query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
-        if prjct["prjct_sn"] is not None:
-            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        if prjct1["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct1["prjct_sn"]))
+
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct2 = get_project_by_cntrct_nm(params["cntrct_sn_2"])
+        g.curs.execute(query, (prjct2["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"),
+                                                  "손익보전", params["option_bigo"])
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct2["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct2["prjct_sn"]))
 
 def get_reserved_project_list(params):
     query = """SELECT c.cntrct_sn

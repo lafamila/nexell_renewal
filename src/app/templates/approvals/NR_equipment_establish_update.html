@@ -42,7 +42,7 @@
                     {% if not init %}
                         <option value=""></option>
                         {% for code in contract_list %}
-                        <option value="{{code.value}}">{{code.label}}</option>
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
                         {% endfor %}
                     {% endif %}
                 </select>
@@ -276,7 +276,9 @@
                             </td>
                             <td class="text-right" data-column="company1_item_amount[]"></td>
                             <td class="text-right" data-column="company1_item_tax[]"></td>
-                            <td class="text-right" data-column="company1_item_total[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company1_item_total[]"/>
+                            </td>
                             <td class="colorP text-right" data-column="company1_item_pink[]" colspan="2"></td>
                         </tr>
                     </tbody>
@@ -433,7 +435,9 @@
                             </td>
                             <td class="text-right" data-column="company2_item_amount[]"></td>
                             <td class="text-right" data-column="company2_item_tax[]"></td>
-                            <td class="text-right" data-column="company2_item_total[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company2_item_total[]"/>
+                            </td>
                             <td class="colorP text-right" data-column="company2_item_pink[]" colspan="2"></td>
                         </tr>
                     </tbody>
@@ -590,7 +594,9 @@
                             </td>
                             <td class="text-right" data-column="company3_item_amount[]"></td>
                             <td class="text-right" data-column="company3_item_tax[]"></td>
-                            <td class="text-right" data-column="company3_item_total[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company3_item_total[]"/>
+                            </td>
                             <td class="colorP text-right" data-column="company3_item_pink[]" colspan="2"></td>
                         </tr>
                     </tbody>
@@ -830,6 +836,7 @@
                             $(document).find(`[name='${company}_item_name[]']`).eq(pI).val(pR.model_no);
                             $(document).find(`[name='${company}_item_dlnt[]']`).eq(pI).val(pR.qy.toFormat('NUMBER'));
                             $(document).find(`[name='${company}_item_damt[]']`).eq(pI).val(Math.round(pR.amount/1.1).toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_item_total[]']`).eq(pI).val((pR.amount * pR.qy).toFormat('NUMBER'));
                             eCost5Total += Math.round(parseInt(pR.qy) * parseInt(pR.amount));
                         });
                         if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
@@ -924,13 +931,26 @@
         $(`tbody[role='${company}_row']`).find("tr").each(function(pIndex, pRow){
             var dlnt = parseInt($(pRow).find(`input[name='${company}_item_dlnt[]']`).val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var damt = parseInt($(pRow).find(`input[name='${company}_item_damt[]']`).val().replaceAll(",", "")); if(isNaN(damt)) damt = 0;
-            var amount = dlnt*damt;
-            var tax = Math.round(amount*0.1);
-            var total = amount + tax;
-            $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
-            $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
-            $(pRow).find(`[data-column='${company}_item_total[]']`).html(total.toFormat('NUMBER'));
-            total_amount += total;
+            var total = parseInt($(pRow).find(`input[name='${company}_item_total[]']`).val().replaceAll(",", "")); if(isNaN(total)) total = 0;
+
+            if($(pRow).find(`input[name='${company}_item_damt[]']`).val() != '' &&  $(pRow).find(`input[name='${company}_item_total[]']`).val() == ''){
+                var amount = dlnt*damt;
+                var tax = Math.round(amount*0.1);
+                var total = amount + tax;
+                $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
+                $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
+                $(pRow).find(`input[name='${company}_item_total[]']`).val(total.toFormat('NUMBER'));
+                total_amount += total;
+            }
+            else{
+                var tax = Math.round(total / 11);
+                var amount = Math.round(total / 1.1);
+                var damt = Math.round(amount / dlnt);
+                $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
+                $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
+                $(pRow).find(`input[name='${company}_item_damt[]']`).val(damt.toFormat('NUMBER'));
+                total_amount += total;
+            }
         });
         $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
         $(this).yRowspan(7);
@@ -1133,10 +1153,10 @@
                 var html = `<option value="">[전체]</option>`;
                 $.each(pResult, function(pIndex, pValue){
                     if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
-                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.spt_nm}</option>`;
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
                     }
                     else{
-                        html += `<option value="${pValue.cntrct_sn}">${pValue.spt_nm}</option>`;
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
                     }
                     window.projects[pValue.cntrct_sn] = pValue;
                 });
