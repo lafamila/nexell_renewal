@@ -419,7 +419,7 @@
         $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
         $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", true);
         $.ajax({
-            url : '/api/project/get_b_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var cntrct_sn = $(document).find("#cntrct_sn").val();

@@ -1274,7 +1274,7 @@ def get_money_data(params):
 				, MIN(t.collct_de) AS collct_de
 				, MAX(t.pblicte_de) AS pblicte_de
 				, SUM(t.splpc_am + IFNULL(t.vat, 0)) AS amount
-				, MIN(IFNULL(r.rcppay_de, '9999-99-99')) AS rcppay_de
+				, MAX(IFNULL(r.rcppay_de, '9999-99-99')) AS rcppay_de
 				, SUM(IFNULL(r.price_1, 0)) AS price_1
 				, SUM(IFNULL(r.price_2, 0)) AS price_2		
                 , (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr						

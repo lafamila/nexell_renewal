@@ -519,7 +519,7 @@
     $(document).ready(function(){
         $(document).find("tbody[role='ct_se_code'] input").attr("disabled", true);
         $.ajax({
-            url : '/api/project/get_b_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var cntrct_sn = $(document).find("#cntrct_sn").val();

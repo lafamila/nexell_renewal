@@ -439,7 +439,12 @@
                             var rcppay_amt_total = 0;
                             $.each(pData.etcRcppayList, function(pI, pV){
                                 var amt = parseInt(pV.amount);
-                                rcppay_amt_total += parseInt(amt);
+                                if(parseInt(pV.acntctgr_code) != 504) {
+                                    rcppay_amt_total += parseInt(amt);
+                                }
+                                else{
+                                    c_opt_amount += parseInt(amt);
+                                }
                             });
 
                             $(document).find('#report_exec tbody[role=body] tr[data-row=result] td:eq(0)').html(cCostTotal.toString().toFormat('NUMBER'));
