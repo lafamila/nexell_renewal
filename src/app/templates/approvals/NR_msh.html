@@ -771,7 +771,7 @@
         $(document).find("tbody[role='ms_house_row'] input").attr("disabled", true);
         $(document).find("tbody[role='ms_house_row'] select").attr("disabled", true);
         $.ajax({
-            url : '/api/project/get_b_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var cntrct_sn = $(document).find("#cntrct_sn").val();

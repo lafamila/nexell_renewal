@@ -500,7 +500,7 @@
                 $(pRow).find("[name='dlnt[]']").val(dlnt.toFormat('NUMBER'));
             }
             {% endif %}
-            var samount_dlnt = samount / cnt_dlnt;
+            var samount_dlnt = samount / cnt_dlnt; if(cnt_dlnt == 0) {samount_dlnt = 0; dlamt = 0;}
             var now_samount = samount_dlnt * dlnt;
             var amount = dlnt*dlamt;
             var va = now_samount-amount;

@@ -1222,25 +1222,29 @@ def insert_equipment(params):
         g.curs.executemany(query, equipments_other)
     if equipments_update:
         for eq in equipments_update:
-            query = """SELECT equip_sn, cnt_dlnt FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s"""
+            query = """SELECT * FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s"""
             row = g.curs.execute(query, eq)
             if row:
-                before = g.curs.fetchone()
-                cnt_dlnt_before = before['cnt_dlnt']
-                equip_sn = before['equip_sn']
-                query = """UPDATE expect_equipment SET cnt_dlnt=%(cnt_dlnt)s WHERE equip_sn=%(equip_sn)s"""
-                g.curs.execute(query, {"cnt_dlnt" : int(cnt_dlnt_before) + int(eq['cnt_dlnt']), "equip_sn" : equip_sn})
+                before = g.curs.fetchone(transform=False)
+                del before['equip_sn']
+                del before['reg_time']
+                before['cnt_dlnt'] = int(eq['cnt_dlnt'])
+                keys = list(before.keys())
+                query = """INSERT INTO expect_equipment({0}) VALUES ({1})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+                g.curs.execute(query, before)
 
     if equipments_other_update:
         for eq in equipments_other_update:
-            query = """SELECT equip_sn, cnt_dlnt FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s"""
+            query = """SELECT * FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s"""
             row = g.curs.execute(query, eq)
             if row:
-                before = g.curs.fetchone()
-                cnt_dlnt_before = before['cnt_dlnt']
-                equip_sn = before['equip_sn']
-                query = """UPDATE expect_equipment SET cnt_dlnt=%(cnt_dlnt)s WHERE cntrct_sn=%(equip_sn)s"""
-                g.curs.execute(query, {"cnt_dlnt" : int(cnt_dlnt_before) + int(eq['cnt_dlnt']), "equip_sn" : equip_sn})
+                before = g.curs.fetchone(transform=False)
+                del before['equip_sn']
+                del before['reg_time']
+                before['cnt_dlnt'] = int(eq['cnt_dlnt'])
+                keys = list(before.keys())
+                query = """INSERT INTO expect_equipment({0}) VALUES ({1})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+                g.curs.execute(query, before)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""

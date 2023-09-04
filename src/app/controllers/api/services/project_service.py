@@ -2723,23 +2723,23 @@ def insert_b_bd_project(params):
         g.curs.execute(query, pParams)
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, add_dscnt_rt, cost_date, extra_sn, regist_dtm, register_id, dspy_se_code)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '61', '74', '(예상)', 1, %(b61)s, 0.0, %(b61rate)s ,'0000-00-00', 0, %(regist_dtm)s, %(register_id)s, 1)"""
-    params['b61'] = int(params['D_61'].replace(",", ""))
+    params['b61'] = int(params['D_61'].replace(",", "")) if params['D_61'].replace(",", "") != '' else 0
     params['b61rate'] = (int(params['D_61_DC'].replace(",", ""))*100/int(params['D_61'].replace(",", ""))) if int(params['D_61'].replace(",", "")) != 0 else 0.0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, salamt, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'G', '63', '판매금액', 1, %(b63)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b63'] = int(params['D_63'].replace(",", ""))
+    params['b63'] = int(params['D_63'].replace(",", "")) if params['D_63'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '10', '기타비용', 1, %(b10)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b10'] = int(params['D_10'].replace(",", ""))
+    params['b10'] = int(params['D_10'].replace(",", "")) if params['D_10'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b7'] = int(params['D_7'].replace(",", ""))
+    params['b7'] = int(params['D_7'].replace(",", "")) if params['D_7'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
@@ -3009,9 +3009,9 @@ def get_expect_equip_list(params):
                     , e.bcnc_sn
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
                     , e.delng_ty_code
-                    , e.cnt_dlnt
+                    , SUM(e.cnt_dlnt) AS cnt_dlnt
                     , e.dlamt
-                    , e.samt AS samount
+                    , SUM(e.samt) AS samount
                     , e.rm
                     , e.dlivy_amt
                     , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm
@@ -3032,7 +3032,8 @@ def get_expect_equip_list(params):
 
     query += """
                 AND e.delng_ty_code='1'
-                AND cntrct_sn = %(s_cntrct_sn)s"""
+                AND cntrct_sn = %(s_cntrct_sn)s
+                GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -3044,20 +3045,30 @@ def get_expect_equip_other_list(params):
                     , e.bcnc_sn
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
                     , e.delng_ty_code
-                    , e.cnt_dlnt
+                    , SUM(e.cnt_dlnt) AS cnt_dlnt
                     , e.dlamt
-                    , e.samt AS samount
+                    , SUM(e.samt) AS samount
                     , e.rm
                     , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm                    
                     , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
                     , IFNULL(q.dlnt, 0) AS sdlnt
                     , IFNULL(q.before_dlnt, 0) AS before_dlnt
                 FROM expect_equipment e
-                LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
-                ON e.equip_sn=q.cnnc_sn
-                WHERE 1=1
+"""
+    if "approval_sn" in params:
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND reg_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) GROUP BY cnnc_sn) q
+                        ON e.equip_sn=q.cnnc_sn
+                        WHERE 1=1 
+                        AND e.reg_time < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
+    else:
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
+                        ON e.equip_sn=q.cnnc_sn
+                        WHERE 1=1 """
+
+    query += """
                 AND e.delng_ty_code='2'
-                AND cntrct_sn = %(s_cntrct_sn)s"""
+                AND cntrct_sn = %(s_cntrct_sn)s
+                GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result

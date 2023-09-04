@@ -19,23 +19,24 @@ class Cursor:
     def executemany(self, query, params=tuple()):
         return self.cursor.executemany(query, params)
 
-    def fetchone(self):
+    def fetchone(self, transform=True):
         result = self.cursor.fetchone()
         if result is None:
             return result
-        for key, obj in result.items():
+        if transform:
+            for key, obj in result.items():
 
-            if isinstance(obj, datetime.datetime):
-                result[key] = obj.strftime('%Y-%m-%d')
+                if isinstance(obj, datetime.datetime):
+                    result[key] = obj.strftime('%Y-%m-%d')
 
-            if isinstance(obj, datetime.date):
-                result[key] = obj.strftime('%Y-%m-%d')
+                if isinstance(obj, datetime.date):
+                    result[key] = obj.strftime('%Y-%m-%d')
 
-            if isinstance(obj, decimal.Decimal):
-                result[key] = float(obj)
+                if isinstance(obj, decimal.Decimal):
+                    result[key] = float(obj)
 
-            if obj is None:
-                result[key] = ""
+                if obj is None:
+                    result[key] = ""
 
         return result
 

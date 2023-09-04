@@ -2475,7 +2475,18 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 				/* 특이사항 */
 				/* ********************************************************* */
-				$('#popReportBD').find('#partclr_matter').html(project.partclr_matter.trim().replaceAll("\n", "<br>")); //특이사항
+				// $('#popReportBD').find('#partclr_matter').html(project.partclr_matter.trim().replaceAll("\n", "<br>")); //특이사항
+				var partclrs = project.partclr_matter.trim().split("\n");
+				var re_partclrs = "";
+				for(let i=0;i<partclrs.length;i++){
+					if(isValidDate(partclrs[i].split(" ")[0])){
+						re_partclrs += "<span style='color:blue!important;'>" + partclrs[i] + "</span><br>";
+					}
+					else{
+						re_partclrs += partclrs[i] + "<br>";
+					}
+				}
+				$('#popReportBD').find('#partclr_matter').html(re_partclrs);
 				/* ********************************************************* */
 
                 var cells = $('#popReportBD').find('td, th');
@@ -2493,6 +2504,17 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 
     });
+
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+
 	$(function() {
 		/**************************************************************************
 		 * 인쇄 버튼 클릭 처리

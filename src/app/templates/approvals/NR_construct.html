@@ -105,7 +105,7 @@
             <th class="color-contract text-center">도급비</th>
             <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">로지텍자재</th>
-            <th class="color-contract text-center">기타자재</th>
+            <th class="color-contract text-center">타사자재</th>
             <th class="color-contract text-center">기타비용</th>
             <th class="color-contract text-center">설계변경</th>
             <th class="color-contract text-center">계</th>
@@ -194,15 +194,28 @@
 <!--            <td class="text-right" name="a_total"></td>-->
 <!--            <td class="text-right" name="a_now_total"></td>-->
 <!--            <td class="text-center colorG" name="a_rate"></td>-->
-            <td class="text-right" name=""></td>
-            <td class="text-right" name=""></td>
-            <td class="text-right" name=""></td>
-            <td class="text-right" name=""></td>
+            <td class="hasinput">
+
+                <input type="text" class="form-control text-right" name="s12_account_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="cum_apply_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="indirect_sum_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="sum_123_total" readonly/>
+            </td>
             <td class="text-right" name="a_before_total"></td>
             <td class="text-right" name="a_now_diff"></td>
             <td class="text-right" name="b_now_total"></td>
-            <td class="text-right" name="b_before_total"></td>
-            <td class="text-right" name="b_now_diff"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="all_sum_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="b_now_diff" readonly/>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -238,7 +251,7 @@
             <td class="text-right" name="bcnc_completed_total"></td>
             <td class="colorP text-center" name="bcnc_completed_rate"></td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" name="bcnc_now_total"/>
+                <input type="text" class="form-control text-right" data-type="number" name="bcnc_now_total"/>
             </td>
             <td class="colorP text-center" name="bcnc_now_rate"></td>
             <td class="colorY text-right" name="bcnc_total_total"></td>
@@ -278,7 +291,7 @@
             <th class="color-contract text-center">일용직</th>
             <th class="color-contract text-center">계</th>
             <th class="color-contract text-center">로지텍자재</th>
-            <th class="color-contract text-center">기타자재</th>
+            <th class="color-contract text-center">타사자재</th>
             <th class="color-contract text-center">계</th>
         </tr>
     </thead>
@@ -504,11 +517,17 @@
                         }
                         $(tbody).find(`[data-column="qy"]`).html(pRow.qy.toFormat('NUMBER'));
                     }
+                    else{
+                        $(tbody).find(`[data-column="qy"]`).html(pRow.qy.toFormat('NUMBER'));
+
+                    }
                     /*
                     * TODO : item_sn을 이용해 저장된 라벨 목록이 있는지 확인후에 가져올것
                     *  else if(pRow.item_sn is in SOMETHING){
                     *  }
                     * */
+
+
 
                 });
                 $.ajax({
@@ -546,6 +565,111 @@
                         // {% endif %}
                     }
                 });
+                var prjct_sn = pResult.prjct.prjct_sn;
+                $.ajax({
+                    url: '/api/project/ajax_get_reportNR',
+                    type: 'GET',
+                    data: {"s_cntrct_sn" : cntrct_sn, "s_prjct_sn" : prjct_sn},
+                    success: function(pData) {
+                        var cCostTotal = 0;
+                        $.each(pData.aCostList, function(pI, pV){
+                            var amount = 0;
+                            if (pV.amount != '') { amount = parseInt(pV.amount); }
+                            if (pV.cntrct_execut_code == 'C') // 계약
+                            {
+                                cCostTotal += amount;
+                            }
+                        });
+
+                        var max_extra_sn = 0;
+                        $.each(pData.extraCostList, function(pI, pV){
+                            if(pV.extra_sn > max_extra_sn){
+                                max_extra_sn = pV.extra_sn;
+                            }
+                        });
+                        if(pData.extraCostList.length > 0) {
+                            cCostTotal = 0;
+                            $.each(pData.extraCostList, function (pI, pV) {
+                                var amount = 0;
+                                if (pV.amount != '') {
+                                    amount = parseInt(pV.amount);
+                                }
+                                if (pV.cntrct_execut_code == 'C') // 계약
+                                {
+                                    if(pV.extra_sn == max_extra_sn)
+                                        cCostTotal += amount;
+                                }
+                            });
+                        }
+                        var amt_tot = 0;
+                        $.each(pData.rcppayList, function(pI, pV) {
+                            var amount_total = 0;
+                            var iRcppayList = pV.iRcppayList;
+                            $.each(iRcppayList, function(pIndex, pValue) {
+                                amount_total += parseInt(pValue.amount);
+                            });
+                            amt_tot += amount_total;
+                        });
+                        var p_sum_total = 0;
+                        $.each(pData.s1AccountList, function(pI, pV){
+                            p_sum_total += parseInt(pV.p_total);
+                        });
+                        var p_sum_total_other = 0;
+                        $.each(pData.s2AccountList, function(pI, pV){
+                            p_sum_total_other += parseInt(pV.p_total);
+                        });
+                        var all_sum_total = 0, indirect_sum_total = 0;
+                        $.each(pData.outsrcList, function(pI, pV) {
+                            var sum_total = 0;
+
+                            $.each(pV.taxbilList, function(pIndex, pValue){
+                                sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                            });
+                            if([116].includes(pV.outsrc_fo_sn)){
+                                indirect_sum_total += sum_total;
+                            }
+                            else{
+                                all_sum_total += sum_total;
+
+                            }
+                        });
+                        var sum_total = 0;
+                        $.each(pData.s3AccountList, function(pI, pV){
+                            var sum = parseInt(pV.s_total);
+                            sum_total += parseInt(sum);
+                        });
+                        var sum_total_other = 0;
+                        $.each(pData.s4AccountList, function(pI, pV){
+                            var sum = parseInt(pV.p_total);
+                            sum_total_other += parseInt(sum);
+                        });
+                        var msh_total_amount = 0;
+                        $.each(pData.sModelCostList, function(pI, pV){
+                            var dlamt = parseInt(pV.dlamt); if(isNaN(dlamt)) dlamt = 0;
+                            var dlnt = parseInt(pV.dlnt); if(isNaN(dlnt)) dlnt = 0;
+                            var amount = dlamt*dlnt;
+                            msh_total_amount += amount;
+                        });
+                        var c_opt_amount = 0;
+                        if(pData.sOptionCostList != null){
+                            c_opt_amount = parseInt(pData.sOptionCostList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
+                        }
+                        var rcppay_amt_total = 0;
+                        $.each(pData.etcRcppayList, function(pI, pV){
+                            var amt = parseInt(pV.amount);
+                            if(parseInt(pV.acntctgr_code) != 504) {
+                                rcppay_amt_total += parseInt(amt);
+                            }
+                            else{
+                                c_opt_amount += parseInt(amt);
+                            }
+                        });
+                        $(document).find("[name='s12_account_total']").val((p_sum_total + p_sum_total_other).toFormat('NUMBER'));
+                        $(document).find("[name='indirect_sum_total']").val(indirect_sum_total.toFormat('NUMBER'));
+                        $(document).find("[name='all_sum_total']").val(all_sum_total.toFormat('NUMBER'));
+                    }
+                });
+
 
             }
         });
@@ -671,9 +795,10 @@
             b_now_sum += getValue($(pTbody).find(`[name="body_b_now[]"]`), false);
         });
         var a_before_total = getValue($(document).find("[name='a_before_total']"));
-        var b_before_total = getValue($(document).find("[name='b_before_total']"));
-        var a_now_diff = a_now_sum - a_before_total;
-        var b_now_diff = b_now_sum - b_before_total;
+        var b_before_total = getValue($(document).find("[name='all_sum_total']"), false);
+        var sum_123_total = (getValue($(document).find(`[name="s12_account_total"]`), false) + getValue($(document).find(`[name="indirect_sum_total"]`), false) + a_now_sum);
+        var a_now_diff = sum_123_total - a_before_total; if(a_now_diff < 0) a_now_diff = 0;
+        var b_now_diff = b_now_sum - b_before_total; if(b_now_diff < 0) b_now_diff = 0;
         $(document).find("[name='a_total']").html(a_sum.toFormat('NUMBER'));
         $(document).find("[name='a_now_total']").html(a_now_sum.toFormat('NUMBER'));
         $(document).find("[name='a_rate']").html((a_now_sum*100.0/a_sum).toFixed(1) + "%");
@@ -681,8 +806,9 @@
         $(document).find("[name='b_total']").html(b_sum.toFormat('NUMBER'));
         $(document).find("[name='b_now_total']").html(b_now_sum.toFormat('NUMBER'));
         $(document).find("[name='b_rate']").html((b_now_sum*100.0/b_sum).toFixed(1) + "%");
-        $(document).find("[name='b_now_diff']").html(b_now_diff.toFormat('NUMBER'));
-
+        $(document).find("[name='b_now_diff']").val(b_now_diff.toFormat('NUMBER'));
+        $(document).find("[name='cum_apply_total']").val(a_now_sum.toFormat('NUMBER'));
+        $(document).find("[name='sum_123_total']").val(sum_123_total.toFormat('NUMBER'));
     });
     fnValidate = function(){
                     var result = true;
