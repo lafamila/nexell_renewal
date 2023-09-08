@@ -675,7 +675,7 @@ def get_model_list():
         for d in result['model']:
             stocks = st.get_stock_by_account(d['delng_sn'])
             for stock in stocks:
-                pParams = {"s_stock_sn" : stock['stock_sn']}
+                pParams = {"s_stock_sn": stock['stock_sn']}
                 if "approval_sn" in params and params["approval_sn"]:
                     pParams["approval_sn"] = params["approval_sn"]
                 detail = st.get_stock_log(pParams)
@@ -690,7 +690,7 @@ def get_model_list():
                         continue
                     if candidate and log['log_sn'] == stock['log_sn']:
                         if d['delng_sn'] not in result['modelList']:
-                            result['modelList'][d['delng_sn']] = {"count" : 0, "return_de" : None, "return_place" : None}
+                            result['modelList'][d['delng_sn']] = {"count": 0, "return_de": None, "return_place": None}
                         result['modelList'][d['delng_sn']]["count"] += 1
                         result['modelList'][d['delng_sn']]["return_de"] = candidateDate
                         result['modelList'][d['delng_sn']]["return_place"] = candidatePlace
@@ -699,16 +699,17 @@ def get_model_list():
                     candidateDate = None
                     candidatePlace = None
 
-
         result['after'] = []
         delng_sns = [acc['delng_sn'] for acc in result['model']]
-        g.curs.execute("SELECT log_sn, stock_sn, cnnc_sn FROM stock_log WHERE delng_sn IN ({})".format(
-            ",".join(['%s'] * len(delng_sns))), delng_sns)
-        stocks = g.curs.fetchall(transform=False)
-        for stock in stocks:
-            if stock['cnnc_sn'] is not None:
-                result['after'].append(stock['stock_sn'])
+        if delng_sns:
+            g.curs.execute("SELECT log_sn, stock_sn, cnnc_sn FROM stock_log WHERE delng_sn IN ({})".format(
+                ",".join(['%s'] * len(delng_sns))), delng_sns)
+            stocks = g.curs.fetchall(transform=False)
+            for stock in stocks:
+                if stock['cnnc_sn'] is not None:
+                    result['after'].append(stock['stock_sn'])
         return jsonify(result)
+
     except Exception as e:
         print(e)
         return make_response(str(e), 500)

@@ -2844,7 +2844,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* ********************************************************* */
 
 				// $('#popReportNR').find('#partclr_matter').html(project.partclr_matter.trim().replaceAll("\n", "<br>")); //특이사항
-				var partclrs = project.partclr_matter.trim().split("\n");
+				var partclrs = project.partclr_matter.replaceAll("<br>", "\n").trim().split("\n");
 				var re_partclrs = "";
 				for(let i=0;i<partclrs.length;i++){
 					if(isValidDate(partclrs[i].split(" ")[0])){

@@ -442,6 +442,7 @@
                 $(document).find(`tr[data-row='option_header'] td[data-limit]`).removeClass("colorY");
                 $(document).find(`tr[data-row='option_header'] td[data-limit='${window.home_count*500}']`).addClass("colorY");
             }
+            $(document).find("#option_1").trigger("change");
         }
     });
     $(document).on("change", "#option_1, #option_2, #option_3", function(){

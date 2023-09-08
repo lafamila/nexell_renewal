@@ -509,6 +509,7 @@ div.report table th, div.report table td{
                             var app = pResult.approval;
 							window.app = pResult.approval;
                             $.each(app.approval_data, function(key, value){
+
                                 if(key.endsWith("[]")){
                                     var pTag = $("#formContent").find(`[name='${key}']:not(disabled)`);
                                     if(pTag.length == 0){
@@ -548,7 +549,6 @@ div.report table th, div.report table td{
                                     var tagType = '';
                                     if($(pTag).prop("tagName") == undefined || $(pTag).prop("tagName") == null){
                                         pTag = $("#formContent").find(`[name='${key}']`);
-                                        console.log(key);
                                         tagName = $(pTag).eq(0).prop("tagName").toUpperCase();
                                         tagType = $(pTag).eq(0).attr("type");
                                     }

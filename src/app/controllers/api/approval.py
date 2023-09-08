@@ -86,10 +86,13 @@ def ajax_insert_approval():
         if int(session['member']['member_sn']) == 66:
             pass
         elif int(params['approval_ty_code']) in (1, 39, 40):
-            required_member = mber.get_team_leader(member['dept_code'])
+            required_member = 63
             if required_member != approval_list[-1]:
-                return make_response("해당 품의의 최상위 결재자는 반드시 각 팀의 팀장이어야 합니다.", 501)
-        elif int(params['approval_ty_code']) in (3, 35, 42, 9, 46, 14, 18, 32):
+                return make_response("해당 품의의 최상위 결재자[황승태]가 일치하지 않습니다.", 501)
+            # required_member = mber.get_team_leader(member['dept_code'])
+            # if required_member != approval_list[-1]:
+            #     return make_response("해당 품의의 최상위 결재자는 반드시 각 팀의 팀장이어야 합니다.", 501)
+        elif int(params['approval_ty_code']) in (3, 35, 42, 9, 46, 14, 18, 32, 11):
             required_member = 63
             if required_member != approval_list[-1]:
                 return make_response("해당 품의의 최상위 결재자[황승태]가 일치하지 않습니다.", 501)

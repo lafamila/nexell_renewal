@@ -609,7 +609,7 @@ def insert_cost(params):
             data[key] = params[key]
 
     if 'reg_de' in params and params['reg_de']:
-        data['regist_dtm'] = params['reg_de']+" 00:00:00"
+        data['regist_dtm'] = params['reg_de']+" {}".format(datetime.now(timezone('Asia/Seoul')).strftime("%H:%M:%S"))
     else:
         data['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
 
@@ -658,7 +658,9 @@ def update_cost(params):
             else:
                 data[key] = '0000-00-00'
     if 'reg_de' in params and params["reg_de"]:
-        data["regist_dtm"] = params["reg_de"] + " 00:00:00"
+        g.curs.execute("SELECT regist_dtm FROM cost WHERE cntrwk_ct_sn=%(s_cntrwk_ct_sn)s", params)
+        raw = g.curs.fetchone(transform=False)
+        data['regist_dtm'] = params['reg_de']+" {}".format(raw["regist_dtm"].strftime("%H:%M:%S"))
 
     if 'update_dtm' in params and params['update_dtm']:
         data['update_dtm'] = params['update_dtm']

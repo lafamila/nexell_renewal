@@ -362,8 +362,6 @@
 
                     {% if init %}
                     cloneRow("equip_tr", pResult.samsungList.length-$(document).find(`tr[data-row="equip_tr"]`).length);
-                    {% endif %}
-
                     $.each(pResult.samsungList, function(pIndex, pRow){
                         $.each(pRow, function(pName, pValue){
                             var pTag = $("tbody[role='equip_row']").find(`[name='${pName}[]']`).eq(pIndex);
@@ -392,6 +390,73 @@
 
                         })
                     });
+                    {% else %}
+                    var total_contributes = [];
+                    for(let i=0;i<pResult.samsungList.length;i++){
+                        total_contributes.push(i);
+                    }
+
+                    $.each(pResult.samsungList, function(_, pRow){
+                        var pIndex = null;
+                        var keys = ["model_no", "cnt_dlnt", "dlamt", "samount", "rm"];
+                        var contributes = [];
+                        for(let i=0;i<total_contributes.length;i++){
+                            contributes.push(total_contributes[i]);
+                        }
+                        for(let i=0;i<keys.length;i++){
+                            let key = keys[i];
+                            var tags = $(document).find("tbody[role='equip_row']").find(`[name='${key}[]']`);
+                            $.each(tags, function(pI, pT){
+                                if($(pT).data("type") == "number"){
+                                    if(parseInt($(pT).val().replaceAll(",", "")) != parseInt(pRow[key])){
+                                        if(contributes.includes(pI)){
+                                            contributes.splice(contributes.indexOf(pI), 1);
+                                        }
+                                    }
+                                }
+                                else{
+                                    if($(pT).val() != pRow[key]){
+                                        if(contributes.includes(pI)){
+                                            contributes.splice(contributes.indexOf(pI), 1);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        pIndex = contributes[0];
+                        if(total_contributes.includes(pIndex)){
+                            total_contributes.splice(total_contributes.indexOf(pIndex), 1);
+                        }
+
+                        $.each(pRow, function(pName, pValue){
+                            var pTag = $("tbody[role='equip_row']").find(`[name='${pName}[]']`).eq(pIndex);
+                            var tagName = $(pTag).prop("tagName");
+                            if(tagName == "INPUT"){
+                                if($(pTag).data("type") == "number"){
+                                    $(pTag).val(pValue.toFormat('NUMBER'));
+                                }
+                                else{
+                                    $(pTag).val(pValue);
+                                }
+                                $(pTag).attr("readonly", true);
+                            }
+                            else if(tagName == "TD"){
+                                if($(pTag).data("type") == "number"){
+                                    $(pTag).html(pValue.toFormat('NUMBER'));
+                                }
+                                else{
+                                    $(pTag).html(pValue);
+                                }
+                            }
+                            else if(tagName == "SELECT"){
+                                $(pTag).yVal(pValue);
+                                $(pTag).attr("readonly", true);
+                            }
+
+                        })
+                    });
+
+                    {% endif %}
                     $("tbody[role='equip_row']").trigger("change");
 
                 }
@@ -493,7 +558,13 @@
             var dlamt = parseInt($(pRow).find("[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
             var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
+            if($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "") == ''){
+                $(pRow).find("[name='sdlnt[]']").html("0");
+            }
             var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            if($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "") == ''){
+                $(pRow).find("[name='dlnt[]']").val("0");
+            }
             {% if init %}
             if(dlnt + sdlnt > cnt_dlnt){
                 dlnt = cnt_dlnt - sdlnt;

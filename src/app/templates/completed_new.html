@@ -434,6 +434,7 @@ getReportNR = function(s_pxcond_mt)
 
 
                 var amt = {}; //현장별 C/E 누계 총합
+                var rm = {};
                 $.each(pResult.completedList, function(pIndex, pValue){
                     var sum = parseInt(pValue.complete_amount)+(
                     parseInt(pValue.tax_amount) == 0?parseInt(pValue.excut_amount):parseInt(pValue.tax_amount));
@@ -445,6 +446,13 @@ getReportNR = function(s_pxcond_mt)
 
                     }
                     amt[pValue.cntrct_sn][pValue.cntrct_execut_code] += sum;
+
+                    if(!rm.hasOwnProperty(pValue.cntrct_sn)){
+                        rm[pValue.cntrct_sn] = "";
+                    }
+                    if(pValue.rm != rm[pValue.cntrct_sn] && pValue.rm != ""){
+                        rm[pValue.cntrct_sn] = pValue.rm;
+                    }
                 });
 
 
@@ -580,8 +588,8 @@ getReportNR = function(s_pxcond_mt)
                         var p_amt_sum_rt = (parseInt(amt[pValue.cntrct_sn][pValue.cntrct_execut_code])/parseInt(pValue.c_amt_sum))*100;
                         html += '<tr>';
                         html += '    <td class="text-center">'+pValue.bsn_dept_nm+'</td>';
-                        html += '    <td class="text-center" style="color:#333;">'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
-                        html += '    <td class="text-center">'+pValue.cntrct_bcnc_nm+'</td>';
+                        html += '    <td class="text-center" style="color:#333;"><span data-sn="'+pValue.bsn_dept_nm+'"></span>'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
+                        html += '    <td class="text-center"><span data-sn="'+pValue.bsn_dept_nm+pValue.spt_chrg_nm+'"></span>'+pValue.cntrct_bcnc_nm+'</td>';
                         html += '    <td class="text-left font13'+isNewContract+'" title="'+pValue.cntrct_de+'" '+isNoProject+'>'+pValue.spt_nm+'</td>';
                         html += '    <td class="text-center'+isNewContract+'" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
                         html += '    <td class="text-center'+cbg+isNewContract+isNewConstruct+'">'+pValue.purchsofc_nm+'</td>';
@@ -607,7 +615,7 @@ getReportNR = function(s_pxcond_mt)
                         html += '    <td class="text-number'+cbg+isOverpay+'" style="border-right:2px solid black!important;">'+(rt3==0.0?'-':(rt3.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number'+cbg+isEmuchC+'">'+amt[pValue.cntrct_sn][pValue.cntrct_execut_code].toString().toFormat('NUMBER')+'<div style="display:none;">'+pValue.cntrct_sn+':'+pValue.cntrct_execut_code+'</div></td>';
                         html += '    <td class="text-number'+cbg+'">'+p_amt_sum_rt.toFixed(1)+'%<div style="display:none;">'+pValue.cntrct_sn+':'+pValue.cntrct_execut_code+'</div></td>';
-                        html += '    <td class="text-left">'+pValue.rm+'</td>';
+                        html += '    <td class="text-left"><span data-sn="'+pValue.cntrct_sn+'"></span>'+rm[pValue.cntrct_sn]+'</td>';
                         html += '</tr>';
                     }
 					if (pValue.cntrct_execut_code == 'C') {
@@ -691,6 +699,7 @@ getReportNR = function(s_pxcond_mt)
 				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(4);
 				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(13);
 				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(14);
+				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(15);
 				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(0);
 				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(1);
 				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(2);
@@ -698,6 +707,7 @@ getReportNR = function(s_pxcond_mt)
 				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(4);
 				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(13);
 				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(14);
+				$('#popReport').find('#rptCompletedListTS2 tbody[role=body]').yRowspan(15);
 
 
 

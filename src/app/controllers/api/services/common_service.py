@@ -18,9 +18,7 @@ def get_bbs_datatable(params):
     data = []
 
     if "s_reg_dtm_start" in params and params["s_reg_dtm_start"]:
-        query += " AND reg_dtm BETWEEN %s AND %s"
-        data.append(params["s_reg_dtm_start"])
-        data.append(params["s_reg_dtm_end"])
+        query += " AND reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'".format(params["s_reg_dtm_start"], params["s_reg_dtm_end"])
 
     if "s_bbs_type" in params and params["s_bbs_type"]:
         query += " AND bbs_type=%s "

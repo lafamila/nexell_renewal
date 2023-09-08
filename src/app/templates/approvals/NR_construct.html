@@ -298,38 +298,50 @@
     <tbody role="logi">
         <tr>
             <th class="color-contract text-center">전월 누계 집행 금액</th>
-            <td class="text-right" name="outsrc_cntrct_amount" rowspan="3"></td>
-            <td class="text-right" name="completed_est_1"></td>
-            <td class="text-right" name="completed_est_2"></td>
-            <td class="text-right" name="completed_est_3"></td>
+            <td class="hasinput" rowspan="3">
+                <input type="text" class="form-control text-right" data-type="number" name="outsrc_cntrct_amount" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_est_1" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_est_2" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_est_3" readonly/>
+            </td>
             <td class="text-right" name="completed_est_total"></td>
-            <td class="text-right" name="completed_logi_1"></td>
-            <td class="text-right" name="completed_logi_2"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_logi_1" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_logi_2" readonly/>
+            </td>
             <td class="text-right" name="completed_logi_total"></td>
             <td class="text-right" name="completed_total"></td>
-            <td class="text-right" name="completed_rate"></td>
+            <td class="text-center" name="completed_rate"></td>
         </tr>
         <tr>
             <th class="color-contract text-center">금월 집행 금액</th>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" date-type="number" name="now_est_1"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_est_1"/>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" date-type="number" name="now_est_2"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_est_2"/>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" date-type="number" name="now_est_3"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_est_3"/>
             </td>
             <td class="text-right" name="now_est_total"></td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" date-type="number" name="now_logi_1"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_logi_1"/>
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" date-type="number" name="now_logi_2"/>
+                <input type="text" class="form-control text-right" data-type="number" name="now_logi_2"/>
             </td>
             <td class="text-right" name="now_logi_total"></td>
             <td class="text-right" name="now_total"></td>
-            <td class="text-right" name="now_rate"></td>
+            <td class="text-center" name="now_rate"></td>
 
         </tr>
         <tr>
@@ -342,7 +354,7 @@
             <td class="text-right" name="total_completed_logi_2"></td>
             <td class="text-right" name="total_completed_logi_total"></td>
             <td class="text-right" name="total_completed_total"></td>
-            <td class="text-right" name="total_completed_rate"></td>
+            <td class="text-center" name="total_completed_rate"></td>
         </tr>
     </tbody>
 </table>
@@ -546,6 +558,12 @@
                         $(document).find(`[name="bcnc_completed_total"]`).html(bcnc_total.toFormat('NUMBER'));
                         $(document).find(`[name="bcnc_completed_rate"]`).html((bcnc_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
 
+                        {% if init %}
+                            $(document).find(`[name="now_est_1"]`).val(pResult.data[parseInt(outsrc_fo_sn)].toFormat('NUMBER'));
+                            $(document).find(`[name="now_est_3"]`).val(pResult.data[146].toFormat('NUMBER'));
+                        {% endif %}
+
+
                         // $(document).find(`[name="completed_est_1"]`).html(pResult.data.est_1.toFormat('NUMBER'));
                         // $(document).find(`[name="completed_est_2"]`).html(pResult.data.est_2.toFormat('NUMBER'));
                         // $(document).find(`[name="completed_est_3"]`).html(pResult.data.est_3.toFormat('NUMBER'));
@@ -565,12 +583,15 @@
                         // {% endif %}
                     }
                 });
+
+                {% if init %}
                 var prjct_sn = pResult.prjct.prjct_sn;
                 $.ajax({
                     url: '/api/project/ajax_get_reportNR',
                     type: 'GET',
                     data: {"s_cntrct_sn" : cntrct_sn, "s_prjct_sn" : prjct_sn},
                     success: function(pData) {
+                        console.log(pData);
                         var cCostTotal = 0;
                         $.each(pData.aCostList, function(pI, pV){
                             var amount = 0;
@@ -629,7 +650,10 @@
                                 indirect_sum_total += sum_total;
                             }
                             else{
-                                all_sum_total += sum_total;
+                                if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || parseInt(outsrc_fo_sn) == 146){
+                                    all_sum_total += sum_total;
+
+                                }
 
                             }
                         });
@@ -667,10 +691,60 @@
                         $(document).find("[name='s12_account_total']").val((p_sum_total + p_sum_total_other).toFormat('NUMBER'));
                         $(document).find("[name='indirect_sum_total']").val(indirect_sum_total.toFormat('NUMBER'));
                         $(document).find("[name='all_sum_total']").val(all_sum_total.toFormat('NUMBER'));
+
+                        var outsrc_cntrct_amount = 0;
+                        if(pData.outsrcItem.hasOwnProperty(parseInt(outsrc_fo_sn))){
+                            $.each(pData.outsrcItem[outsrc_fo_sn].e5CostList, function(pI, pV){
+                                outsrc_cntrct_amount += (pV.amount*pV.qy);
+                            });
+                        }
+                        $(document).find("[name='outsrc_cntrct_amount']").val(outsrc_cntrct_amount.toFormat('NUMBER'));
+
+                        var completed_est_1 = 0;
+                        var completed_est_3 = 0;
+                        $.each(pData.outsrcList, function(pIndex, pOut){
+                            if(pOut.outsrc_fo_sn == parseInt(outsrc_fo_sn)){
+                                $.each(pOut.taxbilList, function(pI, pT){
+                                    var pblicte_de = pT.pblicte_de;
+                                    var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                    if(parseInt(pblicte_de.split("-")[0]+pblicte_de.split("-")[1]) < parseInt(now.split("-")[0] + now.split("-")[1])){
+                                        completed_est_1 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
+                                    }
+                                });
+                            }
+                            else if(pOut.outsrc_fo_sn == 146){
+                                $.each(pOut.taxbilList, function(pI, pT){
+                                    var pblicte_de = pT.pblicte_de;
+                                    var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                    if(parseInt(pblicte_de.split("-")[0]+pblicte_de.split("-")[1]) < parseInt(now.split("-")[0] + now.split("-")[1])){
+                                        completed_est_3 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
+                                    }
+                                });
+                            }
+                        });
+                        $(document).find("[name='completed_est_1']").val(completed_est_1.toFormat('NUMBER'));
+                        $(document).find("[name='completed_est_2']").val(0);
+                        $(document).find("[name='completed_est_3']").val(completed_est_3.toFormat('NUMBER'));
+
+                        var completed_logi_1 = 0;
+                        var completed_logi_2 = 0;
+                        $.each(pData.s3AccountList, function(pI, pV){
+                            var sum = parseInt(pV.s_total);
+                            completed_logi_1 += parseInt(sum);
+                        });
+                        $.each(pData.s4AccountList, function(pI, pV){
+                            var sum = parseInt(pV.p_total);
+                            completed_logi_2 += parseInt(sum);
+                        });
+                        $(document).find("[name='completed_logi_1']").val(completed_logi_1.toFormat('NUMBER'));
+                        $(document).find("[name='completed_logi_2']").val(completed_logi_2.toFormat('NUMBER'));
+                        $(document).find("tbody[role='logi']").trigger("change");
+
+
                     }
                 });
 
-
+                {% endif %}
             }
         });
 
@@ -720,20 +794,20 @@
         $(this).find(`[name="bcnc_total_rate"]`).html((bcnc_total_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
     });
     $(document).on("change", "tbody[role='logi']", function(){
-        var outsrc_cntrct_amount = getValue($(this).find(`[name="outsrc_cntrct_amount"]`));
-        var completed_est_1 = getValue($(this).find(`[name="completed_est_1"]`));
-        var completed_est_2 = getValue($(this).find(`[name="completed_est_2"]`));
-        var completed_est_3 = getValue($(this).find(`[name="completed_est_3"]`));
+        var outsrc_cntrct_amount = getValue($(this).find(`[name="outsrc_cntrct_amount"]`), false);
+        var completed_est_1 = getValue($(this).find(`[name="completed_est_1"]`), false);
+        var completed_est_2 = getValue($(this).find(`[name="completed_est_2"]`), false);
+        var completed_est_3 = getValue($(this).find(`[name="completed_est_3"]`), false);
         var completed_est_total = completed_est_1 + completed_est_2 + completed_est_3;
         $(this).find(`[name="completed_est_total"]`).html(completed_est_total.toFormat('NUMBER'));
-        var completed_logi_1 = getValue($(this).find(`[name="completed_logi_1"]`));
-        var completed_logi_2 = getValue($(this).find(`[name="completed_logi_2"]`));
+        var completed_logi_1 = getValue($(this).find(`[name="completed_logi_1"]`), false);
+        var completed_logi_2 = getValue($(this).find(`[name="completed_logi_2"]`), false);
         var completed_logi_total = completed_logi_1 + completed_logi_2;
         $(this).find(`[name="completed_logi_total"]`).html(completed_logi_total.toFormat('NUMBER'));
         var completed_total = completed_est_total + completed_logi_total;
         $(this).find(`[name="completed_total"]`).html(completed_total.toFormat('NUMBER'));
         var completed_rate = (completed_total*100.0/outsrc_cntrct_amount);
-        $(this).find(`[name="completed_rate"]`).html(completed_rate.toFixed(1));
+        $(this).find(`[name="completed_rate"]`).html(completed_rate.toFixed(1)+"%");
 
         var now_est_1 = getValue($(this).find(`[name="now_est_1"]`), false);
         var now_est_2 = getValue($(this).find(`[name="now_est_2"]`), false);
@@ -747,7 +821,7 @@
         var now_total = now_est_total + now_logi_total;
         $(this).find(`[name="now_total"]`).html(now_total.toFormat('NUMBER'));
         var now_rate = (now_total*100.0/outsrc_cntrct_amount);
-        $(this).find(`[name="now_rate"]`).html(now_rate.toFixed(1));
+        $(this).find(`[name="now_rate"]`).html(now_rate.toFixed(1)+"%");
 
         var total_completed_est_1 = completed_est_1 + now_est_1;
         var total_completed_est_2 = completed_est_2 + now_est_2;
@@ -766,7 +840,7 @@
         var total_completed_total = total_completed_est_total + total_completed_logi_total;
         $(this).find(`[name="total_completed_total"]`).html(total_completed_total.toFormat('NUMBER'));
         var total_completed_rate = (total_completed_total*100.0/outsrc_cntrct_amount);
-        $(this).find(`[name="total_completed_rate"]`).html(total_completed_rate.toFixed(1));
+        $(this).find(`[name="total_completed_rate"]`).html(total_completed_rate.toFixed(1)+"%");
 
     });
     $(document).on("change", "#establish tbody", function(){
@@ -776,10 +850,12 @@
             var r = parseFloat($(target).find(`[name="rate_${pIndex+1}[]"]`).val().replace("%", ""));
             var total = getValue($(target).find("tr").eq(2).find(`[data-column="qy"]`).eq(pIndex));
             var now = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(now)) now = 0;
+            {% if init %}
             if(now > total){
                 $(pTag).val(total.toFormat('NUMBER'));
                 now = total;
             }
+            {% endif %}
             $(target).find(`td[name="rate_${pIndex+1}"]`).html((now*100.0/total).toFixed(1)+"%");
             $(target).find(`td[name="apply_rate_${pIndex+1}"]`).html((r*now/total).toFixed(1)+"%");
             tot += (r*now/total);

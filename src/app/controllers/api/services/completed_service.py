@@ -10,6 +10,8 @@ from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 import itertools
 import calendar
+from .project_service import get_project_by_cntrct_nm, get_contract
+
 def get_completed_summary(params):
     year = int(params['s_pxcond_mt'].split("-")[0])
     month = int(params['s_pxcond_mt'].split("-")[1])
@@ -344,28 +346,28 @@ def get_completed_reportNR(params):
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
     first_year = "{}-01-01".format(y.zfill(4))
     last_year = "{}-12-31".format(y.zfill(4))
-    query = """SELECT t.prjct_ty_code
-				, t.prjct_creat_at
-				, t.bsn_dept_code
+    query = """SELECT t.prjct_ty_code AS prjct_ty_code
+				, t.prjct_creat_at AS prjct_creat_at
+				, t.bsn_dept_code AS bsn_dept_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='DEPT_CODE' AND code=t.bsn_dept_code) AS bsn_dept_nm
-				, t.bsn_chrg_sn
+				, t.bsn_chrg_sn AS bsn_chrg_sn
 				, GET_MEMBER_NAME(t.bsn_chrg_sn, 'M') AS bsn_chrg_nm
-				, t.cntrct_bcnc_sn
+				, t.cntrct_bcnc_sn AS cntrct_bcnc_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.cntrct_bcnc_sn) AS cntrct_bcnc_nm
-				, t.spt_chrg_sn
+				, t.spt_chrg_sn AS spt_chrg_sn
 				, GET_MEMBER_NAME(t.spt_chrg_sn, 'M') AS spt_chrg_nm
-				, t.spt_nm
-				, t.cntrwk_bgnde
-				, t.cntrwk_endde
-				, t.cntrct_de
-				, t.progrs_sttus_code
-				, t.cntrct_sn
-				, t.prjct_sn
-				, t.cntrct_execut_code
+				, t.spt_nm AS spt_nm
+				, t.cntrwk_bgnde AS cntrwk_bgnde
+				, t.cntrwk_endde AS cntrwk_endde
+				, t.cntrct_de AS cntrct_de
+				, t.progrs_sttus_code AS progrs_sttus_code
+				, t.cntrct_sn AS cntrct_sn
+				, t.prjct_sn AS prjct_sn
+				, t.cntrct_execut_code AS cntrct_execut_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='CNTRCT_EXECUT_CODE' AND code=t.cntrct_execut_code) AS cntrct_execut_nm
-				, t.ct_se_code
+				, t.ct_se_code AS ct_se_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='CT_SE_CODE' AND code=t.ct_se_code) AS ct_se_nm
-				, t.purchsofc_sn
+				, t.purchsofc_sn AS purchsofc_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.purchsofc_sn) AS purchsofc_nm
 				, SUM(t.cntrct_amount) AS cntrct_amount
 				, (SELECT rate FROM pxcond WHERE pxcond_mt<='{0}' AND cntrct_sn=t.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
@@ -389,7 +391,7 @@ def get_completed_reportNR(params):
 				, (SELECT ofcps_code FROM member WHERE mber_sn=t.spt_chrg_sn) AS ofcps_code
 				FROM (
 				SELECT ct.prjct_ty_code
-				, m.dept_code AS bsn_dept_code
+				, mm.dept_code AS bsn_dept_code
 				, ct.bcnc_sn AS cntrct_bcnc_sn
 				, ct.bsn_chrg_sn
 				, ct.prjct_creat_at
@@ -416,20 +418,27 @@ def get_completed_reportNR(params):
 				ON co.cntrct_sn=ct.cntrct_sn
 				LEFT OUTER JOIN member m
 				ON ct.bsn_chrg_sn=m.mber_sn
+				LEFT OUTER JOIN member mm
+				ON ct.spt_chrg_sn=mm.mber_sn
 				LEFT OUTER JOIN project p
 				ON ct.cntrct_sn=p.cntrct_sn
 				WHERE 1=1
 				AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
-				AND co.cost_date <= '{1}'
+				AND (co.cost_date <= '{1}' or co.cost_date IS NULL)
 				AND co.cntrct_execut_code NOT IN ('B', 'D')
 				AND co.ct_se_code NOT IN ('10')
-				AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7', '8'))
+				AND co.purchsofc_sn NOT IN ('691')
 				AND ct.prjct_ty_code = 'NR'
 				AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
-				AND m.dept_code IN ('TS1', 'TS2', 'TS3')
+				AND mm.dept_code IN ('TS1', 'TS2')
 				AND ct.cntrct_de < '{1}' """.format(first_day, last_day, first_year, last_year)
     if 's_cntrct_execut_code' in params and params['s_cntrct_execut_code']:
         query += " AND co.cntrct_execut_code = %(s_cntrct_execut_code)s "
+
+    if "purpose" not in params:
+        query += " AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7', '8')) "
+    else:
+        query += " AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) "
 
     query += """ ) t
 				GROUP BY bsn_dept_code, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
@@ -590,7 +599,7 @@ def get_completed_bcnc_data(params):
     if "approval_sn" not in params:
         params['s_pxcond_mt'] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
     else:
-        g.curs.execute("SELECT DATE_FORMAT(reg_time, '%%Y-%%m') AS reg_time FROM approval WHERE approval_sn=%(approval_sn)s", params)
+        g.curs.execute("SELECT DATE_FORMAT(reg_dtm, '%%Y-%%m') AS reg_time FROM approval WHERE approval_sn=%(approval_sn)s", params)
         params['s_pxcond_mt'] = g.curs.fetchone()['reg_time']
     query = """SELECT GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'P', %(s_pxcond_mt)s) AS completed_1
                     , GET_TAXBIL_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'C', %(s_pxcond_mt)s) AS completed_2
@@ -602,57 +611,92 @@ def get_completed_bcnc_data(params):
     return result
 
 def get_completed(params):
-    # query = """SELECT MAX(body1) AS body1
-    #                 , MAX(body2) AS body2
-    #                 , MAX(body3) AS body3
-    #                 , MAX(body4) AS body4
-    #                 , SUM(IFNULL(bcnc_1, 0)) AS bcnc_1
-    #                 , SUM(IFNULL(bcnc_2, 0)) AS bcnc_2
-    #                 , SUM(IFNULL(bcnc_3, 0)) AS bcnc_3
-    #                 , SUM(IFNULL(est_1, 0)) AS est_1
-    #                 , SUM(IFNULL(est_2, 0)) AS est_2
-    #                 , SUM(IFNULL(est_3, 0)) AS est_3
-    #                 , SUM(IFNULL(logi_1, 0)) AS logi_1
-    #                 , SUM(IFNULL(logi_2, 0)) AS logi_2
-    #             FROM completed
-    #             WHERE 1=1
-    #             AND cntrct_sn=%(s_cntrct_sn)s
-    #             AND outsrc_fo_sn=%(s_outsrc_fo_sn)s
-    #             GROUP BY cntrct_sn, outsrc_fo_sn"""
-    # g.curs.execute(query, params)
-    # result = g.curs.fetchone()
-    # return result
-    return []
+    now = datetime.datetime.now(timezone('Asia/Seoul'))
+    first = now.replace(day=1)
+    last_month = first - datetime.timedelta(days=1)
+    params["s_pxcond_mt"] = last_month.strftime("%Y-%m-01")
+    query = """SELECT cntrct_sn
+                    , excut_amount
+                    , bcnc_sn
+                    FROM pxcond
+                    WHERE 1=1
+                    AND cntrct_sn=%(s_cntrct_sn)s 
+                    AND pxcond_mt=%(s_pxcond_mt)s 
+                    AND bcnc_sn=%(s_outsrc_fo_sn)s 
+                    AND cntrct_execut_code='E'
+                    """
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    data = None
+    if result is None:
+        data = {int(params["s_outsrc_fo_sn"]) : 0}
+    else:
+        data = {int(result["bcnc_sn"]) : result["excut_amount"]}
+
+    query = """SELECT cntrct_sn
+                    , excut_amount
+                    , bcnc_sn
+                    FROM pxcond
+                    WHERE 1=1
+                    AND cntrct_sn=%(s_cntrct_sn)s 
+                    AND pxcond_mt=%(s_pxcond_mt)s 
+                    AND bcnc_sn=146
+                    AND cntrct_execut_code='E'
+                    """
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    if result is None:
+        data[146] = 0
+    else:
+        data[146] = result["excut_amount"]
+
+
+    return data
 
 def insert_completed(params):
-    data = {}
-    for i in range(1, 4):
-        key = "bcnc_now_{}".format(i)
-        if key in params and params[key]:
-            data["bcnc_{}".format(i)] = int(params[key].replace(",", ""))
+    if "now_est_1" in params:
+        now_est_1 = int(params["now_est_1"].replace(",", "")) if params["now_est_1"].replace(",", "") != "" else 0
+    else:
+        now_est_1 = 0
+    if "now_est_2" in params:
+        now_est_2 = int(params["now_est_2"].replace(",", "")) if params["now_est_2"].replace(",", "") != "" else 0
+    else:
+        now_est_2 = 0
+    if "now_est_3" in params:
+        now_est_3 = int(params["now_est_3"].replace(",", "")) if params["now_est_3"].replace(",", "") != "" else 0
+    else:
+        now_est_3 = 0
 
-    for i in range(1, 5):
-        key = "body_{}_a".format(i)
-        if key in params and params[key] != '':
-            data["body{}".format(i)] = int(params[key].replace(",", ""))
-
-    for i in range(1, 4):
-        key = "now_est_{}".format(i)
-        if key in params and params[key]:
-            data["est_{}".format(i)] = int(params[key].replace(",", ""))
-
-    for i in range(1, 3):
-        key = "now_logi_{}".format(i)
-        if key in params and params[key]:
-            data["logi_{}".format(i)] = int(params[key].replace(",", ""))
-
+    data = dict()
     data["cntrct_sn"] = params["cntrct_sn"]
-    data["outsrc_fo_sn"] = params["outsrc_fo_sn"]
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    prjct_sn = prjct['prjct_sn']
+    data["prjct_sn"] = prjct_sn
+    now = datetime.datetime.now(timezone('Asia/Seoul'))
+    first = now.replace(day=1)
+    last_month = first - datetime.timedelta(days=1)
+    data["pxcond_mt"] = last_month.strftime("%Y-%m-01")
+    data["cntrct_execut_code"] = 'E'
+    data["ct_se_code"] = '5'
+    data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
+    data["register_id"] = session["member"]["member_id"]
+    data['ctmmny_sn'] = 1
+    data["rate"] = None
+    data["rm"] = params["option_bigo"].strip()
 
-    keys = list(data.keys())
 
-    query = """INSERT INTO completed({}) VALUES({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
-    g.curs.execute(query, data)
+    data["bcnc_sn"] = params["outsrc_fo_sn"]
+    data["excut_amount"] = now_est_1 + now_est_2
+    delete_pxcond(data)
+    insert_pxcond(data)
+
+
+    data["bcnc_sn"] = 146
+    data["excut_amount"] = now_est_3
+    delete_pxcond(data)
+    insert_pxcond(data)
+
+
 
 def insert_pxcond(params):
     data = {}
@@ -687,7 +731,10 @@ def insert_pxcond(params):
 
     data['ctmmny_sn'] = 1
     data["rate"] = None
-    data["rm"] = None
+    if "rm" in params and params["rm"] != "":
+        data["rm"] = params["rm"]
+    else:
+        data["rm"] = None
 
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]
