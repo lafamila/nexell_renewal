@@ -125,6 +125,19 @@
             </td>
         </tr>
     </tbody>
+    <tfoot>
+        <tr>
+            <th class="colorG text-center" colspan="2">합계</th>
+            <td class="colorG text-number" data-column="qy_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center" data-column="dc_rate_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="cntrct_amount_total"></td>
+            <td class="colorG text-center" data-column="rate_total"></td>
+            <td class="colorG text-number" data-column="cntrct_fee_amount_total"></td>
+        </tr>
+    </tfoot>
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
@@ -324,6 +337,9 @@
     $(document).on("change", "tbody[role='construct_row']", function(){
         var total_fee_amount = 0;
         var total_amount = 0;
+        var total_qy = 0;
+        var total_puchas_amount = 0;
+
         $(this).find("tr").each(function(pIndex, pRow){
             var qy = parseInt($(pRow).find("input[name='qy[]']").eq(0).val().replaceAll(",", "")); if(isNaN(qy)) qy = 0;
             var puchas_amount = parseInt($(pRow).find("input[name='puchas_amount[]']").eq(0).val().replaceAll(",", "")); if(isNaN(puchas_amount)) puchas_amount = 0;
@@ -332,9 +348,16 @@
             $(pRow).find("input[name='dc_rate[]']").eq(0).val((100 - amount*100.0/puchas_amount).toFixed(1)+"%");
             $(pRow).find("input[name='cntrct_amount[]']").eq(0).val((qy*amount).toFormat('NUMBER'));
             $(pRow).find("input[name='cntrct_fee_amount[]']").eq(0).val((qy*amount*rate/100.0).toFormat('NUMBER'));
+            total_puchas_amount += puchas_amount;
             total_amount += qy*amount;
             total_fee_amount += qy*amount*rate/100.0;
+            total_qy += qy;
         });
+        $(document).find(`td[data-column="qy_total"]`).html(total_qy.toFormat('NUMBER'));
+        $(document).find(`td[data-column="cntrct_amount_total"]`).html(total_amount.toFormat('NUMBER'));
+        $(document).find(`td[data-column="cntrct_fee_amount_total"]`).html(total_fee_amount.toFormat('NUMBER'));
+
+        $(document).find(`td[data-column="rate_total"]`).html(((total_fee_amount/total_amount)*100).toFixed(1)+'%');
 
         $(document).find("[name='total_cntrct_fee_amount']").val(total_fee_amount.toFormat('NUMBER'));
         $(document).find("[name='total_cntrct_amount']").val(total_amount.toFormat('NUMBER'));

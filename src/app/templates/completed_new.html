@@ -606,7 +606,7 @@ getReportNR = function(s_pxcond_mt)
                         }
                         else{
 
-                            html += `    <td class="text-number ${isFailedExpect} input-available" data-amount="${pValue.cntrct_amount}" data-cntrct_sn="${pValue.CNTRCT_SN}" data-prjct_sn="${pValue.prjct_sn}" data-bcnc_sn="${pValue.PURCHSOFC_SN}" data-cntrct_execut_code="${pValue.CNTRCT_EXECUT_CODE}" data-ct_se_code="${pValue.ct_se_code}" style="${(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')}">${(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))}</td>`;
+                            html += `    <td class="text-number ${isFailedExpect} input-available" data-amount="${pValue.cntrct_amount}" data-cntrct_sn="${pValue.cntrct_sn}" data-prjct_sn="${pValue.prjct_sn}" data-bcnc_sn="${pValue.purchsofc_sn}" data-cntrct_execut_code="${pValue.cntrct_execut_code}" data-ct_se_code="${pValue.ct_se_code}" style="${(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')}">${(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))}</td>`;
                         }
 
 

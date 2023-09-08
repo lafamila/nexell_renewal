@@ -130,6 +130,8 @@
             <td class="text-right" data-type='number' data-column="E_total"></td>
             <td class="text-right" data-type='number' data-column="va"></td>
             <td class="text-center" data-column="va_rate"></td>
+            <td style="display:none!important;" name="E_7"></td>
+            <td style="display:none!important;" name="E_61"></td>
         </tr>
     </tbody>
 </table>
@@ -650,7 +652,7 @@
                                 indirect_sum_total += sum_total;
                             }
                             else{
-                                if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || parseInt(outsrc_fo_sn) == 146){
+                                if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || pV.outsrc_fo_sn == 146){
                                     all_sum_total += sum_total;
 
                                 }
@@ -779,9 +781,11 @@
         var E_4 = getValue($(this).find("td[name='E_4']"));
         var E_10 = getValue($(this).find("td[name='E_10']"));
         var E_99 = getValue($(this).find("td[name='E_99']"));
+        var E_61 = getValue($(this).find("td[name='E_61']"));
+        var E_7 = getValue($(this).find("td[name='E_7']"));
         var E_total = (E_1+E_2+E_3+E_4+E_5+E_8+E_10+E_99);
         $(this).find("td[data-column='E_total']").html(E_total.toFormat('NUMBER'));
-        $(this).find("td[data-column='va']").html((C_total - E_total).toFormat('NUMBER'))
+        $(this).find("td[data-column='va']").html((C_total - E_total - E_61 - E_7).toFormat('NUMBER'))
         $(this).find("td[data-column='va_rate']").html(((C_total-E_total)*100.0/C_total).toFixed(1)+"%");
 
     });

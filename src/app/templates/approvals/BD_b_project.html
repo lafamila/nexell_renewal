@@ -125,6 +125,20 @@
             </td>
         </tr>
     </tbody>
+    <tfoot>
+        <tr>
+            <th class="colorG text-center" colspan="2">합계</th>
+            <td class="colorG text-number" data-column="qy_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="amount_total"></td>
+            <td class="colorG text-center"></td>
+            <td class="colorG text-number" data-column="cntrct_amount_total"></td>
+            <td class="colorG text-number" data-column="va_total"></td>
+            <td class="colorG text-center"></td>
+        </tr>
+    </tfoot>
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
@@ -319,6 +333,10 @@
     $(document).on("change", "tbody[role='construct_row']", function(){
         var total_amount = 0;
         var total_cntrct_amount = 0;
+        var total_qy = 0;
+        var total_va = 0;
+
+
         $(this).find("tr").each(function(pIndex, pRow){
             var qy = parseInt($(pRow).find("input[name='qy[]']").eq(0).val().replaceAll(",", "")); if(isNaN(qy)) qy = 0;
             var dlivy_amt = parseInt($(pRow).find("input[name='dlivy_amt[]']").eq(0).val().replaceAll(",", "")); if(isNaN(dlivy_amt)) dlivy_amt = 0;
@@ -330,7 +348,13 @@
             $(pRow).find("input[name='va[]']").eq(0).val((qy*(cntrct_dlamt-dlamt)).toFormat('NUMBER'));
             total_amount += qy*dlamt;
             total_cntrct_amount += qy*cntrct_dlamt;
+            total_qy += qy;
+            total_va += (qy*(cntrct_dlamt-dlamt));
         });
+        $(document).find(`td[data-column="qy_total"]`).html(total_qy.toFormat('NUMBER'));
+        $(document).find(`td[data-column="amount_total"]`).html(total_amount.toFormat('NUMBER'));
+        $(document).find(`td[data-column="cntrct_amount_total"]`).html(total_cntrct_amount.toFormat('NUMBER'));
+        $(document).find(`td[data-column="va_total"]`).html(total_va.toFormat('NUMBER'));
         $(document).find("[name='total_cntrct_amount']").val(total_cntrct_amount.toFormat('NUMBER'));
         $(document).find("[name='total_amount']").val(total_amount.toFormat('NUMBER'));
         $(document).find("[name='D_10']").val(Math.round(total_cntrct_amount*0.005).toFormat('NUMBER'));

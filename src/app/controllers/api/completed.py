@@ -41,7 +41,7 @@ def completed_ajax_get_completed_report_data():
             continue
         key = (c["bsn_dept_nm"], c["cntrct_bcnc_nm"], c["spt_nm"], c["spt_chrg_nm"], c['cntrct_sn'])
         if key not in data:
-            data[key] = {"C" : [0, 0, 0], "E" : [0, 0, 0, 0], "rate" : None}
+            data[key] = {"C" : [0, 0, 0], "E" : [0, 0, 0, 0], "rate" : None, "rm" : ""}
 
         cntrct_amount = int(c["cntrct_amount"]) if c["cntrct_amount"] != '' else 0
         complete_amount = int(c["complete_amount"]) if c["complete_amount"] != '' else 0
@@ -58,18 +58,33 @@ def completed_ajax_get_completed_report_data():
             else:
                 data[key][execut_code][3] += amount
         data[key]["rate"] = c['rate']
+        if c['rm'] != '' and data[key]["rm"] != c['rm']:
+            data[key]["rm"] = c["rm"]
     result = list()
     for key in data:
         bsn_dept_nm, cntrct_bcnc_nm, spt_nm, spt_chrg_nm, cntrct_sn = key
+        indirect = cp.get_indirect_data({"cntrct_sn" : cntrct_sn})
+        before_indirect = 0
+        now_indirect = 0
+        for i_tax in indirect["taxbilList"]:
+            if i_tax["pblicte_de"] < datetime.strptime(params["s_pxcond_mt"]+"-01", "%Y-%m-%d").date():
+                before_indirect += int(i_tax["splpc_am"]) + int(i_tax["vat"])
+            elif i_tax["pblicte_de"].strftime("%Y-%m-01") == params["s_pxcond_mt"]+"-01":
+                now_indirect += int(i_tax["splpc_am"]) + int(i_tax["vat"])
+
+        if cntrct_sn == 1389:
+            print(now_indirect, before_indirect, indirect["indirect_total"], indirect["va_total"])
         row = {"bsn_dept_nm" : bsn_dept_nm, "cntrct_bcnc_nm" : cntrct_bcnc_nm, "spt_nm" : spt_nm, "spt_chrg_nm" : spt_chrg_nm, "cntrct_sn" : cntrct_sn}
         row['c_cntrct_amount'] = data[key]['C'][0]
         row['c_completed_amount'] = data[key]['C'][1]
         row['c_now_amount'] = data[key]['C'][2]
-        row['e_cntrct_amount'] = data[key]['E'][0]
-        row['e_completed_amount'] = data[key]['E'][1]
-        row['e_now_amount1'] = data[key]['E'][2]
+        row['e_cntrct_amount'] = data[key]['E'][0] + indirect["indirect_total"]
+        row['e_completed_amount'] = data[key]['E'][1] + before_indirect
+        row['e_now_amount1'] = data[key]['E'][2] + now_indirect
         row['e_now_amount2'] = data[key]['E'][3]
         row['rate'] = data[key]['rate']
+        row['rm'] = data[key]['rm']
+        row['va'] = indirect["va_total"]
         if row['c_completed_amount'] == 0 and row['c_now_amount'] == 0 and row['e_completed_amount'] == 0 and row['e_now_amount1'] == 0 and row['e_now_amount2'] == 0:
             continue
         result.append(row)

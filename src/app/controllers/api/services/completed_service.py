@@ -387,9 +387,47 @@ def get_completed_reportNR(params):
 				END AS excut_amount
 				, GET_CONTRACT_AMOUNT(t.cntrct_sn, t.cntrct_execut_code, %(s_pxcond_mt)s) AS c_amt_sum
 				, GET_PXCOND_AMOUNT(t.cntrct_sn, t.cntrct_execut_code, %(s_pxcond_mt)s) AS p_amt_sum
-				, (SELECT rm FROM pxcond WHERE cntrct_sn=t.cntrct_sn AND cntrct_execut_code=t.cntrct_execut_code AND bcnc_sn=t.purchsofc_sn ORDER BY pxcond_mt DESC LIMIT 1) AS rm
+				, (SELECT rm FROM pxcond WHERE cntrct_sn=t.cntrct_sn AND cntrct_execut_code=t.cntrct_execut_code AND bcnc_sn=t.purchsofc_sn AND pxcond_mt='{0}' ORDER BY pxcond_mt DESC LIMIT 1) AS rm
 				, (SELECT ofcps_code FROM member WHERE mber_sn=t.spt_chrg_sn) AS ofcps_code
 				FROM (
+				SELECT distinct ct.prjct_ty_code
+				, mm.dept_code AS bsn_dept_code
+				, ct.bcnc_sn AS cntrct_bcnc_sn
+				, ct.bsn_chrg_sn
+				, ct.prjct_creat_at
+				, ct.cntrct_de
+				, IF(ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59', 'P', ct.progrs_sttus_code) AS progrs_sttus_code
+				, ct.spt_chrg_sn
+				, ct.spt_nm
+				, ct.cntrwk_bgnde
+				, ct.cntrwk_endde
+				, co.cntrct_sn
+				, p.prjct_sn
+				, 'E' AS CNTRCT_EXECUT_CODE
+				, '5' AS ct_se_code
+				, 146 AS PURCHSOFC_SN
+				, 0 AS cntrct_amount
+				FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn AND x.purchsofc_sn IS NOT NULL) co
+				JOIN contract ct
+				ON co.cntrct_sn=ct.cntrct_sn
+				LEFT OUTER JOIN member m
+				ON ct.bsn_chrg_sn=m.mber_sn
+				LEFT OUTER JOIN member mm
+				ON ct.spt_chrg_sn=mm.mber_sn
+				LEFT OUTER JOIN project p
+				ON ct.cntrct_sn=p.cntrct_sn
+				WHERE {4}
+				AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+				AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) 
+				AND (co.cost_date <= '{1}' or co.cost_date IS NULL)
+				AND co.cntrct_execut_code NOT IN ('B', 'D')
+				AND co.ct_se_code NOT IN ('10')
+				AND co.purchsofc_sn NOT IN ('691')
+				AND ct.prjct_ty_code = 'NR'
+				AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
+				AND mm.dept_code IN ('TS1', 'TS2')
+				AND ct.cntrct_de < '{1}' 
+				UNION
 				SELECT ct.prjct_ty_code
 				, mm.dept_code AS bsn_dept_code
 				, ct.bcnc_sn AS cntrct_bcnc_sn
@@ -422,8 +460,9 @@ def get_completed_reportNR(params):
 				ON ct.spt_chrg_sn=mm.mber_sn
 				LEFT OUTER JOIN project p
 				ON ct.cntrct_sn=p.cntrct_sn
-				WHERE 1=1
+				WHERE {4}
 				AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+				AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) 
 				AND (co.cost_date <= '{1}' or co.cost_date IS NULL)
 				AND co.cntrct_execut_code NOT IN ('B', 'D')
 				AND co.ct_se_code NOT IN ('10')
@@ -431,14 +470,7 @@ def get_completed_reportNR(params):
 				AND ct.prjct_ty_code = 'NR'
 				AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
 				AND mm.dept_code IN ('TS1', 'TS2')
-				AND ct.cntrct_de < '{1}' """.format(first_day, last_day, first_year, last_year)
-    if 's_cntrct_execut_code' in params and params['s_cntrct_execut_code']:
-        query += " AND co.cntrct_execut_code = %(s_cntrct_execut_code)s "
-
-    if "purpose" not in params:
-        query += " AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7', '8')) "
-    else:
-        query += " AND ((co.ct_se_code IN ('61','62', '63','7', '8') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) "
+				AND ct.cntrct_de < '{1}' """.format(first_day, last_day, first_year, last_year, "co.cntrct_execut_code = %(s_cntrct_execut_code)s " if 's_cntrct_execut_code' in params and params['s_cntrct_execut_code'] else " 1=1 ")
 
     query += """ ) t
 				GROUP BY bsn_dept_code, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
@@ -767,3 +799,50 @@ def delete_pxcond(params):
     keys = list(data.keys())
     query = "DELETE FROM pxcond WHERE {}".format(" AND ".join(["{0}=%({0})s".format(k) for k in keys]))
     g.curs.execute(query, data)
+
+def get_indirect_data(params):
+    query = """SELECT t.pblicte_de
+    				, t.splpc_am
+    				, IFNULL(t.vat, 0) AS vat
+    				, (t.splpc_am + IFNULL(t.vat, 0)) AS total
+    				, t.pblicte_trget_sn
+    				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=t.ctmmny_sn AND bcnc_sn=t.pblicte_trget_sn) AS pblicte_trget_nm
+    				, t.rm
+    				FROM taxbil t
+    				WHERE t.ctmmny_sn = 1
+    				AND t.cntrct_sn = %(cntrct_sn)s
+    				AND t.delng_se_code = 'P' 
+    				AND t.pblicte_trget_sn = 116
+    				ORDER BY t.pblicte_de, t.pblicte_trget_sn"""
+    g.curs.execute(query, params)
+    result = dict()
+    result["taxbilList"] = g.curs.fetchall(transform=False)
+
+    query = """SELECT cntrct_execut_code AS cntrct_execut_code
+    				, ct_se_code AS ct_se_code
+    				, extra_sn AS extra_sn
+    				, SUM(CASE cntrct_execut_code
+    				WHEN 'E' THEN puchas_amount * qy
+    				WHEN 'C' THEN salamt*qy
+    				END) AS amount
+    				, DATE_FORMAT(MIN(regist_dtm), '%%Y-%%m-%%d') AS dtm
+    				FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co
+    				WHERE 1=1
+    				AND cntrct_sn = %(cntrct_sn)s
+    				GROUP BY cntrct_execut_code, ct_se_code, extra_sn
+    				ORDER BY extra_sn, cntrct_execut_code"""
+
+    g.curs.execute(query, params)
+
+    rows = g.curs.fetchall()
+    result["indirect_total"] = 0
+    result["va_total"] = 0
+    for r in rows:
+        if r["cntrct_execut_code"] == "C" :
+            result["va_total"] += r["amount"] if r["amount"] != '' else 0
+        else:
+            result["va_total"] -= r["amount"] if r["amount"] != '' else 0
+
+        if r["cntrct_execut_code"] == "E" and int(r["ct_se_code"]) == 8:
+            result["indirect_total"] += r["amount"] if r["amount"] != '' else 0
+    return result
