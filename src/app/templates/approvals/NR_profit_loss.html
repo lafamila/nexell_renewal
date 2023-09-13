@@ -60,7 +60,7 @@
                 <select class="form-control select2 w100p" id="cntrct_sn_1" name="cntrct_sn_1" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;">
                     {% if not init %}
                         <option value=""></option>
-                        {% for code in contract_list %}
+                        {% for code in contract_all_list %}
                         <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
                         {% endfor %}
                     {% endif %}
@@ -155,7 +155,7 @@
                 <select class="form-control select2 w100p" id="cntrct_sn_2" name="cntrct_sn_2" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;">
                     {% if not init %}
                         <option value=""></option>
-                        {% for code in contract_list %}
+                        {% for code in contract_all_list %}
                         <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
                         {% endfor %}
                     {% endif %}
@@ -228,7 +228,11 @@
         $.ajax({
             url : '/api/project/get_costs_bd',
             method : 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn},
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
             success: function(pResult){
                 console.log(pResult);
                 var C_cost = 0;
@@ -310,7 +314,7 @@
 
     $(document).ready(function(){
         $.ajax({
-            url : '/api/project/get_p_projects',
+            url : '/api/project/get_all_projects',
             method: 'GET',
             success: function(pResult){
                 var html = `<option value="">[전체]</option>`;

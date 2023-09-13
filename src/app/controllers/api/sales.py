@@ -540,6 +540,7 @@ def equip_to_account():
         row['dlivy_de'] = params['dlivy_de']
         row['cnnc_sn'] = delng_sn
         row['bcnc_sn'] = cntrct["bcnc_sn"]
+        row['dlamt'] = equipment['samt']
         row['delng_ty_code'] = params["delng_ty_code"]
         if 'expect_de' in params and params['expect_de'] == '':
             params['expect_de'] = None

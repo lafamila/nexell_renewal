@@ -37,6 +37,7 @@ def refresh_code_list():
                 invn_sttus_code_list=get_code_list('invn_sttus_code'.upper()),
                 inventory_list=get_inventory_name_list(),
                 contract_list=get_contract_list(),
+                contract_all_list=get_contract_all_list(),
                 contract_nr_list=get_contract_NR_list(),
                 amt_ty_code_list=get_code_list('amt_ty_code'.upper()),
                 menu_total_list=get_menu_total_list(),
@@ -107,6 +108,35 @@ def get_member_list_by_sn():
     curs.close()
     db.close()
     return {r['mber_sn'] : r for r in result}
+
+def get_contract_all_list():
+    db = DB()
+    curs = db.cursor()
+    curs.execute("""SELECT cntrct_sn AS value
+    				, cntrct_nm AS label
+    				, cntrct_no AS etc1
+    				, cntrct_de AS etc2
+    				, CONCAT(
+    				cntrct_no, '.',
+    				cntrct_nm, '.',
+    				cntrct_de
+    				) AS etc3
+    				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+    				, biss_a
+    				, prjct_creat_at
+    				, (SELECT COUNT(prjct_sn) FROM project WHERE cntrct_sn=c.cntrct_sn) AS prjct_cnt
+    				, c.spt_chrg_sn
+    				, c.bsn_chrg_sn
+    				FROM contract c
+    				WHERE 1=1
+    				AND ctmmny_sn = 1
+                    """)
+    result = curs.fetchall()
+    curs.close()
+    db.close()
+    return result
+
+
 def get_contract_list():
     db = DB()
     curs = db.cursor()

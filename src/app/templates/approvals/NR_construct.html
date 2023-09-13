@@ -103,9 +103,9 @@
             <th class="color-contract text-center">장비비(삼성)</th>
             <th class="color-contract text-center">장비비(타사)</th>
             <th class="color-contract text-center">도급비</th>
-            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">로지텍자재</th>
             <th class="color-contract text-center">타사자재</th>
+            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">기타비용</th>
             <th class="color-contract text-center">설계변경</th>
             <th class="color-contract text-center">계</th>
@@ -122,9 +122,9 @@
             <td class="text-right" data-type='number' name="E_1"></td>
             <td class="text-right" data-type='number' name="E_2"></td>
             <td class="text-right" data-type='number' name="E_5"></td>
-            <td class="text-right" data-type='number' name="E_8"></td>
             <td class="text-right" data-type='number' name="E_3"></td>
             <td class="text-right" data-type='number' name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
             <td class="text-right" data-type='number' name="E_10"></td>
             <td class="text-right" data-type='number' name="E_99"></td>
             <td class="text-right" data-type='number' data-column="E_total"></td>
@@ -728,18 +728,46 @@
                         $(document).find("[name='completed_est_2']").val(0);
                         $(document).find("[name='completed_est_3']").val(completed_est_3.toFormat('NUMBER'));
 
-                        var completed_logi_1 = 0;
-                        var completed_logi_2 = 0;
+                        var completed_logi_1 = 0, now_logi_1 = 0;
+                        var completed_logi_2 = 0, now_logi_2 = 0;
                         $.each(pData.s3AccountList, function(pI, pV){
                             var sum = parseInt(pV.s_total);
-                            completed_logi_1 += parseInt(sum);
+                            var pblicte_de = pV.p_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()){
+                                completed_logi_1 += parseInt(sum);
+                            }
+                            else if(target_de.getTime() == previous.getTime()){
+                                now_logi_1 += parseInt(sum);
+                            }
                         });
                         $.each(pData.s4AccountList, function(pI, pV){
                             var sum = parseInt(pV.p_total);
-                            completed_logi_2 += parseInt(sum);
+                            var pblicte_de = pV.p_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()) {
+                                completed_logi_2 += parseInt(sum);
+                            }
+                            else if(target_de.getTime() == previous.getTime()){
+                                now_logi_2 += parseInt(sum);
+                            }
                         });
                         $(document).find("[name='completed_logi_1']").val(completed_logi_1.toFormat('NUMBER'));
                         $(document).find("[name='completed_logi_2']").val(completed_logi_2.toFormat('NUMBER'));
+                        {% if init %}
+                        $(document).find("[name='now_logi_1']").val(now_logi_1.toFormat('NUMBER'));
+                        $(document).find("[name='now_logi_2']").val(now_logi_2.toFormat('NUMBER'));
+                        {% endif %}
                         $(document).find("tbody[role='logi']").trigger("change");
 
 

@@ -2320,6 +2320,24 @@ def get_all_projects(params):
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+def get_all_with_c_projects(params):
+    query = """SELECT cntrct_sn
+                    , cntrct_no
+                    , spt_nm
+                    , CONCAT(cntrwk_bgnde,' ~ ',cntrwk_endde) AS cntrwk_period
+                    , home_count
+                    , home_region
+                    , mh_count
+                    , mh_place
+                    , mh_period
+                    , mh_approval_step
+                FROM contract 
+                WHERE progrs_sttus_code IN ('P', 'B', 'C')
+                """
+
+    g.curs.execute(query)
+    result = g.curs.fetchall()
+    return result
 
 def get_project_by_cntrct_nm(cntrct_sn):
     g.curs.execute("SELECT prjct_sn FROM project WHERE cntrct_sn=%s", (cntrct_sn, ))

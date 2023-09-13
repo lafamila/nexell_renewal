@@ -83,12 +83,12 @@
             <th class="color-contract text-center">삼성장비</th>
             <th class="color-contract text-center">타사장비</th>
             <th class="color-contract text-center">도급비</th>
-            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">로지텍자재</th>
             <th class="color-contract text-center">타사자재</th>
-            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="color-contract text-center">간접비</th>
             <th class="color-contract text-center">M,S/H(기준표)</th>
             <th class="color-contract text-center">옵션행사비(기준표)</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
             <th class="color-contract text-center">설계변경</th>
             <th class="color-contract text-center">총액</th>
             <th class="color-contract text-center">이익금(VA)</th>
@@ -102,12 +102,12 @@
             <td class="text-right" data-type='number' name="C_1"></td>
             <td class="text-right" data-type='number' name="C_2"></td>
             <td class="text-right" data-type='number' name="C_5"></td>
-            <td class="text-right" data-type='number' name="C_8"></td>
             <td class="text-right" data-type='number' name="C_3"></td>
             <td class="text-right" data-type='number' name="C_4"></td>
-            <td class="text-right" data-type='number' name="C_10"></td>
+            <td class="text-right" data-type='number' name="C_8"></td>
             <td class="text-right" data-type='number' name="C_61"></td>
             <td class="text-right" data-type='number' name="C_7"></td>
+            <td class="text-right" data-type='number' name="C_10"></td>
             <td class="text-right" data-type='number' name="C_99"></td>
             <td class="text-center" data-column="row_total"></td>
             <td class="text-center" data-column="va" rowspan="2"></td>
@@ -124,16 +124,16 @@
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="E_5" readonly>
             </td>
-            <td class="text-right" data-type='number' name="E_8"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="E_3" readonly>
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="E_4" readonly>
             </td>
-            <td class="text-right" data-type='number' name="E_10"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
             <td class="text-right" data-type='number' name="E_61"></td>
             <td class="text-right" data-type='number' name="E_7"></td>
+            <td class="text-right" data-type='number' name="E_10"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="E_99">
             </td>
@@ -451,10 +451,10 @@
                         <tr>
                             <th class="color-contract text-center middle" rowspan="5">분류</th>
                             <th class="color-contract text-center">내역</th>
-                            <th class="color-contract text-center">인건비</th>
+                            <th class="color-contract text-center">인건비(50%)</th>
                             <th class="color-contract text-center">직불</th>
-                            <th class="color-contract text-center">일용직</th>
-                            <th class="color-contract text-center">로지텍/타사</th>
+                            <th class="color-contract text-center">일용직(20%)</th>
+                            <th class="color-contract text-center">로지텍/타사(30%)</th>
                             <th class="color-contract text-center">합계</th>
                             <th class="color-contract text-center" rowspan="5" colspan="2">집행률</th>
                         </tr>
@@ -604,10 +604,10 @@
                         <tr>
                             <th class="color-contract text-center middle" rowspan="5">분류</th>
                             <th class="color-contract text-center">내역</th>
-                            <th class="color-contract text-center">인건비</th>
+                            <th class="color-contract text-center">인건비(50%)</th>
                             <th class="color-contract text-center">직불</th>
-                            <th class="color-contract text-center">일용직</th>
-                            <th class="color-contract text-center">로지텍/타사</th>
+                            <th class="color-contract text-center">일용직(20%)</th>
+                            <th class="color-contract text-center">로지텍/타사(30%)</th>
                             <th class="color-contract text-center">합계</th>
                             <th class="color-contract text-center" rowspan="5" colspan="2">집행률</th>
                         </tr>
@@ -757,10 +757,10 @@
                         <tr>
                             <th class="color-contract text-center middle" rowspan="5">분류</th>
                             <th class="color-contract text-center">내역</th>
-                            <th class="color-contract text-center">인건비</th>
+                            <th class="color-contract text-center">인건비(50%)</th>
                             <th class="color-contract text-center">직불</th>
-                            <th class="color-contract text-center">일용직</th>
-                            <th class="color-contract text-center">로지텍/타사</th>
+                            <th class="color-contract text-center">일용직(20%)</th>
+                            <th class="color-contract text-center">로지텍/타사(30%)</th>
                             <th class="color-contract text-center">합계</th>
                             <th class="color-contract text-center" rowspan="5" colspan="2">집행률</th>
                         </tr>
@@ -1107,6 +1107,14 @@
         });
         $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
         $(this).yRowspan(7);
+        {% if init %}
+        var human = Math.round(total_amount*0.5);
+        var daily = Math.round(total_amount*0.2);
+        var sum = total_amount - human - daily;
+        $(`tbody[role='${company}_detail']`).find(`input[name='${company}_human']`).val(human.toFormat('NUMBER'));
+        $(`tbody[role='${company}_detail']`).find(`input[name='${company}_daily']`).val(daily.toFormat('NUMBER'));
+        $(`tbody[role='${company}_detail']`).find(`input[name='${company}_sum']`).val(sum.toFormat('NUMBER'));
+        {% endif %}
 
     });
     $(document).on("change", "tbody[role='ct_se_code_contract']", function(){

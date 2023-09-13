@@ -573,6 +573,16 @@ def get_all_projects():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/get_all_with_c_projects', methods=['GET'])
+def get_all_with_c_projects():
+    try:
+        params = request.args.to_dict()
+        result = prj.get_all_with_c_projects(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/insert_b_project', methods=['POST'])
 def insert_b_project():
     try:
