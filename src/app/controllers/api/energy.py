@@ -41,6 +41,7 @@ def ajax_get_energy():
         params = request.args.to_dict()
         result = dict()
         result['data'] = eng.get_energy(params)
+        result['status'] = True
         return jsonify(result)
     except Exception as e:
         print(e)
@@ -52,6 +53,7 @@ def ajax_get_plan_list():
         params = request.args.to_dict()
         result = dict()
         result['data'] = eng.get_plan_list(params)
+        result['status'] = True
         return jsonify(result)
     except Exception as e:
         print(e)
@@ -68,3 +70,98 @@ def ajax_get_exp_list():
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+@bp.route('/ajax_get_expP_list', methods=['GET'])
+def ajax_get_expP_list():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = eng.get_expP_list(params)
+        result['plan'] = eng.get_plan_list(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_get_exp_detail_list', methods=['GET'])
+def ajax_get_exp_detail_list():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = eng.get_exp_detail_list(params)
+        result['plan'] = eng.get_plan_list(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_get_expP_list2', methods=['GET'])
+def ajax_get_expP_list2():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        result['data'] = eng.get_expP_list2(params)
+        result['plan'] = eng.get_plan_list(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+@bp.route('/ajax_insert_energy', methods=['POST'])
+def ajax_insert_energy():
+    try:
+        params = request.form.to_dict()
+        eng.insert_energybil(params)
+        result = dict()
+        result['debug'] = params
+        result['status'] = True
+
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+
+@bp.route('/ajax_update_energy', methods=['POST'])
+def ajax_update_energy():
+    try:
+        params = request.form.to_dict()
+        eng.update_energybil(params)
+        result = dict()
+        result['status'] = True
+
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_delete_energy', methods=['POST'])
+def ajax_delete_energy():
+    try:
+        params = request.form.to_dict()
+        eng.delete_energybil(params)
+        result = dict()
+        result['status'] = True
+
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_get_report', methods=['GET'])
+def ajax_get_report():
+        params = request.args.to_dict()
+        result = dict()
+        result['project'] = eng.get_energybil(params)
+        result['plan'] = eng.get_plan_list(params)
+        result['expense'] = eng.get_exp_list(params)
+        result['detail'] = eng.get_exp_detail_list(params)
+        result['ep'] = dict()
+        for ep in eng.get_exp_plan_list(params):
+            if ep['plan_order'] not in result['ep']:
+                result['ep'][ep['plan_order']] = []
+            result['ep'][ep['plan_order']].append(ep)
+        result['rcppayList'] = eng.get_rcppay_report_list(params)
+        return jsonify(result)

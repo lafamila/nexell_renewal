@@ -40,6 +40,8 @@ def refresh_code_list():
                 contract_all_list=get_contract_all_list(),
                 contract_nr_list=get_contract_NR_list(),
                 amt_ty_code_list=get_code_list('amt_ty_code'.upper()),
+                exp_se_code_list=get_code_list('exp_se_code'.upper()),
+                exp_ty_code_list=get_code_list('exp_ty_code'.upper()),
                 menu_total_list=get_menu_total_list(),
                 menus=set_menu(session['member']['auth_cd']) if 'member' in session else None)
 

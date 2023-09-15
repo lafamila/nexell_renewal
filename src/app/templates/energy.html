@@ -224,6 +224,14 @@
 <!--# commom script start                                                  #-->
 <!--########################################################################-->
 
+<style>
+    .clickable, .clickable2{
+        cursor:pointer!important;
+        color:navy!important;
+        text-decoration: underline!important;
+        text-underline-offset: 1px!important;
+    }
+</style>
 <script type="text/javascript">
 /******************************************************************************
  * 계약 목록을 조회한다.
@@ -510,15 +518,6 @@ $.fn.yRowspanExp = function(colIdx, isStats) {
 };
 </script>
 <style>
-    .clickable, .clickable2{
-        cursor:pointer!important;
-        color:navy!important;
-        text-decoration: underline!important;
-        text-underline-offset: 1px!important;
-    }
-</style>
-
-<style>
 .color-contract, .color-project {
     background: rgb(255,204,153)!important;
 }
@@ -764,9 +763,9 @@ $.fn.yRowspanExp = function(colIdx, isStats) {
 											<td style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
 												<select class="form-control select2" id="s_exp_se_code" name="s_exp_se_code">
 													<option value="">[전체]</option>
-													{exp_se_code_list}
-													<option value="{value}">{label}</option>
-													{/exp_se_code_list}
+													{% for code in exp_se_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
 												</select>
 											</td>
 											<td style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
@@ -777,9 +776,9 @@ $.fn.yRowspanExp = function(colIdx, isStats) {
                                             <th style="background:#0070C0;border-color:#0070C0;" class="hasinput" colspan="1">
 												<select class="form-control select2" id="s_exp_ty_code" name="s_exp_ty_code">
 													<option value="">[전체]</option>
-													{exp_ty_code_list}
-													<option value="{value}">{label}</option>
-													{/exp_ty_code_list}
+													{% for code in exp_ty_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
 												</select>
 											</th>
                                             <th class="hasinput text-right" style="background:#0070C0;border-color:#0070C0;">
@@ -815,9 +814,9 @@ $.fn.yRowspanExp = function(colIdx, isStats) {
 											<td class="hasinput" colspan="1">
 												<select class="form-control select2" id="exp_ty_code" name="exp_ty_code">
 													<option value="">[필수]</option>
-													{exp_ty_code_list}
-													<option value="{value}">{label}</option>
-													{/exp_ty_code_list}
+													{% for code in exp_ty_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
 												</select>
 											</td>
                                             <td class="hasinput" colspan="1">
@@ -826,9 +825,9 @@ $.fn.yRowspanExp = function(colIdx, isStats) {
 											<td class="hasinput" colspan="1">
 												<select class="form-control select2" id="exp_se_code" name="exp_se_code">
 													<option value="">[필수]</option>
-													{exp_se_code_list}
-													<option value="{value}">{label}</option>
-													{/exp_se_code_list}
+													{% for code in exp_se_code_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
 												</select>
 											</td>
 											<td class="hasinput" colspan="1">
@@ -1175,6 +1174,9 @@ $.fn.yRowspanExp = function(colIdx, isStats) {
         </div><!--modal-content-->
     </div><!--modal-dialog-->
 </div><!--modal-->
+
+
+
 <script type="text/javascript">
 /******************************************************************************
  *
@@ -1461,7 +1463,7 @@ getExpPList = function(s_eng_sn)
 	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_expP_list',
+		url: '/api/energy/ajax_get_expP_list',
 		type: 'GET',
 		data: params,
 		dataType: 'json',
@@ -1570,7 +1572,7 @@ getExpDetailList = function(s_eng_sn)
 	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_exp_detail_list',
+		url: '/api/energy/ajax_get_exp_detail_list',
 		type: 'GET',
 		data: params,
 		dataType: 'json',
@@ -1633,7 +1635,7 @@ getExpPList2 = function(s_eng_sn)
 	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_expP_list2',
+		url: '/api/energy/ajax_get_expP_list2',
 		type: 'GET',
 		data: params,
 		dataType: 'json',
@@ -1796,7 +1798,7 @@ fnValidate = function(pMode = '')
 insertEnergy = function(pIsReset = true)
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_insert_energy',
+		url: '/api/energy/ajax_insert_energy',
 		type: 'POST',
 		data: getFormData($('#frmBox1')[0]),
 		dataType: 'json',
@@ -1835,7 +1837,7 @@ insertEnergy = function(pIsReset = true)
 updateEnergy = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_update_energy',
+		url: '/api/energy/ajax_update_energy',
 		type: 'POST',
 		data: getFormData($('#frmBox1')[0]),
 		contentType: false,
@@ -1861,7 +1863,7 @@ updateEnergy = function()
 deleteEnergy = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_delete_energy',
+		url: '/api/energy/ajax_delete_energy',
 		type: 'POST',
 		data: getFormData($('#frmBox1')[0]),
 		contentType: false,
@@ -2752,6 +2754,7 @@ $(function() {
      */
 	$('#popBox1').on('show.bs.modal', function(pEvent)
 	{
+		console.log("Asdf");
 		var modal = $(this);
 		var action = null;
 		if (pEvent.relatedTarget) {
@@ -3117,6 +3120,3024 @@ $(function() {
 	});
 
 
+});
+</script>
+
+
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:85%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+<!--
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card" name="s_ddt_card">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+-->
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt1">
+<div class="title"><h2 class="colorLS" id="title">진행상황 보고서 (연구소)</h2></div>
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReport1{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+#popReport1 .colorLLG{
+    background: rgb(221,255,221)!important;
+}
+#popReport1 .colorLLY{
+    background: #FDFDBE!important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+
+div.report tr table th, div.report tr table td {
+    border: 1px solid #000!important;
+
+}
+
+</style>
+<!-- 기성 현황 시작 -->
+<table id="report_project">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="600">
+	</colgroup>
+	<thead>
+		<tr class="form">
+			<th class="sub-title colorN text-center" colspan="4">프로젝트 진행상황 보고서</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="color-contract">사업년도</th>
+			<td id="eng_year"></td>
+			<th class="color-contract">과제명</th>
+			<td id="eng_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">사업주체</th>
+			<td id="cp_nm"></td>
+			<th class="color-contract">과제번호</th>
+			<td id="cp_code"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">주관기관</th>
+			<td id="np_nm"></td>
+			<th class="color-contract">참여기관</th>
+			<td id="xp_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">책임자</th>
+			<td id="own_mber"></td>
+			<th class="color-contract">담당자</th>
+			<td id="mber"></td>
+		</tr>
+	</tbody>
+</table>
+<table id="report_plan">
+	<colgroup>
+		<col width="7.7%">
+		<col width="7.7%">
+		<col width="17.7%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8">사업비 계획 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky" colspan="3">총 사업비</th>
+			<th class="colorSky" colspan="3">당사 사업비</th>
+			<th class="colorSky" colspan="2">사업비 지분율 (%)</th>
+		</tr>
+		<tr>
+			<td class="text-number" id="eng_cost" colspan="3"></td>
+			<td class="text-number" id="cost" colspan="3"></td>
+			<td class="text-number" id="cost_rt" colspan="2"></td>
+		</tr>
+    </tbody>
+    <tbody role="plan_title">
+		<tr>
+			<th class="colorSky" rowspan="2" style="border-right:2px solid black!important;">분류</th>
+			<th class="colorSky" rowspan="2" colspan="2">수행기간</th>
+			<th class="colorSky" colspan="3">민간부담금</th>
+			<th class="colorSky" rowspan="2">정부출연금</th>
+			<th class="colorSky" rowspan="2">합계</th>
+		</tr>
+        <tr>
+        	<th class="colorSky">현물</th>
+        	<th class="colorSky">현금</th>
+        	<th class="colorSky">소계</th>
+        </tr>
+    </tbody>
+    <tbody role="plan">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+<table id="report_exp">
+	<colgroup>
+		<col width="7.89%">
+		<col width="10.52%">
+		<col width="7.89%">
+		<col width="10.52%">
+		<col width="10.52%">
+		<col width="10.52%">
+		<col width="10.52%">
+		<col width="10.52%">
+		<col width="10.52%">
+		<col width="10.52%">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="10">현금 집행 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="color-contract">분류</th>
+			<th class="color-contract">수행기간</th>
+			<th class="color-contract">현황</th>
+			<th class="color-contract" title="신규 인력 인건비">인건비</th>
+			<th class="color-contract">시설,장비,재료비</th>
+			<th class="color-contract" title="전문가활용비, 세미나개최비 등">연구활동비</th>
+			<th class="color-contract" title="국내여비, 회의비 등">연구과제추진비</th>
+			<th class="color-contract" title="연구 인센티브">연구수당</th>
+			<th class="color-contract" title="특허료, 인력지원비 등">간접비</th>
+			<th class="color-contract">합계</th>
+		</tr>
+    </tbody>
+	<tbody role="report_exec">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+
+<table id="rcppay_status">
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" style="border-left:1px solid #000!important;border-right:3px solid #000!important;">집행내역</th>
+			<th class="sub-title colorN text-center" style="border-right:1px solid #000!important;">입금내역</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+	</tbody>
+</table>
+
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<!-- 매입/매출 레포트 팝업 끝 -->
+<script type="text/javascript">
+
+
+getReport1 = function(s_eng_sn)
+{
+
+    var params = '';
+    params += '&s_eng_sn=' + s_eng_sn;
+	$.ajax({
+		url: '/api/energy/ajax_get_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log(pResult);
+            var pData = pResult.project;
+
+            $("#popReport1").find("#eng_year").html(pData.eng_year);
+            $("#popReport1").find("#cp_code").html(pData.cp_code);
+            $("#popReport1").find("#cp_nm").html(pData.cp_nm);
+            $("#popReport1").find("#eng_nm").html(pData.eng_nm);
+            $("#popReport1").find("#np_nm").html(pData.np_nm);
+            $("#popReport1").find("#np_mber").html(pData.np_mber);
+            $("#popReport1").find("#own_mber").html(pData.own_mber);
+            $("#popReport1").find("#mber").html(pData.mber);
+            $("#popReport1").find("#xp_nm").html(pData.xp_nm);
+
+
+            var eng_cost = parseInt(pData.eng_cost);
+            $("#popReport1").find("#eng_cost").html(pData.eng_cost.toFormat('NUMBER'));
+
+            var html = '';
+            var cost = 0;
+            var cp_a_total = 0, cp_b_total = 0, cp_c_total = 0, cp_ab_total = 0;
+            var cntrwk_bgnde = '', cntrwk_endde = '';
+            ///////////////////////////////////////////////////////////
+            var details = {};
+            $.each(pResult.detail, function(pIndex, pValue){
+                let plan = pValue.plan_order;
+                if(details.hasOwnProperty(plan)){
+                    details[plan].push(pValue);
+                }
+                else{
+                    details[plan] = [pValue];
+                }
+            });
+            ///////////////////////////////////////////////////////////
+
+
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pIndex == 0){
+                    cntrwk_bgnde = pValue.cntrwk_bgnde;
+                }
+                if(pIndex == pResult.plan.length-1){
+                    cntrwk_endde = pValue.cntrwk_endde;
+                }
+                cp_a_total += parseInt(pValue.cp_a_cost);
+                cp_b_total += parseInt(pValue.cp_b_cost);
+                cp_c_total += parseInt(pValue.cp_c_cost);
+                cp_ab_total += parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost);
+                var cp_total = parseInt(pValue.cp_a_cost) + parseInt(pValue.cp_b_cost) + parseInt(pValue.cp_c_cost);
+                var _class = details.hasOwnProperty(pIndex+'')? 'clickable2' : '';
+                html += '<tr>';
+                html += '    <td style="border-right:2px solid black!important;border-bottom:2px solid black!important;" class="'+_class+'" data-dpt="'+(pIndex+1)+'">'+(pIndex+1)+'차년도</td>';
+                html += '    <td colspan="2" style="border-bottom:2px solid black!important;">'+pValue.cntrwk_bgnde+' ~ '+pValue.cntrwk_endde+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+pValue.cp_a_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+pValue.cp_b_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+(parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost)).toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+pValue.cp_c_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number colorP" style="border-bottom:2px solid black!important;">'+cp_total.toString().toFormat('NUMBER')+'</td>';
+                html += '</tr>';
+                cost += cp_total;
+            ///////////////////////////////////////////////////////////
+                if(details.hasOwnProperty(pIndex+'')){
+                    var year = (pIndex+1);
+                    html += '<tr style="display:none;" data-dp="'+year+'">';
+                    html += '    <td style="border-right:2px solid black!important;">'+year+'차년도</td>';
+                    html += '    <th class="color-contract">세목</td>';
+                    html += '    <th class="color-contract">내용</td>';
+                    html += '    <th class="color-contract">현물</td>';
+                    html += '    <th class="color-contract" colspan="3">현금+정부출연금</td>';
+                    html += '    <th class="color-contract">계</td>';
+                    html += '</tr>';
+                    var detail = details[pIndex+''];
+                    var cost_1_sum = 0;
+                    var cost_2_sum = 0;
+                    $.each(detail, function(pI, pV){
+                        html += '<tr style="display:none;" data-dp="'+year+'">';
+                        html += '    <td style="border-right:2px solid black!important;">'+year+'차년도</td>';
+                        html += '    <td>'+getDetailCostName(pV.exp_cost_num)+'</td>';
+                        html += '    <td>'+pV.cost_content+'</td>';
+                        html += '    <td class="text-number">'+pV.cost_1.toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" colspan="3">'+pV.cost_2.toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+(parseInt(pV.cost_1)+parseInt(pV.cost_2)).toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        cost_1_sum += parseInt(pV.cost_1);
+                        cost_2_sum += parseInt(pV.cost_2);
+                    });
+                    html += '<tr style="display:none;" data-dp="'+year+'">';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" colspan="3">계</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number">'+cost_1_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number" colspan="3">'+cost_2_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number colorP">'+(cost_1_sum+cost_2_sum).toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+                }
+            ///////////////////////////////////////////////////////////
+            });
+            $("#popReport1").find("#cost").html(cost.toString().toFormat('NUMBER'));
+            $("#popReport1").find("#cost_rt").html((cost/eng_cost*100.0).toFixed(1)+'%');
+            $('#popReport1').find("#report_plan").find("tbody[role=plan]").html(html);
+            $('#popReport1').find("#report_plan").find("tbody[role=plan]").yRowspanExp(0);
+            $('#popReport1').find("#report_plan").find("tbody[role=plan]").yRowspanExp(1);
+
+            var html = '';
+            html += '<tr>';
+            html += '    <th class="colorSky" style="border-right:2px solid black!important;">합계</th>';
+            html += '    <th colspan="2" class="colorSky">'+cntrwk_bgnde+' ~ '+cntrwk_endde+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_a_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_b_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_ab_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_c_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cost.toString().toFormat('NUMBER')+'</th>';
+            html += '</tr>';
+            $('#popReport1').find("#report_plan").find("tfoot").html(html);
+
+
+
+
+
+
+            var html = '';
+            var p_cost_1 = 0, p_cost_2 = 0, p_cost_3 = 0, p_cost_4 = 0, p_cost_5 = 0, p_cost_6 = 0, p_cost_7 = 0, p_cost_8 = 0, p_cost_sum = 0;
+            var o_cost_1 = 0, o_cost_2 = 0, o_cost_3 = 0, o_cost_4 = 0, o_cost_5 = 0, o_cost_6 = 0, o_cost_7 = 0, o_cost_8 = 0, o_cost_sum = 0;
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pResult.ep.hasOwnProperty(pIndex)){
+                    var cost = pResult.ep[pIndex];
+                    var costP = 0;
+                    var rt = '-';
+                    var cost_1 = 0, cost_2 = 0, cost_3 = 0, cost_4 = 0, cost_5 = 0, cost_6 = 0, cost_sum = 0;
+                    $.each(cost, function(pI, pV){
+                        var color = (pV.exp_ty_code == 'P') ? ' colorSky' : ' clickable';
+                        var _data_plan = (pV.exp_ty_code == 'O') ? ' data-plan="'+pIndex+'"' : '';
+
+                        html += '<tr>';
+                        html += '    <td class="colorSky">'+(pIndex+1)+'차년도</td>';
+                        html += '    <td class="colorSky">'+pValue.cntrwk_bgnde+'<br/>~ '+pValue.cntrwk_endde+'</td>';
+                        html += '    <td class="'+color+'">'+pV.exp_nm+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="1">'+pV.cost_1.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="2">'+pV.cost_2.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="3">'+pV.cost_3.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="4">'+pV.cost_4.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="5">'+pV.cost_5.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="6">'+pV.cost_6.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="-1">'+pV.cost_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        if(pV.exp_ty_code == 'P'){
+	                        cost_1 += parseInt(pV.cost_1);
+	                        cost_2 += parseInt(pV.cost_2);
+	                        cost_3 += parseInt(pV.cost_3);
+	                        cost_4 += parseInt(pV.cost_4);
+	                        cost_5 += parseInt(pV.cost_5);
+	                        cost_6 += parseInt(pV.cost_6);
+	                        cost_sum += parseInt(pV.cost_sum);
+                            p_cost_1 += parseInt(pV.cost_1);
+                            p_cost_2 += parseInt(pV.cost_2);
+                            p_cost_3 += parseInt(pV.cost_3);
+                            p_cost_4 += parseInt(pV.cost_4);
+                            p_cost_5 += parseInt(pV.cost_5);
+                            p_cost_6 += parseInt(pV.cost_6);
+                            p_cost_sum += parseInt(pV.cost_sum);
+                        }
+                        else{
+	                        cost_1 -= parseInt(pV.cost_1);
+	                        cost_2 -= parseInt(pV.cost_2);
+	                        cost_3 -= parseInt(pV.cost_3);
+	                        cost_4 -= parseInt(pV.cost_4);
+	                        cost_5 -= parseInt(pV.cost_5);
+	                        cost_6 -= parseInt(pV.cost_6);
+	                        cost_sum -= parseInt(pV.cost_sum);
+                            o_cost_1 += parseInt(pV.cost_1);
+                            o_cost_2 += parseInt(pV.cost_2);
+                            o_cost_3 += parseInt(pV.cost_3);
+                            o_cost_4 += parseInt(pV.cost_4);
+                            o_cost_5 += parseInt(pV.cost_5);
+                            o_cost_6 += parseInt(pV.cost_6);
+                            o_cost_sum += parseInt(pV.cost_sum);
+
+                        }
+                    });
+                    var color = ' ';
+                    html += '<tr>';
+                    html += '    <td class="colorSky">'+(pIndex+1)+'차년도</td>';
+                    html += '    <td class="colorSky">'+pValue.cntrwk_bgnde+'<br/>~ '+pValue.cntrwk_endde+'</td>';
+                    html += '    <td class="'+color+'">잔액</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_1.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_2.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_3.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_4.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_5.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_6.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+
+                }
+            });
+            $('#popReport1').find("#report_exp").find('tbody[role="report_exec"]').html(html);
+            var html = '';
+            var color = ' colorP';
+            var rt = '-';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">예산</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_1.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_2.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_3.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_4.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_5.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_6.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_sum.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            var color = '';
+            var rt = ((p_cost_sum - o_cost_sum) * 100.0/p_cost_sum).toFixed(1)+'%';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">집행</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_1.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_2.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_3.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_4.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_5.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_6.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_sum.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            var color = '';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">잔액</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_1-o_cost_1).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_2-o_cost_2).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_3-o_cost_3).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_4-o_cost_4).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_5-o_cost_5).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_6-o_cost_6).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_sum-o_cost_sum).toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+
+            $('#popReport1').find("#report_exp").find('tfoot').html(html);
+            $('#popReport1').find("#report_exp").yRowspan(0);
+            $('#popReport1').find("#report_exp").yRowspan(1);
+
+
+
+            var html = '';
+            $.each(pResult.rcppayList, function(pIndex, pValue) {
+                console.log('pResult.rcppayList', pValue);
+
+
+                var bgnde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_bgnde;
+                var sYear = bgnde.substring(0,4);
+                var sMonth = bgnde.substring(5,7);
+                var sDate = bgnde.substring(8,10);
+                bgnde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var endde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_endde;
+                var sYear = endde.substring(0,4);
+                var sMonth = endde.substring(5,7);
+                var sDate = endde.substring(8,10);
+                endde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var nowde = new Date();
+
+                var _display = ' style="display:none;"';
+                if(between_date(nowde, bgnde) >= 0 && between_date(endde, nowde) >= 0){
+                    _display = '';
+                }
+
+
+                var year = (pIndex+1)+"차년도";
+                var sTaxbilList = pValue.sTaxbilList;
+                var iRcppayList = pValue.iRcppayList;
+                html += '<tr>';
+                html += '    <th style="width:54%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="7.04%">';
+                html += '                <col width="11.264%">';
+                html += '                <col width="14.08%">';
+                html += '                <col width="30.16%">';
+                html += '                <col width="11.67%">';
+                html += '                <col width="11.67%">';
+                html += '                <col width="14.08%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">연차</th>';
+                html += '                    <th class="colorG">출금일자</th>';
+                html += '                    <th class="colorG">세목</th>';
+                html += '                    <th class="colorG">내용</th>';
+                html += '                    <th class="colorG">현금</th>';
+                html += '                    <th class="colorG">카드</th>';
+                html += '                    <th class="colorG">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="O">';
+
+                var bill_total = 0, card_total = 0, sum_total = 0;
+                $.each(sTaxbilList, function(pIndex, pValue) {
+
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    if(parseInt(pValue.exp_io_type) == 0){
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number"></td>';
+                        bill_total += parseInt(pValue.exp_cost);
+                    }
+                    else{
+                        html += '    <td class="text-number"></td>';
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        card_total += parseInt(pValue.exp_cost);
+                    }
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    sum_total += parseInt(pValue.exp_cost);
+                });
+                if (sTaxbilList.length < iRcppayList.length) {
+                    var max = iRcppayList.length - sTaxbilList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLG">소계</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number">'+bill_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number">'+card_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">합계</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number" colspan="2">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '    <th style="width:46%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="10.04%">';
+                html += '                <col width="14.264%">';
+                html += '                <col width="18.08%">';
+                html += '                <col width="30.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="16.75%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">연차</th>';
+                html += '                    <th class="colorY">입금일자</th>';
+                html += '                    <th class="colorY">세목</th>';
+                html += '                    <th class="colorY">내용</th>';
+                html += '                    <th class="colorY">금액</th>';
+                html += '                    <th class="colorY">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="I">';
+
+                var input_total = 0;
+                $.each(iRcppayList, function(pIndex, pValue) {
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    input_total += parseInt(pValue.exp_cost);
+                });
+                if (iRcppayList.length < sTaxbilList.length) {
+                    var max = sTaxbilList.length - iRcppayList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLY">&nbsp;</th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">합계</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number">'+input_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '</tr>';
+            });
+            $('#popReport1').find('#rcppay_status tbody[role=body]').html(html);
+            $('#popReport1').find('#rcppay_status tbody[role=body] table').yRowspan(0);
+
+
+            $('#popReport1').modal('show');
+
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+//	$('#popReport1').on('show.bs.modal', function(pEvent) {
+//	});
+
+	$('#popReport1').on('hidden.bs.modal', function(pEvent)
+	{
+	});
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport1').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+$(document).on('click', '#popReport1 #report_exp td.clickable', function(){
+    var plan = $(this).data('plan');
+    var detail = $(this).data('detail');
+
+    var cost1 = 0;
+    var cost2 = 0;
+    var cost3 = 0;
+
+    var allTrs = $('#popReport1').find('#rcppay_status tbody[role=body] table tbody').find('tr');
+    $.each(allTrs, function(pI, tr){
+        $(tr).hide();
+    });
+
+    var trsO = $('#popReport1').find('tbody[plan='+plan+'][type=O]').find('tr');
+    var countO = 0;
+    $.each(trsO, function(pIndex, tr){
+        console.log($(tr));
+        $(tr).find('td').eq(0).attr('rowspan', 1);
+        $(tr).find('td').eq(0).show();
+        if(detail!='-1' && $(tr).find('td').eq(2).html()!=getDetailCostName(detail)){
+            $(tr).hide();
+        }
+        else{
+            $(tr).show();
+            $(tr).find('td').eq(0).show();
+            var _cost1 = parseInt($(tr).find('td').eq(4).html().replaceAll(',', '')); if(isNaN(_cost1))_cost1=0;
+            cost1 += _cost1;
+            var _cost2 = parseInt($(tr).find('td').eq(5).html().replaceAll(',', '')); if(isNaN(_cost2))_cost2=0;
+            cost2 += _cost2;
+            countO += 1;
+        }
+    });
+    var trsI = $('#popReport1').find('tbody[plan='+plan+'][type=I]').find('tr');
+    var countI = 0;
+    $.each(trsI, function(pIndex, tr){
+        $(tr).find('td').eq(0).attr('rowspan', 1);
+        $(tr).find('td').eq(0).show();
+        if(detail!='-1' && $(tr).find('td').eq(2).html()!=getDetailCostName(detail)){
+            $(tr).hide();
+        }
+        else{
+            $(tr).show();
+            var _cost3 = parseInt($(tr).find('td').eq(4).html().replaceAll(',', '')); if(isNaN(_cost3))_cost3=0;
+            cost3 += _cost3;
+            countI += 1;
+        }
+    });
+
+    if(countO < countI){
+        var count = countI-countO;
+        var html = '';
+        for(var i=0;i<count;i++){
+            html += '<tr class="colorW">';
+            html += '    <td>'+(parseInt(plan)+1)+'차년도</td>';
+            html += '    <td>-</td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '</tr>';
+        }
+        $('#popReport1').find('tbody[plan='+plan+'][type=O]').append(html);
+    }
+    console.log(cost1);
+    console.log(cost2);
+    console.log(cost3);
+    console.log($('#popReport1').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr'));
+    $('#popReport1').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(0).find('th').eq(4).html(cost1.toString().toFormat('NUMBER'));
+    $('#popReport1').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(0).find('th').eq(5).html(cost2.toString().toFormat('NUMBER'));
+    $('#popReport1').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(1).find('th').eq(4).html((cost1+cost2).toString().toFormat('NUMBER'));
+    if(countO > countI){
+        var count = countO-countI;
+        var html = '';
+        for(var i=0;i<count;i++){
+            html += '<tr class="colorW">';
+            html += '    <td>'+(parseInt(plan)+1)+'차년도</td>';
+            html += '    <td>-</td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '</tr>';
+        }
+        $('#popReport1').find('tbody[plan='+plan+'][type=I]').append(html);
+    }
+    $('#popReport1').find('tbody[plan='+plan+'][type=I]').parent().find('tfoot tr').eq(1).find('th').eq(4).html(cost3.toString().toFormat('NUMBER'));
+    var trsO = $('#popReport1').find('tbody[plan='+plan+'][type=O]').find('tr');
+    var trsI = $('#popReport1').find('tbody[plan='+plan+'][type=I]').find('tr');
+    for(var i=0;i<trsO.length;i++){
+        var tmp1 = trsO.eq(i).find('td').eq(4).html();
+        var tmp2 = trsO.eq(i).find('td').eq(5).html();
+        var tmp3 = trsI.eq(i).find('td').eq(4).html();
+        if(tmp1==''&&tmp2==''&&tmp3==''){
+            trsO.eq(i).hide();
+            trsI.eq(i).hide();
+        }
+    }
+    $('#popReport1').find('#rcppay_status tbody[role=body] table').yRowspanExp(0);
+
+});
+
+$(document).on('click', '#popReport1 td.clickable2', function(){
+    var dp = $(this).data('dpt');
+    console.log(dp);
+
+    var trs = $('#popReport1').find("#report_plan").find("tbody[role=plan] tr");
+    $.each(trs, function(pI, pV){
+        $(pV).find('td').eq(0).attr('rowspan', 1);
+        $(pV).find('td').eq(1).attr('rowspan', 1);
+    });
+//    $('#popReport2').find('tr[data-dp='+dp+']').find('td').eq(1).attr('rowspan', 1);
+    $('#popReport1').find('tr[data-dp='+dp+']').toggle();
+    $('#popReport1').find("#report_plan").find("tbody[role=plan]").yRowspanExp(0);
+    $('#popReport1').find("#report_plan").find("tbody[role=plan]").yRowspanExp(1);
+});
+
+</script>
+
+<div class="modal fade" data-backdrop="static" id="popReport2">
+    <div class="modal-dialog modal-w1200" style="width:85%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+<!--
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card" name="s_ddt_card">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+-->
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt2">
+<div class="title"><h2 class="colorLS" id="title">진행상황 보고서 (연구소)</h2></div>
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReport2{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+#popReport2 .colorLLG{
+    background: rgb(221,255,221)!important;
+}
+#popReport2 .colorLLY{
+    background: #FDFDBE!important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+
+div.report tr table th, div.report tr table td {
+    border: 1px solid #000!important;
+
+}
+
+</style>
+<!-- 기성 현황 시작 -->
+<table id="report_project">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="600">
+	</colgroup>
+	<thead>
+		<tr class="form">
+			<th class="sub-title colorN text-center" colspan="4">프로젝트 진행상황 보고서</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="color-contract">사업년도</th>
+			<td id="eng_year"></td>
+			<th class="color-contract">과제명</th>
+			<td id="eng_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">사업주체</th>
+			<td id="cp_nm"></td>
+			<th class="color-contract">과제번호</th>
+			<td id="cp_code"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">주관기관</th>
+			<td id="np_nm"></td>
+			<th class="color-contract">참여기관</th>
+			<td id="xp_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">책임자</th>
+			<td id="own_mber"></td>
+			<th class="color-contract">담당자</th>
+			<td id="mber"></td>
+		</tr>
+	</tbody>
+</table>
+<table id="report_plan">
+	<colgroup>
+		<col width="7.7%">
+		<col width="7.7%">
+		<col width="17.7%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8">사업비 계획 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky" colspan="3">총 사업비</th>
+			<th class="colorSky" colspan="3">당사 사업비</th>
+			<th class="colorSky" colspan="2">사업비 지분율 (%)</th>
+		</tr>
+		<tr>
+			<td class="text-number" id="eng_cost" colspan="3"></td>
+			<td class="text-number" id="cost" colspan="3"></td>
+			<td class="text-number" id="cost_rt" colspan="2"></td>
+		</tr>
+    </tbody>
+    <tbody role="plan_title">
+		<tr>
+			<th class="colorSky" rowspan="2" style="border-right:2px solid black!important;">분류</th>
+			<th class="colorSky" rowspan="2" colspan="2">수행기간</th>
+			<th class="colorSky" colspan="3">민간부담금</th>
+			<th class="colorSky" rowspan="2">정부출연금</th>
+			<th class="colorSky" rowspan="2">합계</th>
+		</tr>
+        <tr>
+        	<th class="colorSky">현물</th>
+        	<th class="colorSky">현금</th>
+        	<th class="colorSky">소계</th>
+        </tr>
+    </tbody>
+    <tbody role="plan">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+<table id="report_exp">
+	<colgroup>
+		<col width="150">
+		<col width="200">
+		<col width="150">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+
+		<col width="200">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="11">현금 집행 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+
+            <th class="color-contract">분류</th>
+			<th class="color-contract">수행기간</th>
+			<th class="color-contract">현황</th>
+			<th class="color-contract" title="신규 인력 인건비">인건비</th>
+			<th class="color-contract">연구시설 장비비</th>
+			<th class="color-contract">연구재료비</th>
+			<th class="color-contract" title="전문가활용비, 세미나개최비 등">연구활동비</th>
+			<th class="color-contract" title="연구 인센티브">연구수당</th>
+			<th class="color-contract">위탁연구비</th>
+			<th class="color-contract" title="특허료, 인력지원비 등">간접비</th>
+			<th class="color-contract">합계</th>
+		</tr>
+    </tbody>
+	<tbody role="report_exec">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+
+<table id="rcppay_status">
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" style="border-left:1px solid #000!important;border-right:3px solid #000!important;">집행내역</th>
+			<th class="sub-title colorN text-center" style="border-right:1px solid #000!important;">입금내역</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+	</tbody>
+</table>
+
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<!-- 매입/매출 레포트 팝업 끝 -->
+<script type="text/javascript">
+
+
+
+getReport2 = function(s_eng_sn)
+{
+
+    var params = '';
+    params += '&s_eng_sn=' + s_eng_sn;
+	$.ajax({
+		url: '/api/energy/ajax_get_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log(pResult);
+            var pData = pResult.project;
+
+            $("#popReport2").find("#eng_year").html(pData.eng_year);
+            $("#popReport2").find("#cp_code").html(pData.cp_code);
+            $("#popReport2").find("#cp_nm").html(pData.cp_nm);
+            $("#popReport2").find("#eng_nm").html(pData.eng_nm);
+            $("#popReport2").find("#np_nm").html(pData.np_nm);
+            $("#popReport2").find("#np_mber").html(pData.np_mber);
+            $("#popReport2").find("#own_mber").html(pData.own_mber);
+            $("#popReport2").find("#mber").html(pData.mber);
+            $("#popReport2").find("#xp_nm").html(pData.xp_nm);
+
+
+            var eng_cost = parseInt(pData.eng_cost);
+            $("#popReport2").find("#eng_cost").html(pData.eng_cost.toFormat('NUMBER'));
+
+            var html = '';
+            var cost = 0;
+            var cp_a_total = 0, cp_b_total = 0, cp_c_total = 0, cp_ab_total = 0;
+            var cntrwk_bgnde = '', cntrwk_endde = '';
+
+            ///////////////////////////////////////////////////////////
+            var details = {};
+            $.each(pResult.detail, function(pIndex, pValue){
+                let plan = pValue.plan_order;
+                if(details.hasOwnProperty(plan)){
+                    details[plan].push(pValue);
+                }
+                else{
+                    details[plan] = [pValue];
+                }
+            });
+            ///////////////////////////////////////////////////////////
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pIndex == 0){
+                    cntrwk_bgnde = pValue.cntrwk_bgnde;
+                }
+                if(pIndex == pResult.plan.length-1){
+                    cntrwk_endde = pValue.cntrwk_endde;
+                }
+                cp_a_total += parseInt(pValue.cp_a_cost);
+                cp_b_total += parseInt(pValue.cp_b_cost);
+                cp_c_total += parseInt(pValue.cp_c_cost);
+                cp_ab_total += parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost);
+                var cp_total = parseInt(pValue.cp_a_cost) + parseInt(pValue.cp_b_cost) + parseInt(pValue.cp_c_cost);
+                var _class = details.hasOwnProperty(pIndex+'')? 'clickable2' : '';
+                html += '<tr>';
+                html += '    <td style="border-right:2px solid black!important;border-bottom:2px solid black!important;" class="'+_class+'" data-dpt="'+(pIndex+1)+'">'+(pIndex+1)+'차년도</td>';
+                html += '    <td colspan="2" style="border-bottom:2px solid black!important;">'+pValue.cntrwk_bgnde+' ~ '+pValue.cntrwk_endde+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+pValue.cp_a_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+pValue.cp_b_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+(parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost)).toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number" style="border-bottom:2px solid black!important;">'+pValue.cp_c_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number colorP" style="border-bottom:2px solid black!important;">'+cp_total.toString().toFormat('NUMBER')+'</td>';
+                html += '</tr>';
+                cost += cp_total;
+            ///////////////////////////////////////////////////////////
+                if(details.hasOwnProperty(pIndex+'')){
+                    var year = (pIndex+1);
+                    html += '<tr style="display:none;" data-dp="'+year+'">';
+                    html += '    <td style="border-right:2px solid black!important;">'+year+'차년도</td>';
+                    html += '    <th class="color-contract">세목</td>';
+                    html += '    <th class="color-contract">내용</td>';
+                    html += '    <th class="color-contract">현물</td>';
+                    html += '    <th class="color-contract" colspan="3">현금+정부출연금</td>';
+                    html += '    <th class="color-contract">계</td>';
+                    html += '</tr>';
+                    var detail = details[pIndex+''];
+                    var cost_1_sum = 0;
+                    var cost_2_sum = 0;
+                    $.each(detail, function(pI, pV){
+                        html += '<tr style="display:none;" data-dp="'+year+'">';
+                        html += '    <td style="border-right:2px solid black!important;">'+year+'차년도</td>';
+                        html += '    <td>'+getDetailCostName(pV.exp_cost_num)+'</td>';
+                        html += '    <td>'+pV.cost_content+'</td>';
+                        html += '    <td class="text-number">'+pV.cost_1.toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" colspan="3">'+pV.cost_2.toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+(parseInt(pV.cost_1)+parseInt(pV.cost_2)).toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        cost_1_sum += parseInt(pV.cost_1);
+                        cost_2_sum += parseInt(pV.cost_2);
+                    });
+                    html += '<tr style="display:none;" data-dp="'+year+'">';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" colspan="3">계</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number">'+cost_1_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number" colspan="3">'+cost_2_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number colorP">'+(cost_1_sum+cost_2_sum).toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+                }
+            ///////////////////////////////////////////////////////////
+            });
+            $("#popReport2").find("#cost").html(cost.toString().toFormat('NUMBER'));
+            $("#popReport2").find("#cost_rt").html((cost/eng_cost*100.0).toFixed(1)+'%');
+            $('#popReport2').find("#report_plan").find("tbody[role=plan]").html(html);
+            $('#popReport2').find("#report_plan").find("tbody[role=plan]").yRowspanExp(0);
+            $('#popReport2').find("#report_plan").find("tbody[role=plan]").yRowspanExp(1);
+
+
+            var html = '';
+            html += '<tr>';
+            html += '    <th class="colorSky" style="border-right:2px solid black!important;">합계</th>';
+            html += '    <th colspan="2" class="colorSky">'+cntrwk_bgnde+' ~ '+cntrwk_endde+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_a_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_b_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_ab_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_c_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cost.toString().toFormat('NUMBER')+'</th>';
+            html += '</tr>';
+            $('#popReport2').find("#report_plan").find("tfoot").html(html);
+
+
+
+
+            var html = '';
+            var p_cost_1 = 0, p_cost_9 = 0, p_cost_3 = 0, p_cost_4 = 0, p_cost_5 = 0, p_cost_6 = 0, p_cost_7 = 0, p_cost_8 = 0, p_cost_sum = 0;
+            var o_cost_1 = 0, o_cost_9 = 0, o_cost_3 = 0, o_cost_4 = 0, o_cost_5 = 0, o_cost_6 = 0, o_cost_7 = 0, o_cost_8 = 0, o_cost_sum = 0;
+            console.log(pResult.plan);
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pResult.ep.hasOwnProperty(pIndex)){
+                    var cost = pResult.ep[pIndex];
+                    var costP = 0;
+                    var rt = '-';
+                    var cost_1 = 0, cost_9 = 0, cost_3 = 0, cost_5 = 0, cost_6 = 0, cost_7 = 0, cost_8 = 0, cost_sum = 0;
+                    $.each(cost, function(pI, pV){
+                        var color = (pV.exp_ty_code == 'P') ? ' colorSky' : ' clickable';
+                        costP = (pV.exp_ty_code == 'P') ? parseInt(pV.cost_sum) : costP;
+                        rt = (pV.exp_ty_code == 'O') ? ((costP-parseInt(pV.cost_sum)) * 100.0/costP).toFixed(1)+'%' : rt;
+                        var _data_plan = (pV.exp_ty_code == 'O') ? ' data-plan="'+pIndex+'"' : '';
+                        var pV_cost_9 = (pV.exp_ty_code == 'P') ? pV.cost_2 : pV.cost_9;
+                        html += '<tr>';
+                        html += '    <td class="colorSky">'+(pIndex+1)+'차년도</td>';
+                        html += '    <td class="colorSky">'+pValue.cntrwk_bgnde+'<br/>~ '+pValue.cntrwk_endde+'</td>';
+                        html += '    <td class="'+color+'">'+pV.exp_nm+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="1">'+pV.cost_1.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="9">'+pV_cost_9.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="7">'+pV.cost_7.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="3">'+pV.cost_3.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="5">'+pV.cost_5.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="8">'+pV.cost_8.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="6">'+pV.cost_6.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="-1">'+pV.cost_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        if(pV.exp_ty_code == 'P'){
+	                        cost_1 += parseInt(pV.cost_1);
+	                        cost_9 += parseInt(pV.cost_2);
+	                        cost_3 += parseInt(pV.cost_3);
+	                        cost_5 += parseInt(pV.cost_5);
+	                        cost_6 += parseInt(pV.cost_6);
+	                        cost_7 += parseInt(pV.cost_7);
+	                        cost_8 += parseInt(pV.cost_8);
+	                        cost_sum += parseInt(pV.cost_sum);
+                            p_cost_1 += parseInt(pV.cost_1);
+                            p_cost_9 += parseInt(pV.cost_2);
+                            p_cost_3 += parseInt(pV.cost_3);
+                            p_cost_5 += parseInt(pV.cost_5);
+                            p_cost_6 += parseInt(pV.cost_6);
+                            p_cost_7 += parseInt(pV.cost_7);
+                            p_cost_8 += parseInt(pV.cost_8);
+                            p_cost_sum += parseInt(pV.cost_sum);
+                        }
+                        else{
+	                        cost_1 -= parseInt(pV.cost_1);
+	                        cost_9 -= parseInt(pV.cost_9);
+	                        cost_3 -= parseInt(pV.cost_3);
+	                        cost_5 -= parseInt(pV.cost_5);
+	                        cost_6 -= parseInt(pV.cost_6);
+	                        cost_7 -= parseInt(pV.cost_7);
+	                        cost_8 -= parseInt(pV.cost_8);
+	                        cost_sum -= parseInt(pV.cost_sum);
+                            o_cost_1 += parseInt(pV.cost_1);
+                            o_cost_9 += parseInt(pV.cost_9);
+                            o_cost_3 += parseInt(pV.cost_3);
+                            o_cost_5 += parseInt(pV.cost_5);
+                            o_cost_6 += parseInt(pV.cost_6);
+                            o_cost_7 += parseInt(pV.cost_7);
+                            o_cost_8 += parseInt(pV.cost_8);
+                            o_cost_sum += parseInt(pV.cost_sum);
+
+                        }
+
+                    });
+                    var color = ' ';
+                    html += '<tr>';
+                    html += '    <td class="colorSky">'+(pIndex+1)+'차년도</td>';
+                    html += '    <td class="colorSky">'+pValue.cntrwk_bgnde+'<br/>~ '+pValue.cntrwk_endde+'</td>';
+                    html += '    <td class="'+color+'">잔액</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_1.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_9.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_7.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_3.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_5.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_8.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_6.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+
+                }
+            });
+            $('#popReport2').find("#report_exp").find('tbody[role="report_exec"]').html(html);
+            var html = '';
+            var color = ' colorP';
+            var rt = '-';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">예산</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_1.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_9.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_7.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_3.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_5.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_8.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_6.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_sum.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            var color = '';
+            var rt = ((p_cost_sum-o_cost_sum) * 100.0/p_cost_sum).toFixed(1)+'%';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">집행</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_1.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_9.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_7.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_3.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_5.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_8.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_6.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_sum.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            var color = '';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">잔액</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_1-o_cost_1).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_9-o_cost_9).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_7-o_cost_7).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_3-o_cost_3).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_5-o_cost_5).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_8-o_cost_8).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_6-o_cost_6).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_sum-o_cost_sum).toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+
+            $('#popReport2').find("#report_exp").find('tfoot').html(html);
+            $('#popReport2').find("#report_exp").yRowspan(0);
+            $('#popReport2').find("#report_exp").yRowspan(1);
+
+
+
+            var html = '';
+            $.each(pResult.rcppayList, function(pIndex, pValue) {
+                console.log('pResult.rcppayList', pValue);
+
+
+                var bgnde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_bgnde;
+                var sYear = bgnde.substring(0,4);
+                var sMonth = bgnde.substring(5,7);
+                var sDate = bgnde.substring(8,10);
+                bgnde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var endde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_endde;
+                var sYear = endde.substring(0,4);
+                var sMonth = endde.substring(5,7);
+                var sDate = endde.substring(8,10);
+                endde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var nowde = new Date();
+
+                var _display = ' style="display:none;"';
+                if(between_date(nowde, bgnde) >= 0 && between_date(endde, nowde) >= 0){
+                    _display = '';
+                }
+
+
+                var year = (pIndex+1)+"차년도";
+                var sTaxbilList = pValue.sTaxbilList;
+                var iRcppayList = pValue.iRcppayList;
+                html += '<tr>';
+                html += '    <th style="width:54%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="7.04%">';
+                html += '                <col width="11.264%">';
+                html += '                <col width="14.08%">';
+                html += '                <col width="28.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="14.08%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">연차</th>';
+                html += '                    <th class="colorG">출금일자</th>';
+                html += '                    <th class="colorG">세목</th>';
+                html += '                    <th class="colorG">내용</th>';
+                html += '                    <th class="colorG">현금</th>';
+                html += '                    <th class="colorG">카드</th>';
+                html += '                    <th class="colorG">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="O">';
+
+                var bill_total = 0, card_total = 0, sum_total = 0;
+                $.each(sTaxbilList, function(pIndex, pValue) {
+
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    if(parseInt(pValue.exp_io_type) == 0){
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number"></td>';
+                        bill_total += parseInt(pValue.exp_cost);
+                    }
+                    else{
+                        html += '    <td class="text-number"></td>';
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        card_total += parseInt(pValue.exp_cost);
+                    }
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    sum_total += parseInt(pValue.exp_cost);
+                });
+                if (sTaxbilList.length < iRcppayList.length) {
+                    var max = iRcppayList.length - sTaxbilList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLG">소계</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number">'+bill_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number">'+card_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">합계</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number" colspan="2">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '    <th style="width:46%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="10.04%">';
+                html += '                <col width="14.264%">';
+                html += '                <col width="18.08%">';
+                html += '                <col width="30.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="16.75%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">연차</th>';
+                html += '                    <th class="colorY">입금일자</th>';
+                html += '                    <th class="colorY">세목</th>';
+                html += '                    <th class="colorY">내용</th>';
+                html += '                    <th class="colorY">금액</th>';
+                html += '                    <th class="colorY">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="I">';
+
+                var input_total = 0;
+                $.each(iRcppayList, function(pIndex, pValue) {
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    input_total += parseInt(pValue.exp_cost);
+                });
+                if (iRcppayList.length < sTaxbilList.length) {
+                    var max = sTaxbilList.length - iRcppayList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLY">&nbsp;</th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">합계</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number">'+input_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '</tr>';
+            });
+            $('#popReport2').find('#rcppay_status tbody[role=body]').html(html);
+            $('#popReport2').find('#rcppay_status tbody[role=body] table').yRowspan(0);
+
+
+            $('#popReport2').modal('show');
+
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+//	$('#popReport2').on('show.bs.modal', function(pEvent) {
+//	});
+
+	$('#popReport2').on('hidden.bs.modal', function(pEvent)
+	{
+	});
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint2').on('click', function(pEvent) {
+		var html = $('#popReport2').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+$(document).on('click', '#popReport2 #report_exp td.clickable', function(){
+    var plan = $(this).data('plan');
+    var detail = $(this).data('detail');
+
+    var cost1 = 0;
+    var cost2 = 0;
+    var cost3 = 0;
+
+    var allTrs = $('#popReport2').find('#rcppay_status tbody[role=body] table tbody').find('tr');
+    $.each(allTrs, function(pI, tr){
+        $(tr).hide();
+    });
+
+    var trsO = $('#popReport2').find('tbody[plan='+plan+'][type=O]').find('tr');
+    var countO = 0;
+    $.each(trsO, function(pIndex, tr){
+        console.log($(tr));
+        $(tr).find('td').eq(0).attr('rowspan', 1);
+        $(tr).find('td').show();
+        if(detail!='-1' && $(tr).find('td').eq(2).html()!=getDetailCostName(detail)){
+            $(tr).hide();
+        }
+        else{
+            $(tr).show();
+            $(tr).find('td').eq(0).show();
+            var _cost1 = parseInt($(tr).find('td').eq(4).html().replaceAll(',', '')); if(isNaN(_cost1))_cost1=0;
+            cost1 += _cost1;
+            var _cost2 = parseInt($(tr).find('td').eq(5).html().replaceAll(',', '')); if(isNaN(_cost2))_cost2=0;
+            cost2 += _cost2;
+            countO += 1;
+        }
+    });
+    var trsI = $('#popReport2').find('tbody[plan='+plan+'][type=I]').find('tr');
+    var countI = 0;
+    $.each(trsI, function(pIndex, tr){
+        $(tr).find('td').eq(0).attr('rowspan', 1);
+        $(tr).find('td').show();
+        if(detail!='-1' && $(tr).find('td').eq(2).html()!=getDetailCostName(detail)){
+            $(tr).hide();
+        }
+        else{
+            $(tr).show();
+            var _cost3 = parseInt($(tr).find('td').eq(4).html().replaceAll(',', '')); if(isNaN(_cost3))_cost3=0;
+            cost3 += _cost3;
+            countI += 1;
+        }
+    });
+
+    if(countO < countI){
+        var count = countI-countO;
+        var html = '';
+        for(var i=0;i<count;i++){
+            html += '<tr class="colorW">';
+            html += '    <td>'+(parseInt(plan)+1)+'차년도</td>';
+            html += '    <td>-</td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '</tr>';
+        }
+        $('#popReport2').find('tbody[plan='+plan+'][type=O]').append(html);
+    }
+    console.log(cost1);
+    console.log(cost2);
+    console.log(cost3);
+    console.log($('#popReport2').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr'));
+    $('#popReport2').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(0).find('th').eq(4).html(cost1.toString().toFormat('NUMBER'));
+    $('#popReport2').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(0).find('th').eq(5).html(cost2.toString().toFormat('NUMBER'));
+    $('#popReport2').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(1).find('th').eq(4).html((cost1+cost2).toString().toFormat('NUMBER'));
+    if(countO > countI){
+        var count = countO-countI;
+        var html = '';
+        for(var i=0;i<count;i++){
+            html += '<tr class="colorW">';
+            html += '    <td>'+(parseInt(plan)+1)+'차년도</td>';
+            html += '    <td>-</td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '</tr>';
+        }
+        $('#popReport2').find('tbody[plan='+plan+'][type=I]').append(html);
+    }
+    $('#popReport2').find('tbody[plan='+plan+'][type=I]').parent().find('tfoot tr').eq(1).find('th').eq(4).html(cost3.toString().toFormat('NUMBER'));
+
+    var trsO = $('#popReport2').find('tbody[plan='+plan+'][type=O]').find('tr');
+    var trsI = $('#popReport2').find('tbody[plan='+plan+'][type=I]').find('tr');
+    for(var i=0;i<trsO.length;i++){
+        var tmp1 = trsO.eq(i).find('td').eq(4).html();
+        var tmp2 = trsO.eq(i).find('td').eq(5).html();
+        var tmp3 = trsI.eq(i).find('td').eq(4).html();
+        if(tmp1==''&&tmp2==''&&tmp3==''){
+            trsO.eq(i).hide();
+            trsI.eq(i).hide();
+        }
+    }
+
+    $('#popReport2').find('#rcppay_status tbody[role=body] table').yRowspanExp(0);
+
+
+
+});
+$(document).on('click', '#popReport2 td.clickable2', function(){
+    var dp = $(this).data('dpt');
+    console.log(dp);
+
+    var trs = $('#popReport2').find("#report_plan").find("tbody[role=plan] tr");
+    $.each(trs, function(pI, pV){
+        $(pV).find('td').eq(0).attr('rowspan', 1);
+        $(pV).find('td').eq(1).attr('rowspan', 1);
+    });
+//    $('#popReport2').find('tr[data-dp='+dp+']').find('td').eq(1).attr('rowspan', 1);
+    $('#popReport2').find('tr[data-dp='+dp+']').toggle();
+    $('#popReport2').find("#report_plan").find("tbody[role=plan]").yRowspanExp(0);
+    $('#popReport2').find("#report_plan").find("tbody[role=plan]").yRowspanExp(1);
+});
+
+</script>
+<div class="modal fade" data-backdrop="static" id="popReport3">
+    <div class="modal-dialog modal-w1200" style="width:85%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint3"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+<!--
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card" name="s_ddt_card">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+-->
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt3">
+<div class="title"><h2 class="colorLS" id="title">진행상황 보고서 (연구소)</h2></div>
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReport3{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+#popReport3 .colorLLG{
+    background: rgb(221,255,221)!important;
+}
+#popReport3 .colorLLY{
+    background: #FDFDBE!important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+
+div.report tr table th, div.report tr table td {
+    border: 1px solid #000!important;
+
+}
+div.report table th, div.report table td {
+    border: 1px solid #000!important;
+}
+
+</style>
+<!-- 기성 현황 시작 -->
+<table id="report_project">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="600">
+	</colgroup>
+	<thead>
+		<tr class="form">
+			<th class="sub-title colorN text-center" colspan="4">프로젝트 진행상황 보고서</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="color-contract">사업년도</th>
+			<td id="eng_year"></td>
+			<th class="color-contract">과제명</th>
+			<td id="eng_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">사업주체</th>
+			<td id="cp_nm"></td>
+			<th class="color-contract">과제번호</th>
+			<td id="cp_code"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">주관기관</th>
+			<td id="np_nm"></td>
+			<th class="color-contract">참여기관</th>
+			<td id="xp_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">책임자</th>
+			<td id="own_mber"></td>
+			<th class="color-contract">담당자</th>
+			<td id="mber"></td>
+		</tr>
+	</tbody>
+</table>
+<table id="report_plan">
+	<colgroup>
+		<col width="7.7%">
+		<col width="7.7%">
+		<col width="17.7%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+		<col width="13.38%">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="8">사업비 계획 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky" colspan="3">총 사업비</th>
+			<th class="colorSky" colspan="3">당사 사업비</th>
+			<th class="colorSky" colspan="2">사업비 지분율 (%)</th>
+		</tr>
+		<tr>
+			<td class="text-number" id="eng_cost" colspan="3"></td>
+			<td class="text-number" id="cost" colspan="3"></td>
+			<td class="text-number" id="cost_rt" colspan="2"></td>
+		</tr>
+    </tbody>
+    <tbody role="plan_title">
+		<tr>
+			<th class="colorSky" rowspan="2" style="border-right:2px solid black!important;">분류</th>
+			<th class="colorSky" rowspan="2" colspan="2">수행기간</th>
+			<th class="colorSky" colspan="3">민간부담금</th>
+			<th class="colorSky" rowspan="2">정부출연금</th>
+			<th class="colorSky" rowspan="2">합계</th>
+		</tr>
+        <tr>
+        	<th class="colorSky">현물</th>
+        	<th class="colorSky">현금</th>
+        	<th class="colorSky">소계</th>
+        </tr>
+    </tbody>
+    <tbody role="plan">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+<table id="report_exp">
+	<colgroup>
+		<col width="150">
+		<col width="200">
+		<col width="150">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+
+		<col width="200">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="12">현금 집행 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="color-contract">분류</th>
+			<th class="color-contract">수행기간</th>
+			<th class="color-contract">현황</th>
+			<th class="color-contract" title="신규 인력 인건비">인건비</th>
+			<th class="color-contract">여비</th>
+			<th class="color-contract">인쇄비</th>
+			<th class="color-contract">전산처리비</th>
+			<th class="color-contract">회의 자문비</th>
+			<th class="color-contract">회의비</th>
+			<th class="color-contract">전문가 자문비</th>
+			<th class="color-contract">기타</th>
+			<th class="color-contract">합계</th>
+		</tr>
+    </tbody>
+	<tbody role="report_exec">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+
+<table id="rcppay_status">
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" style="border-left:1px solid #000!important;border-right:3px solid #000!important;">집행내역</th>
+			<th class="sub-title colorN text-center" style="border-right:1px solid #000!important;">입금내역</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+	</tbody>
+</table>
+
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<!-- 매입/매출 레포트 팝업 끝 -->
+<script type="text/javascript">
+
+
+
+getReport3 = function(s_eng_sn)
+{
+
+    var params = '';
+    params += '&s_eng_sn=' + s_eng_sn;
+	$.ajax({
+		url: '/api/energy/ajax_get_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log(pResult);
+            var pData = pResult.project;
+
+            $("#popReport3").find("#eng_year").html(pData.eng_year);
+            $("#popReport3").find("#cp_code").html(pData.cp_code);
+            $("#popReport3").find("#cp_nm").html(pData.cp_nm);
+            $("#popReport3").find("#eng_nm").html(pData.eng_nm);
+            $("#popReport3").find("#np_nm").html(pData.np_nm);
+            $("#popReport3").find("#np_mber").html(pData.np_mber);
+            $("#popReport3").find("#own_mber").html(pData.own_mber);
+            $("#popReport3").find("#mber").html(pData.mber);
+            $("#popReport3").find("#xp_nm").html(pData.xp_nm);
+
+
+            var eng_cost = parseInt(pData.eng_cost);
+            $("#popReport3").find("#eng_cost").html(pData.eng_cost.toFormat('NUMBER'));
+
+            var html = '';
+            var cost = 0;
+            var cp_a_total = 0, cp_b_total = 0, cp_c_total = 0, cp_ab_total = 0;
+            var cntrwk_bgnde = '', cntrwk_endde = '';
+            ///////////////////////////////////////////////////////////
+            var details = {};
+            $.each(pResult.detail, function(pIndex, pValue){
+                let plan = pValue.plan_order;
+                if(details.hasOwnProperty(plan)){
+                    details[plan].push(pValue);
+                }
+                else{
+                    details[plan] = [pValue];
+                }
+            });
+            ///////////////////////////////////////////////////////////
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pIndex == 0){
+                    cntrwk_bgnde = pValue.cntrwk_bgnde;
+                }
+                if(pIndex == pResult.plan.length-1){
+                    cntrwk_endde = pValue.cntrwk_endde;
+                }
+                cp_a_total += parseInt(pValue.cp_a_cost);
+                cp_b_total += parseInt(pValue.cp_b_cost);
+                cp_c_total += parseInt(pValue.cp_c_cost);
+                cp_ab_total += parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost);
+                var cp_total = parseInt(pValue.cp_a_cost) + parseInt(pValue.cp_b_cost) + parseInt(pValue.cp_c_cost);
+                html += '<tr>';
+                html += '    <td style="border-right:2px solid black!important;">'+(pIndex+1)+'차년도</td>';
+                html += '    <td colspan="2">'+pValue.cntrwk_bgnde+' ~ '+pValue.cntrwk_endde+'</td>';
+                html += '    <td class="text-number">'+pValue.cp_a_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+pValue.cp_b_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+(parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost)).toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+pValue.cp_c_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number colorP">'+cp_total.toString().toFormat('NUMBER')+'</td>';
+                html += '</tr>';
+                cost += cp_total;
+            ///////////////////////////////////////////////////////////
+                if(details.hasOwnProperty(pIndex+'')){
+                    var year = (pIndex+1);
+                    html += '<tr>';
+                    html += '    <td style="border-right:2px solid black!important;border-bottom:2px solid black!important;">'+year+'차년도</td>';
+                    html += '    <th class="color-contract">세목</td>';
+                    html += '    <th class="color-contract">내용</td>';
+                    html += '    <th class="color-contract">현물</td>';
+                    html += '    <th class="color-contract" colspan="3">현금+정부출연금</td>';
+                    html += '    <th class="color-contract">계</td>';
+                    html += '</tr>';
+                    var detail = details[pIndex+''];
+                    var cost_1_sum = 0;
+                    var cost_2_sum = 0;
+                    $.each(detail, function(pI, pV){
+                        html += '<tr>';
+                        html += '    <td style="border-right:2px solid black!important;">'+year+'차년도</td>';
+                        html += '    <td>'+getDetailCostName(pV.exp_cost_num)+'</td>';
+                        html += '    <td>'+pV.cost_content+'</td>';
+                        html += '    <td class="text-number">'+pV.cost_1.toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number" colspan="3">'+pV.cost_2.toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number">'+(parseInt(pV.cost_1)+parseInt(pV.cost_2)).toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        cost_1_sum += parseInt(pV.cost_1);
+                        cost_2_sum += parseInt(pV.cost_2);
+                    });
+                    html += '<tr>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" colspan="3">계</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number">'+cost_1_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number" colspan="3">'+cost_2_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td style="border-top:2px solid black!important;border-bottom:2px solid black!important;" class="text-number colorP">'+(cost_1_sum+cost_2_sum).toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+                }
+            ///////////////////////////////////////////////////////////
+            });
+            $("#popReport3").find("#cost").html(cost.toString().toFormat('NUMBER'));
+            $("#popReport3").find("#cost_rt").html((cost/eng_cost*100.0).toFixed(1)+'%');
+            $('#popReport3').find("#report_plan").find("tbody[role=plan]").html(html);
+            $('#popReport3').find("#report_plan").find("tbody[role=plan]").yRowspan(0);
+            $('#popReport3').find("#report_plan").find("tbody[role=plan]").yRowspan(1);
+
+
+            var html = '';
+            html += '<tr>';
+            html += '    <th class="colorSky" style="border-right:2px solid black!important;">합계</th>';
+            html += '    <th colspan="2" class="colorSky">'+cntrwk_bgnde+' ~ '+cntrwk_endde+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_a_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_b_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_ab_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_c_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cost.toString().toFormat('NUMBER')+'</th>';
+            html += '</tr>';
+            $('#popReport3').find("#report_plan").find("tfoot").html(html);
+
+
+            var html = '';
+            var p_cost_1 = 0, p_cost_95 = 0, p_cost_96 = 0, p_cost_97 = 0, p_cost_98 = 0, p_cost_99 = 0, p_cost_100 = 0, p_cost_101 = 0, p_cost_sum = 0;
+            var o_cost_1 = 0, o_cost_95 = 0, o_cost_96 = 0, o_cost_97 = 0, o_cost_98 = 0, o_cost_99 = 0, o_cost_100 = 0, o_cost_101 = 0, o_cost_sum = 0;
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pResult.ep.hasOwnProperty(pIndex)){
+                    var cost = pResult.ep[pIndex];
+                    var costP = 0;
+                    var rt = '-';
+                    var cost_1 = 0, cost_95 = 0, cost_96 = 0, cost_97 = 0, cost_98 = 0, cost_99 = 0, cost_100 = 0, cost_101 = 0, cost_sum = 0;
+                    $.each(cost, function(pI, pV){
+                        var color = (pV.exp_ty_code == 'P') ? ' colorSky' : ' clickable';
+                        costP = (pV.exp_ty_code == 'P') ? parseInt(pV.cost_sum) : costP;
+                        rt = (pV.exp_ty_code == 'O') ? ((costP-parseInt(pV.cost_sum)) * 100.0/costP).toFixed(1)+'%' : rt;
+                        var _data_plan = (pV.exp_ty_code == 'O') ? ' data-plan="'+pIndex+'"' : '';
+                        html += '<tr>';
+                        html += '    <td class="colorSky">'+(pIndex+1)+'차년도</td>';
+                        html += '    <td class="colorSky">'+pValue.cntrwk_bgnde+'<br/>~ '+pValue.cntrwk_endde+'</td>';
+                        html += '    <td class="'+color+'">'+pV.exp_nm+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="1">'+pV.cost_1.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="95">'+pV.cost_95.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="96">'+pV.cost_96.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="97">'+pV.cost_97.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="98">'+pV.cost_98.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="99">'+pV.cost_99.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="100">'+pV.cost_100.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="101">'+pV.cost_101.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number'+color+'"'+_data_plan+' data-detail="-1">'+pV.cost_sum.toString().toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        if(pV.exp_ty_code == 'P'){
+	                        cost_1 += parseInt(pV.cost_1);
+	                        cost_95 += parseInt(pV.cost_95);
+	                        cost_96 += parseInt(pV.cost_96);
+	                        cost_97 += parseInt(pV.cost_97);
+	                        cost_98 += parseInt(pV.cost_98);
+	                        cost_99 += parseInt(pV.cost_99);
+	                        cost_100 += parseInt(pV.cost_100);
+	                        cost_101 += parseInt(pV.cost_101);
+	                        cost_sum += parseInt(pV.cost_sum);
+
+                            p_cost_1 += parseInt(pV.cost_1);
+                            p_cost_95 += parseInt(pV.cost_95);
+                            p_cost_96 += parseInt(pV.cost_96);
+                            p_cost_97 += parseInt(pV.cost_97);
+                            p_cost_98 += parseInt(pV.cost_98);
+                            p_cost_99 += parseInt(pV.cost_99);
+                            p_cost_100 += parseInt(pV.cost_100);
+                            p_cost_101 += parseInt(pV.cost_101);
+                            p_cost_sum += parseInt(pV.cost_sum);
+                        }
+                        else{
+	                        cost_1 -= parseInt(pV.cost_1);
+	                        cost_95 -= parseInt(pV.cost_95);
+	                        cost_96 -= parseInt(pV.cost_96);
+	                        cost_97 -= parseInt(pV.cost_97);
+	                        cost_98 -= parseInt(pV.cost_98);
+	                        cost_99 -= parseInt(pV.cost_99);
+	                        cost_100 -= parseInt(pV.cost_100);
+	                        cost_101 -= parseInt(pV.cost_101);
+	                        cost_sum -= parseInt(pV.cost_sum);
+                            o_cost_1 += parseInt(pV.cost_1);
+                            o_cost_95 += parseInt(pV.cost_95);
+                            o_cost_96 += parseInt(pV.cost_96);
+                            o_cost_97 += parseInt(pV.cost_97);
+                            o_cost_98 += parseInt(pV.cost_98);
+                            o_cost_99 += parseInt(pV.cost_99);
+                            o_cost_100 += parseInt(pV.cost_100);
+                            o_cost_101 += parseInt(pV.cost_101);
+                            o_cost_sum += parseInt(pV.cost_sum);
+
+                        }
+                    });
+                    var color = ' ';
+                    html += '<tr>';
+                    html += '    <td class="colorSky">'+(pIndex+1)+'차년도</td>';
+                    html += '    <td class="colorSky">'+pValue.cntrwk_bgnde+'<br/>~ '+pValue.cntrwk_endde+'</td>';
+                    html += '    <td class="'+color+'">잔액</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_1.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_95.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_96.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_97.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_98.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_99.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_100.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_101.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-number'+color+'">'+cost_sum.toString().toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+
+                }
+            });
+            $('#popReport3').find("#report_exp").find('tbody[role="report_exec"]').html(html);
+            var html = '';
+            var color = ' colorP';
+            var rt = '-';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">예산</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_1.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_95.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_96.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_97.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_98.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_99.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_100.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_101.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+p_cost_sum.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            var color = '';
+            var rt = ((p_cost_sum-o_cost_sum) * 100.0/p_cost_sum).toFixed(1)+'%';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">집행</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_1.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_95.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_96.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_97.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_98.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_99.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_100.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_101.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+o_cost_sum.toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            var color = '';
+            html += '<tr>';
+            html += '    <td class="colorP">합계</td>';
+            html += '    <td class="colorP"><span></span>사업비</td>';
+            html += '    <td class="'+color+'">잔액</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_1-o_cost_1).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_95-o_cost_95).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_96-o_cost_96).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_97-o_cost_97).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_98-o_cost_98).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_99-o_cost_99).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_100-o_cost_100).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_101-o_cost_101).toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-number'+color+'">'+(p_cost_sum-o_cost_sum).toString().toFormat('NUMBER')+'</td>';
+            html += '</tr>';
+            $('#popReport3').find("#report_exp").find('tfoot').html(html);
+            $('#popReport3').find("#report_exp").yRowspan(0);
+            $('#popReport3').find("#report_exp").yRowspan(1);
+
+
+
+            var html = '';
+            $.each(pResult.rcppayList, function(pIndex, pValue) {
+                console.log('pResult.rcppayList', pValue);
+
+
+                var bgnde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_bgnde;
+                var sYear = bgnde.substring(0,4);
+                var sMonth = bgnde.substring(5,7);
+                var sDate = bgnde.substring(8,10);
+                bgnde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var endde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_endde;
+                var sYear = endde.substring(0,4);
+                var sMonth = endde.substring(5,7);
+                var sDate = endde.substring(8,10);
+                endde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var nowde = new Date();
+
+                var _display = ' style="display:none;"';
+                if(between_date(nowde, bgnde) >= 0 && between_date(endde, nowde) >= 0){
+                    _display = '';
+                }
+
+
+                var year = (pIndex+1)+"차년도";
+                var sTaxbilList = pValue.sTaxbilList;
+                var iRcppayList = pValue.iRcppayList;
+                html += '<tr>';
+                html += '    <th style="width:54%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+
+                html += '                <col width="7.04%">';
+                html += '                <col width="11.264%">';
+                html += '                <col width="14.08%">';
+                html += '                <col width="28.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="14.08%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">연차</th>';
+                html += '                    <th class="colorG">출금일자</th>';
+                html += '                    <th class="colorG">세목</th>';
+                html += '                    <th class="colorG">내용</th>';
+                html += '                    <th class="colorG">현금</th>';
+                html += '                    <th class="colorG">카드</th>';
+                html += '                    <th class="colorG">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="O">';
+
+                var bill_total = 0, card_total = 0, sum_total = 0;
+                $.each(sTaxbilList, function(pIndex, pValue) {
+
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    if(parseInt(pValue.exp_io_type) == 0){
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number"></td>';
+                        bill_total += parseInt(pValue.exp_cost);
+                    }
+                    else{
+                        html += '    <td class="text-number"></td>';
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        card_total += parseInt(pValue.exp_cost);
+                    }
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    sum_total += parseInt(pValue.exp_cost);
+                });
+                if (sTaxbilList.length < iRcppayList.length) {
+                    var max = iRcppayList.length - sTaxbilList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLG">소계</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number">'+bill_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number">'+card_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">합계</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number" colspan="2">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '    <th style="width:46%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="10.04%">';
+                html += '                <col width="14.264%">';
+                html += '                <col width="18.08%">';
+                html += '                <col width="30.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="16.75%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">연차</th>';
+                html += '                    <th class="colorY">입금일자</th>';
+                html += '                    <th class="colorY">세목</th>';
+                html += '                    <th class="colorY">내용</th>';
+                html += '                    <th class="colorY">금액</th>';
+                html += '                    <th class="colorY">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="I">';
+
+                var input_total = 0;
+                $.each(iRcppayList, function(pIndex, pValue) {
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    input_total += parseInt(pValue.exp_cost);
+                });
+                if (iRcppayList.length < sTaxbilList.length) {
+                    var max = sTaxbilList.length - iRcppayList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLY">&nbsp;</th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">합계</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number">'+input_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '</tr>';
+            });
+            $('#popReport3').find('#rcppay_status tbody[role=body]').html(html);
+            $('#popReport3').find('#rcppay_status tbody[role=body] table').yRowspan(0);
+
+
+            $('#popReport3').modal('show');
+
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+//	$('#popReport3').on('show.bs.modal', function(pEvent) {
+//	});
+
+	$('#popReport3').on('hidden.bs.modal', function(pEvent)
+	{
+	});
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint3').on('click', function(pEvent) {
+		var html = $('#popReport3').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+});
+
+$(document).on('click', '#popReport3 #report_exp td.clickable', function(){
+    var plan = $(this).data('plan');
+    var detail = $(this).data('detail');
+
+    var cost1 = 0;
+    var cost2 = 0;
+    var cost3 = 0;
+
+    var allTrs = $('#popReport3').find('#rcppay_status tbody[role=body] table tbody').find('tr');
+    $.each(allTrs, function(pI, tr){
+        $(tr).hide();
+    });
+
+    var trsO = $('#popReport3').find('tbody[plan='+plan+'][type=O]').find('tr');
+    var countO = 0;
+    $.each(trsO, function(pIndex, tr){
+        console.log($(tr));
+        $(tr).find('td').eq(0).attr('rowspan', 1);
+        $(tr).find('td').eq(0).show();
+        if(detail!='-1' && $(tr).find('td').eq(2).html()!=getDetailCostName(detail)){
+            $(tr).hide();
+        }
+        else{
+            $(tr).show();
+            $(tr).find('td').eq(0).show();
+            var _cost1 = parseInt($(tr).find('td').eq(4).html().replaceAll(',', '')); if(isNaN(_cost1))_cost1=0;
+            cost1 += _cost1;
+            var _cost2 = parseInt($(tr).find('td').eq(5).html().replaceAll(',', '')); if(isNaN(_cost2))_cost2=0;
+            cost2 += _cost2;
+            countO += 1;
+        }
+    });
+    var trsI = $('#popReport3').find('tbody[plan='+plan+'][type=I]').find('tr');
+    var countI = 0;
+    $.each(trsI, function(pIndex, tr){
+        $(tr).find('td').eq(0).attr('rowspan', 1);
+        $(tr).find('td').eq(0).show();
+        if(detail!='-1' && $(tr).find('td').eq(2).html()!=getDetailCostName(detail)){
+            $(tr).hide();
+        }
+        else{
+            $(tr).show();
+            var _cost3 = parseInt($(tr).find('td').eq(4).html().replaceAll(',', '')); if(isNaN(_cost3))_cost3=0;
+            cost3 += _cost3;
+            countI += 1;
+        }
+    });
+
+    if(countO < countI){
+        var count = countI-countO;
+        var html = '';
+        for(var i=0;i<count;i++){
+            html += '<tr class="colorW">';
+            html += '    <td>'+(parseInt(plan)+1)+'차년도</td>';
+            html += '    <td>-</td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '</tr>';
+        }
+        $('#popReport3').find('tbody[plan='+plan+'][type=O]').append(html);
+    }
+    console.log(cost1);
+    console.log(cost2);
+    console.log(cost3);
+    console.log($('#popReport3').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr'));
+    $('#popReport3').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(0).find('th').eq(4).html(cost1.toString().toFormat('NUMBER'));
+    $('#popReport3').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(0).find('th').eq(5).html(cost2.toString().toFormat('NUMBER'));
+    $('#popReport3').find('tbody[plan='+plan+'][type=O]').parent().find('tfoot tr').eq(1).find('th').eq(4).html((cost1+cost2).toString().toFormat('NUMBER'));
+    if(countO > countI){
+        var count = countO-countI;
+        var html = '';
+        for(var i=0;i<count;i++){
+            html += '<tr class="colorW">';
+            html += '    <td>'+(parseInt(plan)+1)+'차년도</td>';
+            html += '    <td>-</td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '    <td></td>';
+            html += '</tr>';
+        }
+        $('#popReport3').find('tbody[plan='+plan+'][type=I]').append(html);
+    }
+    $('#popReport3').find('tbody[plan='+plan+'][type=I]').parent().find('tfoot tr').eq(1).find('th').eq(4).html(cost3.toString().toFormat('NUMBER'));
+    var trsO = $('#popReport3').find('tbody[plan='+plan+'][type=O]').find('tr');
+    var trsI = $('#popReport3').find('tbody[plan='+plan+'][type=I]').find('tr');
+    for(var i=0;i<trsO.length;i++){
+        var tmp1 = trsO.eq(i).find('td').eq(4).html();
+        var tmp2 = trsO.eq(i).find('td').eq(5).html();
+        var tmp3 = trsI.eq(i).find('td').eq(4).html();
+        if(tmp1==''&&tmp2==''&&tmp3==''){
+            trsO.eq(i).hide();
+            trsI.eq(i).hide();
+        }
+    }
+    $('#popReport3').find('#rcppay_status tbody[role=body] table').yRowspanExp(0);
+
+});
+
+$(document).on('click', '#popReport3 td.clickable2', function(){
+    var dp = $(this).data('dpt');
+    console.log(dp);
+
+    var trs = $('#popReport3').find("#report_plan").find("tbody[role=plan] tr");
+    $.each(trs, function(pI, pV){
+        $(pV).find('td').eq(0).attr('rowspan', 1);
+        $(pV).find('td').eq(1).attr('rowspan', 1);
+    });
+//    $('#popReport2').find('tr[data-dp='+dp+']').find('td').eq(1).attr('rowspan', 1);
+    $('#popReport3').find('tr[data-dp='+dp+']').toggle();
+    $('#popReport3').find("#report_plan").find("tbody[role=plan]").yRowspanExp(0);
+    $('#popReport3').find("#report_plan").find("tbody[role=plan]").yRowspanExp(1);
+});
+</script>
+<div class="modal fade" data-backdrop="static" id="popReport4">
+    <div class="modal-dialog modal-w1200" style="width:85%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint4"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+<!--
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_card" name="s_ddt_card">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+-->
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt4">
+<div class="title"><h2 class="colorLS" id="title">진행상황 보고서 (연구소)</h2></div>
+<style>
+div.report .sub-title {
+    padding-top: 4px!important;
+}
+div.report table {
+	border-bottom: 0px solid #000!important;
+}
+div.report table:last-child {
+	border-bottom: 3px solid #000!important;
+}
+div.report table thead,
+div.report table tbody,
+div.report table tbody[role=header],
+div.report table tbody[role=body],
+div.report table tbody[role=footer],
+div.report table tfoot {
+	border: 2px solid #000!important;
+	border-left: 1px solid #000!important;
+	border-right: 1px solid #000!important;
+	border-bottom: 0px solid #000!important;
+}
+div.report table th, div.report table td {
+    padding: 5px!important;
+}
+</style>
+<style>
+#popReport4{
+    font-size: 12px !important;
+    line-height: 1.0 !important;
+}
+#popReport4 .colorLLG{
+    background: rgb(221,255,221)!important;
+}
+#popReport4 .colorLLY{
+    background: #FDFDBE!important;
+}
+</style>
+<style>
+    span[name=alte]{
+        font-size:15px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:inline;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+}
+div.report tr table th, div.report tr table td {
+    border: 1px solid #000!important;
+
+}
+div.report table th, div.report table td {
+    border: 1px solid #000!important;
+}
+</style>
+<!-- 기성 현황 시작 -->
+<table id="report_project">
+	<colgroup>
+		<col width="150">
+		<col width="600">
+		<col width="150">
+		<col width="600">
+	</colgroup>
+	<thead>
+		<tr class="form">
+			<th class="sub-title colorN text-center" colspan="4">프로젝트 진행상황 보고서</th>
+		</tr>
+
+	</thead>
+	<tbody>
+        <tr>
+			<th class="color-contract">사업년도</th>
+			<td id="eng_year"></td>
+			<th class="color-contract">과제명</th>
+			<td id="eng_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">사업주체</th>
+			<td id="cp_nm"></td>
+			<th class="color-contract">과제번호</th>
+			<td id="cp_code"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">주관기관</th>
+			<td id="np_nm"></td>
+			<th class="color-contract">참여기관</th>
+			<td id="xp_nm"></td>
+		</tr>
+        <tr>
+			<th class="color-contract">책임자</th>
+			<td id="own_mber"></td>
+			<th class="color-contract">담당자</th>
+			<td id="mber"></td>
+		</tr>
+	</tbody>
+</table>
+<!--
+<table id="report_plan">
+	<colgroup>
+		<col width="150">
+		<col width="350">
+		<col width="250">
+		<col width="250">
+		<col width="250">
+		<col width="250">
+		<col width="250">
+	</colgroup>
+    <thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="7">사업비 내역</th>
+		</tr>
+
+	</thead>
+	<tbody>
+		<tr>
+			<th class="colorSky" colspan="2">총 사업비</th>
+			<th class="colorSky" colspan="3">당사 사업비</th>
+			<th class="colorSky" colspan="2">사업비 지분율 (%)</th>
+		</tr>
+		<tr>
+			<td class="text-number" id="eng_cost" colspan="2"></td>
+			<td class="text-number" id="cost" colspan="3"></td>
+			<td class="text-number" id="cost_rt" colspan="2"></td>
+		</tr>
+    </tbody>
+    <tbody role="plan_title">
+		<tr>
+			<th class="colorSky" rowspan="2">분류</th>
+			<th class="colorSky" rowspan="2">수행기간</th>
+			<th class="colorSky" colspan="3">민간부담금</th>
+			<th class="colorSky" rowspan="2">정부출연금</th>
+			<th class="colorSky" rowspan="2">합계</th>
+		</tr>
+        <tr>
+        	<th class="colorSky">현물</th>
+        	<th class="colorSky">현금</th>
+        	<th class="colorSky">소계</th>
+        </tr>
+    </tbody>
+    <tbody role="plan">
+    </tbody>
+    <tfoot>
+	</tfoot>
+</table>
+
+
+-->
+<table id="rcppay_status">
+	<tbody>
+		<tr>
+			<th class="sub-title colorN text-center" style="border-left:1px solid #000!important;border-right:3px solid #000!important;">집행내역</th>
+			<th class="sub-title colorN text-center" style="border-right:1px solid #000!important;">입금내역</th>
+		</tr>
+	</tbody>
+	<tbody role="body">
+	</tbody>
+<!--
++++++++++++++++++++++++++++++++++++++++++++++++++
+-->
+</table>
+
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<!-- 매입/매출 레포트 팝업 끝 -->
+<script type="text/javascript">
+
+
+
+getReport4 = function(s_eng_sn)
+{
+
+    var params = '';
+    params += '&s_eng_sn=' + s_eng_sn;
+	$.ajax({
+		url: '/api/energy/ajax_get_report',
+		type: 'GET',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		success: function(pResult) {
+            console.log(pResult);
+            var pData = pResult.project;
+
+            $("#popReport4").find("#eng_year").html(pData.eng_year);
+            $("#popReport4").find("#cp_code").html(pData.cp_code);
+            $("#popReport4").find("#cp_nm").html(pData.cp_nm);
+            $("#popReport4").find("#eng_nm").html(pData.eng_nm);
+            $("#popReport4").find("#np_nm").html(pData.np_nm);
+            $("#popReport4").find("#np_mber").html(pData.np_mber);
+            $("#popReport4").find("#own_mber").html(pData.own_mber);
+            $("#popReport4").find("#mber").html(pData.mber);
+            $("#popReport4").find("#xp_nm").html(pData.xp_nm);
+
+
+            var eng_cost = parseInt(pData.eng_cost);
+            $("#popReport4").find("#eng_cost").html(pData.eng_cost.toFormat('NUMBER'));
+
+            var html = '';
+            var cost = 0;
+            var cp_a_total = 0, cp_b_total = 0, cp_c_total = 0, cp_ab_total = 0;
+            var cntrwk_bgnde = '', cntrwk_endde = '';
+            $.each(pResult.plan, function(pIndex, pValue){
+                if(pIndex == 0){
+                    cntrwk_bgnde = pValue.cntrwk_bgnde;
+                }
+                if(pIndex == pResult.plan.length-1){
+                    cntrwk_endde = pValue.cntrwk_endde;
+                }
+                cp_a_total += parseInt(pValue.cp_a_cost);
+                cp_b_total += parseInt(pValue.cp_b_cost);
+                cp_c_total += parseInt(pValue.cp_c_cost);
+                cp_ab_total += parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost);
+                var cp_total = parseInt(pValue.cp_a_cost) + parseInt(pValue.cp_b_cost) + parseInt(pValue.cp_c_cost);
+                html += '<tr>';
+                html += '    <td>'+(pIndex+1)+'차년도</td>';
+                html += '    <td>'+pValue.cntrwk_bgnde+' ~ '+pValue.cntrwk_endde+'</td>';
+                html += '    <td class="text-number">'+pValue.cp_a_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+pValue.cp_b_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+(parseInt(pValue.cp_a_cost)+parseInt(pValue.cp_b_cost)).toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+pValue.cp_c_cost.toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-number">'+cp_total.toString().toFormat('NUMBER')+'</td>';
+                html += '</tr>';
+                cost += cp_total;
+            });
+            $("#popReport4").find("#cost").html(cost.toString().toFormat('NUMBER'));
+            $("#popReport4").find("#cost_rt").html((cost/eng_cost*100.0).toFixed(1)+'%');
+            $('#popReport4').find("#report_plan").find("tbody[role=plan]").html(html);
+
+
+            var html = '';
+            html += '<tr>';
+            html += '    <th class="colorSky">합계</th>';
+            html += '    <th class="colorSky">'+cntrwk_bgnde+' ~ '+cntrwk_endde+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_a_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_b_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_ab_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cp_c_total.toString().toFormat('NUMBER')+'</th>';
+            html += '    <th class="colorSky text-number">'+cost.toString().toFormat('NUMBER')+'</th>';
+            html += '</tr>';
+            $('#popReport4').find("#report_plan").find("tfoot").html(html);
+
+
+
+
+
+
+            var html = '';
+            $.each(pResult.rcppayList, function(pIndex, pValue) {
+                console.log('pResult.rcppayList', pValue);
+
+
+                var bgnde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_bgnde;
+                var sYear = bgnde.substring(0,4);
+                var sMonth = bgnde.substring(5,7);
+                var sDate = bgnde.substring(8,10);
+                bgnde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var endde = pResult.plan[parseInt(pValue.plan_order)].cntrwk_endde;
+                var sYear = endde.substring(0,4);
+                var sMonth = endde.substring(5,7);
+                var sDate = endde.substring(8,10);
+                endde = new Date(Number(sYear), Number(sMonth)-1, Number(sDate));
+
+                var nowde = new Date();
+
+                var _display = '';
+//                var _display = ' style="display:none;"';
+//                if(between_date(nowde, bgnde) >= 0 && between_date(endde, nowde) >= 0){
+//                    _display = '';
+//                }
+//
+
+                var year = (pIndex+1)+"차년도";
+                var sTaxbilList = pValue.sTaxbilList;
+                var iRcppayList = pValue.iRcppayList;
+                html += '<tr>';
+                html += '    <th style="width:54%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="7.04%">';
+                html += '                <col width="11.264%">';
+                html += '                <col width="14.08%">';
+                html += '                <col width="28.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="14.08%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">연차</th>';
+                html += '                    <th class="colorG">출금일자</th>';
+                html += '                    <th class="colorG">세목</th>';
+                html += '                    <th class="colorG">내용</th>';
+                html += '                    <th class="colorG">현금</th>';
+                html += '                    <th class="colorG">카드</th>';
+                html += '                    <th class="colorG">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="O">';
+
+                var bill_total = 0, card_total = 0, sum_total = 0;
+                $.each(sTaxbilList, function(pIndex, pValue) {
+
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    if(parseInt(pValue.exp_io_type) == 0){
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-number"></td>';
+                        bill_total += parseInt(pValue.exp_cost);
+                    }
+                    else{
+                        html += '    <td class="text-number"></td>';
+                        html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                        card_total += parseInt(pValue.exp_cost);
+                    }
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    sum_total += parseInt(pValue.exp_cost);
+                });
+                if (sTaxbilList.length < iRcppayList.length) {
+                    var max = iRcppayList.length - sTaxbilList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLG">소계</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                    <th class="colorLLG text-number">'+bill_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number">'+card_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorLLG text-number"></th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorG">합계</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                    <th class="colorG text-number" colspan="2">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorG text-number"></th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '    <th style="width:46%;padding:0px!important;vertical-align:top!important;border: 1px solid #000!important;">';
+                html += '        <table style="border:0px!important;">';
+                html += '            <colgroup>';
+                html += '                <col width="10.04%">';
+                html += '                <col width="14.264%">';
+                html += '                <col width="18.08%">';
+                html += '                <col width="30.16%">';
+                html += '                <col width="12.67%">';
+                html += '                <col width="16.75%">';
+                html += '            </colgroup>';
+                html += '            <thead>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">연차</th>';
+                html += '                    <th class="colorY">입금일자</th>';
+                html += '                    <th class="colorY">세목</th>';
+                html += '                    <th class="colorY">내용</th>';
+                html += '                    <th class="colorY">금액</th>';
+                html += '                    <th class="colorY">거래처</th>';
+                html += '                </tr>';
+                html += '            </thead>';
+                html += '            <tbody role="body" plan="'+pIndex+'" type="I">';
+
+                var input_total = 0;
+                $.each(iRcppayList, function(pIndex, pValue) {
+                    html += '<tr class="colorW" '+_display+'>';
+                    html += '    <td>'+year+'</td>';
+                    html += '    <td>'+pValue.exp_de+'</td>';
+                    html += '    <td>'+pValue.exp_se_nm+'</td>';
+                    html += '    <td>'+pValue.exp_content+'</td>';
+                    html += '    <td class="text-number">'+pValue.exp_cost.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td>'+pValue.exp_bcnc_nm+'</td>';
+                    html += '</tr>';
+                    input_total += parseInt(pValue.exp_cost);
+                });
+                if (iRcppayList.length < sTaxbilList.length) {
+                    var max = sTaxbilList.length - iRcppayList.length;
+                    for (i=0; i<max; i++) {
+                        html += '<tr class="colorW" '+_display+'>';
+                        html += '    <td>'+year+'</td>';
+                        html += '    <td>-</td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '    <td></td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '            </tbody>';
+                html += '            <tfoot>';
+                html += '                <tr>';
+                html += '                    <th class="colorLLY">&nbsp;</th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorLLY text-number"></th>';
+                html += '                    <th class="colorP text-center">손익</th>';
+                html += '                </tr>';
+                html += '                <tr>';
+                html += '                    <th class="colorY">합계</th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number"></th>';
+                html += '                    <th class="colorY text-number">'+input_total.toString().toFormat('NUMBER')+'</th>';
+                html += '                    <th class="colorP text-number">'+(input_total-sum_total).toString().toFormat('NUMBER')+'</th>';
+                html += '                </tr>';
+                html += '            </tfoot>';
+                html += '        </table>';
+                html += '    </th>';
+                html += '</tr>';
+            });
+            $('#popReport4').find('#rcppay_status tbody[role=body]').html(html);
+            $('#popReport4').find('#rcppay_status tbody[role=body] table').yRowspan(0);
+
+
+
+            $('#popReport4').modal('show');
+
+		}
+	});
+}
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     *
+     */
+//	$('#popReport4').on('show.bs.modal', function(pEvent) {
+//	});
+
+	$('#popReport4').on('hidden.bs.modal', function(pEvent)
+	{
+	});
+    /**************************************************************************
+     *
+     */
+	$('#btnPrint4').on('click', function(pEvent) {
+		var html = $('#popReport4').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
 });
 </script>
 

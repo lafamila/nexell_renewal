@@ -1,6 +1,8 @@
 from flask import session, jsonify, g, render_template
 from app.helpers.datatable_helper import dt_query
 import json
+import datetime
+from pytz import timezone
 
 def get_energy_datatable(params):
     start = params["s_year_start"].split("-")[0]
@@ -109,6 +111,30 @@ def get_plan_list(params):
     result = g.curs.fetchall()
     return result
 
+def get_expP_list(params):
+    query = """SELECT SUM(IF(e.exp_se_code=1,e.exp_cost,0)) AS exp_cost_1
+				, SUM(IF(e.exp_se_code=2,e.exp_cost,0)) AS exp_cost_2
+				, SUM(IF(e.exp_se_code=3,e.exp_cost,0)) AS exp_cost_3
+				, SUM(IF(e.exp_se_code=4,e.exp_cost,0)) AS exp_cost_4
+				, SUM(IF(e.exp_se_code=5,e.exp_cost,0)) AS exp_cost_5
+				, SUM(IF(e.exp_se_code=6,e.exp_cost,0)) AS exp_cost_6
+				, SUM(IF(e.exp_se_code=7,e.exp_cost,0)) AS exp_cost_7
+				, SUM(IF(e.exp_se_code=8,e.exp_cost,0)) AS exp_cost_8
+				, SUM(IF(e.exp_se_code=9,e.exp_cost,0)) AS exp_cost_9
+				, e.plan_order
+				, e.regist_dtm
+				, e.eng_sn
+				FROM expense e
+				WHERE 1=1
+				AND e.eng_sn = %(s_eng_sn)s
+				AND e.exp_ty_code IN ('P')
+				GROUP BY plan_order, regist_dtm
+				ORDER BY plan_order, regist_dtm
+"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
 def get_exp_list(params):
     query = """SELECT e.eng_sn
 				, e.exp_sn
@@ -128,10 +154,10 @@ def get_exp_list(params):
 				, e.register_id
 				FROM expense e
 				WHERE 1=1
-				AND eng_sn = %(s_eng_sn)s
+				AND eng_sn = %s
 				AND exp_ty_code NOT IN ('P')"""
 
-    data = []
+    data = [params["s_eng_sn"]]
     if "s_exp_bcnc_code" in params and params['s_exp_bcnc_code']:
         query += " AND exp_bcnc_code LIKE %s"
         data.append("%{}%".format(params["s_exp_bcnc_code"]))
@@ -153,8 +179,201 @@ def get_exp_list(params):
         data.append(params["s_start"])
         data.append(params["s_end"])
 
-    query += " ORDER BY exp_de, exp_content ";
+    query += " ORDER BY exp_de, exp_content "
 
     g.curs.execute(query, data)
+    result = g.curs.fetchall()
+    return result
+
+def get_exp_detail_list(params):
+    query = """SELECT d.d_sn
+				, d.eng_sn
+				, d.plan_order
+				, d.exp_cost_num
+				, (SELECT code_ordr FROM code WHERE parnts_code='EXP_SE_CODE' and code=d.exp_cost_num) AS code_ordr
+				, d.cost_content
+				, d.cost_1
+				, d.cost_2
+				, d.regist_dtm
+				FROM detail d
+				WHERE 1=1
+				AND d.eng_sn = %(s_eng_sn)s
+				 ORDER BY plan_order, code_ordr, regist_dtm 
+    """
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_expP_list2(params):
+    query = """SELECT SUM(IF(e.exp_se_code=1,e.exp_cost,0)) AS exp_cost_1
+				, SUM(IF(e.exp_se_code=95,e.exp_cost,0)) AS exp_cost_2
+				, SUM(IF(e.exp_se_code=96,e.exp_cost,0)) AS exp_cost_3
+				, SUM(IF(e.exp_se_code=97,e.exp_cost,0)) AS exp_cost_4
+				, SUM(IF(e.exp_se_code=98,e.exp_cost,0)) AS exp_cost_5
+				, SUM(IF(e.exp_se_code=99,e.exp_cost,0)) AS exp_cost_6
+				, SUM(IF(e.exp_se_code=100,e.exp_cost,0)) AS exp_cost_7
+				, SUM(IF(e.exp_se_code=101,e.exp_cost,0)) AS exp_cost_8
+				, e.plan_order
+				, e.regist_dtm
+				, e.eng_sn
+				FROM expense e
+				WHERE 1=1
+				AND e.eng_sn = %(s_eng_sn)s
+				AND e.exp_ty_code IN ('P')
+				GROUP BY plan_order, regist_dtm
+				ORDER BY plan_order, regist_dtm
+"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def insert_energybil(params):
+    data = dict()
+    for key in ["eng_year", "eng_nm", "eng_state", "cp_nm", "cp_code", "np_nm", "xp_nm", "eng_cost", "np_mber", "own_mber", "mber", "rnr", "regist_dtm", "register_id"]:
+        if key in params:
+            data[key] = params[key]
+
+    if "regist_dtm" not in data:
+        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
+
+    if "register_id" not in data:
+        data["register_id"] = session["member"]["member_id"]
+
+    keys = list(data.keys())
+    query = "INSERT INTO energy({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+    g.curs.execute(query, data)
+
+def update_energybil(params):
+    data = dict()
+    for key in ["eng_year", "eng_nm", "eng_state", "cp_nm", "cp_code", "np_nm", "xp_nm", "eng_cost", "np_mber", "own_mber", "mber", "rnr"]:
+        if key in params:
+            data[key] = params[key]
+        else:
+            data[key] = None
+
+    data["eng_sn"] = params["s_eng_sn"]
+    keys = list(data.keys())
+    query = "UPDATE energy SET {} WHERE eng_sn=%(eng_sn)s".format(",".join(["{0}=%({0})s".format(k) for k in keys]))
+    g.curs.execute(query, data)
+
+
+def delete_energybil(params):
+    query = """DELETE
+				FROM energy
+				WHERE 1=1
+				AND eng_sn = %(s_eng_sn)s
+    """
+    g.curs.execute(query, params)
+
+def get_energybil(params):
+    query = """SELECT e.eng_sn
+				, e.eng_year
+				, e.eng_nm
+				, e.eng_state
+				, e.cp_nm
+				, e.cp_code
+				, e.np_nm
+				, e.np_mber
+				, e.own_mber
+				, e.mber
+				, e.rnr
+				, e.xp_nm
+				, e.eng_cost
+				FROM energy e
+				WHERE 1=1
+				AND e.eng_sn = %(s_eng_sn)s
+"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchone()
+    return result
+
+
+def get_exp_plan_list(params):
+    query = """SELECT SUM(IF(e.exp_se_code=1,e.exp_cost,0)) AS cost_1
+				, SUM(IF(e.exp_se_code=2,e.exp_cost,0)) AS cost_2
+				, SUM(IF(e.exp_se_code=3,e.exp_cost,0)) AS cost_3
+				, SUM(IF(e.exp_se_code=4,e.exp_cost,0)) AS cost_4
+				, SUM(IF(e.exp_se_code=5,e.exp_cost,0)) AS cost_5
+				, SUM(IF(e.exp_se_code=6,e.exp_cost,0)) AS cost_6
+				, SUM(IF(e.exp_se_code=7,e.exp_cost,0)) AS cost_7
+				, SUM(IF(e.exp_se_code=8,e.exp_cost,0)) AS cost_8
+				, SUM(IF(e.exp_se_code=9,e.exp_cost,0)) AS cost_9
+				, SUM(IF(e.exp_se_code=95,e.exp_cost,0)) AS cost_95
+				, SUM(IF(e.exp_se_code=96,e.exp_cost,0)) AS cost_96
+				, SUM(IF(e.exp_se_code=97,e.exp_cost,0)) AS cost_97
+				, SUM(IF(e.exp_se_code=98,e.exp_cost,0)) AS cost_98
+				, SUM(IF(e.exp_se_code=99,e.exp_cost,0)) AS cost_99
+				, SUM(IF(e.exp_se_code=100,e.exp_cost,0)) AS cost_100
+				, SUM(IF(e.exp_se_code=101,e.exp_cost,0)) AS cost_101
+				, SUM(IF(e.exp_se_code >= 1 AND e.exp_se_code <= 101,e.exp_cost,0)) AS cost_sum
+				, e.plan_order
+				, e.exp_ty_code
+				, c.code_nm AS exp_nm
+				FROM expense e
+				LEFT JOIN code c
+				ON e.exp_ty_code = c.code
+				AND c.parnts_code = 'EXP_TY_CODE'
+				WHERE 1=1
+				AND e.eng_sn = %(s_eng_sn)s
+				AND e.exp_ty_code IN ('P', 'O')
+				GROUP BY plan_order, exp_ty_code
+				ORDER BY plan_order, code_ordr
+"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_rcppay_report_list(params):
+    query = """SELECT e.plan_order
+				FROM expense e
+				WHERE e.exp_ty_code IN ('I', 'O')
+				AND e.eng_sn = %(s_eng_sn)s
+				GROUP BY e.plan_order
+				ORDER BY e.plan_order
+"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    for data in result:
+        pParams = {"s_eng_sn" : params["s_eng_sn"], "s_plan_order" : data["plan_order"]}
+        data['sTaxbilList'] = get_s_taxbil_report_list(pParams)
+        data['iRcppayList'] = get_i_rcppay_report_list(pParams)
+
+    return result
+
+def get_s_taxbil_report_list(params):
+    query = """SELECT e.exp_de
+				, e.exp_ty_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='EXP_SE_CODE' AND code=e.exp_se_code) AS exp_se_nm
+				, e.exp_content
+				, e.exp_cost
+				, e.exp_io_type
+				, e.exp_bcnc_code
+				, e.exp_bcnc_code AS exp_bcnc_nm
+				FROM expense e
+				WHERE e.eng_sn = %(s_eng_sn)s
+				AND e.plan_order = %(s_plan_order)s
+				AND e.exp_ty_code = 'O'
+				ORDER BY e.exp_de, e.exp_content
+"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
+
+def get_i_rcppay_report_list(params):
+    query = """SELECT e.exp_de
+				, e.exp_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='EXP_SE_CODE' AND code=e.exp_se_code) AS exp_se_nm
+				, e.exp_content
+				, e.exp_cost
+				, e.exp_io_type
+				, e.exp_bcnc_code
+				, e.exp_bcnc_code AS exp_bcnc_nm
+				FROM expense e
+				WHERE e.eng_sn = %(s_eng_sn)s
+				AND e.plan_order = %(s_plan_order)s
+				AND e.exp_ty_code = 'I'
+				ORDER BY e.exp_de, e.exp_content
+"""
+    g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result

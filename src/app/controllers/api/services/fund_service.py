@@ -360,6 +360,7 @@ def get_rcppay_summary1(params):
 				LEFT JOIN rcppay r
 				ON c.parnts_code='ACNUT_CODE' AND r.acnut_code=c.code AND r.rcppay_de = %(s_rcppay_de)s AND r.rcppay_se_code NOT IN ('B')
 				WHERE c.parnts_code = 'ACNUT_CODE'
+				AND c.use_at='Y'
 				GROUP BY c.code, c.estn_code_a
 				ORDER BY c.code_ordr
 """
@@ -414,6 +415,7 @@ def get_rcppay_summary2(params):
 				LEFT JOIN rcppay r
 				ON r.acnut_code IS NULL AND r.acntctgr_code=c.code AND r.rcppay_de = %(s_rcppay_de)s AND r.rcppay_se_code NOT IN ('B')
 				WHERE c.parnts_code='ACNTCTGR_CODE_PRT'
+				AND c.use_at='Y'				
 				GROUP BY c.code, c.code_nm
 				ORDER BY c.code_ordr
 """
