@@ -307,7 +307,7 @@ def get_completed_suju_b(params):
                     LEFT JOIN contract c
                     ON c.cntrct_sn = cst.cntrct_sn
                     LEFT JOIN member m
-                    ON c.bsn_chrg_sn = m.mber_sn
+                    ON c.spt_chrg_sn = m.mber_sn
                     LEFT JOIN code co
                     ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
 				WHERE 1=1

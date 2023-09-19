@@ -1888,7 +1888,7 @@ getPlan = function(s_plan_sn)
 	params += '&s_plan_sn=' + s_plan_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_plan',
+		url: '/api/energy/ajax_get_plan',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -1912,7 +1912,7 @@ getPlan = function(s_plan_sn)
 insertPlan = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_insert_plan',
+		url: '/api/energy/ajax_insert_plan',
 		type: 'POST',
 		data: getFormData($('#frmBox2')[0]),
 		dataType: 'json',
@@ -1991,7 +1991,7 @@ insertPlan = function()
 updatePlan = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_update_plan',
+		url: '/api/energy/ajax_update_plan',
 		type: 'POST',
 		data: getFormData($('#frmBox2')[0]),
 		dataType: 'json',
@@ -2058,7 +2058,7 @@ deletePlan = function(s_plan_sn)
 	params += '&s_plan_sn=' + s_plan_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_delete_plan',
+		url: '/api/energy/ajax_delete_plan',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2088,7 +2088,7 @@ getExp = function(s_exp_sn)
 	params += '&s_exp_sn=' + s_exp_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_exp',
+		url: '/api/energy/ajax_get_exp',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2115,7 +2115,7 @@ getExp = function(s_exp_sn)
 insertExp = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_insert_exp',
+		url: '/api/energy/ajax_insert_exp',
 		type: 'POST',
 		data: getFormData($('#frmBox3')[0]),
 		dataType: 'json',
@@ -2196,21 +2196,22 @@ insertExp = function()
 		}
 	});
 }
-getExpP = function(s_regist_dtm)
+getExpP = function(s_eng_sn, s_regist_dtm)
 {
 	var params = '';
 	params += '&s_regist_dtm=' + s_regist_dtm;
+	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_expP',
+		url: '/api/energy/ajax_get_expP',
 		type: 'GET',
 		data: params,
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
+			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
-
                 $('#tabBox4').find('#s_regist_dtm').yVal(data.regist_dtm);
                 $('#tabBox4').find('#plan_order').val(data.plan_order).trigger('change');
                 $('#tabBox4').find('#exp_cost_1').yVal(data.exp_cost_1);
@@ -2228,7 +2229,7 @@ getExpP = function(s_regist_dtm)
 insertExpP = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_insert_expP',
+		url: '/api/energy/ajax_insert_expP',
 		type: 'POST',
 		data: getFormData($('#frmBox4')[0]),
 		dataType: 'json',
@@ -2276,13 +2277,14 @@ insertExpP = function()
 		}
 	});
 }
-getExpP2 = function(s_regist_dtm)
+getExpP2 = function(s_eng_sn, s_regist_dtm)
 {
 	var params = '';
 	params += '&s_regist_dtm=' + s_regist_dtm;
+	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_expP2',
+		url: '/api/energy/ajax_get_expP2',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2308,7 +2310,7 @@ getExpP2 = function(s_regist_dtm)
 insertExpP2 = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_insert_expP2',
+		url: '/api/energy/ajax_insert_expP2',
 		type: 'POST',
 		data: getFormData($('#frmBox5')[0]),
 		dataType: 'json',
@@ -2363,7 +2365,7 @@ insertExpP2 = function()
 updateExp = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_update_exp',
+		url: '/api/energy/ajax_update_exp',
 		type: 'POST',
 		data: getFormData($('#frmBox3')[0]),
 		dataType: 'json',
@@ -2437,7 +2439,7 @@ deleteExp = function(s_exp_sn)
 	params += '&s_exp_sn=' + s_exp_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_delete_exp',
+		url: '/api/energy/ajax_delete_exp',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2469,7 +2471,7 @@ deleteExp = function(s_exp_sn)
 updateExpP = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_update_expP',
+		url: '/api/energy/ajax_update_expP',
 		type: 'POST',
 		data: getFormData($('#frmBox4')[0]),
 		dataType: 'json',
@@ -2500,7 +2502,7 @@ updateExpP = function()
 updateExpP2 = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_update_expP2',
+		url: '/api/energy/ajax_update_expP2',
 		type: 'POST',
 		data: getFormData($('#frmBox5')[0]),
 		dataType: 'json',
@@ -2532,13 +2534,14 @@ updateExpP2 = function()
 /******************************************************************************
  *
  */
-deleteExpP = function(s_regist_dtm)
+deleteExpP = function(s_eng_sn, s_regist_dtm)
 {
 	var params = '';
 	params += '&s_regist_dtm=' + s_regist_dtm;
+	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_delete_expP',
+		url: '/api/energy/ajax_delete_expP',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2562,13 +2565,14 @@ deleteExpP = function(s_regist_dtm)
 		}
 	});
 }
-deleteExpP2 = function(s_regist_dtm)
+deleteExpP2 = function(s_eng_sn, s_regist_dtm)
 {
 	var params = '';
 	params += '&s_regist_dtm=' + s_regist_dtm;
+	params += '&s_eng_sn=' + s_eng_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_delete_expP2',
+		url: '/api/energy/ajax_delete_expP2',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2601,7 +2605,7 @@ getDetail = function(d_sn)
 	params += '&s_d_sn=' + d_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_get_exp_detail',
+		url: '/api/energy/ajax_get_exp_detail',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2623,7 +2627,7 @@ getDetail = function(d_sn)
 insertDetail = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_insert_exp_detail',
+		url: '/api/energy/ajax_insert_exp_detail',
 		type: 'POST',
 		data: getFormData($('#frmBox6')[0]),
 		dataType: 'json',
@@ -2675,7 +2679,7 @@ insertDetail = function()
 updateDetail = function()
 {
 	$.ajax({
-		url: '{base_url}energy/ajax_update_exp_detail',
+		url: '/api/energy/ajax_update_exp_detail',
 		type: 'POST',
 		data: getFormData($('#frmBox6')[0]),
 		dataType: 'json',
@@ -2724,7 +2728,7 @@ deleteDetail = function(d_sn)
 	params += '&s_d_sn=' + d_sn;
 
 	$.ajax({
-		url: '{base_url}energy/ajax_delete_exp_detail',
+		url: '/api/energy/ajax_delete_exp_detail',
 		type: 'GET',
 		data: params,
 		contentType: false,
@@ -2997,14 +3001,16 @@ $(function() {
 	$('#tabBox4').on('click', '.btnUpdate', function(pEvent) {
 		$('#tabBox4').find('#action').html('수정');
 		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
 		var regist_dtm = $(target).data('regist_dtm');
-		getExpP(regist_dtm);
+		getExpP(eng_sn, regist_dtm);
 	});
 	$('#tabBox5').on('click', '.btnUpdate', function(pEvent) {
 		$('#tabBox5').find('#action').html('수정');
 		var target = pEvent.currentTarget;
+		var eng_sn = $(target).data('eng_sn');
 		var regist_dtm = $(target).data('regist_dtm');
-		getExpP2(regist_dtm);
+		getExpP2(eng_sn, regist_dtm);
 	});
     $('#tabBox6').on('click', '.btnUpdate', function(pEvent) {
 		$('#tabBox6').find('#action').html('수정');
@@ -3052,7 +3058,7 @@ $(function() {
 		var regist_dtm = $(target).data('regist_dtm');
 
 		if (confirm('삭제하시겠습니까?')) {
-			deleteExpP(regist_dtm);
+			deleteExpP(eng_sn, regist_dtm);
 		}
 	});
     $('#tabBox5').on('click', '.btnDelete', function(pEvent) {
@@ -3061,7 +3067,7 @@ $(function() {
 		var regist_dtm = $(target).data('regist_dtm');
 
 		if (confirm('삭제하시겠습니까?')) {
-			deleteExpP2(regist_dtm);
+			deleteExpP2(eng_sn, regist_dtm);
 		}
 	});
     $('#tabBox6').on('click', '.btnDelete', function(pEvent) {

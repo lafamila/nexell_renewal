@@ -299,7 +299,7 @@ def ajax_get_bnd():
                         is_alright = False
                         m_list = result['taxbill'][cntrct_sn][t.upper()]
                         for m in m_list:
-                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            m_date = datetime.strptime("20{}-01".format(m[0].replace("/", "-")), "%Y-%m-%d")
                             if m_date >= st_date and m_date <= ed_date:
                                 is_alright = True
                             else:
@@ -314,7 +314,7 @@ def ajax_get_bnd():
                         is_alright = False
                         m_list = result['taxbill'][cntrct_sn][t.upper()]
                         for m in m_list:
-                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            m_date = datetime.strptime("20{}-01".format(m[0].replace("/", "-")), "%Y-%m-%d")
                             if m_date >= st_date:
                                 is_alright = True
                             else:
@@ -329,7 +329,7 @@ def ajax_get_bnd():
                         is_alright = False
                         m_list = result['taxbill'][cntrct_sn][t.upper()]
                         for m in m_list:
-                            m_date = datetime.strptime("20{}-01".format(m.replace("/", "-")), "%Y-%m-%d")
+                            m_date = datetime.strptime("20{}-01".format(m[0].replace("/", "-")), "%Y-%m-%d")
                             if m_date <= ed_date:
                                 is_alright = True
                             else:

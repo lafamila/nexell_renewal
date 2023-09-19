@@ -594,9 +594,10 @@ def get_cost(params):
 				FROM cost
 				WHERE 1=1
 				AND cntrct_sn = %(s_cntrct_sn)s
-				AND prjct_sn = %(s_prjct_sn)s
 				AND cntrwk_ct_sn = %(s_cntrwk_ct_sn)s
 """
+    if "s_prjct_sn" in params and params["s_prjct_sn"]:
+        query += "				AND prjct_sn = %(s_prjct_sn)s"
     g.curs.execute(query, params)
     result = g.curs.fetchone()
     return result

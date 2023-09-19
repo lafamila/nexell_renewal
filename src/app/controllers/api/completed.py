@@ -72,15 +72,16 @@ def completed_ajax_get_completed_report_data():
             elif i_tax["pblicte_de"].strftime("%Y-%m-01") == params["s_pxcond_mt"]+"-01":
                 now_indirect += int(i_tax["splpc_am"]) + int(i_tax["vat"])
 
-        if cntrct_sn == 1389:
-            print(now_indirect, before_indirect, indirect["indirect_total"], indirect["va_total"])
+
         row = {"bsn_dept_nm" : bsn_dept_nm, "cntrct_bcnc_nm" : cntrct_bcnc_nm, "spt_nm" : spt_nm, "spt_chrg_nm" : spt_chrg_nm, "cntrct_sn" : cntrct_sn}
         row['c_cntrct_amount'] = data[key]['C'][0]
         row['c_completed_amount'] = data[key]['C'][1]
         row['c_now_amount'] = data[key]['C'][2]
-        row['e_cntrct_amount'] = data[key]['E'][0] + indirect["indirect_total"]
-        row['e_completed_amount'] = data[key]['E'][1] + before_indirect
-        row['e_now_amount1'] = data[key]['E'][2] + now_indirect
+        row['e_cntrct_amount'] = data[key]['E'][0]
+        # row['e_completed_amount'] = data[key]['E'][1] + before_indirect
+        # row['e_now_amount1'] = data[key]['E'][2] + now_indirect
+        row['e_completed_amount'] = data[key]['E'][1]
+        row['e_now_amount1'] = data[key]['E'][2]
         row['e_now_amount2'] = data[key]['E'][3]
         row['rate'] = data[key]['rate']
         row['rm'] = data[key]['rm']

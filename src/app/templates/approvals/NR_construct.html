@@ -83,15 +83,16 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15"><span>공사비 현황</span></th>
+			<th class="sub-title colorN text-center" colspan="16"><span>공사비 현황</span></th>
         </tr>
     </thead>
     <tbody role="header">
         <tr>
-            <th class="color-contract text-center" colspan="4">계약현황</th>
+            <th class="color-contract text-center" colspan="5">계약현황</th>
             <th class="color-contract text-center" colspan="9">실행현황</th>
             <th class="color-contract text-center" colspan="2">VA</th>
         </tr>
@@ -99,6 +100,7 @@
             <th class="color-contract text-center">장비비</th>
             <th class="color-contract text-center">도급비</th>
             <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">설계변경</th>
             <th class="color-contract text-center">계</th>
             <th class="color-contract text-center">장비비(삼성)</th>
             <th class="color-contract text-center">장비비(타사)</th>
@@ -118,6 +120,7 @@
             <td class="text-right" data-type='number' name="C_1"></td>
             <td class="text-right" data-type='number' name="C_5"></td>
             <td class="text-right" data-type='number' name="C_8"></td>
+            <td class="text-right" data-type='number' name="C_99"></td>
             <td class="text-right" data-type='number' data-column="C_total"></td>
             <td class="text-right" data-type='number' name="E_1"></td>
             <td class="text-right" data-type='number' name="E_2"></td>
@@ -460,12 +463,7 @@
                 success: function(pResult){
                     console.log(pResult);
                     var c_12 = 0;
-                    $.each(pResult.aCostList, function(pIndex, pValue){
-                        if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
-                            c_12 += pValue.amount;
-                        }
-                        $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
-                    });
+                    var e_etc = 0;
                     if(Object.keys(pResult.extraCostList).length > 0){
                         c_12 = 0;
                         var max_sn = Math.max(...Object.keys(pResult.extraCostList).map(x => parseInt(x)));
@@ -473,11 +471,28 @@
                             if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
                                 c_12 += pValue.amount;
                             }
+                            if(["E_61", "E_7", "E_10"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                e_etc += pValue.amount;
+                            }
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+
+                    }
+                    else{
+                        $.each(pResult.aCostList, function(pIndex, pValue){
+                            if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                c_12 += pValue.amount;
+                            }
+                            if(["E_61", "E_7", "E_10"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                e_etc += pValue.amount;
+
+                            }
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                         });
 
                     }
                     $(document).find(`[name="C_1"]`).html(c_12.toFormat('NUMBER'));
+                    $(document).find(`[name="E_10"]`).html(e_etc.toFormat('NUMBER'));
                     $(document).find("tbody[role='ct_se_code']").trigger("change");
 
                     {% if init %}
@@ -644,21 +659,34 @@
                         var all_sum_total = 0, indirect_sum_total = 0;
                         $.each(pData.outsrcList, function(pI, pV) {
                             var sum_total = 0;
-
+                            var before_total = 0;
                             $.each(pV.taxbilList, function(pIndex, pValue){
-                                sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                // sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                var pblicte_de = pValue.pblicte_de;
+                                var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                var previous = new Date(now);
+                                previous.setDate(1);
+                                previous.setMonth(previous.getMonth() - 1);
+                                var target_de = new Date(pblicte_de);
+                                target_de.setDate(1);
+                                if(target_de.getTime() < previous.getTime()){
+                                    before_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                }
+
+
                             });
                             if([116].includes(pV.outsrc_fo_sn)){
-                                indirect_sum_total += sum_total;
+                                indirect_sum_total += before_total;
                             }
                             else{
                                 if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || pV.outsrc_fo_sn == 146){
-                                    all_sum_total += sum_total;
-
+                                    all_sum_total += before_total;
                                 }
 
                             }
                         });
+                                console.log(all_sum_total);
+
                         var sum_total = 0;
                         $.each(pData.s3AccountList, function(pI, pV){
                             var sum = parseInt(pV.s_total);
@@ -692,7 +720,6 @@
                         });
                         $(document).find("[name='s12_account_total']").val((p_sum_total + p_sum_total_other).toFormat('NUMBER'));
                         $(document).find("[name='indirect_sum_total']").val(indirect_sum_total.toFormat('NUMBER'));
-                        $(document).find("[name='all_sum_total']").val(all_sum_total.toFormat('NUMBER'));
 
                         var outsrc_cntrct_amount = 0;
                         if(pData.outsrcItem.hasOwnProperty(parseInt(outsrc_fo_sn))){
@@ -709,7 +736,12 @@
                                 $.each(pOut.taxbilList, function(pI, pT){
                                     var pblicte_de = pT.pblicte_de;
                                     var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
-                                    if(parseInt(pblicte_de.split("-")[0]+pblicte_de.split("-")[1]) < parseInt(now.split("-")[0] + now.split("-")[1])){
+                                    var previous = new Date(now);
+                                    previous.setDate(1);
+                                    previous.setMonth(previous.getMonth() - 1);
+                                    var target_de = new Date(pblicte_de);
+                                    target_de.setDate(1);
+                                    if(target_de.getTime() < previous.getTime()){
                                         completed_est_1 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
                                     }
                                 });
@@ -718,7 +750,12 @@
                                 $.each(pOut.taxbilList, function(pI, pT){
                                     var pblicte_de = pT.pblicte_de;
                                     var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
-                                    if(parseInt(pblicte_de.split("-")[0]+pblicte_de.split("-")[1]) < parseInt(now.split("-")[0] + now.split("-")[1])){
+                                    var previous = new Date(now);
+                                    previous.setDate(1);
+                                    previous.setMonth(previous.getMonth() - 1);
+                                    var target_de = new Date(pblicte_de);
+                                    target_de.setDate(1);
+                                    if(target_de.getTime() < previous.getTime()){
                                         completed_est_3 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
                                     }
                                 });
@@ -741,11 +778,14 @@
                             target_de.setDate(1);
                             if(target_de.getTime() < previous.getTime()){
                                 completed_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+
                             }
                             else if(target_de.getTime() == previous.getTime()){
                                 now_logi_1 += parseInt(sum);
                             }
                         });
+                        console.log(all_sum_total);
                         $.each(pData.s4AccountList, function(pI, pV){
                             var sum = parseInt(pV.p_total);
                             var pblicte_de = pV.p_de;
@@ -757,16 +797,19 @@
                             target_de.setDate(1);
                             if(target_de.getTime() < previous.getTime()) {
                                 completed_logi_2 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
                             }
                             else if(target_de.getTime() == previous.getTime()){
                                 now_logi_2 += parseInt(sum);
                             }
                         });
+                        console.log(all_sum_total);
                         $(document).find("[name='completed_logi_1']").val(completed_logi_1.toFormat('NUMBER'));
                         $(document).find("[name='completed_logi_2']").val(completed_logi_2.toFormat('NUMBER'));
                         {% if init %}
                         $(document).find("[name='now_logi_1']").val(now_logi_1.toFormat('NUMBER'));
                         $(document).find("[name='now_logi_2']").val(now_logi_2.toFormat('NUMBER'));
+                        $(document).find("[name='all_sum_total']").val(all_sum_total.toFormat('NUMBER'));
                         {% endif %}
                         $(document).find("tbody[role='logi']").trigger("change");
 
@@ -799,7 +842,8 @@
         var C_1 = getValue($(this).find("td[name='C_1']"));
         var C_5 = getValue($(this).find("td[name='C_5']"));
         var C_8 = getValue($(this).find("td[name='C_8']"));
-        var C_total = (C_1+C_5+C_8);
+        var C_99 = getValue($(this).find("td[name='C_99']"));
+        var C_total = (C_1+C_5+C_8+C_99);
         $(this).find("td[data-column='C_total']").html(C_total.toFormat('NUMBER'));
         var E_1 = getValue($(this).find("td[name='E_1']"));
         var E_2 = getValue($(this).find("td[name='E_2']"));
