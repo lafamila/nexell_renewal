@@ -2110,7 +2110,21 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				html += '	<td class="color-contract">집행률</td> ';
 				html += '</tr> ';
 				var iRcppay_total = eCost5Total;
+
+				var sum_total = 0;
+				$.each(pValue.taxbilList, function(pIndex, pValue) {
+					sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+				});
+				var amount_total = 0;
+				$.each(pValue.rcppayList, function(pIndex, pValue) {
+					amount_total += parseInt(pValue.amount);
+				});
+
 				if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
+					var tot = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
+					if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4){
+						tot = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
+					}
 					html += '<tr>';
 					html += '    <th class="color-contract">계약내역</th>';
 					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[0].toFormat('NUMBER')+'</td>';
@@ -2118,7 +2132,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[2].toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[3].toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right" rowspan="4"></td>';
+					html += '    <td class="text-right" rowspan="4">'+((amount_total*100.0/tot).toFixed(1)+'%')+'</td>';
 					html += '</tr>';
 					daily_total += parseInt(pValue.pymnt_mth.split("-")[2]);
 					eCost5 += (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
@@ -2169,12 +2183,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				}
 
 				html += '<tr>';
-				html += '    <th class="color-contract">집행</th>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
+				html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">집행</th>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+amount_total.toFormat('NUMBER')+'</td>';
 				html += '</tr>';
 				html += '<tr>';
 				html += '    <th class="color-contract">잔액</th>';
@@ -2182,8 +2196,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				html += '    <td class="text-right"></td>';
 				html += '    <td class="text-right"></td>';
 				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right">'+(sum_total-amount_total).toFormat('NUMBER')+'</td>';
 				html += '</tr>';
+
+
 
 
 					html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-bottom:2px solid #555!important;border-right:2px solid #555!important;">';

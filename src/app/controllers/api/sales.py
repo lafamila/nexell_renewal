@@ -513,7 +513,6 @@ def ajax_get_sales_expect_report():
 
 @bp.route('/equip_to_account', methods=['GET'])
 def equip_to_account():
-    try:
         params = request.args.to_dict()
         equipment = cm.get_equipment(params)
         prjct = prj.get_project_by_cntrct_nm(equipment["cntrct_sn"])
@@ -540,7 +539,7 @@ def equip_to_account():
         row['dlivy_de'] = params['dlivy_de']
         row['cnnc_sn'] = delng_sn
         row['bcnc_sn'] = cntrct["bcnc_sn"]
-        row['dlamt'] = equipment['samt'] / equipment['']
+        row['dlamt'] = equipment['samt']
         row['delng_ty_code'] = params["delng_ty_code"]
         if 'expect_de' in params and params['expect_de'] == '':
             params['expect_de'] = None
@@ -551,9 +550,9 @@ def equip_to_account():
         g.curs.execute("UPDATE equipment SET dlivy_de=%(dlivy_de)s, before_dlnt=%(last_dlnt)s WHERE eq_sn=%(eq_sn)s", params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 @bp.route('/insert_BF_ms_equip', methods=['POST'])
 def insert_BF_ms_equip():

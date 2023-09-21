@@ -857,7 +857,8 @@
         var E_7 = getValue($(this).find("td[name='E_7']"));
         var E_total = (E_1+E_2+E_3+E_4+E_5+E_8+E_10+E_99);
         $(this).find("td[data-column='E_total']").html(E_total.toFormat('NUMBER'));
-        $(this).find("td[data-column='va']").html((C_total - E_total - E_61 - E_7).toFormat('NUMBER'))
+        console.log(C_total, E_total, E_61, E_7);
+        $(this).find("td[data-column='va']").html((C_total - E_total).toFormat('NUMBER'))
         $(this).find("td[data-column='va_rate']").html(((C_total-E_total)*100.0/C_total).toFixed(1)+"%");
 
     });
