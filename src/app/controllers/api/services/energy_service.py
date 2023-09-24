@@ -122,7 +122,7 @@ def get_expP_list(params):
 				, SUM(IF(e.exp_se_code=8,e.exp_cost,0)) AS exp_cost_8
 				, SUM(IF(e.exp_se_code=9,e.exp_cost,0)) AS exp_cost_9
 				, e.plan_order
-				, e.regist_dtm
+				, DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d %%T') AS regist_dtm
 				, e.eng_sn
 				FROM expense e
 				WHERE 1=1
@@ -214,7 +214,7 @@ def get_expP_list2(params):
 				, SUM(IF(e.exp_se_code=100,e.exp_cost,0)) AS exp_cost_7
 				, SUM(IF(e.exp_se_code=101,e.exp_cost,0)) AS exp_cost_8
 				, e.plan_order
-				, e.regist_dtm
+				, DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d %%T') AS regist_dtm
 				, e.eng_sn
 				FROM expense e
 				WHERE 1=1
@@ -240,7 +240,7 @@ def insert_energybil(params):
         data["register_id"] = session["member"]["member_id"]
 
     keys = list(data.keys())
-    query = "INSERT INTO energy({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+    query = "INSERT INTO energy({}) VALUES({})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
     g.curs.execute(query, data)
 
 def update_energybil(params):
@@ -411,7 +411,8 @@ def insert_plan(params):
         data["register_id"] = session["member"]["member_id"]
 
     keys = list(data.keys())
-    query = "INSERT INTO plan({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+    query = "INSERT INTO plan({0}) VALUES({1})".format(",".join(keys), ",".join(["%({0})s".format(k) for k in keys]))
+    print(query)
     g.curs.execute(query, data)
 
 def insert_exp(params):
@@ -427,7 +428,7 @@ def insert_exp(params):
         data["register_id"] = session["member"]["member_id"]
 
     keys = list(data.keys())
-    query = "INSERT INTO expense({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+    query = "INSERT INTO expense({}) VALUES({})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
     g.curs.execute(query, data)
 
 def insert_exp_detail(params):
@@ -443,7 +444,7 @@ def insert_exp_detail(params):
         data["register_id"] = session["member"]["member_id"]
 
     keys = list(data.keys())
-    query = "INSERT INTO detail({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+    query = "INSERT INTO detail({}) VALUES({})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
     g.curs.execute(query, data)
 
 def insert_expP(params):
@@ -451,6 +452,9 @@ def insert_expP(params):
     for key in ["eng_sn", "plan_order", "exp_ty_code", "exp_bcnc_code", "exp_io_type", "exp_de", "exp_content", "regist_dtm", "register_id"]:
         if key in params:
             data[key] = params[key]
+        else:
+            if key in ('exp_de',):
+                data[key] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
 
     if "regist_dtm" not in data:
         data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
@@ -458,13 +462,14 @@ def insert_expP(params):
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
 
+
     order = {"1" : 1, "2" : 2, "3": 7, "4":3, "5":4, "6": 5, "7": 8, "8": 6}
     if "exp_cost" in params:
         for idx, exp_cost in enumerate(params["exp_cost"], 1):
             data['exp_cost'] = exp_cost
             data["exp_se_code"] = order[str(idx)]
             keys = list(data.keys())
-            query = "INSERT INTO expense({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+            query = "INSERT INTO expense({}) VALUES({})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
             g.curs.execute(query, data)
 
 def insert_expP2(params):
@@ -472,6 +477,9 @@ def insert_expP2(params):
     for key in ["eng_sn", "plan_order", "exp_ty_code", "exp_bcnc_code", "exp_io_type", "exp_de", "exp_content", "regist_dtm", "register_id"]:
         if key in params:
             data[key] = params[key]
+        else:
+            if key in ('exp_de',):
+                data[key] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
 
     if "regist_dtm" not in data:
         data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
@@ -485,7 +493,7 @@ def insert_expP2(params):
             data['exp_cost'] = exp_cost
             data["exp_se_code"] = order[str(idx)]
             keys = list(data.keys())
-            query = "INSERT INTO expense({}) VALUES({}})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
+            query = "INSERT INTO expense({}) VALUES({})".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
             g.curs.execute(query, data)
 
 def update_plan(params):
@@ -533,7 +541,10 @@ def update_expP(params):
         if key in params:
             data[key] = params[key]
         else:
-            data[key] = None
+            if key in ('exp_de', ):
+                data[key] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
+            else:
+                data[key] = None
     order = {"1" : 1, "2" : 2, "3": 7, "4":3, "5":4, "6": 5, "7": 8, "8": 6}
     if "exp_cost" in params:
         for idx, exp_cost in enumerate(params["exp_cost"], 1):
@@ -551,7 +562,10 @@ def update_expP2(params):
         if key in params:
             data[key] = params[key]
         else:
-            data[key] = None
+            if key in ('exp_de', ):
+                data[key] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
+            else:
+                data[key] = None
     order = {"1" : 1, "2" : 95, "3": 96, "4":97, "5":98, "6": 99, "7": 100, "8": 101}
     if "exp_cost" in params:
         for idx, exp_cost in enumerate(params["exp_cost"], 1):
@@ -584,7 +598,7 @@ def delete_expP(params):
     query  = """DELETE
     				FROM expense
     				WHERE 1=1
-    				AND DATE_FORMAT(regist_dtm, '%%Y-%%m-%%d') = %(s_regist_dtm)s
+    				AND DATE_FORMAT(regist_dtm, '%%Y-%%m-%%d %%T') = %(s_regist_dtm)s
     				AND eng_sn=%(s_eng_sn)s
     """
     g.curs.execute(query, params)
@@ -593,7 +607,7 @@ def delete_expP2(params):
     query  = """DELETE
     				FROM expense
     				WHERE 1=1
-    				AND DATE_FORMAT(regist_dtm, '%%Y-%%m-%%d') = %(s_regist_dtm)s
+    				AND DATE_FORMAT(regist_dtm, '%%Y-%%m-%%d %%T') = %(s_regist_dtm)s
     				AND eng_sn=%(s_eng_sn)s
     """
     g.curs.execute(query, params)
@@ -641,11 +655,11 @@ def get_expP(params):
 				, SUM(IF(e.exp_se_code=7,e.exp_cost,0)) AS exp_cost_7
 				, SUM(IF(e.exp_se_code=8,e.exp_cost,0)) AS exp_cost_8
 				, e.plan_order AS plan_order
-				, e.regist_dtm AS regist_dtm
+				, DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d %%T') AS regist_dtm
 				, e.eng_sn AS eng_sn
 				FROM expense e
 				WHERE 1=1
-				AND DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d') = %(s_regist_dtm)s
+				AND DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d %%T') = %(s_regist_dtm)s
 				AND e.exp_ty_code IN ('P')
 				AND e.eng_sn=%(s_eng_sn)s
 				GROUP BY plan_order, regist_dtm
@@ -664,11 +678,11 @@ def get_expP2(params):
 				, SUM(IF(e.exp_se_code=100,e.exp_cost,0)) AS exp_cost_7
 				, SUM(IF(e.exp_se_code=101,e.exp_cost,0)) AS exp_cost_8
 				, e.plan_order AS plan_order
-				, e.regist_dtm AS regist_dtm
+				, DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d %%T') AS regist_dtm
 				, e.eng_sn AS eng_sn
 				FROM expense e
 				WHERE 1=1
-				AND DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d') = %(s_regist_dtm)s
+				AND DATE_FORMAT(e.regist_dtm, '%%Y-%%m-%%d %%T') = %(s_regist_dtm)s
 				AND e.exp_ty_code IN ('P')
 				AND e.eng_sn=%(s_eng_sn)s
 				GROUP BY plan_order, regist_dtm

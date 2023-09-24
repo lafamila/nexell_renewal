@@ -1605,7 +1605,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '            </tbody>';
 					html += '            <tfoot>';
 					html += '                <tr>';
-					html += '                    <th class="colorG" colspan="3">합계</th>';
+					html += '                    <th class="colorG" colspan="1">합계</th>';
+					html += '                    <th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
+					html += '                    <th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
 					html += '                    <th class="colorG text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
 					html += '                    <th class="colorG text-number"></th>';
 					html += '                </tr>';

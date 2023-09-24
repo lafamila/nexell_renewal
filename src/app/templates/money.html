@@ -650,5 +650,29 @@ $(function(){
 		getMoneyData(year);
 	}
 });
+
+$(document).on('click', '#btnExcel', function(e) {
+    var postfix = $("#s_year").val();
+    var fileName = "자금계획서_"+postfix+".xls";
+    var a = document.createElement('a');
+    var data_type = 'data:application/vnd.ms-excel';
+    var table_html = '';
+    var tbl = 'dtList1';
+    $(document).find(`#${tbl}`).find("thead").eq(0).remove();
+    var table_div = document.getElementById(tbl);
+
+    table_html += table_div.outerHTML.replace(/ /g, '%20');
+    a.href = data_type + ',%EF%BB%BF' + table_html;
+    a.download = fileName;
+    a.click();
+	getMoneyData(postfix);
+
+
+    e.preventDefault();
+
+
+
+});
+
 </script>
 {% endblock %}
