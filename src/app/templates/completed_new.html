@@ -433,6 +433,7 @@ getReportNR = function(s_pxcond_mt)
                 });
 
 
+                var total_cnt = {};
                 var amt = {}; //현장별 C/E 누계 총합
                 var rm = {};
                 $.each(pResult.completedList, function(pIndex, pValue){
@@ -446,6 +447,14 @@ getReportNR = function(s_pxcond_mt)
 
                     }
                     amt[pValue.cntrct_sn][pValue.cntrct_execut_code] += sum;
+                    if(!total_cnt.hasOwnProperty(pValue.cntrct_sn)){
+
+                        total_cnt[pValue.cntrct_sn] = {};
+                        total_cnt[pValue.cntrct_sn]['C'] = 0;
+                        total_cnt[pValue.cntrct_sn]['E'] = 0;
+
+                    }
+                    total_cnt[pValue.cntrct_sn][pValue.cntrct_execut_code] += parseInt(pValue.cntrct_amount);
 
                     if(!rm.hasOwnProperty(pValue.cntrct_sn)){
                         rm[pValue.cntrct_sn] = "";
@@ -585,7 +594,7 @@ getReportNR = function(s_pxcond_mt)
                     else{
                         var cntrwk_bgnde = pValue.cntrwk_bgnde.substring(2,pValue.cntrwk_bgnde.length);
                         var cntrwk_endde = pValue.cntrwk_endde.substring(2,pValue.cntrwk_endde.length);
-                        var p_amt_sum_rt = (parseInt(amt[pValue.cntrct_sn][pValue.cntrct_execut_code])/parseInt(pValue.c_amt_sum))*100;
+                        var p_amt_sum_rt = (parseInt(amt[pValue.cntrct_sn][pValue.cntrct_execut_code])/parseInt(total_cnt[pValue.cntrct_sn][pValue.cntrct_execut_code]))*100;
                         html += '<tr>';
                         html += '    <td class="text-center">'+pValue.bsn_dept_nm+'</td>';
                         html += '    <td class="text-center" style="color:#333;"><span data-sn="'+pValue.bsn_dept_nm+'"></span>'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';

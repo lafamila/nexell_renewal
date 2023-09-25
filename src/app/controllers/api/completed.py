@@ -32,6 +32,7 @@ def disconnect(response):
 def completed_ajax_get_completed_report_data():
     params = request.args.to_dict()
     s_pxcond_dtm = params["s_pxcond_mt"]
+    params["purpose"] = "data"
     params["s_pxcond_mt"] = "-".join(s_pxcond_dtm.split("-")[:2])
     completedList = cp.get_completed_reportNR(params)
     data = OrderedDict()

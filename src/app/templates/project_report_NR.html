@@ -2113,15 +2113,28 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				html += '</tr> ';
 				var iRcppay_total = eCost5Total;
 
-				var sum_total = 0;
-				$.each(pValue.taxbilList, function(pIndex, pValue) {
-					sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
-				});
 				var amount_total = 0;
-				$.each(pValue.rcppayList, function(pIndex, pValue) {
-					amount_total += parseInt(pValue.amount);
-				});
+				var sum_total = 0;
+				var daily_p_total = 0;
+				var human_p_total = 0;
+				var direct_p_total = 0, direct_total=0;
+				var logitec_p_total = 0, logitec_total=0;
+				$.each(pValue.taxbilList, function(pIndex, pValue) {
+					console.log(pValue);
+					amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+					human_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
 
+				});
+				$.each(outsrcList, function(pIndex, pValue) {
+					if ([146].includes(pValue.outsrc_fo_sn)) {
+						//매입계산서
+						var pTaxbilList = pValue.taxbilList;
+						$.each(pTaxbilList, function(pIndex, pValue) {
+							amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+							daily_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+						});
+					}
+				});
 				if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
 					var tot = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
 					if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4){
@@ -2136,9 +2149,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
 					html += '    <td class="text-right" rowspan="4">'+((amount_total*100.0/tot).toFixed(1)+'%')+'</td>';
 					html += '</tr>';
+					sum_total = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
 					daily_total += parseInt(pValue.pymnt_mth.split("-")[2]);
 					eCost5 += (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
 					iRcppay_total = parseInt(pValue.pymnt_mth.split("-")[0]);
+					direct_total = parseInt(pValue.pymnt_mth.split("-")[1]);
+					logitec_total = parseInt(pValue.pymnt_mth.split("-")[3]);
 				}
 				else{
 					html += '<tr>';
@@ -2154,50 +2170,53 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				}
 				if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4) {
 					html += '<tr>';
-					html += '    <th class="color-contract">계약변경</th>';
-					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[2].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-")[3].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
+					html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[2].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[3].toFormat('NUMBER')+'</td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
 					html += '</tr>';
 					if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4) {
 						daily_total -= parseInt(pValue.pymnt_mth.split("-")[2]);
 						eCost5 -= (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
 
 					}
+					sum_total = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
 					daily_total += parseInt(pValue.outsrc_dtls.split("-")[2]);
 					eCost5 += (parseInt(pValue.outsrc_dtls.split("-")[0]) + parseInt(pValue.outsrc_dtls.split("-")[1]) + parseInt(pValue.outsrc_dtls.split("-")[2]));
 					iRcppay_total = parseInt(pValue.outsrc_dtls.split("-")[0]);
+					direct_total = parseInt(pValue.outsrc_dtls.split("-")[1]);
+					logitec_total = parseInt(pValue.outsrc_dtls.split("-")[3]);
 
 
 				}
 				else{
 					html += '<tr>';
-					html += '    <th class="color-contract">계약변경</th>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
+					html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
 					html += '</tr>';
 
 				}
 
 				html += '<tr>';
 				html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">집행</th>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+human_p_total.toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+direct_p_total.toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+daily_p_total.toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+logitec_p_total.toFormat('NUMBER')+'</td>';
 				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+amount_total.toFormat('NUMBER')+'</td>';
 				html += '</tr>';
 				html += '<tr>';
 				html += '    <th class="color-contract">잔액</th>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
-				html += '    <td class="text-right"></td>';
+				html += '    <td class="text-right">'+(iRcppay_total-human_p_total).toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-right">'+(direct_total-direct_p_total).toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-right">'+(daily_total-daily_p_total).toFormat('NUMBER')+'</td>';
+				html += '    <td class="text-right">'+(logitec_total-logitec_p_total).toFormat('NUMBER')+'</td>';
 				html += '    <td class="text-right">'+(sum_total-amount_total).toFormat('NUMBER')+'</td>';
 				html += '</tr>';
 

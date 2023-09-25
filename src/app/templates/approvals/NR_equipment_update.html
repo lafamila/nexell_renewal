@@ -173,6 +173,7 @@
 
 <table class="table table-bordered table-form main-table">
     <colgroup>
+        <col width="1"/>
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
@@ -187,7 +188,7 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
@@ -197,6 +198,7 @@
     </thead>
     <tbody role="header">
         <tr>
+            <th class="color-contract text-center">-</th>
             <th class="color-contract text-center">출고일</th>
             <th class="color-contract text-center">상품명</th>
             <th class="color-contract text-center">모델명</th>
@@ -212,6 +214,7 @@
     </tbody>
     <tbody role="equip_already_row">
         <tr data-row="equip_already_tr">
+            <td class="text-center"></td>
             <td class="text-center" name="dlivy_de_already[]"></td>
             <td class="hasinput">
                 <select class="form-control select2" name="prdlst_se_code_already[]" style="width:100%!important;">
@@ -253,6 +256,9 @@
     </tbody>
     <tbody role="equip_row">
         <tr data-row="equip_tr">
+            <td class="hasinput">
+                 <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+            </td>
             <td class="text-center" name="dlivy_de[]"></td>
             <td class="hasinput">
                 <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
@@ -297,7 +303,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td class="colorG text-center" colspan="3">합계</td>
+            <td class="colorG text-center" colspan="4">합계</td>
             <td class="colorG text-right" data-column="total_cnt_dlnt"></td>
             <td class="colorG"></td>
             <td class="colorG"></td>
@@ -1089,4 +1095,19 @@
 
     }
     {% endif %}
+
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+            if($(this).closest("tbody").find("tr").length > 1){
+                var tbody = $(this).closest("tbody");
+                $(this).closest("tr").remove();
+                $(tbody).trigger("change");
+            }
+            else{
+                alert("더이상 삭제할 수 없습니다.")
+            }
+        {% endif %}
+        return false;
+    });
+
 </script>

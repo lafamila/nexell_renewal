@@ -677,6 +677,7 @@
                             });
                             if([116].includes(pV.outsrc_fo_sn)){
                                 indirect_sum_total += before_total;
+                                all_sum_total += before_total;
                             }
                             else{
                                 if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || pV.outsrc_fo_sn == 146){
@@ -785,10 +786,10 @@
                                 now_logi_1 += parseInt(sum);
                             }
                         });
-                        console.log(all_sum_total);
+                        console.log(pData.s4AccountList);
                         $.each(pData.s4AccountList, function(pI, pV){
                             var sum = parseInt(pV.p_total);
-                            var pblicte_de = pV.p_de;
+                            var pblicte_de = pV.dlivy_de;
                             var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
                             var previous = new Date(now);
                             previous.setDate(1);
