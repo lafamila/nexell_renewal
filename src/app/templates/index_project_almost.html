@@ -124,10 +124,10 @@
 
 					}
 					var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
-					if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
-						pValue.progrs_sttus_code = 'K';
-						pValue.sttus_nm = '대기';
-					}
+					// if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
+					// 	pValue.progrs_sttus_code = 'K';
+					// 	pValue.sttus_nm = '대기';
+					// }
 					if(pValue.progrs_sttus_code == 'P'){
 						pValue.ordr += 1;
 					}

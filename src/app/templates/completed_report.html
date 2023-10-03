@@ -11,8 +11,17 @@
         background-color:rgb(233,233,233)!important;
     }
 </style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<style>
+    .input-available{
+        cursor:pointer;
+    }
+    .input-available:hover{
+        background-color:rgba(0,112,192, 0.5)!important;
+    }
+</style>
 
 <!--########################################################################-->
 <!--# page layer start                                                     #-->
@@ -68,32 +77,32 @@
                 <table id="rptParnterStatus1">
                     <colgroup>
                         <col width="50">
-                        <col width="100">
-                        <col width="150">
+                        <col width="200">
+                        <col width="250">
                         <col width="50">
 
                         <col width="100">
                         <col width="100">
-                        <col width="80">
+                        <col width="50">
                         <col width="100">
-                        <col width="80">
+                        <col width="50">
                         <col width="100">
-                        <col width="80">
+                        <col width="50">
 
                         <col width="100">
                         <col width="100">
-                        <col width="80">
+                        <col width="50">
                         <col width="100">
                         <col width="100">
                         <col width="100">
-                        <col width="80">
+                        <col width="50">
                         <col width="100">
-                        <col width="80">
+                        <col width="50">
 
-                        <col width="80">
+                        <col width="50">
                         <col width="100">
                         <col width="100">
-                        <col width="380">
+                        <col width="290">
                     </colgroup>
                     <thead>
                         <tr>
@@ -104,8 +113,8 @@
                         </tr>
                         <tr>
                             <th class="colorN text-center middle" rowspan="2">팀</th>
-                            <th class="colorN text-center middle" rowspan="2">거래처</th>
-                            <th class="colorN text-center middle" rowspan="2">현장명</th>
+                            <th class="colorN text-center middle" rowspan="2" style="min-width:120px!important;">거래처</th>
+                            <th class="colorN text-center middle" rowspan="2" style="min-width:200px!important;">현장명</th>
                             <th class="colorN text-center middle right_border" rowspan="2">현장<br/>관리</th>
                             <th class="colorN text-center middle" rowspan="2">공사<br/>계약금액</th>
                             <th class="colorN text-center middle" rowspan="2">전월누계</th>
@@ -144,6 +153,40 @@
 </div>
 
 <script>
+    $(document).on("dblclick", ".input-available", function(){
+        var cntrct_sn = $(this).data("cntrct_sn");
+        var data = prompt("값을 입력하세요.");
+        var target = $(this);
+        try{
+            if(/^[+-]?\d+(\.\d+)?$/.test(data)){
+                data = parseFloat(data);
+            }
+            else{
+                throw new Error(`Parameter is not a number : ${data}`);
+            }
+        }catch(e){
+            alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+            return false;
+        }
+        var params = {"cntrct_sn" : cntrct_sn, "rate" : data};
+        $.ajax({
+            url : '/api/completed/ajax_update_completed',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                console.log(pResult);
+                if(pResult.status){
+                    $(target).html(data.toFixed(1)+"%");
+                }
+                else{
+                    alert("기성 집행이 이뤄지지 않은 현장입니다.");
+
+                }
+            }
+
+        });
+
+    });
     getValue = function(tag){
         var data = $(tag).html().replaceAll(",", "");
         return (data != "") ? parseInt(data) : 0;
@@ -213,7 +256,7 @@
                                 <td class="${_class} text-right middle">${e_rate2.toFixed(1)+"%"}</td>
                                 <td class="${_class} text-right middle">${e_total.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle right_border">${e_rate3.toFixed(1)+"%"}</td>
-                                <td class="${_class} text-right middle">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
+                                <td class="${_class} text-right middle input-available" data-cntrct_sn="${pValue.cntrct_sn}">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
                                 <td class="${_class} text-right middle">${va.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle" style="${(c_total-e_total)<0 ? 'color:red!important;' : ''}">${(c_total-e_total).toFormat('NUMBER')}</td>
                                 <td class="${_class} text-left middle">${pValue.rm}</td>

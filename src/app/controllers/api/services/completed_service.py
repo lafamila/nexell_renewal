@@ -547,6 +547,216 @@ def get_completed_reportNR(params):
     result = g.curs.fetchall()
     return result
 
+
+def get_completed_reportNR_new(params):
+    ymd = params['s_pxcond_mt']
+    y, m = ymd.split("-")
+    _, l = calendar.monthrange(int(y), int(m))
+    f = 1
+    first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
+    last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
+    first_year = "{}-01-01".format(y.zfill(4))
+    last_year = "{}-12-31".format(y.zfill(4))
+    query = """SELECT t.prjct_ty_code AS prjct_ty_code
+				, t.prjct_creat_at AS prjct_creat_at
+				, t.bsn_dept_code AS bsn_dept_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='DEPT_CODE' AND code=t.bsn_dept_code) AS bsn_dept_nm
+				, t.bsn_chrg_sn AS bsn_chrg_sn
+				, GET_MEMBER_NAME(t.bsn_chrg_sn, 'M') AS bsn_chrg_nm
+				, t.cntrct_bcnc_sn AS cntrct_bcnc_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.cntrct_bcnc_sn) AS cntrct_bcnc_nm
+				, t.spt_chrg_sn AS spt_chrg_sn
+				, GET_MEMBER_NAME(t.spt_chrg_sn, 'M') AS spt_chrg_nm
+				, t.spt_nm AS spt_nm
+				, t.cntrwk_bgnde AS cntrwk_bgnde
+				, t.cntrwk_endde AS cntrwk_endde
+				, t.cntrct_de AS cntrct_de
+				, t.progrs_sttus_code AS progrs_sttus_code
+				, t.cntrct_sn AS cntrct_sn
+				, t.prjct_sn AS prjct_sn
+				, t.cntrct_execut_code AS cntrct_execut_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='CNTRCT_EXECUT_CODE' AND code=t.cntrct_execut_code) AS cntrct_execut_nm
+				, t.ct_se_code AS ct_se_code
+				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='CT_SE_CODE' AND code=t.ct_se_code) AS ct_se_nm
+				, t.purchsofc_sn AS purchsofc_sn
+				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=t.purchsofc_sn) AS purchsofc_nm
+				, SUM(t.cntrct_amount) AS cntrct_amount
+				, (SELECT rate FROM pxcond WHERE pxcond_mt<='{0}' AND cntrct_sn=t.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
+				, CASE WHEN ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+				WHEN ct_se_code IN ('3') THEN GET_ACCOUNT_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+				WHEN ct_se_code IN ('8') THEN GET_PXCOND_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+				ELSE GET_TAXBIL_COMPLETE_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+				END AS complete_amount
+				, CASE WHEN ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+				WHEN ct_se_code IN ('3') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+				WHEN ct_se_code IN ('8') THEN GET_PXCOND_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+				ELSE GET_TAXBIL_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+				END AS tax_amount
+				, CASE WHEN ct_se_code IN ('1','2','4') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'P', %(s_pxcond_mt)s)
+				WHEN ct_se_code IN ('3') THEN GET_ACCOUNT_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, 'S', %(s_pxcond_mt)s)
+				ELSE GET_PXCOND_EXCUT_AMOUNT(t.cntrct_sn, t.purchsofc_sn, t.cntrct_execut_code, %(s_pxcond_mt)s)
+				END AS excut_amount
+				, GET_CONTRACT_AMOUNT(t.cntrct_sn, t.cntrct_execut_code, %(s_pxcond_mt)s) AS c_amt_sum
+				, GET_PXCOND_AMOUNT(t.cntrct_sn, t.cntrct_execut_code, %(s_pxcond_mt)s) AS p_amt_sum
+				, (SELECT rm FROM pxcond WHERE cntrct_sn=t.cntrct_sn AND cntrct_execut_code=t.cntrct_execut_code AND bcnc_sn=t.purchsofc_sn AND pxcond_mt='{0}' ORDER BY pxcond_mt DESC LIMIT 1) AS rm
+				, (SELECT ofcps_code FROM member WHERE mber_sn=t.spt_chrg_sn) AS ofcps_code
+				FROM 
+				(SELECT
+				  tx.prjct_ty_code
+				  , tx.bsn_dept_code
+				  , tx.cntrct_bcnc_sn
+				  , tx.bsn_chrg_sn
+				  , tx.prjct_creat_at
+				  , tx.cntrct_de
+				  , tx.progrs_sttus_code
+				  , tx.spt_chrg_sn
+				  , tx.spt_nm
+				  , tx.cntrwk_bgnde
+				  , tx.cntrwk_endde
+				  , tx.cntrct_sn
+				  , tx.prjct_sn
+				  , tx.cntrct_execut_code
+				  , tx.ct_se_code
+				  , tx.purchsofc_sn
+				  , SUM(tx.cntrct_amount) AS cntrct_amount
+				  FROM
+                    (
+                        SELECT distinct ct.prjct_ty_code
+                        , mm.dept_code AS bsn_dept_code
+                        , ct.bcnc_sn AS cntrct_bcnc_sn
+                        , ct.bsn_chrg_sn
+                        , ct.prjct_creat_at
+                        , ct.cntrct_de
+                        , IF(ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59', 'P', ct.progrs_sttus_code) AS progrs_sttus_code
+                        , ct.spt_chrg_sn
+                        , ct.spt_nm
+                        , ct.cntrwk_bgnde
+                        , ct.cntrwk_endde
+                        , co.cntrct_sn
+                        , p.prjct_sn
+                        , 'E' AS CNTRCT_EXECUT_CODE
+                        , '4' AS ct_se_code
+                        , 355 AS PURCHSOFC_SN
+                        , 0 AS cntrct_amount
+                        FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn AND x.purchsofc_sn IS NOT NULL) co
+                        JOIN contract ct
+                        ON co.cntrct_sn=ct.cntrct_sn
+                        LEFT OUTER JOIN member m
+                        ON ct.bsn_chrg_sn=m.mber_sn
+                        LEFT OUTER JOIN member mm
+                        ON ct.spt_chrg_sn=mm.mber_sn
+                        LEFT OUTER JOIN project p
+                        ON ct.cntrct_sn=p.cntrct_sn
+                        WHERE {4}
+                        AND {5}
+                        AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+                        AND ((co.ct_se_code IN ('61','62', '63','7') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) 
+                        AND (co.cost_date <= '{1}' or co.cost_date IS NULL)
+                        AND co.cntrct_execut_code NOT IN ('B', 'D')
+                        AND co.purchsofc_sn NOT IN ('691')
+                        AND ct.prjct_ty_code = 'NR'
+                        AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
+                        AND mm.dept_code IN ('TS1', 'TS2')
+                        AND ct.cntrct_de < '{1}' 				
+                        UNION
+                        SELECT distinct ct.prjct_ty_code
+                        , mm.dept_code AS bsn_dept_code
+                        , ct.bcnc_sn AS cntrct_bcnc_sn
+                        , ct.bsn_chrg_sn
+                        , ct.prjct_creat_at
+                        , ct.cntrct_de
+                        , IF(ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59', 'P', ct.progrs_sttus_code) AS progrs_sttus_code
+                        , ct.spt_chrg_sn
+                        , ct.spt_nm
+                        , ct.cntrwk_bgnde
+                        , ct.cntrwk_endde
+                        , co.cntrct_sn
+                        , p.prjct_sn
+                        , 'E' AS CNTRCT_EXECUT_CODE
+                        , '5' AS ct_se_code
+                        , 146 AS PURCHSOFC_SN
+                        , CASE WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code NOT IN ('9') THEN IFNULL(co.qy*co.salamt, 0)
+                        WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code IN ('9') THEN IFNULL(ROUND((co.puchas_amount*((100-co.dscnt_rt)/100))*co.qy * (co.fee_rt/100)), 0)
+                        WHEN co.cntrct_execut_code = 'A' THEN IFNULL(co.qy*co.salamt, 0)
+                        ELSE IFNULL(co.qy*co.puchas_amount, 0)
+                        END AS cntrct_amount
+                        FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn AND x.purchsofc_sn IS NOT NULL) co
+                        JOIN contract ct
+                        ON co.cntrct_sn=ct.cntrct_sn
+                        LEFT OUTER JOIN member m
+                        ON ct.bsn_chrg_sn=m.mber_sn
+                        LEFT OUTER JOIN member mm
+                        ON ct.spt_chrg_sn=mm.mber_sn
+                        LEFT OUTER JOIN project p
+                        ON ct.cntrct_sn=p.cntrct_sn
+                        WHERE {4}
+                        AND {5}
+                        AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+                        AND ((co.ct_se_code IN ('61','62', '63','7') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) 
+                        AND (co.cost_date <= '{1}' or co.cost_date IS NULL)
+                        AND co.cntrct_execut_code NOT IN ('B', 'D')
+                        AND co.purchsofc_sn NOT IN ('691')
+                        AND ct.prjct_ty_code = 'NR'
+                        AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
+                        AND mm.dept_code IN ('TS1', 'TS2')
+                        AND ct.cntrct_de < '{1}' 
+                        UNION
+                        SELECT ct.prjct_ty_code
+                        , mm.dept_code AS bsn_dept_code
+                        , ct.bcnc_sn AS cntrct_bcnc_sn
+                        , ct.bsn_chrg_sn
+                        , ct.prjct_creat_at
+                        , ct.cntrct_de
+                        , IF(ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59', 'P', ct.progrs_sttus_code) AS progrs_sttus_code
+                        , ct.spt_chrg_sn
+                        , ct.spt_nm
+                        , ct.cntrwk_bgnde
+                        , ct.cntrwk_endde
+                        , co.cntrct_sn
+                        , p.prjct_sn
+                        , co.cntrct_execut_code
+                        , CASE WHEN co.cntrct_execut_code = 'C' THEN '0'
+                        ELSE co.ct_se_code
+                        END AS ct_se_code
+                        , co.purchsofc_sn
+                        , CASE WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code NOT IN ('9') THEN IFNULL(co.qy*co.salamt, 0)
+                        WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code IN ('9') THEN IFNULL(ROUND((co.puchas_amount*((100-co.dscnt_rt)/100))*co.qy * (co.fee_rt/100)), 0)
+                        WHEN co.cntrct_execut_code = 'A' THEN IFNULL(co.qy*co.salamt, 0)
+                        ELSE IFNULL(co.qy*co.puchas_amount, 0)
+                        END AS cntrct_amount
+                        FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn AND x.purchsofc_sn IS NOT NULL) co
+                        JOIN contract ct
+                        ON co.cntrct_sn=ct.cntrct_sn
+                        LEFT OUTER JOIN member m
+                        ON ct.bsn_chrg_sn=m.mber_sn
+                        LEFT OUTER JOIN member mm
+                        ON ct.spt_chrg_sn=mm.mber_sn
+                        LEFT OUTER JOIN project p
+                        ON ct.cntrct_sn=p.cntrct_sn
+                        WHERE {4}
+                        AND {5}
+                        AND ct.cntrct_sn IN (SELECT c.cntrct_sn FROM contract c WHERE c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+                        AND ((co.ct_se_code IN ('61','62', '63','7') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7')) 
+                        AND (co.cost_date <= '{1}' or co.cost_date IS NULL)
+                        AND co.cntrct_execut_code NOT IN ('B', 'D')
+                        AND co.purchsofc_sn NOT IN ('691')
+                        AND ct.prjct_ty_code = 'NR'
+                        AND (ct.progrs_sttus_code = 'P' OR (ct.progrs_sttus_code = 'C' AND ct.update_dtm >= '{0} 23:59:59'))
+                        AND mm.dept_code IN ('TS1', 'TS2')
+                        AND ct.cntrct_de < '{1}'
+                    ) tx
+                    GROUP BY 
+                    prjct_ty_code, cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
+                    """.format(first_day, last_day, first_year, last_year, "co.cntrct_execut_code = %(s_cntrct_execut_code)s " if 's_cntrct_execut_code' in params and params['s_cntrct_execut_code'] else " 1=1 ", " co.ct_se_code NOT IN ('10')" if "purpose" in params else " co.ct_se_code NOT IN ('10', '8')")
+
+    query += """ ) t
+				GROUP BY bsn_dept_code, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
+				ORDER BY bsn_dept_code, spt_chrg_nm,  cntrct_bcnc_nm, spt_nm, cntrct_sn, cntrct_bcnc_sn, cntrct_execut_code, ct_se_code, purchsofc_sn """
+
+    print(query)
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    return result
 def get_partner_contract_status(params):
     ymd = params['s_pxcond_mt']
     y, m = ymd.split("-")
@@ -753,6 +963,22 @@ def get_completed(params):
     return data
 
 def insert_completed(params):
+    from pprint import pprint
+    pprint(params)
+    a_now_tot = 0
+    a_tot = 0
+    for body_a, body_a_now, body_b, body_b_now in zip(params["body_a[]"], params["body_a_now[]"], params["body_b[]"], params["body_b_now[]"]):
+        a = body_a.replace(",", "")
+        a_now = body_a_now.replace(",", "")
+        b = body_b.replace(",", "")
+        b_now = body_b_now.replace(",", "")
+        a = int(a) if a != '' else 0
+        a_now = int(a_now) if a_now != '' else 0
+        b = int(b) if b != '' else 0
+        b_now = int(b_now) if b_now != '' else 0
+        a_tot += a
+        a_now_tot += a_now
+    rate = a_now_tot*100.0/a_tot if a_tot != 0 else None
     if "now_est_1" in params:
         now_est_1 = int(params["now_est_1"].replace(",", "")) if params["now_est_1"].replace(",", "") != "" else 0
     else:
@@ -780,12 +1006,12 @@ def insert_completed(params):
     data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
     data["register_id"] = session["member"]["member_id"]
     data['ctmmny_sn'] = 1
-    data["rate"] = None
     data["rm"] = params["option_bigo"].strip()
 
 
     data["bcnc_sn"] = params["outsrc_fo_sn"]
     data["excut_amount"] = now_est_1 + now_est_2
+    data["rate"] = rate
     delete_pxcond(data)
     insert_pxcond(data)
 
@@ -795,6 +1021,26 @@ def insert_completed(params):
     delete_pxcond(data)
     insert_pxcond(data)
 
+
+def update_pxcond(params):
+    data = {}
+    if "cntrct_sn" in params and params["cntrct_sn"]:
+        data["cntrct_sn"] = params["cntrct_sn"]
+
+    if "rate" in params and params["rate"]:
+        data["rate"] = params["rate"]
+
+    query = """SELECT MAX(pxcond_mt) AS m_pxcond_mt FROM pxcond WHERE cntrct_sn=%(cntrct_sn)s"""
+    g.curs.execute(query, data)
+    row = g.curs.fetchall()
+    print(row)
+    if len(row) > 0:
+        data["pxcond_mt"] = row[0]["m_pxcond_mt"]
+        query = """UPDATE pxcond SET rate=%(rate)s WHERE cntrct_sn=%(cntrct_sn)s AND pxcond_mt=%(pxcond_mt)s"""
+        g.curs.execute(query, data)
+        return True
+    else:
+        return False
 
 
 def insert_pxcond(params):
@@ -829,7 +1075,11 @@ def insert_pxcond(params):
         data["register_id"] = session["member"]["member_id"]
 
     data['ctmmny_sn'] = 1
-    data["rate"] = None
+
+    if "rate" in params:
+        data["rate"] = params["rate"]
+    else:
+        data["rate"] = None
     if "rm" in params and params["rm"] != "":
         data["rm"] = params["rm"]
     else:

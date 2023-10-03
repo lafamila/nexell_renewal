@@ -201,7 +201,7 @@
 
 <!-- 미수금현황 시작 -->
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<h5 class="sub-title underline">외상미수금 <span style="font-size:12px!important;">(단위:천원)</span></h5>
+		<h5 class="sub-title underline">장기외상미수금 <span style="font-size:12px!important;">(단위:천원)</span></h5>
 		<table id="rcppay_status_summary">
 			<colgroup>
                         <col width="60">
@@ -2779,10 +2779,10 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
 				}
                 var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
 
-                if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
-                    pValue.progrs_sttus_code = 'K';
-                    pValue.sttus_nm = '대기';
-                }
+                // if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
+                //     pValue.progrs_sttus_code = 'K';
+                //     pValue.sttus_nm = '대기';
+                // }
                 if(pValue.progrs_sttus_code == 'P'){
                     pValue.ordr = 1;
                 }

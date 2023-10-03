@@ -117,6 +117,27 @@ def completed_ajax_get_completed_reportNR():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/ajax_get_completed_reportNR_new', methods=['GET'])
+def completed_ajax_get_completed_reportNR_new():
+    try:
+        params = request.args.to_dict()
+        result = dict()
+        s_pxcond_dtm = params["s_pxcond_mt"]
+        params["s_pxcond_mt"] = "-".join(s_pxcond_dtm.split("-")[:2])
+        result['contractStatusList'] = cp.get_contract_status_list(params)
+        result['executStatusList'] = cp.get_execut_status_list(params)
+        result['completedList'] = cp.get_completed_reportNR_new(params)
+        new_params = dict()
+        new_params["s_pxcond_mt"] = (datetime.strptime(s_pxcond_dtm, "%Y-%m-%d")-relativedelta.relativedelta(months=1)).strftime("%Y-%m")
+        result['lastDate'] = cp.get_completed_reportNR_new(new_params)
+
+
+        result['status'] = True
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 
 @bp.route('/get_completed_info', methods=['GET'])
 def get_completed_info():
@@ -151,3 +172,16 @@ def ajax_insert_completed():
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+
+@bp.route('/ajax_update_completed', methods=['POST'])
+def ajax_update_completed():
+    try:
+        params = request.form.to_dict()
+        status = cp.update_pxcond(params)
+        print(status)
+        return jsonify({"status" : status})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
