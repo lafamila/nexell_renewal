@@ -556,7 +556,6 @@ def equip_to_account():
 
 @bp.route('/insert_BF_ms_equip', methods=['POST'])
 def insert_BF_ms_equip():
-    try:
         pParams = request.get_json()
         params = {}
         for key in pParams:
@@ -589,9 +588,9 @@ def insert_BF_ms_equip():
                         st.insert_log(s['stock_sn'], 1, invn_sttus_code, None, return_de)
 
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 
 @bp.route('/insert_BD_ms_equip', methods=['POST'])

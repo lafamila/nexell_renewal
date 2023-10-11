@@ -647,6 +647,7 @@ def insert_ms_BF_equip(params):
                 elif key == "qy[]":
                     data["dlnt"] = [int(d.replace(",", "")) for d in params[key]]
                 elif key == "dc_rate[]":
+                    print(params[key])
                     data["dscnt_rt"] = [float(d.replace("%", "")) for d in params[key] ]
                 elif key in ("expect_de[]",):
                     data["wrhousng_de"] = params[key]

@@ -11,7 +11,7 @@ from collections import OrderedDict
 import itertools
 import calendar
 from .project_service import get_project_by_cntrct_nm, get_contract
-
+from dateutil.relativedelta import relativedelta
 def get_completed_summary(params):
     year = int(params['s_pxcond_mt'].split("-")[0])
     month = int(params['s_pxcond_mt'].split("-")[1])
@@ -905,8 +905,22 @@ def get_partner_status_list(params):
     return result
 
 def get_completed_bcnc_data(params):
+    result = dict()
     if "approval_sn" not in params:
-        params['s_pxcond_mt'] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
+        params['s_pxcond_mt'] = (datetime.datetime.now(timezone('Asia/Seoul')) + relativedelta(months=-1)).strftime("%Y-%m")
+    else:
+        g.curs.execute("SELECT DATE_FORMAT(DATE_SUB(reg_dtm, INTERVAL 1 MONTH), '%%Y-%%m') AS reg_time FROM approval WHERE approval_sn=%(approval_sn)s", params)
+        params['s_pxcond_mt'] = g.curs.fetchone()['reg_time']
+    query = """SELECT GET_ACCOUNT_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'P', %(s_pxcond_mt)s) AS completed_1
+                    , GET_TAXBIL_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'C', %(s_pxcond_mt)s) AS completed_2
+                    , GET_PXCOND_COMPLETE_AMOUNT(c.cntrct_sn, c.bcnc_sn, 'S', %(s_pxcond_mt)s) AS completed_3
+                FROM contract c
+                WHERE c.cntrct_sn=%(s_cntrct_sn)s"""
+    g.curs.execute(query, params)
+    result['before'] = g.curs.fetchone()
+
+    if "approval_sn" not in params:
+        params['s_pxcond_mt'] = (datetime.datetime.now(timezone('Asia/Seoul'))).strftime("%Y-%m")
     else:
         g.curs.execute("SELECT DATE_FORMAT(reg_dtm, '%%Y-%%m') AS reg_time FROM approval WHERE approval_sn=%(approval_sn)s", params)
         params['s_pxcond_mt'] = g.curs.fetchone()['reg_time']
@@ -916,7 +930,7 @@ def get_completed_bcnc_data(params):
                 FROM contract c
                 WHERE c.cntrct_sn=%(s_cntrct_sn)s"""
     g.curs.execute(query, params)
-    result = g.curs.fetchone()
+    result['now'] = g.curs.fetchone()
     return result
 
 def get_completed(params):

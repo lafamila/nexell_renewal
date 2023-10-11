@@ -190,7 +190,7 @@
             <th class="colorSky text-center">전월 누계 청구금액</th>
             <th class="colorSky text-center">금월 청구 금액</th>
             <th class="colorLP text-center">보할률 적용금액</th>
-            <th class="colorLP text-center">전월 누계 청구금액</th>
+            <th class="colorLP text-center">누계 투입액</th>
             <th class="colorLP text-center">금월 청구 금액</th>
         </tr>
     </thead>
@@ -276,17 +276,19 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
         <col width="80"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="11"><span>도급팀 지급 금액</span></th>
+			<th class="sub-title colorN text-center" colspan="12"><span>도급팀 지급 금액</span></th>
         </tr>
         <tr>
             <th class="color-contract text-center" rowspan="2">구분</th>
             <th class="color-contract text-center" rowspan="2">계약금액</th>
             <th class="color-contract text-center" colspan="4">설치비</th>
             <th class="color-contract text-center" colspan="3">자재</th>
+            <th class="color-contract text-center" rowspan="2">간접비</th>
             <th class="color-contract text-center" rowspan="2">합계</th>
             <th class="color-contract text-center" rowspan="2">집행률</th>
         </tr>
@@ -323,6 +325,9 @@
                 <input type="text" class="form-control text-right" data-type="number" name="completed_logi_2" readonly/>
             </td>
             <td class="text-right" name="completed_logi_total"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_indirect" readonly/>
+            </td>
             <td class="text-right" name="completed_total"></td>
             <td class="text-center" name="completed_rate"></td>
         </tr>
@@ -345,6 +350,9 @@
                 <input type="text" class="form-control text-right" data-type="number" name="now_logi_2"/>
             </td>
             <td class="text-right" name="now_logi_total"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="now_indirect"/>
+            </td>
             <td class="text-right" name="now_total"></td>
             <td class="text-center" name="now_rate"></td>
 
@@ -358,6 +366,7 @@
             <td class="text-right" name="total_completed_logi_1"></td>
             <td class="text-right" name="total_completed_logi_2"></td>
             <td class="text-right" name="total_completed_logi_total"></td>
+            <td class="text-right" name="total_indirect"></td>
             <td class="text-right" name="total_completed_total"></td>
             <td class="text-center" name="total_completed_rate"></td>
         </tr>
@@ -569,9 +578,9 @@
                 {% endif %}
                     success: function(pResult){
                         console.log(pResult);
-                        $(document).find(`[name="a_before_total"]`).html((pResult.bcnc.completed_2).toFormat('NUMBER'));
+                        $(document).find(`[name="a_before_total"]`).html((pResult.bcnc.now.completed_2).toFormat('NUMBER'));
                         // $(document).find(`[name="b_before_total"]`).html((pResult.data.est_1 + pResult.data.est_2 + pResult.data.est_3 + pResult.data.logi_1 + pResult.data.logi_2).toFormat('NUMBER'));
-                        var bcnc_total = (pResult.bcnc.completed_1+pResult.bcnc.completed_2+pResult.bcnc.completed_3);
+                        var bcnc_total = (pResult.bcnc.before.completed_1+pResult.bcnc.before.completed_2+pResult.bcnc.before.completed_3);
                         $(document).find(`[name="bcnc_completed_total"]`).html(bcnc_total.toFormat('NUMBER'));
                         $(document).find(`[name="bcnc_completed_rate"]`).html((bcnc_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
 
@@ -657,9 +666,10 @@
                             p_sum_total_other += parseInt(pV.p_total);
                         });
                         var all_sum_total = 0, indirect_sum_total = 0;
+
                         $.each(pData.outsrcList, function(pI, pV) {
                             var sum_total = 0;
-                            var before_total = 0;
+                            // var before_total = 0;
                             $.each(pV.taxbilList, function(pIndex, pValue){
                                 // sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                                 var pblicte_de = pValue.pblicte_de;
@@ -669,19 +679,21 @@
                                 previous.setMonth(previous.getMonth() - 1);
                                 var target_de = new Date(pblicte_de);
                                 target_de.setDate(1);
-                                if(target_de.getTime() < previous.getTime()){
-                                    before_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                // if(target_de.getTime() < previous.getTime()){
+                                //     before_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                // }
+                                if(target_de.getTime() <= previous.getTime()){
+                                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                                 }
-
 
                             });
                             if([116].includes(pV.outsrc_fo_sn)){
-                                indirect_sum_total += before_total;
-                                all_sum_total += before_total;
+                                indirect_sum_total += sum_total;
+                                all_sum_total += sum_total;
                             }
                             else{
                                 if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || pV.outsrc_fo_sn == 146){
-                                    all_sum_total += before_total;
+                                    all_sum_total += sum_total;
                                 }
 
                             }
@@ -766,6 +778,40 @@
                         $(document).find("[name='completed_est_2']").val(0);
                         $(document).find("[name='completed_est_3']").val(completed_est_3.toFormat('NUMBER'));
 
+
+
+                        var completed_indirect = 0, now_indirect = 0;
+                        $.each(pData.outsrcList, function(pI, pV) {
+                            var sum_total = 0;
+                            var before_total = 0;
+                            $.each(pV.taxbilList, function(pIndex, pValue){
+                                // sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                var pblicte_de = pValue.pblicte_de;
+                                var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                var previous = new Date(now);
+                                previous.setDate(1);
+                                previous.setMonth(previous.getMonth() - 1);
+                                var target_de = new Date(pblicte_de);
+                                target_de.setDate(1);
+                                if(target_de.getTime() < previous.getTime()){
+                                    before_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                }
+                                if(target_de.getTime() == previous.getTime()){
+                                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                }
+
+                            });
+                            if([116].includes(pV.outsrc_fo_sn)){
+                                completed_indirect += before_total;
+                                now_indirect += sum_total;
+                            }
+                        });
+                        $(document).find("[name='completed_indirect']").val(completed_indirect.toFormat('NUMBER'));
+                        $(document).find("[name='now_indirect']").val(now_indirect.toFormat('NUMBER'));
+
+
+
+
                         var completed_logi_1 = 0, now_logi_1 = 0;
                         var completed_logi_2 = 0, now_logi_2 = 0;
                         $.each(pData.s3AccountList, function(pI, pV){
@@ -784,6 +830,7 @@
                             }
                             else if(target_de.getTime() == previous.getTime()){
                                 now_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
                             }
                         });
                         console.log(pData.s4AccountList);
@@ -802,6 +849,7 @@
                             }
                             else if(target_de.getTime() == previous.getTime()){
                                 now_logi_2 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
                             }
                         });
                         console.log(all_sum_total);
@@ -882,7 +930,9 @@
         var completed_logi_2 = getValue($(this).find(`[name="completed_logi_2"]`), false);
         var completed_logi_total = completed_logi_1 + completed_logi_2;
         $(this).find(`[name="completed_logi_total"]`).html(completed_logi_total.toFormat('NUMBER'));
-        var completed_total = completed_est_total + completed_logi_total;
+        var completed_indirect = getValue($(this).find(`[name="completed_indirect"]`), false);
+
+        var completed_total = completed_est_total + completed_logi_total + completed_indirect;
         $(this).find(`[name="completed_total"]`).html(completed_total.toFormat('NUMBER'));
         var completed_rate = (completed_total*100.0/outsrc_cntrct_amount);
         $(this).find(`[name="completed_rate"]`).html(completed_rate.toFixed(1)+"%");
@@ -896,7 +946,8 @@
         var now_logi_2 = getValue($(this).find(`[name="now_logi_2"]`), false);
         var now_logi_total = now_logi_1 + now_logi_2;
         $(this).find(`[name="now_logi_total"]`).html(now_logi_total.toFormat('NUMBER'));
-        var now_total = now_est_total + now_logi_total;
+        var now_indirect = getValue($(this).find(`[name="now_indirect"]`), false);
+        var now_total = now_est_total + now_logi_total + now_indirect;
         $(this).find(`[name="now_total"]`).html(now_total.toFormat('NUMBER'));
         var now_rate = (now_total*100.0/outsrc_cntrct_amount);
         $(this).find(`[name="now_rate"]`).html(now_rate.toFixed(1)+"%");
@@ -914,8 +965,10 @@
         $(this).find(`[name="total_completed_logi_1"]`).html(total_completed_logi_1.toFormat('NUMBER'));
         $(this).find(`[name="total_completed_logi_2"]`).html(total_completed_logi_2.toFormat('NUMBER'));
         var total_completed_logi_total = total_completed_logi_1 + total_completed_logi_2;
+        var total_indirect = completed_indirect + now_indirect;
+        $(this).find(`[name="total_indirect"]`).html(total_indirect.toFormat('NUMBER'));
         $(this).find(`[name="total_completed_logi_total"]`).html(total_completed_logi_total.toFormat('NUMBER'));
-        var total_completed_total = total_completed_est_total + total_completed_logi_total;
+        var total_completed_total = total_completed_est_total + total_completed_logi_total + total_indirect;
         $(this).find(`[name="total_completed_total"]`).html(total_completed_total.toFormat('NUMBER'));
         var total_completed_rate = (total_completed_total*100.0/outsrc_cntrct_amount);
         $(this).find(`[name="total_completed_rate"]`).html(total_completed_rate.toFixed(1)+"%");
