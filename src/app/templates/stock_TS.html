@@ -1697,7 +1697,9 @@ $(function() {
 		background-color:skyblue!important;
 		color:black!important;
 	}
-
+    #popReport3 .colorTotal{
+        background-color: rgb(204, 255, 204)!important;
+    }
 </style>
 <style>
 @media (min-width: 100px) and (max-width: 1024px) {
@@ -1749,10 +1751,10 @@ $(function() {
 		<tr>
             <th class="colorB" colspan="4" style="border-right:2px solid #555!important;">입출고</th>
             <th class="colorB" colspan="3" style="border-right:2px solid #555!important;">현재고</th>
-            <th class="colorB" rowspan="2" style="border-right:2px solid #555!important;">계</th>
+            <th class="colorTotal" rowspan="2" style="border-right:2px solid #555!important;">계</th>
             <th class="colorB" colspan="4" style="border-right:2px solid #555!important;">입출고</th>
             <th class="colorB" colspan="3" style="border-right:2px solid #555!important;">현재고</th>
-            <th class="colorB" rowspan="2" style="border-right:2px solid #555!important;">계</th>
+            <th class="colorTotal" rowspan="2" style="border-right:2px solid #555!important;">계</th>
 		</tr>
 		<tr>
             <th class="colorB">회수</th>
@@ -1782,7 +1784,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1790,7 +1792,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="1">
             <th class="text-center" style="border-right:2px solid #555!important;">1월</th>
@@ -1801,7 +1803,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1809,7 +1811,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="2">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1821,7 +1823,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1829,7 +1831,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="3">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1841,7 +1843,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1849,7 +1851,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="4">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1861,7 +1863,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1869,7 +1871,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="5">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1881,7 +1883,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1889,7 +1891,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="6">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1901,7 +1903,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1909,7 +1911,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="7">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1921,7 +1923,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1929,7 +1931,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="8">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1941,7 +1943,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1949,7 +1951,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="9">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1961,7 +1963,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1969,7 +1971,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="10">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -1981,7 +1983,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -1989,7 +1991,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="11">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -2001,7 +2003,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -2009,7 +2011,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
         <tr data-row="12">
             <th class="text-center middle stock_stdyy" rowspan="12" style="display:none;"></th>
@@ -2021,7 +2023,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
@@ -2029,7 +2031,7 @@ $(function() {
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center" style="border-right:2px solid #555!important;"></td>
-            <td class="text-center" style="border-right:2px solid #555!important;"></td>
+            <td class="text-center colorTotal" style="border-right:2px solid #555!important;"></td>
         </tr>
 	</tbody>
 <!--    <tfoot>-->

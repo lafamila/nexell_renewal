@@ -824,6 +824,7 @@ def insert_equipment_sub(params):
         data['pamt'] = int(pamt.replace(",", "")) if pamt != '' else None
         data['samt'] = int(samt.replace(",", "")) if samt != '' else None
         data['bcnc_sn'] = bcnc_sn
+        data['delng_ty_code'] = 3
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':

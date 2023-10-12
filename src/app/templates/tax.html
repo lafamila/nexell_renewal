@@ -597,6 +597,7 @@ getTax = function(s_cntrct_sn, s_taxbil_sn)
 	var params = '';
 	params += '&s_cntrct_sn=' + s_cntrct_sn;
 	params += '&s_taxbil_sn=' + s_taxbil_sn;
+    console.log(params);
 	// alert(params);
 	$.ajax({
 		url: '/api/tax/ajax_get_tax',
@@ -865,6 +866,7 @@ $(function() {
      */
 	$('#frmBox1').on('change', '#cntrct_sn', function(pEvent) {
 		var action = $('#frmBox1').data('action');
+        console.log($(this));
 		// if (action == 'insert') {
 			getContract($(this).val());
 		// }
