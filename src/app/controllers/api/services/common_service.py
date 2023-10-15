@@ -1308,7 +1308,7 @@ def get_money_data(params):
                                  ) r 
                 ON t.taxbil_sn=r.cnnc_sn
                 WHERE 1=1
-                AND c.progrs_sttus_code IN ('P', 'B')
+                AND c.progrs_sttus_code IN ('P', 'B', 'C')
                 GROUP BY c.cntrct_sn, t.pblicte_trget_sn, t.delng_se_code, DATE_FORMAT(t.collct_de, '%%Y-%%m')
                 ORDER BY code_ordr, bcnc_sn, cntrct_nm
             """
