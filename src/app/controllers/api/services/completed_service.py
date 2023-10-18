@@ -557,94 +557,208 @@ def get_completed_reportNR_new(params):
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
     first_year = "{}-01-01".format(y.zfill(4))
     last_year = "{}-12-31".format(y.zfill(4))
-    query = """SELECT mm.dept_code AS bsn_dept_code
-                    , GET_MEMBER_NAME(mm.mber_sn, 'M') AS spt_chrg_nm
-                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS cntrct_bcnc_nm
-                    , spt_nm
-                    , cntrct_sn
+    #ct_se_code, cntrct_amount, excut_amount, ofcps_code
+    result = []
+    query = """SELECT GET_MEMBER_NAME(mm.mber_sn, 'M') AS spt_chrg_nm
+                    , GET_MEMBER_NAME(m.mber_sn, 'M') AS bsn_chrg_nm
+                    , mm.dept_code AS spt_dept_code
+                    , m.dept_code AS bsn_dept_code
+                    , mm.mber_sn AS spt_chrg_sn
+                    , m.mber_sn AS bsn_chrg_sn
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=mm.dept_code) AS spt_dept_nm
+                    , (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS bsn_dept_nm
                     , c.bcnc_sn AS cntrct_bcnc_sn
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS cntrct_bcnc_nm
+                    , c.spt_nm AS spt_nm
+                    , c.prjct_creat_at AS prjct_creat_at
+                    , c.cntrwk_bgnde AS cntrwk_bgnde
+                    , c.cntrwk_endde AS cntrwk_endde
+                    , c.cntrct_de AS cntrct_de
+                    , c.progrs_sttus_code AS progrs_sttus_code
+                    , c.cntrct_sn AS cntrct_sn
+                    , p.prjct_sn AS prjct_sn
+                    , DATE_FORMAT(c.regist_dtm, '%%Y-%%m-%%d')
+                    
                  FROM contract c
                          LEFT OUTER JOIN member mm
                          ON c.spt_chrg_sn=mm.mber_sn                
+                         LEFT OUTER JOIN member m
+                         ON c.bsn_chrg_sn=m.mber_sn
+                         LEFT OUTER JOIN project p 
+                         ON c.cntrct_sn=p.cntrct_sn
                          WHERE 1=1
-                         AND (c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+                         # AND (c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+                         AND c.progrs_sttus_code = 'P'
                          AND c.prjct_ty_code = 'NR'
-                         AND (c.progrs_sttus_code = 'P' OR (c.progrs_sttus_code = 'C' AND c.update_dtm >= '{0} 23:59:59'))
+                         # AND (c.progrs_sttus_code = 'P' OR (c.progrs_sttus_code = 'C' AND c.update_dtm >= '{0} 23:59:59'))
                          AND mm.dept_code IN ('TS1', 'TS2')
                          AND c.cntrct_de < '{1}'
-                         ORDER BY bsn_dept_code, spt_chrg_nm,  cntrct_bcnc_nm, spt_nm, cntrct_sn, cntrct_bcnc_sn    
+                         ORDER BY spt_dept_code, cntrct_bcnc_nm, DATE_FORMAT(c.regist_dtm, '%%Y-%%m-%%d') DESC, mm.ofcps_code, spt_chrg_nm, spt_nm, cntrct_sn, cntrct_bcnc_sn    
     """.format(first_day, last_day, first_year, last_year)
 
     g.curs.execute(query, params)
     data = g.curs.fetchall()
-    print([(d['spt_nm'], d['bsn_dept_code']) for d in data])
     for d in data:
+        result_part = []
         d['s_pxcond_mt'] = params['s_pxcond_mt']
         bcncs = []
         query = """
-                    SELECT IF(pa.bcnc_sn=3, IFNULL(SUM(IF(pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01'), sa.dlnt*sa.dlamt, 0)), 0), IFNULL(SUM(IF(pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01'), pa.dlnt*pa.dlamt, 0)), 0)) AS completed_amount
+                    SELECT IF(pa.bcnc_sn=3, IFNULL(SUM(IF(pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01'), sa.dlnt*sa.dlamt, 0)), 0), IFNULL(SUM(IF(pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01'), pa.dlnt*pa.dlamt, 0)), 0)) AS complete_amount
                          , IF(pa.bcnc_sn=3, IFNULL(SUM(IF(pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01'), 0,sa.dlnt*sa.dlamt)), 0), IFNULL(SUM(IF(pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01'), 0, pa.dlnt*pa.dlamt)), 0)) AS tax_amount                         
-                         , pa.delng_se_code AS delng_se_code
-                         , pa.bcnc_sn 
-                         , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=pa.bcnc_sn) AS bcnc_nm
+                         , 'E' AS cntrct_execut_code
+                         , pa.bcnc_sn AS purchsofc_sn
+                         , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=pa.bcnc_sn) AS purchsofc_nm
+                         , (SELECT rm FROM pxcond WHERE cntrct_sn=pa.cntrct_sn AND cntrct_execut_code='E' AND bcnc_sn=pa.bcnc_sn AND pxcond_mt='{0}' ORDER BY pxcond_mt DESC LIMIT 1) AS rm
                     FROM account pa
                      LEFT JOIN account sa 
                      ON sa.cnnc_sn=pa.delng_sn
                      WHERE sa.delng_ty_code IN (11, 12)
                         AND pa.cntrct_sn = %(cntrct_sn)s
                         AND (pa.ddt_man < CONCAT(SUBSTRING(%(s_pxcond_mt)s, 1, 7),'-01') OR pa.ddt_man BETWEEN CONCAT(%(s_pxcond_mt)s,'-01') AND CONCAT(%(s_pxcond_mt)s,'-31'))
-                    GROUP BY pa.bcnc_sn, pa.delng_se_code
-                """
+                    GROUP BY purchsofc_sn, cntrct_execut_code
+                """.format(first_day)
         g.curs.execute(query, d)
         bcncs += g.curs.fetchall()
 
         query = """
-                    SELECT IFNULL(SUM(IF(pxcond_mt < CONCAT(%(s_pxcond_mt)s,'-01'),excut_amount, 0)), 0) AS completed_amount                         
+                    SELECT IFNULL(SUM(IF(pxcond_mt < CONCAT(%(s_pxcond_mt)s,'-01'),excut_amount, 0)), 0) AS complete_amount                         
                          , IFNULL(SUM(IF(pxcond_mt < CONCAT(%(s_pxcond_mt)s,'-01'),0, excut_amount)), 0) AS tax_amount                         
-                         , bcnc_sn
-                         , 'P' AS delng_se_code
-                         , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS bcnc_nm
+                         , bcnc_sn AS purchsofc_sn
+                         , 'E' AS cntrct_execut_code
+                         , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS purchsofc_nm
+                         , (SELECT rm FROM pxcond WHERE cntrct_sn=p.cntrct_sn AND cntrct_execut_code='E' AND bcnc_sn=p.bcnc_sn AND pxcond_mt='{0}' ORDER BY pxcond_mt DESC LIMIT 1) AS rm
                     FROM pxcond p
                      WHERE p.cntrct_sn = %(cntrct_sn)s
-                        AND cntrct_execut_code = 'S'
                         AND (pxcond_mt < CONCAT(%(s_pxcond_mt)s,'-01') OR pxcond_mt BETWEEN CONCAT(%(s_pxcond_mt)s,'-01') AND CONCAT(%(s_pxcond_mt)s,'-31'))
-                    GROUP BY p.bcnc_sn
-                """
+                    GROUP BY purchsofc_sn
+                """.format(first_day)
         g.curs.execute(query, d)
-        bcncs += g.curs.fetchall()
+        pxconds = g.curs.fetchall()
 
         query = """
-                    SELECT IFNULL(SUM(IF(t.pblicte_de < CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,7),'-01'), t.SPLPC_AM+IFNULL(t.VAT, 0), 0) ), 0) AS completed_amount                       
+                    SELECT IFNULL(SUM(IF(t.pblicte_de < CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,7),'-01'), t.SPLPC_AM+IFNULL(t.VAT, 0), 0) ), 0) AS complete_amount                       
                          , IFNULL(SUM(IF(t.pblicte_de < CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,7),'-01'), 0, t.SPLPC_AM+IFNULL(t.VAT, 0)) ), 0) AS tax_amount                       
-                         , pblicte_trget_sn AS bcnc_sn
-                         , IF(t.delng_se_code IN ('S', 'S1', 'S3'), 'S', 'P') AS delng_se_code
-                         , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=pblicte_trget_sn) AS bcnc_nm
+                         , pblicte_trget_sn AS purchsofc_sn
+                         , IF(t.delng_se_code IN ('S', 'S1', 'S3'), 'C', 'E') AS cntrct_execut_code
+                         , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=pblicte_trget_sn) AS purchsofc_nm
+                         , (SELECT rm FROM pxcond WHERE cntrct_sn=t.cntrct_sn AND cntrct_execut_code=IF(t.delng_se_code IN ('S', 'S1', 'S3'), 'C', 'E') AND bcnc_sn=t.pblicte_trget_sn AND pxcond_mt='{0}' ORDER BY pxcond_mt DESC LIMIT 1) AS rm
                     FROM taxbil t
                      WHERE t.cntrct_sn = %(cntrct_sn)s
                         AND (t.pblicte_de < CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,7),'-01') OR t.pblicte_de BETWEEN CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,7),'-01') AND CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,7),'-31'))
                         AND t.delng_se_code IN ('S', 'S1', 'S3', 'P')
-                    GROUP BY bcnc_sn
-                """
+                    GROUP BY purchsofc_sn
+                """.format(first_day)
         g.curs.execute(query, d)
         bcncs += g.curs.fetchall()
 
-        bcncs = sorted(bcncs, key=lambda d: d['delng_se_code'], reverse=True)
 
-        print("=================")
-        print(d['spt_nm'])
-        from pprint import pprint
-        pprint(bcncs)
-        print("-------------")
+        query = """
+                    SELECT co.purchsofc_sn AS purchsofc_sn
+                        , CASE WHEN co.cntrct_execut_code = 'C' THEN '0'
+                            ELSE co.ct_se_code
+                            END AS ct_se_code
+                        , SUM(CASE WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code NOT IN ('9') THEN IFNULL(co.qy*co.salamt, 0)
+                            WHEN co.cntrct_execut_code = 'C' AND co.ct_se_code IN ('9') THEN IFNULL(ROUND((co.puchas_amount*((100-co.dscnt_rt)/100))*co.qy * (co.fee_rt/100)), 0)
+                            WHEN co.cntrct_execut_code = 'A' THEN IFNULL(co.qy*co.salamt, 0)
+                            ELSE IFNULL(co.qy*co.puchas_amount, 0)
+                            END) AS cntrct_amount
+                        , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=co.purchsofc_sn) AS purchsofc_nm
+                        , 0 AS complete_amount
+                        , 0 AS tax_amount
+                        , co.cntrct_execut_code AS cntrct_execut_code
+                        , (SELECT rm FROM pxcond WHERE cntrct_sn=co.cntrct_sn AND cntrct_execut_code=co.cntrct_execut_code AND bcnc_sn=co.purchsofc_sn AND pxcond_mt='{1}' ORDER BY pxcond_mt DESC LIMIT 1) AS rm
+                    FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn AND x.purchsofc_sn IS NOT NULL) co
+                        JOIN contract ct
+                        ON co.cntrct_sn=ct.cntrct_sn
+                        LEFT OUTER JOIN member m
+                        ON ct.bsn_chrg_sn=m.mber_sn
+                        LEFT OUTER JOIN member mm
+                        ON ct.spt_chrg_sn=mm.mber_sn
+                        LEFT OUTER JOIN project p
+                        ON ct.cntrct_sn=p.cntrct_sn
+                        WHERE  1=1
+                        AND co.ct_se_code NOT IN ('10', '8')
+                        AND ct.cntrct_sn = %(cntrct_sn)s
+                        AND ((co.ct_se_code IN ('61','62', '63','7') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7'))
+                        AND (co.cost_date <= '{0}' or co.cost_date IS NULL)
+                        AND co.cntrct_execut_code NOT IN ('B', 'D')
+                        AND co.purchsofc_sn NOT IN ('691')
+                        AND mm.dept_code IN ('TS1', 'TS2')
+                    GROUP BY purchsofc_sn,  CASE WHEN co.cntrct_execut_code = 'C' THEN '0'
+                            ELSE co.ct_se_code
+                            END, cntrct_execut_code
+                """.format(last_day, first_day)
+        g.curs.execute(query, d)
+        costs = g.curs.fetchall()
+        costs = {cost['purchsofc_sn'] : cost for cost in costs}
+        pxconds = {pxcond['purchsofc_sn'] : pxcond for pxcond in pxconds}
 
+        query = """
+                    SELECT o.cntrct_sn
+                        , o.prjct_sn
+                        , o.outsrc_fo_sn
+                        , (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=1 AND bcnc_sn=o.outsrc_fo_sn) AS outsrc_fo_nm
+                        , o.cntrct_de
+                        , o.outsrc_sn
+                        , rspnber_nm
+                        , rspnber_telno
+                        , charger_nm
+                        , charger_telno
+                        , pymnt_mth
+                        , outsrc_dtls
+                        FROM outsrc o
+                        WHERE o.cntrct_sn = %(cntrct_sn)s
+                        AND (o.pymnt_mth <> '' OR o.outsrc_dtls <> '')
+                """
+        g.curs.execute(query, d)
+        outsrcs = g.curs.fetchall()
+        human_cntrct_amount = 0
+        establish_cntrct_amount = 0
+        for outsrc in outsrcs:
+            if outsrc['pymnt_mth'] != '' and len(outsrc['pymnt_mth'].split("-")) == 4:
+                establish_cntrct_amount = int(outsrc['pymnt_mth'].split("-")[0]) + int(outsrc['pymnt_mth'].split("-")[1])
+                human_cntrct_amount = int(outsrc['pymnt_mth'].split("-")[2])
+            if outsrc['outsrc_dtls'] != '' and len(outsrc['outsrc_dtls'].split("-")) == 4:
+                establish_cntrct_amount = int(outsrc['outsrc_dtls'].split("-")[0]) + int(outsrc['outsrc_dtls'].split("-")[1])
+                human_cntrct_amount = int(outsrc['outsrc_dtls'].split("-")[2])
+        for bcnc in bcncs:
+            if bcnc['purchsofc_sn'] in costs:
+                cntrct_amount = costs[bcnc['purchsofc_sn']]['cntrct_amount']
+                ct_se_code = costs[bcnc['purchsofc_sn']]['ct_se_code']
+                del costs[bcnc['purchsofc_sn']]
+            else:
+                cntrct_amount = 0
+                ct_se_code = ''
+            if bcnc['purchsofc_sn'] == 146:
+                cntrct_amount = human_cntrct_amount
+            elif ct_se_code != '' and int(ct_se_code) == 5 and bcnc['cntrct_execut_code']  == 'E':
+                cntrct_amount = establish_cntrct_amount
+            bcnc.update(d)
+            bcnc.update({"cntrct_amount" : cntrct_amount, "excut_amount" :0, "ct_se_code" : ct_se_code})
+            if bcnc['purchsofc_sn'] in pxconds:
+                bcnc['excut_amount'] = pxconds[bcnc['purchsofc_sn']]['tax_amount']
+            result_part.append(bcnc)
+        for cost in costs.values():
+            if cost['cntrct_amount'] != 0.0:
+                cost.update(d)
+                cost.update({"excut_amount" : 0})
+                if cost['purchsofc_sn'] in pxconds:
+                    cost['excut_amount'] = pxconds[cost['purchsofc_sn']]['tax_amount']
+                if cost['purchsofc_sn'] == 146:
+                    cost['cntrct_amount'] = human_cntrct_amount
+                elif cost['ct_se_code'] != '' and int(cost['ct_se_code']) == 5 and cost['cntrct_execut_code'] == 'E':
+                    cost['cntrct_amount'] = establish_cntrct_amount
+                result_part.append(cost)
+        result_part = sorted(result_part, key=lambda d: (d['cntrct_execut_code'], 99 if d['ct_se_code'] == '' else int(d['ct_se_code'])))
+        result +=  result_part
 
-
-# ct_se_code in (1, 2, 4) : SELECT IFNULL(SUM(pa.dlnt*pa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code
+    # ct_se_code in (1, 2, 4) : SELECT IFNULL(SUM(pa.dlnt*pa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code
 # ct_se_code in (3) :  SELECT IFNULL(SUM(sa.dlnt*sa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code
 # ct_se_code in (8) : SELECT IFNULL(SUM(excut_amount), 0) FROM pxcond AND bcnc_sn = p_bcnc_sn AND cntrct_execut_code = p_cntrct_execut_code
 # Else : SELECT IFNULL(SUM(t.SPLPC_AM+IFNULL(t.VAT, 0)), 0)
 
 
-    return None
+    return result
 def get_partner_contract_status(params):
     ymd = params['s_pxcond_mt']
     y, m = ymd.split("-")

@@ -405,7 +405,7 @@ getReportNR = function(s_pxcond_mt)
                 // 이전달 현장 목록, 이전달 도급사 목록, 이전달 계약금액
                 var LAST_SPT_NMS = {}, LAST_PURCHSOFC_NMS = {}, LAST_AMOUNTS = {};
                 $.each(pResult.lastDate, function(pIndex, pValue){
-                    let dpt_code = pValue.bsn_dept_code;
+                    let dpt_code = pValue.spt_dept_code;
                     if(!LAST_SPT_NMS.hasOwnProperty(dpt_code)){
                         LAST_SPT_NMS[dpt_code] = [];
                     }
@@ -468,7 +468,7 @@ getReportNR = function(s_pxcond_mt)
                 var data = {}; //팀별 C/E 금월 청구 총합
 
 				var html = '';
-				var before = '', before_bsn_dept_code = '';
+				var before = '', before_spt_dept_code = '';
 				var c_cntrct_amount = 0, c_complete_amount = 0, c_excut_amount = 0, c_sum_amount = 0;
 				var e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
 
@@ -476,7 +476,7 @@ getReportNR = function(s_pxcond_mt)
                     if(pValue.cntrct_execut_code == 'E' && pValue.ct_se_code == 8){
                         return true;
                     }
-					if (before != '' && before != pValue.bsn_dept_nm) {
+					if (before != '' && before != pValue.spt_dept_nm) {
 
 
 
@@ -531,8 +531,8 @@ getReportNR = function(s_pxcond_mt)
 					}
 
 					// header
-					if (before != pValue.bsn_dept_nm) {
-						html += '<table id="rptCompletedList'+pValue.bsn_dept_code+'">';
+					if (before != pValue.spt_dept_nm) {
+						html += '<table id="rptCompletedList'+pValue.spt_dept_code+'">';
 						html += '<colgroup>';
 						html += '    <col width="50">';
 						html += '    <col width="70">';
@@ -554,8 +554,8 @@ getReportNR = function(s_pxcond_mt)
 						html += '<tbody role="header">';
 						html += '	<tr>';
 						html += '		<th class="colorZ">팀</th>';
-						html += '		<th class="colorZ">현장<br>관리</th>';
 						html += '		<th class="colorZ">건설사</th>';
+						html += '		<th class="colorZ">현장<br>관리</th>';
 						html += '		<th class="colorZ">현장명</th>';
 						html += '		<th class="colorZ" style="border-right:2px solid black!important;">공사<br>기간</th>';
 						html += '		<th class="colorZ" colspan="2" style="border-right:2px solid black!important;">계약금액</th>';
@@ -582,9 +582,9 @@ getReportNR = function(s_pxcond_mt)
                     //배경색 조건
 					var cbg = pValue.cntrct_execut_code == 'C' ? ' colorSky' : '';
 					var isFailedExpect = parseInt(pValue.tax_amount) == 0? cbg : (parseInt(pValue.excut_amount)==parseInt(pValue.tax_amount)? cbg : ' colorP');
-                    var isNewContract = LAST_SPT_NMS.hasOwnProperty(pValue.bsn_dept_code) && LAST_SPT_NMS[pValue.bsn_dept_code].includes(pValue.spt_nm) ? '' : ' colorY';
-                    var isNewConstruct = LAST_PURCHSOFC_NMS.hasOwnProperty(pValue.bsn_dept_code) && LAST_PURCHSOFC_NMS[pValue.bsn_dept_code].hasOwnProperty(pValue.spt_nm) && LAST_PURCHSOFC_NMS[pValue.bsn_dept_code][pValue.spt_nm].includes(pValue.purchsofc_nm) ? '' : ' colorY';
-                    var isChangedContractAmount = LAST_AMOUNTS.hasOwnProperty(pValue.bsn_dept_code) && LAST_AMOUNTS[pValue.bsn_dept_code].hasOwnProperty(pValue.spt_nm) && LAST_AMOUNTS[pValue.bsn_dept_code][pValue.spt_nm].hasOwnProperty(pValue.purchsofc_sn) && LAST_AMOUNTS[pValue.bsn_dept_code][pValue.spt_nm][pValue.purchsofc_sn] == pValue.cntrct_amount ? '' : ' colorY';
+                    var isNewContract = LAST_SPT_NMS.hasOwnProperty(pValue.spt_dept_code) && LAST_SPT_NMS[pValue.spt_dept_code].includes(pValue.spt_nm) ? '' : ' colorY';
+                    var isNewConstruct = LAST_PURCHSOFC_NMS.hasOwnProperty(pValue.spt_dept_code) && LAST_PURCHSOFC_NMS[pValue.spt_dept_code].hasOwnProperty(pValue.spt_nm) && LAST_PURCHSOFC_NMS[pValue.spt_dept_code][pValue.spt_nm].includes(pValue.purchsofc_nm) ? '' : ' colorY';
+                    var isChangedContractAmount = LAST_AMOUNTS.hasOwnProperty(pValue.spt_dept_code) && LAST_AMOUNTS[pValue.spt_dept_code].hasOwnProperty(pValue.spt_nm) && LAST_AMOUNTS[pValue.spt_dept_code][pValue.spt_nm].hasOwnProperty(pValue.purchsofc_sn) && LAST_AMOUNTS[pValue.spt_dept_code][pValue.spt_nm][pValue.purchsofc_sn] == pValue.cntrct_amount ? '' : ' colorY';
                     var isNoProject = pValue.prjct_creat_at == 'N' ? ' style="background:#eee!important;"' : '';
                     var isOverpay = rt3>100.0 ? ' colorP' : '';
                     var isEmuchC = (pValue.cntrct_execut_code == 'E' && amt[pValue.cntrct_sn]['C'] < amt[pValue.cntrct_sn]['E']) ? ' colorP' : '';
@@ -596,9 +596,9 @@ getReportNR = function(s_pxcond_mt)
                         var cntrwk_endde = pValue.cntrwk_endde.substring(2,pValue.cntrwk_endde.length);
                         var p_amt_sum_rt = (parseInt(amt[pValue.cntrct_sn][pValue.cntrct_execut_code])/parseInt(total_cnt[pValue.cntrct_sn][pValue.cntrct_execut_code]))*100;
                         html += '<tr>';
-                        html += '    <td class="text-center">'+pValue.bsn_dept_nm+'</td>';
-                        html += '    <td class="text-center" style="color:#333;"><span data-sn="'+pValue.bsn_dept_nm+'"></span>'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
-                        html += '    <td class="text-center"><span data-sn="'+pValue.bsn_dept_nm+pValue.spt_chrg_nm+'"></span>'+pValue.cntrct_bcnc_nm+'</td>';
+                        html += '    <td class="text-center">'+pValue.spt_dept_nm+'</td>';
+                        html += '    <td class="text-center"><span data-sn="'+pValue.spt_dept_nm+'"></span>'+pValue.cntrct_bcnc_nm+'</td>';
+                        html += '    <td class="text-center" style="color:#333;"><span data-sn="'+pValue.spt_dept_nm+pValue.cntrct_bcnc_nm+'"></span>'+pValue.spt_chrg_nm.replaceAll(' ', '<br>')+'</td>';
                         html += '    <td class="text-left font13'+isNewContract+'" title="'+pValue.cntrct_de+'" '+isNoProject+'>'+pValue.spt_nm+'</td>';
                         html += '    <td class="text-center'+isNewContract+'" style="line-height:14px;padding:7px 1px!important;border-right:2px solid black!important;">'+cntrwk_bgnde+'<br>~<br>'+cntrwk_endde+'<div style="display:none;">'+pValue.cntrct_sn+'</div></td>';
                         html += '    <td class="text-center'+cbg+isNewContract+isNewConstruct+'">'+pValue.purchsofc_nm+'</td>';
@@ -615,7 +615,7 @@ getReportNR = function(s_pxcond_mt)
                         }
                         else{
 
-                            html += `    <td class="text-number ${isFailedExpect} input-available" data-amount="${pValue.cntrct_amount}" data-cntrct_sn="${pValue.cntrct_sn}" data-prjct_sn="${pValue.prjct_sn}" data-bcnc_sn="${pValue.purchsofc_sn}" data-cntrct_execut_code="${pValue.cntrct_execut_code}" data-ct_se_code="${pValue.ct_se_code}" style="${(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')}">${(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))}</td>`;
+                            html += `    <td class="text-number ${isFailedExpect} ${(pValue.spt_chrg_sn==loginSN) ? 'input-available' : ''}" data-mber="${pValue.spt_chrg_sn}" data-amount="${pValue.cntrct_amount}" data-cntrct_sn="${pValue.cntrct_sn}" data-prjct_sn="${pValue.prjct_sn}" data-bcnc_sn="${pValue.purchsofc_sn}" data-cntrct_execut_code="${pValue.cntrct_execut_code}" data-ct_se_code="${pValue.ct_se_code}" style="${(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')}">${(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))}</td>`;
                         }
 
 
@@ -656,7 +656,7 @@ getReportNR = function(s_pxcond_mt)
 						html += '</tbody>';
 						html += '<tbody role="footer" style="border-bottom:3px solid #000!important;">';
 						html += '	<tr>';
-						html += '		<th class="colorZ" colspan="5" rowspan="2" style="border-right:2px solid black!important;">'+pValue.bsn_dept_nm+' 계</th>';
+						html += '		<th class="colorZ" colspan="5" rowspan="2" style="border-right:2px solid black!important;">'+pValue.spt_dept_nm+' 계</th>';
 						html += '		<th class="colorZ">당사분</th>';
 						html += '       <td class="text-number" style="border-right:2px solid black!important;" >'+c_cntrct_amount.toString().toFormat('NUMBER')+'</td>';
 						html += '       <td class="text-number">'+c_complete_amount.toString().toFormat('NUMBER')+'</td>';
@@ -697,8 +697,8 @@ getReportNR = function(s_pxcond_mt)
 					}
 
 					// 테이블 행 처리용
-					before = pValue.bsn_dept_nm;
-                    before_bsn_dept_code = pValue.bsn_dept_code;
+					before = pValue.spt_dept_nm;
+                    before_spt_dept_code = pValue.spt_dept_code;
 				});
 				$('#popReport').find('#rptCompletedArea').html(html);
 				$('#popReport').find('#rptCompletedListTS1 tbody[role=body]').yRowspan(0);
@@ -1017,6 +1017,8 @@ getReportNR = function(s_pxcond_mt)
     $(document).on("dblclick", ".input-available", function(){
         /*
          * 8/31 기능해제
+         * 10/17 기능재적용
+         */
         var cntrct_sn = $(this).data("cntrct_sn");
         var prjct_sn = $(this).data("prjct_sn");
         var bcnc_sn = $(this).data("bcnc_sn");
@@ -1050,7 +1052,6 @@ getReportNR = function(s_pxcond_mt)
             }
 
         });
-        */
 
     });
 	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {

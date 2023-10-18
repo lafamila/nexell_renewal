@@ -119,7 +119,7 @@ def completed_ajax_get_completed_reportNR():
 
 @bp.route('/ajax_get_completed_reportNR_new', methods=['GET'])
 def completed_ajax_get_completed_reportNR_new():
-    try:
+    # try:
         params = request.args.to_dict()
         result = dict()
         s_pxcond_dtm = params["s_pxcond_mt"]
@@ -134,9 +134,9 @@ def completed_ajax_get_completed_reportNR_new():
 
         result['status'] = True
         return jsonify(result)
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 
 @bp.route('/get_completed_info', methods=['GET'])
