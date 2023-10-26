@@ -473,9 +473,6 @@ getReportNR = function(s_pxcond_mt)
 				var e_cntrct_amount = 0, e_complete_amount = 0, e_excut_amount = 0, e_sum_amount = 0;
 
 				$.each(pResult.completedList, function(pIndex, pValue){
-                    if(pValue.cntrct_execut_code == 'E' && pValue.ct_se_code == 8){
-                        return true;
-                    }
 					if (before != '' && before != pValue.spt_dept_nm) {
 
 

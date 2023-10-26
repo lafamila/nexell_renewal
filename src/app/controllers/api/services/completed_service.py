@@ -677,7 +677,7 @@ def get_completed_reportNR_new(params):
                         LEFT OUTER JOIN project p
                         ON ct.cntrct_sn=p.cntrct_sn
                         WHERE  1=1
-                        AND co.ct_se_code NOT IN ('10', '8')
+                        AND (co.ct_se_code NOT IN ('10'))
                         AND ct.cntrct_sn = %(cntrct_sn)s
                         AND ((co.ct_se_code IN ('61','62', '63','7') AND co.cntrct_execut_code = 'C') OR co.ct_se_code NOT IN ('61','62', '63','7'))
                         AND (co.cost_date <= '{0}' or co.cost_date IS NULL)
@@ -690,8 +690,20 @@ def get_completed_reportNR_new(params):
                 """.format(last_day, first_day)
         g.curs.execute(query, d)
         costs = g.curs.fetchall()
-        costs = {cost['purchsofc_sn'] : cost for cost in costs}
-        pxconds = {pxcond['purchsofc_sn'] : pxcond for pxcond in pxconds}
+        indirect_idx = -1
+        for idx, cost in enumerate(costs):
+            if cost['ct_se_code'] == '0' and cost['cntrct_execut_code'] == 'C':
+                indirect_idx = idx
+        for idx, cost in enumerate(costs):
+            if cost['ct_se_code'] == '0' and cost['cntrct_execut_code'] == 'C' and indirect_idx != -1:
+                if indirect_idx != idx:
+                    indirect = costs[indirect_idx]
+                    cost['cntrct_amount'] += indirect['cntrct_amount']
+                    cost['complete_amount'] += indirect['complete_amount']
+                    cost['tax_amount'] += indirect['tax_amount']
+                    del costs[indirect_idx]
+        costs = {(cost['purchsofc_sn'], cost['cntrct_execut_code']) : cost for cost in costs}
+        pxconds = {(pxcond['purchsofc_sn'], pxcond['cntrct_execut_code']) : pxcond for pxcond in pxconds}
 
         query = """
                     SELECT o.cntrct_sn
@@ -722,29 +734,31 @@ def get_completed_reportNR_new(params):
                 establish_cntrct_amount = int(outsrc['outsrc_dtls'].split("-")[0]) + int(outsrc['outsrc_dtls'].split("-")[1])
                 human_cntrct_amount = int(outsrc['outsrc_dtls'].split("-")[2])
         for bcnc in bcncs:
-            if bcnc['purchsofc_sn'] in costs:
-                cntrct_amount = costs[bcnc['purchsofc_sn']]['cntrct_amount']
-                ct_se_code = costs[bcnc['purchsofc_sn']]['ct_se_code']
-                del costs[bcnc['purchsofc_sn']]
+            key = (bcnc['purchsofc_sn'], bcnc['cntrct_execut_code'])
+            if key in costs:
+                cntrct_amount = costs[key]['cntrct_amount']
+                ct_se_code = costs[key]['ct_se_code']
+                del costs[key]
             else:
                 cntrct_amount = 0
                 ct_se_code = ''
-            if bcnc['purchsofc_sn'] == 146:
+            if bcnc['purchsofc_sn'] == 146 and bcnc['cntrct_execut_code'] == 'E':
                 cntrct_amount = human_cntrct_amount
             elif ct_se_code != '' and int(ct_se_code) == 5 and bcnc['cntrct_execut_code']  == 'E':
                 cntrct_amount = establish_cntrct_amount
             bcnc.update(d)
             bcnc.update({"cntrct_amount" : cntrct_amount, "excut_amount" :0, "ct_se_code" : ct_se_code})
-            if bcnc['purchsofc_sn'] in pxconds:
-                bcnc['excut_amount'] = pxconds[bcnc['purchsofc_sn']]['tax_amount']
+            if key in pxconds:
+                bcnc['excut_amount'] = pxconds[key]['tax_amount']
             result_part.append(bcnc)
         for cost in costs.values():
             if cost['cntrct_amount'] != 0.0:
                 cost.update(d)
                 cost.update({"excut_amount" : 0})
-                if cost['purchsofc_sn'] in pxconds:
-                    cost['excut_amount'] = pxconds[cost['purchsofc_sn']]['tax_amount']
-                if cost['purchsofc_sn'] == 146:
+                key = (cost['purchsofc_sn'], cost['cntrct_execut_code'])
+                if key in pxconds:
+                    cost['excut_amount'] = pxconds[key]['tax_amount']
+                if cost['purchsofc_sn'] == 146 and cost['cntrct_execut_code'] == 'E':
                     cost['cntrct_amount'] = human_cntrct_amount
                 elif cost['ct_se_code'] != '' and int(cost['ct_se_code']) == 5 and cost['cntrct_execut_code'] == 'E':
                     cost['cntrct_amount'] = establish_cntrct_amount
