@@ -549,6 +549,7 @@ def get_completed_reportNR(params):
 
 
 def get_completed_reportNR_new(params):
+    CT_SE_CODE_ORDER = {0: 0, 1: 1, 2: 2, 5: 3, '': 4, 3: 5, 4: 6, 8: 7}
     ymd = params['s_pxcond_mt']
     y, m = ymd.split("-")
     _, l = calendar.monthrange(int(y), int(m))
@@ -763,7 +764,9 @@ def get_completed_reportNR_new(params):
                 elif cost['ct_se_code'] != '' and int(cost['ct_se_code']) == 5 and cost['cntrct_execut_code'] == 'E':
                     cost['cntrct_amount'] = establish_cntrct_amount
                 result_part.append(cost)
-        result_part = sorted(result_part, key=lambda d: (d['cntrct_execut_code'], 99 if d['ct_se_code'] == '' else int(d['ct_se_code'])))
+        result_part = sorted(result_part, key=lambda d: (d['cntrct_execut_code'], CT_SE_CODE_ORDER[''] if d['ct_se_code'] == '' else CT_SE_CODE_ORDER[int(d['ct_se_code'])] if int(d['ct_se_code']) in CT_SE_CODE_ORDER else 99))
+        if len(result_part) == 0:
+            print('"{}"'.format(d['spt_nm']))
         result +=  result_part
 
     # ct_se_code in (1, 2, 4) : SELECT IFNULL(SUM(pa.dlnt*pa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code

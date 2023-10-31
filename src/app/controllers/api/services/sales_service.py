@@ -1230,6 +1230,7 @@ def insert_equipment(params):
                 before = g.curs.fetchone(transform=False)
                 del before['equip_sn']
                 del before['reg_time']
+                before['samt'] = int(before['samt']*int(eq['cnt_dlnt'])/before['cnt_dlnt'])
                 before['cnt_dlnt'] = int(eq['cnt_dlnt'])
                 keys = list(before.keys())
                 query = """INSERT INTO expect_equipment({0}) VALUES ({1})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
@@ -1243,6 +1244,7 @@ def insert_equipment(params):
                 before = g.curs.fetchone(transform=False)
                 del before['equip_sn']
                 del before['reg_time']
+                before['samt'] = int(before['samt']*int(eq['cnt_dlnt'])/before['cnt_dlnt'])
                 before['cnt_dlnt'] = int(eq['cnt_dlnt'])
                 keys = list(before.keys())
                 query = """INSERT INTO expect_equipment({0}) VALUES ({1})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))

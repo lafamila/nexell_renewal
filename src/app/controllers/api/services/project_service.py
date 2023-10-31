@@ -3054,7 +3054,7 @@ def get_expect_equip_list(params):
     query += """
                 AND e.delng_ty_code='1'
                 AND cntrct_sn = %(s_cntrct_sn)s
-                GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn"""
+                GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn HAVING SUM(e.cnt_dlnt) > 0"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -3089,7 +3089,7 @@ def get_expect_equip_other_list(params):
     query += """
                 AND e.delng_ty_code='2'
                 AND cntrct_sn = %(s_cntrct_sn)s
-                GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn"""
+                GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn HAVING SUM(e.cnt_dlnt) > 0"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result

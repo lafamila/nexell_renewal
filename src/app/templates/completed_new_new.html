@@ -601,7 +601,7 @@ getReportNR = function(s_pxcond_mt)
                         html += '    <td class="text-center'+cbg+isNewContract+isNewConstruct+'">'+pValue.purchsofc_nm+'</td>';
                         html += '    <td class="text-number'+cbg+isNewContract+isNewConstruct+isChangedContractAmount+'" style="border-right:2px solid black!important;">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number'+cbg+'">'+(parseInt(pValue.complete_amount) == 0 ? '' : pValue.complete_amount).toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number'+cbg+'" style="border-right:2px solid black!important;">'+(rt1==0.0?'-' : (rt1.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number'+cbg+'" style="border-right:2px solid black!important;">'+((rt1==0.0 || rt1 == Infinity || rt1 == -Infinity)?'-' : (rt1.toFixed(1)+'%'))+'</td>';
 
 
                         if(pValue.CNTRCT_EXECUT_CODE == 'E' && (['1','2','3','4'].includes(pValue.ct_se_code))){
@@ -616,9 +616,9 @@ getReportNR = function(s_pxcond_mt)
                         }
 
 
-                        html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'border-right:2px solid black!important;">'+(rt2==0.0?'':(rt2.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'border-right:2px solid black!important;">'+((rt2==0.0 || rt2 == Infinity || rt2 == -Infinity)?'':(rt2.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number'+cbg+'">'+(sum==0?'':sum).toString().toFormat('NUMBER')+'</td>';
-                        html += '    <td class="text-number'+cbg+isOverpay+'" style="border-right:2px solid black!important;">'+(rt3==0.0?'-':(rt3.toFixed(1)+'%'))+'</td>';
+                        html += '    <td class="text-number'+cbg+isOverpay+'" style="border-right:2px solid black!important;">'+((rt3==0.0 || rt3 == Infinity || rt3 == -Infinity)?'-':(rt3.toFixed(1)+'%'))+'</td>';
                         html += '    <td class="text-number'+cbg+isEmuchC+'">'+amt[pValue.cntrct_sn][pValue.cntrct_execut_code].toString().toFormat('NUMBER')+'<div style="display:none;">'+pValue.cntrct_sn+':'+pValue.cntrct_execut_code+'</div></td>';
                         html += '    <td class="text-number'+cbg+'">'+p_amt_sum_rt.toFixed(1)+'%<div style="display:none;">'+pValue.cntrct_sn+':'+pValue.cntrct_execut_code+'</div></td>';
                         html += '    <td class="text-left"><span data-sn="'+pValue.cntrct_sn+'"></span>'+rm[pValue.cntrct_sn]+'</td>';

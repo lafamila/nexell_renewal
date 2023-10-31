@@ -503,6 +503,11 @@
                                 isEmpty = true;
                                 pTarget = $(pTag);
                             }
+                            if($(pTag).attr("name") == "bcnc_sn[]" && $(pTag).find("option:selected").val() == '79' && $(pTr).find(`[name="delng_sn[]"]`).val() == ''){
+                                alert("삼성장비(재고)는 재고장비 추가 기능으로만 선택될 수 있습니다.");
+                                result = false;
+                                return false;
+                            }
                         })
                         if(isEmpty){
                             $(pTarget).focus();
@@ -512,7 +517,8 @@
                             result = false;
                             return false;
                         }
-                    })
+                    });
+
                     return result;
                }
 

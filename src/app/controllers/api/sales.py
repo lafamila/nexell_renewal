@@ -822,6 +822,24 @@ def update_equipment_establish():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/update_equipment_establish_new', methods=['POST'])
+def update_equipment_establish_new():
+    try:
+        params = request.get_json()
+        params["establish"] = True
+        prj.insert_c_extra_project(params)
+        sales.update_equipment_establish(params)
+
+        del params["option_bigo"]
+        sales.insert_equipment(params)
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+
+
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 
 @bp.route('/ajax_insert_direct', methods=['GET'])
 def ajax_insert_direct():

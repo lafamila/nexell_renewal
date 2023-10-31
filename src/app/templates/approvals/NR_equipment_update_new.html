@@ -1,0 +1,1809 @@
+{% include "approvals/common_style.html" %}
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+    #formContent tr[data-row='E'] th, #formContent tr[data-row='E'] td{
+        border-bottom:2px solid #555!important;
+    }
+    #formContent tr[data-row='C'] th[rowspan="2"], #formContent tr[data-row='C'] td[rowspan="2"]{
+        border-bottom:2px solid #555!important;
+    }
+
+
+</style>
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="colorSky text-center">계약번호</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">현장명</td>
+            <td class="text-center hasinput" colspan="3">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+            <td class="colorSky text-center">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">공사기간</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table" id="costTable">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="colorB text-center">구분</th>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">삼성장비</th>
+            <th class="color-contract text-center">타사장비</th>
+            <th class="color-contract text-center">도급비</th>
+            <th class="color-contract text-center">로지텍자재</th>
+            <th class="color-contract text-center">타사자재</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">M,S/H(기준표)</th>
+            <th class="color-contract text-center">옵션행사비(기준표)</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="color-contract text-center">설계변경</th>
+            <th class="color-contract text-center">총액</th>
+            <th class="color-contract text-center">이익금(VA)</th>
+            <th class="color-contract text-center">VA율</th>
+        </tr>
+    </tbody>
+    <tbody role="ct_se_code_contract">
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">수주계약</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="text-right" data-type='number' name="C_1"></td>
+            <td class="text-right" data-type='number' name="C_2"></td>
+            <td class="text-right" data-type='number' name="C_5"></td>
+            <td class="text-right" data-type='number' name="C_3"></td>
+            <td class="text-right" data-type='number' name="C_4"></td>
+            <td class="text-right" data-type='number' name="C_8"></td>
+            <td class="text-right" data-type='number' name="C_61"></td>
+            <td class="text-right" data-type='number' name="C_7"></td>
+            <td class="text-right" data-type='number' name="C_10"></td>
+            <td class="text-right" data-type='number' name="C_99"></td>
+            <td class="text-center" data-column="row_total"></td>
+            <td class="text-center" data-column="va" rowspan="2"></td>
+            <td class="text-center" data-column="va_rate" rowspan="2"></td>
+        </tr>
+        <tr data-row="E">
+            <th class="colorSky text-center">실행가</th>
+            <td class="text-right" data-type='number' name="E_1"></td>
+            <td class="text-right" data-type='number' name="E_2"></td>
+            <td class="text-right" data-type='number' name="E_5"></td>
+            <td class="text-right" data-type='number' name="E_3"></td>
+            <td class="text-right" data-type='number' name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
+            <td class="text-right" data-type='number' name="E_61"></td>
+            <td class="text-right" data-type='number' name="E_7"></td>
+            <td class="text-right" data-type='number' name="E_10"></td>
+            <td class="text-right" data-type='number' name="E_99"></td>
+            <td class="text-center" data-column="row_total"></td>
+        </tr>
+    </tbody>
+    <tbody role="ct_se_code_extra_alpha">
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">변경<span id="max_extra_sn"></span></th>
+            <th class="colorSky text-center">변경 계약가</th>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_1_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_2_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_5_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_3_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_4_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_8_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_61_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_7_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_10_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="C_99_alpha"></td>
+            <td class="text-center" data-column="row_total_alpha"></td>
+            <td class="text-center" data-column="va_alpha" rowspan="2"></td>
+            <td class="text-center" data-column="va_rate_alpha" rowspan="2"></td>
+        </tr>
+        <tr data-row="E">
+            <th class="colorSky text-center">변경 실행가</th>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_1_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_2_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_5_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_3_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_4_alpha" readonly></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_8_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_61_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_7_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_10_alpha"></td>
+            <td class="hasinput"><input type="text" class="form-control text-right" data-type='number' name="E_99_alpha"></td>
+            <td class="text-center" data-column="row_total_alpha"></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="1"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="150"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="color-contract text-center">-</th>
+            <th class="color-contract text-center">출고일</th>
+            <th class="color-contract text-center">상품명</th>
+            <th class="color-contract text-center">모델명</th>
+            <th class="color-contract text-center">계약수량</th>
+            <th class="color-contract text-center">매입단가</th>
+            <th class="color-contract text-center">출고수량</th>
+            <th class="color-contract text-center">매입금액</th>
+            <th class="color-contract text-center">매출금액</th>
+            <th class="color-contract text-center">VA</th>
+            <th class="color-contract text-center">매입처</th>
+            <th class="color-contract text-center">장비할인율</th>
+        </tr>
+    </tbody>
+    <tbody role="equip_already_row">
+        <tr data-row="equip_already_tr">
+            <td class="text-center"></td>
+            <td class="text-center" name="dlivy_de_already[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="prdlst_se_code_already[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no_already[]"/>
+                <input type="hidden" name="delng_ty_code_already[]" value="1"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt_already[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt_already[]"/>
+            </td>
+            <td class="text-right" name="dlnt_already[]"></td>
+            <td class="text-right" name="amount_already[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="samount_already[]"/>
+            </td>
+            <td class="text-right" name="va_already[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="bcnc_sn_already[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm_already[]"/>
+            </td>
+        </tr>
+
+    </tbody>
+    <tbody role="equip_row">
+        <tr data-row="equip_tr">
+            <td class="hasinput">
+                 <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+            </td>
+            <td class="text-center" name="dlivy_de[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="prdlst_se_code[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no[]"/>
+                <input type="hidden" name="delng_ty_code[]" value="1"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+            </td>
+            <td class="text-right" name="dlnt[]"></td>
+            <td class="text-right" name="amount[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
+            </td>
+            <td class="text-right" name="va[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    {% if code.value == 74 %}
+                    <option value="{{code.value}}" selected>{{code.value}}.{{code.label}}</option>
+                    {% else %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm[]"/>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="colorG text-center" colspan="4">합계</td>
+            <td class="colorG text-right" data-column="total_cnt_dlnt"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+            <td class="colorP text-right" data-column="total_amount"></td>
+            <td class="colorG text-right" data-column="total_samount"></td>
+            <td class="colorG text-right" data-column="total_va"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+        </tr>
+    </tfoot>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="150"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRowOther"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="color-contract text-center">출고일</th>
+            <th class="color-contract text-center">상품명</th>
+            <th class="color-contract text-center">모델명</th>
+            <th class="color-contract text-center">계약수량</th>
+            <th class="color-contract text-center">매입단가</th>
+            <th class="color-contract text-center">출고수량</th>
+            <th class="color-contract text-center">매입금액</th>
+            <th class="color-contract text-center">매출금액</th>
+            <th class="color-contract text-center">VA</th>
+            <th class="color-contract text-center">매입처</th>
+            <th class="color-contract text-center">장비할인율</th>
+        </tr>
+    </tbody>
+    <tbody role="equip_other_already_row">
+        <tr data-row="equip_other_already_tr">
+            <td class="text-center" name="dlivy_de_other_already[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="prdlst_se_code_other_already[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no_other_already[]"/>
+                <input type="hidden" name="delng_ty_code_other_already[]" value="2"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt_other_already[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt_other_already[]"/>
+            </td>
+            <td class="text-right" name="dlnt_other_already[]"></td>
+            <td class="text-right" name="amount_other_already[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="samount_other_already[]"/>
+            </td>
+            <td class="text-right" name="va_other_already[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="bcnc_sn_other_already[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm_other_already[]"/>
+            </td>
+        </tr>
+    </tbody>
+    <tbody role="equip_other_row">
+        <tr data-row="equip_other_tr">
+            <td class="text-center" name="dlivy_de_other[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="prdlst_se_code_other[]" style="width:100%!important;">
+                    <option value="">[전체]</option>
+                    {% for code in prdlst_se_code_list %}
+                    <option value="{{code.value}}">{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="model_no_other[]"/>
+                <input type="hidden" name="delng_ty_code_other[]" value="2"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="cnt_dlnt_other[]"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="dlamt_other[]"/>
+            </td>
+            <td class="text-right" name="dlnt_other[]"></td>
+            <td class="text-right" name="amount_other[]"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="samount_other[]"/>
+            </td>
+            <td class="text-right" name="va_other[]"></td>
+            <td class="hasinput">
+                <select class="form-control select2" name="bcnc_sn_other[]" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="rm_other[]"/>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="colorG text-center" colspan="3">합계</td>
+            <td class="colorG text-right" data-column="total_cnt_dlnt_other"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+            <td class="colorP text-right" data-column="total_amount_other"></td>
+            <td class="colorG text-right" data-column="total_samount_other"></td>
+            <td class="colorG text-right" data-column="total_va_other"></td>
+            <td class="colorG"></td>
+            <td class="colorG"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<table class="table table-bordered table-form main-table" >
+	<colgroup>
+		<col width="100">
+		<col width="200">
+		<col width="100">
+		<col width="200">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="sub-title colorN text-center" colspan="4"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">③ 설치비 산출 및 지급내역 - VAT포함</span>
+                <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
+                    <button type="button" class="btn btn-table btn-warning" title="추가" id="addRowCompany"><i class="fa fa-plus"></i></button>
+                </div>
+            </th>
+		</tr>
+	</thead>
+	<tbody role="company1">
+        <tr>
+            <th class="color-contract text-center">도급계약사-1</th>
+            <td class="hasinput">
+                <select class="form-control select2" name="company1_name" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <th class="color-contract text-center">도급계약일</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="company1_date"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">대표</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company1_owner"/>
+            </td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company1_owner_telno"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">현장관리자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company1_dam"/>
+            </td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company1_dam_telno"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="hasinput" colspan="4">
+                <table class="table table-bordered table-form" style="width:100%;border:0px!important;">
+                    <colgroup>
+                        <col width="10"/>
+                        <col width="50"/>
+                        <col width="50"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="50"/>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="color-contract text-center" colspan="3">내역</th>
+                            <th class="color-contract text-center">실내기대수</th>
+                            <th class="color-contract text-center">대당단가</th>
+                            <th class="color-contract text-center">공급가액</th>
+                            <th class="color-contract text-center">세액</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" style="border-right:0px!important;">공사비총액</th>
+                            <th class="hasinput color-contract text-right" style="border-left:0px!important;">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-table btn-warning" title="추가" id="company1_addRowItem"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody role="company1_row">
+                        <tr data-row="company1_tr">
+                            <td class="hasinput">
+                                 <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company1_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" name="company1_item_name[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_item_dlnt[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_item_damt[]"/>
+                            </td>
+                            <td class="text-right" data-column="company1_item_amount[]"></td>
+                            <td class="text-right" data-column="company1_item_tax[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company1_item_total[]"/>
+                            </td>
+                            <td class="colorP text-right" data-column="company1_item_pink[]" colspan="2"></td>
+                        </tr>
+                    </tbody>
+                    <tbody role="company1_detail">
+                        <tr>
+                            <th class="color-contract text-center middle" rowspan="5" colspan="2">분류</th>
+                            <th class="color-contract text-center">내역</th>
+                            <th class="color-contract text-center">인건비(50%)</th>
+                            <th class="color-contract text-center">직불</th>
+                            <th class="color-contract text-center">일용직(20%)</th>
+                            <th class="color-contract text-center">로지텍/타사(30%)</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" rowspan="5" colspan="2">집행률</th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약내역</th>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_human"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_direct"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_daily"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_sum"/>
+                            </td>
+                            <th class="colorP text-right" data-column="company1_pink"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약변경</th>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_human_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_direct_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_daily_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company1_sum_change" disabled/>
+                            </td>
+                            <th class="colorP text-right" data-column="company1_pink_change"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">집행</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">잔액</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+	<tbody style="display:none;" role="company2">
+        <tr>
+            <th class="color-contract text-center">도급계약사-2</th>
+            <td class="hasinput">
+                <select class="form-control select2" name="company2_name" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <th class="color-contract text-center">도급계약일</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="company2_date"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">대표</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company2_owner"/>
+            </td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company2_owner_telno"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">현장관리자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company2_dam"/>
+            </td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company2_dam_telno"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="hasinput" colspan="4">
+                <table class="table table-bordered table-form" style="width:100%;border:0px!important;">
+                    <colgroup>
+                        <col width="10"/>
+                        <col width="50"/>
+                        <col width="50"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="50"/>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="color-contract text-center" colspan="3">내역</th>
+                            <th class="color-contract text-center">실내기대수</th>
+                            <th class="color-contract text-center">대당단가</th>
+                            <th class="color-contract text-center">공급가액</th>
+                            <th class="color-contract text-center">세액</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" style="border-right:0px!important;">공사비총액</th>
+                            <th class="hasinput color-contract text-right" style="border-left:0px!important;">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-table btn-warning" title="추가" id="company2_addRowItem"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody role="company2_row">
+                        <tr data-row="company2_tr">
+                            <td class="hasinput">
+                                 <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company2_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" name="company2_item_name[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_item_dlnt[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_item_damt[]"/>
+                            </td>
+                            <td class="text-right" data-column="company2_item_amount[]"></td>
+                            <td class="text-right" data-column="company2_item_tax[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company2_item_total[]"/>
+                            </td>
+                            <td class="colorP text-right" data-column="company2_item_pink[]" colspan="2"></td>
+                        </tr>
+                    </tbody>
+                    <tbody role="company2_detail">
+                        <tr>
+                            <th class="color-contract text-center middle" rowspan="5" colspan="2">분류</th>
+                            <th class="color-contract text-center">내역</th>
+                            <th class="color-contract text-center">인건비(50%)</th>
+                            <th class="color-contract text-center">직불</th>
+                            <th class="color-contract text-center">일용직(20%)</th>
+                            <th class="color-contract text-center">로지텍/타사(30%)</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" rowspan="5" colspan="2">집행률</th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약내역</th>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_human"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_direct"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_daily"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_sum"/>
+                            </td>
+                            <th class="colorP text-right" data-column="company2_pink"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약변경</th>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_human_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_direct_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_daily_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company2_sum_change" disabled/>
+                            </td>
+                            <th class="colorP text-right" data-column="company2_pink_change"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">집행</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">잔액</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+	<tbody style="display:none;" role="company3">
+        <tr>
+            <th class="color-contract text-center">도급계약사-3</th>
+            <td class="hasinput">
+                <select class="form-control select2" name="company3_name" style="width:100%!important;">
+                    <option value=""></option>
+                    {% for code in bcnc_list %}
+                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <th class="color-contract text-center">도급계약일</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-center" data-type="date" name="company3_date"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">대표</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company3_owner"/>
+            </td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company3_owner_telno"/>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">현장관리자</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company3_dam"/>
+            </td>
+            <th class="color-contract text-center">연락처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="company3_dam_telno"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="hasinput" colspan="4">
+                <table class="table table-bordered table-form" style="width:100%;border:0px!important;">
+                    <colgroup>
+                        <col width="10"/>
+                        <col width="50"/>
+                        <col width="50"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="100"/>
+                        <col width="50"/>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="color-contract text-center" colspan="3">내역</th>
+                            <th class="color-contract text-center">실내기대수</th>
+                            <th class="color-contract text-center">대당단가</th>
+                            <th class="color-contract text-center">공급가액</th>
+                            <th class="color-contract text-center">세액</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" style="border-right:0px!important;">공사비총액</th>
+                            <th class="hasinput color-contract text-right" style="border-left:0px!important;">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-table btn-warning" title="추가" id="company3_addRowItem"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody role="company3_row">
+                        <tr data-row="company3_tr">
+                            <td class="hasinput">
+                                 <button type="button" class="btn btn-table removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
+                            <td class="hasinput">
+                                <select class="form-control select2" name="company3_item_type[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    <option value="0">주택</option>
+                                    <option value="1">빌딩</option>
+                                    <option value="2">기타</option>
+                                    <option value="3">일용직</option>
+                                </select>
+                            </td>
+
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" name="company3_item_name[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_item_dlnt[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_item_damt[]"/>
+                            </td>
+                            <td class="text-right" data-column="company3_item_amount[]"></td>
+                            <td class="text-right" data-column="company3_item_tax[]"></td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="company3_item_total[]"/>
+                            </td>
+                            <td class="colorP text-right" data-column="company3_item_pink[]" colspan="2"></td>
+                        </tr>
+                    </tbody>
+                    <tbody role="company3_detail">
+                        <tr>
+                            <th class="color-contract text-center middle" rowspan="5" colspan="2">분류</th>
+                            <th class="color-contract text-center">내역</th>
+                            <th class="color-contract text-center">인건비(50%)</th>
+                            <th class="color-contract text-center">직불</th>
+                            <th class="color-contract text-center">일용직(20%)</th>
+                            <th class="color-contract text-center">로지텍/타사(30%)</th>
+                            <th class="color-contract text-center">합계</th>
+                            <th class="color-contract text-center" rowspan="5" colspan="2">집행률</th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약내역</th>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_human"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_direct"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_daily"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_sum"/>
+                            </td>
+                            <th class="colorP text-right" data-column="company3_pink"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">계약변경</th>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_human_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_direct_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_daily_change" disabled/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" data-type="number" name="company3_sum_change" disabled/>
+                            </td>
+                            <th class="colorP text-right" data-column="company3_pink_change"></th>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">집행</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th class="color-contract text-center">잔액</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+
+
+<style>
+    .table td.hasinput{
+        padding:2px!important;
+    }
+    .hasinput .table td.hasinput{
+        padding:2px!important;
+    }
+</style>
+
+
+
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+  <thead>
+    <tr>
+        <th class="sub-title colorN text-center" colspan="4"><span>특이사항</span></th>
+    </tr>
+
+  </thead>
+  <tbody>
+    <tr>
+        <td class="text-center" colspan="4"><textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea></td>
+    </tr>
+  </tbody>
+</table>
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    get_cost = function(cntrct_sn){
+        $.ajax({
+                url : '/api/project/get_costs_bd',
+                method : 'GET',
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
+                success: function(pResult){
+                    console.log(pResult);
+                    var E_alpha = {3: 0, 4:0, 5:0};
+                    var last_data = {};
+                    $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
+                    $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
+                    $.each(pResult.aCostList, function(pIndex, pValue){
+                        $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        if(pValue.cntrct_execut_code == 'E' && [3,4,5].includes(parseInt(pValue.ct_se_code))){
+                            var amount = isNaN(parseInt(pValue.amount)) ? 0 : parseInt(pValue.amount);
+                            E_alpha[parseInt(pValue.ct_se_code)] = amount;
+                        }
+                        if(pValue.cntrct_execut_code != 'E' || ![3,4,5].includes(parseInt(pValue.ct_se_code))) {
+                            if(!isNaN(parseInt(pValue.amount)))
+                                last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
+                        }
+
+                    });
+                    $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
+                    cloneRow("equip_already_tr", pResult.samsungList.length-$(document).find(`tr[data-row="equip_already_tr"]`).length);
+                    $.each(pResult.samsungList, function(pIndex, pValue){
+                        var pRow = $(document).find("tbody[role='equip_already_row']").find("tr").eq(pIndex);
+                        $(pRow).find(`[name="dlivy_de_already[]"]`).html(pValue.dlivy_de);
+                        $(pRow).find(`[name="prdlst_se_code_already[]"]`).yVal(pValue.prdlst_se_code);
+                        $(pRow).find(`[name="model_no_already[]"]`).val(pValue.model_no);
+                        $(pRow).find(`[name="delng_ty_code_already[]"]`).val(pValue.delng_ty_code);
+                        $(pRow).find(`[name="cnt_dlnt_already[]"]`).val(pValue.cnt_dlnt.toFormat('NUMBER'));
+                        $(pRow).find(`[name="dlamt_already[]"]`).val(pValue.dlamt.toFormat('NUMBER'));
+                        $(pRow).find(`[name="samount_already[]"]`).val(pValue.samount.toFormat('NUMBER'));
+                        $(pRow).find(`[name="bcnc_sn_already[]"]`).yVal(pValue.bcnc_sn);
+                        $(pRow).find(`[name="rm_already[]"]`).yVal(pValue.rm);
+                        $(pRow).find("input, select").attr("disabled", true);
+                    });
+                    if(pResult.samsungList.length == 0){
+                        $(document).find(`tr[data-row="equip_already_tr"]`).find("input, select").attr("disabled", true);
+
+                    }
+
+                    cloneRow("equip_other_already_tr", pResult.otherList.length-1);
+                    $.each(pResult.otherList, function(pIndex, pValue){
+                        var pRow = $(document).find("tbody[role='equip_other_already_row']").find("tr").eq(pIndex);
+                        $(pRow).find(`[name="dlivy_de_other_already[]"]`).html(pValue.dlivy_de);
+                        $(pRow).find(`[name="prdlst_se_code_other_already[]"]`).yVal(pValue.prdlst_se_code);
+                        $(pRow).find(`[name="model_no_other_already[]"]`).val(pValue.model_no);
+                        $(pRow).find(`[name="delng_ty_code_other_already[]"]`).val(pValue.delng_ty_code);
+                        $(pRow).find(`[name="cnt_dlnt_other_already[]"]`).val(pValue.cnt_dlnt.toFormat('NUMBER'));
+                        $(pRow).find(`[name="dlamt_other_already[]"]`).val(pValue.dlamt.toFormat('NUMBER'));
+                        $(pRow).find(`[name="samount_other_already[]"]`).val(pValue.samount.toFormat('NUMBER'));
+                        $(pRow).find(`[name="bcnc_sn_other_already[]"]`).yVal(pValue.bcnc_sn);
+                        $(pRow).find(`[name="rm_other_already[]"]`).yVal(pValue.rm);
+                        $(pRow).find("input, select").attr("disabled", true);
+                    });
+                    if(pResult.otherList.length == 0){
+                        $(document).find(`tr[data-row="equip_other_already_tr"]`).find("input, select").attr("disabled", true);
+                    }
+                    var max_extra_sn = 0;
+                    $(document).find("#costTable tbody[role='ct_se_code_extra']").remove();
+                    $(document).find("#costTable tbody[role='ct_se_code_diff']").remove();
+                    var html = '';
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        max_extra_sn = extra_sn;
+                        var pRow = pResult.extraCostList[extra_sn];
+                        html += `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
+                                        <tr data-row="C">
+                                            <th class="colorB text-center middle" rowspan="2">변경-${extra_sn}</th>
+                                            <th class="colorSky text-center">변경 계약가</th>
+                                            <td class="text-right" data-type='number' name="C_1_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_2_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_5_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_3_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_4_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_8_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_61_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_7_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_10_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="C_99_${extra_sn}"></td>
+                                            <td class="text-center" data-column="row_total_${extra_sn}"></td>
+                                            <td class="text-center" data-column="va_${extra_sn}" rowspan="2"></td>
+                                            <td class="text-center" data-column="va_rate_${extra_sn}" rowspan="2"></td>
+                                        </tr>
+                                        <tr data-row="E">
+                                            <th class="colorSky text-center">변경 실행가</th>
+                                            <td class="text-right" data-type='number' name="E_1_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_2_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_5_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_3_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_4_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_8_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_61_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_7_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_10_${extra_sn}"></td>
+                                            <td class="text-right" data-type='number' name="E_99_${extra_sn}"></td>
+                                            <td class="text-center" data-column="row_total_${extra_sn}"></td>
+                                        </tr>
+                                    </tbody>`;
+                    });
+                    $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
+                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                        var pRow = pResult.extraCostList[extra_sn];
+                        last_data = {};
+                        $.each(pRow, function(pIndex, pValue){
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
+                            if(pValue.cntrct_execut_code == 'E' && [3,4,5].includes(parseInt(pValue.ct_se_code))){
+                                var amount = isNaN(parseInt(pValue.amount)) ? 0 : parseInt(pValue.amount);
+                                E_alpha[parseInt(pValue.ct_se_code)] = amount;
+                            }
+                            if(pValue.cntrct_execut_code != 'E' || ![3,4,5].includes(parseInt(pValue.ct_se_code))) {
+                                if(!isNaN(parseInt(pValue.amount)))
+                                    last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
+                            }
+                        });
+                        $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
+                    });
+                    $("#max_extra_sn").html(parseInt(max_extra_sn) == 0 ? "" : `-${(parseInt(max_extra_sn)+1)}`);
+                    {% if init %}
+                        // $(document).find(`tbody[role="ct_se_code_extra_alpha"] input`).attr("readonly", true);
+                        $(document).find(`[name='E_1_alpha']`).attr("readonly", false);
+                        $(document).find(`[name='E_2_alpha']`).attr("readonly", false);
+                        $(document).find(`[name='E_3_alpha']`).val(E_alpha[3].toFormat('NUMBER'));
+                        $(document).find(`[name='E_4_alpha']`).val(E_alpha[4].toFormat('NUMBER'));
+                        $(document).find(`[name='E_5_alpha']`).val(E_alpha[5].toFormat('NUMBER'));
+                        $.each(last_data, function(pI, pV){
+                            $(document).find(`[name='${pI}_alpha']`).val(pV.toFormat('NUMBER'));
+                        });
+
+                    {% endif %}
+                    var html = `<tbody role="ct_se_code_diff">
+                                    <tr data-row="C">
+                                        <th class="colorLP text-center middle" rowspan="2">차액</th>
+                                        <th class="colorLP text-center">계약 차액가</th>
+                                        <td class="colorLP text-right" data-type='number' name="C_1_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_2_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_5_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_3_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_4_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_8_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_61_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_7_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_10_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="C_99_diff"></td>
+                                        <td class="colorLP text-center" data-column="row_total_diff"></td>
+                                        <td class="colorLP text-center" data-column="va_diff" rowspan="2"></td>
+                                        <td class="colorLP text-center" data-column="va_rate_diff" rowspan="2"></td>
+                                    </tr>
+                                    <tr data-row="E">
+                                        <th class="colorLP text-center">실행 차액가</th>
+                                        <td class="colorLP text-right" data-type='number' name="E_1_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_2_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_5_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_3_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_4_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_8_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_61_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_7_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_10_diff"></td>
+                                        <td class="colorLP text-right" data-type='number' name="E_99_diff"></td>
+                                        <td class="colorLP text-center" data-column="row_total"></td>
+                                    </tr>
+                                </tbody>`;
+                    $(document).find("#costTable").append(html);
+                    $(document).find("tbody[role='equip_already_row'], tbody[role='equip_row']").trigger("change");
+                    $(document).find("tbody[role='equip_other_already_row'], tbody[role='equip_other_row']").trigger("change");
+                    $(document).find("tbody[role='ct_se_code_extra_alpha']").trigger("change");
+
+                    {% if init %}
+                    $.each(pResult.outsrcList, function(pIndex, pValue){
+                        var company = `company${pIndex+1}`;
+                        $(document).find(`tbody[role='company${pIndex+1}']`).show();
+                        $(document).find(`[name='${company}_name']`).yVal(pValue.outsrc_fo_sn);
+                        $(document).find(`[name='${company}_date']`).val(pValue.cntrct_de);
+                        $(document).find(`[name='${company}_owner']`).val(pValue.rspnber_nm);
+                        $(document).find(`[name='${company}_owner_telno']`).val(pValue.rspnber_telno);
+                        $(document).find(`[name='${company}_dam']`).val(pValue.charger_nm);
+                        $(document).find(`[name='${company}_dam_telno']`).val(pValue.charger_telno);
+                        if(pResult.outsrcItem.hasOwnProperty(pValue.outsrc_fo_sn)){
+                            cloneRow(`${company}_tr`, pResult.outsrcItem[pValue.outsrc_fo_sn].e5CostList.length-1);
+                        }
+                        var eCost5Total = 0;
+                        $.each(pResult.outsrcItem[pValue.outsrc_fo_sn].e5CostList, function(pI, pR){
+                            $(document).find(`[name='${company}_item_type[]']`).eq(pI).yVal(pR.cost_type);
+                            $(document).find(`[name='${company}_item_name[]']`).eq(pI).val(pR.model_no);
+                            $(document).find(`[name='${company}_item_dlnt[]']`).eq(pI).val(pR.qy.toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_item_damt[]']`).eq(pI).val(Math.round(pR.amount/1.1).toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_item_total[]']`).eq(pI).val((pR.amount * pR.qy).toFormat('NUMBER'));
+                            eCost5Total += Math.round(parseInt(pR.qy) * parseInt(pR.amount));
+                        });
+                        if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
+                            $(document).find(`[name='${company}_human']`).val(pValue.pymnt_mth.split("-")[0].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_direct']`).val(pValue.pymnt_mth.split("-")[1].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_daily']`).val(pValue.pymnt_mth.split("-")[2].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_sum']`).val(pValue.pymnt_mth.split("-")[3].toFormat('NUMBER'));
+                            $(document).find(`[name='${company}_human']`).attr("readonly", true);
+                            $(document).find(`[name='${company}_direct']`).attr("readonly", true);
+                            $(document).find(`[name='${company}_daily']`).attr("readonly", true);
+                            $(document).find(`[name='${company}_sum']`).attr("readonly", true);
+                            $(document).find(`[data-column='${company}_pink']`).html(eCost5Total.toFormat('NUMBER'));
+
+                        }
+                        $(document).find(`[name='${company}_human_change']`).attr("disabled", false);
+                        $(document).find(`[name='${company}_direct_change']`).attr("disabled", false);
+                        $(document).find(`[name='${company}_daily_change']`).attr("disabled", false);
+                        $(document).find(`[name='${company}_sum_change']`).attr("disabled", false);
+                        $(document).find(`tbody[role='${company}_row']`).trigger("change");
+
+                    });
+                    {% else %}
+                    console.log(pResult.outsrcList);
+                    $.each(pResult.outsrcList, function(pIndex, pValue){
+                        var company = `company${pIndex+1}`;
+                        $(document).find(`tbody[role='company${pIndex+1}']`).show();
+                        $(`tbody[role='${company}_row']`).find("tr").each(function(pIndex, pRow){
+                            var name = $(pRow).find(`input[name='${company}_item_name[]']`).val();
+                            var dlnt = $(pRow).find(`input[name='${company}_item_dlnt[]']`).val();
+                            var damt = $(pRow).find(`input[name='${company}_item_damt[]']`).val();
+                            if(name == '' && dlnt == '' && damt == ''){
+                                $(pRow).remove();
+                            }
+                        });
+                        $(`tbody[role='${company}_row']`).trigger("change");
+                    });
+                    {% endif %}
+
+                }
+            });
+
+    }
+
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        if(["company1_tr", "company2_tr", "company3_tr"].includes(selector)){
+            var company = selector.split("_")[0];
+            for(let i=0;i<count;i++){
+                var trs = $(document).find(`tbody[role='${company}_row'] tr`);
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="${company}_item_type[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    <option value="0">주택</option>
+                                                    <option value="1">빌딩</option>
+                                                    <option value="2">기타</option>
+                                                    <option value="3">일용직</option>
+                                                </select>`);
+                    }
+                });
+
+                $(document).find(`tbody[role='${company}_row']`).append($(origin));
+
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find(`tbody[role='${company}_row']`).trigger("change");
+        }
+        if(selector == "equip_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='equip_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("input[type='hidden'][name='delng_sn[]']").remove();
+                //재고장비는 62
+                $(origin).find("input[type='hidden'][name='delng_ty_code[]']").val('1');
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="prdlst_se_code[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    } else if (pIndex == 1) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
+                                                <option value="">[전체]</option>
+                                                {% for code in bcnc_list %}
+                                                {% if code.value == 74 %}
+                                                <option value="{{code.value}}" selected>{{code.value}}.{{code.label}}</option>
+                                                {% else %}
+                                                <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>`);
+                    }
+                });
+                $(document).find("tbody[role='equip_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_row']").trigger("change");
+        }
+        if(selector == "equip_already_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='equip_already_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("input[type='hidden'][name='delng_sn_already[]']").remove();
+                //재고장비는 62
+                $(origin).find("input[type='hidden'][name='delng_ty_code_already[]']").val('1');
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="prdlst_se_code_already[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    } else if (pIndex == 1) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn_already[]" style="width:100%!important;">
+                                                <option value="">[전체]</option>
+                                                {% for code in bcnc_list %}
+                                                <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endfor %}
+                                            </select>`);
+                    }
+                });
+                $(document).find("tbody[role='equip_already_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_already_row']").trigger("change");
+        }
+        if(selector == "equip_other_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='equip_other_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("input[type='hidden'][name='delng_sn_other[]']").remove();
+                //재고장비는 62
+                $(origin).find("input[type='hidden'][name='delng_ty_code_other[]']").val('2');
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="prdlst_se_code_other[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    } else if (pIndex == 1) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn_other[]" style="width:100%!important;">
+                                                <option value="">[전체]</option>
+                                                {% for code in bcnc_list %}
+                                                <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endfor %}
+                                            </select>`);
+                    }
+                });
+                $(document).find("tbody[role='equip_other_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_other_row']").trigger("change");
+        }
+        if(selector == "equip_other_already_tr"){
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='equip_other_already_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td:not(.hasinput)").html("");
+                $(origin).find("td.hasinput input").val("");
+                $(origin).find("input[type='hidden'][name='delng_sn_other_already[]']").remove();
+                //재고장비는 62
+                $(origin).find("input[type='hidden'][name='delng_ty_code_other_already[]']").val('2');
+                $(origin).find("td.hasinput select").each(function (pIndex, pTag) {
+
+                    if (pIndex == 0) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="prdlst_se_code_other_already[]" style="width:100%!important;">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>`);
+                    } else if (pIndex == 1) {
+                        $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn_other_already[]" style="width:100%!important;">
+                                                <option value="">[전체]</option>
+                                                {% for code in bcnc_list %}
+                                                <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                                {% endfor %}
+                                            </select>`);
+                    }
+                });
+                $(document).find("tbody[role='equip_other_already_row']").append($(origin));
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_other_already_row']").trigger("change");
+        }
+    }
+    $(document).on("click", "#addRowCompany", function(){
+        for(let i=1;i<=3;i++){
+            if($(document).find(`tbody[role='company${i}']`).css('display') == 'none'){
+                $(document).find(`tbody[role='company${i}']`).show();
+                break;
+            }
+        }
+    });
+    $(document).on("change", "tbody[role='company1_row'], tbody[role='company2_row'], tbody[role='company3_row']", function(){
+        var total_amount = 0;
+        var company = $(this).attr("role").split("_")[0];
+        $(`tbody[role='${company}_row']`).find("tr").each(function(pIndex, pRow){
+            var dlnt = parseInt($(pRow).find(`input[name='${company}_item_dlnt[]']`).val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var damt = parseInt($(pRow).find(`input[name='${company}_item_damt[]']`).val().replaceAll(",", "")); if(isNaN(damt)) damt = 0;
+            var total = parseInt($(pRow).find(`input[name='${company}_item_total[]']`).val().replaceAll(",", "")); if(isNaN(total)) total = 0;
+
+            if($(pRow).find(`input[name='${company}_item_damt[]']`).val() != '' &&  $(pRow).find(`input[name='${company}_item_total[]']`).val() == ''){
+                var amount = dlnt*damt;
+                var tax = Math.round(amount*0.1);
+                var total = amount + tax;
+                $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
+                $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
+                $(pRow).find(`input[name='${company}_item_total[]']`).val(total.toFormat('NUMBER'));
+                total_amount += total;
+            }
+            else{
+                var tax = Math.round(total / 11);
+                var amount = Math.round(total / 1.1);
+                var damt = Math.round(amount / dlnt);
+                $(pRow).find(`[data-column='${company}_item_amount[]']`).html(amount.toFormat('NUMBER'));
+                $(pRow).find(`[data-column='${company}_item_tax[]']`).html(tax.toFormat('NUMBER'));
+                $(pRow).find(`input[name='${company}_item_damt[]']`).val(damt.toFormat('NUMBER'));
+                total_amount += total;
+            }
+        });
+        $(this).find(`[data-column='${company}_item_pink[]']`).html(total_amount.toFormat('NUMBER'));
+        $(this).find(`[data-column='${company}_item_pink[]']`).show();
+        $(this).yRowspan(8);
+
+    });
+    $(document).on("change", "tbody[role='equip_already_row'], tbody[role='equip_row']", function(){
+        var total_amount = 0;
+        var total_samount = 0;
+        var total_cnt_dlnt = 0;
+        var total_va = 0;
+        $("tbody[role='equip_already_row']").find("tr").each(function(pIndex, pRow){
+            var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_already[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt_already[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("input[name='samount_already[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var amount = cnt_dlnt*dlamt;
+            var va = samount-amount;
+            total_amount += amount;
+            total_samount += samount;
+            total_cnt_dlnt += cnt_dlnt;
+            total_va += va;
+            $(pRow).find("[name='va_already[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='amount_already[]']").html(amount.toFormat('NUMBER'));
+        });
+        $("tbody[role='equip_row']").find("tr").each(function(pIndex, pRow){
+            var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("input[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var amount = cnt_dlnt*dlamt;
+            var va = samount-amount;
+            total_amount += amount;
+            total_samount += samount;
+            total_cnt_dlnt += cnt_dlnt;
+            total_va += va;
+            $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
+        });
+
+        $("tbody[role='equip_row']").parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
+        $("tbody[role='equip_row']").parent().find("[data-column='total_cnt_dlnt']").html(total_cnt_dlnt.toFormat('NUMBER'));
+        $("tbody[role='equip_row']").parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
+        $("tbody[role='equip_row']").parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
+    });
+    $(document).on("change", "tbody[role='equip_other_already_row'], tbody[role='equip_other_row']", function(){
+        var total_amount = 0;
+        var total_samount = 0;
+        var total_cnt_dlnt = 0;
+        var total_va = 0;
+        $("tbody[role='equip_other_already_row']").find("tr").each(function(pIndex, pRow){
+            var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_other_already[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt_other_already[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("input[name='samount_other_already[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var amount = cnt_dlnt*dlamt;
+            var va = samount-amount;
+            total_amount += amount;
+            total_samount += samount;
+            total_cnt_dlnt += cnt_dlnt;
+            total_va += va;
+            $(pRow).find("[name='va_other_already[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='amount_other_already[]']").html(amount.toFormat('NUMBER'));
+        });
+        $("tbody[role='equip_other_row']").find("tr").each(function(pIndex, pRow){
+            var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_other[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt_other[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("input[name='samount_other[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var amount = cnt_dlnt*dlamt;
+            var va = samount-amount;
+            total_amount += amount;
+            total_samount += samount;
+            total_cnt_dlnt += cnt_dlnt;
+            total_va += va;
+            $(pRow).find("[name='va_other[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='amount_other[]']").html(amount.toFormat('NUMBER'));
+        });
+
+        $("tbody[role='equip_other_row']").parent().find("[data-column='total_amount_other']").html(total_amount.toFormat('NUMBER'));
+        $("tbody[role='equip_other_row']").parent().find("[data-column='total_cnt_dlnt_other']").html(total_cnt_dlnt.toFormat('NUMBER'));
+        $("tbody[role='equip_other_row']").parent().find("[data-column='total_va_other']").html(total_va.toFormat('NUMBER'));
+        $("tbody[role='equip_other_row']").parent().find("[data-column='total_samount_other']").html(total_samount.toFormat('NUMBER'));
+    });
+    $(document).on("change", "tbody[role='ct_se_code_contract']", function(){
+        var totals = [];
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+        });
+
+        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+    });
+    $(document).on("change", "tbody[role='ct_se_code_extra_alpha']", function(){
+        var totals = [];
+        var sn = $(this).data("row");
+        if(sn == '' || sn == undefined) sn = 'alpha';
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "INPUT"){
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find(`[data-column='row_total_${sn}']`).html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "INPUT"){
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find(`[data-column='row_total_${sn}']`).html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+        });
+
+        $(this).find(`[data-column='va_${sn}']`).html((totals[0] - totals[1]).toFormat('NUMBER'));
+        if(!isNaN((totals[0] - totals[1])*100.0/totals[0])){
+            $(this).find(`[data-column='va_rate_${sn}']`).html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+
+        }
+
+        var last_sn = $("#costTable").find("tbody").eq($("#costTable").find("tbody").length-3).data("row");
+        var suffix = "";
+        if(last_sn != undefined && last_sn != null){
+            var suffix = `_${last_sn}`;
+        }
+        var extra_sn = $("#costTable").find("tbody").eq($("#costTable").find("tbody").length-2).data("row");
+        var sum_rows = {"C" : 0, "E" : 0};
+        $(document).find(`tbody[role='ct_se_code_extra_alpha']`).find("input").each(function(pIndex, pTag){
+
+            var name = $(pTag).attr("name").split("_")[0]+"_"+$(pTag).attr("name").split("_")[1]+suffix;
+            var before = parseInt($(document).find(`[name='${name}']`).html().replaceAll(",", ""));if(isNaN(before)) before = 0;
+            var after = parseInt($(pTag).val().replaceAll(",", ""));if(isNaN(after)) after = 0;
+            var diff = $(pTag).attr("name").split("_")[0]+"_"+$(pTag).attr("name").split("_")[1]+"_diff";
+            $(document).find(`[name='${diff}']`).html((after-before).toFormat('NUMBER'));
+            if(sum_rows.hasOwnProperty($(document).find(`[name='${diff}']`).parent().data("row"))){
+                sum_rows[$(document).find(`[name='${diff}']`).parent().data("row")] += (after-before);
+            }
+
+        });
+        var va_rates_td = $(document).find(`td[data-column='va_rate${suffix}']`);
+
+        var new_va_rate = parseFloat($(this).find(`[data-column='va_rate_${sn}']`).html().replaceAll("%", "").replaceAll(",", "")) - parseFloat($(va_rates_td).eq(va_rates_td.length - 1).html().replaceAll("%", ""));
+        $(document).find("tbody[role='ct_se_code_diff'] tr[data-row='C'] td[data-column='row_total_diff']").html(sum_rows['C'].toFormat('NUMBER'));
+        $(document).find("tbody[role='ct_se_code_diff'] tr[data-row='C'] td[data-column='va_diff']").html((sum_rows['C']-sum_rows['E']).toFormat('NUMBER'));
+
+        if(!isNaN(new_va_rate)){
+
+            $(document).find("tbody[role='ct_se_code_diff'] tr[data-row='C'] td[data-column='va_rate_diff']").html(new_va_rate.toFixed(1)+"%");
+        }
+        $(document).find("tbody[role='ct_se_code_diff'] tr[data-row='E'] td[data-column='row_total']").html(sum_rows['E'].toFormat('NUMBER'));
+
+    });
+    $(document).on("change", "tbody[role='ct_se_code_extra']", function(){
+        var totals = [];
+        var sn = $(this).data("row");
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "INPUT"){
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find(`[data-column='row_total_${sn}']`).html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "INPUT"){
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).text().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find(`[data-column='row_total_${sn}']`).html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+        });
+
+        $(this).find(`[data-column='va_${sn}']`).html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find(`[data-column='va_rate_${sn}']`).html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+
+
+
+    });
+
+    $(document).on("change", "tbody[role='company1_detail'], tbody[role='company2_detail'], tbody[role='company3_detail']", function(){
+        var company = $(this).attr("role").split("_")[0];
+        var human = parseInt($(this).find(`input[name='${company}_human']`).val().replaceAll(",", "")); if(isNaN(human)) human = 0;
+        var direct = parseInt($(this).find(`input[name='${company}_direct']`).val().replaceAll(",", "")); if(isNaN(direct)) direct = 0;
+        var daily = parseInt($(this).find(`input[name='${company}_daily']`).val().replaceAll(",", "")); if(isNaN(daily)) daily = 0;
+        var sum = parseInt($(this).find(`input[name='${company}_sum']`).val().replaceAll(",", "")); if(isNaN(sum)) sum = 0;
+        var pink = human + direct + daily + sum;
+        $(`tbody[role='${company}_detail']`).find(`[data-column='${company}_pink']`).html(pink.toFormat('NUMBER'));
+        var human_change = parseInt($(this).find(`input[name='${company}_human_change']`).val().replaceAll(",", "")); if(isNaN(human_change)) human_change = 0;
+        var direct_change = parseInt($(this).find(`input[name='${company}_direct_change']`).val().replaceAll(",", "")); if(isNaN(direct_change)) direct_change = 0;
+        var daily_change = parseInt($(this).find(`input[name='${company}_daily_change']`).val().replaceAll(",", "")); if(isNaN(daily_change)) daily_change = 0;
+        var sum_change = parseInt($(this).find(`input[name='${company}_sum_change']`).val().replaceAll(",", "")); if(isNaN(sum_change)) sum_change = 0;
+        var pink_change = human_change + direct_change + daily_change + sum_change;
+        $(`tbody[role='${company}_detail']`).find(`[data-column='${company}_pink_change']`).html(pink_change.toFormat('NUMBER'));
+        var hdd = 0;
+        var s = 0;
+        for(let i=1;i<=3;i++){
+            var company = `company${i}`;
+            var row = $(document).find(`tbody[role='${company}_detail']`);
+            var human = parseInt($(row).find(`input[name='${company}_human_change']`).val().replaceAll(",", "")); if(isNaN(human)) human = 0;
+            var direct = parseInt($(row).find(`input[name='${company}_direct_change']`).val().replaceAll(",", "")); if(isNaN(direct)) direct = 0;
+            var daily = parseInt($(row).find(`input[name='${company}_daily_change']`).val().replaceAll(",", "")); if(isNaN(daily)) daily = 0;
+            var sum = parseInt($(row).find(`input[name='${company}_sum_change']`).val().replaceAll(",", "")); if(isNaN(sum)) sum = 0;
+            hdd += (human+direct+daily);
+            s += sum;
+        }
+        $(document).find("input[name='E_5_alpha']").val(hdd.toFormat('NUMBER'));
+        $(document).find("input[name='E_3_alpha']").val(s.toFormat('NUMBER'));
+        $(document).find("input[name='E_4_alpha']").val(0);
+        $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
+    });
+    {% if init %}
+    $(document).on("click", "#company1_addRowItem", function(){
+        cloneRow("company1_tr", 1);
+    });
+    $(document).on("click", "#company2_addRowItem", function(){
+        cloneRow("company2_tr", 1);
+    });
+    $(document).on("click", "#company3_addRowItem", function(){
+        cloneRow("company3_tr", 1);
+    });
+    $(document).on("click", "#addRow", function(){
+        cloneRow("equip_tr", 1);
+    });
+    $(document).on("click", "#addRowOther", function(){
+        cloneRow("equip_other_tr", 1);
+    });
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
+    $(document).ready(function(){
+        $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_already_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_already_row'] select").attr("disabled", true);
+        $(document).find("tbody[role='equip_other_already_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='equip_other_already_row'] select").attr("disabled", true);
+        $.ajax({
+            url : '/api/project/get_p_projects',
+            method: 'GET',
+            success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+
+            }
+        });
+        var input = document.querySelector('input[data-type="number"]');
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9 \,]/, '');
+        });
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+            get_cost(cntrct_sn);
+        }
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        get_cost(cntrct_sn);
+        $(document).find("tbody[role='company_row'] input").attr("disabled", true);
+        $(document).find("tbody[role='company1'] input, tbody[role='company1'] select").attr("disabled", true);
+        $(document).find("tbody[role='company2'] input, tbody[role='company2'] select").attr("disabled", true);
+        $(document).find("tbody[role='company3'] input, tbody[role='company3'] select").attr("disabled", true);
+
+    }
+    {% endif %}
+
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+            if($(this).closest("tbody").find("tr").length > 1){
+                var tbody = $(this).closest("tbody");
+                $(this).closest("tr").remove();
+                $(tbody).trigger("change");
+            }
+            else{
+                alert("더이상 삭제할 수 없습니다.")
+            }
+        {% endif %}
+        return false;
+    });
+
+</script>
