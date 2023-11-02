@@ -401,6 +401,8 @@ getProjectList = function()
 							pRow.prjct_ty_code = 'NR'
 
 						dept_code += ","+pRow.spt_dept_code;
+                        if(pRow.prjct_ty_code == "NR")
+                            dept_code += ",ST";
                         html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
                         html += '	<i class="fa fa-print"></i>'+pData;
                         html += '</button>';
@@ -484,7 +486,7 @@ getProjectList = function()
 			var myList = this;
             var myDeptCode = pJson.member.dept_code;
             var show = true;
-            if(myDeptCode == "TS1" || myDeptCode == "TS2" || myDeptCode == "TS3" || myDeptCode == "BI"){
+            if(myDeptCode == "TS1" || myDeptCode == "TS2" || myDeptCode == "TS3" || myDeptCode == "BI" || myDeptCode == "ST"){
                 show = false;
             }
 
