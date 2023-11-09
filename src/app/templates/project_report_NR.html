@@ -576,7 +576,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						<th class="color-contract" colspan="1">모델명</th>
 						<th class="color-contract" colspan="1">계약수량</th>
 						<th class="color-contract" colspan="1">매입단가</th>
-						<th class="color-contract" colspan="1">기출고수량</th>
+						<th class="color-contract" colspan="1">총출고수량</th>
+						<th class="color-contract" colspan="1">미출고수량</th>
 						<th class="color-contract" colspan="1">매입금액</th>
 						<th class="color-contract" colspan="1">매출금액</th>
 						<th class="color-contract" colspan="1">VA</th>
@@ -658,7 +659,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						<th class="color-contract" colspan="1">모델명</th>
 						<th class="color-contract" colspan="1">계약수량</th>
 						<th class="color-contract" colspan="1">매입단가</th>
-						<th class="color-contract" colspan="1">기출고수량</th>
+						<th class="color-contract" colspan="1">총출고수량</th>
+						<th class="color-contract" colspan="1">미출고수량</th>
 						<th class="color-contract" colspan="1">매입금액</th>
 						<th class="color-contract" colspan="1">매출금액</th>
 						<th class="color-contract" colspan="1">VA</th>
@@ -1690,6 +1692,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var html = '';
 					var count = 0;
 					var before_dlnt = 0;
+					var yet_dlnt = 0;
 					var pamount = 0, va = 0, samount = 0;
 					$.each(equipList, function(pIndex, pValue){
 						html += `<tr>
@@ -1699,6 +1702,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 									<td class="text-center">${pValue.cnt_dlnt.toFormat('NUMBER')}</td>
 									<td class="text-right">${pValue.dlamt.toFormat('NUMBER')}</td>
 									<td class="text-center">${pValue.before_dlnt.toFormat('NUMBER')}</td>
+									<td class="text-center">${(parseInt(pValue.cnt_dlnt) - parseInt(pValue.before_dlnt)).toFormat('NUMBER')}</td>
 									<td class="text-right">${(pValue.dlamt*pValue.cnt_dlnt).toFormat('NUMBER')}</td>
 									<td class="text-right">${pValue.samount.toFormat('NUMBER')}</td>
 									<td class="text-right">${((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt)).toFormat('NUMBER')}</td>
@@ -1708,6 +1712,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
+						yet_dlnt += parseInt(pValue.cnt_dlnt) - parseInt(pValue.before_dlnt);
 						pamount += pValue.dlamt*pValue.cnt_dlnt;
 						samount += (isNaN(parseInt(pValue.samount)) ? 0 : pValue.samount);
 						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
@@ -1717,6 +1722,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								<td class="colorG text-center">${count.toFormat('NUMBER')}</td>
 								<td class="colorG text-center"></td>
 								<td class="colorG text-center">${before_dlnt.toFormat('NUMBER')}</td>
+								<td class="colorG text-center">${yet_dlnt.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${pamount.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${samount.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${va.toFormat('NUMBER')}</td>
@@ -1774,6 +1780,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var html = '';
 					var count = 0;
 					var before_dlnt = 0;
+					var yet_dlnt = 0;
 					var pamount = 0, va = 0, samount = 0;
 					$.each(equipList, function(pIndex, pValue){
 						html += `<tr>
@@ -1783,6 +1790,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 									<td class="text-center">${pValue.cnt_dlnt.toFormat('NUMBER')}</td>
 									<td class="text-right">${pValue.dlamt.toFormat('NUMBER')}</td>
 									<td class="text-center">${pValue.before_dlnt.toFormat('NUMBER')}</td>
+									<td class="text-center">${(parseInt(pValue.cnt_dlnt) - parseInt(pValue.before_dlnt)).toFormat('NUMBER')}</td>
 									<td class="text-right">${(pValue.dlamt*pValue.cnt_dlnt).toFormat('NUMBER')}</td>
 									<td class="text-right">${pValue.samount.toFormat('NUMBER')}</td>
 									<td class="text-right">${((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt)).toFormat('NUMBER')}</td>
@@ -1791,6 +1799,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								</tr>`;
 						count += parseInt(pValue.cnt_dlnt);
 						before_dlnt += parseInt(pValue.before_dlnt);
+						yet_dlnt += parseInt(pValue.cnt_dlnt) - parseInt(pValue.before_dlnt);
 						pamount += pValue.dlamt*pValue.cnt_dlnt;
 						samount += isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount);
 						va += ((isNaN(parseInt(pValue.samount)) ? 0 : parseInt(pValue.samount)) - parseInt(pValue.dlamt)*parseInt(pValue.cnt_dlnt));
@@ -1800,6 +1809,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								<td class="colorG text-center">${count.toFormat('NUMBER')}</td>
 								<td class="colorG text-center"></td>
 								<td class="colorG text-center">${before_dlnt.toFormat('NUMBER')}</td>
+								<td class="colorG text-center">${yet_dlnt.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${pamount.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${samount.toFormat('NUMBER')}</td>
 								<td class="colorG text-right">${va.toFormat('NUMBER')}</td>
@@ -2753,16 +2763,18 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* M/SH, 옵션 */
 				var html = '';
 				var dspyOptionList = pResult.sOptionCostList;
-				console.log(dspyOptionList);
+				console.log("dspy", dspyOptionList);
 				if(dspyOptionList != null){
 					$.each(dspyOptionList, function(pKey, pValue){
 						var target = $(document).find(`#rptTableOpt tbody[role=body] [data-column='${pKey}']`);
-						if($(target).data("type") != 'number'){
-							$(target).html(pValue);
-						}
-						else{
-							$(target).html(pValue.toFormat('NUMBER'));
-						}
+                        if(pKey != 'e_opt_pay_dtm' && pKey != 'c_opt_pay_dtm'){
+                            if($(target).data("type") != 'number'){
+                                $(target).html(pValue);
+                            }
+                            else{
+                                $(target).html(pValue.toFormat('NUMBER'));
+                            }
+                        }
 					});
 					var c_opt_amount = parseInt(dspyOptionList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
 					var e_opt_amount = parseInt(dspyOptionList.e_opt_amount); if(isNaN(e_opt_amount)) e_opt_amount = 0;

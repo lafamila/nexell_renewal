@@ -184,11 +184,12 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
         <col width="150"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
@@ -204,7 +205,8 @@
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">계약수량</th>
             <th class="color-contract text-center">매입단가</th>
-            <th class="color-contract text-center">출고수량</th>
+            <th class="color-contract text-center">총출고수량</th>
+            <th class="color-contract text-center">미출고수량</th>
             <th class="color-contract text-center">매입금액</th>
             <th class="color-contract text-center">매출금액</th>
             <th class="color-contract text-center">VA</th>
@@ -235,6 +237,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt_already[]"/>
             </td>
             <td class="text-right" name="dlnt_already[]"></td>
+            <td class="text-right" name="yet_dlnt_already[]"></td>
             <td class="text-right" name="amount_already[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="samount_already[]"/>
@@ -279,6 +282,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
             </td>
             <td class="text-right" name="dlnt[]"></td>
+            <td class="text-right" name="yet_dlnt[]"></td>
             <td class="text-right" name="amount[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
@@ -307,6 +311,7 @@
             <td class="colorG text-right" data-column="total_cnt_dlnt"></td>
             <td class="colorG"></td>
             <td class="colorG"></td>
+            <td class="colorG"></td>
             <td class="colorP text-right" data-column="total_amount"></td>
             <td class="colorG text-right" data-column="total_samount"></td>
             <td class="colorG text-right" data-column="total_va"></td>
@@ -327,11 +332,12 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
         <col width="150"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="11"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRowOther"><i class="fa fa-plus"></i></button>
                 </div>
@@ -346,7 +352,8 @@
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">계약수량</th>
             <th class="color-contract text-center">매입단가</th>
-            <th class="color-contract text-center">출고수량</th>
+            <th class="color-contract text-center">총출고수량</th>
+            <th class="color-contract text-center">미출고수량</th>
             <th class="color-contract text-center">매입금액</th>
             <th class="color-contract text-center">매출금액</th>
             <th class="color-contract text-center">VA</th>
@@ -376,6 +383,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt_other_already[]"/>
             </td>
             <td class="text-right" name="dlnt_other_already[]"></td>
+            <td class="text-right" name="yet_dlnt_other_already[]"></td>
             <td class="text-right" name="amount_other_already[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="samount_other_already[]"/>
@@ -416,6 +424,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt_other[]"/>
             </td>
             <td class="text-right" name="dlnt_other[]"></td>
+            <td class="text-right" name="yet_dlnt_other[]"></td>
             <td class="text-right" name="amount_other[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="samount_other[]"/>
@@ -438,6 +447,7 @@
         <tr>
             <td class="colorG text-center" colspan="3">합계</td>
             <td class="colorG text-right" data-column="total_cnt_dlnt_other"></td>
+            <td class="colorG"></td>
             <td class="colorG"></td>
             <td class="colorG"></td>
             <td class="colorP text-right" data-column="total_amount_other"></td>
@@ -1460,29 +1470,36 @@
         $("tbody[role='equip_already_row']").find("tr").each(function(pIndex, pRow){
             var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_already[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
             var dlamt = parseInt($(pRow).find("input[name='dlamt_already[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt_already[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var samount = parseInt($(pRow).find("input[name='samount_already[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var amount = cnt_dlnt*dlamt;
+            var yet_dlnt = cnt_dlnt - dlnt;
             var va = samount-amount;
             total_amount += amount;
             total_samount += samount;
             total_cnt_dlnt += cnt_dlnt;
             total_va += va;
             $(pRow).find("[name='va_already[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='yet_dlnt_already[]']").html(yet_dlnt.toFormat('NUMBER'));
             $(pRow).find("[name='amount_already[]']").html(amount.toFormat('NUMBER'));
         });
         $("tbody[role='equip_row']").find("tr").each(function(pIndex, pRow){
             var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var dlamt = parseInt($(pRow).find("input[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
             var samount = parseInt($(pRow).find("input[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var amount = cnt_dlnt*dlamt;
+            var yet_dlnt = cnt_dlnt - dlnt;
             var va = samount-amount;
             total_amount += amount;
             total_samount += samount;
             total_cnt_dlnt += cnt_dlnt;
             total_va += va;
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='yet_dlnt[]']").html(yet_dlnt.toFormat('NUMBER'));
             $(pRow).find("[name='amount[]']").html(amount.toFormat('NUMBER'));
         });
+
 
         $("tbody[role='equip_row']").parent().find("[data-column='total_amount']").html(total_amount.toFormat('NUMBER'));
         $("tbody[role='equip_row']").parent().find("[data-column='total_cnt_dlnt']").html(total_cnt_dlnt.toFormat('NUMBER'));
@@ -1497,27 +1514,33 @@
         $("tbody[role='equip_other_already_row']").find("tr").each(function(pIndex, pRow){
             var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_other_already[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
             var dlamt = parseInt($(pRow).find("input[name='dlamt_other_already[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt_other_already[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var samount = parseInt($(pRow).find("input[name='samount_other_already[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var amount = cnt_dlnt*dlamt;
+            var yet_dlnt = cnt_dlnt - dlnt;
             var va = samount-amount;
             total_amount += amount;
             total_samount += samount;
             total_cnt_dlnt += cnt_dlnt;
             total_va += va;
             $(pRow).find("[name='va_other_already[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='yet_dlnt_other_already[]']").html(yet_dlnt.toFormat('NUMBER'));
             $(pRow).find("[name='amount_other_already[]']").html(amount.toFormat('NUMBER'));
         });
         $("tbody[role='equip_other_row']").find("tr").each(function(pIndex, pRow){
             var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_other[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
             var dlamt = parseInt($(pRow).find("input[name='dlamt_other[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt_other[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var samount = parseInt($(pRow).find("input[name='samount_other[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var amount = cnt_dlnt*dlamt;
+            var yet_dlnt = cnt_dlnt - dlnt;
             var va = samount-amount;
             total_amount += amount;
             total_samount += samount;
             total_cnt_dlnt += cnt_dlnt;
             total_va += va;
             $(pRow).find("[name='va_other[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='yet_dlnt_other[]']").html(yet_dlnt.toFormat('NUMBER'));
             $(pRow).find("[name='amount_other[]']").html(amount.toFormat('NUMBER'));
         });
 

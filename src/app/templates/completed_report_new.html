@@ -1,0 +1,406 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<style>
+    div.report table td.bottom_border, div.report table th.bottom_border{
+        border-bottom:2px solid #333!important;
+    }
+    div.report table td.right_border, div.report table th.right_border{
+        border-right:2px solid #333!important;
+    }
+    .colorLLG{
+        background-color:rgb(233,233,233)!important;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<style>
+    .input-available{
+        cursor:pointer;
+    }
+    .input-available:hover{
+        background-color:rgba(0,112,192, 0.5)!important;
+    }
+</style>
+
+<!--########################################################################-->
+<!--# page layer start                                                     #-->
+<!--########################################################################-->
+<!-- 레포트1 레이어 팝업 시작 -->
+<div id="popReport">
+    <div>
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button class="btn btn-primary" id="btnDownload"><i class="fa fa-download">&nbsp;다운로드</i></button>
+					<button class="btn btn-primary" id="btnPrint2"><i class="fa fa-print">&nbsp;출력</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_pxcond_mt" name="s_pxcond_mt">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-body report">
+
+                <style>
+                    div.report.report-completed1 table th,
+                    div.report.report-completed1 table td {
+                        font-size: 12px!important;
+                    }
+
+                    div.report.report-completed1 #rptCompletedArea table th,
+                    div.report.report-completed1 #rptCompletedArea table td {
+                        font-size: 12px!important;
+                        padding: 7px 5px!important;
+                    }
+                    div.report table tbody[role=header] tr:last-child th {
+                        border-bottom: black 1px solid !important;
+                    }
+
+                    div.report *{
+                        font-size:12px !important;
+                    }
+                    #popReport{
+                        font-size: 9px !important;
+                        line-height: 1.0 !important;
+                    }
+                    tr.etc{
+                        display:none;
+                    }
+                    tr.myETC, #eETC{
+                        cursor:pointer;
+                    }
+                </style>
+                <div class="title"><h2 class="colorLS"><span id="year"></span>년 <span id="month"></span>월 기성현황 집계표</h2></div>
+                <table id="rptParnterStatus1">
+                    <colgroup>
+                        <col width="50">
+                        <col width="200">
+                        <col width="250">
+                        <col width="50">
+
+                        <col width="100">
+                        <col width="100">
+                        <col width="50">
+                        <col width="100">
+                        <col width="50">
+                        <col width="100">
+                        <col width="50">
+
+                        <col width="100">
+                        <col width="100">
+                        <col width="50">
+                        <col width="100">
+                        <col width="100">
+                        <col width="100">
+                        <col width="50">
+                        <col width="100">
+                        <col width="50">
+
+                        <col width="50">
+                        <col width="100">
+                        <col width="100">
+                        <col width="290">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="color-contract" colspan="4">구분</th>
+                            <th class="color-contract" colspan="7">건설사 기성</th>
+                            <th class="color-contract" colspan="9">협력사 집행(제품+기성+자재)</th>
+                            <th class="color-contract text-right" colspan="4">VAT포함, 단위:천원, %</th>
+                        </tr>
+                        <tr>
+                            <th class="colorN text-center middle" rowspan="2">팀</th>
+                            <th class="colorN text-center middle" rowspan="2" style="min-width:120px!important;">거래처</th>
+                            <th class="colorN text-center middle" rowspan="2" style="min-width:200px!important;">현장명</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">현장<br/>관리</th>
+                            <th class="colorN text-center middle" rowspan="2">공사<br/>계약금액</th>
+                            <th class="colorN text-center middle" rowspan="2">전월누계</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">당월기성</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">기성누계</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">집행<br/>예상금액</th>
+                            <th class="colorN text-center middle" rowspan="2">전월누계</th>
+                            <th class="colorN text-center middle" rowspan="2">%</th>
+                            <th class="colorN text-center middle" colspan="4">당월집행</th>
+                            <th class="colorN text-center middle" rowspan="2">집행누계</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">%</th>
+                            <th class="colorN text-center middle" rowspan="2">공정률</th>
+                            <th class="colorN text-center middle" rowspan="2">VA</th>
+                            <th class="colorN text-center middle" rowspan="2">청구비<br/>차이</th>
+                            <th class="colorN text-center middle" rowspan="2">비고</th>
+                        </tr>
+                        <tr>
+                            <th class="colorN text-center middle">장비+기타</th>
+                            <th class="colorN text-center middle">도급비</th>
+                            <th class="colorN text-center middle">소계</th>
+                            <th class="colorN text-center middle">%</th>
+                        </tr>
+                    </thead>
+                    <tbody role="body">
+                    </tbody>
+                </table>
+                <!------------------------------------------------------------------------------------------->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div>
+
+<script>
+    $(document).on("dblclick", ".input-available", function(){
+        var cntrct_sn = $(this).data("cntrct_sn");
+        var data = prompt("값을 입력하세요.");
+        var target = $(this);
+        try{
+            if(/^[+-]?\d+(\.\d+)?$/.test(data)){
+                data = parseFloat(data);
+            }
+            else{
+                throw new Error(`Parameter is not a number : ${data}`);
+            }
+        }catch(e){
+            alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+            return false;
+        }
+        var params = {"cntrct_sn" : cntrct_sn, "rate" : data};
+        $.ajax({
+            url : '/api/completed/ajax_update_completed',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                console.log(pResult);
+                if(pResult.status){
+                    $(target).html(data.toFixed(1)+"%");
+                }
+                else{
+                    alert("기성 집행이 이뤄지지 않은 현장입니다.");
+
+                }
+            }
+
+        });
+
+    });
+    getValue = function(tag){
+        var data = $(tag).html().replaceAll(",", "");
+        return (data != "") ? parseInt(data) : 0;
+    }
+    getReportTableNR = function(s_pxcond_mt){
+        var params = '';
+        params += '&s_pxcond_mt=' + s_pxcond_mt;
+        var year = s_pxcond_mt.split("-")[0].substr(2,2);
+        var month = parseInt(s_pxcond_mt.split("-")[1]);
+        $(document).find("#year").html(year);
+        $(document).find("#month").html(month+"");
+        console.log('getReportNR', params);
+        var temp = {"C" : {}, "E" : {}};
+        $.ajax({
+            url: '/api/completed/ajax_get_completed_report_data_new',
+            type: 'GET',
+            data: params,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (pResult) {
+                var html = '';
+                var before = '';
+                var before_class = 1;
+                $.each(pResult, function(pIndex, pValue){
+                    var divider = 1000;
+                    var c_cntrct_amount = Math.round(pValue.c_cntrct_amount/divider);
+                    var c_completed_amount = Math.round(pValue.c_completed_amount/divider);
+                    var c_now_amount = Math.round(pValue.c_now_amount/divider);
+                    var c_total = c_completed_amount + c_now_amount;
+                    var c_rate1 = c_completed_amount*100.0/c_cntrct_amount;
+                    var c_rate2 = c_now_amount*100.0/c_cntrct_amount;
+                    var c_rate3 = c_total*100.0/c_cntrct_amount;
+                    var e_cntrct_amount = Math.round(pValue.e_cntrct_amount/divider);
+                    var e_completed_amount = Math.round(pValue.e_completed_amount/divider);
+                    var e_now_amount1 = Math.round(pValue.e_now_amount1/divider);
+                    var e_now_amount2 = Math.round(pValue.e_now_amount2/divider);
+                    var e_now_amount = e_now_amount1 + e_now_amount2;
+                    var e_total = e_completed_amount + e_now_amount;
+                    var e_rate1 = e_completed_amount*100.0/e_cntrct_amount;
+                    var e_rate2 = e_now_amount*100.0/e_cntrct_amount;
+                    var e_rate3 = e_total*100.0/e_cntrct_amount;
+                    var va = Math.round(pValue.va/divider);
+                    if(before != '' && before != pValue.bsn_dept_nm){
+                        before_class++;
+                    }
+                    before = pValue.bsn_dept_nm;
+                    var _class = (before_class%2 == 0) ? "colorLLG" : "";
+                    html += `<tr data-dept="${pValue.bsn_dept_nm}">
+                                <td class="${_class} text-center middle">${pValue.bsn_dept_nm}</td>
+                                <td class="${_class} text-center middle">${pValue.cntrct_bcnc_nm}</td>
+                                <td class="${_class} text-left middle">${pValue.spt_nm}</td>
+                                <td class="${_class} text-center middle right_border">${pValue.spt_chrg_nm}</td>
+                                <td class="${_class} text-right middle">${c_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${c_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${c_rate1.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${c_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${c_rate2.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${c_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border">${c_rate3.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${e_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_rate1.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${e_now_amount1.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_now_amount2.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${e_rate2.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle">${e_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border">${e_rate3.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle input-available" data-cntrct_sn="${pValue.cntrct_sn}">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
+                                <td class="${_class} text-right middle">${va.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle" style="${(c_total-e_total)<0 ? 'color:red!important;' : ''}">${(c_total-e_total).toFormat('NUMBER')}</td>
+                                <td class="${_class} text-left middle">${pValue.rm}</td>
+                             </tr>`;
+                });
+                $("#rptParnterStatus1").find("tbody[role='body']").html(html);
+                var totals = {};
+                $.each($("#rptParnterStatus1").find("tbody[role='body']").find("tr"), function(pIndex, pRow){
+                    var dept_nm = $(pRow).data("dept");
+                    if(!totals.hasOwnProperty(dept_nm)){
+                        totals[dept_nm] = {"c_cntrct_amount" : 0, "c_completed_amount" : 0, "c_now_amount" : 0, "c_total" : 0, "e_cntrct_amount" : 0, "e_completed_amount" : 0, "e_now_amount1" : 0, "e_now_amount2" : 0, "e_now_amount" : 0, "e_total" : 0, "va" : 0, "diff" : 0};
+                    }
+                    totals[dept_nm]["c_cntrct_amount"] += getValue($(pRow).find("td").eq(4));
+                    totals[dept_nm]["c_completed_amount"] += getValue($(pRow).find("td").eq(5));
+                    totals[dept_nm]["c_now_amount"] += getValue($(pRow).find("td").eq(7));
+                    totals[dept_nm]["c_total"] += getValue($(pRow).find("td").eq(5)) + getValue($(pRow).find("td").eq(7));
+                    totals[dept_nm]["e_cntrct_amount"] += getValue($(pRow).find("td").eq(11));
+                    totals[dept_nm]["e_completed_amount"] += getValue($(pRow).find("td").eq(12));
+                    totals[dept_nm]["e_now_amount1"] += getValue($(pRow).find("td").eq(14));
+                    totals[dept_nm]["e_now_amount2"] += getValue($(pRow).find("td").eq(15));
+                    totals[dept_nm]["e_now_amount"] += getValue($(pRow).find("td").eq(14)) + getValue($(pRow).find("td").eq(15));
+                    totals[dept_nm]["e_total"] += getValue($(pRow).find("td").eq(12)) + getValue($(pRow).find("td").eq(14)) + getValue($(pRow).find("td").eq(15));
+                    totals[dept_nm]["va"] += getValue($(pRow).find("td").eq(21));
+                    totals[dept_nm]["diff"] += getValue($(pRow).find("td").eq(22));
+                    console.log(totals);
+                });
+
+                $.each(totals, function(dept_nm, pValue){
+                    var html = '';
+                    var _class="colorN";
+                    console.log(pValue);
+                    html += `<tr data-dept="${dept_nm}_total">
+                                <td class="${_class} text-center middle" colspan="4">${dept_nm} 계</td>
+                                <td class="${_class} text-right middle">${pValue.c_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${pValue.c_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle"></td>
+                                <td class="${_class} text-right middle">${pValue.c_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle"></td>
+                                <td class="${_class} text-right middle">${pValue.c_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border"></td>
+                                <td class="${_class} text-right middle">${pValue.e_cntrct_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${pValue.e_completed_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle"></td>
+                                <td class="${_class} text-right middle">${pValue.e_now_amount1.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${pValue.e_now_amount2.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle">${pValue.e_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle"></td>
+                                <td class="${_class} text-right middle">${pValue.e_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border"></td>
+                                <td class="${_class} text-right middle"></td>
+                                <td class="${_class} text-right middle">${pValue.va.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle" style="${(pValue.diff)<0 ? 'color:red!important;' : ''}">${pValue.diff.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-left middle"></td>
+                             </tr>`;
+                    $(html).insertAfter($("#rptParnterStatus1").find("tbody[role='body']").find(`tr[data-dept="${dept_nm}"]`).last());
+                });
+
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(0);
+
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(1);
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(2);
+                $("#rptParnterStatus1").find("tbody[role='body']").yRowspan(3);
+
+
+            }
+        });
+    }
+	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
+		getReportTableNR($(this).val());
+	});
+    $(document).ready(function(){
+		if ($(document).find('#s_pxcond_mt').val() == '') {
+			$(document).find('#s_pxcond_mt').datepicker('setDate', 'today');
+		}
+        getReportTableNR($(document).find('#s_pxcond_mt').val());
+
+    });
+
+
+	$(function() {
+		/**************************************************************************
+		 * 인쇄 버튼 클릭 처리
+		 */
+        var excelHandler = {
+            getExcelFileName : function(){
+                return '기성현황집계표.xlsx';	//파일명
+            },
+            getSheetName : function(){
+                return 'Sheet1';	//시트명
+            },
+            getExcelData : function(){
+                return document.getElementById('rptParnterStatus1'); 	//TABLE id
+            },
+            getWorksheet : function(){
+                return XLSX.utils.table_to_sheet(this.getExcelData());
+            }
+        }
+
+        function s2ab(s) {
+          var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+          var view = new Uint8Array(buf);  //create uint8array as viewer
+          for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+          return buf;
+        }
+
+
+		$('#btnPrint2').on('click', function(pEvent) {
+			var html = $('#popReport').find('.modal-body').html();
+			$('#_print').contents().find('body>div.report').html('');
+			$('#_print').contents().find('body>div.report').html(html);
+			parent.frames['_print'].focus();
+			parent.frames['_print'].print();
+		});
+
+        $('#btnDownload').on("click", function(pEvent){
+            $("#rptParnterStatus1").find("td, th").each(function(pIndex, pTag){
+                if($(pTag).css('display') == 'none'){
+                    $(pTag).remove();
+                }
+                else{
+                    $(pTag).find("div").each(function(pIndex, pT){
+                        if($(pT).css('display') == 'none'){
+                            $(pT).remove();
+                        }
+
+                    })
+                }
+            });
+              var wb = XLSX.utils.book_new();
+              var newWorksheet = excelHandler.getWorksheet();
+
+              // step 3. workbook에 새로만든 워크시트에 이름을 주고 붙인다.
+              XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName());
+
+              // step 4. 엑셀 파일 만들기
+              var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+
+              // step 5. 엑셀 파일 내보내기
+              saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());
+        });
+	});
+
+
+
+</script>
+
+{% endblock %}

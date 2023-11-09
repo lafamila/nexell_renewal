@@ -70,7 +70,7 @@ def insert_approval_member(params):
     for row in approval_list:
         row['approval_sn'] = params['approval_sn']
         already_members.append(row['mber_sn'])
-    g.curs.execute("SELECT mber_sn FROM member WHERE author_sn=1")
+    g.curs.execute("SELECT mber_sn FROM member WHERE author_sn=1 or dept_code='CEO'")
     systems = g.curs.fetchall()
     for s in systems:
         if str(s['mber_sn']) not in already_members:

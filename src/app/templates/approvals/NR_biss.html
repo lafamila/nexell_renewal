@@ -9,7 +9,20 @@
     .jarviswidget td:last-child, .jarviswidget th:last-child {
         border-right:1px solid #ddd;
     }
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+
 </style>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
+
 <table class="table table-bordered table-form sub-table" style="width:35%!important;">
     <colgroup>
         <col width="25%">
@@ -195,6 +208,7 @@
 		<col width="100">
 		<col width="100">
 		<col width="100">
+		<col width="100">
 	</colgroup>
 	<tbody>
 		<tr>
@@ -206,6 +220,7 @@
 			<th class="color-contract text-center">준공현장정보</th>
 			<th class="color-contract text-center">마지막기성</th>
 			<th class="color-contract text-center">BISS해결완료</th>
+			<th class="color-contract text-center">하자이행증권 (파일첨부)</th>
 		</tr>
 		<tr>
 			<td class="hasinput">
@@ -257,6 +272,10 @@
                     <option value="0">X</option>
                 </select>
             </td>
+            <td class="hasinput" colspan="1">
+                <input type="file" id="pdf1" name="pdf1" accept="application/pdf" />
+            </td>
+
 		</tr>
 	</tbody>
 </table>
@@ -273,6 +292,15 @@
             </td>
         </tr>
     </tbody>
+
+    <tbody role="files_row" style="display:none;">
+      <tr data-row="files_tr">
+        <td>
+          <input type="hidden" name="pdf_sn1" value=""/>
+        </td>
+      </tr>
+    </tbody>
+
 </table>
 <script>
     get_cost = function(cntrct_sn){
@@ -572,6 +600,67 @@
     });
     // 공사변경 part2 END
 
+
+    $(document).on("change", "#pdf1, #pdf2", function(){
+        $("#my-spinner").show();
+        var id = $(this).attr("id");
+        console.log(id);
+        var ordr = (id == "pdf1") ? 0 : 1;
+        const file = document.querySelector("#"+id).files[0];
+        const filesize = file.size;
+        var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : ordr};
+        $.ajax({
+            url : '/api/common/get_upload_file_id',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                let name = pResult.filename;
+                let chunk_size = pResult.filesize;
+                let file_sn = pResult.file_sn;
+                let ord = pResult.order;
+                let start = 0;
+                create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+            },
+            error: function(){
+                alert("오류가 발생했습니다.");
+                location.reload();
+            },
+            beforeSend: function(){
+
+
+            }
+        });
+
+    });
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+                $(document).find(`[name='pdf_sn${parseInt(order)+1}']`).val(file_sn);
+                $("#my-spinner").hide();
+            }
+        }
+        oReq.send(form);
+    }
+
     fnValidate = function(){
                     var result = true;
                     return result;
@@ -646,8 +735,51 @@
     });
     {% else %}
     $.fn.afterLoadApproval = function() {
-        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
-        get_cost(cntrct_sn);
+          var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+          get_cost(cntrct_sn);
+
+
+          var params = {"f_sns" : []}
+          var target = [];
+          $(document).find("[name='pdf_sn1'], [name='pdf_sn2']").each(function(pIndex, pTag){
+            var f_sn = $(pTag).val();
+            if(f_sn != '' && f_sn != undefined){
+
+                params.f_sns.push(f_sn);
+                target.push($(pTag).attr("name"));
+            }
+          });
+          console.log(params);
+          // $("#pdf1").prop("disabled", true);
+          // $("#pdf2").prop("disabled", true);
+          $.ajax({
+            url : '/api/common/get_files_name',
+            method : 'POST',
+            data: JSON.stringify(params),
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            processData: false,
+            success: function(pResult){
+              var html = '';
+              $.each(pResult, function(pIndex, path){
+                  if(target.length == 1){
+                      if(target[pIndex] == "pdf_sn1"){
+                          html += `<a target="_blank" href="/static/files/${path}">하자이행증권</a>`;
+                          $("#pdf1").hide();
+                      }
+                  }
+              });
+              html += ""
+              if(target.length > 0){
+                  $(html).insertAfter($(document).find(`#pdf1`));
+
+              }
+
+            },
+            error: function(pResult){
+
+            }
+          });
     }
     {% endif %}
 </script>

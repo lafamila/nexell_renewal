@@ -145,10 +145,11 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">① 삼성장비매입금액 - VAT포함</span>
             </th>
 
         </tr>
@@ -160,7 +161,8 @@
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">계약수량</th>
             <th class="color-contract text-center">매입단가</th>
-            <th class="color-contract text-center">기출고수량</th>
+            <th class="color-contract text-center">총출고수량</th>
+            <th class="color-contract text-center">미출고수량</th>
             <th class="color-contract text-center">출고요청수량</th>
             <th class="color-contract text-center">매입금액</th>
             <th class="color-contract text-center">매출금액</th>
@@ -192,6 +194,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
             </td>
             <td class="text-right" data-type="number" name="sdlnt[]"></td>
+            <td class="text-right" name="yet_dlnt[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
             </td>
@@ -223,6 +226,7 @@
             <td class="colorG text-right" data-column="total_cnt_dlnt"></td>
             <td class="colorG"></td>
             <td class="colorG text-right" data-column="total_sdlnt"></td>
+            <td class="colorG"></td>
             <td class="colorG text-right" data-column="total_dlnt"></td>
             <td class="colorP text-right" data-column="total_amount"></td>
             <td class="colorG text-right" data-column="total_samount"></td>
@@ -558,6 +562,7 @@
             var dlamt = parseInt($(pRow).find("[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
             var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
+            var yet_dlnt = cnt_dlnt - sdlnt;
             if($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "") == ''){
                 $(pRow).find("[name='sdlnt[]']").html("0");
             }
@@ -582,6 +587,7 @@
             total_sdlnt += sdlnt;
             total_va += va;
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='yet_dlnt[]']").html(yet_dlnt.toFormat('NUMBER'));
             $(pRow).find("[name='now_amount[]']").val(amount.toFormat('NUMBER'));
             $(pRow).find("[name='now_samount[]']").val(now_samount.toFormat('NUMBER'));
             if($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "") == ''){

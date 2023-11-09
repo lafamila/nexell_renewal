@@ -144,11 +144,12 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
         <col width="200"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="12"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
+			<th class="sub-title colorN text-center" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">② 타사장비매입금액 - VAT포함</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
@@ -162,7 +163,8 @@
             <th class="color-contract text-center">모델명</th>
             <th class="color-contract text-center">계약수량</th>
             <th class="color-contract text-center">매입단가</th>
-            <th class="color-contract text-center">기출고수량</th>
+            <th class="color-contract text-center">총출고수량</th>
+            <th class="color-contract text-center">미출고수량</th>
             <th class="color-contract text-center">출고요청수량</th>
             <th class="color-contract text-center">매입금액</th>
             <th class="color-contract text-center">매출금액</th>
@@ -194,6 +196,7 @@
                 <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
             </td>
             <td class="text-right" name="sdlnt[]"></td>
+            <td class="text-right" name="yet_dlnt[]"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="dlnt[]"/>
             </td>
@@ -225,6 +228,7 @@
             <td class="colorG text-right" data-column="total_cnt_dlnt"></td>
             <td class="colorG"></td>
             <td class="colorG text-right" data-column="total_sdlnt"></td>
+            <td class="colorG"></td>
             <td class="colorG text-right" data-column="total_dlnt"></td>
             <td class="colorP text-right" data-column="total_amount"></td>
             <td class="colorG text-right" data-column="total_samount"></td>
@@ -278,7 +282,11 @@
         $.ajax({
                 url : '/api/project/get_costs_bd',
                 method : 'GET',
+        {% if init %}
                 data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
                 success: function(pResult){
                     console.log(pResult);
                     {% if init %}
@@ -494,6 +502,7 @@
             var samount = parseInt($(pRow).find("[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var sdlnt = parseInt($(pRow).find("[name='sdlnt[]']").html().replaceAll(",", "")); if(isNaN(sdlnt)) sdlnt = 0;
             var dlnt = parseInt($(pRow).find("[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var yet_dlnt = cnt_dlnt - sdlnt;
             {% if init %}
             if(dlnt + sdlnt > cnt_dlnt){
                 dlnt = cnt_dlnt - sdlnt;
@@ -517,6 +526,7 @@
             total_sdlnt += sdlnt;
             total_va += va;
             $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='yet_dlnt[]']").html(yet_dlnt.toFormat('NUMBER'));
             $(pRow).find("[name='now_amount[]']").val(amount.toFormat('NUMBER'));
             $(pRow).find("[name='now_samount[]']").val(now_samount.toFormat('NUMBER'));
         });

@@ -579,6 +579,7 @@ def get_completed_reportNR_new(params):
                     , c.cntrct_sn AS cntrct_sn
                     , p.prjct_sn AS prjct_sn
                     , DATE_FORMAT(c.regist_dtm, '%%Y-%%m-%%d')
+                    , (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
                     
                  FROM contract c
                          LEFT OUTER JOIN member mm
@@ -725,15 +726,21 @@ def get_completed_reportNR_new(params):
                 """
         g.curs.execute(query, d)
         outsrcs = g.curs.fetchall()
-        human_cntrct_amount = 0
-        establish_cntrct_amount = 0
+        human_cntrct_amounts = [0, 0]
+        establish_cntrct_amounts = {0 : {}, 1 : {}}
         for outsrc in outsrcs:
             if outsrc['pymnt_mth'] != '' and len(outsrc['pymnt_mth'].split("-")) == 4:
-                establish_cntrct_amount = int(outsrc['pymnt_mth'].split("-")[0]) + int(outsrc['pymnt_mth'].split("-")[1])
-                human_cntrct_amount = int(outsrc['pymnt_mth'].split("-")[2])
+                if int(outsrc['outsrc_fo_sn']) not in establish_cntrct_amounts[0]:
+                    establish_cntrct_amounts[0][int(outsrc['outsrc_fo_sn'])] = 0
+                establish_cntrct_amounts[0][int(outsrc['outsrc_fo_sn'])] += int(outsrc['pymnt_mth'].split("-")[0]) + int(outsrc['pymnt_mth'].split("-")[1])
+                human_cntrct_amounts[0] += int(outsrc['pymnt_mth'].split("-")[2])
             if outsrc['outsrc_dtls'] != '' and len(outsrc['outsrc_dtls'].split("-")) == 4:
-                establish_cntrct_amount = int(outsrc['outsrc_dtls'].split("-")[0]) + int(outsrc['outsrc_dtls'].split("-")[1])
-                human_cntrct_amount = int(outsrc['outsrc_dtls'].split("-")[2])
+                if int(outsrc['outsrc_fo_sn']) not in establish_cntrct_amounts[1]:
+                    establish_cntrct_amounts[1][int(outsrc['outsrc_fo_sn'])] = 0
+                establish_cntrct_amounts[1][int(outsrc['outsrc_fo_sn'])] += int(outsrc['outsrc_dtls'].split("-")[0]) + int(outsrc['outsrc_dtls'].split("-")[1])
+                human_cntrct_amounts[1] += int(outsrc['outsrc_dtls'].split("-")[2])
+        human_cntrct_amount = human_cntrct_amounts[1] if human_cntrct_amounts[1] != 0 else human_cntrct_amounts[0]
+        establish_cntrct_amount = establish_cntrct_amounts[1] if sum(establish_cntrct_amounts[1].values()) != 0 else establish_cntrct_amounts[0]
         for bcnc in bcncs:
             key = (bcnc['purchsofc_sn'], bcnc['cntrct_execut_code'])
             if key in costs:
@@ -745,8 +752,8 @@ def get_completed_reportNR_new(params):
                 ct_se_code = ''
             if bcnc['purchsofc_sn'] == 146 and bcnc['cntrct_execut_code'] == 'E':
                 cntrct_amount = human_cntrct_amount
-            elif ct_se_code != '' and int(ct_se_code) == 5 and bcnc['cntrct_execut_code']  == 'E':
-                cntrct_amount = establish_cntrct_amount
+            elif ct_se_code != '' and int(ct_se_code) == 5 and bcnc['cntrct_execut_code']  == 'E' and int(bcnc['purchsofc_sn']) in establish_cntrct_amount:
+                cntrct_amount = establish_cntrct_amount[int(bcnc['purchsofc_sn'])]
             bcnc.update(d)
             bcnc.update({"cntrct_amount" : cntrct_amount, "excut_amount" :0, "ct_se_code" : ct_se_code})
             if key in pxconds:
@@ -761,8 +768,8 @@ def get_completed_reportNR_new(params):
                     cost['excut_amount'] = pxconds[key]['tax_amount']
                 if cost['purchsofc_sn'] == 146 and cost['cntrct_execut_code'] == 'E':
                     cost['cntrct_amount'] = human_cntrct_amount
-                elif cost['ct_se_code'] != '' and int(cost['ct_se_code']) == 5 and cost['cntrct_execut_code'] == 'E':
-                    cost['cntrct_amount'] = establish_cntrct_amount
+                elif cost['ct_se_code'] != '' and int(cost['ct_se_code']) == 5 and cost['cntrct_execut_code'] == 'E' and int(cost['purchsofc_sn']) in establish_cntrct_amount:
+                    cost['cntrct_amount'] = establish_cntrct_amount[int(cost['purchsofc_sn'])]
                 result_part.append(cost)
         result_part = sorted(result_part, key=lambda d: (d['cntrct_execut_code'], CT_SE_CODE_ORDER[''] if d['ct_se_code'] == '' else CT_SE_CODE_ORDER[int(d['ct_se_code'])] if int(d['ct_se_code']) in CT_SE_CODE_ORDER else 99))
         if len(result_part) == 0:
