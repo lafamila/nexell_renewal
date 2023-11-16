@@ -407,7 +407,8 @@ getProjectList = function()
 
                         //if(pRow.prjct_ty_code == "NR")
                         //    dept_code += ",ST";
-                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
+
+                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-special="'+(pRow.spt_nm.endsWith("(시스템환기)") ? "1" : "0")+'" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
                         html += '	<i class="fa fa-print"></i>'+pData;
                         html += '</button>';
 
@@ -493,7 +494,6 @@ getProjectList = function()
             if(myDeptCode == "TS1" || myDeptCode == "TS2" || myDeptCode == "TS3" || myDeptCode == "BI" || myDeptCode == "ST"){
                 show = false;
             }
-
 			$(myList).on('click', 'tbody tr', function(pEvent) {
 				if ($(this).parent().find('td.dataTables_empty').length > 0) {
 					return;
@@ -555,7 +555,9 @@ getProjectList = function()
 				var prjct_ty_code = $(this).data('prjct_ty_code');
 				var cntrct_sn = $(this).data('cntrct_sn');
 				var prjct_sn = $(this).data('prjct_sn');
-                if(show || dept_code.split(",").includes(myDeptCode)){
+				var is_special = $(this).data('special');
+
+                if(show || dept_code.split(",").includes(myDeptCode) || (pJson.member.mber_sn == 57 && parseInt(is_special) == 1)){
                     if (prjct_ty_code == 'NR') { //일반공무
                         getReportNR(cntrct_sn, prjct_sn);
                     } else if (prjct_ty_code == 'BD') { //빌트인직계약

@@ -210,10 +210,10 @@
                 <input type="text" class="form-control text-right" data-type="number" name="D_8">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="D_61" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_61">
             </td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="D_7" readonly>
+                <input type="text" class="form-control text-right" data-type="number" name="D_7">
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="D_10" readonly>
@@ -557,9 +557,11 @@
             $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
             totals.push(total);
             if(pIndex == 0){
-                $(document).find("input[name='D_10']").val(Math.round(total*0.005).toFormat('NUMBER'));
+                var value1 = parseInt($(pRow).find("input[name='B_1']").val().replaceAll(",", "")); if(isNaN(value1)) value1 = 0;
+                var value2 = parseInt($(pRow).find("input[name='B_2']").val().replaceAll(",", "")); if(isNaN(value1)) value2 = 0;
+                $(document).find("input[name='D_10']").val(Math.round((total-value1-value2)*0.005).toFormat('NUMBER'));
             }
-        });
+0        });
 
         $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
         $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
@@ -684,12 +686,12 @@
                     done = true;
                 }
             }
-            if(!done){
-                $("input[name='D_7']").attr("readonly", false);
-            }
-            else{
-                $("input[name='D_7']").attr("readonly", true);
-            }
+            // if(!done){
+            //     $("input[name='D_7']").attr("readonly", false);
+            // }
+            // else{
+            //     $("input[name='D_7']").attr("readonly", true);
+            // }
         }
         else if(option_rate == '0'){
             $("input[name='D_7']").attr("readonly", false);
@@ -727,12 +729,12 @@
                     done = true;
                 }
             }
-            if(!done){
-                $("input[name='D_61']").attr("readonly", false);
-            }
-            else{
-                $("input[name='D_61']").attr("readonly", true);
-            }
+            // if(!done){
+            //     $("input[name='D_61']").attr("readonly", false);
+            // }
+            // else{
+            //     $("input[name='D_61']").attr("readonly", true);
+            // }
         }
         else if(option_model == '0'){
             $("input[name='D_61']").attr("readonly", false);

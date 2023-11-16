@@ -422,7 +422,6 @@ def update_contract(params):
         params["spt_nm"] = params["cntrct_nm"]
     columns = list(data.keys())
     query = """UPDATE contract SET {} WHERE cntrct_sn=%(s_cntrct_sn)s""".format(",".join(["{0}=%({0})s".format(col) for col in columns]))
-    print(query, params)
     g.curs.execute(query, params)
 
 def update_project(params):

@@ -513,6 +513,7 @@ def ajax_get_sales_expect_report():
 
 @bp.route('/equip_to_account', methods=['GET'])
 def equip_to_account():
+    try:
         params = request.args.to_dict()
         equipment = cm.get_equipment(params)
         prjct = prj.get_project_by_cntrct_nm(equipment["cntrct_sn"])
@@ -550,51 +551,12 @@ def equip_to_account():
         g.curs.execute("UPDATE equipment SET dlivy_de=%(dlivy_de)s, before_dlnt=%(last_dlnt)s WHERE eq_sn=%(eq_sn)s", params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
-    # except Exception as e:
-    #     print(e)
-    #     return make_response(str(e), 500)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
 
 @bp.route('/insert_BF_ms_equip', methods=['POST'])
 def insert_BF_ms_equip():
-        pParams = request.get_json()
-        params = {}
-        for key in pParams:
-            if (key.startswith("m_") or key.startswith("s_")) and key.endswith("[]"):
-                if key[2:] in params:
-                    params[key[2:]] += pParams[key]
-                else:
-                    params[key[2:]] = pParams[key]
-            else:
-                params[key] = pParams[key]
-        if params['msh_approval_type'] in ('S', 'B'):
-            delng_sns = sales.insert_ms_BF_equip(params)
-            stock_sns = [(stock_sn, delng_sn, model_no, dlnt, prduct_ty_code) for delng_ty_code, stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in zip(params["delng_ty_code[]"], params["stock_sn[]"], delng_sns, params["model_no[]"], params["qy[]"], params["prduct_ty_code[]"])]
-            for stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in stock_sns:
-
-                if stock_sn == "":
-                    for _ in range(int(dlnt)):
-                        s_params = {"use_type" : "", "prduct_se_code" : "2", "prduct_ty_code" : prduct_ty_code, "model_no" : model_no}
-                        stock_sn = st.insert_stock(s_params, 0)
-                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
-                else:
-                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
-            return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
-        else:
-            sales.insert_ms_BF_equip(params)
-            for delng_sn, dlnt, invn_sttus_code, return_de in zip(params["delng_sn[]"], params["return_dlnt[]"], params["stock_place[]"], params["return_de[]"]):
-                if dlnt != '' and invn_sttus_code != '' and return_de != '':
-                    stocks = st.get_stock_by_account(delng_sn, isOut=True)
-                    for s in stocks[:min(len(stocks), int(dlnt))]:
-                        st.insert_log(s['stock_sn'], 1, invn_sttus_code, None, return_de)
-
-            return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
-    # except Exception as e:
-    #     print(e)
-    #     return make_response(str(e), 500)
-
-
-@bp.route('/insert_BD_ms_equip', methods=['POST'])
-def insert_BD_ms_equip():
     try:
         pParams = request.get_json()
         params = {}
@@ -631,6 +593,46 @@ def insert_BD_ms_equip():
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+
+@bp.route('/insert_BD_ms_equip', methods=['POST'])
+def insert_BD_ms_equip():
+    # try:
+        pParams = request.get_json()
+        params = {}
+        for key in pParams:
+            if (key.startswith("m_") or key.startswith("s_")) and key.endswith("[]"):
+                if key[2:] in params:
+                    params[key[2:]] += pParams[key]
+                else:
+                    params[key[2:]] = pParams[key]
+            else:
+                params[key] = pParams[key]
+        if params['msh_approval_type'] in ('S', 'B'):
+            delng_sns = sales.insert_ms_BF_equip(params)
+            stock_sns = [(stock_sn, delng_sn, model_no, dlnt, prduct_ty_code) for delng_ty_code, stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in zip(params["delng_ty_code[]"], params["stock_sn[]"], delng_sns, params["model_no[]"], params["qy[]"], params["prduct_ty_code[]"])]
+            for stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in stock_sns:
+
+                if stock_sn == "":
+                    for _ in range(int(dlnt)):
+                        s_params = {"use_type" : "", "prduct_se_code" : "2", "prduct_ty_code" : prduct_ty_code, "model_no" : model_no}
+                        stock_sn = st.insert_stock(s_params, 0)
+                        st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
+                else:
+                    st.insert_log(stock_sn, 2, params['cntrct_sn'], delng_sn, datetime.now(timezone('Asia/Seoul')))
+            return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+        else:
+            sales.insert_ms_BF_equip(params)
+            for delng_sn, dlnt, invn_sttus_code, return_de in zip(params["delng_sn[]"], params["return_dlnt[]"], params["stock_place[]"], params["return_de[]"]):
+                if dlnt != '' and invn_sttus_code != '' and return_de != '':
+                    stocks = st.get_stock_by_account(delng_sn, isOut=True)
+                    for s in stocks[:min(len(stocks), int(dlnt))]:
+                        st.insert_log(s['stock_sn'], 1, invn_sttus_code, None, return_de)
+
+            return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 
 @bp.route('/insert_ms_equip', methods=['POST'])
@@ -831,7 +833,7 @@ def update_equipment_establish_new():
         sales.update_equipment_establish(params)
 
         del params["option_bigo"]
-        sales.insert_equipment(params)
+        sales.insert_equipment_new(params)
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
 

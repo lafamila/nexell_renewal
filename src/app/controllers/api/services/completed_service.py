@@ -1072,10 +1072,10 @@ def update_pxcond(params):
 
     query = """SELECT MAX(pxcond_mt) AS m_pxcond_mt FROM pxcond WHERE cntrct_sn=%(cntrct_sn)s"""
     g.curs.execute(query, data)
-    row = g.curs.fetchall()
-    print(row)
-    if len(row) > 0:
-        data["pxcond_mt"] = row[0]["m_pxcond_mt"]
+    row = g.curs.fetchone()
+
+    if row['m_pxcond_mt'] != '':
+        data["pxcond_mt"] = row["m_pxcond_mt"]
         query = """UPDATE pxcond SET rate=%(rate)s WHERE cntrct_sn=%(cntrct_sn)s AND pxcond_mt=%(pxcond_mt)s"""
         g.curs.execute(query, data)
         return True

@@ -236,7 +236,6 @@ def ajax_update_completed():
     try:
         params = request.form.to_dict()
         status = cp.update_pxcond(params)
-        print(status)
         return jsonify({"status" : status})
     except Exception as e:
         print(e)
