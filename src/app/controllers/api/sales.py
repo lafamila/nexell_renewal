@@ -570,7 +570,7 @@ def insert_BF_ms_equip():
                 params[key] = pParams[key]
         if params['msh_approval_type'] in ('S', 'B'):
             delng_sns = sales.insert_ms_BF_equip(params)
-            stock_sns = [(stock_sn, delng_sn, model_no, dlnt, prduct_ty_code) for delng_ty_code, stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in zip(params["delng_ty_code[]"], params["stock_sn[]"], delng_sns, params["model_no[]"], params["qy[]"], params["prduct_ty_code[]"])]
+            stock_sns = [(stock_sn, delng_sn, model_no, dlnt, prduct_ty_code) for delng_ty_code, stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in zip(params["delng_ty_code[]"], params["stock_sn[]"], delng_sns, params["model_no[]"], params["qy[]"], params["prduct_ty_code[]"]) if dlnt != '' and model_no != '']
             for stock_sn, delng_sn, model_no, dlnt, prduct_ty_code in stock_sns:
 
                 if stock_sn == "":

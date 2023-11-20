@@ -664,10 +664,15 @@ def insert_ms_BF_equip(params):
             else:
                 for j, row in enumerate(data[key]):
                     input_data[j][key] = row
+        deletes = []
         for i in range(len(input_data)):
             row = input_data[i]
             if row['dlamt'] == 0 and row['dlivy_amt'] == 0 and row['dlnt'] == 0 and row['add_dscnt_rt'] == 0.0 and row['dscnt_rt'] == 0.0 and row['model_no'].strip() == '':
-                del input_data[i]
+                deletes.append(i)
+
+        for i in deletes[::-1]:
+            del input_data[i]
+
         for row in input_data:
             row['cntrct_sn'] = cntrct_sn
             row['prjct_sn'] = prjct_sn
