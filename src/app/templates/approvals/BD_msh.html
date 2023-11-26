@@ -59,9 +59,6 @@
                         <input type="radio" name="msh_approval_type" value="S">설치
                     </label>
                     <label class="btn btn-default">
-                        <input type="radio" name="msh_approval_type" value="B">변경
-                    </label>
-                    <label class="btn btn-default">
                         <input type="radio" name="msh_approval_type" value="H">회수
                     </label>
                 </div>
@@ -829,17 +826,17 @@
             }
             if(pValue.mh_approval_step == ''){
                 $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
-                $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
+                // $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
                 $(document).find("input[name=msh_approval_type][value='H']").yReadonly(false);
             }
             else if(pValue.mh_approval_step == 1){
                 $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
-                $(document).find("input[name=msh_approval_type][value='B']").yReadonly(false);
+                // $(document).find("input[name=msh_approval_type][value='B']").yReadonly(false);
                 $(document).find("input[name=msh_approval_type][value='H']").yReadonly(false);
             }
             else{
                 $(document).find("input[name=msh_approval_type][value='S']").yReadonly(false);
-                $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
+                // $(document).find("input[name=msh_approval_type][value='B']").yReadonly(true);
                 $(document).find("input[name=msh_approval_type][value='H']").yReadonly(false);
             }
             get_cost_bf_bd(cntrct_sn);

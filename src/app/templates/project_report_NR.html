@@ -1956,13 +1956,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						indirect_html += '		<th class="colorG">합계</th>';
 						indirect_html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
 						indirect_html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
-						indirect_html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+						indirect_html += '		<th class="colorG text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
 						indirect_html += '		<th class="colorG text-number"></th>';
 						indirect_html += '	</tr>';
 						indirect_html += '</tfoot>';
 						indirect_html += '</table>';
 						indirect_html += '</td>';
-						indirect_sum_total += sum_total;
 						//지급내역
 						indirect_html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
 						var oRcppayList = pValue.rcppayList;
@@ -2016,7 +2015,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						indirect_html += '<tfoot>';
 						indirect_html += '	<tr>';
 						indirect_html += '		<th class="colorG">합계</th>';
-						indirect_html += '		<th class="colorG text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
+						indirect_html += '		<th class="colorP text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
 						indirect_html += '		<th class="colorG text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
 						indirect_html += '		<th class="colorG text-number">'+rate_total.toFixed(1)+'%'+'</th>';
 						indirect_html += '		<th class="colorG text-number"></th>';
@@ -2024,6 +2023,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						indirect_html += '</tfoot>';
 						indirect_html += '</table>';
 						indirect_html += '</td></tr>';
+						indirect_sum_total += amount_total;
 						$('#popReportNR').find('#rptTable9_indirect tbody[role=body]').append(indirect_html);
 						return true;
 					}
@@ -2285,13 +2285,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '		<th class="colorG">합계</th>';
 					html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
 					html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
-					html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorG text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
 					html += '		<th class="colorG text-number"></th>';
 					html += '	</tr>';
 					html += '</tfoot>';
 					html += '</table>';
 					html += '</td>';
-                    all_sum_total += sum_total;
 					//지급내역
 					html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;border-bottom:2px solid #555!important;">';
 					var oRcppayList = pValue.rcppayList;
@@ -2350,7 +2349,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '<tfoot>';
 					html += '	<tr>';
 					html += '		<th class="colorG">합계</th>';
-					html += '		<th class="colorG text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
+					html += '		<th class="colorP text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
 					html += '		<th class="colorG text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
 					html += '		<th class="colorG text-number">'+rate_total.toFixed(1)+'%'+'</th>';
 					html += '		<th class="colorG text-number"></th>';
@@ -2359,6 +2358,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '</table>';
 					html += '</td></tr>';
 					all_amt_total += amount_total;
+                    all_sum_total += amount_total;
+
 				});
 				$('#popReportNR').find('#rptTable9 tbody[role=body]').html(html);
 
@@ -2417,13 +2418,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						daily_html += '		<th class="colorG">합계</th>';
 						daily_html += '		<th class="colorG text-number">'+splpc_am_total.toString().toFormat('NUMBER')+'</th>';
 						daily_html += '		<th class="colorG text-number">'+vat_total.toString().toFormat('NUMBER')+'</th>';
-						daily_html += '		<th class="colorP text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
+						daily_html += '		<th class="colorG text-number">'+sum_total.toString().toFormat('NUMBER')+'</th>';
 						daily_html += '		<th class="colorG text-number"></th>';
 						daily_html += '	</tr>';
 						daily_html += '</tfoot>';
 						daily_html += '</table>';
 						daily_html += '</td>';
-						all_sum_total += sum_total;
 						//지급내역
 						daily_html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
 						var oRcppayList = pValue.rcppayList;
@@ -2478,7 +2478,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						daily_html += '<tfoot>';
 						daily_html += '	<tr>';
 						daily_html += '		<th class="colorG">합계</th>';
-						daily_html += '		<th class="colorG text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
+						daily_html += '		<th class="colorP text-number">'+amount_total.toString().toFormat('NUMBER')+'</th>';
 						daily_html += '		<th class="colorG text-number">'+sub_total.toString().toFormat('NUMBER')+'</th>';
 						daily_html += '		<th class="colorG text-number">'+rate_total.toFixed(1)+'%'+'</th>';
 						daily_html += '		<th class="colorG text-number"></th>';
@@ -2487,6 +2487,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						daily_html += '</table>';
 						daily_html += '</td></tr>';
 						all_amt_total += amount_total;
+						all_sum_total += amount_total;
 						$('#popReportNR').find('#rptTable9 tbody[role=foot]').append(daily_html);
 
 				}
@@ -2825,6 +2826,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt0 = 0;
 				}
+				execAmt0 = parseInt($('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th').eq(0).html().replaceAll(',', ''));
+				if(isNaN(execAmt0)) execAmt0 = 0;
+
+
 				var execAmt1 = $(execData[1]).html().replaceAll(',', '');
 				if (execAmt1 != '') {
 					execAmt1 = parseInt(execAmt1);

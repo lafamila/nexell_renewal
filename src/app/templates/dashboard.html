@@ -112,14 +112,12 @@
 			<col width="75">
 			<col width="75">
 			<col width="75">
-			<col width="75">
 		</colgroup>
 		<tbody role="header" style="border-bottom:none!important;">
             <tr>
                 <th class="colorB" style="vertical-align:middle;font-size:11px!important;border-bottom:none!important;"></th>
                 <th class="colorB" style="font-size:11px!important;">부서</th>
                 <th class="colorB" style="font-size:11px!important;">진행</th>
-                <th class="colorB" style="font-size:11px!important;">대기</th>
                 <th class="colorB" style="font-size:11px!important;">사전</th>
                 <th class="colorB" style="font-size:11px!important;">유보</th>
             </tr>
@@ -127,14 +125,12 @@
                 <th rowspan="3" class="colorB" style="vertical-align:middle;font-size:11px!important;border-top:none!important;">기준</th>
                 <td style="font-size:11px!important;">공조</td>
                 <td style="font-size:11px!important;">공5%</td>
-                <td style="font-size:11px!important;">공0%</td>
                 <td style="font-size:11px!important;">낙찰</td>
                 <td style="font-size:11px!important;">미지급</td>
             </tr>
             <tr>
                 <td style="font-size:11px!important;">빌트</td>
                 <td style="font-size:11px!important;">납품5%</td>
-                <td style="font-size:11px!important;">납품0%</td>
                 <td style="font-size:11px!important;">낙찰</td>
                 <td style="font-size:11px!important;">미입금</td>
             </tr>
@@ -150,8 +146,6 @@
 			<col width="75">
 			<col width="75">
 			<col width="75">
-			<col width="75">
-			<col width="75">
 			<col width="205">
 <!--			<col width="*">-->
 			<col width="495">
@@ -160,17 +154,15 @@
 		</colgroup>
 		<tbody role="header">
 			<tr>
-				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" colspan="9">현장현황</th>
+				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;" colspan="7">현장현황</th>
 				<th class="colorG" colspan="4">BISS 지적현황</th>
 			</tr>
 			<tr>
 				<th class="colorB" style="vertical-align:middle;">부서</th>
 				<th class="colorB" style="vertical-align:middle;" colspan="2">담당자</th>
 				<th class="colorB" style="vertical-align:middle;">진행현장</th>
-				<th class="colorB" style="vertical-align:middle;">대기현장</th>
 				<th class="colorB" style="vertical-align:middle;">사전입찰</th>
 				<th class="colorB" style="vertical-align:middle;">유보</th>
-				<th class="colorB" style="vertical-align:middle;">판매</th>
 				<th class="colorB" style="vertical-align:middle;border-right:2px solid black!important;">계</th>
                 <th class="colorG" style="border-right:2px solid black!important;">건설사</th>
 				<th class="colorG">계약명(현장명)</th>
@@ -183,8 +175,6 @@
         <tbody role="foot">
 
 				<th class="colorSky" style="vertical-align:middle;" colspan="3">총계</th>
-				<th class="colorSky" style="vertical-align:middle;"></th>
-				<th class="colorSky" style="vertical-align:middle;"></th>
 				<th class="colorSky" style="vertical-align:middle;"></th>
 				<th class="colorSky" style="vertical-align:middle;"></th>
 				<th class="colorSky" style="vertical-align:middle;"></th>
@@ -598,7 +588,7 @@ getBissSummery = function()
                     if(rate < 5.0) //HERE
                         k_cnts[pValue.mber_sn]++;
                 });
-                var small_tot = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+                var small_tot = [0, 0, 0, 0, 0, 0, 0];
                 var flag = false;
 				$.each(pResult.list, function(pIndex, pValue){
 					var bgColor = '';
@@ -615,13 +605,11 @@ getBissSummery = function()
                             html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[2]+'</td>';
                             html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[3]+'</td>';
                             html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[4]+'</td>';
+                            html += '    <td class="text-center colorSky " style="vertical-align:middle;" colspan="2"></td>';
                             html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[5]+'</td>';
                             html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[6]+'</td>';
-                            html += '    <td class="text-center colorSky " style="vertical-align:middle;" colspan="2"></td>';
-                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[7]+'</td>';
-                            html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[8]+'</td>';
                             html += '</tr>';
-                            small_tot = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            small_tot = [0, 0, 0, 0, 0, 0, 0];
                             flag = true;
                         }
 
@@ -631,12 +619,10 @@ getBissSummery = function()
                         html += '    <td class="colorSky '+bgColor+'" style="vertical-align:middle;"><a style="color:inherit;" class="btnDept" data-code="'+pValue.dept_code+'">'+pValue.dept_nm+'</a></td>';
                         html += '    <td class="colorSky '+bgColor+'" style="vertical-align:middle;"><a style="color:inherit;" class="btnMber" data-code="'+pValue.mber_sn+'" data-dept="'+pValue.dept_code+'">'+pValue.mber_nm+'</a></td>';
                         html += '    <td class="colorSky '+bgColor+'" style="vertical-align:middle;" data-code="'+pValue.mber_sn+'">'+pValue.mber_size+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
-                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+(parseInt(pValue.cntrct_cnt)-k_cnt).toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
-                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+k_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
+                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+(parseInt(pValue.cntrct_cnt)).toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
 
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.ct_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.n_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
-                        html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;">'+pValue.s_cnt.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
                         html += '    <td class="text-center '+bgColor+'" style="vertical-align:middle;border-right:2px solid black!important;">'+s.toString().toFormat('NUMBER')+'<div class="sr-only">'+pValue.mber_sn+'</div></td>';
                         html += '    <td class="text-center '+bgColor+'" style="border-right:2px solid black!important;">'+pValue.bcnc_nm+'</td>';
                         html += '    <td class="text-left '+bgColor+'">'+pValue.spt_nm+'</td>';
@@ -652,15 +638,13 @@ getBissSummery = function()
                             k_sum += k_cnt;
                             before = pValue.mber_sn;
                             small_tot[0] += parseInt(pValue.mber_size);
-                            small_tot[1] += (parseInt(pValue.cntrct_cnt)-k_cnt);
-                            small_tot[2] += k_cnt;
-                            small_tot[3] += parseInt(pValue.ct_cnt);
-                            small_tot[4] += parseInt(pValue.n_cnt);
-                            small_tot[5] += parseInt(pValue.s_cnt);
-                            small_tot[6] += s;
+                            small_tot[1] += (parseInt(pValue.cntrct_cnt));
+                            small_tot[2] += parseInt(pValue.ct_cnt);
+                            small_tot[3] += parseInt(pValue.n_cnt);
+                            small_tot[4] += s;
                         }
-                        small_tot[7] += parseInt(pValue.flaw_co == '' ? 0 : pValue.flaw_co);
-                        small_tot[8] += parseInt(pValue.flaw_co == '' ? 0 : pValue.flaw_co);
+                        small_tot[5] += parseInt(pValue.flaw_co == '' ? 0 : pValue.flaw_co);
+                        small_tot[6] += parseInt(pValue.flaw_co == '' ? 0 : pValue.flaw_co);
                     }
 				});
                 html += '<tr>';
@@ -669,12 +653,10 @@ getBissSummery = function()
                 html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[1]+'</td>';
                 html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[2]+'</td>';
                 html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[3]+'</td>';
-                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[4]+'</td>';
-                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[5]+'</td>';
-                html += '    <td class="text-center colorSky " style="vertical-align:middle;border-right:2px solid black!important;">'+small_tot[6]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;border-right:2px solid black!important;">'+small_tot[4]+'</td>';
                 html += '    <td class="text-center colorSky " style="vertical-align:middle;" colspan="2"></td>';
-                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[7]+'</td>';
-                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[8]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[5]+'</td>';
+                html += '    <td class="text-center colorSky " style="vertical-align:middle;">'+small_tot[6]+'</td>';
                 html += '</tr>';
 
 				$('#rptBissSummery tbody[role=body]').html(html);
@@ -684,23 +666,19 @@ getBissSummery = function()
 				$('#rptBissSummery tbody[role=body]').yRowspan(3);
 				$('#rptBissSummery tbody[role=body]').yRowspan(4);
 				$('#rptBissSummery tbody[role=body]').yRowspan(5);
-				$('#rptBissSummery tbody[role=body]').yRowspan(6);
 //				$('#rptBissSummery tbody[role=body]').yRowspan(5);
 //				$('#rptBissSummery tbody[role=body]').yRowspan(9);
-				$('#rptBissSummery tbody[role=body]').yRowspan(7);
-				$('#rptBissSummery tbody[role=body]').yRowspan(8);
-				$('#rptBissSummery tbody[role=body]').yRowspan(12);
+				$('#rptBissSummery tbody[role=body]').yRowspan(6);
+				$('#rptBissSummery tbody[role=body]').yRowspan(10);
 
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(1).html(cntrct_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(2).html(k_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(3).html(ct_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(4).html(n_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(5).html(s_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(1).html((cntrct_sum+k_sum));
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(2).html(ct_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(3).html(n_sum);
 //				$('#rptBissSummery tbody[role=foot]').find('th').eq(6).html(flaw_sum);
 //				$('#rptBissSummery tbody[role=foot]').find('th').eq(7).html(flaw_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(6).html(cntrct_sum + ct_sum + n_sum + k_sum + s_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(8).html(flaw_sum);
-				$('#rptBissSummery tbody[role=foot]').find('th').eq(9).html(flaw_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(4).html(cntrct_sum + ct_sum + n_sum + k_sum + s_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(6).html(flaw_sum);
+				$('#rptBissSummery tbody[role=foot]').find('th').eq(7).html(flaw_sum);
                 var cells = $('#rptBissSummery tbody[role=body] td, #rptBissSummery tbody[role=body] th');
                 $.each(cells, function(pIndex, pValue){
                     let value = $(pValue).clone().children().remove().end().text();

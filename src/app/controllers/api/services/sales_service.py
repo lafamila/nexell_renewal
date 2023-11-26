@@ -754,7 +754,7 @@ def insert_ms_equip(params):
         for key in params:
             if key.endswith("[]"):
                 if key in ("dlamt[]", "dlnt[]"):
-                    data[key.replace("[]", "")] = [int(d.replace(",", "")) for d in params[key]]
+                    data[key.replace("[]", "")] = [int(d.replace(",", "")) if d.replace(",", "") != '' else 0 for d in params[key]]
                 elif key in ("expect_de[]", ):
                     data["wrhousng_de"] = params[key]
                 elif key in ("delng_sn[]", "prduct_ty_code[]"):
@@ -771,6 +771,19 @@ def insert_ms_equip(params):
             else:
                 for j, row in enumerate(data[key]):
                     input_data[j][key] = row
+
+        deletes = []
+        for i in range(len(input_data)):
+            row = input_data[i]
+            if row['dlamt'] == 0 and row['dlnt'] == 0 and row['model_no'].strip() == '':
+                deletes.append(i)
+            elif row['bcnc_sn'] == '' or int(row['bcnc_sn']) not in (74,79):
+                deletes.append(i)
+
+        for i in deletes[::-1]:
+            del input_data[i]
+
+
         for row in input_data:
             row['cntrct_sn'] = cntrct_sn
             row['prjct_sn'] = prjct_sn
@@ -778,7 +791,7 @@ def insert_ms_equip(params):
             row['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
             row['register_id'] = session['member']['member_id']
             row['delng_se_code'] = 'P'
-            row['ddt_man'] = datetime.datetime.now(timezone('Asia/Seoul'))
+            row['ddt_man'] = datetime.datetime.now(timezone('Asia/Seoul')) if int(row['bcnc_sn']) == 79 else None
             if 'delng_ty_code' not in row or row['delng_ty_code'] == '':
                 row['delng_ty_code'] = '61'
 
