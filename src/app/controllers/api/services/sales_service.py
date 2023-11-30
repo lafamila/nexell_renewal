@@ -314,6 +314,15 @@ def insert_account(params):
 
     query = """INSERT INTO account({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
     g.curs.execute(query, data)
+
+    if "cnnc_sn" in params and 'dlivy_de' in params and params["dlivy_de"] != '':
+        row = g.curs.execute("SELECT log_sn FROM stock_log WHERE delng_sn=%(cnnc_sn)s", params)
+        if row:
+            log_sns = g.curs.fetchall()
+            for log in log_sns:
+                log['dlivy_de'] = params['dlivy_de']
+            g.curs.executemany("UPDATE stock_log SET ddt_man=%(dlivy_de)s WHERE log_sn=%(log_sn)s", log_sns)
+
     return g.curs.lastrowid
 
 def update_account(params):
@@ -336,6 +345,15 @@ def update_account(params):
     sub_query = ["{0}=%({0})s".format(key) for key in data]
     query = """UPDATE account SET {} WHERE delng_sn=%(s_delng_sn)s""".format(",".join(sub_query))
     g.curs.execute(query, params)
+
+    if "cnnc_sn" in params and 'dlivy_de' in params and params["dlivy_de"] != '':
+        row = g.curs.execute("SELECT log_sn FROM stock_log WHERE delng_sn=%(cnnc_sn)s", params)
+        if row:
+            log_sns = g.curs.fetchall()
+            for log in log_sns:
+                log['dlivy_de'] = params['dlivy_de']
+            g.curs.executemany("UPDATE stock_log SET ddt_man=%(dlivy_de)s WHERE log_sn=%(log_sn)s", log_sns)
+
     row = g.curs.execute("SELECT delng_sn, sales_type, json_data FROM account_temp WHERE delng_sn=%(s_delng_sn)s", params)
     if row:
         data = g.curs.fetchone()
@@ -458,6 +476,7 @@ def get_expect_s_list(params):
     query = """SELECT GROUP_CONCAT(s.delng_sn) AS delng_sn
             , DATE_FORMAT(s.dlivy_de, '%%y-%%m') AS dlivy_de
             , s.bcnc_sn AS bcnc_sn
+            , m.mber_nm AS chrg_nm
             , s.cntrct_sn AS cntrct_sn
             , s.expect_de AS expect_de
             , (SELECT spt_nm FROM contract WHERE cntrct_sn=s.cntrct_sn) AS cntrct_nm
@@ -478,6 +497,8 @@ def get_expect_s_list(params):
     else:
         query += " FROM (SELECT * FROM account WHERE delng_se_code='S' AND delng_ty_code='12' AND expect_de >= '2019-01-01') s "
     query += """ LEFT JOIN (SELECT * FROM account WHERE delng_se_code='P') p 
+            LEFT JOIN (SELECT cntrct_sn, spt_chrg_sn, bsn_chrg_sn FROM contract WHERE 1=1) c ON p.cntrct_sn=c.cntrct_sn
+            LEFT JOIN member m ON c.spt_chrg_sn=m.mber_sn
             ON s.cnnc_sn=p.delng_sn
             WHERE 1=1
             AND s.dlivy_de IS NOT NULL
@@ -485,6 +506,7 @@ def get_expect_s_list(params):
             ORDER BY dlivy_de ASC
             """
     g.curs.execute(query)
+    print(query)
     result = g.curs.fetchall()
     return result
 
@@ -494,6 +516,7 @@ def get_expect_t_list(params):
             , t.taxbil_yn AS taxbil_yn
             , t.pblicte_trget_sn AS bcnc_sn
             , DATE_FORMAT(t.pblicte_de, '%%y-%%m') AS dlivy_de
+            , m.mber_nm AS chrg_nm
             , t.collct_de AS expect_de
             , t.cntrct_sn AS cntrct_sn
             , (SELECT spt_nm FROM contract WHERE cntrct_sn=t.cntrct_sn) AS cntrct_nm
@@ -503,6 +526,8 @@ def get_expect_t_list(params):
             , (SELECT code_nm FROM code WHERE parnts_code='DELNG_SE_CODE' AND code=t.delng_se_code) AS delng_se_nm
             , SUM(t.splpc_am + IFNULL(t.vat, 0)) AS price_total
             FROM taxbil t
+            LEFT JOIN (SELECT cntrct_sn, spt_chrg_sn, bsn_chrg_sn FROM contract WHERE 1=1) c ON t.cntrct_sn=c.cntrct_sn
+            LEFT JOIN member m ON c.spt_chrg_sn=m.mber_sn
             WHERE 1=1
             AND t.delng_se_code LIKE 'S%%' """
     if "expect_de" in params:
@@ -528,6 +553,7 @@ def get_expect_r_list(params):
     query = """SELECT t.taxbil_sn AS taxbil_sn
             , r.rcppay_de AS rcppay_de
             , r.amount AS amount
+            , m.mber_nm AS chrg_nm
             FROM (SELECT * FROM rcppay WHERE acntctgr_code IN ('108', '110', '501') AND rcppay_se_code IN ('I', 'I1', 'I2', 'I3', 'I4')) r """
     if "expect_de" in params:
         ymd = params['expect_de']
@@ -542,14 +568,19 @@ def get_expect_r_list(params):
         query += " LEFT JOIN (SELECT * FROM taxbil WHERE delng_se_code LIKE 'S%%' AND collct_de > '0000-00-00') t "
 
     query += """ ON r.cntrct_sn = t.cntrct_sn AND r.prvent_sn = t.pblicte_trget_sn AND t.taxbil_sn = r.cnnc_sn
+            LEFT JOIN (SELECT cntrct_sn, spt_chrg_sn, bsn_chrg_sn FROM contract WHERE 1=1) c ON t.cntrct_sn=c.cntrct_sn
+            LEFT JOIN member m ON c.spt_chrg_sn=m.mber_sn
             WHERE 1=1
             AND t.collct_de > '0000-00-00'
             UNION
-            SELECT taxbil_sn AS taxbil_sn
-            , rcppay_de AS rcppay_de
-            , amount
-            FROM direct
-            WHERE 1=1
+            (SELECT d.taxbil_sn AS taxbil_sn
+            , d.rcppay_de AS rcppay_de
+            , d.amount
+            , m.mber_nm AS chrg_nm
+            FROM direct d LEFT JOIN taxbil t ON d.taxbil_sn=t.taxbil_sn
+            LEFT JOIN (SELECT cntrct_sn, spt_chrg_sn, bsn_chrg_sn FROM contract WHERE 1=1) c ON t.cntrct_sn=c.cntrct_sn
+            LEFT JOIN member m ON c.spt_chrg_sn=m.mber_sn
+            WHERE 1=1)
             """
     g.curs.execute(query)
     result = g.curs.fetchall()
@@ -915,7 +946,8 @@ def insert_equipment_other_sub(params):
         data['dlnt'] = int(dlnt.replace(",", ""))
         data['pamt'] = int(damt.replace(",", ""))*int(dlnt.replace(",", "")) if damt != '' else None
         data['samt'] = data['pamt']
-        data['bcnc_sn'] = bcnc_sn
+        data['bcnc_sn'] = 355
+        data['delng_ty_code'] = 4
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
@@ -1198,6 +1230,9 @@ def insert_equipment(params):
             value = params[key].replace(",", "")
             if value == '':
                 continue
+            if cntrct_execut_code == 'E' and ct_se_code == '5':
+                continue
+
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
             cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
 
@@ -1247,6 +1282,22 @@ def insert_equipment(params):
                     VALUES(%(cntrct_sn)s, %(prjct_sn)s, %(name)s, %(date)s, %(pymnt_mth)s, %(owner)s, %(owner_telno)s, %(dam)s, %(dam_telno)s, NOW(), %(register_id)s)"""
         g.curs.execute(query, c)
         outsrc_sn = g.curs.lastrowid
+        if s != 0:
+            cost_param = {"cntrct_sn": params["cntrct_sn"], "prjct_sn": prjct["prjct_sn"], "cntrct_execut_code": 'E',
+                 "ct_se_code": '5', "qy": 1, column: -s, "extra_sn": 0,
+                 "regist_dtm": datetime.datetime.now(timezone('Asia/Seoul')),
+                 "register_id": session["member"]["member_id"], 'purchsofc_sn' : c["name"]}
+            sub_query = [key for key in cost_param]
+            params_query = ["%({})s".format(key) for key in cost_param]
+            query = """SELECT cntrwk_ct_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s AND extra_sn=0"""
+            row = g.curs.execute(query, cost_param)
+            if row:
+                cntrwk_ct_sn = g.curs.fetchone()['cntrwk_ct_sn']
+                g.curs.execute("DELETE FROM cost WHERE cntrwk_ct_sn=%s", (cntrwk_ct_sn, ))
+            query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+            g.curs.execute(query, cost_param)
+
+
 
         for item_type, item_nm, item_dlnt, item_damt, item_total in zip(c['item_type[]'], c['item_name[]'], c['item_dlnt[]'], c['item_damt[]'], c['item_total[]']):
             if item_nm != '':
@@ -1418,6 +1469,12 @@ def insert_equipment_samsung(params):
     for r in real_data:
         if r['equip_sn'] == '':
             r['equip_sn'] = None
+        if "_type" in params:
+            r['delng_ty_code']=1
+            r['bcnc_sn'] = 74
+        else:
+            r['delng_ty_code']=2
+            r['bcnc_sn'] = 100
 
     query = """INSERT INTO equipment(order_de, cntrct_sn, prdlst_se_code, model_no, dlnt, pamt, samt, bcnc_sn, cnnc_sn, delng_ty_code) 
     VALUES(NOW(), %(cntrct_sn)s, %(prdlst_se_code)s, %(model_no)s, %(dlnt)s, %(dlamt)s, %(samount)s, %(bcnc_sn)s, %(equip_sn)s, %(delng_ty_code)s) """

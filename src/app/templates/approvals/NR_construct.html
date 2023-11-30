@@ -288,9 +288,9 @@
             <th class="color-contract text-center" rowspan="2">계약금액</th>
             <th class="color-contract text-center" colspan="4">설치비</th>
             <th class="color-contract text-center" colspan="3">자재</th>
-            <th class="color-contract text-center" rowspan="2">간접비</th>
             <th class="color-contract text-center" rowspan="2">합계</th>
             <th class="color-contract text-center" rowspan="2">집행률</th>
+            <th class="color-contract text-center" rowspan="2">간접비</th>
         </tr>
         <tr>
             <th class="color-contract text-center">직접지급</th>
@@ -325,11 +325,11 @@
                 <input type="text" class="form-control text-right" data-type="number" name="completed_logi_2" readonly/>
             </td>
             <td class="text-right" name="completed_logi_total"></td>
+            <td class="text-right" name="completed_total"></td>
+            <td class="text-center" name="completed_rate"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="completed_indirect" readonly/>
             </td>
-            <td class="text-right" name="completed_total"></td>
-            <td class="text-center" name="completed_rate"></td>
         </tr>
         <tr>
             <th class="color-contract text-center">금월 집행 금액</th>
@@ -350,11 +350,11 @@
                 <input type="text" class="form-control text-right" data-type="number" name="now_logi_2"/>
             </td>
             <td class="text-right" name="now_logi_total"></td>
+            <td class="text-right" name="now_total"></td>
+            <td class="text-center" name="now_rate"></td>
             <td class="hasinput">
                 <input type="text" class="form-control text-right" data-type="number" name="now_indirect"/>
             </td>
-            <td class="text-right" name="now_total"></td>
-            <td class="text-center" name="now_rate"></td>
 
         </tr>
         <tr>
@@ -366,9 +366,9 @@
             <td class="text-right" name="total_completed_logi_1"></td>
             <td class="text-right" name="total_completed_logi_2"></td>
             <td class="text-right" name="total_completed_logi_total"></td>
-            <td class="text-right" name="total_indirect"></td>
             <td class="text-right" name="total_completed_total"></td>
             <td class="text-center" name="total_completed_rate"></td>
+            <td class="text-right" name="total_indirect"></td>
         </tr>
     </tbody>
 </table>
@@ -932,7 +932,7 @@
         $(this).find(`[name="completed_logi_total"]`).html(completed_logi_total.toFormat('NUMBER'));
         var completed_indirect = getValue($(this).find(`[name="completed_indirect"]`), false);
 
-        var completed_total = completed_est_total + completed_logi_total + completed_indirect;
+        var completed_total = completed_est_total + completed_logi_total;
         $(this).find(`[name="completed_total"]`).html(completed_total.toFormat('NUMBER'));
         var completed_rate = (completed_total*100.0/outsrc_cntrct_amount);
         $(this).find(`[name="completed_rate"]`).html(completed_rate.toFixed(1)+"%");
@@ -947,7 +947,7 @@
         var now_logi_total = now_logi_1 + now_logi_2;
         $(this).find(`[name="now_logi_total"]`).html(now_logi_total.toFormat('NUMBER'));
         var now_indirect = getValue($(this).find(`[name="now_indirect"]`), false);
-        var now_total = now_est_total + now_logi_total + now_indirect;
+        var now_total = now_est_total + now_logi_total;
         $(this).find(`[name="now_total"]`).html(now_total.toFormat('NUMBER'));
         var now_rate = (now_total*100.0/outsrc_cntrct_amount);
         $(this).find(`[name="now_rate"]`).html(now_rate.toFixed(1)+"%");
@@ -968,7 +968,7 @@
         var total_indirect = completed_indirect + now_indirect;
         $(this).find(`[name="total_indirect"]`).html(total_indirect.toFormat('NUMBER'));
         $(this).find(`[name="total_completed_logi_total"]`).html(total_completed_logi_total.toFormat('NUMBER'));
-        var total_completed_total = total_completed_est_total + total_completed_logi_total + total_indirect;
+        var total_completed_total = total_completed_est_total + total_completed_logi_total;
         $(this).find(`[name="total_completed_total"]`).html(total_completed_total.toFormat('NUMBER'));
         var total_completed_rate = (total_completed_total*100.0/outsrc_cntrct_amount);
         $(this).find(`[name="total_completed_rate"]`).html(total_completed_rate.toFixed(1)+"%");

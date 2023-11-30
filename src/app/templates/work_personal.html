@@ -447,4 +447,157 @@ $(function() {
 	getWorkPersonal();
 });
 </script>
+
+<div class="modal fade" data-backdrop="static" id="popReport1">
+    <div class="modal-dialog modal-w1200" style="width:65%!important;">
+        <div class="modal-content">
+			<div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+				</div>
+				<div class="pull-right" style="margin-right:10px;width:150px;">
+					<div class="input-group">
+						<input class="form-control datepicker" type="text" style="z-index:1050!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="r2_s_ddt_man" name="r2_s_ddt_man">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-body report">
+
+
+<div id="rpt9">
+<div class="title"><h2 class="colorLS" id="titles">휴가 사용 내역</h2></div>
+<style>
+
+    #rpt6 .table>tbody>tr>td, #rpt6 .table>tbody>tr>th, #rpt6 .table>tfoot>tr>td, #rpt6 .table>tfoot>tr>th, #rpt6 .table>thead>tr>td, #rpt6 .table>thead>tr>th {
+        line-height: 0.5 !important;
+    }
+	#popReport1 .colorB{
+		background-color:skyblue!important;
+		color:black!important;
+	}
+    #popReport1 .colorTotal{
+        background-color: rgb(204, 255, 204)!important;
+    }
+
+</style>
+<style>
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #popReport1 div.report table th,
+    #popReport1 div.report table td {
+        font-size: 8px!important;
+        padding: 7px 5px!important;
+        line-height: 1.0!important;
+    }
+}
+</style>
+<!-- 기성 현황 시작 -->
+<table id="vacation_detail_report" class="table table-bordered w100p">
+     <colgroup>
+        <col width="50">
+
+        <col width="100">
+        <col width="80">
+        <col width="200">
+    </colgroup>
+    <thead>
+		<tr>
+            <th class="colorB">#</th>
+            <th class="colorB">일시</th>
+            <th class="colorB">유형</th>
+            <th class="colorB" style="border-right:2px solid #555!important;">사유</th>
+		</tr>
+    </thead>
+    <tbody role="body">
+
+	</tbody>
+    <tfoot>
+        <tr>
+            <th class="colorB" colspan="3">총 사용 휴가 수</th>
+            <th class="colorB text-right" id="total_usage">0.0</th>
+        </tr>
+    </tfoot>
+<!--    <tfoot>-->
+<!--        <tr class="amount">-->
+<!--            <th class="colorSky text-center" colspan="2" style="border-right:2px solid #555!important;">합계</th>-->
+<!--            <td class="colorSky text-number" colspan="4" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="3" style="border-right:2px solid #555!important;"></td>-->
+<!--            <td class="colorSky text-number" colspan="1"></td>-->
+<!--        </tr>-->
+<!--    </tfoot>-->
+
+</table>
+</div><!-- 기성 현황 끝 -->
+
+
+			</div><!--modal-body-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+
+
+<script>
+getWorkPersonalDetail = function(s_ddt_man)
+{
+	var params = '';
+	params += '&s_ddt_man=' + s_ddt_man;
+
+	$.ajax({
+		url: '/api/work/ajax_get_vacation_report',
+		type: 'POST',
+		data: params,
+		success: function(pResult) {
+			console.log('getStockMonth', pResult);
+			if (pResult.status) {
+                var html = '';
+                var total_usage = 0.0;
+                $.each(pResult.data, function(pIndex, pValue){
+                    html += `<tr>
+                                <td class="text-center">${pIndex+1}</td>
+                                <td class="text-center">${pValue.vacation_de}</td>
+                                <td class="text-center">${pValue.type_nm}</td>
+                                <td class="text-left">${pValue.content}</td>
+                             </tr>`;
+                    total_usage += pValue.value;
+                });
+                $("#vacation_detail_report").find("tbody").html(html);
+                $("#vacation_detail_report").find("#total_usage").html(total_usage.toFixed(1));
+			}
+		}
+	});
+}
+$(function() {
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('show.bs.modal', function(pEvent) {
+		var modal = $(this);
+		if (modal.find('#r2_s_ddt_man').val() == '') {
+			modal.find('#r2_s_ddt_man').datepicker('setDate', 'today');
+		}
+		getWorkPersonalDetail(modal.find('#r2_s_ddt_man').val());
+	});
+
+    /**************************************************************************
+     *
+     */
+	$('#popReport1').on('change', '#r2_s_ddt_man', function(pEvent) {
+		getWorkPersonalDetail($(this).val());
+	});
+
+	$('#btnPrint1').on('click', function(pEvent) {
+		var html = $('#popReport1').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+
+});
+
+</script>
 {% endblock %}
+

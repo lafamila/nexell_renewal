@@ -263,3 +263,38 @@ def get_today(params):
     g.curs.execute(query, data)
     result = g.curs.fetchone()
     return result
+
+def get_vacation_report(params):
+    s_year = params['s_ddt_man'].split("-")[0]
+    params["s_start"] = "{}-01-01".format(s_year)
+    params["s_end"] = "{}-12-31".format(s_year)
+    query = """SELECT vacation_de
+                    , etc1 AS content
+                    , vacation_type
+                    , IF(vacation_type IN (1, 4, 7), 1.0, 0.5) AS value
+                    FROM vacation
+                    WHERE mber_sn=%(mber_sn)s
+                    AND vacation_type IN (1, 2, 3, 4, 5, 6, 7)
+                    AND vacation_de BETWEEN %(s_start)s AND %(s_end)s
+                    ORDER BY vacation_de"""
+    g.curs.execute(query, params)
+    result = g.curs.fetchall()
+    for r in result:
+        _type = int(r['vacation_type'])
+        if _type in (1, 2, 3):
+            _frm = "연차{}"
+        elif _type in (4, 5, 6):
+            _frm = "병가{}"
+        else:
+            _frm = "특별휴가"
+        if _type in (1, 4):
+            r['type_nm'] = _frm.format("")
+        elif _type in (2, 5):
+            r['type_nm'] = _frm.format(" / 오전반차")
+        elif _type in (3, 6):
+            r['type_nm'] = _frm.format(" / 오후반차")
+        else:
+            r['type_nm'] = _frm
+    return result
+
+

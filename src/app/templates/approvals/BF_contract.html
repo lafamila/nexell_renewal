@@ -334,7 +334,7 @@
             success: function(pResult){
                 console.log(pResult);
                 var cntrct_amount_total = 0, cntrct_fee_amount_total = 0;
-                cloneRow("construct_tr", pResult.cCostList.length-1);
+                cloneRow("construct_tr", $(document).find(`tr[data-row="construct_tr"]`).length - pResult.cCostList.length);
                 $.each(pResult.cCostList, function(pIndex, pValue){
                     $("tbody[role='construct_row']").find(`[name="model_no[]"]`).eq(pIndex).val(pValue.model_no);
                     $("tbody[role='construct_row']").find(`[name="qy[]"]`).eq(pIndex).val(pValue.qy.toFormat('NUMBER'));
@@ -343,7 +343,7 @@
                     $("tbody[role='construct_row']").find(`[name="rate[]"]`).eq(pIndex).val(pValue.fee_rt+"%");
                 });
                 $("tbody[role='construct_row']").trigger("change");
-                cloneRow("construct_expect_tr", pResult.cCostListExtra.length-1);
+                cloneRow("construct_expect_tr", $(document).find(`tr[data-row="construct_expect_tr"]`).length - pResult.cCostListExtra.length);
                 $.each(pResult.cCostListExtra, function(pIndex, pValue){
                     var cntrct_amount = Math.round(pValue.puchas_amount * ((100 - pValue.dscnt_rt) / 100.0) * pValue.qy);
                     var cntrct_fee_amount = cntrct_amount * (pValue.fee_rt / 100.0);

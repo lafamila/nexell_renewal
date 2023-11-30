@@ -198,6 +198,7 @@
                         <col width="120">
                         <col width="220">
                         <col width="80">
+                        <col width="80">
                         <col width="100">
                         <col width="100">
                         <col width="100">
@@ -211,13 +212,14 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th class="colorG" colspan="14">입금</th>
+                    <th class="colorG" colspan="15">입금</th>
                 </tr>
                 <tr>
                     <th class="colorG">출고월</th>
                     <th class="colorG">거래처명</th>
                     <th class="colorG">현장명</th>
                     <th class="colorG">부서</th>
+                    <th class="colorG">담당</th>
                     <th class="colorG">장비대</th>
                     <th class="colorG">자재</th>
                     <th class="colorG">설치비</th>
@@ -235,7 +237,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th class="colorG" style="" colspan="4">합계</th>
+                    <th class="colorG" style="" colspan="5">합계</th>
                     <th class="colorG text-number"></th>
                     <th class="colorG text-number"></th>
                     <th class="colorG text-number"></th>
@@ -701,7 +703,7 @@ getSalesExpectReport = function(){
 		url: '/api/sales/ajax_get_sales_expect_report',
 		type: 'GET',
 		data: params,
-		timeout: 7200000,
+		timeout: 1000,
 		async: false,
 		dataType: 'json',
 		success: function (pTable) {
@@ -726,6 +728,7 @@ getSalesExpectReport = function(){
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.bcnc_nm+'</td>';
 				html += '    <td class="text-left"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.cntrct_nm+'</td>';
 				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.dept_nm+'</td>';
+				html += '    <td class=""><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+pValue.chrg_nm+'</td>';
 				html += '    <td class="text-number">'+price_1.toString().toFormat('NUMBER')+'</td>';
 				html += '    <td class="text-number">'+price_2.toString().toFormat('NUMBER')+'</td>';
 				html += '    <td class="text-number"><span data-cntrct="'+pValue.cntrct_sn+'" data-sn="'+pValue.taxbil_sn+'"></span>'+price_3.toString().toFormat('NUMBER')+'</td>';
@@ -743,14 +746,15 @@ getSalesExpectReport = function(){
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(1);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(2);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(3);
-			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(6);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(4);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(7);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(8);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(9);
 			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(10);
-			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(13);
-			var prices = $(document).find(`#rcppay_status_summary`).find("tbody[role='body']").find("tr").calculation(4, 8);
-			var rPrices = $(document).find(`#rcppay_status_summary`).find("tbody[role='body']").find("tr").calculation(12, 13);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(11);
+			$(document).find(`#rcppay_status_summary`).find("tbody[role='body']").yRowspan(14);
+			var prices = $(document).find(`#rcppay_status_summary`).find("tbody[role='body']").find("tr").calculation(5, 9);
+			var rPrices = $(document).find(`#rcppay_status_summary`).find("tbody[role='body']").find("tr").calculation(13, 14);
 			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(1).html(prices[0].toFormat('NUMBER'));
 			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(2).html(prices[1].toFormat('NUMBER'));
 			$(document).find(`#rcppay_status_summary`).find("tfoot").find("th").eq(3).html(prices[2].toFormat('NUMBER'));

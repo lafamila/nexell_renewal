@@ -146,3 +146,19 @@ def ajax_today():
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+
+
+@bp.route('/ajax_get_vacation_report', methods=['POST'])
+def ajax_get_vacation_report():
+    # try:
+        params = request.form.to_dict()
+        print(params)
+        params['mber_sn'] = session['member']['member_sn']
+        result = dict()
+        result['data'] = wk.get_vacation_report(params)
+        result['status'] = True
+        return jsonify(result)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)

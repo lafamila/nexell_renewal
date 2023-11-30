@@ -327,7 +327,7 @@ def get_kisung_suju(params):
 				, cd.code_nm AS dept_nm
 				FROM (
 				SELECT 1 AS sort
-				, mb.dept_code AS dept
+				, IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, SUM(IFNULL(1m,0)) AS m01
 				, SUM(IFNULL(2m,0)) AS m02
 				, SUM(IFNULL(3m,0)) AS m03
@@ -358,7 +358,7 @@ def get_kisung_suju(params):
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code = '2'
 				AND mb.dept_code <> 'PM'
-				GROUP BY mb.dept_code
+				GROUP BY dept
 				UNION
 				SELECT 2 AS sort
 				, t.dept
@@ -376,7 +376,7 @@ def get_kisung_suju(params):
 				, SUM(IFNULL(t.m12,0)) AS m12
 				, IFNULL(SUM(t.m01),0)+IFNULL(SUM(t.m02),0)+IFNULL(SUM(t.m03),0)+IFNULL(SUM(t.m04),0)+IFNULL(SUM(t.m05),0)+IFNULL(SUM(t.m06),0)+IFNULL(SUM(t.m07),0)+IFNULL(SUM(t.m08),0)+IFNULL(SUM(t.m09),0)+IFNULL(SUM(t.m10),0)+IFNULL(SUM(t.m11),0)+IFNULL(SUM(t.m12),0) AS total
 				FROM (
-				SELECT mb.dept_code AS dept
+				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-01-01'), mb.mber_sn, 'M') AS m01
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-02-01'), mb.mber_sn, 'M') AS m02
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-03-01'), mb.mber_sn, 'M') AS m03
@@ -396,7 +396,7 @@ def get_kisung_suju(params):
 				) t
 				GROUP BY t.dept
 				) sj
-				JOIN code cd
+				JOIN (SELECT parnts_code, code, code_nm, code_ordr FROM code WHERE 1=1 UNION SELECT 'GOAL_DEPT_CODE' AS parnts_code, 'ETC' AS code, '기타' AS code_nm, 999 AS code_ordr FROM code) cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
 				ORDER BY IF(sj.dept = 'ST', 0, 1), cd.code_ordr, sj.sort"""
     g.curs.execute(query)
@@ -408,7 +408,7 @@ def get_kisung_sales(params):
 				, cd.code_nm AS dept_nm
 				FROM (
 				SELECT 1 AS sort
-				, mb.dept_code AS dept
+				, IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, SUM(IFNULL(1m,0)) AS m01
 				, SUM(IFNULL(2m,0)) AS m02
 				, SUM(IFNULL(3m,0)) AS m03
@@ -428,7 +428,7 @@ def get_kisung_sales(params):
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code IN ('3','8')
 				AND mb.dept_code <> 'PM'
-				GROUP BY mb.dept_code
+				GROUP BY dept
 				UNION
 				SELECT 2 AS sort
 				, t.dept
@@ -446,7 +446,7 @@ def get_kisung_sales(params):
 				, IFNULL(SUM(t.m12),0) AS m12
 				, IFNULL(SUM(t.m01),0)+IFNULL(SUM(t.m02),0)+IFNULL(SUM(t.m03),0)+IFNULL(SUM(t.m04),0)+IFNULL(SUM(t.m05),0)+IFNULL(SUM(t.m06),0)+IFNULL(SUM(t.m07),0)+IFNULL(SUM(t.m08),0)+IFNULL(SUM(t.m09),0)+IFNULL(SUM(t.m10),0)+IFNULL(SUM(t.m11),0)+IFNULL(SUM(t.m12),0) AS total
 				FROM (
-				SELECT mb.dept_code AS dept
+				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-01-01'), mb.mber_sn),0) AS m01
 				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-02-01'), mb.mber_sn),0) AS m02
 				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-03-01'), mb.mber_sn),0) AS m03
@@ -464,7 +464,7 @@ def get_kisung_sales(params):
 				WHERE 1
 				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
 				UNION
-				SELECT mb.dept_code AS dept
+				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, IFNULL(SUM(1m),0) AS m01
 				, IFNULL(SUM(2m),0) AS m02
 				, IFNULL(SUM(3m),0) AS m03
@@ -484,11 +484,11 @@ def get_kisung_sales(params):
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code = '9'
 				AND mb.dept_code <> 'PM'
-				GROUP BY mb.dept_code
+				GROUP BY dept
 				) t
 				GROUP BY t.dept
 				) sj
-				JOIN code cd
+				JOIN (SELECT parnts_code, code, code_nm, code_ordr FROM code WHERE 1=1 UNION SELECT 'GOAL_DEPT_CODE' AS parnts_code, 'ETC' AS code, '기타' AS code_nm, 999 AS code_ordr FROM code) cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
 				ORDER BY cd.code_ordr, sj.sort"""
     g.curs.execute(query)
@@ -499,7 +499,7 @@ def get_kisung_va(params):
 				, cd.code_nm AS dept_nm
 				FROM (
 				SELECT 1 AS sort
-				, mb.dept_code AS dept
+				, IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, SUM(IFNULL(1m, 0)) AS m01
 				, SUM(IFNULL(2m, 0)) AS m02
 				, SUM(IFNULL(3m, 0)) AS m03
@@ -519,7 +519,7 @@ def get_kisung_va(params):
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code IN ('5','8')
 				AND mb.dept_code <> 'PM'
-				GROUP BY mb.dept_code
+				GROUP BY dept
 				UNION
 				SELECT 2 AS sort
 				, t.dept
@@ -537,7 +537,7 @@ def get_kisung_va(params):
 				, SUM(t.m12) AS m12
 				, SUM(t.total) AS total
 				FROM (
-				SELECT mb.dept_code AS dept
+				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-01'), mb.mber_sn)) AS m01
 				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-02'), mb.mber_sn)) AS m02
 				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-03'), mb.mber_sn)) AS m03
@@ -553,9 +553,9 @@ def get_kisung_va(params):
 				, SUM(GET_VA_TOTAL_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn)) AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
-				GROUP BY mb.dept_code
+				GROUP BY dept
 				UNION
-				SELECT mb.dept_code AS dept
+				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, SUM(1m) AS m01
 				, SUM(2m) AS m02
 				, SUM(3m) AS m03
@@ -575,11 +575,11 @@ def get_kisung_va(params):
 				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
 				AND go.amt_ty_code = '9'
 				AND mb.dept_code <> 'PM'
-				GROUP BY mb.dept_code
+				GROUP BY dept
 				) t
 				GROUP BY t.dept
 				) sj
-				JOIN code cd
+				JOIN (SELECT parnts_code, code, code_nm, code_ordr FROM code WHERE 1=1 UNION SELECT 'GOAL_DEPT_CODE' AS parnts_code, 'ETC' AS code, '기타' AS code_nm, 999 AS code_ordr FROM code) cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
 				ORDER BY cd.code_ordr, sj.sort"""
     g.curs.execute(query)

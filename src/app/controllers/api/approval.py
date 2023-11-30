@@ -120,6 +120,10 @@ def ajax_insert_approval():
                 if required_member not in coop_list:
                     return make_response("해당 품의는 필수 협조자[권은미]가 지정되어야 합니다.")
 
+        elif int(params['approval_ty_code']) in (15, ):
+            required_member = 21
+            if required_member not in coop_list:
+                return make_response("해당 품의는 필수 협조자[이학용]가 지정되어야 합니다.", 501)
 
 
         else:

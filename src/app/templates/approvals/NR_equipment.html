@@ -219,9 +219,13 @@
             <td class="hasinput">
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
+                    {%  if init %}
+                    <option value="74">74.삼성장비</option>
+                    {%  else %}
 `                    {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                     {% endfor %}
+                    {%  endif %}
 `                </select>
             </td>
             <td class="hasinput">
@@ -316,9 +320,13 @@
             <td class="hasinput">
                 <select class="form-control select2" name="bcnc_sn_other[]" style="width:100%!important;">
                     <option value=""></option>
-                    {% for code in bcnc_list %}
+                    {%  if init %}
+                    <option value="100">100.타사장비</option>
+                    {%  else %}
+`                    {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                     {% endfor %}
+                    {%  endif %}
                 </select>
             </td>
             <td class="hasinput">

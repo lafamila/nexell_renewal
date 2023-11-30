@@ -28,11 +28,12 @@ def disconnect(response):
     g.db.close()
     return response
 
-def make_row(cntrct_sn, dlivy_de, bcnc_nm, cntrct_nm, dept_nm, price_1, price_2, price_3, price_sum, price_4, delng_se_nm, expect_de, rcppay_de, rcppay_amount, diff, taxbil_sn='', taxbil_yn='Y', bcnc_sn='', sales_expect_de=''):
+def make_row(cntrct_sn, dlivy_de, bcnc_nm, cntrct_nm, dept_nm, price_1, price_2, price_3, price_sum, price_4, delng_se_nm, expect_de, rcppay_de, rcppay_amount, diff, taxbil_sn='', taxbil_yn='Y', bcnc_sn='', sales_expect_de='', chrg_nm=''):
     data = {}
     data['cntrct_sn'] = cntrct_sn
     data['dlivy_de'] = dlivy_de
     data['bcnc_nm'] = bcnc_nm
+    data['chrg_nm'] = chrg_nm
     data['cntrct_nm'] = cntrct_nm
     data['dept_nm'] = dept_nm
     data['price_1'] = price_1
@@ -430,15 +431,15 @@ def ajax_get_sales_expect_report():
                         data = make_row(s_rows[i]['cntrct_sn'], s_rows[i]['dlivy_de'], s_rows[i]['bcnc_nm'], s_rows[i]['cntrct_nm'],
                                         s_rows[i]['dept_nm'], s_rows[i]['price_1'], s_rows[i]['price_2'], price_3, s_rows[i]['price_1']+s_rows[i]['price_2']+p3,
                                         t['price_total'], t['delng_se_nm'], expect_de, r_rows[i]['rcppay_de'],
-                                        r_rows[i]['amount'], diff, taxbil_sn, taxbil_yn, s_rows[i]['bcnc_sn'], s_rows[i]['expect_de'])
+                                        r_rows[i]['amount'], diff, taxbil_sn, taxbil_yn, s_rows[i]['bcnc_sn'], s_rows[i]['expect_de'], chrg_nm=s_rows[i]['chrg_nm'])
                     elif i < len(r_rows):
                         data = make_row(t['cntrct_sn'], '', t['bcnc_nm'], t['cntrct_nm'], t['dept_nm'], 0, 0, price_3, p3, t['price_total'],
                                         t['delng_se_nm'], expect_de, r_rows[i]['rcppay_de'], r_rows[i]['amount'], diff,
-                                        taxbil_sn, taxbil_yn, '', '')
+                                        taxbil_sn, taxbil_yn, '', '', chrg_nm=t['chrg_nm'])
                     else:
                         data = make_row(s_rows[i]['cntrct_sn'], s_rows[i]['dlivy_de'], s_rows[i]['bcnc_nm'], s_rows[i]['cntrct_nm'],
                                         s_rows[i]['dept_nm'], s_rows[i]['price_1'], s_rows[i]['price_2'], price_3, s_rows[i]['price_1']+s_rows[i]['price_2']+p3,
-                                        t['price_total'], t['delng_se_nm'], expect_de, '', '', diff, taxbil_sn, taxbil_yn, s_rows[i]['bcnc_sn'], s_rows[i]['expect_de'])
+                                        t['price_total'], t['delng_se_nm'], expect_de, '', '', diff, taxbil_sn, taxbil_yn, s_rows[i]['bcnc_sn'], s_rows[i]['expect_de'], chrg_nm=s_rows[i]['chrg_nm'])
                     total_long_result[order].append(data)
             elif key in s_dict:
                 s_rows = s_dict[key]
@@ -446,7 +447,7 @@ def ajax_get_sales_expect_report():
                 for i in range(len(s_rows)):
                     data = make_row(s_rows[i]['cntrct_sn'], s_rows[i]['dlivy_de'], s_rows[i]['bcnc_nm'], s_rows[i]['cntrct_nm'],
                                     s_rows[i]['dept_nm'], s_rows[i]['price_1'], s_rows[i]['price_2'], '', s_rows[i]['price_1']+s_rows[i]['price_2'], '', '', expect_de, '',
-                                    '', (s_rows[i]['price_1'] + s_rows[i]['price_2']), '', '', s_rows[i]['bcnc_sn'], s_rows[i]['expect_de'])
+                                    '', (s_rows[i]['price_1'] + s_rows[i]['price_2']), '', '', s_rows[i]['bcnc_sn'], s_rows[i]['expect_de'], chrg_nm=s_rows[i]['chrg_nm'])
                     total_long_result[order].append(data)
             else:
                 t = t_dict[key]
@@ -463,7 +464,7 @@ def ajax_get_sales_expect_report():
                 if len(r_rows) == 0:
                     data = make_row(t['cntrct_sn'], t['dlivy_de'], t['bcnc_nm'], t['cntrct_nm'], t['dept_nm'], 0, 0, price_3, price_3,
                                     t['price_total'], t['delng_se_nm'], expect_de, '',
-                                    '', diff, taxbil_sn, taxbil_yn, '', '')
+                                    '', diff, taxbil_sn, taxbil_yn, '', '', chrg_nm=t['chrg_nm'])
                     total_long_result[order].append(data)
 
                 for i in range(len(r_rows)):
@@ -471,7 +472,7 @@ def ajax_get_sales_expect_report():
                     data = {}
                     data = make_row(t['cntrct_sn'], t['dlivy_de'], t['bcnc_nm'], t['cntrct_nm'], t['dept_nm'], 0, 0, price_3, p3,
                                     t['price_total'], t['delng_se_nm'], expect_de, r_rows[i]['rcppay_de'],
-                                    r_rows[i]['amount'], diff, taxbil_sn, taxbil_yn, '', '')
+                                    r_rows[i]['amount'], diff, taxbil_sn, taxbil_yn, '', '', chrg_nm=t['chrg_nm'])
                     total_long_result[order].append(data)
 
         for key in total_long_result:
