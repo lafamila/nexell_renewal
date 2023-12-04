@@ -136,6 +136,22 @@ def update_approval(params):
     data.append(params['approval_sn'])
     g.curs.execute(query, data)
 
+    if int(data[0]) == 1 and session['member']['member_sn'] == 63:
+        member_list = get_approval_member(params)
+        member_list = [m for m in member_list if m['reg_type'] in (0, 1)]
+        _next = False
+        for m in member_list:
+            if _next and m['mber_sn'] == 4 and int(m['reg_type']) == 1:
+                g.curs.execute("UPDATE approval_member SET approval_status_code=1, update_dtm=NOW() WHERE mber_sn=4 AND approval_sn=%s", params['approval_sn'])
+                break
+            if m['mber_sn'] == session['member']['member_sn']:
+                _next = True
+                continue
+            else:
+                _next = False
+
+
+
 def get_approval_datatable(params):
     query = """SELECT distinct a.approval_sn
 				, a.approval_ty_code

@@ -8,7 +8,7 @@
 <!--# contents style end                                                   #-->
 <!--########################################################################-->
 <style type="text/css">
-tbody .btnUpdate, tbody .btnPrint{
+tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
     line-height: 0.3!important;
     padding: 3px 7px!important;
 }
@@ -106,7 +106,7 @@ tbody .btnUpdate, tbody .btnPrint{
 									<col width="110">
 									<col width="110">
 									<col width="100">
-									<col width="1">
+									<col width="100">
 								</colgroup>
 								<thead>
 									<!-- 검색 -->
@@ -315,6 +315,9 @@ getSalesApprovalList = function()
                       html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-eq_sn="'+row.eq_sn+'">';
                       html += '		<i class="fa fa-edit"></i>';
                       html += '	</button>';
+                      html += '	<button class="btn btn-table btn-danger btnDelete" title="삭제" data-eq_sn="'+row.eq_sn+'">';
+                      html += '		<i class="fa fa-trash"></i>';
+                      html += '	</button>';
                       html += '</div>';
 					return html;
 				}
@@ -359,6 +362,20 @@ getSalesApprovalList = function()
 				var eq_sn = $(this).data('eq_sn');
 				$('#popBox1').find("#eq_sn").val(eq_sn);
 				$('#popBox1').modal('show');
+			});
+			$(myList).on('click', '.btnDelete', function(pEvent) {
+				var eq_sn = $(this).data('eq_sn');
+				if(confirm("정말 삭제하시겠습니까?")){
+					$.ajax({
+						url : '/api/sales/delete_equip',
+						method: 'POST',
+						data: {"eq_sn" : eq_sn},
+						success: function(pResult){
+							alert("삭제되었습니다.");
+							$.datatable1.ajax.reload();
+						}
+					})
+				}
 			});
 			$(myList).on('change', 'thead input.form-control', function(pEvent){
 				if ($(this).data('before')) {

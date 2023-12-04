@@ -103,6 +103,7 @@ def get_sales_approval_datatable(params):
                     WHERE 1=1
                     AND ((e.dlivy_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or e.dlivy_de IS NULL)
                     AND before_dlnt < dlnt
+                    AND deleted = 0
                     """.format(params['s_ddt_man_start'], params['s_ddt_man_end'])
     data = []
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
@@ -704,6 +705,7 @@ def insert_ms_BF_equip(params):
         for i in deletes[::-1]:
             del input_data[i]
 
+        print(input_data)
         for row in input_data:
             row['cntrct_sn'] = cntrct_sn
             row['prjct_sn'] = prjct_sn
@@ -711,7 +713,7 @@ def insert_ms_BF_equip(params):
             row['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
             row['register_id'] = session['member']['member_id']
             row['delng_se_code'] = 'P'
-            row['ddt_man'] = datetime.datetime.now(timezone('Asia/Seoul'))
+            row['ddt_man'] = datetime.datetime.now(timezone('Asia/Seoul')) if int(row['bcnc_sn']) == 79 else None
 
         sub_query = [key for key in input_data[0]]
         params_query = ["%({})s".format(key) for key in input_data[0]]
@@ -1234,7 +1236,11 @@ def insert_equipment(params):
                 continue
 
             column = "puchas_amount" if cntrct_execut_code == 'E' else "salamt"
-            cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
+            if cntrct_execut_code == 'E' and ct_se_code == '8':
+
+                cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"], "cost_type" : "2"})
+            else:
+                cost_data.append({"cntrct_sn" : params["cntrct_sn"], "prjct_sn" : prjct["prjct_sn"], "cntrct_execut_code" : cntrct_execut_code, "ct_se_code" : ct_se_code, "qy" : 1, column : int(value), "extra_sn" : 0, "regist_dtm" : datetime.datetime.now(timezone('Asia/Seoul')), "register_id" : session["member"]["member_id"]})
 
 
     for data in cost_data:

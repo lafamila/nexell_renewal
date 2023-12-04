@@ -1605,6 +1605,9 @@ def set_reserve_data(params):
         params['r_sn'] = result['r_sn']
     g.curs.execute("UPDATE reserved SET {}=%(data)s WHERE r_sn=%(r_sn)s".format(params['column']), params)
 
+def delete_equipment(params):
+    g.curs.execute("UPDATE equipment SET deleted=1 WHERE eq_sn=%(eq_sn)s", params)
+
 def get_equipment(params):
     g.curs.execute("""SELECT eq_sn
                             , order_de

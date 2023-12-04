@@ -528,6 +528,7 @@
                         $(pRow).find(`[name="model_no_already[]"]`).val(pValue.model_no);
                         $(pRow).find(`[name="delng_ty_code_already[]"]`).val(pValue.delng_ty_code);
                         $(pRow).find(`[name="cnt_dlnt_already[]"]`).val(pValue.cnt_dlnt.toFormat('NUMBER'));
+                        $(pRow).find(`[name="dlnt_already[]"]`).html(pValue.before_dlnt.toFormat('NUMBER'));
                         $(pRow).find(`[name="dlamt_already[]"]`).val(pValue.dlamt.toFormat('NUMBER'));
                         $(pRow).find(`[name="samount_already[]"]`).val(pValue.samount.toFormat('NUMBER'));
                         $(pRow).find(`[name="bcnc_sn_already[]"]`).yVal(pValue.bcnc_sn);
@@ -547,6 +548,7 @@
                         $(pRow).find(`[name="model_no_other_already[]"]`).val(pValue.model_no);
                         $(pRow).find(`[name="delng_ty_code_other_already[]"]`).val(pValue.delng_ty_code);
                         $(pRow).find(`[name="cnt_dlnt_other_already[]"]`).val(pValue.cnt_dlnt.toFormat('NUMBER'));
+                        $(pRow).find(`[name="dlnt_other_already[]"]`).html(pValue.before_dlnt.toFormat('NUMBER'));
                         $(pRow).find(`[name="dlamt_other_already[]"]`).val(pValue.dlamt.toFormat('NUMBER'));
                         $(pRow).find(`[name="samount_other_already[]"]`).val(pValue.samount.toFormat('NUMBER'));
                         $(pRow).find(`[name="bcnc_sn_other_already[]"]`).yVal(pValue.bcnc_sn);
@@ -817,7 +819,7 @@
         $("tbody[role='equip_already_row']").find("tr").each(function(pIndex, pRow){
             var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_already[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
             var dlamt = parseInt($(pRow).find("input[name='dlamt_already[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
-            var dlnt = parseInt($(pRow).find("[name='dlnt_already[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt_already[]']").html().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var samount = parseInt($(pRow).find("input[name='samount_already[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var amount = cnt_dlnt*dlamt;
             var yet_dlnt = cnt_dlnt - dlnt;
@@ -860,7 +862,7 @@
         $("tbody[role='equip_other_already_row']").find("tr").each(function(pIndex, pRow){
             var cnt_dlnt = parseInt($(pRow).find("input[name='cnt_dlnt_other_already[]']").val().replaceAll(",", "")); if(isNaN(cnt_dlnt)) cnt_dlnt = 0;
             var dlamt = parseInt($(pRow).find("input[name='dlamt_other_already[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
-            var dlnt = parseInt($(pRow).find("[name='dlnt_other_already[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var dlnt = parseInt($(pRow).find("[name='dlnt_other_already[]']").html().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
             var samount = parseInt($(pRow).find("input[name='samount_other_already[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
             var amount = cnt_dlnt*dlamt;
             var yet_dlnt = cnt_dlnt - dlnt;

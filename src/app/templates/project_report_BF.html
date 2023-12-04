@@ -1279,18 +1279,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var p_dc_amt = Math.round(pValue.puchas_amount * ((100 - pValue.dscnt_rt) / 100));
 						var p_dc_amt_sum = p_dc_amt * parseInt(pValue.qy);
 						var real_amt = p_dc_amt_sum * (pValue.fee_rt / 100);
-						html += '<tr>';
-						html += '    <td class="colorSky">수주계약</td>';
-						html += '    <td>' + pValue.model_no + '</td>';
-						html += '    <td class="text-center">' + pValue.qy.toString().toFormat('NUMBER') + '</td>';
-						html += '    <td class="text-number"></td>';
-						html += '    <td class="text-number">' + pValue.puchas_amount.toString().toFormat('NUMBER') + '</td>';
-						html += '    <td class="text-center">' + dscnt_rt + '</td>';
-						html += '    <td class="text-number">' + p_dc_amt.toString().toFormat('NUMBER') + '</td>';
-						html += '    <td class="text-number">' + p_dc_amt_sum.toString().toFormat('NUMBER') + '</td>';
-						html += '    <td class="text-center">' + fee_rt + '</td>';
-						html += '    <td class="text-number">' + real_amt.toString().toFormat('NUMBER') + '</td>';
-						html += '</tr>';
 						if(!base.hasOwnProperty(pValue.extra_sn)){
 							base[pValue.extra_sn] = {"real_amt_total" : 0, "p_sum_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_sell_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"};
 						}
@@ -1305,6 +1293,40 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						dlivy_sum += parseInt(pValue.puchas_amount) * parseInt(pValue.qy);
 						qy_tot += parseInt(pValue.qy);
 					});
+					$.each(cCostList, function (pIndex, pValue) {
+						var dscnt_rt = '';
+						if (pValue.dscnt_rt != '') dscnt_rt = parseFloat(pValue.dscnt_rt).toFixed(1) + '%';
+						var fee_rt = '';
+						if (pValue.fee_rt != '') fee_rt = parseFloat(pValue.fee_rt).toFixed(1) + '%';
+						var p_dc_amt = Math.round(pValue.puchas_amount * ((100 - pValue.dscnt_rt) / 100));
+						var p_dc_amt_sum = p_dc_amt * parseInt(pValue.qy);
+						var real_amt = p_dc_amt_sum * (pValue.fee_rt / 100);
+						var html_dom = $.parseHTML(html);
+						var tempDom = $('<output>').append($.parseHTML(html));
+						var target = $(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom);
+						if($(target).length > 0){
+							var qy = $(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom).eq(0).find("td").eq(2).html();
+							qy = parseInt(qy.replaceAll(",", ""));
+							if(isNaN(qy)) qy = 0;
+							qy += parseInt(pValue.qy);
+							$(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom).eq(0).find("td").eq(2).html(qy.toString().toFormat('NUMBER'));
+							html = $(tempDom).prop('innerHTML');
+						}
+						else{
+							html += `<tr data-model="${pValue.model_no}" data-puchas="${pValue.puchas_amount}" data-dscnt="${pValue.dscnt_rt}" data-salamt="${pValue.salamt}">`;
+							html += '    <td class="colorSky">수주계약</td>';
+							html += '    <td>' + pValue.model_no + '</td>';
+							html += '    <td class="text-center">' + pValue.qy.toString().toFormat('NUMBER') + '</td>';
+							html += '    <td class="text-number"></td>';
+							html += '    <td class="text-number">' + pValue.puchas_amount.toString().toFormat('NUMBER') + '</td>';
+							html += '    <td class="text-center">' + dscnt_rt + '</td>';
+							html += '    <td class="text-number">' + p_dc_amt.toString().toFormat('NUMBER') + '</td>';
+							html += '    <td class="text-number">' + p_dc_amt_sum.toString().toFormat('NUMBER') + '</td>';
+							html += '    <td class="text-center">' + fee_rt + '</td>';
+							html += '    <td class="text-number">' + real_amt.toString().toFormat('NUMBER') + '</td>';
+							html += '</tr>';
+						}
+					});
 					fee_rt_avg = (real_amt_total / p_sum_total) * 100;
 					// html += '<tr>';
 					// html += '    <td class="colorSky">확정</td>';
@@ -1318,6 +1340,14 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					// html += '    <td class="text-number color-contract">'+real_amt_total.toString().toFormat('NUMBER')+'</td>';
 					// html += '</tr>';
 					$('#popReportBF').find('tbody[role="construct_row"]').html(html);
+					$.each($('#popReportBF').find('tbody[role="construct_row"]').find("tr"), function(pIndex, pRow){
+						var qy = parseInt($(pRow).find("td").eq(2).html().replaceAll(",", ""));
+						if(isNaN(qy)) qy = 0;
+						if(qy == 0){
+							$(pRow).remove();
+						}
+					});
+
 					$('#popReportBF').find('tbody[role="construct_row"]').yRowspan(0);
 					$('#popReportBF').find('tbody[role="construct_row_total"]').show();
 					$('#popReportBF').find(`td[data-column="qy_total"]`).html(qy_tot.toString().toFormat('NUMBER'));

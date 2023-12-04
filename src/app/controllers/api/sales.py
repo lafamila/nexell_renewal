@@ -512,6 +512,16 @@ def ajax_get_sales_expect_report():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/delete_equip', methods=['POST'])
+def delete_equip():
+    try:
+        params = request.form.to_dict()
+        cm.delete_equipment(params)
+        return jsonify({"status" : True, "message" : "성공적으로 삭제되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/equip_to_account', methods=['GET'])
 def equip_to_account():
     try:
@@ -638,7 +648,7 @@ def insert_BD_ms_equip():
 
 @bp.route('/insert_ms_equip', methods=['POST'])
 def insert_ms_equip():
-    try:
+    # try:
         params = request.get_json()
         if params['msh_approval_type'] in ('S', 'B'):
             delng_sns = sales.insert_ms_equip(params)
@@ -655,16 +665,19 @@ def insert_ms_equip():
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
         else:
             sales.insert_ms_equip(params)
+            from pprint import pprint
+            pprint(params)
             for delng_sn, dlnt, invn_sttus_code, return_de in zip(params["delng_sn[]"], params["return_dlnt[]"], params["stock_place[]"], params["return_de[]"]):
-
+                if dlnt == '':
+                    continue
                 stocks = st.get_stock_by_account(delng_sn, isOut=True)
                 for s in stocks[:min(len(stocks), int(dlnt))]:
                     st.insert_log(s['stock_sn'], 1, invn_sttus_code, None, return_de)
 
             return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 
 @bp.route('/get_model_list', methods=['GET'])

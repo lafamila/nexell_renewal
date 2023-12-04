@@ -610,12 +610,12 @@ getReportNR = function(s_pxcond_mt)
                         if(pValue.CNTRCT_EXECUT_CODE == 'E' && (['1','2','3','4'].includes(pValue.ct_se_code))){
                             html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
                         }
-                        else if((pValue.spt_chrg_sn != parseInt(loginSN)) && "{{session['member']['auth_cd']}}" != "1"){
-                            html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
-                        }
-                        else{
+                        else if((pValue.spt_chrg_sn == parseInt(loginSN)) || ("{{session['member']['auth_cd']}}" == "1") || ("{{session['member']['member_sn']}}" == "63")){
 
                             html += `    <td class="text-number ${isFailedExpect} input-available" data-amount="${pValue.cntrct_amount}" data-cntrct_sn="${pValue.cntrct_sn}" data-prjct_sn="${pValue.prjct_sn}" data-bcnc_sn="${pValue.purchsofc_sn}" data-cntrct_execut_code="${pValue.cntrct_execut_code}" data-ct_se_code="${pValue.ct_se_code}" style="${(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')}">${(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))}</td>`;
+                        }
+                        else{
+                            html += '    <td class="text-number'+isFailedExpect+'" style="'+(parseInt(pValue.tax_amount) == 0? 'color:red;' : '')+'">'+(amount == 0 ? '' : amount.toString().toFormat('NUMBER'))+'</td>';
                         }
 
 
@@ -1015,8 +1015,6 @@ getReportNR = function(s_pxcond_mt)
 
 <script>
     $(document).on("dblclick", ".input-available", function(){
-        /*
-         * 8/31 기능해제
         var cntrct_sn = $(this).data("cntrct_sn");
         var prjct_sn = $(this).data("prjct_sn");
         var bcnc_sn = $(this).data("bcnc_sn");
@@ -1050,7 +1048,6 @@ getReportNR = function(s_pxcond_mt)
             }
 
         });
-        */
 
     });
 	$('#popReport').find('#s_pxcond_mt').on('change', function(pEvent) {
