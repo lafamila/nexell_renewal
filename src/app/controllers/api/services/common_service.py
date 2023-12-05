@@ -11,6 +11,10 @@ def get_bbs_datatable(params):
                     , bbs_type
                     , bbs_title
                     , reg_sn
+                    , open_always
+                    , open_st
+                    , open_ed
+                    , open_up
                     , (SELECT mber_nm FROM member WHERE mber_sn=reg_sn) AS reg_nm
                     , DATE_fORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_dtm
                     FROM bbs
@@ -31,6 +35,21 @@ def get_bbs_datatable(params):
     if "s_reg_sn" in params and params["s_reg_sn"]:
         query += " AND reg_sn = %s "
         data.append(params['s_reg_sn'])
+
+    if "s_up" in params and params["s_up"]:
+        query += " AND open_up = %s "
+        data.append(params['s_up'])
+
+    if "s_open" in params and params["s_open"]:
+        s_open = int(params["s_open"])
+        if s_open == 1:
+            query += " AND (open_always = 1 OR (NOW() BETWEEN open_st AND open_ed))"
+        elif s_open == 2:
+            query += " AND (open_always = 0 OR NOT (NOW() BETWEEN open_st AND open_ed))"
+        elif s_open == 3:
+            query += " AND open_always = 1"
+        elif s_open == 4:
+            query += " AND open_always = 0 AND open_st IS NULL AND open_ed IS NULL"
 
     return dt_query(query, data, params)
 
@@ -2087,20 +2106,28 @@ def get_outsrcs_by_contract(params):
     return result
 
 def insert_bbs(params):
-    query = """INSERT INTO bbs(bbs_type, bbs_title, bbs_content, reg_sn) VALUES(%(bbs_type)s, %(bbs_title)s, %(bbs_content)s, %(reg_sn)s)"""
+    if params["open_st"] == '':
+        params["open_st"] = None
+    if params["open_ed"] == '':
+        params["open_ed"] = None
+    query = """INSERT INTO bbs(bbs_type, bbs_title, bbs_content, reg_sn, open_always, open_st, open_ed) VALUES(%(bbs_type)s, %(bbs_title)s, %(bbs_content)s, %(reg_sn)s, %(open_always)s, %(open_st)s, %(open_ed)s)"""
     params["reg_sn"] = session["member"]['member_sn']
     g.curs.execute(query, params)
 
 def update_bbs(params):
-    query = """UPDATE bbs SET bbs_type=%(bbs_type)s, bbs_title=%(bbs_title)s, bbs_content=%(bbs_content)s WHERE bbs_sn=%(bbs_sn)s"""
+    if params["open_st"] == '':
+        params["open_st"] = None
+    if params["open_ed"] == '':
+        params["open_ed"] = None
+    query = """UPDATE bbs SET bbs_type=%(bbs_type)s, bbs_title=%(bbs_title)s, bbs_content=%(bbs_content)s, open_always=%(open_always)s, open_st=%(open_st)s, open_ed=%(open_ed)s, open_up=%(open_up)s WHERE bbs_sn=%(bbs_sn)s"""
     g.curs.execute(query, params)
 
 def get_bbs_list(params):
-    g.curs.execute("SELECT bbs_sn, bbs_type, bbs_title, bbs_content, reg_sn, m.mber_nm AS reg_nm, DATE_FORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_date FROM bbs b LEFT JOIN member m ON b.reg_sn=m.mber_sn ORDER BY reg_date DESC")
+    g.curs.execute("SELECT bbs_sn, bbs_type, bbs_title, bbs_content, reg_sn, open_always, open_st, open_ed, IF(open_always=1 OR (NOW() BETWEEN open_st AND open_ed), 1, 0) AS open_now, m.mber_nm AS reg_nm, DATE_FORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_date FROM bbs b LEFT JOIN member m ON b.reg_sn=m.mber_sn WHERE open_up=1 ORDER BY reg_date DESC")
     result = g.curs.fetchall()
     return result
 def get_bbs(params):
-    g.curs.execute("SELECT bbs_sn, bbs_type, bbs_title, bbs_content, reg_sn, m.mber_nm AS reg_nm, DATE_FORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_date FROM bbs b LEFT JOIN member m ON b.reg_sn=m.mber_sn WHERE bbs_sn=%(bbs_sn)s", params)
+    g.curs.execute("SELECT bbs_sn, bbs_type, bbs_title, bbs_content, reg_sn, open_always, open_st, open_ed, open_up, m.mber_nm AS reg_nm, DATE_FORMAT(reg_dtm, '%%Y-%%m-%%d') AS reg_date FROM bbs b LEFT JOIN member m ON b.reg_sn=m.mber_sn WHERE bbs_sn=%(bbs_sn)s", params)
     result = g.curs.fetchone()
     return result
 def delete_bbs(params):

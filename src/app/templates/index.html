@@ -1107,6 +1107,13 @@ getBBS = function()
 							<div class="table-td">${pValue.reg_nm}</div>
 							<div class="table-td">${pValue.reg_date}</div>
 						</div>`;
+                if(pValue.open_now == 1){
+                    var params = '';
+                    params += '&bbs_sn=' + pValue.bbs_sn;
+
+                    window.open("/bbs/report?"+params, "_blank");
+
+                }
 			});
 			$(document).find("#approval_status_4").html(html);
 

@@ -590,6 +590,7 @@ def get_completed_reportNR_new(params):
                          ON c.cntrct_sn=p.cntrct_sn
                          WHERE 1=1
                          # AND (c.progrs_sttus_code <> 'C' OR (c.progrs_sttus_code = 'C' AND c.update_dtm BETWEEN '{2} 00:00:00' AND '{3} 23:59:59'))
+                         AND p.prjct_sn IS NOT NULL
                          AND c.progrs_sttus_code = 'P'
                          AND c.prjct_ty_code = 'NR'
                          # AND (c.progrs_sttus_code = 'P' OR (c.progrs_sttus_code = 'C' AND c.update_dtm >= '{0} 23:59:59'))
@@ -741,6 +742,7 @@ def get_completed_reportNR_new(params):
                 human_cntrct_amounts[1] += int(outsrc['outsrc_dtls'].split("-")[2])
         human_cntrct_amount = human_cntrct_amounts[1] if human_cntrct_amounts[1] != 0 else human_cntrct_amounts[0]
         establish_cntrct_amount = establish_cntrct_amounts[1] if sum(establish_cntrct_amounts[1].values()) != 0 else establish_cntrct_amounts[0]
+        human_inserted = False
         for bcnc in bcncs:
             key = (bcnc['purchsofc_sn'], bcnc['cntrct_execut_code'])
             if key in costs:
@@ -752,6 +754,7 @@ def get_completed_reportNR_new(params):
                 ct_se_code = ''
             if bcnc['purchsofc_sn'] == 146 and bcnc['cntrct_execut_code'] == 'E':
                 cntrct_amount = human_cntrct_amount
+                human_inserted = True
             elif ct_se_code != '' and int(ct_se_code) == 5 and bcnc['cntrct_execut_code']  == 'E' and int(bcnc['purchsofc_sn']) in establish_cntrct_amount:
                 cntrct_amount = establish_cntrct_amount[int(bcnc['purchsofc_sn'])]
             bcnc.update(d)
@@ -768,9 +771,24 @@ def get_completed_reportNR_new(params):
                     cost['excut_amount'] = pxconds[key]['tax_amount']
                 if cost['purchsofc_sn'] == 146 and cost['cntrct_execut_code'] == 'E':
                     cost['cntrct_amount'] = human_cntrct_amount
+                    human_inserted = True
+
                 elif cost['ct_se_code'] != '' and int(cost['ct_se_code']) == 5 and cost['cntrct_execut_code'] == 'E' and int(cost['purchsofc_sn']) in establish_cntrct_amount:
                     cost['cntrct_amount'] = establish_cntrct_amount[int(cost['purchsofc_sn'])]
                 result_part.append(cost)
+
+        if human_cntrct_amount != 0 and not human_inserted:
+            if len(result_part) > 0:
+                raw = {key:value for key, value in result_part[-1].items()}
+                raw['cntrct_amount'] = human_cntrct_amount
+                raw['tax_amount'] = 0.0
+                raw['cntrct_execut_code'] = 'E'
+                raw['purchsofc_sn'] = 146
+                raw['purchsofc_nm'] = '일용직'
+                raw['ct_se_code'] = ''
+                raw['excut_amount'] = 0.0
+                result_part.append(raw)
+
         result_part = sorted(result_part, key=lambda d: (d['cntrct_execut_code'], CT_SE_CODE_ORDER[''] if d['ct_se_code'] == '' else CT_SE_CODE_ORDER[int(d['ct_se_code'])] if int(d['ct_se_code']) in CT_SE_CODE_ORDER else 99))
         if len(result_part) == 0:
             print('"{}"'.format(d['spt_nm']))

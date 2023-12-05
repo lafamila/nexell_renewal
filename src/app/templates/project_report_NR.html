@@ -1861,13 +1861,25 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var outsrcItem = pResult.outsrcItem;
 				var all_amt_total = 0;
                 var all_sum_total = 0;
-				var daily_total = 0;
 				var index = 1;
 				var daily_html = "";
 				var daily_item_detail = [];
 				var indirect_html = "";
 				var indirect_sum_total = 0;
 				var eCost5 = 0;
+                var daily_p_total = 0;
+                $.each(outsrcList, function(pIndex, pValue) {
+                    if ([146].includes(pValue.outsrc_fo_sn)) {
+                        //매입계산서
+                        var pTaxbilList = pValue.taxbilList;
+                        $.each(pTaxbilList, function(pIndex, pValue) {
+                            amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                            daily_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                        });
+                    }
+                });
+
+
 				$.each(outsrcList, function(pIndex, pValue){
 					if([146].includes(pValue.outsrc_fo_sn)){
 						//매입계산서
@@ -2034,6 +2046,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					if([146, 116].includes(pValue.outsrc_fo_sn)){
 						return true;
 					}
+    				var daily_total = 0;
 					html += '<tr>';
 					html += '    <th class="color-contract">도급계약사-'+index+'</th>';
 					html += '    <td colspan="3">'+pValue.outsrc_fo_nm+'</td>';
@@ -2062,173 +2075,164 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '	<th class="color-contract">공사비총액</th> ';
 					html += '</tr> ';
 					if(outsrcItem.hasOwnProperty(pValue.outsrc_fo_sn)){
-					var eCost5 = outsrcItem[pValue.outsrc_fo_sn]['e5CostList'][0];
-					var eCost5Total = 0;
-					$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pV){
-						eCost5Total += Math.round(pV.amount*pV.qy);
-					});
-					if(outsrcItem.hasOwnProperty("146") && outsrcItem["146"].hasOwnProperty('e5CostList')){
-						$.each(outsrcItem["146"]['e5CostList'], function(pIndex, pV){
-							eCost5Total += Math.round(pV.amount*pV.qy);
-						});
+					    var eCost5 = outsrcItem[pValue.outsrc_fo_sn]['e5CostList'][0];
+					    var eCost5Total = 0;
+                        $.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pV){
+                            eCost5Total += Math.round(pV.amount*pV.qy);
+                        });
+                        if(outsrcItem.hasOwnProperty("146") && outsrcItem["146"].hasOwnProperty('e5CostList')){
+                            $.each(outsrcItem["146"]['e5CostList'], function(pIndex, pV){
+                                eCost5Total += Math.round(pV.amount*pV.qy);
+                            });
 
-					}
-					if (eCost5) {
-						var eCost5_amt = Math.round(eCost5.amount / 1.1);
-						var eCost5_amt_total = eCost5_amt * eCost5.qy;
-						var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
-						var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
-						console.log('eCost5', eCost5, eCost5_amt);
-						html += '<tr> ';
-						html += '	<td class="text-center" id="eCost5_qy">'+eCost5.model_no+'</td> ';
-						html += '	<td class="text-number" id="eCost5_qy">'+eCost5.qy.toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" id="eCost5_amt">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
-						html += '	<td class="text-number" rowspan="'+(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'].length+daily_item_detail.length)+'">'+eCost5Total.toString().toFormat('NUMBER')+'</td> ';
-						html += '</tr> ';
-						$.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pValue){
-							if (pIndex != 0) {
+                        }
+                        if (eCost5) {
+                            var eCost5_amt = Math.round(eCost5.amount / 1.1);
+                            var eCost5_amt_total = eCost5_amt * eCost5.qy;
+                            var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
+                            var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
+                            console.log('eCost5', eCost5, eCost5_amt);
+                            html += '<tr> ';
+                            html += '	<td class="text-center" id="eCost5_qy">'+eCost5.model_no+'</td> ';
+                            html += '	<td class="text-number" id="eCost5_qy">'+eCost5.qy.toString().toFormat('NUMBER')+'</td> ';
+                            html += '	<td class="text-number" id="eCost5_amt">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+                            html += '	<td class="text-number" id="eCost5_amt_total">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+                            html += '	<td class="text-number" id="eCost5_vat_total">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+                            html += '	<td class="text-number" id="eCost5_sum">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+                            html += '	<td class="text-number" rowspan="'+(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'].length+daily_item_detail.length)+'">'+eCost5Total.toString().toFormat('NUMBER')+'</td> ';
+                            html += '</tr> ';
+                            $.each(outsrcItem[pValue.outsrc_fo_sn]['e5CostList'], function(pIndex, pValue){
+                                if (pIndex != 0) {
 
-								var eCost5_amt = Math.round(pValue.amount / 1.1);
-								var eCost5_amt_total = eCost5_amt * pValue.qy;
-								var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
-								var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
-								html += '<tr> ';
-								html += '	<td class="text-center">'+pValue.model_no+'</td> ';
-								html += '	<td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td> ';
-								html += '	<td class="text-number">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
-								html += '	<td class="text-number">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
-								html += '	<td class="text-number">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
-								html += '	<td class="text-number">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
-								html += '</tr> ';
-							}
-						});
-						$.each(daily_item_detail, function(pIndex, pValue){
-							html += pValue;
-						});
-						daily_item_detail = [];
-					}
-					index++;
-				}
-				html += '<tr> ';
-				html += '	<td class="color-contract">내역</td> ';
-				html += '	<td class="color-contract">인건비(50%)</td> ';
-				html += '	<td class="color-contract">직불</td> ';
-				html += '	<td class="color-contract">일용직(20%)</td> ';
-				html += '	<td class="color-contract">로지텍/타사(30%)</td> ';
-				html += '	<td class="color-contract">합계</td> ';
-				html += '	<td class="color-contract">집행률</td> ';
-				html += '</tr> ';
-				var iRcppay_total = eCost5Total;
+                                    var eCost5_amt = Math.round(pValue.amount / 1.1);
+                                    var eCost5_amt_total = eCost5_amt * pValue.qy;
+                                    var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
+                                    var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
+                                    html += '<tr> ';
+                                    html += '	<td class="text-center">'+pValue.model_no+'</td> ';
+                                    html += '	<td class="text-number">'+pValue.qy.toString().toFormat('NUMBER')+'</td> ';
+                                    html += '	<td class="text-number">'+Math.round(eCost5_amt).toString().toFormat('NUMBER')+'</td> ';
+                                    html += '	<td class="text-number">'+eCost5_amt_total.toString().toFormat('NUMBER')+'</td> ';
+                                    html += '	<td class="text-number">'+eCost5_vat_total.toString().toFormat('NUMBER')+'</td> ';
+                                    html += '	<td class="text-number">'+eCost5_sum.toString().toFormat('NUMBER')+'</td> ';
+                                    html += '</tr> ';
+                                }
+                            });
+                            $.each(daily_item_detail, function(pIndex, pValue){
+                                html += pValue;
+                            });
+                            daily_item_detail = [];
+                        }
+                        index++;
+    				}
+                    html += '<tr> ';
+                    html += '	<td class="color-contract">내역</td> ';
+                    html += '	<td class="color-contract">인건비(50%)</td> ';
+                    html += '	<td class="color-contract">직불</td> ';
+                    html += '	<td class="color-contract">일용직(20%)</td> ';
+                    html += '	<td class="color-contract">로지텍/타사(30%)</td> ';
+                    html += '	<td class="color-contract">합계</td> ';
+                    html += '	<td class="color-contract">집행률</td> ';
+                    html += '</tr> ';
+                    var iRcppay_total = eCost5Total;
 
-				var amount_total = 0;
-				var sum_total = 0;
-				var daily_p_total = 0;
-				var human_p_total = 0;
-				var direct_p_total = 0, direct_total=0;
-				var logitec_p_total = 0, logitec_total=0;
-				$.each(pValue.taxbilList, function(pIndex, pValue) {
-					console.log(pValue);
-					amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
-					human_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                    var amount_total = 0;
+                    var sum_total = 0;
+                    var human_p_total = 0;
+                    var direct_p_total = 0, direct_total=0;
+                    var logitec_p_total = 0, logitec_total=0;
+                    $.each(pValue.taxbilList, function(pIndex, pValue) {
+                        console.log(pValue);
+                        amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                        human_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
 
-				});
-				$.each(outsrcList, function(pIndex, pValue) {
-					if ([146].includes(pValue.outsrc_fo_sn)) {
-						//매입계산서
-						var pTaxbilList = pValue.taxbilList;
-						$.each(pTaxbilList, function(pIndex, pValue) {
-							amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
-							daily_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
-						});
-					}
-				});
-				if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
-					var tot = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
-					if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4){
-						tot = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
-					}
-					html += '<tr>';
-					html += '    <th class="color-contract">계약내역</th>';
-					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[0].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[1].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[2].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[3].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right">'+pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right" rowspan="4">'+((amount_total*100.0/tot).toFixed(1)+'%')+'</td>';
-					html += '</tr>';
-					sum_total = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
-					daily_total += parseInt(pValue.pymnt_mth.split("-")[2]);
-					eCost5 += (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
-					iRcppay_total = parseInt(pValue.pymnt_mth.split("-")[0]);
-					direct_total = parseInt(pValue.pymnt_mth.split("-")[1]);
-					logitec_total = parseInt(pValue.pymnt_mth.split("-")[3]);
-				}
-				else{
-					html += '<tr>';
-					html += '    <th class="color-contract">계약내역</th>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right"></td>';
-					html += '    <td class="text-right" rowspan="4"></td>';
-					html += '</tr>';
+                    });
+                    if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4){
+                        var tot = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
+                        if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4){
+                            tot = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
+                        }
+                        html += '<tr>';
+                        html += '    <th class="color-contract">계약내역</th>';
+                        html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[0].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[1].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[2].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[3].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right">'+pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right" rowspan="4">'+((amount_total*100.0/tot).toFixed(1)+'%')+'</td>';
+                        html += '</tr>';
+                        sum_total = pValue.pymnt_mth.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
+                        daily_total += parseInt(pValue.pymnt_mth.split("-")[2]);
+                        eCost5 += (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
+                        iRcppay_total = parseInt(pValue.pymnt_mth.split("-")[0]);
+                        direct_total = parseInt(pValue.pymnt_mth.split("-")[1]);
+                        logitec_total = parseInt(pValue.pymnt_mth.split("-")[3]);
+                    }
+                    else{
+                        html += '<tr>';
+                        html += '    <th class="color-contract">계약내역</th>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right"></td>';
+                        html += '    <td class="text-right" rowspan="4"></td>';
+                        html += '</tr>';
 
-				}
-				if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4) {
-					html += '<tr>';
-					html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[2].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[3].toFormat('NUMBER')+'</td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
-					html += '</tr>';
-					if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4) {
-						daily_total -= parseInt(pValue.pymnt_mth.split("-")[2]);
-						eCost5 -= (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
+                    }
+                    if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4) {
+                        html += '<tr>';
+                        html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[2].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[3].toFormat('NUMBER')+'</td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0).toFormat('NUMBER')+'</td>';
+                        html += '</tr>';
+                        if(pValue.pymnt_mth && pValue.pymnt_mth.split("-").length == 4) {
+                            daily_total -= parseInt(pValue.pymnt_mth.split("-")[2]);
+                            eCost5 -= (parseInt(pValue.pymnt_mth.split("-")[0]) + parseInt(pValue.pymnt_mth.split("-")[1]) + parseInt(pValue.pymnt_mth.split("-")[2]));
 
-					}
-					sum_total = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
-					daily_total += parseInt(pValue.outsrc_dtls.split("-")[2]);
-					eCost5 += (parseInt(pValue.outsrc_dtls.split("-")[0]) + parseInt(pValue.outsrc_dtls.split("-")[1]) + parseInt(pValue.outsrc_dtls.split("-")[2]));
-					iRcppay_total = parseInt(pValue.outsrc_dtls.split("-")[0]);
-					direct_total = parseInt(pValue.outsrc_dtls.split("-")[1]);
-					logitec_total = parseInt(pValue.outsrc_dtls.split("-")[3]);
+                        }
+                        sum_total = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
+                        daily_total += parseInt(pValue.outsrc_dtls.split("-")[2]);
+                        eCost5 += (parseInt(pValue.outsrc_dtls.split("-")[0]) + parseInt(pValue.outsrc_dtls.split("-")[1]) + parseInt(pValue.outsrc_dtls.split("-")[2]));
+                        iRcppay_total = parseInt(pValue.outsrc_dtls.split("-")[0]);
+                        direct_total = parseInt(pValue.outsrc_dtls.split("-")[1]);
+                        logitec_total = parseInt(pValue.outsrc_dtls.split("-")[3]);
 
 
-				}
-				else{
-					html += '<tr>';
-					html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-					html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
-					html += '</tr>';
+                    }
+                    else{
+                        html += '<tr>';
+                        html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+                        html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;"></td>';
+                        html += '</tr>';
 
-				}
+                    }
 
-				html += '<tr>';
-				html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">집행</th>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+human_p_total.toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+direct_p_total.toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+daily_p_total.toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+logitec_p_total.toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+amount_total.toFormat('NUMBER')+'</td>';
-				html += '</tr>';
-				html += '<tr>';
-				html += '    <th class="color-contract">잔액</th>';
-				html += '    <td class="text-right">'+(iRcppay_total-human_p_total).toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right">'+(direct_total-direct_p_total).toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right">'+(daily_total-daily_p_total).toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right">'+(logitec_total-logitec_p_total).toFormat('NUMBER')+'</td>';
-				html += '    <td class="text-right">'+(sum_total-amount_total).toFormat('NUMBER')+'</td>';
-				html += '</tr>';
+                    var daily_p = daily_p_total > daily_total ? daily_total : daily_p_total;
+                    daily_p_total -= daily_p;
+                    html += '<tr>';
+                    html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">집행</th>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+human_p_total.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+direct_p_total.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+daily_p.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+logitec_p_total.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+amount_total.toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '    <th class="color-contract">잔액</th>';
+                    html += '    <td class="text-right">'+(iRcppay_total-human_p_total).toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right">'+(direct_total-direct_p_total).toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right">'+(daily_total-daily_p).toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right">'+(logitec_total-logitec_p_total).toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right">'+(sum_total-amount_total).toFormat('NUMBER')+'</td>';
+                    html += '</tr>';
 
 
 

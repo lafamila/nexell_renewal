@@ -931,7 +931,7 @@ def chunk_upload():
             with open(save_path, 'ab') as f:
                 f.seek(CHUNK_SIZE*int(idx))
                 f.write(file.stream.read())
-            return jsonify({"status" : True})
+            return jsonify({"status" : True, "path" : "/static/files/{}".format("{}.{}".format(name, ext))})
         except Exception as e:
             return jsonify({"status" : False, "msg" : str(e)})
 

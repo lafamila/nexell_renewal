@@ -1,9 +1,148 @@
-{% extends 'common/report_base.html' %}
-{% block content %}
-<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+		<!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+
+		<title>{{title}}</title>
+		<meta name="description" content="">
+		<meta name="author" content="NerdGeeks Co.,Ltd.">
+
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
+
+		<!-- #CSS Links -->
+		<!-- Basic Styles -->
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/font-awesome.min.css">
+
+		<!-- SmartAdmin Styles : Caution! DO NOT change the order -->
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production-plugins.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-production.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/smart-admin/css/smartadmin-skins.min.css">
+
+		<!-- We recommend you use "your_style.css" to override SmartAdmin
+		     specific styles this will also ensure you retrain your customization with each SmartAdmin update. -->
+		<!-- <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell.css">
+		<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-popup.css"> -->
+		<link rel="stylesheet" type="text/css" href="/static/yawn-admin/_plugin/fakeLoader/fakeLoader.ext.css">
+		<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-s6.css">
+		<!-- <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css"> -->
+		<link rel="stylesheet" type="text/css" href="/static/yawn-admin/css/yawn-datepicker-ext.css">
+
+		<!-- #FAVICONS -->
+		<!-- <link rel="shortcut icon" href="/static/smart-admin/img/favicon/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="/static/smart-admin/img/favicon/favicon.ico" type="image/x-icon"> -->
+		<link rel="shortcut icon" href="/static/nexell/img/nexell.ico" type="image/x-icon">
+		<link rel="icon" href="/static/nexell/img/nexell.ico" type="image/x-icon">
+
+		<!-- #GOOGLE FONT -->
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+
+		<!-- #APP SCREEN / ICONS -->
+		<!-- Specifying a Webpage Icon for Web Clip
+			 Ref: https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html -->
+		<link rel="apple-touch-icon" href="/static/smart-admin/img/splash/sptouch-icon-iphone.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/static/smart-admin/img/splash/touch-icon-ipad.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/static/smart-admin/img/splash/touch-icon-iphone-retina.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/static/smart-admin/img/splash/touch-icon-ipad-retina.png">
+
+		<!-- iOS web-app metas : hides Safari UI Components and Changes Status Bar Appearance -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!-- Startup image for web apps -->
+		<link rel="apple-touch-startup-image" href="/static/smart-admin/img/splash/ipad-landscape.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
+		<link rel="apple-touch-startup-image" href="/static/smart-admin/img/splash/ipad-portrait.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+		<link rel="apple-touch-startup-image" href="/static/smart-admin/img/splash/iphone.png" media="screen and (max-device-width: 320px)">
+
+		<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script>
+			if (!window.jQuery) {
+				document.write('<script src="/static/smart-admin/js/libs/jquery-2.1.1.min.js"><\/script>');
+			}
+		</script>
+
+		{% include 'common/common_scripts.html' %}
+		<style>
+            .breadcrumb{
+                font-size:14px !important;
+            }
+            .breadcrumb>li+li:before {
+                content: "<";
+                color : #374850!important;
+            }
+            .breadcrumb>li:first-child{
+                font-size:17px !important;
+                color:#1565C0!important;
+            }
+          #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+          #my-spinner div { width: 100%; height: 100%; display: table; }
+          #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+          #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+
+        </style>
+		<script>
+			biss2text = function(val)
+			{
+				if(val == '0')
+					return 'X';
+				else if(val == '1')
+					return 'O';
+				else
+					return '해당사항없음';
+			}
+			$(document).on("click", "#btnClose", function(){
+				window.close();
+			});
+		</script>
+
+	</head>
+	<!-- Possible Classes
+
+		* 'smart-style-{SKIN#}'
+		* 'smart-rtl'         - Switch theme mode to RTL
+		* 'menu-on-top'       - Switch to top navigation (no DOM change required)
+		* 'no-menu'			  - Hides the menu completely
+		* 'hidden-menu'       - Hides the main menu but still accessable by hovering over left edge
+		* 'fixed-header'      - Fixes the header
+		* 'fixed-navigation'  - Fixes the main menu
+		* 'fixed-ribbon'      - Fixes breadcrumb
+		* 'fixed-page-footer' - Fixes footer
+		* 'container'         - boxed layout mode (non-responsive: will not work with fixed-navigation & fixed-ribbon)
+	-->
+<!--	<body class="smart-style-6 menu-on-top fixed-header fixed-navigation fixed-ribbon" style="min-width:1280px;">-->
+	<body class="smart-style-6 fixed-navigation fixed-ribbon" style="">
+<!--########################################################################-->
+<!--# header area start                                                    #-->
+<!--########################################################################-->
+
+
+		<div role="main">
+		<!-- <div id="main" role="main" style="background:#fff;"> -->
+
+{#<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">#}
+<style>
+.colorN, div.report table th.colorN, div.report table td.colorN{
+    background: #0070C0!important;
+    color: #fff!important;
+}
+div.report table th, div.report table td {
+    border: 1px solid #555!important;
+    padding: 7px!important;
+    text-align: center;
+}
+</style>
 <script src="/static/summernote/summernote-lite.js"></script>
 <script src="/static/summernote/summernote-ko-KR.js"></script>
 <link href="/static/summernote/summernote-lite.css" rel="stylesheet"/>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
 
 <!--########################################################################-->
 <!--# page layer start                                                     #-->
@@ -15,9 +154,33 @@
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
 					{% if _type == "new" %}
+				<div class="pull-left" style="margin-right:10px;width:300px;">
+					<div class="input-group">
+                        <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="open_st" name="open_st">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="open_ed" name="open_ed">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+                <label for="btnOpenAlways">항상띄우기</label>
+                <input type="checkbox" id="btnOpenAlways"/>
+                <label for="btnUp">게시</label>
+                <input type="checkbox" id="btnUp" checked/>
 					<button type="button" class="btn btn-primary" id="btnSaveBbs"><i class="fa fa-save">&nbsp;저장</i></button>
 					{% else %}
 					{% if session['member']['auth_cd'] == 1 %}
+				<div class="pull-left" style="margin-right:10px;width:300px;">
+					<div class="input-group">
+                        <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="open_st" name="open_st" disabled>
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input class="form-control datepicker" type="text" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="open_ed" name="open_ed" disabled>
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+                <label for="btnOpenAlways">항상띄우기</label>
+                <input type="checkbox" id="btnOpenAlways" disabled/>
+                <label for="btnUp">게시</label>
+                <input type="checkbox" id="btnUp" disabled/>
 					<button type="button" class="btn btn-secondary" id="btnEditBbs"><i class="fa fa-edit">&nbsp;편집</i></button>
 					<button type="button" class="btn btn-primary" id="btnSaveBbs" style="display:none!important;"><i class="fa fa-save">&nbsp;저장</i></button>
 					{% endif %}
@@ -27,203 +190,386 @@
 			</div>
 			<div class="modal-body report">
 
-<style>
-@media (min-width: 100px) and (max-width: 1024px) {
+                <style>
+                @media (min-width: 100px) and (max-width: 1024px) {
 
-    #popReport div.report table th,
-    #popReport div.report table td {
-        font-size: 8px!important;
-        padding: 7px 5px!important;
-        line-height: 1.0!important;
-    }
-}
-</style>
-				<div id="rpt">
+                    #popReport div.report table th,
+                    #popReport div.report table td {
+                        font-size: 8px!important;
+                        padding: 7px 5px!important;
+                        line-height: 1.0!important;
+                    }
+                }
+                </style>
+                                <div id="rpt">
 
-				<!-- 기성 현황 시작 -->
-				<table id="bbs" class="table table-bordered w100p">
-					<colgroup>
-						<col width="20%"/>
-						<col width="80%"/>
-					</colgroup>
-					<thead>
-						<tr>
-							<th class="colorN" colspan="2">공지사항 작성</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th class="color-contract middle">분류</th>
-							<td class="hasinput">
-								<select class="form-control select2" id="bbs_type" name="bbs_type" style="width:100%;">
-									<option value=""></option>
-									<option value="1">공지사항</option>
-									<option value="2">경조사</option>
-									<option value="3">뉴스레터</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th class="color-contract middle">제목</th>
-							<td class="hasinput">
-								<input type="text" class="form-control" id="bbs_title" name="bbs_title">
-							</td>
-						</tr>
-						<tr>
-							<th class="color-contract middle">내용</th>
-							<td class="hasinput">
-								<textarea name="bbs_content" id="bbs_content"></textarea>
-							</td>
-						</tr>
-					</tbody>
+                                <!-- 기성 현황 시작 -->
+                                <table id="bbs" class="table table-bordered w100p">
+                                    <colgroup>
+                                        <col width="20%"/>
+                                        <col width="80%"/>
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th class="colorN" colspan="2">공지사항 작성</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th class="color-contract middle">분류</th>
+                                            <td class="hasinput">
+                                                <select class="form-control select2" id="bbs_type" name="bbs_type" style="width:100%;">
+                                                    <option value=""></option>
+                                                    <option value="1">공지사항</option>
+                                                    <option value="2">경조사</option>
+                                                    <option value="3">뉴스레터</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="color-contract middle">제목</th>
+                                            <td class="hasinput">
+                                                <input type="text" class="form-control" id="bbs_title" name="bbs_title">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="color-contract middle">내용</th>
+                                            <td class="hasinput">
+                                                <textarea name="bbs_content" id="bbs_content"></textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
 
-				</table>
-				</div><!-- 기성 현황 끝 -->
-
-
-			</div><!--modal-body-->
-        </div><!--modal-content-->
-
-    </div><!--modal-dialog-->
-</div>
-<!-- 레포트1 레이어 팝업 끝 -->
-
-<script>
-
-var BBS_TYPE = {1 : "공지사항", 2: "경조사", 3:"뉴스레터"}	;
-$(document).ready(function() {
-	//여기 아래 부분
-	$('#bbs_content').summernote({
-		  height: 600,                 // 에디터 높이
-	  lang: "ko-KR",
-	  // 에디터에 커서 이동 (input창의 autofocus라고 생각하시면 됩니다.)
-	  focus : true,
-	  toolbar: [
-		    // 글꼴 설정
-		    ['fontname', ['fontname']],
-		    // 글자 크기 설정
-		    ['fontsize', ['fontsize']],
-		    // 굵기, 기울임꼴, 밑줄,취소 선, 서식지우기
-		    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
-		    // 글자색
-		    ['color', ['forecolor','color']],
-		    // 표만들기
-		    ['table', ['table']],
-		    // 글머리 기호, 번호매기기, 문단정렬
-		    ['para', ['ul', 'ol', 'paragraph']],
-		    // 줄간격
-		    ['height', ['height']],
-		    // 코드보기, 확대해서보기, 도움말
-		    ['view', ['codeview','fullscreen', 'help']]
-		  ],
-		  // 추가한 글꼴
-		fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋음체','바탕체'],
-		 // 추가한 폰트사이즈
-		fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']	});
-});
+                                </table>
+                                </div><!-- 기성 현황 끝 -->
 
 
-    getBBSReport = function(sn){
-        var params = '';
-        params += '&bbs_sn='+sn;
-		$.ajax({
-			url : '/api/common/get_bbs',
-			method : 'GET',
-			data : {"bbs_sn" : sn},
-			success : function(pResult){
-				$("#popReport").find("#btnDeleteBbs").data("sn", sn);
-				$("#popReport").find("#bbs_type").yVal(pResult.bbs_type);
-				$("#popReport").find("#bbs_title").val(pResult.bbs_title);
-				$("#popReport").find("#bbs_content").summernote('code', pResult.bbs_content);
+                            </div><!--modal-body-->
+                        </div><!--modal-content-->
 
-				$("#popReport").find("#bbs_type").attr("readonly", true);
-				$("#popReport").find("#bbs_title").attr("readonly", true);
-				$("#popReport").find("#bbs_content").summernote('disable');
+                    </div><!--modal-dialog-->
+                </div>
+                <!-- 레포트1 레이어 팝업 끝 -->
+
+                <script>
+
+                function create_chunk(editor, order, file_sn, name, file, chunk_size, start, idx){
+                    let chunk_end = Math.min(start + chunk_size , file.size );
+                    const chunk = file.slice(start, chunk_end);
+                    const form = new FormData();
+                    let filename = name.split(".")[0];
+                    let ext = name.split(".")[1];
+                    form.append('file', chunk, filename+"."+ext+"."+idx);
+                    let oReq = new XMLHttpRequest();
+                    oReq.open("POST", "/api/common/chunk_upload", true);
+                    let blob_end = chunk_end-1;
+                    let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+                    oReq.setRequestHeader("Content-Range",contentRange);
+                    oReq.onload = function(e){
+                        let pResult = JSON.parse(oReq.response);
+                        if(!pResult.status){
+                            alert(pResult.msg);
+                            return;
+                        }
+                        if(start + chunk_size < file.size){
+                            create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+                        }
+                        else{
+                          //cloneRow할자리
+
+                            $("#my-spinner").hide();
+                            $(editor).summernote('insertImage', pResult.path);
+                        }
+                    }
+                    oReq.send(form);
+                }
+
+                function uploadSummernoteImageFile(file, editor) {
+                    $("#my-spinner").show();
+                    const filesize = file.size;
+                    var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : 0};
+                    $.ajax({
+                        url : '/api/common/get_upload_file_id',
+                        method : 'POST',
+                        data : params,
+                        success: function(pResult){
+                            let name = pResult.filename;
+                            let chunk_size = pResult.filesize;
+                            let file_sn = pResult.file_sn;
+                            let ord = pResult.order;
+                            let start = 0;
+                            create_chunk(editor, ord, file_sn, name, file, chunk_size, start, 0);
+                        },
+                        error: function(){
+                            alert("오류가 발생했습니다.");
+                            location.reload();
+                        },
+                        beforeSend: function(){
+                        }
+                    });
 
 
-			},
-			error: function(pResult){
-				alert("에러가 발생했습니다.");
-			}
-		})
-    }
+                    {#var data = new FormData();#}
+                    {#data.append("file", file);#}
+                    {#$.ajax({#}
+                    {#    data : data,#}
+                    {#    type : "POST",#}
+                    {#    url : "/uploadSummernoteImageFile",#}
+                    {#    contentType : false,#}
+                    {#    processData : false,#}
+                    {#    success : function(data) {#}
+                    {#        //항상 업로드된 파일의 url이 있어야 한다.#}
+                    {#        $(editor).summernote('insertImage', data.url);#}
+                    {#    }#}
+                    {#});#}
+                }
 
-	$(function() {
-		/**************************************************************************
-		 * 인쇄 버튼 클릭 처리
-		 */
-		{% if _type == "show" %}
-		getBBSReport("{{bbs_sn}}");
-		{% endif %}
-		$('#btnPrint2').on('click', function(pEvent) {
-			var html = $('#popReport').find('.modal-body').html();
-			$('#_print').contents().find('body>div.report').html('');
-			$('#_print').contents().find('body>div.report').html(html);
-			parent.frames['_print'].focus();
-			parent.frames['_print'].print();
-		});
-	});
-{% if _type == "new" %}
-	$('#btnSaveBbs').on('click', function(pEvent) {
-		var params = {"bbs_type" : $("#popReport").find("#bbs_type").val(), "bbs_title" : $("#popReport").find("#bbs_title").val().trim(), "bbs_content" : $("#popReport").find("#bbs_content").val().trim()};
-		if(params["bbs_type"] == ''){
-			alert("분류를 선택해주세요.");
-			return false;
-		}
-		if(params["bbs_title"] == ''){
-			alert("제목을 입력해주세요.");
-			return false;
-		}
-		if(params["bbs_content"].trim() == ''){
-			alert("내용을 입력해주세요.");
-			return false;
-		}
-		$.ajax({
-			url : '/api/common/insert_bbs',
-			method : 'POST',
-			data : params,
-			success: function(pResult){
-				window.close();
-			},
-			error:function(pResult){
-				alert("심각한 오류가 발생했습니다.");
-			}
-		})
-	});
-{% else %}
-	$('#btnSaveBbs').on('click', function(pEvent) {
-		var params = {"bbs_type" : $("#popReport").find("#bbs_type").val(), "bbs_title" : $("#popReport").find("#bbs_title").val().trim(), "bbs_content" : $("#popReport").find("#bbs_content").val().trim(), "bbs_sn" : "{{bbs_sn}}"};
-		if(params["bbs_type"] == ''){
-			alert("분류를 선택해주세요.");
-			return false;
-		}
-		if(params["bbs_title"] == ''){
-			alert("제목을 입력해주세요.");
-			return false;
-		}
-		if(params["bbs_content"].trim() == ''){
-			alert("내용을 입력해주세요.");
-			return false;
-		}
-		$.ajax({
-			url : '/api/common/update_bbs',
-			method : 'POST',
-			data : params,
-			success: function(pResult){
-				window.close();
-			},
-			error:function(pResult){
-				alert("심각한 오류가 발생했습니다.");
-			}
-		})
-	});
-{% endif %}
-	$('#btnEditBbs').on('click', function(pEvent){
-		$("#btnEditBbs").hide();
-		$("#popReport").find("#bbs_type").attr("readonly", false);
-		$("#popReport").find("#bbs_title").attr("readonly", false);
-		$("#popReport").find("#bbs_content").summernote('enable');
-		$("#btnSaveBbs").show();
-	});
-</script>
-{% endblock %}
+                var BBS_TYPE = {1 : "공지사항", 2: "경조사", 3:"뉴스레터"}	;
+                $(document).ready(function() {
+                    //여기 아래 부분
+                    $('#bbs_content').summernote({
+                          height: 600,                 // 에디터 높이
+                      lang: "ko-KR",
+                      // 에디터에 커서 이동 (input창의 autofocus라고 생각하시면 됩니다.)
+                      focus : true,
+                      toolbar: [
+                            // 글꼴 설정
+                            ['fontname', ['fontname']],
+                            // 글자 크기 설정
+                            ['fontsize', ['fontsize']],
+                            // 굵기, 기울임꼴, 밑줄,취소 선, 서식지우기
+                            ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+                            // 글자색
+                            ['color', ['forecolor','color']],
+                            // 표만들기
+                            ['table', ['table']],
+                            // 글머리 기호, 번호매기기, 문단정렬
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            // 줄간격
+                            ['height', ['height']],
+                            ['insert', ['picture']],
+                            // 코드보기, 확대해서보기, 도움말
+                            ['view', ['codeview','fullscreen', 'help']]
+
+                          ],
+					{% if _type == "new" %}
+                            callbacks: {	//여기 부분이 이미지를 첨부하는 부분
+                                onImageUpload : function(files) {
+                                    uploadSummernoteImageFile(files[0],this);
+                                },
+                                onPaste: function (e) {
+                                    var clipboardData = e.originalEvent.clipboardData;
+                                    if (clipboardData && clipboardData.items && clipboardData.items.length) {
+                                        var item = clipboardData.items[0];
+                                        if (item.kind === 'file' && item.type.indexOf('image/') !== -1) {
+                                            e.preventDefault();
+                                        }
+                                    }
+                                }
+                            },
+
+                    {% endif %}
+
+                          // 추가한 글꼴
+                        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋음체','바탕체'],
+                         // 추가한 폰트사이즈
+                        fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']	});
+                });
+                    {% if _type == "new" %}
+                    $("div.note-editable").on('drop',function(e){
+                             for(let i=0; i< e.originalEvent.dataTransfer.files.length; i++){
+                                uploadSummernoteImageFile(e.originalEvent.dataTransfer.files[i],$("#bbs_content")[0]);
+                             }
+                            e.preventDefault();
+                    });
+                    {% endif %}
+
+                    getBBSReport = function(sn){
+                        var params = '';
+                        params += '&bbs_sn='+sn;
+                        $.ajax({
+                            url : '/api/common/get_bbs',
+                            method : 'GET',
+                            data : {"bbs_sn" : sn},
+                            success : function(pResult){
+                                console.log(pResult);
+                                $("#popReport").find("#btnDeleteBbs").data("sn", sn);
+                                $("#popReport").find("#bbs_type").yVal(pResult.bbs_type);
+                                $("#popReport").find("#bbs_title").val(pResult.bbs_title);
+                                $("#popReport").find("#bbs_content").summernote('code', pResult.bbs_content);
+
+                                $("#popReport").find("#bbs_type").attr("readonly", true);
+                                $("#popReport").find("#bbs_title").attr("readonly", true);
+                                $("#popReport").find("#bbs_content").summernote('disable');
+
+            					{% if session['member']['auth_cd'] == 1 %}
+                                    $(document).find("#open_st").val(pResult.open_st);
+                                    $(document).find("#open_ed").val(pResult.open_ed);
+                                    $(document).find("#btnOpenAlways").prop("checked", (pResult.open_always == 1));
+                                    $(document).find("#btnUp").prop("checked", (pResult.open_up == 1));
+                                    if(pResult.open_always == 1){
+                                        $(document).find("#open_st").attr("readonly", true);
+                                        $(document).find("#open_ed").attr("readonly", true);
+                                    }
+                                {% endif %}
+
+                            },
+                            error: function(pResult){
+                                alert("에러가 발생했습니다.");
+                            }
+                        })
+                    }
+
+                    $(function() {
+                        /**************************************************************************
+                         * 인쇄 버튼 클릭 처리
+                         */
+                        {% if _type == "show" %}
+                        getBBSReport("{{bbs_sn}}");
+                        {% endif %}
+                        $('#btnPrint2').on('click', function(pEvent) {
+                            var html = $('#popReport').find('.modal-body').html();
+                            $('#_print').contents().find('body>div.report').html('');
+                            $('#_print').contents().find('body>div.report').html(html);
+                            parent.frames['_print'].focus();
+                            parent.frames['_print'].print();
+                        });
+                    });
+                {% if _type == "new" %}
+                    $('#btnSaveBbs').on('click', function(pEvent) {
+                        var params = {"bbs_type" : $("#popReport").find("#bbs_type").val(), "bbs_title" : $("#popReport").find("#bbs_title").val().trim(), "bbs_content" : $("#popReport").find("#bbs_content").val().trim()};
+                        if(params["bbs_type"] == ''){
+                            alert("분류를 선택해주세요.");
+                            return false;
+                        }
+                        if(params["bbs_title"] == ''){
+                            alert("제목을 입력해주세요.");
+                            return false;
+                        }
+                        if(params["bbs_content"].trim() == ''){
+                            alert("내용을 입력해주세요.");
+                            return false;
+                        }
+                        var open_st = $(document).find("#open_st").val();
+                        var open_ed = $(document).find("#open_ed").val();
+                        var checked = $("#btnOpenAlways").is(":checked");
+                        var open_up = $("#btnUp").is(":checked");
+                        if(!checked){
+                            if(open_st == '' || open_ed == ''){
+                                if(!confirm("팝업 날짜를 지정하지 않으면 팝업되지 않습니다.")){
+                                    return false;
+                                }
+                                open_st = '';
+                                open_ed = '';
+                            }
+                        }
+                        else{
+                            open_st = '';
+                            open_ed = '';
+                        }
+                        params['open_st'] = open_st;
+                        params['open_ed'] = open_ed;
+                        params['open_always'] = checked ? 1 : 0;
+                        params['open_up'] = open_up ? 1 : 0;
+                        $.ajax({
+                            url : '/api/common/insert_bbs',
+                            method : 'POST',
+                            data : params,
+                            success: function(pResult){
+                                window.close();
+                            },
+                            error:function(pResult){
+                                alert("심각한 오류가 발생했습니다.");
+                            }
+                        })
+                    });
+                {% else %}
+                    $('#btnSaveBbs').on('click', function(pEvent) {
+                        var params = {"bbs_type" : $("#popReport").find("#bbs_type").val(), "bbs_title" : $("#popReport").find("#bbs_title").val().trim(), "bbs_content" : $("#popReport").find("#bbs_content").val().trim(), "bbs_sn" : "{{bbs_sn}}"};
+                        if(params["bbs_type"] == ''){
+                            alert("분류를 선택해주세요.");
+                            return false;
+                        }
+                        if(params["bbs_title"] == ''){
+                            alert("제목을 입력해주세요.");
+                            return false;
+                        }
+                        if(params["bbs_content"].trim() == ''){
+                            alert("내용을 입력해주세요.");
+                            return false;
+                        }
+                        var open_st = $(document).find("#open_st").val();
+                        var open_ed = $(document).find("#open_ed").val();
+                        var checked = $("#btnOpenAlways").is(":checked");
+                        var open_up = $("#btnUp").is(":checked");
+                        if(!checked){
+                            if(open_st == '' || open_ed == ''){
+                                if(!confirm("팝업 날짜를 지정하지 않으면 팝업되지 않습니다.")){
+                                    return false;
+                                }
+                                open_st = '';
+                                open_ed = '';
+                            }
+                        }
+                        else{
+                            open_st = '';
+                            open_ed = '';
+                        }
+                        params['open_st'] = open_st;
+                        params['open_ed'] = open_ed;
+                        params['open_always'] = checked ? 1 : 0;
+                        params['open_up'] = open_up ? 1 : 0;
+
+                        $.ajax({
+                            url : '/api/common/update_bbs',
+                            method : 'POST',
+                            data : params,
+                            success: function(pResult){
+                                window.close();
+                            },
+                            error:function(pResult){
+                                alert("심각한 오류가 발생했습니다.");
+                            }
+                        })
+                    });
+                {% endif %}
+                    $('#btnEditBbs').on('click', function(pEvent){
+                        $("#btnEditBbs").hide();
+                        $("#popReport").find("#bbs_type").attr("readonly", false);
+                        $("#popReport").find("#bbs_title").attr("readonly", false);
+                        $("#popReport").find("#bbs_content").summernote('enable');
+                        $(document).find("#open_st").attr("disabled", false);
+                        $(document).find("#open_ed").attr("disabled", false);
+                        $(document).find("#btnOpenAlways").attr("disabled", false);
+                        $(document).find("#btnUp").attr("disabled", false);
+                        $("#btnSaveBbs").show();
+                    });
+
+                    $(document).on("change", "#btnOpenAlways", function(e){
+                        var checked = $(this).is(":checked");
+                        if(checked){
+                            $(document).find("#open_st").attr("readonly", true);
+                            $(document).find("#open_ed").attr("readonly", true);
+                        }
+                        else{
+                            $(document).find("#open_st").attr("readonly", false);
+                            $(document).find("#open_ed").attr("readonly", false);
+
+                        }
+                    });
+                </script>
+		</div>
+
+
+
+
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+		<div class="yawnLoader"></div>
+		<iframe id="_download" name="_download" style="display:none;"></iframe>
+		<iframe id="_print" name="_print" src="/html/printNew.html" style="display:none;width:100%;height:300px;"></iframe>
+	</body>
+</html>
+
+

@@ -64,9 +64,10 @@
         <col width="120">
         <col width="120">
         <col width="120">
+        <col width="1">
     </colgroup>
     <thead>
-        <th class="sub-title colorN text-center" colspan="13"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
+        <th class="sub-title colorN text-center" colspan="14"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
 
             <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                 <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowStock">재고장비추가</button>
@@ -89,6 +90,7 @@
             <th class="colorP text-center">기타비용(배송/설치비)</th>
             <th class="colorP text-center">VA</th>
             <th class="colorP text-center">비고</th>
+            <th class="color-contract text-center">-</th>
         </tr>
     </tbody>
     <tbody role="equip_row" data-tr="equip_tr">
@@ -108,6 +110,7 @@
             <td class="colorG text-right" data-column="total_samount"></td>
             <td class="colorG text-right" data-column="total_etc"></td>
             <td class="colorG text-right" data-column="total_va"></td>
+            <td class="colorG"></td>
             <td class="colorG"></td>
         </tr>
     </tfoot>
@@ -289,6 +292,9 @@
                                     <option value="4">장기재고</option>
                                 </select>
                             </td>
+                            <td class="hasinput">
+                                <button class="btn btn-table btn-warning removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
 
                         </tr>`;
                 var tag = $($.parseHTML(html));
@@ -418,4 +424,12 @@
     $.fn.afterLoadApproval = function() {
     }
     {% endif %}
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+
+            $(this).closest("tr").remove();
+        {% endif %}
+        return false;
+    });
+
 </script>

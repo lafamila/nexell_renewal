@@ -790,12 +790,12 @@ getReportNR = function(s_pxcond_mt)
 //						html += '    <col width="58">';
 //						html += '    <col width="*">';
 //                html += '</colgroup>';
-				html += '<tbody role="footer_tot" style="border:3px solid #fff!important;">';
+				html += '<tbody role="footer_tot" style="border:3px solid #fff!important;" id="final_tot_blank">';
                 html += '   <tr>';
                 html += '       <td style="border:none!important;">&nbsp;</td>';
                 html += '   </tr>';
                 html += '</tbody>';
-                html += '<tbody role="footer_tot" style="border-top:3px solid #000!important;">';
+                html += '<tbody role="footer_tot" style="border-top:3px solid #000!important;" id="final_tot">';
 				html += '	<tr style="border-top:3px solid #000!important;">';
 				html += '		<th class="colorZ" rowspan="2" colspan="5"  style="border-right:2px solid black!important;">총&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계</th>';
 				html += '		<th class="colorZ">당사분</th>';
@@ -1070,16 +1070,19 @@ getReportNR = function(s_pxcond_mt)
 
         var excelHandler = {
             getExcelFileName : function(){
-                return 'test.xlsx';	//파일명
+                var today = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+
+                return `기성현황서_${today.replaceAll("-", "_")}.xlsx`;	//파일명
             },
             getSheetName : function(){
-                return 'Sheet1';	//시트명
+                return ['공조1팀', '공조2팀'];	//시트명
             },
             getExcelData : function(){
-                return document.getElementById('rptCompletedListTS1'); 	//TABLE id
+                return [document.getElementById('rptCompletedListTS1'), document.getElementById('rptCompletedListTS2')]; 	//TABLE id
             },
             getWorksheet : function(){
-                return XLSX.utils.table_to_sheet(this.getExcelData());
+                var excelData = this.getExcelData();
+                return [XLSX.utils.table_to_sheet(excelData[0]), XLSX.utils.table_to_sheet(excelData[1])];
             }
         }
 
@@ -1110,17 +1113,37 @@ getReportNR = function(s_pxcond_mt)
                     })
                 }
             });
-              var wb = XLSX.utils.book_new();
-              var newWorksheet = excelHandler.getWorksheet();
+            $("#rptCompletedListTS2").find("td, th").each(function(pIndex, pTag){
+                if($(pTag).css('display') == 'none'){
+                    $(pTag).remove();
+                }
+                else{
+                    $(pTag).find("div").each(function(pIndex, pT){
+                        if($(pT).css('display') == 'none'){
+                            $(pT).remove();
+                        }
 
+                    })
+                }
+            });
+            var final_clone = $(document).find("#final_tot").clone(true);
+            var blank_clone = $(document).find("#final_tot_blank").clone(true);
+            $(document).find("#final_tot").remove();
+            $(document).find("#final_tot_blank").remove();
+            var wb = XLSX.utils.book_new();
+              var newWorksheets = excelHandler.getWorksheet();
+              var sheets = excelHandler.getSheetName();
               // step 3. workbook에 새로만든 워크시트에 이름을 주고 붙인다.
-              XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName());
+              XLSX.utils.book_append_sheet(wb, newWorksheets[0], sheets[0]);
+              XLSX.utils.book_append_sheet(wb, newWorksheets[1], sheets[1]);
 
               // step 4. 엑셀 파일 만들기
               var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
 
               // step 5. 엑셀 파일 내보내기
               saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());
+              $(blank_clone).appendTo("#rptCompletedListTS2")
+              $(final_clone).appendTo("#rptCompletedListTS2")
         });
 	});
 

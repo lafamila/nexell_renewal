@@ -72,9 +72,10 @@
         <col width="120">
         <col width="80">
         <col width="160">
+        <col width="1">
     </colgroup>
     <thead>
-        <th class="sub-title colorN text-center" colspan="18"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
+        <th class="sub-title colorN text-center" colspan="19"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);">판매정보</span>
 
             <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                 <button type="button" class="btn btn-table btn-warning" title="재고추가" id="addRowStock">재고장비추가</button>
@@ -96,6 +97,7 @@
             <th class="colorP text-center" colspan="4">판매</th>
             <th class="colorP text-center" colspan="2">VA</th>
             <th class="colorP text-center" rowspan="3">비고</th>
+            <th class="color-contract text-center" rowspan="3">-</th>
        </tr>
        <tr>
             <th class="color-contract text-center" rowspan="2">매입일</th>
@@ -128,6 +130,7 @@
             <td class="colorG text-right" data-column="total_s"></td>
             <td class="colorG text-right" data-column="total_va"></td>
             <td class="colorG text-center" data-column="total_va_rate"></td>
+            <td class="colorG text-right"></td>
             <td class="colorG text-right"></td>
         </tr>
     </tfoot>
@@ -353,6 +356,9 @@
                                     <option value="4">장기재고</option>
                                 </select>
                             </td>
+                            <td class="hasinput">
+                                <button class="btn btn-table btn-warning removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
 
                         </tr>`;
                 var tag = $($.parseHTML(html));
@@ -511,4 +517,10 @@
     $.fn.afterLoadApproval = function() {
     }
     {% endif %}
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+            $(this).closest("tr").remove();
+        {% endif %}
+        return false;
+    });
 </script>

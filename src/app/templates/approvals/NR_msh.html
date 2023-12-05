@@ -356,6 +356,7 @@
                     console.log(pData);
                     var pResult = pData.model;
                     window.after = pData.after;
+                    if($(document).find("tbody[role='ms_house_row'] tr").length <= 1){
                     $.each(pResult, function(pIndex, pValue){
                         var trs = $(document).find("tbody[role='ms_house_row'] tr");
                         var origin = trs.eq(0).clone(true);
@@ -420,7 +421,7 @@
                         }
                         $(document).find("tbody[role='ms_house_row']").prepend($(origin));
                     });
-
+                    }
                     $(document).find("tbody[role='ms_house_row']").trigger("change");
                 }
         });

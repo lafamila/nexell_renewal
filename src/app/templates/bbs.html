@@ -166,6 +166,8 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 									<col width="*">
 									<col width="120">
 									<col width="136">
+									<col width="200">
+									<col width="120">
 									<col width="80">
 								</colgroup>
 								<thead>
@@ -195,6 +197,24 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
 											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_reg_dtm_end" name="s_reg_dtm_end" placeholder="[종료일자]">
 										</th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_open" name="s_open">
+												<option value="">[전체]</option>
+												<option value="1">현재 팝업O</option>
+												<option value="2">현재 팝업X</option>
+												<option value="3">항상 팝업O</option>
+												<option value="4">항상 팝업X</option>
+											</select>
+
+                                        </th>
+                                        <th class="hasinput">
+											<select class="form-control select2 w100p" id="s_up" name="s_up">
+												<option value="">[전체]</option>
+												<option value="1">게시</option>
+												<option value="0">게시중단</option>
+											</select>
+
+                                        </th>
 										<th class="hasinput text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
@@ -208,6 +228,8 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete{
 										<th>제목</th>
 										<th>작성자</th>
 										<th>작성일</th>
+										<th>팝업여부</th>
+										<th>게시여부</th>
 										<th class="text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-warning" title="등록" id="addBbsBtn"><i class="fa fa-plus"></i></button>
@@ -265,6 +287,8 @@ getProjectList = function()
 					's_reg_sn': $('#dtList1').find('#s_reg_sn').val(),
 					's_reg_dtm_start': $('#dtList1').find('#s_reg_dtm_start').val(),
 					's_reg_dtm_end': $('#dtList1').find('#s_reg_dtm_end').val(),
+					's_open': $('#dtList1').find('#s_open').val(),
+					's_up': $('#dtList1').find('#s_up').val(),
 				});
             },
             error: function(pJqXHR, pTextStatus, pErrorThrown) {
@@ -298,6 +322,29 @@ getProjectList = function()
             { data: 'bbs_title', className: 'text-left' },
             { data: 'reg_nm', className: 'text-center' },
             { data: 'reg_dtm', className: 'text-center' },
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+			    render: function(data, type, row, meta) {
+                    if(row.open_always == 1){
+                        return "항상";
+                    }
+                    else if(row.open_st != '' && row.open_ed != ''){
+                        return `${row.open_st} ~ ${row.open_ed}`;
+                    }
+                    else{
+                        return '';
+                    }
+				}
+			},
+            { data: 'ctmmny_sn', className: 'text-center', orderable: false,
+			    render: function(data, type, row, meta) {
+                    if(row.open_up == 1){
+                        return "게시";
+                    }
+                    else{
+                        return "게시중단";
+                    }
+				}
+			},
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
