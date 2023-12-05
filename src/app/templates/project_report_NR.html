@@ -2041,7 +2041,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					}
 
 				});
-
+				var daily_total_tot = 0;
 				$.each(outsrcList, function(pIndex, pValue) {
 					if([146, 116].includes(pValue.outsrc_fo_sn)){
 						return true;
@@ -2234,7 +2234,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
                     html += '    <td class="text-right">'+(sum_total-amount_total).toFormat('NUMBER')+'</td>';
                     html += '</tr>';
 
-
+					daily_total_tot += daily_total;
 
 
 					html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-bottom:2px solid #555!important;border-right:2px solid #555!important;">';
@@ -2371,7 +2371,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				{
 						var pValue=pResult.dailyList;
 						var splpc_am_total = 0, vat_total = 0, sum_total = 0;
-						var cntrct_amount = daily_total;
+						var cntrct_amount = daily_total_tot;
 
 						daily_html += '<tr><td colspan="4" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">';
 						daily_html += '<table style="width:100%;border:0px!important;">';
