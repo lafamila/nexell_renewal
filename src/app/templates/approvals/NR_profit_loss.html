@@ -289,7 +289,7 @@
         var E_total = E_total_again_1 + E_99_1;
         $(this).find("[name='E_total_total_1']").html(E_total.toFormat('NUMBER'));
         $(this).find("[name='va_again_1']").html((C_total - E_total).toFormat('NUMBER'));
-        $(this).find("[name='va_rate_again_1']").html(((C_total - E_total)*100.0/C_total).toFixed(1));
+        $(this).find("[name='va_rate_again_1']").html(((C_total - E_total)*100.0/C_total).toFixed(1)+"%");
     });
     $(document).on("change", "tbody[role='ct_se_code_2']", function(){
         var C_total_again_2 = parseInt($(this).find("[name='C_total_again_2']").html().replaceAll(",", "")); if(isNaN(C_total_again_2)) C_total_again_2 = 0;
@@ -301,7 +301,7 @@
         var E_total = E_total_again_2 + E_99_2;
         $(this).find("[name='E_total_total_2']").html(E_total.toFormat('NUMBER'));
         $(this).find("[name='va_again_2']").html((C_total - E_total).toFormat('NUMBER'));
-        $(this).find("[name='va_rate_again_2']").html(((C_total - E_total)*100.0/C_total).toFixed(1));
+        $(this).find("[name='va_rate_again_2']").html(((C_total - E_total)*100.0/C_total).toFixed(1)+"%");
     });
     fnValidate = function(){
                     var result = true;

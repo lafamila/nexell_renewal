@@ -408,7 +408,7 @@ getProjectList = function()
                         //if(pRow.prjct_ty_code == "NR")
                         //    dept_code += ",ST";
 
-                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-special="'+(pRow.spt_nm.endsWith("(환)") ? "1" : "0")+'" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
+                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-special="'+((pRow.spt_nm.endsWith("(환)") || pRow.spt_nm.endsWith("(에,환)")) ? "1" : "0")+'" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
                         html += '	<i class="fa fa-print"></i>'+pData;
                         html += '</button>';
 
