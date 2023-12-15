@@ -1429,6 +1429,8 @@ def insert_vacation_out(params, vacation_type):
     data['vacation_type'] = vacation_type
     for d in range((ed_de - st_de).days + 1):
         for mber_sn in params['member_sn[]']:
+            if mber_sn == '':
+                continue
             data['mber_sn'] = mber_sn
             data['vacation_de'] = (st_de + datetime.timedelta(days=d)).strftime("%Y-%m-%d")
             g.curs.execute("INSERT INTO vacation({}) VALUES ({})".format(",".join(["{}".format(key) for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
@@ -1638,11 +1640,21 @@ def get_equipment(params):
                             , samt
                             , bcnc_sn
                             , delng_ty_code
-                            , cnnc_sn
                             , dlivy_de
                             , before_dlnt
+                            , IFNULL(cnnc_sn, '') AS cnnc_sn
                     FROM equipment WHERE eq_sn=%(eq_sn)s""", params)
     result = g.curs.fetchone()
+    g.curs.execute("SELECT prjct_ty_code FROM project WHERE cntrct_sn=%(cntrct_sn)s", result)
+    prjct = g.curs.fetchone()
+    if prjct is not None and prjct['prjct_ty_code'] == 'NR' and result['cnnc_sn'] != '':
+        cnnc_sn = result['cnnc_sn']
+        g.curs.execute("SELECT GROUP_CONCAT(equip_sn, ',') AS equip_sns, e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn, SUM(e.samt) AS samount, SUM(e.cnt_dlnt) AS cnt_dlnt FROM expect_equipment e WHERE e.cntrct_sn=%(cntrct_sn)s GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn", result)
+        equips = g.curs.fetchall()
+        for e in equips:
+            if str(cnnc_sn) in e["equip_sns"].split(","):
+                result['samt'] = e['samount'] / e['cnt_dlnt']
+                break
     return result
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):

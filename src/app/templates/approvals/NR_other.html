@@ -212,9 +212,13 @@
             <td class="hasinput">
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
+                    {%  if init %}
+                    <option value="100">100.타사장비</option>
+                    {%  else %}
                     {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                     {% endfor %}
+                    {%  endif %}
                 </select>
             </td>
             <td class="hasinput">
@@ -431,9 +435,13 @@
                     } else if (pIndex == 1) {
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
+                                                {%  if init %}
+                                                <option value="100">100.타사장비</option>
+                                                {%  else %}
                                                 {% for code in bcnc_list %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                                                 {% endfor %}
+                                                {%  endif %}
                                             </select>`);
                     }
                 });

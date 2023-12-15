@@ -1282,6 +1282,7 @@ def get_s1_account_report_list(params):
 				AND s.delng_se_code = 'S'
 				AND p.delng_ty_code IN ('1')
 				AND s.delng_ty_code <> 14
+				ORDER BY s.dlivy_de ASC
 """
     g.curs.execute(query, params)
     result = g.curs.fetchall()

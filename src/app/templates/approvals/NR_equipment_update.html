@@ -291,13 +291,13 @@
             <td class="hasinput">
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
+                    {%  if init %}
+                    <option value="74">74.삼성장비</option>
+                    {%  else %}
                     {% for code in bcnc_list %}
-                    {% if code.value == 74 %}
-                    <option value="{{code.value}}" selected>{{code.value}}.{{code.label}}</option>
-                    {% else %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
-                    {% endif %}
                     {% endfor %}
+                    {%  endif %}
                 </select>
             </td>
             <td class="hasinput">
@@ -433,9 +433,13 @@
             <td class="hasinput">
                 <select class="form-control select2" name="bcnc_sn_other[]" style="width:100%!important;">
                     <option value=""></option>
+                    {%  if init %}
+                    <option value="100">100.타사장비</option>
+                    {%  else %}
                     {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                     {% endfor %}
+                    {%  endif %}
                 </select>
             </td>
             <td class="hasinput">
@@ -688,13 +692,13 @@
                     } else if (pIndex == 1) {
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
+                                                {%  if init %}
+                                                <option value="74">74.삼성장비</option>
+                                                {%  else %}
                                                 {% for code in bcnc_list %}
-                                                {% if code.value == 74 %}
-                                                <option value="{{code.value}}" selected>{{code.value}}.{{code.label}}</option>
-                                                {% else %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
-                                                {% endif %}
                                                 {% endfor %}
+                                                {%  endif %}
                                             </select>`);
                     }
                 });
@@ -762,9 +766,13 @@
                     } else if (pIndex == 1) {
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn_other[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
+                                                {%  if init %}
+                                                <option value="100">100.타사장비</option>
+                                                {%  else %}
                                                 {% for code in bcnc_list %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                                                 {% endfor %}
+                                                {%  endif %}
                                             </select>`);
                     }
                 });

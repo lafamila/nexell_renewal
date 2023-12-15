@@ -222,11 +222,11 @@
                     {%  if init %}
                     <option value="74">74.삼성장비</option>
                     {%  else %}
-`                    {% for code in bcnc_list %}
+                    {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                     {% endfor %}
                     {%  endif %}
-`                </select>
+                </select>
             </td>
             <td class="hasinput">
                 <input type="text" class="form-control text-left" name="rm[]"/>
@@ -323,7 +323,7 @@
                     {%  if init %}
                     <option value="100">100.타사장비</option>
                     {%  else %}
-`                    {% for code in bcnc_list %}
+                    {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                     {% endfor %}
                     {%  endif %}
@@ -973,9 +973,13 @@
                     } else if (pIndex == 1) {
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
+                                                {%  if init %}
+                                                <option value="74">74.삼성장비</option>
+                                                {%  else %}
                                                 {% for code in bcnc_list %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                                                 {% endfor %}
+                                                {%  endif %}
                                             </select>`);
                     }
                 });
@@ -1008,10 +1012,14 @@
                     } else if (pIndex == 1) {
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn_other[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
+                                                {%  if init %}
+                                                <option value="100">100.타사장비</option>
+                                                {%  else %}
                                                 {% for code in bcnc_list %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
                                                 {% endfor %}
-                                            </select>`);
+                                                {%  endif %}
+                                                </select>`);
                     }
                 });
                 $(document).find("tbody[role='equip_other_row']").append($(origin));
