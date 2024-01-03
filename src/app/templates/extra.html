@@ -742,8 +742,24 @@ getComp = function(comp_year)
             var html = '';
             $("#dtList2").find("tr[data-code='append']").remove();
             $.each(pResult.extra_goal, function(pIndex, pRow){
-                var tot1 = 0; for(let i=1;i<13;i++) tot1 += pRow['8'][`${i}m`];
-                var tot2 = 0; for(let i=1;i<13;i++) tot2 += pRow['9'][`${i}m`];
+                var tot1 = 0;
+                if(pRow.hasOwnProperty('8')){
+                    for(let i=1;i<13;i++) tot1 += pRow['8'][`${i}m`];
+                }
+                else{
+                    pRow['8'] = {};
+                    for(let i=1;i<13;i++) pRow['8'][`${i}m`] = 0;
+                }
+                var tot2 = 0;
+                if(pRow.hasOwnProperty('9')){
+                    for(let i=1;i<13;i++) tot2 += pRow['9'][`${i}m`];
+                }
+                else{
+                    pRow['9'] = {};
+                    for(let i=1;i<13;i++) pRow['9'][`${i}m`] = 0;
+                }
+
+
 
                 html += `<tr role="goal" data-code="append">
                             <td class="colorG bold" style="text-align:center;vertical-align:middle;">종합현황 (자동)</td>
