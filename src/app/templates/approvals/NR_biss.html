@@ -432,12 +432,12 @@
                             $.each(pData.outsrcList, function(pI, pV) {
                                 var sum_total = 0;
 
-                                // $.each(pV.taxbilList, function(pIndex, pValue){
-                                //     sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
-                                // });
-                                $.each(pV.rcppayList, function(pIndex, pValue){
-                                    sum_total += pValue.amount == '' ? 0 : parseInt(pValue.amount);
+                                $.each(pV.taxbilList, function(pIndex, pValue){
+                                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                                 });
+                                // $.each(pV.rcppayList, function(pIndex, pValue){
+                                //     sum_total += pValue.amount == '' ? 0 : parseInt(pValue.amount);
+                                // });
                                 if([116].includes(pV.outsrc_fo_sn)){
                                     indirect_sum_total += sum_total;
                                 }
@@ -446,8 +446,11 @@
 
                                 }
                             });
-                            $.each(pData.dailyList.rcppayList, function(pIndex, pValue) {
-                                all_sum_total += parseInt(pValue.amount);
+                            // $.each(pData.dailyList.rcppayList, function(pIndex, pValue) {
+                            //     all_sum_total += parseInt(pValue.amount);
+                            // });
+                            $.each(pData.dailyList.taxbilList, function(pIndex, pValue) {
+                                all_sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                             });
 
 
