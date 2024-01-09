@@ -235,7 +235,8 @@ def get_stock_datatable(params, prduct_se_code):
         data.append('%{}%'.format(params["s_rm"]))
 
     if "s_cntrct_nm" in params and params['s_cntrct_nm']:
-        query += " AND m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s"
+        query += " AND (m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s) OR (m.stock_sttus = 1 AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)) LIKE %s)"
+        data.append('%{}%'.format(params["s_cntrct_nm"]))
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
@@ -326,7 +327,8 @@ def get_stock_summary(params, prduct_se_code):
         data.append('%{}%'.format(params["s_rm"]))
 
     if "s_cntrct_nm" in params and params['s_cntrct_nm']:
-        query += " AND m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s"
+        query += " AND (m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s) OR (m.stock_sttus = 1 AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)) LIKE %s)"
+        data.append('%{}%'.format(params["s_cntrct_nm"]))
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
