@@ -1475,7 +1475,7 @@ def insert_equipment_samsung(params):
     for r in real_data:
         if r['equip_sn'] == '':
             r['equip_sn'] = None
-        if "_type" in params:
+        if "_type" not in params:
             r['delng_ty_code']=1
             r['bcnc_sn'] = 74
         else:
