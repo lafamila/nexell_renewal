@@ -2834,8 +2834,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt0 = 0;
 				}
-				execAmt0 = parseInt($('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th').eq(0).html().replaceAll(',', ''));
-				if(isNaN(execAmt0)) execAmt0 = 0;
+				//execAmt0 = parseInt($('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th').eq(0).html().replaceAll(',', ''));
+				//if(isNaN(execAmt0)) execAmt0 = 0;
 
 
 				var execAmt1 = $(execData[1]).html().replaceAll(',', '');
@@ -2894,6 +2894,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				}
 				var total12 = execAmt1 + execAmt2;
 				var total345 = execAmt3 + execAmt4 + execAmt5;
+                console.log("lafamila", execAmt0, execAmt1, execAmt2, execAmt3, execAmt4, execAmt5, execAmt6, execAmt7, execAmt8, execAmt9);
 				var vaTotal = execAmt0 - execAmt1 - execAmt2 - execAmt3 - execAmt4 - execAmt5 - execAmt6 - execAmt7 - execAmt8 - execAmt9;
 				var vaRate = (vaTotal/execAmt0)*100;
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(1)').html(total12.toString().toFormat('NUMBER'));

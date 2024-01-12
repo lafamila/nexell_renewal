@@ -414,9 +414,16 @@
                             var amt_tot = 0;
                             $.each(pData.rcppayList, function(pI, pV) {
                                 var amount_total = 0;
+                                /*
             					var iRcppayList = pV.iRcppayList;
                                 $.each(iRcppayList, function(pIndex, pValue) {
                                     amount_total += parseInt(pValue.amount);
+                                });
+                                amt_tot += amount_total;
+                                 */
+            					var sTaxbilList = pV.sTaxbilList;
+                                $.each(sTaxbilList, function(pIndex, pValue) {
+                                    amount_total += parseInt(pValue.total);
                                 });
                                 amt_tot += amount_total;
                             });
@@ -449,9 +456,9 @@
                             // $.each(pData.dailyList.rcppayList, function(pIndex, pValue) {
                             //     all_sum_total += parseInt(pValue.amount);
                             // });
-                            $.each(pData.dailyList.taxbilList, function(pIndex, pValue) {
-                                all_sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
-                            });
+                            {#$.each(pData.dailyList.taxbilList, function(pIndex, pValue) {#}
+                            {#    all_sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);#}
+                            {#});#}
 
 
 
