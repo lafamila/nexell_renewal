@@ -787,6 +787,7 @@ def get_completed_reportNR_new(params):
                 raw['purchsofc_nm'] = '일용직'
                 raw['ct_se_code'] = ''
                 raw['excut_amount'] = 0.0
+                raw['complete_amount'] = 0
                 result_part.append(raw)
 
         result_part = sorted(result_part, key=lambda d: (d['cntrct_execut_code'], CT_SE_CODE_ORDER[''] if d['ct_se_code'] == '' else CT_SE_CODE_ORDER[int(d['ct_se_code'])] if int(d['ct_se_code']) in CT_SE_CODE_ORDER else 99))
