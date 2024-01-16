@@ -215,6 +215,16 @@ def ajax_get_project():
 
 
 
+@bp.route('/ajax_get_expect_equipment_datatable', methods=['POST'])
+def ajax_get_expect_equipment_datatable():
+    try:
+        params = request.form.to_dict()
+        result = prj.get_expect_equipment_datatable(params)
+        return jsonify(result)
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
 @bp.route('/ajax_get_project_datatable', methods=['POST'])
 def ajax_get_project_datatable():
     try:
@@ -912,6 +922,25 @@ def ajax_update_renewal():
         params = request.form.to_dict()
         prj.update_renewal(params)
         return jsonify({"status": True, "message" : "성공적으로 삭제되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/insert_expect_equipment', methods=['POST'])
+def insert_expect_equipment():
+    try:
+        params = request.form.to_dict()
+        prj.insert_expect_equipment(params)
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+@bp.route('/insert_equipment_dlivy', methods=['POST'])
+def insert_equipment_dlivy():
+    try:
+        params = request.form.to_dict()
+        prj.insert_equipment_dlivy(params)
+        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
         print(e)
         return make_response(str(e), 500)

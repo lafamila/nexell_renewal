@@ -37,3 +37,8 @@ def report_BF():
     s_prjct_sn = request.args.get("s_prjct_sn")
     params = request.args.to_dict()
     return render_template('project_report_BF.html', title="프로젝트 보고서", params=params, **refresh_code_list())
+
+@bp.route('/equipment')
+@session_helper.session_check
+def equipment_page():
+    return render_template('project_equipment.html', title="계약 장비 관리 | 넥셀시스템", **refresh_code_list())

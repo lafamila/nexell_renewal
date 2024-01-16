@@ -3021,6 +3021,35 @@ def get_option_cost_list(params):
     result = g.curs.fetchone()
     return result
 
+def get_expect_equipment_datatable(params):
+    query = """SELECT GROUP_CONCAT(e.equip_sn, ',') AS eq_sns
+                        , e.model_no
+                        , e.prdlst_se_code
+                        , e.bcnc_sn
+                        , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=e.bcnc_sn) AS bcnc_nm
+                        , e.delng_ty_code
+                        , SUM(e.cnt_dlnt) AS cnt_dlnt
+                        , e.dlamt
+                        , SUM(e.samt) AS samount
+                        , e.rm
+                        , e.dlivy_amt
+                        , (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=e.prdlst_se_code) AS prdlst_se_nm
+                        , IF(q.dlivy_de='0000-00-00', '', IFNULL(q.dlivy_de, '')) AS dlivy_de
+                        , IFNULL(q.dlnt, 0) AS sdlnt
+                        , IFNULL(q.before_dlnt, 0) AS before_dlnt
+                    FROM expect_equipment e
+                    LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
+                            ON e.equip_sn=q.cnnc_sn
+                            WHERE 1=1 
+                    AND e.delng_ty_code IN ('1', '2')
+                    AND cntrct_sn = %s
+                    GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn, e.delng_ty_code HAVING SUM(e.cnt_dlnt) > 0"""
+
+    data = [params["s_cntrct_sn"]]
+    params["custom_order"] = ["delng_ty_code"]
+
+    return dt_query(query, data, params)
+
 def get_expect_equip_list(params):
 
 
@@ -3411,3 +3440,69 @@ def delete_outsrc(params):
 def update_renewal(params):
     query = """UPDATE contract SET renewal=%(renewal)s WHERE cntrct_sn=%(cntrct_sn)s"""
     g.curs.execute(query, params)
+
+def insert_equipment_dlivy(params):
+    print(params)
+
+
+    eq_sn = None
+    for eq in params["eq_sns"].split(","):
+        if eq.strip() != "":
+            eq_sn = eq.strip()
+            break
+    if eq_sn:
+        query = "SELECT e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt AS pamt, e.cntrct_sn FROM expect_equipment e WHERE e.equip_sn = %s"
+        g.curs.execute(query, eq_sn)
+        result = g.curs.fetchone()
+        result["order_de"] = params["dlivy_de"]
+        result["dlivy_de"] = params["dlivy_de"]
+        result["cnnc_sn"] = eq_sn
+        result["before_dlnt"] = params["before_dlnt"]
+        result["dlnt"] = params["before_dlnt"]
+        result["samt"] = int(params["samt"])*int(params["before_dlnt"])
+        result["dlivy_amt"] = None
+        result["reg_dtm"] = datetime.now(timezone('Asia/Seoul'))
+        print(result)
+        keys = list(result.keys())
+        columns = ", ".join(keys)
+        values = ", ".join(["%({})s".format(k) for k in keys])
+        query = "INSERT INTO equipment({}) VALUES({})".format(columns, values)
+        g.curs.execute(query, result)
+
+
+def insert_expect_equipment(params):
+    if "eq_sns" in params:
+        eq_sn = None
+        for eq in params["eq_sns"].split(","):
+            if eq.strip() != "":
+                eq_sn = eq.strip()
+                break
+        if eq_sn:
+            query = "SELECT e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn FROM expect_equipment e WHERE e.equip_sn = %s"
+            g.curs.execute(query, eq_sn)
+            result = g.curs.fetchone()
+            print(result)
+            result["cnt_dlnt"] = int(params["cnt_dlnt"])
+            result["samt"] = int(params["samt"]) * int(params["cnt_dlnt"])
+            result["reg_time"] = datetime.now(timezone('Asia/Seoul'))
+            result["rm"] = ""
+            result["dlivy_amt"] = None
+            keys = list(result.keys())
+            columns = ", ".join(keys)
+            values = ", ".join(["%({})s".format(k) for k in keys])
+            query = "INSERT INTO expect_equipment({}) VALUES({})".format(columns, values)
+            g.curs.execute(query, result)
+
+    else:
+        result = {k:v for k, v in params.items() if k != 'samount'}
+        result["cnt_dlnt"] = int(params["cnt_dlnt"])
+        result["samt"] = int(params["samount"]) * abs(int(params["cnt_dlnt"]))
+        result["reg_time"] = datetime.now(timezone('Asia/Seoul'))
+        result["rm"] = ""
+        result["dlivy_amt"] = None
+        result["delng_ty_code"] = "1" if result["bcnc_sn"] == "74" else "2"
+        keys = list(result.keys())
+        columns = ", ".join(keys)
+        values = ", ".join(["%({})s".format(k) for k in keys])
+        query = "INSERT INTO expect_equipment({}) VALUES({})".format(columns, values)
+        g.curs.execute(query, result)

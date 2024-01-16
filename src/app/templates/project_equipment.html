@@ -1,0 +1,729 @@
+{% extends 'common/main_base.html' %}
+{% block content %}
+<!--########################################################################-->
+<!--# contents style start                                                 #-->
+<!--########################################################################-->
+<style type="text/css">
+	.colorLGreen{
+		background-color:rgba(0, 255, 0, 0.2);
+		width:100%;
+		height:100%;
+	}
+	.colorLRed{
+		background-color:rgba(255, 0, 0, 0.2);
+		width:100%;
+		height:100%;
+
+	}
+tbody .btnUpdate, tbody .btnPrint, tbody .btnUpdate2{
+    line-height: 0.3!important;
+    padding: 3px 7px!important;
+}
+    tbody{
+        font-size:12px!important;
+    }
+</style>
+
+<style>
+    #summery{
+        top:63px;
+        left:720px;
+        width:400px;
+    }
+    #temp{
+        display:none;
+    }
+@media (min-width: 100px) and (max-width: 1024px) {
+
+    #summery{
+        top:150px;
+        left:13px;
+        width:400px;
+    }
+    #temp{
+        display:block;
+    }
+}
+</style>
+<!--########################################################################-->
+<!--# contents style end                                                   #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# RIBBON area start                                                    #-->
+<!--########################################################################-->
+<div id="ribbon" style="background:#B3E5FC!important;">
+	<span class="ribbon-button-alignment">
+		<span class="btn btn-ribbon"><i class="fa fa-refresh"></i></span>
+	</span>
+	<ol class="breadcrumb" style="font-size:14px !important;">
+<!--		<li>홈</li><li>계약 및 프로젝트</li><li>계약 및 프로젝트 등록</li>-->
+        <style>
+            .breadcrumb>li+li:before {
+                content: ">";
+                color : #374850!important;
+            }
+        </style>
+        <li style="font-size:17px !important;color:#1565C0!important;">계약 장비 관리 </li><li><span> 계약 / 프로젝트</span></li>
+	</ol>
+</div>
+<!--########################################################################-->
+<!--# RIBBON area end                                                      #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# contents area start                                                  #-->
+<!--########################################################################-->
+<div id="content">
+
+	<!-- 화면 제목 -->
+	<div class="row">
+		<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+<!--
+			<h1 class="page-title txt-color-blueDark">
+				<i class="fa-fw fa fa-list-alt"></i>
+					계약 및 프로젝트 등록 <span>> 계약 및 프로젝트</span>
+			</h1>
+-->
+		</div>
+		<!-- right side of the page with the sparkline graphs -->
+		<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+		</div>
+	</div>
+
+	<!-- 화면 설명 -->
+	<div class="alert alert-block alert-info" style="background:#e6faff!important;">
+		<p><i class="fa-fw fa fa-info"></i>
+			<span style="font-weight:bold!important;">공조</span> 프로젝트의 <span style="font-weight:bold!important;">장비 계약 내역</span>을 수정합니다.
+		</p>
+	</div>
+
+
+    <div id="temp">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+	<!-- 화면 내용 -->
+	<section id="widget-grid">
+
+		<div class="row">
+			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+				<!-- Widget ID (each widget will need unique ID)-->
+				<div class="jarviswidget jarviswidget-color-darken">
+					<header>
+						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
+						<h2>계약 장비 목록</h2>
+						<div class="widget-toolbar">
+<!--                            <button class="btn btn-info" data-toggle="modal" href="#popReport7"><i class="fa fa-print"> 업무일지</i></button>-->
+							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
+                            <input type="hidden" id="s_cntrct_sn" name="s_cntrct_sn" value="12460"/>
+						</div>
+					</header>
+					<!-- widget body div-->
+					<div>
+						<!-- widget edit box -->
+						<div class="jarviswidget-editbox">
+						</div>
+						<!-- end widget edit box -->
+
+						<!-- widget content -->
+						<div class="widget-body no-padding">
+							<!-- <table class="table table-bordered" style="">
+								<colgroup>
+									<col width="667">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="60">
+									<col width="120">
+									<col width="*">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="text-center"></th>
+										<th class="text-center" style="background:#ccc;">집계표</th>
+										<th class="text-center">건수</td>
+										<td class="text-center" style="background:#fff;">0</td>
+										<th class="text-center">합계</td>
+										<td class="text-number" style="background:#fff;">0</td>
+										<th class="text-center"></th>
+									</tr>
+								</thead>
+							</table> -->
+							<table class="datatable table table-bordered table-hover" id="dtList1">
+								<colgroup>
+									<col width="50">
+									<col width="150">
+									<col width="170">
+									<col width="*">
+									<col width="120">
+									<col width="1">
+									<col width="136">
+									<col width="130">
+									<col width="1">
+									<col width="130">
+									<col width="130">
+									<col width="202">
+									<col width="100">
+									<col width="100">
+									<col width="1">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="search">검색</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+{#											<input type="text" class="form-control" placeholder="[전체]" id="s_cntrct_nm" name="s_cntrct_nm">#}
+										</th>
+										<th class="hasinput" colspan="2">
+										</th>
+                                        <th class="hasinput">
+{#											<select class="form-control select2 w100p" id="s_prjct_ty_code" name="s_prjct_ty_code">#}
+{#												<option value="">[전체]</option>#}
+{#												{% for code in prjct_ty_code_list %}#}
+{#												<option value="{{code.value}}">{{code.label}}</option>#}
+{#												{% endfor %}#}
+{#											</select>#}
+										</th>
+										<th class="hasinput" colspan="2">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput">
+										</th>
+										<th class="hasinput text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
+											</div>
+										</th>
+									</tr>
+									<!-- 헤더 -->
+									<tr>
+										<th>No.</th>
+										<th>마지막 출고일</th>
+										<th>상품명</th>
+										<th>모델명</th>
+										<th class="text-center" colspan="2">계약수량</th>
+										<th>매입단가</th>
+                                        <th class="text-center" colspan="2">총출고수량</th>
+										<th>미출고수량</th>
+										<th>매입금액</th>
+										<th>매출금액</th>
+										<th>VA</th>
+										<th>매입처</th>
+										<th class="text-right">
+											<div class="btn-group">
+												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
+											</div>
+										</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+						<!-- end widget content -->
+					</div>
+					<!-- end widget body div -->
+				</div>
+				<!-- end widget -->
+
+			</article>
+		</div>
+
+	</section>
+
+</div>
+<!--########################################################################-->
+<!--# contents area end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# commom script start                                                  #-->
+<!--########################################################################-->
+<!--########################################################################-->
+<!--# common script end                                                    #-->
+<!--########################################################################-->
+
+
+<!--########################################################################-->
+<!--# page script start                                                    #-->
+<!--########################################################################-->
+<script type="text/javascript">
+/******************************************************************************
+ * 계약 목록을 조회한다.
+ */
+
+function isValidDate(dateString) {
+  var regEx = /^\d{4}-\d{2}-\d{2}$/;
+  if(!dateString.match(regEx)) return false;  // Invalid format
+  var d = new Date(dateString);
+
+  var dNum = d.getTime();
+  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+}
+
+getExpectEquipmentList = function()
+{
+    $.datatable1 = $('#dtList1').DataTable({
+		serverSide: true,
+		ordering: false,
+		pageLength: 15,
+		buttons: ['excelHtml5'],
+        ajax: {
+            url: '/api/project/ajax_get_expect_equipment_datatable',
+            type: 'POST',
+            data: function(params) {
+				return $.extend({}, params, {
+					's_cntrct_sn': $(document).find('#s_cntrct_sn').val(),
+				});
+            },
+            error: function(pJqXHR, pTextStatus, pErrorThrown) {
+                toastrError(pJqXHR);
+            }
+        },
+		order: [1, 'desc'],
+		// columnDefs: [
+        //     { targets: 4, visible: false }
+        // ],
+        columns: [
+
+            { data: 'eq_sns', className: 'text-center', orderable: false,
+                render: function(data, type, row, meta) {
+                    return `<div>${meta.settings._iDisplayStart + meta.row + 1}</div>`;
+                }
+            },
+            { data: 'dlivy_de', className: 'text-center' },
+            { data: 'prdlst_se_nm', className: 'text-center' },
+            { data: 'model_no', className: 'text-center' },
+            { data: 'cnt_dlnt', className: 'text-center',
+                render: function(data, type, row, meta) {
+                    return data.toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'eq_sns', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+                    var samount = isNaN(parseInt(row.samount)) ? 0 : parseInt(row.samount);
+                    var samt = parseInt(samount / row.cnt_dlnt);
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate" title="수정" data-sns="'+row.eq_sns+'" data-samt="'+samt+'">';
+					html += '		<i class="fa fa-plus"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},
+            { data: 'dlamt', className: 'text-number',
+                render: function(data, type, row, meta) {
+                    return data.toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'before_dlnt', className: 'text-center',
+                render: function(data, type, row, meta) {
+                    return data.toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'eq_sns', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+                    var samount = isNaN(parseInt(row.samount)) ? 0 : parseInt(row.samount);
+                    var samt = parseInt(samount / row.cnt_dlnt);
+					var html = '';
+					html += '<div class="btn-group">';
+					html += '	<button class="btn btn-table btn-info btnUpdate2" title="수정" data-sns="'+row.eq_sns+'" data-samt="'+samt+'">';
+					html += '		<i class="fa fa-plus"></i>';
+					html += '	</button>';
+					html += '</div>';
+					return html;
+				}
+			},            { data: 'before_dlnt', className: 'text-center',
+                render: function(data, type, row, meta) {
+                    return (row.cnt_dlnt - data).toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'dlamt', className: 'text-number',
+                render: function(data, type, row, meta) {
+                    return (row.dlamt*row.cnt_dlnt).toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'samount', className: 'text-number',
+                render: function(data, type, row, meta) {
+                    var samount = isNaN(parseInt(data)) ? 0 : parseInt(data);
+                    return samount.toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'samount', className: 'text-number',
+                render: function(data, type, row, meta) {
+                    var va = isNaN(parseInt(data)) ? 0 : parseInt(data) - row.dlamt*row.cnt_dlnt;
+                    return va.toString().toFormat('NUMBER');
+                }
+            },
+            { data: 'bcnc_nm', className: 'text-center' },
+            { data: 'eq_sns', className: 'hasinput text-right', orderable: false,
+			    render: function(data, type, row, meta) {
+					var html = '';
+					return html;
+				}
+			},
+		],
+		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+			{#var contract = pSettings.json.contract;#}
+			{#var count = pSettings.json.count;#}
+            {#$('#summery').find('tbody td').eq(0).html(count.total_count.toString().toFormat('NUMBER'));#}
+			{#$('#summery').find('tbody td').eq(1).html(contract.total_amount.toString().toFormat('NUMBER'));#}
+            // $('#summery').find('tbody td').eq(1).html(contract.amount.toString().toFormat('NUMBER'));
+        },
+		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
+			var myList = this;
+			$(myList).on('click', 'tbody tr', function(pEvent) {
+				if ($(this).parent().find('td.dataTables_empty').length > 0) {
+					return;
+				} else {
+					$(this).parent().find('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+
+			$(myList).on('click', '#btnSearch', function(pEvent) {
+				$.datatable1.ajax.reload();
+			});
+
+			$(myList).on('click', '.btnUpdate', function(pEvent) {
+                var eq_sns = $(this).data("sns");
+                var samt = $(this).data("samt");
+                var data = prompt("추가할 계약 수량을 입력하세요.");
+                try{
+                    if(/^-?\d+$/.test(data)){
+                        data = parseInt(data);
+                    }
+                    else{
+                        throw new Error(`Parameter is not a number : ${data}`);
+                    }
+                }catch(e){
+                    alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+                    return false;
+                }
+                $.ajax({
+                    url : '/api/project/insert_expect_equipment',
+                    method : 'POST',
+                    data : {"s_cntrct_sn" : $(document).find("#s_cntrct_sn").val(), "eq_sns" : eq_sns, "cnt_dlnt" : data, "samt" : samt},
+                    success: function(pResult){
+        				$.datatable1.ajax.reload();
+
+                    },
+                    error : function(pResult){
+                        alert("에러가 발생했습니다.");
+                    }
+                });
+
+			});
+
+			$(myList).on('click', '.btnUpdate2', function(pEvent) {
+                var eq_sns = $(this).data("sns");
+                var samt = $(this).data("samt");
+                var data = prompt("추가할 출고 수량을 입력하세요.");
+                try{
+                    if(/^-?\d+$/.test(data)){
+                        data = parseInt(data);
+                    }
+                    else{
+                        throw new Error(`Parameter is not a number : ${data}`);
+                    }
+                }catch(e){
+                    alert("숫자 형식이 아닙니다. 올바른 형식으로 입력해주세요.");
+                    return false;
+                }
+                var date = prompt("출고 날짜를 입력하세요. (yyyy-mm-dd)");
+                if(!isValidDate(date)){
+                    alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+                    return false;
+                }
+
+                $.ajax({
+                    url : '/api/project/insert_equipment_dlivy',
+                    method : 'POST',
+                    data : {"s_cntrct_sn" : $(document).find("#s_cntrct_sn").val(), "eq_sns" : eq_sns, "before_dlnt" : data, "dlivy_de" : date, "samt" : samt},
+                    success: function(pResult){
+        				$.datatable1.ajax.reload();
+
+                    },
+                    error : function(pResult){
+                        alert("에러가 발생했습니다.");
+                    }
+                });
+
+			});
+
+			$(myList).on('change', 'thead input.form-control', function(pEvent){
+				if ($(this).data('before')) {
+					if ($(this).data('before') != $(this).val()) {
+						$.datatable1.ajax.reload();
+					}
+				} else {
+					$.datatable1.ajax.reload();
+				}
+			});
+
+			$(myList).on('change', 'thead select', function(pEvent){
+				$.datatable1.ajax.reload();
+			});
+
+			$('#btnExcel').on('click', function(pEvent) {
+				$.datatable1.context[0]._iDisplayLength=0;
+				$.datatable1.ajax.reload(function(){
+					$('.dt-button.buttons-excel.buttons-html5').trigger('click');
+				});
+			});
+		},
+    });
+}
+</script>
+<script type="text/javascript">
+$(function(){
+
+	getExpectEquipmentList();
+});
+
+$(document).keyup(function(e) {
+    if (e.keyCode == 27) { // escape key maps to keycode `27`
+        $("button[data-dismiss=modal]").trigger('click');
+    }
+});
+</script>
+<!--########################################################################-->
+<!--# page script end                                                      #-->
+<!--########################################################################-->
+
+
+<style>
+#popBox1 th {
+	background: rgb(255,153,255)!important;
+}
+</style>
+
+<!-- 등록/수정 레이어 팝업 시작 -->
+<div class="modal fade" data-backdrop="static" data-action="" id="popBox1">
+    <div class="modal-dialog modal-w600">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>계약 장비 정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button type="button" class="btn btn-primary" id="btnSaveNew" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 저장</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBox1">
+							<form id="frmBox1">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="130">
+										<col width="*">
+									</colgroup>
+									<tbody>
+                                        <!--
+e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn, e.cnt_dlnt
+매출단가
+                                        -->
+										<tr>
+											<th class="required">상품명</th>
+                                            <td class="hasinput">
+                                                <select class="form-control select2 w100p" id="prdlst_se_code" name="prdlst_se_code">
+                                                    <option value="">[전체]</option>
+                                                    {% for code in prdlst_se_code_list %}
+                                                    <option value="{{code.value}}">{{code.label}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+										</tr>
+										<tr>
+											<th class="required">모델명</th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="model_no" name="model_no">
+											</td>
+										</tr>
+										<tr><th class="required-x">계약수량</th>
+											<td class="hasinput">
+												<input type="number" class="form-control" id="cnt_dlnt" name="cnt_dlnt">
+											</td>
+										</tr>
+										<tr><th class="required-x">매입단가</th>
+											<td class="hasinput">
+												<input type="number" class="form-control" id="dlamt" name="dlamt">
+											</td>
+										</tr>
+										<tr><th class="required-x">매출단가</th>
+											<td class="hasinput">
+												<input type="number" class="form-control" id="samount" name="samount">
+											</td>
+										</tr>
+										<tr>
+											<th class="required">매입처</th>
+                                            <td class="hasinput">
+                                                <select class="form-control select2 w100p" id="bcnc_sn" name="bcnc_sn">
+                                                    <option value="">[전체]</option>
+                                                    <option value="74">삼성장비</option>
+                                                    <option value="100">타사장비</option>
+                                                </select>
+                                            </td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+/******************************************************************************
+ *
+ */
+isDataChange = false;
+
+/******************************************************************************
+ *
+ */
+formReset = function(pMode = '')
+{
+    $('#popBox1').find('#prdlst_se_code').val('').trigger('change');
+    $('#popBox1').find('#model_no').val('');
+    $('#popBox1').find('#cnt_dlnt').val('');
+    $('#popBox1').find('#dlamt').val('');
+    $('#popBox1').find('#samount').val('');
+    $('#popBox1').find('#bcnc_sn').val('').trigger('change');
+}
+
+fnValidate = function(pMode = '')
+{
+	var result = true;
+
+	// 입/출금일
+	var prdlst_se_code = $('#popBox1').find('#prdlst_se_code').val();
+	if (result == true && fnIsEmpty(prdlst_se_code)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#prdlst_se_code').trigger('focus');
+		result = false;
+	}
+
+	// 계정과목
+	var model_no = $('#popBox1').find('#model_no').val();
+	if (result == true && fnIsEmpty(model_no)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#model_no').trigger('focus');
+		result = false;
+	}
+
+	// 입출금구분
+	var cnt_dlnt = $('#popBox1').find('#cnt_dlnt').val();
+	if (result == true && fnIsEmpty(cnt_dlnt)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#cnt_dlnt').trigger('focus');
+		result = false;
+	}
+
+	// 금액
+	var dlamt = $('#popBox1').find('#dlamt').val();
+	if (result == true && fnIsEmpty(dlamt)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#dlamt').trigger('focus');
+		result = false;
+	}
+
+	// 금액
+	var samount = $('#popBox1').find('#samount').val();
+	if (result == true && fnIsEmpty(samount)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#samount').trigger('focus');
+		result = false;
+	}
+
+	// 금액
+	var bcnc_sn = $('#popBox1').find('#bcnc_sn').val();
+	if (result == true && fnIsEmpty(bcnc_sn)) {
+		alert('필수 입력 항목을 입력하시기 바랍니다.');
+		$('#popBox1').find('#bcnc_sn').trigger('focus');
+		result = false;
+	}
+
+	return result;
+}
+
+/******************************************************************************
+ *
+ */
+insert_expect_equipment = function(pIsReset = true)
+{
+    var params = getFormData($('#frmBox1')[0]);
+    params.append("cntrct_sn", $(document).find("#s_cntrct_sn").val());
+	$.ajax({
+        url : '/api/project/insert_expect_equipment',
+        method : 'POST',
+		data: params,
+		dataType: 'json',
+		contentType: false,
+		processData: false,
+		validate: function() {
+			return fnValidate('insert');
+		},
+		success: function(pResult) {
+			console.log('insertFund', pResult);
+			if (pResult.status) {
+				isDataChange = true;
+				fnAlert(pResult.message);
+				if (pIsReset) {
+					formReset('insert');
+				}
+			} else {
+				fnAlert(pResult.error, 'error');
+			}
+		}
+	});
+}
+
+$('#popBox1').on('click', '#btnSaveNew', function(pEvent) {
+    insert_expect_equipment(true);
+});
+$('#popBox1').on('hidden.bs.modal', function(pEvent)
+{
+    $('#popBox1').data('action', '');
+    formReset('init');
+    if (isDataChange) {
+        $.datatable1.ajax.reload();
+        isDataChange = false;
+    }
+});
+
+</script>
+
+
+{% endblock %}
