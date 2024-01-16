@@ -120,9 +120,9 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnUpdate2{
 						<span class="widget-icon"> <i class="fa fa-list"></i> </span>
 						<h2>계약 장비 목록</h2>
 						<div class="widget-toolbar">
-<!--                            <button class="btn btn-info" data-toggle="modal" href="#popReport7"><i class="fa fa-print"> 업무일지</i></button>-->
+                            <button class="btn btn-info" data-toggle="modal" href="#popBox2"><i class="fa fa-print"> 현장변경</i></button>
 							<button class="btn btn-success" id="btnExcel"><i class="fa fa-file-excel-o"> 엑셀 다운로드</i></button>
-                            <input type="hidden" id="s_cntrct_sn" name="s_cntrct_sn" value="12460"/>
+                            <input type="hidden" id="s_cntrct_sn" name="s_cntrct_sn" value=""/>
 						</div>
 					</header>
 					<!-- widget body div-->
@@ -440,6 +440,9 @@ getExpectEquipmentList = function()
                 try{
                     if(/^-?\d+$/.test(data)){
                         data = parseInt(data);
+                        if(data < 0){
+	                        throw new Error(`Parameter is negative : ${data}`);
+						}
                     }
                     else{
                         throw new Error(`Parameter is not a number : ${data}`);
@@ -496,14 +499,9 @@ getExpectEquipmentList = function()
 <script type="text/javascript">
 $(function(){
 
-	getExpectEquipmentList();
+	$("#popBox2").modal("show");
 });
 
-$(document).keyup(function(e) {
-    if (e.keyCode == 27) { // escape key maps to keycode `27`
-        $("button[data-dismiss=modal]").trigger('click');
-    }
-});
 </script>
 <!--########################################################################-->
 <!--# page script end                                                      #-->
@@ -725,5 +723,85 @@ $('#popBox1').on('hidden.bs.modal', function(pEvent)
 
 </script>
 
+
+<div class="modal fade" data-backdrop="static" data-action="" id="popBox2">
+    <div class="modal-dialog modal-w600">
+        <div class="modal-content">
+			<div class="jarviswidget jarviswidget-color-greenDark">
+				<header>
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a data-toggle="tab" href="#tabBox1"><i class="fa fa-lg fa-edit"></i>&nbsp;<span>계약 장비 정보</span></a>
+						</li>
+					</ul>
+					<div class="jarviswidget-ctrls" role="menu">
+						<a class="button-icon jarviswidget-delete-btn" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times"></i></a>
+					</div>
+					<div class="widget-toolbar">
+						<button type="button" class="btn btn-primary" id="btnSave" title="저장 후 입력값을 초기화합니다."><i class="fa fa-save"> 지정</i></button>
+					</div>
+				</header>
+				<div role="content">
+					<div class="widget-body no-padding">
+						<div class="tab-content">
+
+							<div class="tab-pane fade active in" id="tabBoxContract1">
+							<form id="frmBoxContract1">
+								<table class="table table-bordered table-form">
+									<colgroup>
+										<col width="130">
+										<col width="*">
+									</colgroup>
+									<tbody>
+                                        <!--
+e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn, e.cnt_dlnt
+매출단가
+                                        -->
+										<tr>
+											<th class="color-contract">현장명</th>
+											<td class="hasinput" colspan="2">
+												<select class="form-control select2" id="n_cntrct_sn" name="n_cntrct_sn">
+													<option value="">[계약을 선택해주세요.]</option>
+													{% for code in contract_list %}
+													<option value="{{code.value}}">{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+							</div><!--tab-pane-->
+
+						</div><!--tab-content-->
+					</div><!--widget-body-->
+				</div><!--content-->
+			</div><!--jarviswidget-->
+        </div><!--modal-content-->
+    </div><!--modal-dialog-->
+</div><!--modal-->
+<script type="text/javascript">
+$('#popBox2').on('click', '#btnSave', function(pEvent) {
+	var cntrct_sn = $(document).find("#n_cntrct_sn").val();
+	if(cntrct_sn == ''){
+		alert("현장을 선택해주세요.");
+		return false;
+	}
+	else{
+		$(document).find("#s_cntrct_sn").val(cntrct_sn);
+		$("#popBox2").modal("hide");
+	}
+});
+$('#popBox2').on('hidden.bs.modal', function(pEvent)
+{
+	if($.datatable1){
+		$.datatable1.ajax.reload();
+	}
+	else{
+		getExpectEquipmentList();
+	}
+});
+
+</script>
 
 {% endblock %}
