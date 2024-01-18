@@ -285,7 +285,8 @@ def get_author_list():
 				FROM author
 				WHERE 1=1
 				AND ctmmny_sn = 1
-				AND use_at = 'Y'
+				AND use_at = 'Y'    
+				ORDER BY ORDR ASC
                 """)
     result = curs.fetchall()
     curs.close()
