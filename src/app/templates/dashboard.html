@@ -2301,12 +2301,14 @@ $(function() {
     </div><!--modal-dialog-->
 </div><!--modal-->
 <script>
-getCompletedYearSummary = function()
+getCompletedYearSummary = function(s_pxcond_mt)
 {
+    var params = '';
+	params += '&s_pxcond_mt='+s_pxcond_mt;
 	$.ajax({
 		url: '/api/dashboard/ajax_get_completed_year_summary',
 		type: 'GET',
-		data: '',
+		data: params,
 		dataType: 'json',
 		contentType: false,
 		processData: false,
@@ -2613,7 +2615,7 @@ $(function() {
      * 
      */
 	$('#popReport1').on('show.bs.modal', function(pEvent) {
-		getCompletedYearSummary();
+		getCompletedYearSummary($("#s_pxcond_mt").val());
 	});
 
 

@@ -355,7 +355,7 @@ def get_kisung_suju(params):
 				FROM goal go
 				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
-				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
+				WHERE go.stdyy = SUBSTRING(%(s_pxcond_mt)s,1,4)
 				AND go.amt_ty_code = '2'
 				AND mb.dept_code <> 'PM'
 				GROUP BY dept
@@ -377,19 +377,19 @@ def get_kisung_suju(params):
 				, IFNULL(SUM(t.m01),0)+IFNULL(SUM(t.m02),0)+IFNULL(SUM(t.m03),0)+IFNULL(SUM(t.m04),0)+IFNULL(SUM(t.m05),0)+IFNULL(SUM(t.m06),0)+IFNULL(SUM(t.m07),0)+IFNULL(SUM(t.m08),0)+IFNULL(SUM(t.m09),0)+IFNULL(SUM(t.m10),0)+IFNULL(SUM(t.m11),0)+IFNULL(SUM(t.m12),0) AS total
 				FROM (
 				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-01-01'), mb.mber_sn, 'M') AS m01
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-02-01'), mb.mber_sn, 'M') AS m02
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-03-01'), mb.mber_sn, 'M') AS m03
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-04-01'), mb.mber_sn, 'M') AS m04
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-05-01'), mb.mber_sn, 'M') AS m05
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-06-01'), mb.mber_sn, 'M') AS m06
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-07-01'), mb.mber_sn, 'M') AS m07
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-08-01'), mb.mber_sn, 'M') AS m08
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-09-01'), mb.mber_sn, 'M') AS m09
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-10-01'), mb.mber_sn, 'M') AS m10
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-11-01'), mb.mber_sn, 'M') AS m11
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12-01'), mb.mber_sn, 'M') AS m12
-				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12-01'), mb.mber_sn, 'A') AS total
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-01-01'), mb.mber_sn, 'M') AS m01
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-02-01'), mb.mber_sn, 'M') AS m02
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-03-01'), mb.mber_sn, 'M') AS m03
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-04-01'), mb.mber_sn, 'M') AS m04
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-05-01'), mb.mber_sn, 'M') AS m05
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-06-01'), mb.mber_sn, 'M') AS m06
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-07-01'), mb.mber_sn, 'M') AS m07
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-08-01'), mb.mber_sn, 'M') AS m08
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-09-01'), mb.mber_sn, 'M') AS m09
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-10-01'), mb.mber_sn, 'M') AS m10
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-11-01'), mb.mber_sn, 'M') AS m11
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12-01'), mb.mber_sn, 'M') AS m12
+				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12-01'), mb.mber_sn, 'A') AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE 1
 				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('ST', 'EL', 'CT', 'MA'))
@@ -399,7 +399,7 @@ def get_kisung_suju(params):
 				JOIN (SELECT parnts_code, code, code_nm, code_ordr FROM code WHERE 1=1 UNION SELECT 'GOAL_DEPT_CODE' AS parnts_code, 'ETC' AS code, '기타' AS code_nm, 999 AS code_ordr FROM code) cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
 				ORDER BY IF(sj.dept = 'ST', 0, 1), cd.code_ordr, sj.sort"""
-    g.curs.execute(query)
+    g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
@@ -425,7 +425,7 @@ def get_kisung_sales(params):
 				FROM goal go
 				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
-				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
+				WHERE go.stdyy = SUBSTRING(%(s_pxcond_mt)s,1,4)
 				AND go.amt_ty_code IN ('3','8')
 				AND mb.dept_code <> 'PM'
 				GROUP BY dept
@@ -447,19 +447,19 @@ def get_kisung_sales(params):
 				, IFNULL(SUM(t.m01),0)+IFNULL(SUM(t.m02),0)+IFNULL(SUM(t.m03),0)+IFNULL(SUM(t.m04),0)+IFNULL(SUM(t.m05),0)+IFNULL(SUM(t.m06),0)+IFNULL(SUM(t.m07),0)+IFNULL(SUM(t.m08),0)+IFNULL(SUM(t.m09),0)+IFNULL(SUM(t.m10),0)+IFNULL(SUM(t.m11),0)+IFNULL(SUM(t.m12),0) AS total
 				FROM (
 				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-01-01'), mb.mber_sn),0) AS m01
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-02-01'), mb.mber_sn),0) AS m02
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-03-01'), mb.mber_sn),0) AS m03
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-04-01'), mb.mber_sn),0) AS m04
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-05-01'), mb.mber_sn),0) AS m05
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-06-01'), mb.mber_sn),0) AS m06
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-07-01'), mb.mber_sn),0) AS m07
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-08-01'), mb.mber_sn),0) AS m08
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-09-01'), mb.mber_sn),0) AS m09
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-10-01'), mb.mber_sn),0) AS m10
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-11-01'), mb.mber_sn),0) AS m11
-				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-12-01'), mb.mber_sn),0) AS m12
-				, GET_PXCOND_TOTAL_AMOUNT('C',CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn) AS total
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-01-01'), mb.mber_sn),0) AS m01
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-02-01'), mb.mber_sn),0) AS m02
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-03-01'), mb.mber_sn),0) AS m03
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-04-01'), mb.mber_sn),0) AS m04
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-05-01'), mb.mber_sn),0) AS m05
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-06-01'), mb.mber_sn),0) AS m06
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-07-01'), mb.mber_sn),0) AS m07
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-08-01'), mb.mber_sn),0) AS m08
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-09-01'), mb.mber_sn),0) AS m09
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-10-01'), mb.mber_sn),0) AS m10
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-11-01'), mb.mber_sn),0) AS m11
+				, IFNULL(GET_PXCOND_MONTH_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12-01'), mb.mber_sn),0) AS m12
+				, GET_PXCOND_TOTAL_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12'), mb.mber_sn) AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE 1
 				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
@@ -481,7 +481,7 @@ def get_kisung_sales(params):
 				FROM goal go
 				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
-				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
+				WHERE go.stdyy = SUBSTRING(%(s_pxcond_mt)s,1,4)
 				AND go.amt_ty_code = '9'
 				AND mb.dept_code <> 'PM'
 				GROUP BY dept
@@ -491,7 +491,7 @@ def get_kisung_sales(params):
 				JOIN (SELECT parnts_code, code, code_nm, code_ordr FROM code WHERE 1=1 UNION SELECT 'GOAL_DEPT_CODE' AS parnts_code, 'ETC' AS code, '기타' AS code_nm, 999 AS code_ordr FROM code) cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
 				ORDER BY cd.code_ordr, sj.sort"""
-    g.curs.execute(query)
+    g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 def get_kisung_va(params):
@@ -516,7 +516,7 @@ def get_kisung_va(params):
 				FROM goal go
 				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
-				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
+				WHERE go.stdyy = SUBSTRING(%(s_pxcond_mt)s,1,4)
 				AND go.amt_ty_code IN ('5','8')
 				AND mb.dept_code <> 'PM'
 				GROUP BY dept
@@ -538,19 +538,19 @@ def get_kisung_va(params):
 				, SUM(t.total) AS total
 				FROM (
 				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-01'), mb.mber_sn)) AS m01
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-02'), mb.mber_sn)) AS m02
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-03'), mb.mber_sn)) AS m03
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-04'), mb.mber_sn)) AS m04
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-05'), mb.mber_sn)) AS m05
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-06'), mb.mber_sn)) AS m06
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-07'), mb.mber_sn)) AS m07
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-08'), mb.mber_sn)) AS m08
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-09'), mb.mber_sn)) AS m09
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-10'), mb.mber_sn)) AS m10
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-11'), mb.mber_sn)) AS m11
-				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn)) AS m12
-				, SUM(GET_VA_TOTAL_AMOUNT(CONCAT(SUBSTRING(NOW(),1,4),'-12'), mb.mber_sn)) AS total
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-01'), mb.mber_sn)) AS m01
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-02'), mb.mber_sn)) AS m02
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-03'), mb.mber_sn)) AS m03
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-04'), mb.mber_sn)) AS m04
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-05'), mb.mber_sn)) AS m05
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-06'), mb.mber_sn)) AS m06
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-07'), mb.mber_sn)) AS m07
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-08'), mb.mber_sn)) AS m08
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-09'), mb.mber_sn)) AS m09
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-10'), mb.mber_sn)) AS m10
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-11'), mb.mber_sn)) AS m11
+				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12'), mb.mber_sn)) AS m12
+				, SUM(GET_VA_TOTAL_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12'), mb.mber_sn)) AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
 				GROUP BY dept
@@ -572,7 +572,7 @@ def get_kisung_va(params):
 				FROM goal go
 				JOIN (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				ON go.mber_sn = mb.mber_sn
-				WHERE go.stdyy = SUBSTRING(NOW(),1,4)
+				WHERE go.stdyy = SUBSTRING(%(s_pxcond_mt)s,1,4)
 				AND go.amt_ty_code = '9'
 				AND mb.dept_code <> 'PM'
 				GROUP BY dept
@@ -582,7 +582,7 @@ def get_kisung_va(params):
 				JOIN (SELECT parnts_code, code, code_nm, code_ordr FROM code WHERE 1=1 UNION SELECT 'GOAL_DEPT_CODE' AS parnts_code, 'ETC' AS code, '기타' AS code_nm, 999 AS code_ordr FROM code) cd
 				ON cd.parnts_code='GOAL_DEPT_CODE' AND cd.code=sj.dept
 				ORDER BY cd.code_ordr, sj.sort"""
-    g.curs.execute(query)
+    g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
