@@ -52,7 +52,7 @@ def ajax_qr_image_off():
         if result['status']:
             session['member'] = mber.get_member_info(member_sn)
             mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
-        elif member_qr == '4321':
+        elif member_qr == '1190084':
             session['member'] = mber.get_member_info(member_sn)
             mber.history_login("로그인", "login", session['member']['member_sn'], session['member']['member_id'])
             return jsonify({"status" : True})
@@ -121,6 +121,7 @@ def ajax_get_member_todo():
         result = dict()
         result['data'] = mber.get_member_todo(params)
         result['extra'] = mber.get_extra_todo(params)
+        result['type'] = params['s_mber_type']
         return jsonify(result)
     except Exception as e:
         print(e)

@@ -85,14 +85,26 @@ def ajax_insert_approval():
         member = mber.get_member(session['member']['member_sn'])
         if int(session['member']['member_sn']) == 66:
             pass
-        elif int(params['approval_ty_code']) in (1, 39, 40):
+        elif int(params['approval_ty_code']) in (1, ):
+            required_member = 91
+            if required_member != approval_list[-1]:
+                return make_response("해당 품의의 최상위 결재자[황남룡]가 일치하지 않습니다.", 501)
+        elif int(params['approval_ty_code']) in (39, 40):
             required_member = 63
             if required_member != approval_list[-1]:
                 return make_response("해당 품의의 최상위 결재자[황승태]가 일치하지 않습니다.", 501)
             # required_member = mber.get_team_leader(member['dept_code'])
             # if required_member != approval_list[-1]:
             #     return make_response("해당 품의의 최상위 결재자는 반드시 각 팀의 팀장이어야 합니다.", 501)
-        elif int(params['approval_ty_code']) in (3, 35, 42, 9, 46, 14, 18, 32, 11):
+        elif int(params['approval_ty_code']) in (3, 9, 14, 18, 11):
+            required_member = 91
+            if required_member != approval_list[-1]:
+                return make_response("해당 품의의 최상위 결재자[황남룡]가 일치하지 않습니다.", 501)
+            if int(params['approval_ty_code']) == 14:
+                required_member = 21
+                if required_member not in coop_list:
+                    return make_response("해당 품의는 필수 협조자[이학용]가 지정되어야 합니다.")
+        elif int(params['approval_ty_code']) in (35, 42, 46, 32):
             required_member = 63
             if required_member != approval_list[-1]:
                 return make_response("해당 품의의 최상위 결재자[황승태]가 일치하지 않습니다.", 501)

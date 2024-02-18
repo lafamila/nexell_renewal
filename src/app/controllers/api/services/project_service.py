@@ -2804,23 +2804,23 @@ def insert_b_bf_project(params):
         g.curs.execute(query, pParams)
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, model_no, qy, puchas_amount, dscnt_rt, add_dscnt_rt, cost_date, extra_sn, regist_dtm, register_id, dspy_se_code)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '61', '74', '(예상)', 1, %(b61)s, 0.0, %(b61rate)s ,'0000-00-00', 0, %(regist_dtm)s, %(register_id)s, 1)"""
-    params['b61'] = int(params['D_61'].replace(",", ""))
+    params['b61'] = int(params['D_61'].replace(",", "")) if params['D_61'].replace(",", "") != '' else 0
     params['b61rate'] = (int(params['D_61_DC'].replace(",", ""))*100/int(params['D_61'].replace(",", ""))) if int(params['D_61'].replace(",", "")) != 0 else 0.0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, salamt, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'G', '63', '판매금액', 1, %(b63)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b63'] = int(params['D_63'].replace(",", ""))
+    params['b63'] = int(params['D_63'].replace(",", "")) if params['D_63'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '10', '기타비용', 1, %(b10)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b10'] = int(params['D_10'].replace(",", ""))
+    params['b10'] = int(params['D_10'].replace(",", "")) if params['D_10'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, model_no, qy, puchas_amount, cost_date, extra_sn, regist_dtm, register_id)
                 VALUES (%(cntrct_sn)s, %(prjct_sn)s, 'D', '7', '옵션행사비', 1, %(b7)s, '0000-00-00', 0, %(regist_dtm)s, %(register_id)s)"""
-    params['b7'] = int(params['D_7'].replace(",", ""))
+    params['b7'] = int(params['D_7'].replace(",", "")) if params['D_7'].replace(",", "") != '' else 0
     g.curs.execute(query, params)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':

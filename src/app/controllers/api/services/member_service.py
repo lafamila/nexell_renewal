@@ -246,6 +246,11 @@ def get_datatable(params):
 
 
 def get_member_todo(params):
+    if int(params["s_mber_type"]) == 0:
+        sub_query = """ AND (m.mber_sn = 91 OR m.dept_code <> 'ST')"""
+    else:
+        sub_query = """ AND (m.mber_sn <> 91 AND m.dept_code = 'ST')"""
+
     query = """				SELECT m.mber_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, m.mber_sn
@@ -261,7 +266,8 @@ def get_member_todo(params):
 				AND m.dept_code IS NOT NULL
 				AND m.dept_code <> ''
 				AND m.check_todo = 1
-				ORDER BY code_ordr, m.ofcps_code, rspofc_code, ordr"""
+				{0}
+				ORDER BY code_ordr, m.ofcps_code, rspofc_code, ordr""".format(sub_query)
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result

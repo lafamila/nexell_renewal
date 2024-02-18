@@ -136,7 +136,7 @@ def update_approval(params):
     data.append(params['approval_sn'])
     g.curs.execute(query, data)
 
-    if int(data[0]) == 1 and session['member']['member_sn'] == 63:
+    if int(data[0]) == 1 and session['member']['member_sn'] in (63, 91):
         member_list = get_approval_member(params)
         member_list = [m for m in member_list if m['reg_type'] in (0, 1)]
         _next = False

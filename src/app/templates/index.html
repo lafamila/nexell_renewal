@@ -617,6 +617,12 @@
 						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 					</div>
 				</div>
+	{% if session['member']['auth_cd'] == 1 or session['member']['member_sn'] == 91 or session['member']['auth_cd'] == 10 %}
+                <div class="pull-right" style="margin-right:10px;width:150px;">
+					<button type="button" class="btn btn-primary" id="btnTodoRefresh" value="0">영업팀업무현황</button>
+				</div>
+	{% endif %}
+
 
 			</div>
 			<div class="modal-body report">
@@ -669,8 +675,8 @@
 					<tbody role="header">
 						<tr>
 							<th class="colorG" colspan="3">구 분</th>
-							<th class="colorG" colspan="1">오전</th>
-							<th class="colorG" colspan="1">오후</th>
+							<th class="colorG" colspan="1" id="todo-title-left">오전</th>
+							<th class="colorG" colspan="1" id="todo-title-right">오후</th>
 						</tr>
 					</tbody>
 					<tbody role="top">
@@ -839,10 +845,37 @@ updateTodo = function(pTodoSN, pMberSN, pTodoTime, pTodoText)
         }
 	});
 }
+$(document).on("click", "#btnTodoRefresh", function(){
+	if(parseInt($(this).val()) == "0"){
+		$(this).val("1");
+		getTodo($('#s_ddt_man').val());
+		$(this).html("일반업무현황");
+	}
+	else{
+		$(this).val("0");
+		getTodo($('#s_ddt_man').val());
+		$(this).html("영업팀업무현황");
+
+	}
+});
+
 getTodo = function(s_ddt_man)
 {
     var params = '';
 	params += '&s_ddt_man='+s_ddt_man;
+	{% if session['member']['auth_cd'] == 1 or session['member']['auth_cd'] == 10%}
+		//똑닥이 버튼이 클릭되어있는지를 가져오기
+		params += '&s_mber_type='+$("#btnTodoRefresh").val();
+	{% elif session['member']['member_sn'] == 91%}
+		//똑닥이 버튼이 클릭되어있는지를 가져오기
+		params += '&s_mber_type='+$("#btnTodoRefresh").val();
+	{% else %}
+		{% if session['member']['dept_code'] == 'ST' %}
+			params += '&s_mber_type=1';
+		{% else %}
+			params += '&s_mber_type=0';
+		{% endif %}
+	{% endif %}
 
 	$.ajax({
 		url: '/api/member/ajax_get_member_todo',
@@ -853,6 +886,15 @@ getTodo = function(s_ddt_man)
 		processData: false,
 		success: function(pResult) {
 			console.log('getTodo', pResult);
+			if(parseInt(pResult.type) == 0){
+				$("#todo-title-left").html("오전");
+				$("#todo-title-right").html("오후");
+			}
+			else{
+				$("#todo-title-left").html("당일계획");
+				$("#todo-title-right").html("전일활동현황");
+
+			}
 			var html = '';
             var before = '';
             $.each(pResult.data, function(pIndex, pValue){
