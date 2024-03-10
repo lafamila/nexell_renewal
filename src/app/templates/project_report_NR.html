@@ -1553,6 +1553,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* ********************************************************* */
 				var html = '';
                 var amt_tot = 0;
+                var real_amt_tot = 0;
 				$.each(pResult.rcppayList, function(pIndex, pValue) {
 					console.log('pResult.rcppayList', pValue);
 					var sTaxbilList = pValue.sTaxbilList;
@@ -1682,9 +1683,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					html += '        </table>';
 					html += '    </th>';
 					html += '</tr>';
+					real_amt_tot += amount_total;
                     // amt_tot += amount_total;
 				});
-                $('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(0)').html(amt_tot.toString().toFormat('NUMBER'));
+                $('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(0)').html(((real_amt_tot > amt_tot ) ? real_amt_tot : amt_tot).toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rcppay_status tbody[role=body]').html(html);
 				/* ********************************************************* */
 
@@ -1742,14 +1744,20 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var s1AccountList = pResult.s1AccountList;
 				var dlnt1_total = 0, dlnt2_total = 0, dlnt3_total = 0, dlnt4_total = 0, dlnt9_total = 0;
 				var p_sum_total = 0, s_sum_total = 0, va_total = 0;
+
 				$.each(s1AccountList, function(pIndex, pValue) {
+					console.log("lafamila", pValue);
 					var va = parseInt(pValue.s_total) - parseInt(pValue.p_total);
+					function to_int(x){
+						if(x == '') return 0;
+						else return parseInt(x);
+					}
 					html += '<tr>';
 					html += '    <td class="">'+pValue.s_dlivy_de+'</td>';
 					html += '    <td class="">'+pValue.prdlst_se_nm+'</td>';
 					html += '    <td class="">'+pValue.s_model_no+'</td>';
 					html += '    <td class=" text-number">'+pValue.p_dlamt.toString().toFormat('NUMBER')+'</td>';
-					html += '    <td class=" text-center">'+(pValue.dlnt1+pValue.dlnt2+pValue.dlnt3+pValue.dlnt4+pValue.dlnt9).toString().toFormat('NUMBER')+'</td>';
+					html += '    <td class=" text-center">'+(to_int(pValue.dlnt1)+to_int(pValue.dlnt2)+to_int(pValue.dlnt3)+to_int(pValue.dlnt4)+to_int(pValue.dlnt9)).toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+pValue.p_total.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+pValue.s_total.toString().toFormat('NUMBER')+'</td>';
 					html += '    <td class=" text-number">'+va.toString().toFormat('NUMBER')+'</td>';
@@ -2219,13 +2227,14 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
                     var daily_p = daily_p_total > daily_total ? daily_total : daily_p_total;
                     daily_p_total -= daily_p;
+                    var tot_p_total = human_p_total + direct_p_total + daily_p + logitec_p_total;
                     html += '<tr>';
                     html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">집행</th>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+human_p_total.toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+direct_p_total.toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+daily_p.toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+logitec_p_total.toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+amount_total.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+tot_p_total.toFormat('NUMBER')+'</td>';
                     html += '</tr>';
                     html += '<tr>';
                     html += '    <th class="color-contract">잔액</th>';
@@ -2233,7 +2242,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
                     html += '    <td class="text-right">'+(direct_total-direct_p_total).toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right">'+(daily_total-daily_p).toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right">'+(logitec_total-logitec_p_total).toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-right">'+(sum_total-amount_total).toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right">'+(sum_total-tot_p_total).toFormat('NUMBER')+'</td>';
                     html += '</tr>';
 
 					daily_total_tot += daily_total;
@@ -2834,8 +2843,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt0 = 0;
 				}
-				//execAmt0 = parseInt($('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th').eq(0).html().replaceAll(',', ''));
-				//if(isNaN(execAmt0)) execAmt0 = 0;
+				execAmt0 = parseInt($('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th').eq(0).html().replaceAll(',', ''));
+				if(isNaN(execAmt0)) execAmt0 = 0;
 
 
 				var execAmt1 = $(execData[1]).html().replaceAll(',', '');

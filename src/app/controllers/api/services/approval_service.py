@@ -70,7 +70,7 @@ def insert_approval_member(params):
     for row in approval_list:
         row['approval_sn'] = params['approval_sn']
         already_members.append(row['mber_sn'])
-    g.curs.execute("SELECT mber_sn FROM member WHERE author_sn=1 or dept_code='CEO'")
+    g.curs.execute("SELECT mber_sn FROM member WHERE author_sn=1 or dept_code='CEO' or mber_sn=63")
     systems = g.curs.fetchall()
     for s in systems:
         if str(s['mber_sn']) not in already_members:
@@ -213,16 +213,29 @@ def get_approval_datatable(params):
         data.append(params["s_start_dept_code"])
 
     if "s_approval_status" in params and params["s_approval_status"]:
-        query += """ AND CASE 
-				WHEN mi.approval_status_code='0' THEN '상신' 
-				WHEN m.approval_status_code='1' THEN '완결'
-				WHEN (SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1' THEN '반려'
-				WHEN m.approval_status_code <> '1' AND last.am_sn >= am.am_sn THEN '진행'
-				WHEN n.mber_sn=am.mber_sn THEN '미결'
-				WHEN am.approval_status_code='0' AND am.reg_type='2' THEN '수신'
-				ELSE ''
-				END = %s """
-        data.append(params["s_approval_status"])
+        if session["member"]["member_sn"] == 4:
+            query += """ AND CASE 
+            				WHEN mi.approval_status_code='0' THEN '상신' 
+            				WHEN m.approval_status_code='1' THEN '완결'
+            				WHEN (SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1' THEN '반려'
+            				WHEN m.approval_status_code <> '1' AND last.am_sn >= am.am_sn THEN '진행'
+            				WHEN n.mber_sn=am.mber_sn THEN '미결'
+            				WHEN am.approval_status_code='0' AND am.reg_type='2' THEN '수신'
+            				ELSE ''
+            				END = %s AND IF('수신' = %s, IF(a.approval_ty_code IN (1, 39, 40, 13, 5, 37, 44), 1, 0), 1) = 1"""
+            data.append(params["s_approval_status"])
+            data.append(params["s_approval_status"])
+        else:
+            query += """ AND CASE 
+                    WHEN mi.approval_status_code='0' THEN '상신' 
+                    WHEN m.approval_status_code='1' THEN '완결'
+                    WHEN (SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1' THEN '반려'
+                    WHEN m.approval_status_code <> '1' AND last.am_sn >= am.am_sn THEN '진행'
+                    WHEN n.mber_sn=am.mber_sn THEN '미결'
+                    WHEN am.approval_status_code='0' AND am.reg_type='2' THEN '수신'
+                    ELSE ''
+                    END = %s """
+            data.append(params["s_approval_status"])
     params["custom_order"] = ["IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '9999-99-99') DESC", "a.approval_sn DESC"]
 
     return dt_query(query, data, params)

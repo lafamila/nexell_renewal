@@ -2460,6 +2460,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt0 = 0;
 				}
+				execAmt0 = parseInt($('#popReportBD').find('#report_exec tbody[role=body] tr[data-row=result] th').eq(0).html().replaceAll(',', ''));
 				var execAmt1 = $(execData[1]).html().replaceAll(',', '');
 				if (execAmt1 != '') {
 					execAmt1 = parseInt(execAmt1);

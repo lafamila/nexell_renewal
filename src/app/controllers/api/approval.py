@@ -112,7 +112,7 @@ def ajax_insert_approval():
                 required_member = 21
                 if required_member not in coop_list:
                     return make_response("해당 품의는 필수 협조자[이학용]가 지정되어야 합니다.")
-        elif int(params['approval_ty_code']) in (20, 53, 54, 21, 33, 55, 22, 56, 57, 23, 58, 59, 24, 60, 61, 25, 62, 63):
+        elif int(params['approval_ty_code']) in (53, 54, 33, 55, 56, 57, 58, 59, 60, 61, 62, 63):
             if member['rspofc_code'] != '' and int(member['rspofc_code']) == 200:
                 required_member = 63
                 if required_member != approval_list[-1]:
@@ -127,7 +127,28 @@ def ajax_insert_approval():
                 required_member = 63
                 if required_member != approval_list[-1]:
                     return make_response("해당 품의의 최상위 결재자[황승태]가 일치하지 않습니다.", 501)
-            if int(params['approval_ty_code']) in (20, 53, 54, 21, 55, 33):
+            if int(params['approval_ty_code']) in (53, 54, 55, 33):
+                required_member = 19
+                if required_member not in coop_list:
+                    return make_response("해당 품의는 필수 협조자[권은미]가 지정되어야 합니다.")
+
+                
+        elif int(params['approval_ty_code']) in (20, 21, 22, 23, 24, 25):
+            if member['rspofc_code'] != '' and int(member['rspofc_code']) == 200:
+                required_member = 91
+                if required_member != approval_list[-1]:
+                    return make_response("해당 품의의 최상위 결재자[황남룡]가 일치하지 않습니다.", 501)
+
+            elif member['rspofc_code'] != '' and int(member['rspofc_code']) == 150:
+                required_member = 4
+                if required_member != approval_list[-1]:
+                    return make_response("해당 품의의 최상위 결재자[황영구]가 일치하지 않습니다.", 501)
+
+            else:
+                required_member = 91
+                if required_member != approval_list[-1]:
+                    return make_response("해당 품의의 최상위 결재자[황남룡]가 일치하지 않습니다.", 501)
+            if int(params['approval_ty_code']) in (20, 21):
                 required_member = 19
                 if required_member not in coop_list:
                     return make_response("해당 품의는 필수 협조자[권은미]가 지정되어야 합니다.")

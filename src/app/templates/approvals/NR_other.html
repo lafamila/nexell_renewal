@@ -526,7 +526,7 @@
                 now_samount = parseInt($(pRow).find("[name='now_samount[]']").val().replaceAll(",", "")); if(isNaN(now_samount)) now_samount = 0;
             }
             var amount = dlnt*dlamt;
-            var va = (samount_dlnt * (dlnt + sdlnt)) - (dlamt * (dlnt + sdlnt));
+            var va = now_samount - amount;
             total_amount += amount;
             total_samount += now_samount;
             total_cnt_dlnt += cnt_dlnt;

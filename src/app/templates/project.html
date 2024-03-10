@@ -330,6 +330,18 @@ tbody .btnUpdate, tbody .btnPrint{
 /******************************************************************************
  * 계약 목록을 조회한다.
  */
+
+openProject = function(prjct_ty_code, cntrct_sn, prjct_sn){
+	if (prjct_ty_code == 'NR') { //일반공무
+		getReportNR(cntrct_sn, prjct_sn);
+	} else if (prjct_ty_code == 'BD') { //빌트인직계약
+		getReportBD(cntrct_sn, prjct_sn);
+	} else if (prjct_ty_code == 'BF') { //빌트인수수료
+		getReportBF(cntrct_sn, prjct_sn);
+	}
+
+}
+
 getProjectList = function()
 {
     $.datatable1 = $('#dtList1').DataTable({
@@ -408,7 +420,7 @@ getProjectList = function()
                         //if(pRow.prjct_ty_code == "NR")
                         //    dept_code += ",ST";
 
-                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-special="'+((pRow.spt_nm.endsWith("(환)") || pRow.spt_nm.endsWith("(에,환)")) ? "1" : "0")+'" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
+                        html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-bsn="'+pRow.bsn_chrg_sn+'" data-special="'+((pRow.spt_nm.endsWith("(환)") || pRow.spt_nm.endsWith("(에,환)")) ? "1" : "0")+'" data-dept_code="'+dept_code+'" data-prjct_ty_code="'+pRow.prjct_ty_code+'" data-cntrct_sn="'+pRow.cntrct_sn+'" data-prjct_sn="'+pRow.prjct_sn+'">';
                         html += '	<i class="fa fa-print"></i>'+pData;
                         html += '</button>';
 
@@ -492,7 +504,9 @@ getProjectList = function()
             var myDeptCode = pJson.member.dept_code;
             var show = true;
             if(myDeptCode == "TS1" || myDeptCode == "TS2" || myDeptCode == "TS3" || myDeptCode == "BI" || myDeptCode == "ST"){
-                show = false;
+            	if(parseInt($("#loginSN").val()) != 91){
+	                show = false;
+				}
             }
 			$(myList).on('click', 'tbody tr', function(pEvent) {
 				if ($(this).parent().find('td.dataTables_empty').length > 0) {
@@ -556,19 +570,96 @@ getProjectList = function()
 				var cntrct_sn = $(this).data('cntrct_sn');
 				var prjct_sn = $(this).data('prjct_sn');
 				var is_special = $(this).data('special');
+				var bsn_chrg_sn = $(this).data("bsn");
+				var loginSN = parseInt($("#loginSN").val());
+				console.log(show);
+				var go = false;
+				if(show){
+					openProject(prjct_ty_code, cntrct_sn, prjct_sn);
+				}
+				else if([11, 57, 91].includes(loginSN)){
+					if(loginSN == 11){
+						if(prjct_ty_code == 'NR'){
+							openProject(prjct_ty_code, cntrct_sn, prjct_sn);
+						}
+						else{
+							alert("열람 권한이 없습니다.");
+						}
+					}
+					else if(loginSN == 57){
+						if(parseInt(is_special) == 1){
+							openProject(prjct_ty_code, cntrct_sn, prjct_sn);
+						}
+						else{
+							alert("열람 권한이 없습니다.");
+						}
+					}
+					else if(loginSN == 91){
+						openProject(prjct_ty_code, cntrct_sn, prjct_sn);
+					}
+				}
+				else if(myDeptCode == 'ST'){
+					if(loginSN == parseInt(bsn_chrg_sn)) {
+						openProject(prjct_ty_code, cntrct_sn, prjct_sn);
+					}
+					else{
+						alert("담당자만 열람 가능합니다.");
+					}
+				}
+				else{
+					if(dept_code.split(",").includes(myDeptCode)){
+						openProject(prjct_ty_code, cntrct_sn, prjct_sn);
+					}
+					else{
+						alert("해당 부서만 열람 가능합니다.");
+					}
+				}
 
-                if(show || dept_code.split(",").includes(myDeptCode) || (pJson.member.mber_sn == 57 && parseInt(is_special) == 1)){
-                    if (prjct_ty_code == 'NR') { //일반공무
-                        getReportNR(cntrct_sn, prjct_sn);
-                    } else if (prjct_ty_code == 'BD') { //빌트인직계약
-                        getReportBD(cntrct_sn, prjct_sn);
-                    } else if (prjct_ty_code == 'BF') { //빌트인수수료
-                        getReportBF(cntrct_sn, prjct_sn);
-                    }
-                }
-                else{
-                    alert("해당 부서만 열람 가능합니다.");
-                }
+				// if(show || ( == 11 && (prjct_ty_code == 'NR'))){
+				// }
+                // else if(dept_code.split(",").includes(myDeptCode)){
+                // 	if(myDeptCode == 'ST' && parseInt($("#loginSN").val()) != 91){
+                // 		if(parseInt($("#loginSN").val()) != parseInt(bsn_chrg_sn)){
+				// 			alert("영업 담당자만 열람 가능합니다.");
+				// 		}
+                // 		else{
+				// 			if (prjct_ty_code == 'NR') { //일반공무
+				// 				getReportNR(cntrct_sn, prjct_sn);
+				// 			} else if (prjct_ty_code == 'BD') { //빌트인직계약
+				// 				getReportBD(cntrct_sn, prjct_sn);
+				// 			} else if (prjct_ty_code == 'BF') { //빌트인수수료
+				// 				getReportBF(cntrct_sn, prjct_sn);
+				// 			}
+				//
+				// 		}
+				// 	}
+                // 	else if(!(pJson.member.mber_sn == 57 && )){
+                // 		alert("열람 권한이 없습니다.");
+				// 	}
+                // 	else{
+				// 		if (prjct_ty_code == 'NR') { //일반공무
+				// 			getReportNR(cntrct_sn, prjct_sn);
+				// 		} else if (prjct_ty_code == 'BD') { //빌트인직계약
+				// 			getReportBD(cntrct_sn, prjct_sn);
+				// 		} else if (prjct_ty_code == 'BF') { //빌트인수수료
+				// 			getReportBF(cntrct_sn, prjct_sn);
+				// 		}
+				//
+				// 	}
+                // }
+                // else if((pJson.member.mber_sn == 57 && parseInt(is_special) == 1)){
+				// 		if (prjct_ty_code == 'NR') { //일반공무
+				// 			getReportNR(cntrct_sn, prjct_sn);
+				// 		} else if (prjct_ty_code == 'BD') { //빌트인직계약
+				// 			getReportBD(cntrct_sn, prjct_sn);
+				// 		} else if (prjct_ty_code == 'BF') { //빌트인수수료
+				// 			getReportBF(cntrct_sn, prjct_sn);
+				// 		}
+				//
+				// }
+                // else{
+                //     alert("해당 부서만 열람 가능합니다.");
+                // }
 			});
 			$(myList).on('change', 'thead input.form-control', function(pEvent){
 				if ($(this).data('before')) {
@@ -2948,7 +3039,7 @@ deleteConstruct = function(s_cntrct_sn, s_prjct_sn, s_construct_sn)
 	}
 	$(document).on('click', '#btnSaveBiss', function(){
 		var session = {{session | tojson | safe}};
-		var authors = [""];
+		var authors = ["pm_jermsoo"];
 		var loginId = $("#loginID").val();
 		console.log(session.member.auth_cd, 1, "1");
 		if(!authors.includes("*") && !authors.includes(loginId) && ![1, 2, 3, 6].includes(session.member.auth_cd)){
