@@ -851,7 +851,6 @@ def update_equipment_establish_new():
         return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
 
 
-        return jsonify({"status" : True, "message" : "성공적으로 처리되었습니다."})
     except Exception as e:
         print(e)
         return make_response(str(e), 500)

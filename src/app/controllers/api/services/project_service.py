@@ -2547,10 +2547,11 @@ def insert_c_extra_project(params):
             g.curs.execute("SELECT bcnc_sn FROM contract WHERE cntrct_sn=%s", params['cntrct_sn'])
             data['purchsofc_sn'] = g.curs.fetchone()['bcnc_sn']
         else:
-            row = g.curs.execute("SELECT distinct purchsofc_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s", data)
+            row = g.curs.execute("SELECT distinct cost_type, purchsofc_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s", data)
             costs = g.curs.fetchall()
             if len(costs) == 1:
                 data['purchsofc_sn'] = costs[0]['purchsofc_sn'] if costs[0]['purchsofc_sn'] != '' else None
+                data['cost_type'] = costs[0]['cost_type']
 
         if data['cntrct_execut_code'] == 'C':
             g.curs.execute("SELECT IFNULL(SUM(salamt*qy), 0) AS samt FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND cntrct_execut_code='C' AND ct_se_code=%(ct_se_code)s AND extra_sn=%(extra_sn)s", {"cntrct_sn": data["cntrct_sn"], "ct_se_code" : data["ct_se_code"], "extra_sn" : extra_sn-1})

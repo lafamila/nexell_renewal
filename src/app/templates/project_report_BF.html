@@ -1303,13 +1303,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var real_amt = p_dc_amt_sum * (pValue.fee_rt / 100);
 						var html_dom = $.parseHTML(html);
 						var tempDom = $('<output>').append($.parseHTML(html));
-						var target = $(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom);
+						var target = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom);
 						if($(target).length > 0){
-							var qy = $(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom).eq(0).find("td").eq(2).html();
+							var qy = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(2).html();
 							qy = parseInt(qy.replaceAll(",", ""));
 							if(isNaN(qy)) qy = 0;
 							qy += parseInt(pValue.qy);
-							$(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom).eq(0).find("td").eq(2).html(qy.toString().toFormat('NUMBER'));
+							$(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(2).html(qy.toString().toFormat('NUMBER'));
 							html = $(tempDom).prop('innerHTML');
 						}
 						else{
