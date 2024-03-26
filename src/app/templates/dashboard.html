@@ -1710,7 +1710,7 @@ getMonthReport = function(pxcond_mt){
 						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
-						var diff = (pR.amount-pR.value);
+						var diff = (parseInt(pR.amount/1000)-d_value);
 						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
@@ -1718,7 +1718,7 @@ getMonthReport = function(pxcond_mt){
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmS" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
 						tot11 += pR.value;
@@ -1731,7 +1731,7 @@ getMonthReport = function(pxcond_mt){
 						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
-						var diff = (pR.amount-pR.value);
+						var diff = (parseInt(pR.amount/1000)-d_value);
 						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">수주</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
@@ -1739,7 +1739,7 @@ getMonthReport = function(pxcond_mt){
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueS" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmS" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
 						tot11 += pR.value;
@@ -1763,7 +1763,7 @@ getMonthReport = function(pxcond_mt){
 						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
-						var diff = (pR.amount-pR.value);
+						var diff = (parseInt(pR.amount/1000)-d_value);
 						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
@@ -1771,7 +1771,7 @@ getMonthReport = function(pxcond_mt){
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmT" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
 						tot21 += pR.value;
@@ -1785,7 +1785,7 @@ getMonthReport = function(pxcond_mt){
 						var d_value = pR.dashboard_value == '' ? 0 : parseInt(pR.dashboard_value);
 						var d_rm = pR.dashboard_rm;
 						var amount = pR.amount;
-						var diff = (pR.amount-pR.value);
+						var diff = (parseInt(pR.amount/1000)-d_value);
 						var miss = (amount - d_value) < 0 && (d_value - amount) >= Math.round(d_value*0.1);
 						html += `	<td class="color-contract middle text-center">매출</td>
 								 	<td class="middle text-left" colspan="2">${pR.bcnc_nm}</td>
@@ -1793,7 +1793,7 @@ getMonthReport = function(pxcond_mt){
 								 	<td class="middle text-right colorLG">${Math.round(pR.value/1000).toFormat('NUMBER')}</td>
 								 	<td class="middle text-right fontColorN input-available only-number" data-column="valueT" data-row="${pR.cntrct_sn}">${d_value.toFormat('NUMBER')}</td>
 								 	<td class="middle text-right colorLG">${Math.round(amount/1000).toFormat('NUMBER')}</td>
-								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff/1000).toFormat('NUMBER')}</td>
+								 	<td class="middle text-right ${diff < 0 ? 'color-red' : ''}">${Math.round(diff).toFormat('NUMBER')}</td>
 								 	<td class="middle text-left input-available only-text" colspan="4" data-column="rmT" data-row="${pR.cntrct_sn}">${d_rm}</td>
 								`;
 						tot21 += pR.value;
