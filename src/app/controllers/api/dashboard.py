@@ -138,7 +138,7 @@ def ajax_get_projects_by_dept_member():
 
 @bp.route('/ajax_get_month_report', methods=['GET'])
 def ajax_get_month_report():
-    try:
+    # try:
         params = request.args.to_dict()
         if "s_pxcond_mt" not in params:
             params['s_pxcond_mt'] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
@@ -247,6 +247,8 @@ def ajax_get_month_report():
                 total_amount_2[r['dept_code']] = r['m_contract_amount']
 
         for dept_code in result['contractList']:
+            if dept_code == 'NE':
+                continue
             if '3' in result['contractList'][dept_code]:
                 remain = total_amount_3[dept_code] - sum([c['amount'] for c in result['contractList'][dept_code]['3']])
             else:
@@ -274,6 +276,8 @@ def ajax_get_month_report():
 
 
         for dept_code in result['contractList']:
+            if dept_code == 'NE':
+                continue
             if '2' in result['contractList'][dept_code]:
                 remain = total_amount_2[dept_code] - sum([c['amount'] for c in result['contractList'][dept_code]['2']])
             else:
@@ -300,9 +304,9 @@ def ajax_get_month_report():
             result['contractList'][dept_code]['2'].append(row)
 
         return jsonify(result)
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 @bp.route('/ajax_set_extra_goal_contract', methods=['GET'])
 def ajax_set_extra_goal_contract():
