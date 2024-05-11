@@ -45,15 +45,7 @@
         </tr>
         <tr>
             <td class="colorSky text-center">현장명</td>
-            <td class="text-center hasinput" colspan="3">
-                <select class="form-control select2 w100p" id="cntrct_sn_1" name="cntrct_sn_1" style="padding-top:0px!important;padding-bottom:0px!important;width:100%;">
-                    {% if not init %}
-                        <option value=""></option>
-                        {% for code in contract_all_list %}
-                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
-                        {% endfor %}
-                    {% endif %}
-                </select>
+.                 </select>
             </td>
             <th class="sub-title colorN text-center" rowspan="2">수주계약</th>
             <th class="colorSky text-center">계약가</th>

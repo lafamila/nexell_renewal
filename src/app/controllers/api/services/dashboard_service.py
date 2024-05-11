@@ -201,7 +201,7 @@ def get_completed_suju(params):
 				ON c.bsn_chrg_sn = m.mber_sn
 				LEFT JOIN code co
 				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
-				WHERE (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))
+				WHERE (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code='NE' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))
 				AND m.mber_sttus_code = 'H'
 				AND cst.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
 				AND (cst.cntrct_execut_code IN ('A', 'B', 'C'))
@@ -311,7 +311,7 @@ def get_completed_suju_b(params):
                     LEFT JOIN code co
                     ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
 				WHERE 1=1
-                    AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))
+                    AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code='NE' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))
                     AND m.mber_sttus_code = 'H'
                     AND cst.cntrct_execut_code IN ('B', 'C')
                     AND c.PROGRS_STTUS_CODE IN ('B')
@@ -392,7 +392,7 @@ def get_kisung_suju(params):
 				, GET_SUJU_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12-01'), mb.mber_sn, 'A') AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE 1
-				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('ST', 'EL', 'CT', 'MA'))
+				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code='NE' OR mb.dept_code IN ('ST', 'EL', 'CT', 'MA'))
 				) t
 				GROUP BY t.dept
 				) sj
@@ -401,6 +401,7 @@ def get_kisung_suju(params):
 				ORDER BY IF(sj.dept = 'ST', 0, 1), cd.code_ordr, sj.sort"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
+    print(result)
     return result
 
 def get_kisung_sales(params):
@@ -462,7 +463,7 @@ def get_kisung_sales(params):
 				, GET_PXCOND_TOTAL_AMOUNT('C',CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12'), mb.mber_sn) AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
 				WHERE 1
-				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
+				AND (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code='NE' OR mb.dept_code IN ('EL', 'CT', 'MA'))
 				UNION
 				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
 				, IFNULL(SUM(1m),0) AS m01
@@ -552,7 +553,7 @@ def get_kisung_va(params):
 				, SUM(GET_VA_MONTH_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12'), mb.mber_sn)) AS m12
 				, SUM(GET_VA_TOTAL_AMOUNT(CONCAT(SUBSTRING(%(s_pxcond_mt)s,1,4),'-12'), mb.mber_sn)) AS total
 				FROM (SELECT * FROM member WHERE mber_sttus_code='H') mb
-				WHERE (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code IN ('EL', 'CT', 'MA'))
+				WHERE (mb.dept_code IN ('TS1', 'TS2') OR mb.dept_code LIKE 'BI%%' OR mb.dept_code='NE' OR mb.dept_code IN ('EL', 'CT', 'MA'))
 				GROUP BY dept
 				UNION
 				SELECT IF(mb.dept_code IN ('EL','CT', 'MA'), 'ETC', mb.dept_code) AS dept
@@ -701,7 +702,7 @@ def get_extra_goal_contract(params):
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(d.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=d.cntrct_sn), '') AS dashboard_value
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(d.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=d.cntrct_sn), '') AS dashboard_rm
-                    , CASE WHEN c.prjct_ty_code IN ('NR') THEN
+                    , CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
                     (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
                     WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
                     (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
@@ -758,7 +759,7 @@ def get_goal_contract(params):
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_value
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_rm
-                    , CASE WHEN c.prjct_ty_code IN ('NR') THEN
+                    , CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
                     (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
                     WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
                     (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))

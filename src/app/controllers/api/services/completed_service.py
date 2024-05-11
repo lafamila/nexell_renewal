@@ -39,7 +39,9 @@ def get_completed_summary(params):
 				, SUM(IFNULL(11m, 0)) AS m11
 				, SUM(IFNULL(12m, 0)) AS m12
 				"""
-    if year >= 2023:
+    if year >= 2024:
+        query += """, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND (code LIKE 'TS%%' OR code LIKE 'BI%%' OR code = 'NE' OR code IN ('ST', 'EL', 'CT', 'MA'))) - (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code IN ('EL', 'CT', 'MA')) + 1 AS dept_count"""
+    elif year >= 2023:
         query += """, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND (code LIKE 'TS%%' OR code LIKE 'BI%%' OR code IN ('ST', 'EL', 'CT', 'MA'))) - (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code IN ('EL', 'CT', 'MA')) + 1 AS dept_count"""
     else:
         query += """, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND (code LIKE 'TS%%' OR code LIKE 'BI%%')) AS dept_count"""
@@ -82,7 +84,9 @@ def get_completed_summary(params):
 				ON m.mber_sn=g.mber_sn AND g.amt_ty_code=z.amt_ty_code
 				WHERE 1=1				
 				"""
-    if year >= 2023:
+    if year >= 2024:
+        query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code = 'NE' OR m.dept_code IN ('ST'))"""
+    elif year >= 2023:
         query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))"""
     else:
         query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%')"""
@@ -102,7 +106,9 @@ def get_completed_summary(params):
     code_nms[('DEPT_CODE', 'ETC')] = ("기타", 999)
     dept_codes = ['TS1', 'TS2', 'TS3', 'BI']
     amt_ty_codes = ['2', '3', '5']
-    if year >= 2023:
+    if year >= 2024:
+        dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'NE']
+    elif year >= 2023:
         dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'ETC']
 
     tables = {(r['amt_ty_code'], r['dept_code']) : r for r in result}

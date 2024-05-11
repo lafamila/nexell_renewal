@@ -1249,6 +1249,8 @@
 
     fnValidate = function(){
                     var result = true;
+
+                    $(document).find("tbody[role='company1_detail'], tbody[role='company2_detail'], tbody[role='company3_detail']").trigger("change");
                     return result;
                }
     cloneRow = function(selector, count){

@@ -139,16 +139,24 @@ def update_approval(params):
     if int(data[0]) == 1 and session['member']['member_sn'] in (63, 91):
         member_list = get_approval_member(params)
         member_list = [m for m in member_list if m['reg_type'] in (0, 1)]
-        _next = False
-        for m in member_list:
-            if _next and m['mber_sn'] == 4 and int(m['reg_type']) == 1:
-                g.curs.execute("UPDATE approval_member SET approval_status_code=1, update_dtm=NOW() WHERE mber_sn=4 AND approval_sn=%s", params['approval_sn'])
-                break
-            if m['mber_sn'] == session['member']['member_sn']:
-                _next = True
-                continue
-            else:
-                _next = False
+
+        _pass = True
+        g.curs.execute("SELECT a.approval_ty_code, m.rspofc_code FROM approval a LEFT JOIN member m ON a.reg_mber=m.mber_sn WHERE a.approval_sn=%s", params['approval_sn'])
+        approval = g.curs.fetchone()
+        if int(approval['approval_ty_code']) in (2, 34, 41) or (int(approval['approval_ty_code']) in (22, 56, 57) and int(approval['rspofc_code']) in (100, 150)):
+            _pass = False
+
+        if _pass:
+            _next = False
+            for m in member_list:
+                if _next and m['mber_sn'] == 4 and int(m['reg_type']) == 1:
+                    g.curs.execute("UPDATE approval_member SET approval_status_code=1, update_dtm=NOW() WHERE mber_sn=4 AND approval_sn=%s", params['approval_sn'])
+                    break
+                if m['mber_sn'] == session['member']['member_sn']:
+                    _next = True
+                    continue
+                else:
+                    _next = False
 
 
 

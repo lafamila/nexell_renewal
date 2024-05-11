@@ -187,7 +187,7 @@ def ajax_get_month_report():
                 goal_data[int(g['dashboard_row'])] = dict()
             goal_data[int(g['dashboard_row'])][g['dashboard_column']] = g['dashboard_data']
 
-        DEPT_CNTRCT_SN = {"ST" : -1, "TS1" : -2, "TS2" : -3, "BI" : -4, "ETC" : -5}
+        DEPT_CNTRCT_SN = {"ST" : -1, "TS1" : -2, "TS2" : -3, "BI" : -4, "ETC" : -5, "NE" : -6}
 
 
         # 1,4,7,10월 장려금
