@@ -637,6 +637,7 @@ def get_projects_by_dept_member(params):
 				END AS ordr
 				, (SELECT IFNULL(SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code = 'C', IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))),0) FROM cost cst WHERE cst.cntrct_sn = c.cntrct_sn AND cst.cntrct_execut_code <> 'B') AS cntrct_amount
 				, m.dept_code
+				, m.mber_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_ordr				
 				FROM contract c

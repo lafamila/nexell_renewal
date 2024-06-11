@@ -1679,7 +1679,7 @@ $(function() {
      * 인쇄 버튼 클릭 처리
      */
 	$('#btnPrint1').on('click', function(pEvent) {
-		var html = $('#popReport2').find('.modal-body').html();
+		var html = $('#popReport1').find('.modal-body').html();
 		$('#_print').contents().find('body>div.report').html('');
 		$('#_print').contents().find('body>div.report').html(html);
 		parent.frames['_print'].focus();
@@ -2412,6 +2412,37 @@ $(function() {
 	});
 
 });
+
+</script>
+<script type="text/javascript">
+$(function() {
+    /**************************************************************************
+     * 인쇄 버튼 클릭 처리
+     */
+	$('#btnPrint4').on('click', function(pEvent) {
+		var html = $('#popReport4').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+	$('#btnPrint3').on('click', function(pEvent) {
+		var html = $('#popReport3').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
+	});
+	// $('#btnPrint1').on('click', function(pEvent) {
+	// 	var html = $('#popReport2').find('.modal-body').html();
+	// 	$('#_print').contents().find('body>div.report').html('');
+	// 	$('#_print').contents().find('body>div.report').html(html);
+	// 	parent.frames['_print'].focus();
+    // 	parent.frames['_print'].print();
+	// });
+
+});
+
 
 </script>
 

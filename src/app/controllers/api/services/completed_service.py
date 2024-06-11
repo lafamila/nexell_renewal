@@ -705,7 +705,7 @@ def get_completed_reportNR_new(params):
                 indirect_idx = idx
         for idx, cost in enumerate(costs):
             if cost['ct_se_code'] == '0' and cost['cntrct_execut_code'] == 'C' and indirect_idx != -1:
-                if indirect_idx != idx:
+                if indirect_idx != idx and indirect_idx < len(costs):
                     indirect = costs[indirect_idx]
                     cost['cntrct_amount'] += indirect['cntrct_amount']
                     cost['complete_amount'] += indirect['complete_amount']

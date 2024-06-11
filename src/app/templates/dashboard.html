@@ -1822,14 +1822,14 @@ getMonthReport = function(pxcond_mt){
 									<td class="colorSky middle text-right">${Math.round(tot11/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueStot">${Math.round(tot12).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right">${Math.round(tot13/1000).toFormat('NUMBER')}</td>
-									<td class="colorSky middle text-right ${tot14 < 0 ? 'color-red' : ''}">${Math.round(tot14/1000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right ${tot14 < 0 ? 'color-red' : ''}">${Math.round(tot14).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
 									<td class="color-contract middle text-center">매출</td>
 									<td class="colorSky middle text-center" colspan="4">합 계</td>
 									<td class="colorSky middle text-right">${Math.round(tot21/1000).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right" data-column="valueTtot">${Math.round(tot22).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-right">${Math.round(tot23/1000).toFormat('NUMBER')}</td>
-									<td class="colorSky middle text-right ${tot24 < 0 ? 'color-red' : ''}">${Math.round(tot24/1000).toFormat('NUMBER')}</td>
+									<td class="colorSky middle text-right ${tot24 < 0 ? 'color-red' : ''}">${Math.round(tot24).toFormat('NUMBER')}</td>
 									<td class="colorSky middle text-center" colspan="4"></td>
 								</tr>`;
 				html += `   </tbody>`;
@@ -2645,7 +2645,7 @@ $('#popReport1').on('click', '.btnSearch', function(pEvent) {
 
 <!-- popReport6 : 현장현황 및 BISS 지적현황 - 이름/부서 -->
 <div class="modal fade" data-backdrop="static" id="popReport6">
-    <div class="modal-dialog modal-w1200" style="width:60%!important;">
+    <div class="modal-dialog modal-w1200" style="width:75%!important;">
         <div class="modal-content">
 			<div class="modal-header">
 				<div class="pull-right" style="margin-right:10px;">
@@ -2698,6 +2698,7 @@ $('#popReport1').on('click', '.btnSearch', function(pEvent) {
 						<col width="*">
 						<col width="100">
 						<col width="160">
+						<col width="80">
 						<col width="60">
 					</colgroup>
 					<tbody role="header">
@@ -2708,6 +2709,7 @@ $('#popReport1').on('click', '.btnSearch', function(pEvent) {
 							<th class="colorB" colspan="1">현장명(사전입찰)</th>
 							<th class="colorB" colspan="1">금액</th>
 							<th class="colorB" colspan="1">공사기간</th>
+							<th class="colorB" colspan="1">현장담당</th>
 							<th class="colorB" colspan="1">공정률</th>
 						</tr>
 					</tbody>
@@ -2768,19 +2770,20 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 //     pValue.sttus_nm = '대기';
                 // }
                 if(pValue.progrs_sttus_code == 'P'){
-                    pValue.ordr = 1;
+                    pValue.ordr = 100;
                 }
                 else if(pValue.progrs_sttus_code == 'K'){
-                    pValue.ordr = 2;
+                    pValue.ordr = 200;
                 }
                 else if(pValue.progrs_sttus_code == 'B'){
-                    pValue.ordr = 3;
+                    pValue.ordr = 300;
                 }
                 else{
-                    pValue.ordr = 4;
+                    pValue.ordr = 400;
                 }
+                pValue["order_rate"] = pValue.ordr - rate;
             });
-            pData.sort((a, b) => (a.ordr > b.ordr) ? 1 : -1 )
+            pData.sort((a, b) => (a.order_rate > b.order_rate) ? 1 : -1 );
             $.each(pResult.data, function(pIndex, pValue){
 				if(before != "" && before != pValue.sttus_nm){
 
@@ -2788,6 +2791,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                     html += '    <td class="text-center colorN3" colspan="3">계</td>';
                     html += '    <td class="text-center colorN3">'+count.toString().toFormat('NUMBER')+'개</td>';
                     html += '    <td class="text-right colorN3">'+amount.toString().toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-center colorN3"></td>';
                     html += '    <td class="text-center colorN3"></td>';
                     html += '    <td class="text-center colorN3"></td>';
                     html += '</tr>';
@@ -2803,13 +2807,14 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 var now_sum = pValue.now_sum == '' ? 0 : parseInt(pValue.now_sum);
                 var rate = pValue.rate == '' ? '0.0%' : parseFloat(pValue.rate).toFixed(1)+'%';
                 html += '<tr>';
-                html += '    <td class="text-center">'+pValue.sttus_nm+'</td>'
-                html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>'
-                html += '    <td class="text-center">'+pValue.prjct_ty_nm.split("(")[1].replaceAll(")", "").replaceAll("일반", "직계약")+'</td>'
-                html += '    <td class="text-left">'+pValue.spt_nm+'</td>'
-                html += '    <td class="text-right">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>'
-                html += '    <td class="text-center">'+pValue.cntrwk_period+'</td>'
-                html += `    <td class="text-center ${parseFloat(pValue.rate) >= 95.0 ? "colorP" : ""}">${rate}</td>`
+                html += '    <td class="text-center">'+pValue.sttus_nm+'</td>';
+                html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>';
+                html += '    <td class="text-center">'+pValue.prjct_ty_nm.split("(")[1].replaceAll(")", "").replaceAll("일반", "직계약")+'</td>';
+                html += '    <td class="text-left">'+pValue.spt_nm+'</td>';
+                html += '    <td class="text-right">'+pValue.cntrct_amount.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-center">'+pValue.cntrwk_period+'</td>';
+                html += '    <td class="text-center">'+pValue.mber_nm+'</td>';
+                html += `    <td class="text-center ${parseFloat(pValue.rate) >= 95.0 ? "colorP" : ""}">${rate}</td>`;
                 html += '</tr>';
                 count += 1;
                 amount += pValue.cntrct_amount == '' ? 0 : parseInt(pValue.cntrct_amount);
@@ -2820,6 +2825,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 html += '    <td class="text-center colorN3" colspan="3">계</td>';
                 html += '    <td class="text-center colorN3">'+count.toString().toFormat('NUMBER')+'개</td>';
                 html += '    <td class="text-right colorN3">'+amount.toString().toFormat('NUMBER')+'</td>';
+                html += '    <td class="text-center colorN3"></td>';
                 html += '    <td class="text-center colorN3"></td>';
                 html += '    <td class="text-center colorN3"></td>';
                 html += '</tr>';
@@ -2838,6 +2844,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
             html += '    <td class="text-center colorSky" colspan="3">합계</td>';
             html += '    <td class="text-center colorSky">'+count_tot.toString().toFormat('NUMBER')+'개</td>';
             html += '    <td class="text-right colorSky">'+amount_tot.toString().toFormat('NUMBER')+'</td>';
+            html += '    <td class="text-center colorSky"></td>';
             html += '    <td class="text-center colorSky"></td>';
             html += '    <td class="text-center colorSky"></td>';
             html += '</tr>';
