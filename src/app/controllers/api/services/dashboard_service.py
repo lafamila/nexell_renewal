@@ -218,7 +218,7 @@ def get_completed_va(params):
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
 
-    query = """SELECT c.cntrct_sn
+    query = """(SELECT c.cntrct_sn
 				, m.dept_code AS dept_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn='1' AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
@@ -228,12 +228,34 @@ def get_completed_va(params):
 				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS p3
 				, 0 AS s2
 				, (SELECT (IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) - IFNULL(SUM(p.dlnt*p.dlamt),0)) FROM account p LEFT OUTER JOIN account s ON s.cnnc_sn=p.delng_sn WHERE p.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND p.delng_se_code = 'P' AND p.cntrct_sn IS NOT NULL AND p.bcnc_sn = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
+				, 1 AS s_order
 				FROM contract c
 				LEFT OUTER JOIN member m
 				ON c.spt_chrg_sn=m.mber_sn
-				WHERE 1=1
-				ORDER BY dept_nm, bcnc_nm, spt_nm
-""".format(first_day, last_day)
+				WHERE 1=1)
+                UNION (
+				SELECT '' AS cntrct_sn
+				, co.code AS dept_code
+				, co.code_nm AS dept_nm
+				, '장려금' AS bcnc_nm
+				, '' AS spt_nm
+				, SUM(IFNULL({2}, 0)) AS s1
+				, 0 AS p1
+				, 0 AS p3
+				, 0 AS s2
+				, 0 AS p2
+				, 2 AS s_order
+				FROM goal g
+				LEFT JOIN member m
+				ON g.mber_sn = m.mber_sn
+				LEFT JOIN code co
+				ON co.parnts_code = 'DEPT_CODE' AND co.code = m.dept_code
+				WHERE g.amt_ty_code = 9
+				AND g.stdyy BETWEEN YEAR('{0} 00:00:00') AND '{1} 23:59:59'
+				GROUP BY dept_nm)
+
+				ORDER BY dept_nm, s_order, bcnc_nm, spt_nm
+""".format(first_day, last_day, "{}m".format(int(m)))
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
