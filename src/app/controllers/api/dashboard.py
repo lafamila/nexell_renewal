@@ -247,7 +247,7 @@ def ajax_get_month_report():
                 total_amount_2[r['dept_code']] = r['m_contract_amount']
 
         for dept_code in result['contractList']:
-            if dept_code == 'NE':
+            if dept_code in ('NE', 'ETC'):
                 continue
             if '3' in result['contractList'][dept_code]:
                 remain = total_amount_3[dept_code] - sum([c['amount'] for c in result['contractList'][dept_code]['3']])
@@ -276,7 +276,7 @@ def ajax_get_month_report():
 
 
         for dept_code in result['contractList']:
-            if dept_code == 'NE':
+            if dept_code in ('NE', 'ETC'):
                 continue
             if '2' in result['contractList'][dept_code]:
                 remain = total_amount_2[dept_code] - sum([c['amount'] for c in result['contractList'][dept_code]['2']])

@@ -84,7 +84,7 @@ def get_stock_datatable_search(params):
     				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
     				INNER JOIN
     				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
-    				INNER JOIN
+    				LEFT OUTER JOIN
     				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
     				WHERE 1=1
     				AND m.ddt_man BETWEEN '{0}' AND '{1}'
@@ -119,11 +119,11 @@ def get_stock_datatable_search(params):
         data.append('%{}%'.format(params["s_rm"]))
 
     if "s_cntrct_nm" in params and params['s_cntrct_nm']:
-        query += " AND m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s"
+        query += " AND m.stock_sttus=1 AND IFNULL((SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)), '') LIKE %s"
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
     if "s_bcnc_sn" in params and params['s_bcnc_sn']:
-        query += " AND m.stock_sttus IN (2,3) AND (SELECT bcnc_sn FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) = %s"
+        query += " AND m.stock_sttus=1 AND (SELECT bcnc_sn FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) = %s"
         data.append(params["s_bcnc_sn"])
 
     if "s_puchas_se_code" in params and params['s_puchas_se_code']:
@@ -167,6 +167,7 @@ def get_stock_datatable_search(params):
         if len(afters) > 0:
             query += ") )"
 
+    print(query, data)
     return dt_query(query, data, params)
 def get_stock_datatable(params, prduct_se_code):
     query = """SELECT '1' AS ctmmny_sn
@@ -235,7 +236,7 @@ def get_stock_datatable(params, prduct_se_code):
         data.append('%{}%'.format(params["s_rm"]))
 
     if "s_cntrct_nm" in params and params['s_cntrct_nm']:
-        query += " AND (m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s) OR (m.stock_sttus = 1 AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)) LIKE %s)"
+        query += " AND ((m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s) OR (m.stock_sttus = 1 AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)) LIKE %s))"
         data.append('%{}%'.format(params["s_cntrct_nm"]))
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 
@@ -252,6 +253,7 @@ def get_stock_datatable(params, prduct_se_code):
         data.append(params['s_bigo'])
 
     if "s_invn_sttus_code" in params and params['s_invn_sttus_code']:
+        print("------")
         sttus_code = params['s_invn_sttus_code']
         if sttus_code == '2S':
             query += " AND (m.stock_sttus=1 AND m.cntrct_sn=2 AND s.rm LIKE %s)"
@@ -278,7 +280,7 @@ def get_stock_datatable(params, prduct_se_code):
             data.append(sttus_code)
 
     params["custom_order"] = ["IF(instl_de <> '', instl_de, IF(m.stock_sttus IN (1, 4), m.ddt_man, '')) DESC, invn_sttus_nm"]
-
+    print(query, data)
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):
@@ -327,7 +329,7 @@ def get_stock_summary(params, prduct_se_code):
         data.append('%{}%'.format(params["s_rm"]))
 
     if "s_cntrct_nm" in params and params['s_cntrct_nm']:
-        query += " AND (m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s) OR (m.stock_sttus = 1 AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)) LIKE %s)"
+        query += " AND ((m.stock_sttus IN (2, 3) AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=m.cntrct_sn) LIKE %s) OR (m.stock_sttus = 1 AND (SELECT spt_nm FROM contract ct WHERE ct.cntrct_sn=(SELECT cntrct_sn FROM stock_log WHERE log_sn=m.cnnc_sn)) LIKE %s))"
         data.append('%{}%'.format(params["s_cntrct_nm"]))
         data.append('%{}%'.format(params["s_cntrct_nm"]))
 

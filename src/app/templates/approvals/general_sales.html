@@ -223,6 +223,22 @@
 
     fnValidate = function(){
                     var result = true;
+                    if($(document).find("#cntrct_de").val() == ''){
+                        alert("계약일을 입력해주세요.");
+                        result = false;
+                        return result;
+                    }
+                    if($(document).find("#expect_de").val() == ''){
+                        alert("입금예정일을 입력해주세요.");
+                        result = false;
+                        return result;
+                    }
+                    if($(document).find("#cntrct_sn").val() == ''){
+                        alert("프로젝트를 선택해주세요.");
+                        result = false;
+                        return result;
+                    }
+
                     return result;
                }
     cloneRow = function(selector, count){
