@@ -1,6 +1,7 @@
 from flask import session
 from app.connectors import DB
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from pytz import timezone
 def refresh_code_list():
     def wrapper(**params):
@@ -323,6 +324,61 @@ def set_menu(auth_cd):
     #########################
     # auto handler check    #
     #########################
+    now = datetime.now(timezone('Asia/Seoul')) - relativedelta(months=1)
+    y, m = now.strftime("%Y-%m").split("-")
+    st, ed = now.strftime("%Y-%m-01"), now.strftime("%Y-%m-31")
+    row = curs.execute("SELECT * FROM bnd_table WHERE stdyy=%s AND stdmm=%s", (y, m))
+    if not row:
+        query = "SELECT IFNULL(count(distinct c.cntrct_sn), 0) as cnt FROM account s LEFT JOIN contract c ON s.cntrct_sn=c.cntrct_sn LEFT JOIN member m ON c.bsn_chrg_sn=m.mber_sn WHERE 1=1 AND m.dept_code='BI' AND s.delng_se_code='S' AND s.delng_ty_code='13' AND ddt_man BETWEEN '{} 00:00:00' AND '{} 23:59:59'".format(st, ed)
+        curs.execute(query)
+        result = curs.fetchone()
+        cnt_new = result['cnt']
+        query = """SELECT distinct c.spt_nm FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn LEFT JOIN stock s ON x.stock_sn=s.stock_sn LEFT OUTER JOIN contract c ON x.cntrct_sn=c.cntrct_sn
+                LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='P') p_last ON x.delng_sn=p_last.delng_sn
+				LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='S') sa_last ON sa_last.cnnc_sn=p_last.delng_sn
+WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1, 4), x.ddt_man, sa_last.dlivy_de) IS NOT NULL"""
+        curs.execute(query)
+        result = curs.fetchall()
+        cnt_out_all = len(result)
+        query = "SELECT COUNT(distinct c.cntrct_sn) AS cnt FROM taxbil t LEFT JOIN contract c ON t.cntrct_sn=c.cntrct_sn LEFT JOIN member m ON c.BSN_CHRG_SN=m.mber_sn WHERE m.dept_code='BI' AND  t.delng_se_code IN ('S2', 'S4') AND t.PBLICTE_DE BETWEEN %(st)s AND %(ed)s"
+        curs.execute(query, {"st": st, "ed": ed})
+        result = curs.fetchone()
+        cnt_in_1 = result['cnt']
+
+
+        query = "SELECT COUNT(distinct c.cntrct_sn) AS cnt FROM taxbil t LEFT JOIN contract c ON t.cntrct_sn=c.cntrct_sn LEFT JOIN member m ON c.BSN_CHRG_SN=m.mber_sn WHERE m.dept_code='BI' AND c.PRJCT_CREAT_AT='Y' AND t.delng_se_code IN ('S', 'S1') AND t.PBLICTE_DE BETWEEN %(st)s AND %(ed)s"
+        curs.execute(query, {"st": st, "ed": ed})
+        result = curs.fetchone()
+        cnt_in_2 = result['cnt']
+
+        # TODO: cnt_not_in_1, cnt_remain_1, cnt_not_in_2, cnt_remain_2
+        # TODO: insert
+
+    row = curs.execute("SELECT * FROM bnd_stock_table WHERE stdyy=%s AND stdmm=%s", (y, m))
+    if not row:
+        queries = """SELECT IFNULL(COUNT(*), 0) AS cnt FROM stock_log ss LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus='1' AND s.PRDUCT_SE_CODE='2' AND ddt_man BETWEEN %(st)s AND %(ed)s
+    SELECT IFNULL(COUNT(*), 0) AS cnt  FROM stock_log ss LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus='2' AND s.PRDUCT_SE_CODE='2' AND ss.CNNC_SN IS NOT NULL AND ddt_man BETWEEN %(st)s AND %(ed)s
+    SELECT IFNULL(COUNT(*), 0) AS cnt  FROM stock_log ss LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus='3' AND s.PRDUCT_SE_CODE='2' AND ddt_man BETWEEN %(st)s AND %(ed)s
+    SELECT IFNULL(COUNT(*), 0) AS cnt  FROM stock_log ss LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus='4' AND s.PRDUCT_SE_CODE='2' AND ddt_man BETWEEN %(st)s AND %(ed)s""".split("\n")
+        results = dict()
+        for i, query in enumerate(queries):
+            curs.execute(query.strip(), {"st": st, "ed": ed})
+            result = curs.fetchone()
+            cnt = result['cnt']
+            results[f"cnt{i}"] = cnt
+        curs.execute("SELECT IFNULL(s.use_type, '') AS use_type, count(*) AS cnt FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn  LEFT JOIN stock s ON x.stock_sn=s.stock_sn WHERE x.stock_sttus='1' AND s.PRDUCT_SE_CODE='2' GROUP BY s.use_type")
+        result = curs.fetchall()
+        for r in result:
+            if r['use_type'] != '':
+                results[r['use_type']] = r['cnt']
+
+        for t in ("빌트인", "일반", "자재"):
+            if t not in results:
+                results[t] = 0
+        curs.execute("INSERT INTO bnd_stock_table(stdyy, stdmm, invn_type, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7) VALUES (%s, %s, 0, %s, %s, %s, %s, %s, %s, %s)", (y, m, results["cnt0"], results["cnt1"], results["cnt2"], results["cnt3"], results["빌트인"], results["일반"], results["자재"]))
+        db.commit()
     # general sales project - bcnc check
 
     # bcnc_nm = "{}년{}월일반".format(datetime.now(timezone('Asia/Seoul')).strftime("%y"), int(datetime.now(timezone('Asia/Seoul')).strftime("%m")))
