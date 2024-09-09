@@ -352,7 +352,7 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
         curs.execute(query, {"st": st, "ed": ed})
         result = curs.fetchone()
         cnt_in_2 = result['cnt']
-
+        print(cnt_new, cnt_out_all, cnt_in_1, cnt_in_2)
         # TODO: cnt_not_in_1, cnt_remain_1, cnt_not_in_2, cnt_remain_2
         # TODO: insert
 
@@ -378,6 +378,29 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
             if t not in results:
                 results[t] = 0
         curs.execute("INSERT INTO bnd_stock_table(stdyy, stdmm, invn_type, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7) VALUES (%s, %s, 0, %s, %s, %s, %s, %s, %s, %s)", (y, m, results["cnt0"], results["cnt1"], results["cnt2"], results["cnt3"], results["빌트인"], results["일반"], results["자재"]))
+        db.commit()
+
+
+    row = curs.execute("""SELECT  s.stock_sn AS stock_sn
+				FROM (SELECT * FROM stock WHERE prduct_se_code=2) s
+				INNER JOIN
+				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+				INNER JOIN
+				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MIN(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) mi ON s.stock_sn=mi.stock_sn
+				INNER JOIN
+				(SELECT * FROM account WHERE delng_se_code='P') p ON mi.delng_sn=p.delng_sn
+				LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='S') sa ON sa.cnnc_sn=p.delng_sn
+				LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='P') p_last ON m.delng_sn=p_last.delng_sn
+				LEFT OUTER JOIN
+				(SELECT * FROM account WHERE delng_se_code='S') sa_last ON sa_last.cnnc_sn=p_last.delng_sn
+				WHERE 1=1
+                AND p.ddt_man < DATE_SUB(NOW(), INTERVAL 2 YEAR)
+                AND (s.rm NOT LIKE %s or s.rm IS NULL)""", ('%장기%', ))
+    if row:
+        stocks = curs.fetchall()
+        curs.executemany("""UPDATE stock SET rm=concat('장기 ', IFNULL(rm, '')) WHERE stock_sn=%(stock_sn)s""", stocks)
         db.commit()
     # general sales project - bcnc check
 

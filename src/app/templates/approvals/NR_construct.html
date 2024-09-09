@@ -256,7 +256,7 @@
             <td class="text-right" name="bcnc_completed_total"></td>
             <td class="colorP text-center" name="bcnc_completed_rate"></td>
             <td class="hasinput">
-                <input type="text" class="form-control text-right" data-type="number" name="bcnc_now_total"/>
+                <input type="text" class="form-control text-right" data-type="minus-number" name="bcnc_now_total"/>
             </td>
             <td class="colorP text-center" name="bcnc_now_rate"></td>
             <td class="colorY text-right" name="bcnc_total_total"></td>
@@ -1195,9 +1195,20 @@
             });
 
         }
+        var input = document.querySelector('input[data-type="minus-number"]');
+        if(input){
+            input.addEventListener('input', function() {
+              this.value = this.value.replace(/[^0-9,\- ]/g, '')
+            });
+
+        }
 
     });
     $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input[data-type='minus-number']", function(){
         var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
         $(this).val(value);
     });

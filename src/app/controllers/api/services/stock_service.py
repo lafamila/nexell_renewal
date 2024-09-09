@@ -253,7 +253,6 @@ def get_stock_datatable(params, prduct_se_code):
         data.append(params['s_bigo'])
 
     if "s_invn_sttus_code" in params and params['s_invn_sttus_code']:
-        print("------")
         sttus_code = params['s_invn_sttus_code']
         if sttus_code == '2S':
             query += " AND (m.stock_sttus=1 AND m.cntrct_sn=2 AND s.rm LIKE %s)"
@@ -280,7 +279,6 @@ def get_stock_datatable(params, prduct_se_code):
             data.append(sttus_code)
 
     params["custom_order"] = ["IF(instl_de <> '', instl_de, IF(m.stock_sttus IN (1, 4), m.ddt_man, '')) DESC, invn_sttus_nm"]
-    print(query, data)
     return dt_query(query, data, params)
 
 def get_stock_summary(params, prduct_se_code):

@@ -75,6 +75,12 @@ def insert_approval_member(params):
     for s in systems:
         if str(s['mber_sn']) not in already_members:
             approval_list.append({"approval_sn" : params['approval_sn'], "mber_sn" : s['mber_sn'], "reg_type" : 2})
+    g.curs.execute("SELECT code_ordr FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=%s", params['approval_ty_code'])
+    code_ordr = int(g.curs.fetchone()['code_ordr'])
+    print(code_ordr, already_members)
+    if code_ordr in (2, 3):
+        if '91' not in already_members:
+            approval_list.append({"approval_sn": params['approval_sn'], "mber_sn": '91', "reg_type": 2})
     g.curs.executemany("INSERT INTO approval_member(approval_sn, mber_sn, reg_type, approval_status_code) SELECT %(approval_sn)s, %(mber_sn)s, %(reg_type)s, 0 FROM approval_member WHERE NOT EXISTS (SELECT approval_sn, mber_sn, reg_type FROM approval_member WHERE approval_sn=%(approval_sn)s AND mber_sn=%(mber_sn)s AND reg_type=%(reg_type)s) LIMIT 1", approval_list)
 
 def get_approval(params):

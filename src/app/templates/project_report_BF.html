@@ -481,8 +481,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	<colgroup>
 		<col width="50">
 		<col width="100">
-		<col width="100">
 		<col width="50">
+		<col width="100">
 		<col width="100">
 		<col width="100">
 		<col width="100">
@@ -500,10 +500,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	<tbody role="body">
 		<tr>
 			<th class="colorN" rowspan="2">결산내역</th>
-			<th class="colorP">입금합계</th>
 			<th class="colorP">삼성전자 수주총액</th>
 			<th class="colorP">수수료율(%)</th>
-			<th class="colorP">① 당사수주(수수료) 총액</th>
+			<th class="colorP">당사수주(수수료) 총액</th>
+			<th class="colorP">① 입금합계</th>
 			<th class="colorP">② M,S/H 매입금액</th>
 			<th class="colorP">③ M,S/H 추가DC금액</th>
 			<th class="colorP">④ M,S/H 판매금액</th>
@@ -513,9 +513,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">VA율</th>
 		</tr>
 		<tr data-row="result">
+			<td class="colorX text-number"></td>
+			<td class="colorX text-number"></td>
 			<th class="text-number colorP"></th>
-			<td class="colorX text-number"></td>
-			<td class="colorX text-number"></td>
 			<th class="text-number colorP"></th>
 			<td class="colorX text-number"></td>
 			<td class="colorX text-number"></td>
@@ -2446,6 +2446,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				} else {
 					execAmt6 = 0;
 				}
+
+                //Th0 - td2 + td3 + td4 - td5 - td6
 				var vaTotal = (totData1 + execAmt3 + execAmt4)-(execAmt2 + execAmt5 + execAmt6);
 				var vaRate = (vaTotal/totData1)*100;
 				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(7)').html(vaTotal.toString().toFormat('NUMBER'));
