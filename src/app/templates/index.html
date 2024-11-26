@@ -617,7 +617,7 @@
 						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 					</div>
 				</div>
-	{% if session['member']['auth_cd'] == 1 or session['member']['member_sn'] == 91 or session['member']['auth_cd'] == 10 %}
+	{% if session['member']['auth_cd'] == 1 or session['member']['member_sn'] in (91, 21) or session['member']['auth_cd'] == 10 %}
                 <div class="pull-right" style="margin-right:10px;width:150px;">
 					<button type="button" class="btn btn-primary" id="btnTodoRefresh" value="0">영업팀업무현황</button>
 				</div>

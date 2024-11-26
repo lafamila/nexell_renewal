@@ -1181,7 +1181,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var bCostList = pResult.bCostList, cCostTotal = 0, eCostTotal = 0;
 				var bCostDTM = '9999-99-99';
 				var bTotals = {"A" : [0, 0], "B" : [0, 0]};
-				console.log('bCostList', bCostList);
 				$.each(bCostList, function(pIndex, pValue) {
 					var amount = 0;
 					if (pValue.amount != '') {
@@ -1257,7 +1256,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
                     if(pIndex >= 9){
                         return false;
                     }
-					console.log('sCost['+pIndex+']', tCost[pIndex]);
 					if (tCost[pIndex]!==null) {
 						$(pValue).html(tCost[pIndex].toString().toFormat('NUMBER'));
                     }
@@ -1278,7 +1276,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var aCostList = pResult.aCostList, cCostTotal = 0, eCostTotal = 0, cCostTotalLast = 0;
 				var cTotals = {"C" : [0, 0], "E" : [0, 0]};
 				var aCostDTM = '9999-99-99';
-				console.log('aCostList', aCostList);
 				$.each(aCostList, function(pIndex, pValue) {
 					var amount = 0;
 					if (pValue.amount != '') {
@@ -1321,7 +1318,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportNR').find('#aCostDTM').html((aCostDTM == '9999-99-99') ? '' : aCostDTM);
 
 				var extraCostList = pResult.extraCostList;
-				console.log(extraCostList);
 				if(extraCostList){
 					cCostTotalLast = 0;
 					var extraCosts = {};
@@ -1333,8 +1329,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						extraCosts[extra_sn].push(pCost);
 					});
 
-					var extra_sns = Object.keys(extraCosts);
-					extra_sns.sort();
+					var extra_sns = Object.keys(extraCosts).map((e)=>{return parseInt(e)});
+					extra_sns.sort((a, b)=>{return a-b});
+					console.log("extra", extra_sns);
+					console.log("extra", extraCosts);
 					for(let i=1;i<=extra_sns.length;i++){
 						var extra_sn = extra_sns[i-1];
 						var costs = extraCosts[extra_sn];
@@ -1380,7 +1378,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var totals = {"C" : [0, 0], "E" : [0, 0]};
 						var tCostDTM = '9999-99-99';
 						$.each(costs, function(pIndex, pCost){
-							console.log(pCost);
 							$(tbody).find(`td[data-column="${pCost.cntrct_execut_code.toLowerCase()}Cost${pCost.ct_se_code}"]`).html(pCost.amount.toFormat('NUMBER'));
 							costTotal[pCost.cntrct_execut_code] += (pCost.amount != '') ? parseInt(pCost.amount) : 0;
 							if([1, 2].includes(parseInt(pCost.ct_se_code))){
@@ -1555,7 +1552,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
                 var amt_tot = 0;
                 var real_amt_tot = 0;
 				$.each(pResult.rcppayList, function(pIndex, pValue) {
-					console.log('pResult.rcppayList', pValue);
 					var sTaxbilList = pValue.sTaxbilList;
 					var iRcppayList = pValue.iRcppayList;
 					html += '<tr>';
@@ -1746,7 +1742,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var p_sum_total = 0, s_sum_total = 0, va_total = 0;
 
 				$.each(s1AccountList, function(pIndex, pValue) {
-					console.log("lafamila", pValue);
 					var va = parseInt(pValue.s_total) - parseInt(pValue.p_total);
 					function to_int(x){
 						if(x == '') return 0;
@@ -2101,7 +2096,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
                             var eCost5_amt_total = eCost5_amt * eCost5.qy;
                             var eCost5_vat_total = Math.round(eCost5_amt_total * 0.1);
                             var eCost5_sum = eCost5_amt_total + eCost5_vat_total;
-                            console.log('eCost5', eCost5, eCost5_amt);
                             html += '<tr> ';
                             html += '	<td class="text-center" id="eCost5_qy">'+eCost5.model_no+'</td> ';
                             html += '	<td class="text-number" id="eCost5_qy">'+eCost5.qy.toString().toFormat('NUMBER')+'</td> ';
@@ -2152,7 +2146,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
                     var direct_p_total = 0, direct_total=0;
                     var logitec_p_total = 0, logitec_total=0;
                     $.each(pValue.taxbilList, function(pIndex, pValue) {
-                        console.log(pValue);
                         amount_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
                         human_p_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
 
@@ -2781,7 +2774,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* M/SH, 옵션 */
 				var html = '';
 				var dspyOptionList = pResult.sOptionCostList;
-				console.log("dspy", dspyOptionList);
 				if(dspyOptionList != null){
 					$.each(dspyOptionList, function(pKey, pValue){
 						var target = $(document).find(`#rptTableOpt tbody[role=body] [data-column='${pKey}']`);
@@ -2903,7 +2895,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				}
 				var total12 = execAmt1 + execAmt2;
 				var total345 = execAmt3 + execAmt4 + execAmt5;
-                console.log("lafamila", execAmt0, execAmt1, execAmt2, execAmt3, execAmt4, execAmt5, execAmt6, execAmt7, execAmt8, execAmt9);
 				var vaTotal = execAmt0 - execAmt1 - execAmt2 - execAmt3 - execAmt4 - execAmt5 - execAmt6 - execAmt7 - execAmt8 - execAmt9;
 				var vaRate = (vaTotal/execAmt0)*100;
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] th:eq(1)').html(total12.toString().toFormat('NUMBER'));

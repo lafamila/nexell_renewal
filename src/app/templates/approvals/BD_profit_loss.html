@@ -301,9 +301,13 @@
                                 base[pValue.extra_sn].p_sell_amt_total += p_puchas;
                             }
                         });
-                        var max_sn = Math.max(...Object.keys(base).map(x => parseInt(x)));
-                        console.log(base[max_sn].p_sell_amt_total);
-                        C_cost += base[max_sn].p_sell_amt_total;
+                        if(Object.keys(base).length > 0){
+                            var max_sn = Math.max(...Object.keys(base).map(x => parseInt(x)));
+                            console.log(base);
+                            console.log(max_sn);
+                            console.log(base[max_sn].p_sell_amt_total);
+                            C_cost += base[max_sn].p_sell_amt_total;
+                        }
 
 
 

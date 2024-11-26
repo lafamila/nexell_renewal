@@ -212,7 +212,7 @@ def get_work(params):
                     END)) AS rate_tot
                     , Name AS name 
                     , Sabun AS mber_sn
-                    FROM T_SECOM_WORKHISTORY WHERE 1=1 AND WorkDate LIKE %s GROUP BY Name, Sabun) wt
+                    FROM T_SECOM_WORKHISTORY WHERE 1=1 AND WorkDate LIKE %s AND WorkDate<= %s GROUP BY Name, Sabun) wt
                 ON m.mber_sn=wt.mber_sn
                 LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
                 ON m.mber_sn=w.Sabun
@@ -220,7 +220,7 @@ def get_work(params):
                 ORDER BY code_ordr ASC, ofcps_ordr ASC
                     """.format(work_date, work_year)
 
-    data = ['%Y%m%d', '%Y%m%d', '{}%'.format(work_year), work_date.replace("-", "")]
+    data = ['%Y%m%d', '%Y%m%d', '{}%'.format(work_year), work_date.replace("-", ""), work_date.replace("-", "")]
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result

@@ -1079,7 +1079,7 @@
                     $(document).find("#costTable tbody[role='ct_se_code_extra']").remove();
                     $(document).find("#costTable tbody[role='ct_se_code_diff']").remove();
                     var html = '';
-                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                    $.each(Object.keys(pResult.extraCostList).sort((a, b)=>{return parseInt(a)-parseInt(b)}), function(pIndex, extra_sn){
                         max_extra_sn = extra_sn;
                         var pRow = pResult.extraCostList[extra_sn];
                         html += `<tbody role="ct_se_code_extra" data-row="${extra_sn}">
@@ -1117,7 +1117,7 @@
                                     </tbody>`;
                     });
                     $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
-                    $.each(Object.keys(pResult.extraCostList).sort(), function(pIndex, extra_sn){
+                    $.each(Object.keys(pResult.extraCostList).sort((a, b)=>{return parseInt(a)-parseInt(b)}), function(pIndex, extra_sn){
                         var pRow = pResult.extraCostList[extra_sn];
                         last_data = {};
                         $.each(pRow, function(pIndex, pValue){
