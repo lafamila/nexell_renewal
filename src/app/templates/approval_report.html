@@ -591,6 +591,8 @@ div.report table th, div.report table td{
 							var comment = '';
 							var count = 0;
 							var isProcessing = false;
+							var before = '';
+							var status_text = '';
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
 									count ++;
@@ -607,9 +609,16 @@ div.report table th, div.report table td{
                                         status_nm = '(반려)';
 										isProcessing = true;
                                     }
+                                    if(before != '' && before == pMember.update_dtm){
+                                    	status_text = "전결";
+									}
+                                    else{
+                                    	status_text = `<img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/>`;
+									}
+                                    before = pMember.update_dtm;
                                     var html = `<div class="approval-member">
                                                     <div>${pMember.ofcps_nm == '' ? '&nbsp;' : pMember.ofcps_nm}</div>
-                                                    <div><img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/> </div>
+                                                    <div>${status_text} </div>
                                                     <div>${count}. ${pMember.mber_nm}</div>
                                                     <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0]+"<span style='text-align:center;'>"+pMember.update_dtm.split(" ")[1]+"</span>" : "&nbsp;"}</div>
                                                 </div>`;
