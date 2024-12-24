@@ -8,6 +8,28 @@ from pytz import timezone
 def get_approval_template(url, init=True):
     return render_template("approvals/{}.html".format(url), init=init, **refresh_code_list())
 
+
+def get_approval_detail(approval_ty_code):
+    result = {}
+    query = """SELECT code_ordr AS team_ordr
+                    , estn_code_a AS parent_code
+                    FROM code
+                WHERE use_at='Y'
+                AND parnts_code='APPROVAL_TY_CODE'
+                AND code=%s"""
+    g.curs.execute(query, approval_ty_code)
+    result.update(g.curs.fetchone())
+
+    query = """SELECT auth_type
+                    , coop
+                    , conditions
+                    FROM approval_auth
+                    WHERE approval_ty_code = %s"""
+    g.curs.execute(query, approval_ty_code)
+    result.update(g.curs.fetchone())
+
+
+    return result
 def get_approval_ty_list(params):
     query = """SELECT code
                     , code_nm

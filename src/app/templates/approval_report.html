@@ -593,6 +593,8 @@ div.report table th, div.report table td{
 							var isProcessing = false;
 							var before = '';
 							var status_text = '';
+                            var member_list_length = pResult.member_list.length;
+                            var html_chair = '';
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
 									count ++;
@@ -609,7 +611,7 @@ div.report table th, div.report table td{
                                         status_nm = '(반려)';
 										isProcessing = true;
                                     }
-                                    if(before != '' && before == pMember.update_dtm){
+                                    if(before != '' &&  (new Date(pMember.update_dtm) - new Date(before)) < 3000){
                                     	status_text = "전결";
 									}
                                     else{
@@ -642,8 +644,20 @@ div.report table th, div.report table td{
 									}
                                 }
                             });
+
+                            if(parseInt(pResult.member_list[member_list_length-1]) != 4){
+                                let pMember = pResult.member_list[member_list_length-1];
+                                html_chair +=  `<div class="approval-member">
+                                                    <div>대표</div>
+                                                    <div>전결 </div>
+                                                    <div>${count+1}. 황영구</div>
+                                                    <div style="display:grid;justify-content: center;align-items: center;">${pMember.update_dtm != '' ? pMember.update_dtm.split(" ")[0]+"<span style='text-align:center;'>"+pMember.update_dtm.split(" ")[1]+"</span>" : "&nbsp;"}</div>
+                                                </div>`;
+
+                            }
+
                             $(document).find("#approval_member_0").html(html0);
-                            $(document).find("#approval_member_1").html(html1);
+                            $(document).find("#approval_member_1").html(html1+html_chair);
                             $(document).find("#approval_member_2").html(html2);
 							if(comment.trim() != ''){
 	                            $(document).find("#comment-before").val(comment);
