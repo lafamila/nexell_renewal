@@ -595,6 +595,7 @@ div.report table th, div.report table td{
 							var status_text = '';
                             var member_list_length = pResult.member_list.length;
                             var html_chair = '';
+                            var chair_exist = false;
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
 									count ++;
@@ -632,6 +633,7 @@ div.report table th, div.report table td{
                                     else if(pMember.reg_type == 1){
                                         // ${loginSN==pMember.mber_sn.toString() ? 'font-weight:bold!important;' : ''}
                                         html1 += html;
+                                        if(parseInt(pMember.mber_sn) == 4) chair_exist = true;
                                     }
 									if(pMember.memo.trim() != ''){
 										comment += `${pMember.mber_nm} : ${pMember.memo}\n`;
@@ -645,7 +647,7 @@ div.report table th, div.report table td{
                                 }
                             });
 
-                            if(parseInt(pResult.member_list[member_list_length-1]) != 4){
+                            if(!chair_exist){
                                 let pMember = pResult.member_list[member_list_length-1];
                                 html_chair +=  `<div class="approval-member">
                                                     <div>대표</div>

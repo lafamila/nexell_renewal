@@ -83,44 +83,45 @@ def ajax_insert_approval():
         approval_list = [int(m['mber_sn']) for m in member_list if int(m['reg_type']) == 1]
         coop_list = [int(m['mber_sn']) for m in member_list if int(m['reg_type']) == 0]
         member = mber.get_member(session['member']['member_sn'])
-        if int(session['member']['member_sn']) == 66:
-            pass
-        else:
-            team_code = {0 : 'TS', 1 : 'BI', 2 : 'BI'}
-            approval_ty_code = int(params['approval_ty_code'])
-            approval_detail = apvl.get_approval_detail(approval_ty_code)
-            if approval_detail['coop'] != 0:
-                required_member_sn = int(approval_detail['coop'])
-                if required_member_sn not in coop_list:
-                    required_member = mber.get_member(required_member_sn)
-                    return make_response(f"해당 품의는 필수 협조자[{required_member['mber_nm']}]가 지정되어야 합니다.")
-            if approval_detail['conditions'] != 0:
-                if approval_ty_code in (56, 57, 22):
-                    member = mber.get_member(approval_list[0])
-                    if int(200 if member['rspofc_code'] == '' else member['rspofc_code']) != 200:
-                        required_member_sn = 4
-                    else:
-                        required_member_sn = mber.get_team_leader(member['dept_code'])
-                    if int(required_member_sn) != approval_list[-1]:
-                        required_member = mber.get_member(required_member_sn)
-                        return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
-
-            elif approval_detail['auth_type'] == 0:
+        # if int(session['member']['member_sn']) == 66:
+        #     pass
+        # else:
+        team_code = {1 : 'TS', 2 : 'BI', 3 : 'BI'}
+        approval_ty_code = int(params['approval_ty_code'])
+        approval_detail = apvl.get_approval_detail(approval_ty_code)
+        if approval_detail['coop'] != 0:
+            required_member_sn = int(approval_detail['coop'])
+            if required_member_sn not in coop_list:
+                required_member = mber.get_member(required_member_sn)
+                return make_response(f"해당 품의는 필수 협조자[{required_member['mber_nm']}]가 지정되어야 합니다.")
+        if approval_detail['conditions'] != 0:
+            if approval_ty_code in (56, 57, 22):
                 member = mber.get_member(approval_list[0])
-                required_member_sn = mber.get_team_leader(member['dept_code'])
+                if int(200 if member['rspofc_code'] == '' else member['rspofc_code']) != 200:
+                    required_member_sn = 4
+                else:
+                    required_member_sn = mber.get_team_leader(member['dept_code'])
                 if int(required_member_sn) != approval_list[-1]:
                     required_member = mber.get_member(required_member_sn)
                     return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
-            elif approval_detail['auth_type'] == 1:
-                required_member_sn = 91 if team_code[approval_detail['team_ordr']] == 'TS' else 63
-                if int(required_member_sn) != approval_list[-1]:
-                    required_member = mber.get_member(required_member_sn)
-                    return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
-            else:
-                required_member_sn = 4
-                if int(required_member_sn) != approval_list[-1]:
-                    required_member = mber.get_member(required_member_sn)
-                    return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
+
+        elif approval_detail['auth_type'] == 0:
+            member = mber.get_member(approval_list[0])
+            required_member_sn = mber.get_team_leader(member['dept_code'])
+            if int(required_member_sn) != approval_list[-1]:
+                required_member = mber.get_member(required_member_sn)
+                return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
+        elif approval_detail['auth_type'] == 1:
+            print(approval_detail)
+            required_member_sn = 91 if team_code[approval_detail['team_ordr']] == 'TS' else 63
+            if int(required_member_sn) != approval_list[-1]:
+                required_member = mber.get_member(required_member_sn)
+                return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
+        else:
+            required_member_sn = 4
+            if int(required_member_sn) != approval_list[-1]:
+                required_member = mber.get_member(required_member_sn)
+                return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
 
 
         # if int(params['approval_ty_code']) in (1, ):
