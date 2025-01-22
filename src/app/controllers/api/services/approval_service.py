@@ -168,7 +168,7 @@ def update_approval(params):
         member_list = get_approval_member(params)
         member_list = [m for m in member_list if m['reg_type'] in (0, 1)]
 
-        _pass = True
+        _pass = False
         g.curs.execute("SELECT a.approval_ty_code, m.rspofc_code FROM approval a LEFT JOIN member m ON a.reg_mber=m.mber_sn WHERE a.approval_sn=%s", params['approval_sn'])
         approval = g.curs.fetchone()
         if int(approval['approval_ty_code']) in (2, 34, 41) or (int(approval['approval_ty_code']) in (22, 56, 57) and int(approval['rspofc_code']) in (100, 150)):
