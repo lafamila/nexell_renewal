@@ -100,7 +100,7 @@ def ajax_insert_approval():
                 if int(200 if member['rspofc_code'] == '' else member['rspofc_code']) != 200:
                     required_member_sn = 4
                 else:
-                    required_member_sn = mber.get_team_leader(member['dept_code'])
+                    required_member_sn = 91 if team_code[approval_detail['team_ordr']] == 'TS' else 63
                 if int(required_member_sn) != approval_list[-1]:
                     required_member = mber.get_member(required_member_sn)
                     return make_response(f"해당 품의의 최상위 결재자[{required_member['mber_nm']}]가 일치하지 않습니다.", 501)
