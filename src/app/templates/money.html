@@ -327,11 +327,17 @@ $(document).on("dblclick", ".input-available", function(){
 	var data_type = $(this).data("type");
 	var authors = ["*"];
 	var loginId = $("#loginID").val();
+
 	if(!authors.includes("*") && !authors.includes(loginId)){
 		alert("권한이 없습니다.");
 		return false;
 	}
-	var data = prompt("값을 입력하세요.");
+    if(["rm1", "rm2"].includes(column)){
+    	var data = prompt("값을 입력하세요.", $(this).html());
+    }
+    else{
+    	var data = prompt("값을 입력하세요.");
+    }
 	if(data_type == "number"){
 		try{
 			if(/^-?\d+$/.test(data)){

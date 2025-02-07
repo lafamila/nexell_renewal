@@ -1,8 +1,11 @@
 from flask import session
 from app.connectors import DB
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from pytz import timezone
+import requests
+
+
 def refresh_code_list():
     def wrapper(**params):
         return params
@@ -325,6 +328,8 @@ def set_menu(auth_cd):
     # auto handler check    #
     #########################
     now = datetime.now(timezone('Asia/Seoul')) - relativedelta(months=1)
+    last_day = datetime.strptime(datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d") + timedelta(days=-1)
+
     y, m = now.strftime("%Y-%m").split("-")
     st, ed = now.strftime("%Y-%m-01"), now.strftime("%Y-%m-31")
     row = curs.execute("SELECT * FROM bnd_table WHERE stdyy=%s AND stdmm=%s", (y, m))
@@ -346,15 +351,57 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
         curs.execute(query, {"st": st, "ed": ed})
         result = curs.fetchone()
         cnt_in_1 = result['cnt']
-
-
         query = "SELECT COUNT(distinct c.cntrct_sn) AS cnt FROM taxbil t LEFT JOIN contract c ON t.cntrct_sn=c.cntrct_sn LEFT JOIN member m ON c.BSN_CHRG_SN=m.mber_sn WHERE m.dept_code='BI' AND c.PRJCT_CREAT_AT='Y' AND t.delng_se_code IN ('S', 'S1') AND t.PBLICTE_DE BETWEEN %(st)s AND %(ed)s"
         curs.execute(query, {"st": st, "ed": ed})
         result = curs.fetchone()
         cnt_in_2 = result['cnt']
-        print(cnt_new, cnt_out_all, cnt_in_1, cnt_in_2)
+
+
+        params = {'bnd_year': last_day.year, 'm_dlivy_de_start': '', 'm_dlivy_de_end': '', 'm_pblict_de_start': '', 'm_pblict_de_end': '', 's_dlivy_de_start': '', 's_dlivy_de_end': '', 's_pblict_de_start': '', 's_pblict_de_end': '', 't_pblict_de_start': '', 't_pblict_de_end': ''}
+        res = requests.get("http://localhost:5001/api/bnd/ajax_get_bnd",
+                           params=params)
+        result = res.json()
+        cnt_1 = 0
+        remain_1 = 0
+        cnt_2 = 0
+        remain_2 = 0
+        expect = {str(_['cntrct_sn']): (datetime.strptime(_['expect_de'], "%y/%m/%d"), _['progrs_order'] in (1, 3)) for
+                  _ in result['data'] if _['expect_de'] != ''}
+        for cntrct_sn, pRow in result['taxbill'].items():
+            mTotal = sum([_[1] for _ in pRow['M']])
+            sTotal = sum([_[1] for _ in pRow['S']])
+            tTotal = sum([_[1] for _ in pRow['T']])
+            rcppay = result['rcppay'].get(cntrct_sn, {'M': 0, 'S': 0, 'T': 0})
+            mRemain, sRemain = round((int(rcppay['M']) - int(mTotal)) / 1000), round(
+                (int(rcppay['S']) - int(sTotal)) / 1000)
+            if mRemain >= 10 or sRemain >= 10:
+                cnt_1 += 1
+                remain_1 += mRemain if mRemain >= 10 else 0
+                remain_1 += sRemain if sRemain >= 10 else 0
+
+            tRemain = round((int(rcppay['T']) - int(tTotal)) / 1000)
+            if cntrct_sn in expect:
+                if last_day >= expect[cntrct_sn][0] and expect[cntrct_sn][1] and tRemain > 0:
+                    cnt_2 += 1
+                    remain_2 += tRemain
+        for cntrct_sn, pRow in result['rcppay'].items():
+            if cntrct_sn not in result['taxbill']:
+                mRemain, sRemain = round(int(pRow['M']) / 1000), round(int(pRow['S']) / 1000)
+                if mRemain >= 10 or sRemain >= 10:
+                    cnt_1 += 1
+                    remain_1 += mRemain if mRemain >= 10 else 0
+                    remain_1 += sRemain if sRemain >= 10 else 0
+                tRemain = round(int(rcppay['T']) / 1000)
+                if last_day >= expect[cntrct_sn][0] and expect[cntrct_sn][1] and tRemain > 0:
+                    cnt_2 += 1
+                    remain_2 += tRemain
+
         # TODO: cnt_not_in_1, cnt_remain_1, cnt_not_in_2, cnt_remain_2
         # TODO: insert
+        curs.execute(
+            "INSERT INTO bnd_table(stdyy, stdmm, cnt_new, cnt_out_all, cnt_in_1, cnt_not_in_1, cnt_remain_1, cnt_in_2, cnt_not_in_2, cnt_remain_2) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (last_day.year, last_day.month, cnt_new, cnt_out_all, cnt_in_1, cnt_1, remain_1, cnt_in_2, cnt_2, remain_2))
+        db.commit()
 
     row = curs.execute("SELECT * FROM bnd_stock_table WHERE stdyy=%s AND stdmm=%s", (y, m))
     if not row:

@@ -503,12 +503,12 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">삼성전자 수주총액</th>
 			<th class="colorP">수수료율(%)</th>
 			<th class="colorP">당사수주(수수료) 총액</th>
-			<th class="colorP">① 입금합계</th>
-			<th class="colorP">② M,S/H 매입금액</th>
-			<th class="colorP">③ M,S/H 추가DC금액</th>
-			<th class="colorP">④ M,S/H 판매금액</th>
-			<th class="colorP">⑤ 옵션행사비</th>
-			<th class="colorP">⑥ 기타비용(총액 0.5%)</th>
+			<th class="colorP">입금합계</th>
+			<th class="colorP">① M,S/H 매입금액</th>
+			<th class="colorP">② M,S/H 추가DC금액</th>
+			<th class="colorP">③ M,S/H 판매금액</th>
+			<th class="colorP">④ 옵션행사비</th>
+			<th class="colorP">⑤ 기타비용(총액 0.5%)</th>
 			<th class="colorP">이익금(VA)</th>
 			<th class="colorP">VA율</th>
 		</tr>
@@ -664,7 +664,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="15">② M,S/H 설치·회수 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="15">① M,S/H 설치·회수 (관리) - VAT포함</th>
 		</tr>
 		</tr>
 	</tbody>
@@ -738,7 +738,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 <table>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="2">③ M,S/H 전시차감 현황 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="2">② M,S/H 전시차감 현황 (관리) - VAT포함</th>
 		</tr>
 	</tbody>
 	<tbody role="body">
@@ -838,7 +838,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 <table>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="2">④ M,S/H 판매현황 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="2">③ M,S/H 판매현황 (관리) - VAT포함</th>
 		</tr>
 	</tbody>
 	<tbody role="body">
@@ -928,7 +928,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<thead>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="8">⑤ 옵션행사비</th>
+			<th class="sub-title colorN text-center" colspan="8">④ 옵션행사비</th>
 		</tr>
 		<tr>
 			<th class="color-contract text-center">구분</th>
@@ -987,7 +987,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="6">⑥ 기타비용 (관리) - VAT포함</th>
+			<th class="sub-title colorN text-center" colspan="6">⑤ 기타비용 (관리) - VAT포함</th>
 		</tr>
 		<tr>
 			<th class="color-contract">일자</th>
@@ -1363,7 +1363,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 					$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(1)').html(fee_rt_avg.toFixed(1)+'%');
 					$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(0)').html(p_sum_total.toString().toFormat('NUMBER'));
-					$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] th:eq(1)').html((p_sum_total * (isNaN(fee_rt_avg) ? 0 : fee_rt_avg) / 100.0).toString().toFormat('NUMBER'));
+					$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] th:eq(0)').html((p_sum_total * (isNaN(fee_rt_avg) ? 0 : fee_rt_avg) / 100.0).toString().toFormat('NUMBER'));
 
 				}
 
@@ -1739,7 +1739,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					}
 				}
 				$('#popReportBF').find('#report_i1_rcppay tbody').html(html);
-				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] th:eq(0)').html(amount_total.toString().toFormat('NUMBER'));
+				$('#popReportBF').find('#report_exec tbody[role=body] tr[data-row="result"] th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i1_rcppay tfoot th:eq(1)').html(amount_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i1_rcppay tfoot th:eq(2)').html(sub_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_i1_rcppay tfoot th:eq(3)').html(rate_total.toFixed(1)+'%');

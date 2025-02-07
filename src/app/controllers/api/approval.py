@@ -77,8 +77,9 @@ def ajax_insert_approval():
             if params['data']['prjct_creat_at'] == 'N' or params['data']['progrs_sttus_code'] == 'S':
                 params['data']['cntrct_no'] = None
             else:
-                params['data']['cntrct_no'] = prj.get_contract_no({"today" : datetime.today().strftime("%Y-%m-%d")})
-
+                params['data']['cntrct_no'] = prj.get_contract_no({"today" : datetime.today().strftime("%Y-%m-%d")}, mber_sn=params['data']['bsn_chrg_sn'])
+        print(params['data']['cntrct_no'])
+        return make_response('', 500)
         member_list = params['approval_list']
         approval_list = [int(m['mber_sn']) for m in member_list if int(m['reg_type']) == 1]
         coop_list = [int(m['mber_sn']) for m in member_list if int(m['reg_type']) == 0]

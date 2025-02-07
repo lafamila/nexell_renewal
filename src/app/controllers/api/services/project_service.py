@@ -3,7 +3,7 @@ from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 from datetime import datetime
 from pytz import timezone
-
+from . import member_service as mber
 def get_project_datatable(params):
     query = """SELECT c.ctmmny_sn
 				, c.cntrct_sn
@@ -2143,10 +2143,14 @@ def delete_finals(params):
     query = """UPDATE finals SET finals_done='F' WHERE finals_sn=%(finals_sn)s"""
     g.curs.execute(query, params)
 
-def get_contract_no(params):
+def get_contract_no(params, mber_sn=None):
 
     y, m, _ = list(map(int, params['today'].split("-")))
-    dept_code = session['member']['dept_code']
+    if mber_sn is not None:
+        member = mber.get_member_info(mber_sn)
+    else:
+        member = session['member']
+    dept_code = member['dept_code']
     query = """SELECT cnt FROM contract_no WHERE stdyy=%s AND dept_code=%s"""
     row = g.curs.execute(query, (y, dept_code))
     if row:
@@ -2155,12 +2159,12 @@ def get_contract_no(params):
     else:
         cnt = 1
         g.curs.execute("INSERT INTO contract_no(stdyy, dept_code, cnt) VALUES(%s, %s, %s)", (y, dept_code, cnt))
-    if session['member']['dept_nm'] == '':
+    if member['dept_nm'] == '':
         dept = ''
     elif dept_code.startswith("TS"):
-        dept = session['member']['dept_nm'][0]+dept_code.replace("TS", '')
+        dept = member['dept_nm'][0]+dept_code.replace("TS", '')
     else:
-        dept = session['member']['dept_nm'][0]
+        dept = member['dept_nm'][0]
     return "{}-{}-{}".format(datetime.strptime(params['today'], "%Y-%m-%d").strftime("%y%m"), dept, str(cnt).zfill(3))
 
 def insert_project(params):

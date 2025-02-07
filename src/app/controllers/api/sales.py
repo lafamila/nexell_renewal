@@ -505,6 +505,7 @@ def ajax_get_sales_expect_report():
         sorted_finals = []
         for cntrct_sn in sorted(list(finals_data.keys()), key=lambda x: finals_data[x][0]['dlivy_de']):
             sorted_finals += finals_data[cntrct_sn]
+        sorted_finals = [_ for _ in sorted_finals if int(_['cntrct_sn']) not in (1931, )]
         table_data["longTermData"] = sorted_finals
 
         return jsonify(table_data)

@@ -1020,6 +1020,7 @@ $('#rptBissSummery').on('click', '.btnDept', function(pEvent) {
 													<option value="TS1">공조1</option>
 													<option value="TS2">공조2</option>
 													<option value="BI">빌트인</option>
+													<option value="NE">미래사업실</option>
 													<option value="ETC">기타</option>
 												</select>
 											</td>
@@ -2784,7 +2785,7 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 }
                 pValue["order_rate"] = pValue.ordr - rate;
             });
-            pData.sort((a, b) => (a.order_rate > b.order_rate) ? 1 : -1 );
+            pData.sort((a, b) => (a.order_rate > b.order_rate) ? 1 : ((a.order_rate == b.order_rate) ? ((a.mber_nm >= b.mber_nm) ? 1: -1): -1 ));
             $.each(pResult.data, function(pIndex, pValue){
 				if(before != "" && before != pValue.sttus_nm){
 

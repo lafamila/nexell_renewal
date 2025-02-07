@@ -905,7 +905,7 @@ def get_bcnc_contract_list(params):
 				, GET_MEMBER_NAME(c.spt_chrg_sn, 'S') AS spt_chrg_nm
 				, (SELECT code_ordr FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
 				, CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
-				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				(SELECT IFNULL(SUM(IF(co.extra_sn=mco.max_sn,IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0),0)),0) FROM cost co LEFT JOIN (SELECT max(extra_sn) AS max_sn, cntrct_sn FROM cost GROUP BY cntrct_sn) mco ON co.cntrct_sn=mco.cntrct_sn WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
 				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
 				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
