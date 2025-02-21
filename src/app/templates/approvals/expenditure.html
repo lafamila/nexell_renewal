@@ -1,0 +1,336 @@
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+.drop-zone {
+  max-width: 100%;
+  height: 100%;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  cursor: pointer;
+  color: #cccccc;
+  border: 4px dashed #cecece;
+  border-radius: 10px;
+}
+
+.drop-zone--over {
+  border-style: solid;
+}
+
+.drop-zone__input {
+  display: none!important;
+}
+
+.drop-zone__thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #cccccc;
+  background-size: cover;
+  position: relative;
+}
+
+.drop-zone__thumb::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 0;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.75);
+  font-size: 14px;
+  text-align: center;
+}
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+
+</style>
+<script>
+document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+  const dropZoneElement = inputElement.closest(".drop-zone");
+
+  dropZoneElement.addEventListener("click", (e) => {
+    inputElement.click();
+  });
+
+  inputElement.addEventListener("change", (e) => {
+    if (inputElement.files.length) {
+      updateThumbnail(dropZoneElement, inputElement.files[0]);
+    }
+  });
+
+  dropZoneElement.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZoneElement.classList.add("drop-zone--over");
+  });
+
+  ["dragleave", "dragend"].forEach((type) => {
+    dropZoneElement.addEventListener(type, (e) => {
+      dropZoneElement.classList.remove("drop-zone--over");
+    });
+  });
+
+  dropZoneElement.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    if (e.dataTransfer.files.length) {
+      inputElement.files = e.dataTransfer.files;
+      updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+    }
+
+    dropZoneElement.classList.remove("drop-zone--over");
+  });
+});
+
+/**
+ * Updates the thumbnail on a drop zone element.
+ *
+ * @param {HTMLElement} dropZoneElement
+ * @param {File} file
+ */
+function updateThumbnail(dropZoneElement, file) {
+  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+  // First time - remove the prompt
+  if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+    dropZoneElement.querySelector(".drop-zone__prompt").remove();
+  }
+
+  // First time - there is no thumbnail element, so lets create it
+  if (!thumbnailElement) {
+    thumbnailElement = document.createElement("div");
+    thumbnailElement.classList.add("drop-zone__thumb");
+    dropZoneElement.appendChild(thumbnailElement);
+  }
+
+  thumbnailElement.dataset.label = file.name;
+
+  // Show thumbnail for image files
+  if (file.type.startsWith("image/")) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+    };
+  } else {
+    thumbnailElement.style.backgroundImage = null;
+  }
+
+
+  cloneRow("images_tr", document.querySelector("#ex_filename").files.length-1);
+  window.length = document.querySelector("#ex_filename").files.length;
+  $("#my-spinner").show();
+  for(let i=0;i<document.querySelector("#ex_filename").files.length;i++){
+    const file = document.querySelector("#ex_filename").files[i];
+    const filesize = file.size;
+    var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : i};
+    $.ajax({
+        url : '/api/common/get_upload_file_id',
+        method : 'POST',
+        data : params,
+        success: function(pResult){
+            let name = pResult.filename;
+            let chunk_size = pResult.filesize;
+            let file_sn = pResult.file_sn;
+            let ord = pResult.order;
+            let start = 0;
+            create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+        },
+        error: function(){
+            alert("오류가 발생했습니다.");
+                location.reload();
+            },
+            beforeSend: function(){
+
+
+            }
+        });
+
+
+
+      }
+
+
+
+}
+
+</script>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="200"/>
+        <col width="*"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>거래처</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="bcnc_nm">
+            </td>
+        </tr>
+    </thead>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="*"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center"><span>내용</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center" style="height:20vh!important;">
+                <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="*"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center"><span>이미지/PDF (업로드)</span></th>
+        </tr>
+    </thead>
+    <tbody id="dropbox">
+        <tr>
+            <td class="text-center" style="height:75vh!important;">
+              <div class="drop-zone">
+                <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                <input type="file" name="myFile" id="ex_filename" class="drop-zone__input">
+              </div>
+
+            </td>
+        </tr>
+    </tbody>
+    <tbody role="images_row" style="display:none;">
+      <tr data-row="images_tr">
+        <td colspan="1">
+          <input type="hidden" name="f_sn[]" value=""/>
+        </td>
+      </tr>
+    </tbody>
+
+</table>
+<div id="last">
+
+</div>
+<script>
+    fnValidate = function(){
+                  var result = true;
+                  return result;
+             }
+    cloneRow = function(selector, count){
+        if(selector == "images_tr"){
+
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='images_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='images_row']").append($(origin));
+            }
+        }
+    }
+    {% if init %}
+    $(document).on("change", "#ex_filename", function(){
+
+
+    });
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+              //cloneRow할자리
+              console.log(order);
+              console.log($(document).find("[name='f_sn[]']"));
+              console.log($(document).find("[name='f_sn[]']").eq(order));
+              $(document).find("[name='f_sn[]']").eq(order).val(file_sn);
+              window.length--;
+              if(window.length == 0){
+                $("#my-spinner").hide();
+              }
+            }
+        }
+        oReq.send(form);
+    }
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        $("#dropbox").hide();
+          var params = {"f_sns" : []}
+          $(document).find("[name='f_sn[]']").each(function(pIndex, pTag){
+            var f_sn = $(pTag).val();
+            params.f_sns.push(f_sn);
+          });
+          $.ajax({
+            url : '/api/common/get_files_name',
+            method : 'POST',
+            data: JSON.stringify(params),
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            processData: false,
+            success: function(pResult){
+              var html = '';
+              $.each(pResult, function(pIndex, path){
+                  if(path.endsWith("pdf")){
+                        html += `<a target="_blank" href="/static/files/${path}">첨부파일</a>`;
+                  }
+                  else{
+                        html += `<img src="/static/files/${path}" style="max-width:99vw;min-width:100%;height:auto;"/>`;
+                  }
+              });
+              $("#last").html(html);
+
+            },
+            error: function(pResult){
+
+            }
+          });
+    }
+    {% endif %}
+</script>

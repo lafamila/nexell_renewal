@@ -187,6 +187,7 @@
 									<col width="100">
 									<col width="120">
 									<col width="130">
+									<col width="120">
 									<col width="1">
 								</colgroup>
 								<thead>
@@ -246,14 +247,8 @@
 												{% endfor %}
 											</select>
 										</th>
-										<th class="hasinput">
-											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
-												<option value="">[전체]</option>
-												{% for code in dept_code_list %}
-												<option value="{{code.value}}">{{code.label}}</option>
-												{% endfor %}
-											</select>
-										</th>
+                                        <th class="hasinput">
+                                        </th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_rcppay_se_code" name="s_rcppay_se_code">
 												<option value="">[전체]</option>
@@ -271,6 +266,14 @@
 												<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
 												{% endfor %}
 												<option value="999">현금/계좌외</option>
+											</select>
+										</th>
+										<th class="hasinput">
+											<select class="form-control select2 w100p" id="s_dept_code" name="s_dept_code">
+												<option value="">[전체]</option>
+												{% for code in dept_code_list %}
+												<option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput text-right">
@@ -295,6 +298,7 @@
 										<th>입/출금구분</th>
 										<th style="text-align:left!important;">금액</th>
 										<th>계좌</th>
+										<th>담당부서</th>
 										<th class="text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
@@ -379,7 +383,7 @@ getFundList = function()
             { data: 'bil_exprn_de' , className: 'text-center'},
             { data: 'rcppay_dtls' , className: 'text-center'},
             { data: 'papr_invstmnt_nm' , className: 'text-center'},
-            { data: 'dept_nm' , className: 'text-center'},
+            { data: 'project_dept_nm' , className: 'text-center'},
             { data: 'rcppay_se_nm' , className: 'text-center'},
 			{ data: 'amount', className: 'text-right',
 			    render: function(data, type, row, meta) {
@@ -391,6 +395,7 @@ getFundList = function()
 				}
 			},
             { data: 'acnut_nm' , className: 'text-center'},
+            { data: 'dept_nm' , className: 'text-center'},
             { data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
@@ -657,6 +662,16 @@ $(function(){
 												<input type="hidden" id="t_prjct_sn">
 											</td>
 										</tr>
+										<tr id="project_dept_container">
+											<th class="required">부서(자동)</th>
+											<td class="hasinput">
+												<select class="form-control select2" id="project_dept" readonly>
+													{% for code in dept_code_list %}
+													<option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+													{% endfor %}
+												</select>
+											</td>
+										</tr>
 
 										<tr><th>거래처명</th>
 											<td class="hasinput" colspan="1">
@@ -718,7 +733,7 @@ $(function(){
 												</select>
 											</td>
 										</tr>
-										<tr><th>부서</th>
+										<tr><th>담당부서</th>
 											<td class="hasinput">
 												<select class="form-control select2" id="dept_code" name="dept_code">
 													<option value="">-</option>
@@ -796,6 +811,7 @@ formReset = function(pMode = '')
 		// $('#popBox1').find('#cntrct_sn').yReadonly(false);
 		// $('#popBox1').find('#prjct_sn').yReadonly(false);
 		$('#popBox1').find('#project').hide();
+		$('#popBox1').find('#project_dept_container').hide();
 		$('#popBox1').find('#taxbil').hide();
 
 		$('#popBox1').find('#btnSaveKeep').show();
@@ -826,7 +842,6 @@ getFund = function(s_cntrct_sn, s_rcppay_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
 				$('#popBox1').find('#s_rcppay_sn').val(data.rcppay_sn);
@@ -911,29 +926,62 @@ fnValidate = function(pMode = '')
  */
 insertFund = function(pIsReset = true)
 {
-	$.ajax({
-		url: '/api/fund/ajax_insert_fund',
-		type: 'POST',
-		data: getFormData($('#frmBox1')[0]),
-		dataType: 'json',
-		contentType: false,
-		processData: false,
-		validate: function() {
-			return fnValidate('insert');
-		},
-		success: function(pResult) {
-			console.log('insertFund', pResult);
-			if (pResult.status) {
-				isDataChange = true;
-				fnAlert(pResult.message);
-				if (pIsReset) {
-					formReset('insert');
-				}
-			} else {
-				fnAlert(pResult.error, 'error');
-			}
-		}
-	});
+    let saveFund = (eq_sn=null)=>{
+        let data = getFormData($('#frmBox1')[0]);
+        if(eq_sn != null) data.append("eq_sn", eq_sn);
+        $.ajax({
+            url: '/api/fund/ajax_insert_fund',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            validate: function() {
+                return fnValidate('insert');
+            },
+            success: function(pResult) {
+                console.log('insertFund', pResult);
+                if (pResult.status) {
+                    isDataChange = true;
+                    fnAlert(pResult.message);
+                    if (pIsReset) {
+                        formReset('insert');
+                    }
+                } else {
+                    fnAlert(pResult.error, 'error');
+                }
+            }
+        });
+    }
+    let cntrct_sn = $(document).find("#cntrct_sn").val();
+    let acntctgr_code = $(document).find("#acntctgr_code").val();
+    let rcppay_se_code = $(document).find("#rcppay_se_code").val();
+    let dept_code = $(document).find("#dept_code").val();
+    let amount = $(document).find("#amount").val();
+    let model_no = '';
+    if(cntrct_sn && rcppay_se_code == 'O' && dept_code == 'M9' && [624].includes(Number(acntctgr_code))){
+        model_no = prompt('타사장비/자재 모델명을 입력하세요');
+        $.ajax({
+            url: '/api/sales/ajax_get_equipment',
+            type: 'POST',
+            data: {"model_no" : model_no, "cntrct_sn" : cntrct_sn, "amount" : amount},
+            success: function(pResult){
+                if(pResult.length == 0){
+                    alert("일치하는 항목이 없습니다.");
+                    return false;
+                }
+                else{
+                    saveFund(pResult[0].eq_sn);
+                }
+            }
+        });
+    }
+    else{
+        saveFund();
+    }
+    /*
+
+     */
 }
 
 /******************************************************************************
@@ -1002,9 +1050,9 @@ getContract = function(s_cntrct_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
+                console.log(data);
 				$('#popBox1').find('#prjct_creat_at').yVal(data.prjct_creat_at);
 				if (data.prjct_creat_at == 'Y') {
 					var html = '<option value="">[프로젝트를 선택하세요]</option>';
@@ -1026,6 +1074,9 @@ getContract = function(s_cntrct_sn)
 					$('#popBox1').find('#prjct_sn').yVal('');
 					$('#popBox1').find('#project').hide();
 				}
+                console.log(data.spt_dept_code);
+                $('#popBox1').find('#project_dept').yVal(data.spt_dept_code);
+                $('#popBox1').find('#project_dept_container').show();
                 getTaxbil($("#cntrct_sn").val(), $("#prvent_sn").val());
 			}
 		}
@@ -1042,7 +1093,6 @@ getTaxbil = function(s_cntrct_sn, s_prvent_sn)
 	var params = '';
 	params += '&s_cntrct_sn=' + s_cntrct_sn;
 	params += '&s_prvent_sn=' + s_prvent_sn;
-    console.log(params);
 	$.ajax({
 		url: '/api/tax/ajax_get_tax_list',
 		type: 'GET',
@@ -1051,12 +1101,10 @@ getTaxbil = function(s_cntrct_sn, s_prvent_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('result', pResult);
 			if (pResult.status) {
                 if(pResult.tax.length > 0){
                     var html = '<option value="">[세금계산서를 선택하세요]</option>';
                     $.each(pResult.tax, function(pIndex, pValue){
-                        console.log(pValue);
                         var am = pValue.amount == '' ? 0 : parseInt(pValue.amount);
                         var vat = pValue.vat == '' ? 0 : parseInt(pValue.vat);
                         var rm = (parseInt(pValue.splpc_am)+vat) - am;
@@ -1383,7 +1431,6 @@ getReport = function(s_rcppay_de)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReport', pResult);
 			if (pResult.status) {
 				$('#popReport1').find('#rptDate').html(pResult.date);
 				// ============================================================
@@ -1484,7 +1531,6 @@ getReport = function(s_rcppay_de)
                     if(parseInt(pValue.amount) == 0)
                         return true;
 
-                    console.log("pIndex", pIndex);
 					s2 += '<tr class="s2" style="display:none;">';
                     s2 += '    <td class="text-center colorLP"'+border+' colspan="3"></td>';
 					s2 += '    <td class="text-center"'+border+'>'+pValue.bil_exprn_de+'</td>';
@@ -1567,14 +1613,12 @@ getReport = function(s_rcppay_de)
 				var html = '';
 				var i_amount_sum = 0, o_amount_sum = 0;
                 for(var i=0;i<pResult.list.length;i++){
-                    console.log(valid(pResult.list, i, i+1));
                     if(valid(pResult.list, i, i+1)){
                         var pValue = pResult.list[i];
                         var nValue = pResult.list[i+1];
                         var acntctgr_nm = (parseInt(pValue.acntctgr_code) > parseInt(nValue.acntctgr_code)) ? pValue.acntctgr_nm : nValue.acntctgr_nm;
                         var i_amount = (pValue.i_amount == '0')?nValue.i_amount : pValue.i_amount;
                         var o_amount = (pValue.o_amount == '0')?nValue.o_amount : pValue.o_amount;
-                        console.log(pValue, nValue);
                         var acnut_nm = (pValue.i_amount == '0')?nValue.acnut_nm+"|"+pValue.acnut_nm : pValue.acnut_nm+"|"+nValue.acnut_nm;
                         var dept_nm = (pValue.o_amount == '0')?nValue.dept_nm : pValue.dept_nm;
 
@@ -1671,7 +1715,6 @@ getMemoList = function(s_memo_ty)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				$.each(pResult.memo_list, function(pIndex, pValue) {
 					$('#popReport1').find('#'+pValue.memo_id).html(pValue.memo);

@@ -118,7 +118,7 @@ tbody .btnUpdate, tbody .btnPrint{
 							<table class="datatable table table-bordered table-hover" id="dtList1">
 								<colgroup>
 									<col width="50">
-									<col width="202">
+									<col width="217">
 									<col width="110">
 									<col width="130">
 									<col width="90">
@@ -126,7 +126,7 @@ tbody .btnUpdate, tbody .btnPrint{
 									<col width="94">
 									<col width="170">
 									<col width="*">
-									<col width="100">
+									<col width="90">
 									<col width="50">
 									<col width="110">
 									<col width="110">
@@ -138,6 +138,7 @@ tbody .btnUpdate, tbody .btnPrint{
 									<tr>
 										<th class="search">검색</th>
 										<th class="hasinput">
+                                            <input type="checkbox" class="form-control" id="s_ddt_man_show" name="s_ddt_man_show" style="width:10px!important;">
 											<input type="text" class="form-control datepicker-s" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_start" name="s_ddt_man_start" placeholder="[시작일자]">
 											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
 											<input type="text" class="form-control datepicker-e" style="display:inline-block;width:89px!important;" readonly data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="s_ddt_man_end" name="s_ddt_man_end" placeholder="[종료일자]">
@@ -199,8 +200,6 @@ tbody .btnUpdate, tbody .btnPrint{
 												<option value="{{code.value}}">{{code.label}}</option>
 												{% endfor %}
 											</select>
-										</th>
-										<th class="hasinput">
 										</th>
 										<th class="hasinput">
 										</th>
@@ -342,6 +341,7 @@ getSalesList = function()
 					// 's_ddt_man': $('#dtList1').find('#s_ddt_man').val(),
 					's_ddt_man_start': $('#dtList1').find('#s_ddt_man_start').val(),
 					's_ddt_man_end': $('#dtList1').find('#s_ddt_man_end').val(),
+					's_ddt_man_show': $('#dtList1').find('#s_ddt_man_show').is(":checked") ? 1 : 0,
 					's_delng_se_code': $('#dtList1').find('#s_delng_se_code').val(),
 					's_delng_ty_code1': $('#dtList1').find('#s_delng_ty_code1').val(),
 					's_delng_ty_code2': $('#dtList1').find('#s_delng_ty_code2').val(),

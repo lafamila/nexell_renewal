@@ -505,7 +505,7 @@ def ajax_get_sales_expect_report():
         sorted_finals = []
         for cntrct_sn in sorted(list(finals_data.keys()), key=lambda x: finals_data[x][0]['dlivy_de']):
             sorted_finals += finals_data[cntrct_sn]
-        sorted_finals = [_ for _ in sorted_finals if int(_['cntrct_sn']) not in (1931, )]
+        sorted_finals = [_ for _ in sorted_finals if int(_['cntrct_sn']) not in (1931, 517)]
         table_data["longTermData"] = sorted_finals
 
         return jsonify(table_data)
@@ -525,9 +525,11 @@ def delete_equip():
 
 @bp.route('/equip_to_account', methods=['GET'])
 def equip_to_account():
-    try:
+    # try:
         params = request.args.to_dict()
         equipment = cm.get_equipment(params)
+        if "before_dlnt" not in params:
+            params["before_dlnt"] = str(int(equipment["dlnt"]) - int(equipment["before_dlnt"]))
         prjct = prj.get_project_by_cntrct_nm(equipment["cntrct_sn"])
         cntrct = prj.get_contract({"s_cntrct_sn" : equipment["cntrct_sn"]})
 
@@ -536,7 +538,7 @@ def equip_to_account():
         row['prjct_sn'] = prjct['prjct_sn']
         row['ctmmny_sn'] = 1
         row['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
-        row['register_id'] = session['member']['member_id']
+        row['register_id'] = session['member']['member_id'] if "member" in session else "nexelll"
         row['delng_se_code'] = 'P'
         row['ddt_man'] = params['dlivy_de']
         row['bcnc_sn'] = equipment['bcnc_sn']
@@ -563,9 +565,9 @@ def equip_to_account():
         g.curs.execute("UPDATE equipment SET dlivy_de=%(dlivy_de)s, before_dlnt=%(last_dlnt)s WHERE eq_sn=%(eq_sn)s", params)
         return jsonify({"status" : True, "message" : "성공적으로 추가되었습니다."})
 
-    except Exception as e:
-        print(e)
-        return make_response(str(e), 500)
+    # except Exception as e:
+    #     print(e)
+    #     return make_response(str(e), 500)
 
 @bp.route('/insert_BF_ms_equip', methods=['POST'])
 def insert_BF_ms_equip():
@@ -883,6 +885,16 @@ def ajax_update_account_expect_de():
         params = request.args.to_dict()
         sales.update_account_expect_de(params)
         return jsonify({"status": True, "message" : "성공적으로 수정되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+@bp.route('/ajax_get_equipment', methods=['POST'])
+def ajax_get_equipment():
+    try:
+        params = request.form.to_dict()
+        result = sales.get_equipment(params)
+        return jsonify(result)
     except Exception as e:
         print(e)
         return make_response(str(e), 500)

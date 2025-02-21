@@ -44,8 +44,8 @@ def get_sales_datatable(params):
 				ON m.mber_sn=c.bsn_chrg_sn
 				WHERE 1=1
 				AND a.ctmmny_sn = 1
-				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or a.ddt_man IS NULL)
-""".format(params['s_ddt_man_start'], params['s_ddt_man_end'])
+				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') {2})
+""".format(params['s_ddt_man_start'], params['s_ddt_man_end'], '' if int(params['s_ddt_man_show']) == 1 else ' or a.ddt_man IS NULL')
 
     data = []
     if "s_delng_se_code" in params and params['s_delng_se_code']:
@@ -135,8 +135,8 @@ def get_sales_summary(params):
 				ON c.bsn_chrg_sn=m.mber_sn
 				WHERE 1=1
 				AND a.ctmmny_sn = 1
-				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') or a.ddt_man IS NULL)
-				""".format(params['s_ddt_man_start'], params['s_ddt_man_end'])
+				AND ((a.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') {2})
+				""".format(params['s_ddt_man_start'], params['s_ddt_man_end'], '' if int(params['s_ddt_man_show']) == 1 else ' or a.ddt_man IS NULL')
 
     data = []
     if "s_delng_se_code" in params and params['s_delng_se_code']:
@@ -1712,3 +1712,8 @@ def insert_general_sales_NR(params):
         query = """INSERT INTO account({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
         g.curs.execute(query, data)
 
+
+def get_equipment(params):
+    row = g.curs.execute("SELECT eq_sn FROM equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s AND pamt*(dlnt-before_dlnt)=%(amount)s AND deleted = 0", params)
+    result = g.curs.fetchall()
+    return result

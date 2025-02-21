@@ -225,9 +225,9 @@ def get_completed_va(params):
 				, c.spt_nm
 				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
 				, (SELECT SUM(IFNULL(p.dlamt * p.dlnt, 0)) FROM account p LEFT JOIN account s ON p.delng_sn=s.cnnc_sn WHERE s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1','2','4', '61', '64') AND p.delng_se_code IN ('P', 'P1') AND p.ddt_man BETWEEN '{0}' AND '{1}' AND p.cntrct_sn=c.cntrct_sn) AS p1
-				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS p3
+				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND bcnc_nm <> ''  AND cntrct_sn=c.cntrct_sn) AS p3
 				, 0 AS s2
-				, (SELECT (IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) - IFNULL(SUM(p.dlnt*p.dlamt),0)) FROM account p LEFT OUTER JOIN account s ON s.cnnc_sn=p.delng_sn WHERE p.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND p.delng_se_code = 'P' AND p.cntrct_sn IS NOT NULL AND p.bcnc_sn = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
+				, (SELECT IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) FROM account p JOIN account s ON s.cnnc_sn=p.delng_sn WHERE s.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
 				, 1 AS s_order
 				FROM contract c
 				LEFT OUTER JOIN member m
@@ -256,6 +256,7 @@ def get_completed_va(params):
 
 				ORDER BY dept_nm, s_order, bcnc_nm, spt_nm
 """.format(first_day, last_day, "{}m".format(int(m)))
+    print(query)
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result

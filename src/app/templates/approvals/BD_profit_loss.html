@@ -283,7 +283,8 @@
                         console.log(optionCost, etcCost);
                         C_cost += s_sum_total;
                         E_cost += p_dsp_sum + p_amt_total_sum;
-                        C_cost += p_add_dc_sum;
+                        //C_cost += p_add_dc_sum;
+                        E_cost -= p_add_dc_sum;
                         E_cost += optionCost + etcCost;
 
                         $("tbody").find(`[name='s_sum_total${suffix}']`).val(s_sum_total.toFormat('NUMBER'));
@@ -306,7 +307,7 @@
                             console.log(base);
                             console.log(max_sn);
                             console.log(base[max_sn].p_sell_amt_total);
-                            C_cost += base[max_sn].p_sell_amt_total;
+                            //C_cost += base[max_sn].p_sell_amt_total;
                         }
 
 

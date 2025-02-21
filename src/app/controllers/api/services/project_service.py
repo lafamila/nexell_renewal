@@ -378,6 +378,7 @@ def get_contract(params):
 				, (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS bsn_chrg_nm
 				, spt_chrg_sn
 				, (SELECT mber_nm FROM member WHERE mber_sn=c.spt_chrg_sn) AS spt_chrg_nm
+				, (SELECT dept_code FROM member WHERE mber_sn=c.spt_chrg_sn) AS spt_dept_code
 				, partclr_matter
 				, prjct_creat_at
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='PRJCT_CREAT_AT' AND code=c.prjct_creat_at) AS prjct_creat_nm
@@ -1210,7 +1211,7 @@ def get_etc_rcppay_report_list(params):
 				AND r.cntrct_sn = %(s_cntrct_sn)s
 				AND r.prjct_sn = %(s_prjct_sn)s
 				AND r.rcppay_se_code = 'O'
-				AND r.acntctgr_code NOT IN ('108', '638', '110') 
+				AND r.acntctgr_code NOT IN ('108', '638', '110', '624') 
 				UNION ALL
 				SELECT c.card_de AS rcppay_de
 				, c.acntctgr_code

@@ -5,6 +5,9 @@ import datetime
 from pytz import timezone
 import calendar
 
+import requests
+from dateutil import relativedelta
+
 def get_rcppay_datatable(params):
     query = """SELECT r.ctmmny_sn
 				, r.cntrct_sn
@@ -21,6 +24,8 @@ def get_rcppay_datatable(params):
 				, GET_MEMBER_NAME(papr_invstmnt_sn, 'M') AS papr_invstmnt_nm
 				, dept_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=r.dept_code) AS dept_nm
+				, (SELECT dept_code FROM member WHERE mber_sn=c.spt_chrg_sn) AS project_dept
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=c.spt_chrg_sn)) AS project_dept_nm
 				, rcppay_se_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='RCPPAY_SE_CODE' AND code=r.rcppay_se_code) AS rcppay_se_nm
 				, IFNULL(amount, '') AS amount
@@ -250,7 +255,7 @@ def insert_rcppay(params):
     data = OrderedDict()
     for key in params:
         if key not in (None,):
-            if params[key] != '':
+            if params[key] != '' and key not in ('eq_sn', ):
                 data[key] = params[key]
     if "ctmmny_sn" not in data:
         data["ctmmny_sn"] = 1
@@ -266,6 +271,88 @@ def insert_rcppay(params):
 
     query = """INSERT INTO rcppay({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
     g.curs.execute(query, data)
+
+    if "eq_sn" in params:
+        g.curs.execute("""
+        SELECT
+            b.expect_de_type,
+            c.bcnc_sn,
+            CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+				ELSE 0
+            END AS cntrct_amount
+            FROM contract c
+				LEFT OUTER JOIN member m
+				ON m.mber_sn=c.bsn_chrg_sn
+				LEFT OUTER JOIN project p
+				ON p.cntrct_sn=c.cntrct_sn
+				LEFT OUTER JOIN bcnc b
+				ON c.bcnc_sn=b.bcnc_sn
+		    WHERE c.cntrct_sn=%(cntrct_sn)s
+        """, params)
+        result = g.curs.fetchone()
+        cntrct_amount = result['cntrct_amount']
+        expect_de_type = result['expect_de_type']
+
+
+        query = """SELECT co.purchsofc_sn
+        				FROM cost co
+        				WHERE co.cntrct_execut_code = 'C'
+        				AND co.cntrct_sn = %(cntrct_sn)s
+        				AND co.purchsofc_sn IS NOT NULL
+        				GROUP BY co.purchsofc_sn
+        """
+        g.curs.execute(query, params)
+        result = g.curs.fetchall()
+        r_amount = 0
+        for i, r in enumerate(result):
+            pParams = {"s_cntrct_sn": params['cntrct_sn'], "s_prvent_sn": r['purchsofc_sn']}
+            query = """SELECT r.rcppay_de
+            				, r.amount
+            				, r.acnut_code
+            				, (SELECT code_nm FROM code WHERE parnts_code='ACNUT_CODE' AND code=r.acnut_code) AS acnut_nm
+            				, r.prvent_sn
+            				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=r.ctmmny_sn AND bcnc_sn=r.prvent_sn) AS prvent_nm
+            				, r.rcppay_dtls
+            				, (SELECT SUM(co.salamt*co.qy) AS amount FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn=r.cntrct_sn AND co.purchsofc_sn=r.prvent_sn AND co.cntrct_execut_code='C') AS cntrct_amount
+            				FROM rcppay r
+            				WHERE r.ctmmny_sn = 1
+            				AND r.cntrct_sn = %(s_cntrct_sn)s
+            """
+            if "s_prvent_sn" in params and params["s_prvent_sn"]:
+                query += " AND r.prvent_sn = %(s_prvent_sn)s "
+
+            query += """ AND r.rcppay_se_code = 'I' 
+                             ORDER BY r.rcppay_de
+                """
+
+            g.curs.execute(query, pParams)
+            result[i]['iRcppayList'] = g.curs.fetchall()
+            r_amount += sum([r['amount'] for r in result[i]['iRcppayList']])
+
+        if r_amount < cntrct_amount:
+            delng_ty_code = 12
+            rcppay_de = datetime.datetime.strptime(params["rcppay_de"], "%Y-%m-%d")
+
+            if int(expect_de_type) == 0:
+                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=1)).strftime("%Y-%m-20")
+            else:
+                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=2) + relativedelta(days=-1)).strftime("%Y-%m-%d")
+        else:
+            delng_ty_code = 11
+            expect_de = ''
+        #현금/외상 기준은 해당 프로젝트의 보고서에서 계약총액보다 입금세금계산서 금액이 더 낮으면 외상, 받을거 다 받았으면 현금
+        #equip_to_account?eq_sn=12282&expect_de=2025-02-21&delng_ty_code=11&dlivy_de=2025-02-21&before_dlnt=1
+        p_params = {"eq_sn" : params["eq_sn"], "dlivy_de" : params["rcppay_de"], "delng_ty_code" : delng_ty_code, "expect_de" : expect_de}
+        res = requests.get("http://localhost:5001/api/sales/equip_to_account",
+                           params=p_params)
+        print(res.text)
     return g.curs.lastrowid
 
 def update_rcppay(params):

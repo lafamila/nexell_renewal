@@ -1176,6 +1176,7 @@ def get_bcnc_datatable(params):
 				, rprsntv_nm
 				, bizrno
 				, bsnm_se_code
+				, expect_de_type
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='BSNM_SE_CODE' AND code=b.bsnm_se_code) AS bsnm_se_nm
 				, esntl_delng_no
 				, use_at
@@ -1219,6 +1220,7 @@ def get_bcnc(params):
 				, bcnc_adres
 				, rprsntv_nm
 				, bizrno
+				, expect_de_type
 				, bsnm_se_code
 				, esntl_delng_no
 				, use_at

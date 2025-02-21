@@ -714,6 +714,7 @@ def get_completed_reportNR_new(params):
         costs = {(cost['purchsofc_sn'], cost['cntrct_execut_code']) : cost for cost in costs}
         pxconds = {(pxcond['purchsofc_sn'], pxcond['cntrct_execut_code']) : pxcond for pxcond in pxconds}
 
+
         query = """
                     SELECT o.cntrct_sn
                         , o.prjct_sn
@@ -751,6 +752,9 @@ def get_completed_reportNR_new(params):
         human_inserted = False
         for bcnc in bcncs:
             key = (bcnc['purchsofc_sn'], bcnc['cntrct_execut_code'])
+            if key == (74, 'E') and d['cntrct_sn'] in (12679, 12458):
+                print(bcnc)
+                print(key in costs)
             if key in costs:
                 cntrct_amount = costs[key]['cntrct_amount']
                 ct_se_code = costs[key]['ct_se_code']

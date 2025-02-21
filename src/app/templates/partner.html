@@ -75,6 +75,7 @@
 									<col width="110">
 									<col width="*">
 									<col width="120">
+									<col width="120">
 									<col width="1">
 								</colgroup>
 								<thead>
@@ -110,6 +111,8 @@
 										</th>
 										<th class="hasinput">
 										</th>
+										<th class="hasinput">
+										</th>
 										<th class="hasinput text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
@@ -126,6 +129,7 @@
 										<th>대표자명</th>
 										<th>사업장주소</th>
 										<th>전화번호</th>
+										<th>수금예정일</th>
 										<th class="text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-warning" title="등록" data-toggle="modal" href="#popBox1" data-action="insert"><i class="fa fa-plus"></i></button>
@@ -186,6 +190,17 @@ getPartnerList = function()
             { data: 'rprsntv_nm' , className: 'text-center'},
             { data: 'bcnc_adres' , className: 'text-left'},
             { data: 'bcnc_telno' , className: 'text-center'},
+            { data: 'expect_de_type' , className: 'text-center',
+                render: function(data, type, row, meta) {
+                    let expect_de_type = Number(row.expect_de_type);
+                    if(expect_de_type == 0){
+                        return "20일";
+                    }
+                    else{
+                        return "말일";
+                    }
+                }
+            },
             { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
 					var html = '';
@@ -335,6 +350,19 @@ $(function() {
 												<input type="text" class="form-control" id="esntl_delng_no" name="esntl_delng_no">
 											</td>
 										</tr>
+										<tr><th>수금예정일</th>
+											<td class="hasinput" colspan="1">
+                                                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="expect_de_type" value="0">20일
+                                                    </label>
+                                                    <label class="btn btn-default">
+                                                        <input type="radio" name="expect_de_type" value="1">말일
+                                                    </label>
+                                                </div>
+
+											</td>
+										</tr>
 										<tr><th>첨부</th>
 											<td class="hasinput" colspan="1">
 												<div class="input-group">
@@ -392,6 +420,7 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#esntl_delng_no').val('');
 		$('#popBox1').find('#orginl_file_nm').val('');
 		$('#popBox1').find('#upload_file_nm').val('');
+		$('#popBox1').find('input:radio[name=expect_de_type]').yVal('');
 		$('#popBox1').find('#btnDelete').hide();
 		$('#popBox1').find('input:radio[name=bsnm_se_code]').eq(0).trigger('change');
 	} else if (pMode === 'update') {
@@ -427,6 +456,7 @@ getPartner = function(s_bcnc_sn)
 				$('#popBox1').find('#bcnc_adres').val(data.bcnc_adres);
 				$('#popBox1').find('#esntl_delng_no').val(data.esntl_delng_no);
 				$('#popBox1').find('#orginl_file_nm').val(data.orginl_file_nm);
+				$('#popBox1').find('input:radio[name=expect_de_type]').yVal(data.expect_de_type);
 				$('#popBox1').data('action', 'update');
 				$('#popBox1').modal('show');
 			}
@@ -490,6 +520,13 @@ fnValidate = function(pMode = '')
 			$('#popBox1').find('#bcnc_nm').focus();
 			result = false;
 		}
+
+    	// 수금예정일
+        var expect_de_type = $('#popBox1').find('input[name=expect_de_type]').is(':checked');
+        if (result == true && fnIsEmpty(expect_de_type)) {
+            alert('필수 입력 항목을 입력하시기 바랍니다.');
+            result = false;
+        }
 
 	}
 
