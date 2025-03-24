@@ -251,11 +251,11 @@ getInventoryList = function()
 				}
 			},
         ],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) { //console.log('drawCallback', pSettings.json);
 
 		},
 
-		initComplete: function(pSettings, pJson) { console.log('initComplete', pJson);
+		initComplete: function(pSettings, pJson) { //console.log('initComplete', pJson);
 
 			var myList = this;
 
@@ -521,7 +521,6 @@ getReport = function(s_stock_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReport2', pResult);
 			if (pResult.status) {
 
                 var pValue = pResult.summary;

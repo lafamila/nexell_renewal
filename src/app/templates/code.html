@@ -601,7 +601,6 @@ insertCode = function()
 			return fnValidate('insert');
 		},
 		success: function(result) {
-			console.log('insertCode', result);
 			if (result.message) {
 				formReset();
 				$('#popBox1').find('#code').trigger('focus');

@@ -357,7 +357,7 @@ getFundStatDatatables1 = function()
 				}
 			},
 		],
-		drawCallback: function(settings) { console.log('drawCallback1', settings.json);
+		drawCallback: function(settings) {
 			var i_amount = settings.json.summary1.i_amount;
 			var o_amount = settings.json.summary1.o_amount;
 			var summary1 = i_amount - o_amount;
@@ -365,7 +365,7 @@ getFundStatDatatables1 = function()
 			$('#summary1 tbody td').eq(1).html(o_amount.toString().toFormat('NUMBER'))
 			$('#summary1 tbody td').eq(2).html(summary1.toString().toFormat('NUMBER'))
 		},
-		initComplete: function(settings, json) { console.log('initComplete1', json);
+		initComplete: function(settings, json) {
 
 			var myList = this;
 
@@ -461,7 +461,7 @@ getFundStatDatatables2 = function()
 				}
 			},
 		],
-		drawCallback: function(settings) { console.log('drawCallback2');
+		drawCallback: function(settings) {
 			var i_amount = settings.json.summary2.i_amount;
 			var o_amount = settings.json.summary2.o_amount;
 			var summary2 = i_amount - o_amount;
@@ -469,7 +469,7 @@ getFundStatDatatables2 = function()
 			$('#summary2 tbody td').eq(1).html(o_amount.toString().toFormat('NUMBER'))
 			$('#summary2 tbody td').eq(2).html(summary2.toString().toFormat('NUMBER'))
 		},
-		initComplete: function(settings, json) { console.log('initComplete2', json);
+		initComplete: function(settings, json) {
 
 			var myList = this;
 

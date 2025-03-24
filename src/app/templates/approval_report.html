@@ -369,7 +369,6 @@ div.report table th, div.report table td{
 		 */
 		$('#btnPrint2').on('click', function(pEvent) {
 			var html = $('#popReportApproval').find('.modal-content').html();
-            console.log(html);
 			html = `<style>${$("#style").html()}</style>` + html;
             $(document).find("input:disabled").attr("disabled", false);
             var data = $(document).find("#frmBox3").serializeObject();
@@ -378,6 +377,7 @@ div.report table th, div.report table td{
 			$('#_print').contents().find('body>div.report').html('');
 			$('#_print').contents().find('body>div.report').html(html);
 			$('#_print').contents().find('body>div.report').find("#approval_title").val(window.app.approval_title);
+            $('#_print').contents().find('#comment-before').val($('.modal-content').find("#comment-before").val());
 			$.each(data, function(key, value){
 				if(key.endsWith("[]")){
 					var pTag = $('#_print').contents().find('body>div.report').find(`[name='${key}']`);
@@ -670,7 +670,6 @@ div.report table th, div.report table td{
 
 							}
 							{% if init == "show" %}
-							console.log(pResult);
                             if(pResult.myTurn){
                                 //
                                 $("#btnApprove").attr("disabled", false);
@@ -742,7 +741,6 @@ $(document).on("click", "#btnApprove, #btnNotApprove, #btnApproveCancel", functi
 		success : function(pResult){
 			if(pResult.status){
 				if(pResult.isEnd){
-					console.log(pResult.approval);
 					$.ajax({
 						url : pResult.approval.api_url,
 						method : 'POST',

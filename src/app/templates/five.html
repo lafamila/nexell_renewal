@@ -99,7 +99,6 @@ getReport = function(s_pxcond_mt)
 {
 	var params = '';
     params += '&s_pxcond_mt='+s_pxcond_mt;
-	console.log('getReport', params);
 
 	$.ajax({
 		url: '/api/five/ajax_get_five',
@@ -109,7 +108,6 @@ getReport = function(s_pxcond_mt)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReport', pResult); //rptCompletedArea
             var html = '';
             $.each(pResult.amt_ty_code_order, function(pIndex, amt_ty_code_int){
    			  var amt_ty_code = amt_ty_code_int+"";

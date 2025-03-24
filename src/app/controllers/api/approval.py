@@ -26,7 +26,7 @@ def disconnect(response):
 
 
 @bp.route('/ajax_get_approval_datatable', methods=['POST'])
-def ajax_get_project_datatable():
+def ajax_get_approval_datatable():
     try:
         params = request.form.to_dict()
         result = apvl.get_approval_datatable(params)

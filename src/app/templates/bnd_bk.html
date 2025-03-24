@@ -270,45 +270,36 @@ tbody .btnUpdate, tbody .btn{
 						<div class="widget-body no-padding">
 							<table class="table table-bordered w120p" id="dtList1">
 								<colgroup>
-									<col width="20">
 									<col width="65">
 									<col width="80">
 									<col width="110">
-									<col width="170">
+									<col width="250">
 									<col width="80">
 									<col width="80">
+									<col width="80">
+									<col width="120">
 
                                     <col width="50">
 									<col width="50">
 									<col width="100">
+									<col width="100">
+
+                                    <col width="70">
 
                                     <col width="50">
 									<col width="50">
 									<col width="100">
-
-                                    <col width="50">
-									<col width="50">
-
-                                    <col width="50">
-									<col width="50">
 									<col width="100">
 
-                                    <col width="50">
-									<col width="50">
-									<col width="100">
-
-                                    <col width="50">
-									<col width="50">
+									<col width="70">
 
 									<col width="50">
 									<col width="100">
+									<col width="100">
 
+									<col width="70">
 									<col width="50">
-									<col width="100">
-
-									<col width="100">
-									<col width="100">
-
+									<col width="50">
 <!--									<col width="80">-->
 
 
@@ -317,76 +308,97 @@ tbody .btnUpdate, tbody .btn{
 								<thead>
 									<!-- 헤더 -->
 									<tr>
-										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="4">순서</th>
 										<th class="colorG middle bottom_border" style="text-align:center;" rowspan="4">분류</th>
-{#                                        <th class="hasinput button" style="padding:0px!important;">#}
-{#											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc">#}
-{#												<option value="-1">[전체]</option>#}
-{#											</select>#}
-{#										</th>#}
-										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="4">건설사</th>
 										<th class="colorG middle bottom_border" style="text-align:center;min-width:65px;" rowspan="4">계약일</th>
-{#										<th class="hasinput button" style="padding:0px!important;">#}
-{#											<input type="text" class="form-control" name="s_spt_nm" id="s_spt_nm"/>#}
-{#										</th>#}
-										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="4">현장명</th>
-{#                                        <th class="hasinput button right_border" style="padding:0px!important;">#}
-{#											<select class="form-control select2 w100p s_resrv_chrg" name="s_resrv_chrg">#}
-{#												<option value="-1">[전체]</option>#}
-{##}
-{#											</select>#}
-{#										</th>#}
-                                        <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="4">유형</th>
-                                        <th class="bold colorG middle bottom_border right_border" style="text-align:center;min-width:55px;" rowspan="4">담당</th>
-										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="16">전시내역</th>
-										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="5" rowspan="2">판매/수수료</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_bcnc" name="s_resrv_bcnc">
+												<option value="-1">[전체]</option>
+											</select>
+										</th>
+										<th class="hasinput button" style="padding:0px!important;">
+											<input type="text" class="form-control" name="s_spt_nm" id="s_spt_nm"/>
+										</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_type" name="s_resrv_type">
+												<option value="-1">[전체]</option>
+                                                <option value="BD">직계약</option>
+                                                <option value="BF">수수료</option>
+
+											</select>
+										</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_chrg" name="s_resrv_chrg">
+												<option value="-1">[전체]</option>
+
+											</select>
+										</th>
+                                        <th class="hasinput button" style="padding:0px!important;">
+											<select class="form-control select2 w100p s_resrv_c_chrg" name="s_resrv_c_chrg">
+												<option value="-1">[전체]</option>
+
+											</select>
+										</th>
+										<th class="bold colorG right_border middle bottom_border" style="text-align:center;min-width:45px;" rowspan="4">수주금액</th>
+										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="10">전시내역</th>
+										<th class="bold colorSkyB right_border middle bottom_border" style="text-align:center!important;" colspan="3" rowspan="2">판매/수수료</th>
 										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;" rowspan="4">준공예정일</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:80px;" rowspan="4">공정률</th>
+										<th class="bold colorEG right_border middle bottom_border" style="text-align:center;min-width:110px;" rowspan="4">비고</th>
 									</tr>
 									<tr>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:90px;" rowspan="3">건설사</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:160px;" rowspan="3">현장명</th>
+										<th class="bold colorG middle bottom_border" style="text-align:center;min-width:60px;" rowspan="3">계약분류</th>
+                                        <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">담당</th>
+                                        <th class="bold colorG middle bottom_border" style="text-align:center;min-width:55px;" rowspan="3">본사</th>
 
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="8">M/H</th>
-										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="8">S/H</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="5">M/H</th>
+										<th class="bold colorSkyB bottom_border right_border" style="text-align:center!important;" colspan="5">S/H</th>
 <!--										<th class="colorSkyB bottom_border right_border middle" style="text-align:center!important;min-width:50px;" rowspan="2">분류</th>-->
                                     </tr>
-                                    <tr>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="3">전시매입금액(30%/TV 40%)</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="3">차감(추가 50%/TV 40%)</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="2">회수</th>
-
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="3">전시매입금액(30%/TV 40%)</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="3">차감(추가 50%/TV 40%)</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="2">회수</th>
-
-	    								<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="2">판매수수료</th>
-	    								<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="2">직계약</th>
-	    								<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" colspan="1"></th>
-
-                                    </tr>
 									<tr>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">전시</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:40px;" rowspan="1">수량</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">전시금액</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">차감일</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">차감금액</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">차감잔액</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">회수일</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:40px;" rowspan="1">회수수량</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_dlivy_de_start" name="m_dlivy_de_start" data-target="m-date">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_dlivy_de_end" name="m_dlivy_de_end" data-target="m-date">
+										</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_pblict_de_start" name="m_pblict_de_start" data-target="m-t-date">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="m_pblict_de_end" name="m_pblict_de_end"  data-target="m-t-date">
+										</th>
+										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:80px;" rowspan="2">추가DC</th>
+										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">잔액</th>
+										<th class="bold colorEG middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">회수예정일</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_dlivy_de_start" name="s_dlivy_de_start" data-target="s-date">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_dlivy_de_end" name="s_dlivy_de_end" data-target="s-date">
+										</th>
+										<th class="hasinput" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_pblict_de_start" name="s_pblict_de_start" data-target="s-t-date">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="s_pblict_de_end" name="s_pblict_de_end" data-target="s-t-date">
+										</th>
+										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:80px;" rowspan="2">추가DC</th>
+										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">잔액</th>
+										<th class="bold colorEG middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">회수예정일</th>
+										<th class="hasinput right_border" style="padding:0px!important;">
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="t_pblict_de_start" name="t_pblict_de_start" data-target="t-t-date">
+											<span class="input-group-addon" style="display:inline-block;width:10px!important;padding:0;border:0;">~</span>
+											<input type="text" class="form-control datepicker_form" style="display:inline-block;width:50px!important;font-size:8px!important;line-height:20px!important;height:20px!important;" data-dateformat="yy-mm" data-mask="99-99" data-mask-placeholder="_" id="t_pblict_de_end" name="t_pblict_de_end" data-target="t-t-date">
+										</th>
+										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:80px;" rowspan="2">금액</th>
+										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:80px;" rowspan="2">잔액</th>
+									</tr>
+                                    <tr>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">출고월</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
 
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">전시</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:40px;" rowspan="1">수량</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">전시금액</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">차감일</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">차감금액</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">차감잔액</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">회수일</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:40px;" rowspan="1">회수수량</th>
+                                        <th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">출고월</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
 
-
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">발행일</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">금액</th>
-										<th class="bold colorSkyB middle bottom_border" style="text-align:center!important;min-width:60px;" rowspan="1">발행일</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">금액</th>
-										<th class="bold colorSkyB middle bottom_border right_border" style="text-align:center!important;min-width:60px;" rowspan="1">잔액</th>
+										<th class="bold colorSkyB bottom_border" style="text-align:center!important;min-width:65px;">발행일자</th>
 									</tr>
 								</thead>
                                 <tbody role='exec'>
@@ -418,14 +430,6 @@ tbody .btnUpdate, tbody .btn{
 <!--########################################################################-->
 
 <script type="text/javascript">
-
-Number.prototype.floor = function()
-{
-    return Math.floor(this / 1000);
-}
-String.prototype.floor = function(){
-    return Math.floor(Number(this) / 1000);
-}
   var progrs = {1 : '진행', 2 : '사전<br>입찰', 3 : '유보'}
   getReserveType = function(s_resrv_bcnc, s_resrv_type, s_resrv_chrg, s_resrv_c_chrg)
   {
@@ -482,11 +486,6 @@ String.prototype.floor = function(){
           }
       });
   }
-  const strptime = (date_string) => {
-    if(date_string == '') return NaN;
-    let [y, m, d] = date_string.split("/");
-    return new Date(`20${y}-${m}-${d}`);
-  }
   getBndList = function(bnd_year)
   {
 	var s_resrv_bcnc = $('#s_resrv_bcnc').val();
@@ -532,6 +531,7 @@ String.prototype.floor = function(){
 	params += '&s_pblict_de_end='+s_pblict_de_end;
 	params += '&t_pblict_de_start='+t_pblict_de_start;
 	params += '&t_pblict_de_end='+t_pblict_de_end;
+	console.log(params);
 	//직계약 현장 - 판매/수수료 값 : 입금현황에 있는 모든 세금계산서 날짜 및 금액 나열
 	  // 수주 총액과 비교한게 잔액..인데 입금현황에 있는 세금계산서 모두 + 세금계산서 없이 입금된 값들 모두
 	  //How ? 입금은 금액을 어떻게 표시할것인가?
@@ -542,106 +542,304 @@ String.prototype.floor = function(){
 
 
 	$.ajax({
-		url: '/api/bnd/ajax_get_bnd_new',
+		url: '/api/bnd/ajax_get_bnd',
 		type: 'GET',
 		data: params,
 		dataType: 'json',
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
+			console.log(pResult);
 			var before = -1;
             var html = '';
             var _class = '';
-            var _class_m = '';
-            var _class_s = '';
-            var _class_t = '';
             var count = 1;
             var total = {"cntrct_amount" : 0};
             $.each(pResult.data, function(pIndex, pValue){
               if(before != pValue.progrs_order && before != -1){
-                {#html += `<tr class="total">#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#         </tr>#}
-                {#        `;#}
+                html += `<tr class="total">
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                         </tr>
+                        `;
               }
-              _class_m = (pValue.m_dlnt <= pValue.m_return_dlnt) ? "colorY" : '';
-              _class_s = (pValue.s_dlnt <= pValue.s_return_dlnt) ? "colorY" : '';
-              _class_t = (((pValue.prjct_ty_code == 'BF') ? pValue.tax_amount1 : pValue.tax_amount2) >= (pValue.cntrct_amount)) && (![_class_m, _class_s].includes('')) ? "colorY" : '';
-              _class_t = ((pValue.prjct_ty_code == 'BF') ? pValue.tax_de1 : pValue.tax_de2) == '' ? '' : _class_t;
-              _class = ![_class_m, _class_t, _class_t].includes('') ? 'colorY' : '';
-              let m_date = strptime(pValue.m_dlivy_de);
-              let s_date = strptime(pValue.s_dlivy_de);
+              if(before != pValue.progrs_order){
+                before = pValue.progrs_order;
+                count = 0;
+                _class = "";
+                total.cntrct_amount = 0;
+              }
+              else{
+                _class = "";
+              }
 
-              let max_date;
-              if(!isNaN(m_date) && !isNaN(s_date)) max_date = m_date > s_date ? m_date : s_date
-              else if(isNaN(m_date) && !isNaN(s_date)) max_date = s_date;
-              else if(isNaN(s_date) && !isNaN(m_date)) max_date = m_date;
-              else max_date = new Date();
-              let date_diff = ((new Date()) - max_date)/(24*60*60*1000);
-              let _class_old = (date_diff >= 365) ? 'colorEG' : '';
-              html += `<tr class="row${pValue.cntrct_sn}" id="${pValue.cntrct_sn}" data-count="${Math.floor(count/15)}" data-label="${progrs[pValue.progrs_order]}">
-                            <td class="bold colorBtn top_border text-center middle" data-column="label" data-count="${Math.floor(count/15)}" data-code="${progrs[pValue.progrs_order]}">${(count)}</td>
-                            <td class="bold colorBtn top_border text-center middle" data-column="label" data-count="${Math.floor(count/15)}" data-code="${progrs[pValue.progrs_order]}">${progrs[pValue.progrs_order]}</td>
-                            <td class="bold colorBtn top_border middle" style="text-align:left;">${pValue.bcnc_nm}</td>
+              html += `<tr class="row${pValue.cntrct_sn}" id="${pValue.cntrct_sn}" data-count="${Math.floor(count/15)}" data-nm="${_class}" data-label="${progrs[pValue.progrs_order]}">
+                            <td class="bold colorBtn top_border text-center middle ${_class}" data-column="label" data-count="${Math.floor(count/15)}" data-code="${progrs[pValue.progrs_order]}"><span class="${Math.floor(count/15)}"></span>${progrs[pValue.progrs_order]}</td>
                             <td class="bold colorBtn top_border middle ${_class}" style="text-align:left;">${pValue.cntrct_de}</td>
+                            <td class="bold colorBtn top_border middle ${_class}" style="text-align:left;">${pValue.bcnc_nm}</td>
                             <td class="bold colorBtn top_border middle ${_class}" style="text-align:left;">${pValue.spt_nm}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class}">${(pValue.prjct_ty_code == 'BF') ? '수수료' : '직계약'}</td>
-                            <td class="bold colorBtn top_border middle text-center right_border ${_class}">${pValue.mber_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.prjct_ty_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.bsn_chrg_nm}</td>
+                            <td class="bold colorBtn top_border middle text-center ${_class}">${pValue.chrg_nm}</td>
+                            <td class="bold colorBtn top_border middle right_border ${_class}" style="text-align:right;">${Math.round(pValue.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
+                            <td class="bold colorBtn top_border text-center ${_class} m-date" style="text-align:left;" data-column="1"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} m-t-date" style="text-align:left;" data-column="2"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} m-t-date" style="text-align:left;" data-column="3"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} m-remain" style="text-align:left;" data-column="4"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} m-next-date" style="text-align:left;" data-column="5"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} s-date" style="text-align:left;" data-column="6"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} s-t-date" style="text-align:left;" data-column="7"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} s-t-date" style="text-align:left;" data-column="8"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} s-remain" style="text-align:left;" data-column="9"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} s-next-date" style="text-align:left;" data-column="10"></td>
+                            <td class="bold colorBtn top_border text-center ${_class} t-t-date" style="text-align:left;" data-column="11"></td>
+                            <td class="bold colorBtn top_border text-right ${_class} t-t-date" style="text-align:left;" data-column="12"></td>
+                            <td class="bold colorBtn top_border text-right middle right_border ${_class} t-remain" style="text-align:left;" data-column="13"></td>
+                            <td class="bold colorBtn top_border text-center middle right_border ${_class} input-available" style="text-align:left;" data-column="expect_de">${pValue.expect_de}</td>`;
+              if(pValue.prjct_ty_code == 'BF'){
+				  var rate = parseInt(pValue.rate);
+              	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class} input-available-select" style="text-align:left;padding:0px!important" data-column="rate">
+								<select class="select2" name="s_rate" style="width:100%;">
+									<option value="0" ${rate == 0 ? "selected" : ""}>0%</option>
+									<option value="90" ${rate == 90 ? "selected" : ""}>90%</option>
+									<option value="95" ${rate == 95 ? "selected" : ""}>95%</option>
+									<option value="100" ${rate == 100 ? "selected" : ""}>100%</option>
+								</select>
+							</td>`;
+			  }
+              else{
+				  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
+					  var rate = 0.0;
+				  }
+				  else{
+					  var rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
+				  }
 
-                            <td class="bold colorBtn top_border middle text-center ${_class_m}">${pValue.m_dlivy_de}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_m}">${pValue.m_dlivy_de == '' ? '' : pValue.m_dlnt}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_m}">${pValue.m_dlivy_de == '' ? '' : pValue.m_dlivy_amt.floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_m}">${pValue.m_discount_de}</td>
-                            <td class="bold colorBtn top_border middle text-right ${_class_m}">${pValue.m_discount_de == '' ? '' : pValue.m_discount_tax_amt.floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_m}">${pValue.m_discount_de == '' ? '' : ((pValue.m_discount_amt - pValue.m_discount_tax_amt).floor() == -1 ? 0 : (pValue.m_discount_amt - pValue.m_discount_tax_amt).floor()).toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_m}">${pValue.m_return_de}</td>
-                            <td class="bold colorBtn top_border middle text-center right_border ${_class_m}">${pValue.m_return_de == '' ? '' : pValue.m_return_dlnt}</td>
-
-                            <td class="bold colorBtn top_border middle text-center ${_class_s}">${pValue.s_dlivy_de}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_s}">${pValue.s_dlivy_de == '' ? '' : pValue.s_dlnt}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_s}">${pValue.s_dlivy_de == '' ? '' : pValue.s_dlivy_amt.floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_s}">${pValue.s_discount_de}</td>
-                            <td class="bold colorBtn top_border middle text-right ${_class_s}">${pValue.s_discount_de == '' ? '' : pValue.s_discount_tax_amt.floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_s}">${pValue.s_discount_de == '' ? '' : ((pValue.s_discount_amt - pValue.s_discount_tax_amt).floor() == -1 ? 0 : (pValue.s_discount_amt - pValue.s_discount_tax_amt).floor()).toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_s}">${pValue.s_return_de}</td>
-                            <td class="bold colorBtn top_border middle text-center right_border ${_class_s}">${pValue.s_return_de == '' ? '' : pValue.s_return_dlnt}</td>
-
-                            <td class="bold colorBtn top_border middle text-center ${_class_t}">${(pValue.prjct_ty_code == 'BF') ? pValue.tax_de1 : ''}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${pValue.tax_de1 == '' ? '' : ((pValue.prjct_ty_code == 'BF') ? pValue.tax_amount1.floor().toFormat('NUMBER') : '')}</td>
-                            <td class="bold colorBtn top_border middle text-center ${_class_t}">${(pValue.prjct_ty_code == 'BD') ? pValue.tax_de2 : ''}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${pValue.tax_de2 == '' ? '' : ((pValue.prjct_ty_code == 'BD') ? pValue.tax_amount2.floor().toFormat('NUMBER') : '')}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${((pValue.prjct_ty_code == 'BF') ? pValue.tax_de1 : pValue.tax_de2) == '' ? '' : (pValue.cntrct_amount - (pValue.prjct_ty_code == 'BD' ? pValue.tax_amount2 : pValue.tax_amount1)).floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border text-center middle right_border ${_class_old} input-available" style="text-align:left;" data-column="expect_de">${pValue.expect_de}</td>
-                       </tr>`;
+              	html += `   <td class="bold colorBtn top_border text-left middle right_border ${_class}" style="text-align:left;" data-column="rate-text">${rate.toFixed(1)+"%"}</td>`;
+			  }
+              html += `     <td class="bold colorBtn top_border text-left middle right_border ${_class} input-available" style="text-align:left;" data-column="rm"></td>
+                       </tr>
+                      `;
               count++;
               total.cntrct_amount += parseInt(pValue.cntrct_amount);
-
+              if(pIndex == pResult.data.length - 1){
+                html += `<tr class="total">
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>
+                         </tr>
+                        `;
+              }
             });
             $("#dtList1").find("tbody[role=exec]").html(html);
 
+            $.each(pResult.account, function(cntrct_sn, pRow){
+            	var row = $(document).find(`#${cntrct_sn}`);
+            	var count = $(row).data("count");
+            	var _class = $(row).data("nm");
+            	var label = $(row).data("label");
+            	for(let i=1;i<8;i++){
+					$(row).find("td").eq(i).attr("rowspan", pRow.max_row.toString());
+				}
+				$(row).find("td").eq(11).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(12).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(16).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(17).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(20).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(21).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(22).attr("rowspan", pRow.max_row.toString());
+				$(row).find("td").eq(23).attr("rowspan", pRow.max_row.toString());
+            	var html = `<tr class="row${cntrct_sn}">
+	                            <td class="bold colorBtn top_border text-center middle ${_class}" data-column="label" data-count="${count}" data-code="${label}"><span class="${count}"></span>${label}</td>
+								<td class="bold colorBtn ${_class} text-center m-date" style="text-align:left;" data-column="1"></td>
+								<td class="bold colorBtn ${_class} text-center m-t-date" style="text-align:left;" data-column="2"></td>
+								<td class="bold colorBtn ${_class} text-right m-t-date" style="text-align:left;" data-column="3"></td>
+								<td class="bold colorBtn ${_class} text-center s-date" style="text-align:left;" data-column="6"></td>
+								<td class="bold colorBtn ${_class} text-center s-t-date" style="text-align:left;" data-column="7"></td>
+								<td class="bold colorBtn ${_class} text-right s-t-date" style="text-align:left;" data-column="8"></td>
+								<td class="bold colorBtn ${_class} text-center t-t-date" style="text-align:left;" data-column="11"></td>
+								<td class="bold colorBtn ${_class} text-right t-t-date" style="text-align:left;border-right:1px solid #ddd!important;" data-column="12"></td>
+							</tr>`;
+            	for(let i=0;i<pRow.max_row-1;i++){
+	            	$(html).insertAfter(`#${cntrct_sn}`);
+				}
 
-            $("#dtList1").find("tbody[role=exec]").yRowspan(1);
-            $("#dtList1").find("tbody[role=exec]").yRowspan(2);
-            {#$("#dtList1").find("tbody[role=exec]").yRowspan(5);#}
+
+            	let offset = (new Date()).getTimezoneOffset() * 60000;
+            	$.each(pRow.M, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-date").eq(0).text(pValue);
+				});
+            	if(pRow.M.length > 0){
+					var pDate = pRow.M[pRow.M.length-1];
+					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`)+12, 0);
+					var nextDateStr = (new Date(nextDate.getTime()-offset)).toISOString().split("T")[0];
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-next-date").eq(0).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+				}
+
+
+
+				$.each(pRow.S, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-date").eq(0).text(pValue);
+				});
+            	if(pRow.S.length > 0) {
+					var pDate = pRow.S[pRow.S.length - 1];
+					var nextDate = new Date(parseInt(`20${pDate.split("/")[0]}`), parseInt(`${pDate.split("/")[1]}`) + 6, 0);
+					var nextDateStr = (new Date(nextDate.getTime() - offset)).toISOString().split("T")[0];
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-next-date").eq(0).text(`${nextDateStr.split("-")[0].substr(2)}/${parseInt(nextDateStr.split("-")[1])}/${parseInt(nextDateStr.split("-")[2])}`);
+				}
+			});
+            var total_remain_now = 0;
+            var total_remain_cnt_now = 0;
+
+			var rcppay = pResult.rcppay;
+            $.each(pResult.taxbill, function(cntrct_sn, pRow){
+            	var mTotal = 0, sTotal = 0, tTotal=0;
+
+            	$.each(pRow.M, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(0).text(pValue[0]);
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".m-t-date").eq(1).text(Math.round(pValue[1]/1000).toFormat('NUMBER'));
+	            	mTotal += pValue[1];
+				});
+            	$.each(pRow.S, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(0).text(pValue[0]);
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".s-t-date").eq(1).text(Math.round(pValue[1]/1000).toFormat('NUMBER'));
+	            	sTotal += pValue[1];
+				});
+            	$.each(pRow.T, function(pIndex, pValue){
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(0).text(pValue[0]);
+	            	$(document).find(`.row${cntrct_sn}`).eq(pIndex).find(".t-t-date").eq(1).text(Math.round(pValue[1]/1000).toFormat('NUMBER'));
+	            	tTotal += pValue[1];
+				});
+            	if(rcppay.hasOwnProperty(cntrct_sn)){
+                    let cnt = 0;
+					var remain = Math.round((rcppay[cntrct_sn].M - mTotal)/1000);
+                    if(remain >= 10) {
+                        total_remain_now += remain;
+                        cnt++;
+                    }
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain.toFormat('NUMBER'));
+
+            		if(remain == 0){
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-remain").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".m-next-date").addClass("colorY");
+					}
+					var remain = Math.round((rcppay[cntrct_sn].S - sTotal)/1000);
+                    if(remain >= 10) {
+                        total_remain_now += remain;
+                        cnt++;
+                    }
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain.toFormat('NUMBER'));
+            		if(remain == 0){
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-remain").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".s-next-date").addClass("colorY");
+					}
+					var remain = Math.round((rcppay[cntrct_sn].T - tTotal)/1000);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain.toFormat('NUMBER'));
+            		if(remain == 0){
+            			// $(document).find(`.row${cntrct_sn}`).find(".t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".t-t-date").addClass("colorY");
+            			// $(document).find(`.row${cntrct_sn}`).find(".t-remain").addClass("colorY");
+					}
+                    if(cnt > 0){
+                        total_remain_cnt_now += 1;
+                    }
+				}
+
+			});
+            var done_keys = Object.keys(pResult.taxbill);
+			$.each(rcppay, function(cntrct_sn, pRow){
+				if(!done_keys.includes(cntrct_sn)){
+                    let cnt = 0;
+					var remain = Math.round((pRow.M)/1000);
+                    if(remain >= 10) {
+                        total_remain_now += remain;
+                        cnt++;
+                    }
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".m-remain").eq(0).text(remain.toFormat('NUMBER'));
+					var remain = Math.round((pRow.S)/1000);
+                    if(remain >= 10) {
+                        total_remain_now += remain;
+                        cnt++;
+                    }
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".s-remain").eq(0).text(remain.toFormat('NUMBER'));
+					var remain = Math.round((pRow.T)/1000);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain.toFormat('NUMBER'));
+                    if(cnt > 0){
+                        total_remain_cnt_now += 1;
+                    }
+
+				}
+			});
+            console.log(total_remain_now, total_remain_cnt_now);
+            $.each(pResult.data, function(pIndex, pValue){
+				var cntrct_sn = pValue.cntrct_sn;
+				if(!pResult.taxbill.hasOwnProperty(cntrct_sn) || pResult.taxbill[cntrct_sn].T.length == 0){
+					var remain = Math.round(pValue.cntrct_amount / 1000);
+					$(document).find(`.row${cntrct_sn}`).eq(0).find(".t-remain").eq(0).text(remain.toFormat('NUMBER'));
+				}
+			});
+
+            $("#dtList1").find("tbody[role=exec]").yRowspan(0);
+            $("#dtList1").find("tbody .select2").select2();
+            $.each(pResult.bnd, function(pIndex, pValue){
+            	if(pValue.bnd_month == 'rate'){
+					// $(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"] select`).val(pValue.bnd_data).trigger('change');
+					return true;
+				}
+            	else{
+	            	$(`tr.${pValue.bnd_row}`).find(`td[data-column="${pValue.bnd_month}"]`).text(pValue.bnd_data);
+				}
+			});
             getReserveType(s_resrv_bcnc, s_resrv_type, s_resrv_chrg);
+   			$("#dtList1").find(".colorY").removeClass("colorY");
+            $.each(pResult.color, function(pIndex, pValue){
 
+	            var target = $("#dtList1").find(`tr.row${pValue.bnd_cntrct_sn} td[data-column="${pValue.bnd_column}"]`).eq(parseInt(pValue.bnd_row));
+	            if(target){
+	            	if(pValue.bnd_class == 1){
+	            		$(target).addClass("colorY");
+					}
+	            	else{
+	            		$(target).removeClass("colorY");
+
+					}
+				}
+			})
         }
 	});
   }
@@ -1069,6 +1267,7 @@ getBuiltInMonth = function(s_ddt_man)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
+			console.log('getBuiltInMonth', pResult);
 			if (pResult.status) {
 				var html = `<tr>
 								<td class="text-center colorG">${s_ddt_man.split("-")[0]}</td>

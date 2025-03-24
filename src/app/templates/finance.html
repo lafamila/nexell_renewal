@@ -570,7 +570,6 @@ getExtra = function(finance_year)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
             var pData = pResult.data;
             $.each(pData, function(pIndex, pValue){
                 if(pValue.finance_month != 'name' && pValue.finance_month != 'name2' && (!isNaN(parseInt(pValue.finance_row.replaceAll('row', ''))) || pValue.finance_row.replaceAll('row','') == 'a' || pValue.finance_row.replaceAll('row','') == 'b' )){
@@ -646,7 +645,6 @@ calcTotal = function()
             continue;
         }
         let total = 0;
-        console.log(idx);
         for(let month=1;month<=12;month++){
             let data = $("#row"+idx).find("td[name="+month+"m]").html().toString().replaceAll(',', '');
             data = (data == '') ? 0 : parseInt(data);
@@ -696,7 +694,6 @@ insertExtra = function(finance_year, finance_row, finance_month, finance_data)
 	params += '&finance_row='+finance_row;
 	params += '&finance_month='+finance_month;
 	params += '&finance_data='+finance_data;
-    console.log(params);
 	$.ajax({
 		url: '/api/common/ajax_insert_finance',
 		type: 'GET',

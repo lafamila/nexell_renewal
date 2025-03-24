@@ -554,6 +554,147 @@ def get_completed_reportNR(params):
     return result
 
 
+def get_s1(cntrct_sn, pxcond_ym):
+    p_total = 0
+    pxcond_st = pxcond_ym+"-01"
+    pxcond_ed = pxcond_ym+"-31"
+    query = """SELECT IFNULL(SUM(s.dlnt * p.dlamt), 0) AS p_total
+    				FROM account s
+    				LEFT JOIN account p
+    				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
+    				WHERE s.ctmmny_sn = 1
+    				AND s.cntrct_sn = %s
+    				AND s.delng_se_code = 'S'
+    				AND p.delng_ty_code IN ('1')
+    				AND s.delng_ty_code <> 14
+    				AND s.dlivy_de BETWEEN %s AND %s
+    """
+    g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
+    result = g.curs.fetchone()
+    if result:
+        print(result)
+        p_total += result['p_total'] if 'p_total' in result else 0
+    query = """SELECT IFNULL(SUM(a.dlnt * ac.dlamt), 0) AS p_total
+    				FROM account a
+    				LEFT JOIN account ac
+    				ON a.ctmmny_sn=ac.ctmmny_sn AND a.cntrct_sn=ac.cntrct_sn AND a.prjct_sn=ac.prjct_sn AND a.cnnc_sn=ac.delng_sn
+    				WHERE a.ctmmny_sn = 1
+    				AND a.cntrct_sn = %s
+    				AND a.delng_se_code = 'S'
+    				AND ac.delng_ty_code = '2'
+    				AND a.delng_ty_code <> 14
+    				AND a.dlivy_de BETWEEN %s AND %s
+    """
+    g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
+    result = g.curs.fetchone()
+    if result:
+        p_total += result['p_total'] if 'p_total' in result else 0
+
+    query = """SELECT IFNULL(SUM(a.dlnt * a.dlamt),0) AS p_total
+				FROM account a
+				LEFT JOIN account ac
+				ON a.ctmmny_sn=ac.ctmmny_sn AND a.cntrct_sn=ac.cntrct_sn AND a.prjct_sn=ac.prjct_sn AND a.cnnc_sn=ac.delng_sn
+				WHERE a.ctmmny_sn = 1
+				AND a.cntrct_sn = %s
+				AND a.delng_se_code = 'S'
+				AND ac.delng_ty_code = '3'
+                AND a.dlivy_de BETWEEN %s AND %s
+
+    """
+    g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
+    result = g.curs.fetchone()
+    if result:
+        p_total += result['p_total'] if 'p_total' in result else 0
+
+    query = """SELECT IFNULL(SUM(a.dlnt * ac.dlamt),0) AS p_total
+    				FROM account a
+    				LEFT JOIN account ac
+    				ON a.ctmmny_sn=ac.ctmmny_sn AND a.cntrct_sn=ac.cntrct_sn AND a.prjct_sn=ac.prjct_sn AND a.cnnc_sn=ac.delng_sn
+    				WHERE a.ctmmny_sn = 1
+    				AND a.cntrct_sn = %s
+    				AND a.delng_se_code = 'S'
+    				AND ac.delng_ty_code = '4'
+                    AND a.dlivy_de BETWEEN %s AND %s
+    """
+    g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
+    result = g.curs.fetchone()
+    if result:
+        p_total += result['p_total'] if 'p_total' in result else 0
+
+
+
+    query = """SELECT IFNULL(SUM(t.splpc_am + IFNULL(t.vat, 0)),0) AS p_total
+                FROM taxbil t
+                WHERE t.ctmmny_sn = 1
+                AND t.cntrct_sn = %s
+                AND t.delng_se_code = 'P' 
+                AND t.pblicte_trget_sn = 116 
+                AND t.pblicte_de BETWEEN %s AND %s"""
+    g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
+    result = g.curs.fetchone()
+    if result:
+        p_total += result['p_total'] if 'p_total' in result else 0
+
+
+    return p_total
+
+def get_s2(cntrct_sn, pxcond_ym):
+    p_total = 0
+    pxcond_st = pxcond_ym+"-01"
+    pxcond_ed = pxcond_ym+"-31"
+    query = """SELECT o.cntrct_sn
+    				, o.outsrc_fo_sn
+    				FROM outsrc o
+    				LEFT OUTER JOIN reserved r
+    				ON o.outsrc_fo_sn=r.outsrc_fo_sn AND o.cntrct_sn=r.cntrct_sn
+    				WHERE o.cntrct_sn = %s
+    				AND o.outsrc_fo_sn NOT IN (116)
+    """
+    g.curs.execute(query, cntrct_sn)
+    result = g.curs.fetchall()
+    check_146 = False
+    for i, r in enumerate(result):
+        outsrc_fo_sn = r['outsrc_fo_sn']
+        if int(outsrc_fo_sn) == 146:
+            check_146 = True
+
+        query = """SELECT IFNULL(SUM(t.splpc_am + IFNULL(t.vat,0)),0) AS p_total
+				FROM taxbil t
+				WHERE t.ctmmny_sn = 1
+				AND t.cntrct_sn = %s
+				AND t.delng_se_code = 'P' 
+				AND t.pblicte_trget_sn = %s 
+                AND t.pblicte_de BETWEEN %s AND %s"""
+        g.curs.execute(query, (cntrct_sn, outsrc_fo_sn, pxcond_st, pxcond_ed))
+        r = g.curs.fetchone()
+        if r:
+            p_total += r['p_total'] if 'p_total' in r else 0
+    if not check_146:
+        query = """SELECT IFNULL(SUM(t.splpc_am + IFNULL(t.vat,0)),0) AS p_total
+        				FROM taxbil t
+        				WHERE t.ctmmny_sn = 1
+        				AND t.cntrct_sn = %s
+        				AND t.delng_se_code = 'P' 
+        				AND t.pblicte_trget_sn = 146
+                        AND t.pblicte_de BETWEEN %s AND %s"""
+        g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
+        r = g.curs.fetchone()
+        if r:
+            p_total += r['p_total'] if 'p_total' in r else 0
+
+    return p_total
+
+def get_s(cntrct_sn):
+    query = """SELECT IFNULL(s.amt, 0) AS s_sum
+                FROM contract c
+				LEFT OUTER JOIN (SELECT SUM(IFNULL(splpc_am, 0) + IFNULL(vat, 0)) AS amt, cntrct_sn FROM taxbil WHERE delng_se_code='S' GROUP BY cntrct_sn) s
+				ON s.cntrct_sn=c.cntrct_sn
+				WHERE c.cntrct_sn=%s
+"""
+    g.curs.execute(query, cntrct_sn)
+    result = g.curs.fetchone()
+    return result.get('s_sum', 0)
+
 def get_completed_reportNR_new(params):
     CT_SE_CODE_ORDER = {0: 0, 1: 1, 2: 2, 5: 3, '': 4, 3: 5, 4: 6, 8: 7}
     ymd = params['s_pxcond_mt']

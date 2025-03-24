@@ -103,7 +103,6 @@ getReport = function()
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-            console.log(pResult.contract);
             $(document).find("#cntrct_nm").html(pResult.contract.spt_nm);
             var lo = pResult.logitech;
             var ot = pResult.other;

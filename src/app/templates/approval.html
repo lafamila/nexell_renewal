@@ -508,7 +508,7 @@ getApprovalList = function()
 				}
 			},
 		],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) {
 			// var contract = pSettings.json.contract;
 			// var count = pSettings.json.count;
             // $('#summery').find('tbody td').eq(0).html(count.total_count.toString().toFormat('NUMBER'));
@@ -570,7 +570,6 @@ getApprovalList = function()
 						let options = $("#s_approval_tty_code").find("option");
 						$.each(options, function(pIndex, pValue){
 							let parent_se_code = $(pValue).data("parent");
-							console.log(parent_se_code);
 							if(parent_se_code != undefined && parseInt(parent_se_code)!== parseInt(se_code)){
 								$(pValue).remove();
 							}
@@ -636,7 +635,7 @@ $(function(){
 	if (start == '') {
 		var end = $('.datepicker-e').val();
 		var endDate = new Date(end);
-        endDate.setFullYear(endDate.getFullYear()-1);
+        endDate.setFullYear(endDate.getFullYear());
         endDate.setMonth(0);
         endDate.setDate(1);
 

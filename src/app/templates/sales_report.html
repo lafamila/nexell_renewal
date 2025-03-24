@@ -266,7 +266,6 @@ updateAccount = function(cntrct_sn, bcnc_sn, before, expect_de)
             async: false,
             dataType: 'json',
             success: function (pTable) {
-				console.log(pTable.longTermData);
                 var pData = pTable.termData;
                 $("#myContent").html('');
                 var keys = [-1, 0, 1, 2];
@@ -623,7 +622,6 @@ updateAccount = function(cntrct_sn, bcnc_sn, before, expect_de)
 
 
                     var table_div = document. querySelectorAll(tbl)[0];
-                    console.log(tbl, table_div);
                     table_html += table_div.outerHTML.replace(/ /g, '%20');
                 });
                 a.href = data_type + ', ' + table_html;

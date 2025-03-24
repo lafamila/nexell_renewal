@@ -528,7 +528,7 @@ getFinalsList = function()
 				}
 			},
 		],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) {
 			var count = pSettings.json.count;
             $('#summery').find('tbody td').eq(0).html(count.amt1.toString().toFormat('NUMBER'));
             $('#summery').find('tbody td').eq(1).html(count.amt2.toString().toFormat('NUMBER'));

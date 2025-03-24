@@ -235,6 +235,11 @@
                     }
                     before = pValue.bsn_dept_nm;
                     var _class = (before_class%2 == 0) ? "colorLLG" : "";
+
+
+                    var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
+
+
                     html += `<tr data-dept="${pValue.bsn_dept_nm}">
                                 <td class="${_class} text-center middle">${pValue.bsn_dept_nm}</td>
                                 <td class="${_class} text-center middle">${pValue.cntrct_bcnc_nm}</td>

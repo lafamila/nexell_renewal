@@ -233,7 +233,6 @@ $(function() {
             contentType: false,
             processData: false,
             success: function (pData) {
-				console.log(pData);
 				var pGoal = pData.goal;
 				var pResult = pData.data;
                 var html = '';
@@ -668,7 +667,6 @@ $(document).on("dblclick", ".input-available", function(){
 			contentType: false,
 			processData: false,
 			success: function (pResult) {
-				console.log(pResult);
 				isDataChange = true;
 				init();
 			}
@@ -800,7 +798,6 @@ $(document).on("dblclick", ".input-available", function(){
 			contentType: false,
 			processData: false,
 			success: function (pResult) {
-				console.log(pResult);
 				isDataChange = true;
 			}
 

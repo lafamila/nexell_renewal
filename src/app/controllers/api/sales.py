@@ -332,7 +332,6 @@ def ajax_get_sales_expect_report():
                                             t['delng_se_nm'], expect_de, r_rows[i]['rcppay_de'], r_rows[i]['amount'], diff,
                                             taxbil_sn, taxbil_yn, '', '')
                             total_result[order].append(data)
-
                 total_rows = {-1: list(), 0: list()}
                 t_result = sales.get_expect_p_t_list(params)
                 r_result = sales.get_expect_p_r_list(params)
@@ -482,6 +481,8 @@ def ajax_get_sales_expect_report():
                 if (f['cntrct_sn'], f['taxbil_sn']) not in finals_data:
                     finals_data[(f['cntrct_sn'], f['taxbil_sn'])] = []
                 finals_data[(f['cntrct_sn'], f['taxbil_sn'])].append(f)
+                if f['cntrct_sn'] == 12805:
+                    print(key, f)
 
             sorted_finals = []
             for cntrct_sn in sorted(list(finals_data.keys()), key=lambda x: finals_data[x][0]['dlivy_de']):
@@ -543,7 +544,7 @@ def equip_to_account():
         row['ddt_man'] = params['dlivy_de']
         row['bcnc_sn'] = equipment['bcnc_sn']
         row['prdlst_se_code'] = equipment['prdlst_se_code']
-        row['model_no'] = equipment['model_no']
+        row['model_no'] = equipment['model_no'] if "rcppay_dtls" not in params else "{}{}".format(equipment['bigo'], params['rcppay_dtls'])
         row['delng_ty_code'] = equipment['delng_ty_code']
         row['dlnt'] = params["before_dlnt"]
         row['dlamt'] = equipment['pamt']

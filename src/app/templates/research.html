@@ -457,7 +457,6 @@ getExtra = function(research_year)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
             var pData = pResult.data;
             $.each(pData, function(pIndex, pValue){
                 if(pValue.research_month != 'name' && pValue.research_month != 'name2' && (!isNaN(parseInt(pValue.research_row.replaceAll('row', ''))) || pValue.research_row.replaceAll('row','') == 'a' || pValue.research_row.replaceAll('row','') == 'b' )){
@@ -542,7 +541,6 @@ insertExtra = function(research_year, research_row, research_month, research_dat
 	params += '&research_row='+research_row;
 	params += '&research_month='+research_month;
 	params += '&research_data='+research_data;
-    console.log(params);
 	$.ajax({
 		url: '/api/research/ajax_insert_research',
 		type: 'GET',

@@ -331,7 +331,6 @@ function fnDateAdd(pValue)
     var tmpDate = valArrs[0].split('-');
     var tmpDays = parseInt(valArrs[1]);
     var tmpType = valArrs[2];
-    console.log(tmpDate, tmpDays, tmpType);
     if (tmpType == 'year') {
         var tmp = new Date(tmpDate[0], tmpDate[1], tmpDate[2]+(365*tmpDays));
         var year = tmp.getFullYear();
@@ -355,7 +354,6 @@ function fnGetFirstDay(pValue)
     var year = tmpDate.getFullYear();
     var month = tmpDate.getMonth()+1; month = month < 10 ? '0'+ month : month;
     var day = tmpDate.getDate(); day = day < 10 ? '0'+ day : day;
-    console.log(year+'-'+month+'-'+day);
     return year+'-'+month+'-'+day;
 }
 
@@ -366,6 +364,5 @@ function fnGetLastDay(pValue)
     var year = tmpDate.getFullYear();
     var month = tmpDate.getMonth()+1; month = month < 10 ? '0'+ month : month;
     var day = tmpDate.getDate(); day = day < 10 ? '0'+ day : day;
-    console.log(year+'-'+month+'-'+day);
     return year+'-'+month+'-'+day;
 }

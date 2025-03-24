@@ -122,7 +122,6 @@
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
             var html = '';
             let offset = (new Date()).getTimezoneOffset() * 60000;
             let nowStr = (new Date((new Date()).getTime() - offset)).toISOString().split("T")[0];

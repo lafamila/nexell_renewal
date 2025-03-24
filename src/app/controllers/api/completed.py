@@ -139,9 +139,11 @@ def completed_ajax_get_completed_report_data_new():
         # row['e_completed_amount'] = data[key]['E'][1] + before_indirect
         # row['e_now_amount1'] = data[key]['E'][2] + now_indirect
         row['e_completed_amount'] = data[key]['E'][1]
-        row['e_now_amount1'] = data[key]['E'][2]
-        row['e_now_amount2'] = data[key]['E'][3]
-        row['rate'] = data[key]['rate']
+        row['e_now_amount1'] = cp.get_s1(cntrct_sn, params["s_pxcond_mt"])
+        # row['e_now_amount1'] = data[key]['E'][2]
+        # row['e_now_amount2'] = (data[key]['E'][2] + data[key]['E'][3]) - cp.get_s1(cntrct_sn, params["s_pxcond_mt"])
+        row['e_now_amount2'] = cp.get_s2(cntrct_sn, params["s_pxcond_mt"])
+        row['rate'] = cp.get_s(cntrct_sn) * 100.0 / row['c_cntrct_amount'] if row['c_cntrct_amount'] != 0 else 0.0
         row['rm'] = data[key]['rm']
         row['va'] = indirect["va_total"]
         if row['c_completed_amount'] == 0 and row['c_now_amount'] == 0 and row['e_completed_amount'] == 0 and row['e_now_amount1'] == 0 and row['e_now_amount2'] == 0:

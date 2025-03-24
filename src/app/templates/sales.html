@@ -422,7 +422,7 @@ getSalesList = function()
 				}
 			},
         ],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) { //console.log('drawCallback', pSettings.json);
 
 			var data = pSettings.json;
 			var bf_s_ddt_man = '0000-00-00';
@@ -985,7 +985,7 @@ isDataChange = false;
  *
  */
 formReset = function(pMode = '')
-{ console.log('formReset', pMode);
+{ //console.log('formReset', pMode);
 	if (pMode === 'init') {
 		$('#popBox1').find('input:radio[name=t_delng_se_code]').yVal('P');
 		$('#popBox1').find('input:radio[name=t_delng_se_code]').yReadonly(false);
@@ -1070,8 +1070,7 @@ getInventoryDeleteList = function()
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('result', pResult);
-            var html = '';
+			var html = '';
             $.each(pResult.data, function(pIndex, pValue){
 
                 html += '<option value="'+pValue.value+'" data-tp="'+pValue.use_type+'" data-invn_sttus_code="'+pValue.item_sttus_code+'" data-ty="'+pValue.ty+'" data-se="'+pValue.se+'" data-model="'+pValue.name.trim()+'">';
@@ -1110,7 +1109,6 @@ getContract = function(s_cntrct_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
 				var targetForm = '';
@@ -1143,7 +1141,6 @@ getContract = function(s_cntrct_sn)
 					$(targetForm).find('#project'+delng_se_code).hide();
 				}
 
-				console.log("lafamila", delng_se_code);
 				if (delng_se_code == 'S') { // 매출일 경우에만 처리
 					var html = '';
 					$.each(pResult.sales, function(pIndex, pValue){
@@ -1208,7 +1205,6 @@ getInventory = function(s_invn_sttus_code)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
 				var targetForm = '';
@@ -1274,7 +1270,6 @@ getSales = function(s_delng_sn)
 {
 	var params = '';
 	params += '&s_delng_sn=' + s_delng_sn;
-	console.log(params);
 
 	$.ajax({
 		url: '/api/sales/ajax_get_sales',
@@ -1284,7 +1279,6 @@ getSales = function(s_delng_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
 
@@ -1442,7 +1436,6 @@ insertSales = function(pFormName, pIsReset = true)
 			return fnValidate('insert');
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				isDataChange = true;
 				fnAlert(pResult.message);
@@ -1615,7 +1608,6 @@ $(function() {
         var option = $("#item_sn option:selected");
         if(option.length > 0){
         	let target = $(option).eq(option.length-1);
-			console.log($(target).data('invn_sttus_code'));
 			var action = $('#popBox1').data('action');
 			// if (action == 'insert') {
 			$('#puchas').find('#invn_sttus_code').yVal($(target).data('invn_sttus_code'));
@@ -1913,7 +1905,6 @@ getReportSales = function(s_ddt_man)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReportSales', pResult);
 			if (pResult.status) {
 				$('#popReport1').find('#rptDate').html(pResult.date);
 				// ============================================================
@@ -2060,7 +2051,6 @@ getMemoList = function(s_memo_ty)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				$.each(pResult.memo_list, function(pIndex, pValue) {
                     if(pValue.memo_id != 'sales_memo_title'){
@@ -2109,7 +2099,6 @@ getSalesExpectReport = function(expect_de){
 		async: false,
 		dataType: 'json',
 		success: function (pTable) {
-			console.log(pTable);
 			var pData = pTable.termData;
 			var keys = [-1, 0, 1, 2];
 			var pkeys = [-1, 0];

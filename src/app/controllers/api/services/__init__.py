@@ -328,10 +328,12 @@ def set_menu(auth_cd):
     # auto handler check    #
     #########################
     now = datetime.now(timezone('Asia/Seoul')) - relativedelta(months=1)
+    before = datetime.now(timezone('Asia/Seoul')) - relativedelta(months=2)
     last_day = datetime.strptime(datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d") + timedelta(days=-1)
 
     y, m = now.strftime("%Y-%m").split("-")
     st, ed = now.strftime("%Y-%m-01"), now.strftime("%Y-%m-31")
+    before_y, before_m = before.strftime("%Y-%m").split("-")
     row = curs.execute("SELECT * FROM bnd_table WHERE stdyy=%s AND stdmm=%s", (y, m))
     if not row:
         query = "SELECT IFNULL(count(distinct c.cntrct_sn), 0) as cnt FROM account s LEFT JOIN contract c ON s.cntrct_sn=c.cntrct_sn LEFT JOIN member m ON c.bsn_chrg_sn=m.mber_sn WHERE 1=1 AND m.dept_code='BI' AND s.delng_se_code='S' AND s.delng_ty_code='13' AND ddt_man BETWEEN '{} 00:00:00' AND '{} 23:59:59'".format(st, ed)
@@ -425,6 +427,29 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
             if t not in results:
                 results[t] = 0
         curs.execute("INSERT INTO bnd_stock_table(stdyy, stdmm, invn_type, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7) VALUES (%s, %s, 0, %s, %s, %s, %s, %s, %s, %s)", (y, m, results["cnt0"], results["cnt1"], results["cnt2"], results["cnt3"], results["빌트인"], results["일반"], results["자재"]))
+
+        curs.execute("SELECT * FROM bnd_stock_table WHERE stdyy=%s AND stdmm=%s AND invn_type IN (1, 2)", (before_y, before_m))
+        result = curs.fetchall()
+        result_before = {int(r['invn_type']):r for r in result}
+
+        query = """SELECT ss.cntrct_sn, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3) AS prduct_ty_code, COUNT(*) AS cnt FROM stock_log ss LEFT OUTER JOIN stock_log ls ON ls.cnnc_sn=ss.log_sn LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus='1' AND s.PRDUCT_SE_CODE='1' AND (ls.LOG_SN IS NULL OR ls.STOCK_STTUS <> '4') AND ss.ddt_man BETWEEN %(st)s AND %(ed)s GROUP BY ss.cntrct_sn, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3)"""
+        curs.execute(query.strip(), {"st": st, "ed" : ed})
+        result = curs.fetchall()
+        data_in = {2: 0, 3: 0}
+        for r in result:
+            data_in[int(r['cntrct_sn'])] += r['cnt']
+            result_before[int(r['cntrct_sn'])-1]['cnt{}'.format(int(r['prduct_ty_code'])+4)] += r['cnt']
+
+        query = """SELECT ss.stock_sttus, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3) AS prduct_ty_code, ls.cntrct_sn, COUNT(*) AS cnt FROM stock_log ss LEFT OUTER JOIN stock_log ls ON ls.log_sn=ss.cnnc_sn LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus IN ('2', '3') AND s.PRDUCT_SE_CODE='1' AND ls.cntrct_sn IS NOT NULL AND ss.ddt_man BETWEEN %(st)s AND %(ed)s GROUP BY ls.cntrct_sn, ss.STOCK_STTUS, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3)"""
+        curs.execute(query.strip(), {"st": st, "ed" : ed})
+        result = curs.fetchall()
+        data_out = {2: {2: 0, 3: 0, 4: 0}, 3: {2: 0, 3: 0, 4: 0}}
+        for r in result:
+            data_out[int(r['cntrct_sn'])][int(r['stock_sttus'])] += r['cnt']
+            result_before[int(r['cntrct_sn']) - 1]['cnt{}'.format(int(r['prduct_ty_code']) + 4)] -= r['cnt']
+        for invn_type in data_in:
+            curs.execute("INSERT INTO bnd_stock_table(stdyy, stdmm, invn_type, cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (y, m, invn_type-1, data_in[invn_type], data_out[invn_type][2], data_out[invn_type][3], data_out[invn_type][4], result_before[invn_type-1]['cnt5'], result_before[invn_type-1]['cnt6'], result_before[invn_type-1]['cnt7']))
+
         db.commit()
 
 
@@ -451,14 +476,44 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
         db.commit()
     # general sales project - bcnc check
 
-    # bcnc_nm = "{}년{}월일반".format(datetime.now(timezone('Asia/Seoul')).strftime("%y"), int(datetime.now(timezone('Asia/Seoul')).strftime("%m")))
-    # row = curs.execute("SELECT bcnc_sn FROM bcnc WHERE bcnc_nm=%s AND bcnc_se_code='S'", bcnc_nm)
-    # if not row:
-    #     curs.execute("INSERT bcnc(CTMMNY_SN, BCNC_SE_CODE, BCNC_NM, BCNC_TELNO, BCNC_ADRES, RPRSNTV_NM, BIZRNO, BSNM_SE_CODE, ESNTL_DELNG_NO, USE_AT, REGIST_DTM, REGISTER_ID) VALUES (1, 'S', %s, null, null, null, '해당사항없음', 1, null, 'Y', NOW(), 'nexelll')", bcnc_nm)
-    #     bcnc_sn = curs.lastrowid
-    # else:
-    #     bcnc_sn = curs.fetchone()['bcnc_sn']
-    #
+    bcnc_nm = "{}년{}월일반".format(datetime.now(timezone('Asia/Seoul')).strftime("%y"), int(datetime.now(timezone('Asia/Seoul')).strftime("%m")))
+    row = curs.execute("SELECT bcnc_sn FROM bcnc WHERE bcnc_nm=%s AND bcnc_se_code='S'", bcnc_nm)
+    if not row:
+        curs.execute("INSERT bcnc(CTMMNY_SN, BCNC_SE_CODE, BCNC_NM, BCNC_TELNO, BCNC_ADRES, RPRSNTV_NM, BIZRNO, BSNM_SE_CODE, ESNTL_DELNG_NO, USE_AT, REGIST_DTM, REGISTER_ID) VALUES (1, 'S', %s, null, null, null, '해당사항없음', 1, null, 'Y', NOW(), 'nexelll')", bcnc_nm)
+        bcnc_sn = curs.lastrowid
+    else:
+        bcnc_sn = curs.fetchone()['bcnc_sn']
+
+    dept_codes = {("공조1", "TS1"): "NR", ("공조2", "TS2"): "NR", ("빌트인", "BI"): "BD"}
+    now_bgn = datetime.strptime(datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d")
+    now_end = now_bgn + relativedelta(months=1) + relativedelta(days=-1)
+    cntrct_nm_format = now_bgn.strftime("%y년%m월 일반판매")
+    for dept_nm, dept_code in dept_codes:
+        raw = curs.execute(
+            "SELECT mber_sn FROM member  WHERE dept_code=%s AND mber_sttus_code='H' ORDER BY ofcps_code ASC, rspofc_code ASC",
+            dept_code)
+        if not raw:
+            mber_sn = 66
+        else:
+            mber_sn = curs.fetchone()['mber_sn']
+
+        cntrct_data = {"cntrct_nm": "{}({})".format(cntrct_nm_format, dept_nm),
+                       "bgn_de": now_bgn.strftime("%Y-%m-%d"), "end_de": now_end.strftime("%Y-%m-%d"),
+                       "prjct_ty_code": dept_codes[(dept_nm, dept_code)], "mber_sn": mber_sn, "bcnc_sn" : bcnc_sn}
+
+        raw = curs.execute("SELECT * FROM contract WHERE cntrct_nm=%(cntrct_nm)s", cntrct_data)
+        if not raw:
+            query = """INSERT INTO contract (ctmmny_sn, cntrct_no, cntrct_nm, 
+                                cntrct_de, prjct_ty_code, bcnc_sn, spt_nm, 
+                                spt_adres, cntrwk_bgnde, cntrwk_endde, bsn_chrg_sn, spt_chrg_sn, prjct_creat_at,
+                                progrs_sttus_code, home_count, home_region, regist_dtm, register_id)
+                        values (1, '', %(cntrct_nm)s,
+                                %(bgn_de)s, %(prjct_ty_code)s, %(bcnc_sn)s, %(cntrct_nm)s,
+                                ' ', %(bgn_de)s, %(end_de)s, %(mber_sn)s, %(mber_sn)s, 'N',
+                                'P', '1', '서울권', NOW(), 'nexelll')"""
+            curs.execute(query, cntrct_data)
+    db.commit()
+
     # # general sales project - contract & project check
     # curs.execute("SHOW COLUMNS FROM contract")
     # result = curs.fetchall()

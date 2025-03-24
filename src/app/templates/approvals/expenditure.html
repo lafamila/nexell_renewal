@@ -181,33 +181,110 @@ function updateThumbnail(dropZoneElement, file) {
 </div>
 <table class="table table-bordered table-form main-table">
     <colgroup>
-        <col width="200"/>
-        <col width="*"/>
+        <col width="20%"/>
+        <col width="30%"/>
+        <col width="20%"/>
+        <col width="30%"/>
     </colgroup>
     <thead>
         <tr>
-            <th>거래처</th>
-            <td class="hasinput">
+            <th class="color-contract">거래처</th>
+            <td class="hasinput" colspan="3">
                 <input type="text" class="form-control text-left" name="bcnc_nm">
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">제목</th>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="title">
             </td>
         </tr>
     </thead>
 </table>
 <table class="table table-bordered table-form main-table">
     <colgroup>
-        <col width="*"/>
+        <col width="10%"/>
+        <col width="10%"/>
+        <col width="30%"/>
+        <col width="20%"/>
+        <col width="30%"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center"><span>내용</span></th>
+            <th class="color-contract" colspan="5">내역</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td class="text-center" style="height:20vh!important;">
+            <td class="text-center" style="height:20vh!important;" colspan="5">
                 <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
             </td>
         </tr>
+        <tr>
+            <th class="color-contract" colspan="2">비용처리 현장명</th>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="spt_name">
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract" colspan="2">결제방법</th>
+            <td class="hasinput">
+                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="radio" name="pay_method" value="0">현금
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="pay_method" value="1">법인카드
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="pay_method" value="2">개인카드
+                    </label>
+                </div>
+
+            </td>
+            <th class="color-contract">결제예정일</th>
+            <td class="hasinput">
+                <div class="input-group">
+                    <input type="text" class="form-control datepicker" style="z-index:1040!important;" data-dateformat="yy-mm-dd" data-mask="9999-99-99" data-mask-placeholder="_" id="cntrct_de" name="cntrct_de">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract" colspan="2">사유</th>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="content">
+            </td>
+        </tr>
+
+    </tbody>
+    <tbody role="account" style="display:none;">
+        <tr>
+            <th class="color-contract" rowspan="2">결제계좌</th>
+            <th class="color-contract">입금은행</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="account_name">
+            </td>
+            <th class="color-contract">예금주</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-left" name="account_person">
+            </td>
+        </tr>
+        <tr>
+            <th class="color-contract">계좌번호</th>
+            <td class="hasinput" colspan="3">
+                <input type="text" class="form-control text-left" name="account">
+            </td>
+        </tr>
+    </tbody>
+    <tbody>
+        <tr>
+            <th class="color-contract" colspan="2">금액</th>
+            <td class="hasinput" colspan="3">
+                <input type="number" class="form-control text-left" name="amount">
+            </td>
+        </tr>
+
     </tbody>
 
 </table>
@@ -245,8 +322,26 @@ function updateThumbnail(dropZoneElement, file) {
 </div>
 <script>
     fnValidate = function(){
-                  var result = true;
-                  return result;
+                 	var result = true;
+                    var title = $("[name='title']").val();
+                    if (result == true && fnIsEmpty(title)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find("[name='title']").trigger('focus');
+                        result = false;
+                    }
+                    var option_bigo = $("[name='option_bigo']").val();
+                    if (result == true && fnIsEmpty(option_bigo)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find("[name='option_bigo']").trigger('focus');
+                        result = false;
+                    }
+                    var amount = $("[name='amount']").val();
+                    if (result == true && fnIsEmpty(amount)) {
+                        alert('필수 입력 항목을 입력하시기 바랍니다.');
+                        $(document).find("[name='amount']").trigger('focus');
+                        result = false;
+                    }
+                    return result;
              }
     cloneRow = function(selector, count){
         if(selector == "images_tr"){
@@ -259,7 +354,28 @@ function updateThumbnail(dropZoneElement, file) {
             }
         }
     }
+    $(document).on("change", "[name='pay_method']", function(){
+        var pay_method = $('input[name=pay_method]:checked').val();
+        if(pay_method == '0'){
+            $(document).find("tbody[role='account']").show();
+        }
+        else{
+            $(document).find("tbody[role='account']").hide();
+        }
+    });
     {% if init %}
+    $(document).ready(function(){
+        $(document).find(".datepicker").datepicker({
+            beforeShow: function(dateText) {
+                $(this).data('before', $(this).val());
+            },
+            onSelect: function(dateText) {
+                $(this).change();
+            },
+            onClose: function(dateText) {
+            },
+        });
+    });
     $(document).on("change", "#ex_filename", function(){
 
 

@@ -78,10 +78,11 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
+			<th class="sub-title colorN text-center" colspan="16"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
         </tr>
     </thead>
     <tbody role="header">
@@ -101,6 +102,7 @@
             <th class="color-contract text-center">총액</th>
             <th class="color-contract text-center">이익금(VA)</th>
             <th class="color-contract text-center">VA율</th>
+            <th class="color-contract text-center">결재완료일</th>
         </tr>
     </tbody>
     <tbody role="ct_se_code_contract">
@@ -120,6 +122,7 @@
             <td class="text-center" data-column="row_total"></td>
             <td class="text-center" data-column="va" rowspan="2"></td>
             <td class="text-center" data-column="va_rate" rowspan="2"></td>
+            <td class="text-center" data-column="dtm" rowspan="2"></td>
         </tr>
         <tr data-row="E">
             <th class="colorSky text-center">실행가</th>
@@ -153,6 +156,7 @@
             <td class="text-center" data-column="row_total_alpha"></td>
             <td class="text-center" data-column="va_alpha" rowspan="2"></td>
             <td class="text-center" data-column="va_rate_alpha" rowspan="2"></td>
+            <td class="text-center" data-column="dtm_alpha" rowspan="2">-</td>
         </tr>
         <tr data-row="E">
             <th class="colorSky text-center">변경 실행가</th>
@@ -1026,7 +1030,12 @@
                     var last_data = {};
                     $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                     $(document).find("tbody[role='equip_row'] input, tbody[role='equip_row'] select").attr("disabled", false);
+    				var aCostDTM = '9999-99-99';
                     $.each(pResult.aCostList, function(pIndex, pValue){
+						if(aCostDTM > pValue.dtm){
+							aCostDTM = pValue.dtm;
+						}
+
                         $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                         if(pValue.cntrct_execut_code == 'E' && [3,4,5].includes(parseInt(pValue.ct_se_code))){
                             var amount = isNaN(parseInt(pValue.amount)) ? 0 : parseInt(pValue.amount);
@@ -1038,6 +1047,7 @@
                         }
 
                     });
+                    $(document).find(`[data-column="dtm"]`).html(aCostDTM);
                     $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
                     cloneRow("equip_already_tr", pResult.samsungList.length-$(document).find(`tr[data-row="equip_already_tr"]`).length);
                     $.each(pResult.samsungList, function(pIndex, pValue){
@@ -1099,6 +1109,7 @@
                                             <td class="text-center" data-column="row_total_${extra_sn}"></td>
                                             <td class="text-center" data-column="va_${extra_sn}" rowspan="2"></td>
                                             <td class="text-center" data-column="va_rate_${extra_sn}" rowspan="2"></td>
+                                            <td class="text-center" data-column="dtm_${extra_sn}" rowspan="2"></td>
                                         </tr>
                                         <tr data-row="E">
                                             <th class="colorSky text-center">변경 실행가</th>
@@ -1118,9 +1129,14 @@
                     });
                     $(document).find("#costTable tbody[role='ct_se_code_contract']").after(html);
                     $.each(Object.keys(pResult.extraCostList).sort((a, b)=>{return parseInt(a)-parseInt(b)}), function(pIndex, extra_sn){
+                        var tCostDTM = '9999-99-99';
                         var pRow = pResult.extraCostList[extra_sn];
                         last_data = {};
                         $.each(pRow, function(pIndex, pValue){
+                            console.log(pValue.dtm);
+                            if(tCostDTM > pValue.dtm){
+                                tCostDTM = pValue.dtm;
+                            }
                             $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}_${extra_sn}"]`).html(pValue.amount.toFormat('NUMBER'));
                             if(pValue.cntrct_execut_code == 'E' && [3,4,5].includes(parseInt(pValue.ct_se_code))){
                                 var amount = isNaN(parseInt(pValue.amount)) ? 0 : parseInt(pValue.amount);
@@ -1131,6 +1147,7 @@
                                     last_data[`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`] = parseInt(pValue.amount);
                             }
                         });
+                        $(document).find(`td[data-column="dtm_${extra_sn}"]`).html((tCostDTM == '9999-99-99') ? '' : tCostDTM);
                         $(document).find(`tbody[data-row='${extra_sn}']`).trigger("change");
                     });
                     $("#max_extra_sn").html(parseInt(max_extra_sn) == 0 ? "" : `-${(parseInt(max_extra_sn)+1)}`);
@@ -1163,6 +1180,7 @@
                                         <td class="colorLP text-center" data-column="row_total_diff"></td>
                                         <td class="colorLP text-center" data-column="va_diff" rowspan="2"></td>
                                         <td class="colorLP text-center" data-column="va_rate_diff" rowspan="2"></td>
+                                        <td class="colorLP text-center" data-column="dtm_diff" rowspan="2">-</td>
                                     </tr>
                                     <tr data-row="E">
                                         <th class="colorLP text-center">실행 차액가</th>

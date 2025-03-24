@@ -167,7 +167,6 @@ getStockReport = function(_type)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getStockReport', pResult);
             $.each(pResult.summary, function(pIndex, pValue){
                 $("#stock_report_summary").find(`tbody tr[data-row='${pValue.prduct_se_code}']`).eq(0).find("td").eq(window.dict[pValue.invn_sttus_nm]).html(pValue.puchas_amount.toFormat('NUMBER'));
                 $("#stock_report_summary").find(`tbody tr[data-row='${pValue.prduct_se_code}']`).eq(1).find("td").eq(window.dict[pValue.invn_sttus_nm]).html(pValue.qy_total.toFormat('NUMBER'));

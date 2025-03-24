@@ -485,7 +485,7 @@ getTaxList = function()
 				}
 			},
 		],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) { //console.log('drawCallback', pSettings.json);
 			var summary = pSettings.json.summary;
 			$('#summary').find('tbody td').eq(0).html(summary.total_count.toFormat('NUMBER'));
 			$('#summary').find('tbody td').eq(1).html(summary.total_amount.toFormat('NUMBER'));
@@ -559,7 +559,6 @@ getContract = function(s_cntrct_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
 				$('#frmBox1').find('#prjct_creat_at').yVal(data.prjct_creat_at);
@@ -597,7 +596,6 @@ getTax = function(s_cntrct_sn, s_taxbil_sn)
 	var params = '';
 	params += '&s_cntrct_sn=' + s_cntrct_sn;
 	params += '&s_taxbil_sn=' + s_taxbil_sn;
-    console.log(params);
 	// alert(params);
 	$.ajax({
 		url: '/api/tax/ajax_get_tax',
@@ -607,7 +605,6 @@ getTax = function(s_cntrct_sn, s_taxbil_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
 				$('#frmBox1').find('#s_taxbil_sn').val(data.taxbil_sn);
@@ -747,7 +744,6 @@ insertTax = function(pIsReset = true)
 			return fnValidate('insert');
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				isDataChange = true;
 				fnAlert(pResult.message);
@@ -866,7 +862,6 @@ $(function() {
      */
 	$('#frmBox1').on('change', '#cntrct_sn', function(pEvent) {
 		var action = $('#frmBox1').data('action');
-        console.log($(this));
 		// if (action == 'insert') {
 			getContract($(this).val());
 		// }
@@ -912,7 +907,6 @@ $(function() {
 
 
     $('#frmBox1').on('click', '#plus', function(pEvent) {
-        console.log($(this).parent().parent().parent().html());
         var now = parseInt($("#collct_time").val())+1;
         $("#collct_time").val(now);
 	});

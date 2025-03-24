@@ -109,7 +109,6 @@ getReport = function(s_pxcond_mt)
 	var params = '';
     params += '&s_year='+(s_pxcond_mt.split("-")[0]);
     params += '&s_dept_code=TS';
-	console.log('getReport', params);
 
 	$.ajax({
 		url: '/api/overpay/ajax_get_overpay',
@@ -119,7 +118,6 @@ getReport = function(s_pxcond_mt)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReport', pResult); //rptCompletedArea
 			$("#rptTitle").text((s_pxcond_mt.split("-")[0]));
 			var count_dept_month = {};
 			var dept_order = [];
@@ -180,9 +178,6 @@ getReport = function(s_pxcond_mt)
 							$.each(pResult.outsrc_taxbill[cntrct_sn], function(pKey, pRow){
 								p_total[month] += pRow[month];
 								p_detail[`o${pKey}`][month] += pRow[month];
-								if(isNaN(p_total[month])){
-									console.log("o", cntrct_sn, pKey, month);
-								}
 							});
 						}
 					}

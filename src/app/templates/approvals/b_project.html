@@ -75,7 +75,7 @@
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" style="" colspan="7"><span>공사비 산출</span>
+			<th class="sub-title colorN text-center" style="" colspan="7"><span>장비 및 공사비 산출</span>
                 <div class="btn-group" style="position:absolute;top:50%;transform:translateY(-50%);right:0;">
                     <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
                 </div>
@@ -559,7 +559,6 @@
             if(pIndex == 0){
                 var value1 = parseInt($(pRow).find("input[name='B_1']").val().replaceAll(",", "")); if(isNaN(value1)) value1 = 0;
                 var value2 = parseInt($(pRow).find("input[name='B_2']").val().replaceAll(",", "")); if(isNaN(value2)) value2 = 0;
-                console.log(total, value1, value2);
                 $(document).find("input[name='D_10']").val(Math.round((total-value1-value2)*0.005).toFormat('NUMBER'));
             }
 0        });

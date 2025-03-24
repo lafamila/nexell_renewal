@@ -258,6 +258,7 @@
 											</select>
 										</th>
 										<th class="hasinput">
+                                            <input type="number" class="form-control text-right" id="s_amount" name="s_amount">
 										</th>
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_acnut_code" name="s_acnut_code">
@@ -353,6 +354,7 @@ getFundList = function()
 					's_rcppay_se_code': $('#dtList1').find('#s_rcppay_se_code').val(),
 					's_acnut_code': $('#dtList1').find('#s_acnut_code').val(),
 					's_rcppay_dtls': $('#dtList1').find('#s_rcppay_dtls').val(),
+                    's_amount': $('#dtList1').find('#s_amount').val(),
 				});
             },
             error: function(pJqXHR, pTextStatus, pErrorThrown) {
@@ -408,7 +410,7 @@ getFundList = function()
 				}
 			},
         ],
-        drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+        drawCallback: function(pSettings) {
             var last = [0, 0, 0, 0, 0];
 			var eSummary = pSettings.json.eSummary;
             var total = 0;
@@ -940,7 +942,6 @@ insertFund = function(pIsReset = true)
                 return fnValidate('insert');
             },
             success: function(pResult) {
-                console.log('insertFund', pResult);
                 if (pResult.status) {
                     isDataChange = true;
                     fnAlert(pResult.message);
@@ -959,7 +960,7 @@ insertFund = function(pIsReset = true)
     let dept_code = $(document).find("#dept_code").val();
     let amount = $(document).find("#amount").val();
     let model_no = '';
-    if(cntrct_sn && rcppay_se_code == 'O' && dept_code == 'M9' && [624].includes(Number(acntctgr_code))){
+    if(cntrct_sn && rcppay_se_code == 'O' && dept_code == 'M9' && [624, 634].includes(Number(acntctgr_code))){
         model_no = prompt('타사장비/자재 모델명을 입력하세요');
         $.ajax({
             url: '/api/sales/ajax_get_equipment',
@@ -1052,7 +1053,6 @@ getContract = function(s_cntrct_sn)
 		success: function(pResult) {
 			if (pResult.status) {
 				var data = pResult.data;
-                console.log(data);
 				$('#popBox1').find('#prjct_creat_at').yVal(data.prjct_creat_at);
 				if (data.prjct_creat_at == 'Y') {
 					var html = '<option value="">[프로젝트를 선택하세요]</option>';
@@ -1074,9 +1074,9 @@ getContract = function(s_cntrct_sn)
 					$('#popBox1').find('#prjct_sn').yVal('');
 					$('#popBox1').find('#project').hide();
 				}
-                console.log(data.spt_dept_code);
                 $('#popBox1').find('#project_dept').yVal(data.spt_dept_code);
                 $('#popBox1').find('#project_dept_container').show();
+                $('#popBox1').find('#papr_invstmnt_sn').yVal(data.spt_chrg_sn);
                 getTaxbil($("#cntrct_sn").val(), $("#prvent_sn").val());
 			}
 		}
@@ -1617,6 +1617,8 @@ getReport = function(s_rcppay_de)
                         var pValue = pResult.list[i];
                         var nValue = pResult.list[i+1];
                         var acntctgr_nm = (parseInt(pValue.acntctgr_code) > parseInt(nValue.acntctgr_code)) ? pValue.acntctgr_nm : nValue.acntctgr_nm;
+                        var acntctgr_code = (parseInt(pValue.acntctgr_code) > parseInt(nValue.acntctgr_code)) ? parseInt(pValue.acntctgr_code) : parseInt(nValue.acntctgr_code);
+                        var project_dept_nm = (parseInt(pValue.acntctgr_code) > parseInt(nValue.acntctgr_code)) ? pValue.project_dept_nm : nValue.project_dept_nm;
                         var i_amount = (pValue.i_amount == '0')?nValue.i_amount : pValue.i_amount;
                         var o_amount = (pValue.o_amount == '0')?nValue.o_amount : pValue.o_amount;
                         var acnut_nm = (pValue.i_amount == '0')?nValue.acnut_nm+"|"+pValue.acnut_nm : pValue.acnut_nm+"|"+nValue.acnut_nm;
@@ -1630,7 +1632,7 @@ getReport = function(s_rcppay_de)
                         html += '    <td class="text-left">'+pValue.cntrct_nm+'</td>';
                         html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>';
                         html += '    <td class="text-center">'+pValue.papr_invstmnt_nm+'</td>';
-                        html += '    <td class="text-center">'+dept_nm+'</td>';
+                        html += '    <td class="text-center">'+(project_dept_nm!= '' ? project_dept_nm : dept_nm)+'</td>';
                         html += '    <td class="text-number">'+i_amount.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number">'+o_amount.toString().toFormat('NUMBER')+'</td>';
                         var acnut_num_1 = acnut_nm.split("|")[0] == '' ?  acntctgr_nm : acnut_nm.split("|")[0];
@@ -1651,7 +1653,7 @@ getReport = function(s_rcppay_de)
                         html += '    <td class="text-left">'+pValue.cntrct_nm+'</td>';
                         html += '    <td class="text-center">'+pValue.bcnc_nm+'</td>';
                         html += '    <td class="text-center">'+pValue.papr_invstmnt_nm+'</td>';
-                        html += '    <td class="text-center">'+pValue.dept_nm+'</td>';
+                        html += '    <td class="text-center">'+(pValue.project_dept_nm!= '' ? pValue.project_dept_nm : pValue.dept_nm)+'</td>';
                         html += '    <td class="text-number">'+pValue.i_amount.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-number">'+pValue.o_amount.toString().toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-center" colspan="2">'+acnut_num+'</td>';

@@ -1,0 +1,1242 @@
+{% include "approvals/common_style.html" %}
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+</style>
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="colorSky text-center">계약번호</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">현장명</td>
+            <td class="text-center hasinput" colspan="3">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+            <td class="colorSky text-center">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">공사기간</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">도급사</th>
+            <td class="text-center hasinput" colspan="3">
+                <select class="form-control select2 w100p" id="outsrc_fo_sn" name="outsrc_fo_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in bcnc_list %}
+                        <option value="{{code.value}}">{{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="16"><span>공사비 현황</span></th>
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="color-contract text-center" colspan="5">계약현황</th>
+            <th class="color-contract text-center" colspan="9">실행현황</th>
+            <th class="color-contract text-center" colspan="2">VA</th>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">장비비</th>
+            <th class="color-contract text-center">설치비</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">설계변경</th>
+            <th class="color-contract text-center">계</th>
+            <th class="color-contract text-center">장비비(삼성)</th>
+            <th class="color-contract text-center">장비비(타사)</th>
+            <th class="color-contract text-center">설치비</th>
+            <th class="color-contract text-center">로지텍자재</th>
+            <th class="color-contract text-center">타사자재</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">기타비용</th>
+            <th class="color-contract text-center">설계변경</th>
+            <th class="color-contract text-center">계</th>
+            <th class="color-contract text-center">이익금</th>
+            <th class="color-contract text-center">VA율</th>
+        </tr>
+    </tbody>
+    <tbody role="ct_se_code">
+        <tr>
+            <td class="text-right" data-type='number' name="C_1"></td>
+            <td class="text-right" data-type='number' name="C_5"></td>
+            <td class="text-right" data-type='number' name="C_8"></td>
+            <td class="text-right" data-type='number' name="C_99"></td>
+            <td class="text-right" data-type='number' data-column="C_total"></td>
+            <td class="text-right" data-type='number' name="E_1"></td>
+            <td class="text-right" data-type='number' name="E_2"></td>
+            <td class="text-right" data-type='number' name="E_5"></td>
+            <td class="text-right" data-type='number' name="E_3"></td>
+            <td class="text-right" data-type='number' name="E_4"></td>
+            <td class="text-right" data-type='number' name="E_8"></td>
+            <td class="text-right" data-type='number' name="E_10"></td>
+            <td class="text-right" data-type='number' name="E_99"></td>
+            <td class="text-right" data-type='number' data-column="E_total"></td>
+            <td class="text-right" data-type='number' data-column="va"></td>
+            <td class="text-center" data-column="va_rate"></td>
+            <td style="display:none!important;" name="E_7"></td>
+            <td style="display:none!important;" name="E_61"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table" id="establish-virtual" style="display:none!important;">
+    <tbody data-tr="establish_tbody">
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table" id="establish">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="14"><span>설치비 기성산출</span></th>
+        </tr>
+    </thead>
+</table>
+<table class="table table-bordered table-form" style="display:none;">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="colorSky text-center" colspan="6">발주처 기성</th>
+            <th class="colorLP text-center" colspan="3">도급팀 기성</th>
+        </tr>
+        <tr>
+            <th class="colorSky text-center">장비비 누계 투입금액</th>
+            <th class="colorSky text-center">보할률 적용 누계 설치비</th>
+            <th class="colorSky text-center">간접비 누계 집행금액</th>
+            <th class="colorSky text-center">누계 기성 청구 금액</th>
+            <th class="colorSky text-center">전월 누계 청구금액</th>
+            <th class="colorSky text-center">금월 청구 금액</th>
+            <th class="colorLP text-center">보할률 적용금액</th>
+            <th class="colorLP text-center">누계 투입액</th>
+            <th class="colorLP text-center">금월 청구 금액</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+<!--            <td class="text-right" name="a_total"></td>-->
+<!--            <td class="text-right" name="a_now_total"></td>-->
+<!--            <td class="text-center colorG" name="a_rate"></td>-->
+            <td class="hasinput">
+
+                <input type="text" class="form-control text-right" name="s12_account_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="cum_apply_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="indirect_sum_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="sum_123_total" readonly/>
+            </td>
+            <td class="text-right" name="a_before_total"></td>
+            <td class="text-right" name="a_now_diff"></td>
+            <td class="text-right" name="b_now_total"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="all_sum_total" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" name="b_now_diff" readonly/>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="400"/>
+        <col width="80"/>
+        <col width="400"/>
+        <col width="80"/>
+        <col width="400"/>
+        <col width="80"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="6"><span>건설사 청구</span></th>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">전월 누계 금액</th>
+            <th class="color-contract text-center">기성률</th>
+            <th class="color-contract text-center">금월 청구 금액</th>
+            <th class="color-contract text-center">기성률</th>
+            <th class="color-contract text-center">합계 금액</th>
+            <th class="color-contract text-center">기성률</th>
+        </tr>
+    </thead>
+    <tbody role="bcnc">
+        <tr>
+            <td class="text-right" name="bcnc_completed_total"></td>
+            <td class="text-center" name="bcnc_completed_rate"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="minus-number" name="bcnc_now_total"/>
+            </td>
+            <td class="text-center" name="bcnc_now_rate"></td>
+            <td class="colorY text-right" name="bcnc_total_total"></td>
+            <td class="colorP text-center" name="bcnc_total_rate"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="80"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="12"><span>도급팀 지급</span></th>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">구분</th>
+            <th class="color-contract text-center">직접지급</th>
+            <th class="color-contract text-center">일용직</th>
+            <th class="color-contract text-center">설치비 계</th>
+            <th class="color-contract text-center">장비 자재</th>
+            <th class="color-contract text-center">간접비</th>
+            <th class="color-contract text-center">장비+기타 계</th>
+            <th class="color-contract text-center">합계</th>
+            <th class="color-contract text-center">집행률</th>
+        </tr>
+    </thead>
+    <tbody role="logi">
+        <tr>
+            <th class="color-contract text-center">전월 누계 금액
+                <input type="hidden" class="form-control text-right" data-type="number" name="outsrc_cntrct_amount" readonly/>
+            </th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_est_1" readonly/>
+                <input type="hidden" class="form-control text-right" data-type="number" name="completed_est_2" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_est_3" readonly/>
+            </td>
+            <td class="text-right" name="completed_est_total"></td>
+            <td class="hasinput">
+                <input type="hidden" class="form-control text-right" data-type="number" name="completed_logi_1" readonly/>
+                <input type="hidden" class="form-control text-right" data-type="number" name="completed_logi_2" readonly/>
+                <input type="text" class="form-control text-right" data-type="number" name="completed_logi_mid_tot" readonly/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="completed_indirect" readonly/>
+            </td>
+            <td class="text-right" name="completed_logi_total"></td>
+            <td class="text-right" name="completed_total"></td>
+            <td class="text-center" name="completed_rate"></td>
+        </tr>
+        <tr>
+            <th class="color-contract text-center">금월 지급 금액</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="now_est_1"/>
+                <input type="hidden" class="form-control text-right" data-type="number" name="now_est_2"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="now_est_3"/>
+            </td>
+            <td class="text-right" name="now_est_total"></td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="now_logi_1"/>
+                <input type="hidden" class="form-control text-right" data-type="number" name="now_logi_2"/>
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="now_indirect"/>
+            </td>
+            <td class="text-right" name="now_logi_total"></td>
+            <td class="text-right" name="now_total"></td>
+            <td class="text-center" name="now_rate"></td>
+
+        </tr>
+        <tr>
+            <th class="color-contract text-center">합계 금액</th>
+            <td class="text-right" name="total_completed_est_1"></td>
+{#            <td class="text-right" name="total_completed_est_2"></td>#}
+            <td class="text-right" name="total_completed_est_3"></td>
+            <td class="text-right" name="total_completed_est_total"></td>
+            <td class="text-right" name="total_completed_logi_1"></td>
+{#            <td class="text-right" name="total_completed_logi_2"></td>#}
+            <td class="text-right" name="total_indirect"></td>
+            <td class="text-right" name="total_completed_logi_total"></td>
+            <td class="text-right" name="total_completed_total"></td>
+            <td class="colorP text-center" name="total_completed_rate"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
+    <colgroup>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center border_right" colspan="4"><span>특이사항</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-row="option_row">
+            <td class="hasinput" colspan="4">
+                <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!--
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="100"/>
+        <col width="80"/>
+        <col width="150"/>
+        <col width="80"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="16"><span>누계 집행 현황</span></th>
+        </tr>
+        <tr>
+            <th class="color-contract" colspan="2">장비비(삼성)</th>
+            <th class="color-contract" colspan="2">장비비(타사)</th>
+            <th class="color-contract" colspan="2">설치비</th>
+            <th class="color-contract" colspan="2">간접비</th>
+            <th class="color-contract" colspan="2">자재비</th>
+            <th class="color-contract" colspan="2">기타비용</th>
+            <th class="color-contract" colspan="2">설계변경</th>
+            <th class="color-contract" rowspan="2">계</th>
+            <th class="color-contract" rowspan="2">집행율</th>
+        </tr>
+        <tr>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+            <th class="color-contract">금액</th>
+            <th class="color-contract">집행율</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+-->
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+    get_completed = function(cntrct_sn){
+        $.ajax({
+                url : '/api/project/get_costs_bd',
+                method : 'GET',
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
+                success: function(pResult){
+                    console.log(pResult);
+                    var c_12 = 0;
+                    var e_etc = 0;
+                    if(Object.keys(pResult.extraCostList).length > 0){
+                        c_12 = 0;
+                        var max_sn = Math.max(...Object.keys(pResult.extraCostList).map(x => parseInt(x)));
+                        $.each(pResult.extraCostList[max_sn], function(pIndex, pValue){
+                            if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                c_12 += pValue.amount;
+                            }
+                            if(["E_61", "E_7", "E_10"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                e_etc += pValue.amount;
+                            }
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+
+                    }
+                    else{
+                        $.each(pResult.aCostList, function(pIndex, pValue){
+                            if(["C_1", "C_2"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                c_12 += pValue.amount;
+                            }
+                            if(["E_61", "E_7", "E_10"].includes(`${pValue.cntrct_execut_code}_${pValue.ct_se_code}`)){
+                                e_etc += pValue.amount;
+
+                            }
+                            $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                        });
+
+                    }
+                    $(document).find(`[name="C_1"]`).html(c_12.toFormat('NUMBER'));
+                    $(document).find(`[name="E_10"]`).html(e_etc.toFormat('NUMBER'));
+                    $(document).find("tbody[role='ct_se_code']").trigger("change");
+
+                    {% if init %}
+                    var html = `<option value="">[전체]</option>`;
+                    $.each(pResult.outsrcList, function(pIndex, pValue){
+                        if(parseInt(pValue.outsrc_fo_sn) != 146){
+                            html += `<option value="${pValue.outsrc_fo_sn}">${pValue.outsrc_fo_nm}</option>`;
+                        }
+                    });
+                    $(document).find("#outsrc_fo_sn").html(html);
+                    {% else %}
+                    var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
+                    get_completed_info(cntrct_sn, outsrc_fo_sn);
+
+
+                    {% endif %}
+
+
+                }
+        });
+    }
+    get_completed_info = function(cntrct_sn, outsrc_fo_sn){
+
+        $.ajax({
+            url : '/api/project/get_costs_bd',
+            method : 'GET',
+    {% if init %}
+            data : {"s_cntrct_sn" : cntrct_sn},
+    {% else %}
+            data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+    {% endif %}
+            success: function(pResult){
+
+                console.log(pResult);
+                var items = pResult.outsrcItem[parseInt(outsrc_fo_sn)].e5CostList;
+                console.log(items);
+                var rows = cloneRow("establish_tbody", items.length - $(document).find("#establish tbody").length);
+                var TYPES = {0 : "주택", 1 : "빌딩", 2 : "기타", 3 : "기타"};
+                var LABELS = ["스리브 및 골조", "배관(냉매,드레인)", "기밀,통수", "전원,통신", "실내기", "실외기", "시운전"];
+                var RATES = ["5%", "45%", "10%", "3%", "12%", "15%", "10%"];
+                $.each(items, function(pIndex, pRow){
+                    var cost_type = TYPES[pRow.cost_type];
+                    var tbody = $(document).find("#establish tbody").eq(pIndex);
+                    $(tbody).find("[data-column='cost_type']").html(cost_type);
+                    if([0, 1].includes(pRow.cost_type)){
+                        for(let i=1;i<8;i++){
+                            $(tbody).find(`[name="label_${i}[]"]`).val(LABELS[i-1]);
+                            $(tbody).find(`[name="label_${i}[]"]`).attr("readonly", true);
+                            $(tbody).find(`[name="rate_${i}[]"]`).val(RATES[i-1]);
+                            $(tbody).find(`[name="rate_${i}[]"]`).attr("readonly", true);
+                        }
+                        $(tbody).find(`[data-column="qy"]`).html(pRow.qy.toFormat('NUMBER'));
+                    }
+                    else{
+                        $(tbody).find(`[data-column="qy"]`).html(pRow.qy.toFormat('NUMBER'));
+
+                    }
+                    /*
+                    * TODO : item_sn을 이용해 저장된 라벨 목록이 있는지 확인후에 가져올것
+                    *  else if(pRow.item_sn is in SOMETHING){
+                    *  }
+                    * */
+
+
+
+                });
+                $.ajax({
+                    url : '/api/completed/get_completed_info',
+                    method : 'GET',
+                {% if init %}
+                    data : {"s_cntrct_sn" : cntrct_sn, "s_outsrc_fo_sn" : outsrc_fo_sn},
+                {% else %}
+                    data : {"s_cntrct_sn" : cntrct_sn, "s_outsrc_fo_sn" : outsrc_fo_sn, "approval_sn" : window.approval_sn},
+                {% endif %}
+                    success: function(pResult){
+                        console.log(pResult);
+                        $(document).find(`[name="a_before_total"]`).html((pResult.bcnc.now.completed_2).toFormat('NUMBER'));
+                        // $(document).find(`[name="b_before_total"]`).html((pResult.data.est_1 + pResult.data.est_2 + pResult.data.est_3 + pResult.data.logi_1 + pResult.data.logi_2).toFormat('NUMBER'));
+                        var bcnc_total = (pResult.bcnc.before.completed_1+pResult.bcnc.before.completed_2+pResult.bcnc.before.completed_3);
+                        $(document).find(`[name="bcnc_completed_total"]`).html(bcnc_total.toFormat('NUMBER'));
+                        $(document).find(`[name="bcnc_completed_rate"]`).html((bcnc_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
+
+                        {% if init %}
+                            $(document).find(`[name="now_est_1"]`).val(pResult.data[parseInt(outsrc_fo_sn)].toFormat('NUMBER'));
+                            $(document).find(`[name="now_est_3"]`).val(pResult.data[146].toFormat('NUMBER'));
+                        {% endif %}
+
+
+                        // $(document).find(`[name="completed_est_1"]`).html(pResult.data.est_1.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_est_2"]`).html(pResult.data.est_2.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_est_3"]`).html(pResult.data.est_3.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_logi_1"]`).html(pResult.data.logi_1.toFormat('NUMBER'));
+                        // $(document).find(`[name="completed_logi_2"]`).html(pResult.data.logi_2.toFormat('NUMBER'));
+                        $(document).find("tbody").trigger("change");
+                        // {% if init %}
+                        //     for(let i=1;i<=4;i++){
+                        //         if(pResult.data[`body${i}`] != ''){
+                        //             $(document).find(`[name="body_${i}_a"]`).val(pResult.data[`body${i}`].toFormat('NUMBER'));
+                        //             $(document).find(`[name="body_${i}_a"]`).attr("readonly", true);
+                        //         }
+                        //         else{
+                        //             $(document).find(`[name="body_${i}_a"]`).attr("readonly", false);
+                        //         }
+                        //     }
+                        // {% endif %}
+                    }
+                });
+
+                {% if init %}
+                var prjct_sn = pResult.prjct.prjct_sn;
+                $.ajax({
+                    url: '/api/project/ajax_get_reportNR',
+                    type: 'GET',
+                    data: {"s_cntrct_sn" : cntrct_sn, "s_prjct_sn" : prjct_sn},
+                    success: function(pData) {
+                        console.log(pData);
+                        var cCostTotal = 0;
+                        $.each(pData.aCostList, function(pI, pV){
+                            var amount = 0;
+                            if (pV.amount != '') { amount = parseInt(pV.amount); }
+                            if (pV.cntrct_execut_code == 'C') // 계약
+                            {
+                                cCostTotal += amount;
+                            }
+                        });
+
+                        var max_extra_sn = 0;
+                        $.each(pData.extraCostList, function(pI, pV){
+                            if(pV.extra_sn > max_extra_sn){
+                                max_extra_sn = pV.extra_sn;
+                            }
+                        });
+                        if(pData.extraCostList.length > 0) {
+                            cCostTotal = 0;
+                            $.each(pData.extraCostList, function (pI, pV) {
+                                var amount = 0;
+                                if (pV.amount != '') {
+                                    amount = parseInt(pV.amount);
+                                }
+                                if (pV.cntrct_execut_code == 'C') // 계약
+                                {
+                                    if(pV.extra_sn == max_extra_sn)
+                                        cCostTotal += amount;
+                                }
+                            });
+                        }
+                        var amt_tot = 0;
+                        $.each(pData.rcppayList, function(pI, pV) {
+                            var amount_total = 0;
+                            var iRcppayList = pV.iRcppayList;
+                            $.each(iRcppayList, function(pIndex, pValue) {
+                                amount_total += parseInt(pValue.amount);
+                            });
+                            amt_tot += amount_total;
+                        });
+                        var p_sum_total = 0;
+                        $.each(pData.s1AccountList, function(pI, pV){
+                            p_sum_total += parseInt(pV.p_total);
+                        });
+                        var p_sum_total_other = 0;
+                        $.each(pData.s2AccountList, function(pI, pV){
+                            p_sum_total_other += parseInt(pV.p_total);
+                        });
+                        var all_sum_total = 0, indirect_sum_total = 0;
+
+                        $.each(pData.outsrcList, function(pI, pV) {
+                            var sum_total = 0;
+                            // var before_total = 0;
+                            $.each(pV.taxbilList, function(pIndex, pValue){
+                                // sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                var pblicte_de = pValue.pblicte_de;
+                                var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                var previous = new Date(now);
+                                previous.setDate(1);
+                                previous.setMonth(previous.getMonth() - 1);
+                                var target_de = new Date(pblicte_de);
+                                target_de.setDate(1);
+                                // if(target_de.getTime() < previous.getTime()){
+                                //     before_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                // }
+                                if(target_de.getTime() <= previous.getTime()){
+                                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                }
+
+                            });
+                            if([116].includes(pV.outsrc_fo_sn)){
+                                indirect_sum_total += sum_total;
+                                all_sum_total += sum_total;
+                            }
+                            else{
+                                if(parseInt(outsrc_fo_sn) == pV.outsrc_fo_sn || pV.outsrc_fo_sn == 146){
+                                    all_sum_total += sum_total;
+                                }
+
+                            }
+                        });
+                                console.log(all_sum_total);
+
+                        var sum_total = 0;
+                        $.each(pData.s3AccountList, function(pI, pV){
+                            var sum = parseInt(pV.s_total);
+                            sum_total += parseInt(sum);
+                        });
+                        var sum_total_other = 0;
+                        $.each(pData.s4AccountList, function(pI, pV){
+                            var sum = parseInt(pV.p_total);
+                            sum_total_other += parseInt(sum);
+                        });
+                        var msh_total_amount = 0;
+                        $.each(pData.sModelCostList, function(pI, pV){
+                            var dlamt = parseInt(pV.dlamt); if(isNaN(dlamt)) dlamt = 0;
+                            var dlnt = parseInt(pV.dlnt); if(isNaN(dlnt)) dlnt = 0;
+                            var amount = dlamt*dlnt;
+                            msh_total_amount += amount;
+                        });
+                        var c_opt_amount = 0;
+                        if(pData.sOptionCostList != null){
+                            c_opt_amount = parseInt(pData.sOptionCostList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
+                        }
+                        var rcppay_amt_total = 0;
+                        $.each(pData.etcRcppayList, function(pI, pV){
+                            var amt = parseInt(pV.amount);
+                            if(parseInt(pV.acntctgr_code) != 504) {
+                                rcppay_amt_total += parseInt(amt);
+                            }
+                            else{
+                                c_opt_amount += parseInt(amt);
+                            }
+                        });
+                        $(document).find("[name='s12_account_total']").val((p_sum_total + p_sum_total_other).toFormat('NUMBER'));
+                        $(document).find("[name='indirect_sum_total']").val(indirect_sum_total.toFormat('NUMBER'));
+
+                        var outsrc_cntrct_amount = 0;
+                        if(pData.outsrcItem.hasOwnProperty(parseInt(outsrc_fo_sn))){
+                            $.each(pData.outsrcItem[outsrc_fo_sn].e5CostList, function(pI, pV){
+                                outsrc_cntrct_amount += (pV.amount*pV.qy);
+                            });
+                        }
+                        $(document).find("[name='outsrc_cntrct_amount']").val(outsrc_cntrct_amount.toFormat('NUMBER'));
+
+                        var completed_est_1 = 0;
+                        var completed_est_3 = 0;
+                        $.each(pData.outsrcList, function(pIndex, pOut){
+                            if(pOut.outsrc_fo_sn == parseInt(outsrc_fo_sn)){
+                                $.each(pOut.taxbilList, function(pI, pT){
+                                    var pblicte_de = pT.pblicte_de;
+                                    var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                    var previous = new Date(now);
+                                    previous.setDate(1);
+                                    previous.setMonth(previous.getMonth() - 1);
+                                    var target_de = new Date(pblicte_de);
+                                    target_de.setDate(1);
+                                    if(target_de.getTime() < previous.getTime()){
+                                        completed_est_1 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
+                                    }
+                                });
+                            }
+                            else if(pOut.outsrc_fo_sn == 146){
+                                $.each(pOut.taxbilList, function(pI, pT){
+                                    var pblicte_de = pT.pblicte_de;
+                                    var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                    var previous = new Date(now);
+                                    previous.setDate(1);
+                                    previous.setMonth(previous.getMonth() - 1);
+                                    var target_de = new Date(pblicte_de);
+                                    target_de.setDate(1);
+                                    if(target_de.getTime() < previous.getTime()){
+                                        completed_est_3 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
+                                    }
+                                });
+                            }
+                        });
+                        $(document).find("[name='completed_est_1']").val(completed_est_1.toFormat('NUMBER'));
+                        $(document).find("[name='completed_est_2']").val(0);
+                        $(document).find("[name='completed_est_3']").val(completed_est_3.toFormat('NUMBER'));
+
+
+
+                        var completed_indirect = 0, now_indirect = 0;
+                        $.each(pData.outsrcList, function(pI, pV) {
+                            var sum_total = 0;
+                            var before_total = 0;
+                            $.each(pV.taxbilList, function(pIndex, pValue){
+                                // sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                var pblicte_de = pValue.pblicte_de;
+                                var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                                var previous = new Date(now);
+                                previous.setDate(1);
+                                previous.setMonth(previous.getMonth() - 1);
+                                var target_de = new Date(pblicte_de);
+                                target_de.setDate(1);
+                                if(target_de.getTime() < previous.getTime()){
+                                    before_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                }
+                                if(target_de.getTime() == previous.getTime()){
+                                    sum_total += pValue.total == '' ? parseInt(pValue.splpc_am)+(pValue.vat == '' ? 0 : parseInt(pValue.vat)) : parseInt(pValue.total);
+                                }
+
+                            });
+                            if([116].includes(pV.outsrc_fo_sn)){
+                                completed_indirect += before_total;
+                                now_indirect += sum_total;
+                            }
+                        });
+                        $(document).find("[name='completed_indirect']").val(completed_indirect.toFormat('NUMBER'));
+                        $(document).find("[name='now_indirect']").val(now_indirect.toFormat('NUMBER'));
+
+
+
+
+                        var completed_logi_1 = 0, now_logi_1 = 0;
+                        var completed_logi_2 = 0, now_logi_2 = 0;
+                        $.each(pData.s3AccountList, function(pI, pV){
+                            var sum = parseInt(pV.s_total);
+                            var pblicte_de = pV.p_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()){
+                                completed_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+
+                            }
+                            else if(target_de.getTime() == previous.getTime()){
+                                now_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+                            }
+                        });
+                        console.log(pData.s4AccountList);
+                        $.each(pData.s4AccountList, function(pI, pV){
+                            var sum = parseInt(pV.p_total);
+                            var pblicte_de = pV.dlivy_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()) {
+                                completed_logi_2 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+                            }
+                            else if(target_de.getTime() == previous.getTime()){
+                                now_logi_2 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+                            }
+                        });
+                        console.log(all_sum_total);
+                        $(document).find("[name='completed_logi_1']").val(completed_logi_1.toFormat('NUMBER'));
+                        $(document).find("[name='completed_logi_2']").val(completed_logi_2.toFormat('NUMBER'));
+                        $(document).find("[name='completed_logi_mid_tot']").val((completed_logi_1 + completed_logi_2).toFormat('NUMBER'));
+                        {% if init %}
+                        $(document).find("[name='now_logi_1']").val(now_logi_1.toFormat('NUMBER'));
+                        $(document).find("[name='now_logi_2']").val(now_logi_2.toFormat('NUMBER'));
+                        $(document).find("[name='all_sum_total']").val(all_sum_total.toFormat('NUMBER'));
+                        {% endif %}
+                        $(document).find("tbody[role='logi']").trigger("change");
+
+
+                    }
+                });
+
+                {% endif %}
+            }
+        });
+
+
+
+    }
+
+
+    getValue = function(tag, isHTML=true){
+        if(isHTML){
+            var value = parseInt($(tag).html().replaceAll(",", ""));
+        }
+        else{
+                var value = parseInt($(tag).val().replaceAll(",", ""));
+
+        }
+        if(isNaN(value)) value = 0;
+        return value;
+    }
+    $(document).on("change", "tbody[role='ct_se_code']", function(){
+
+        var C_1 = getValue($(this).find("td[name='C_1']"));
+        var C_5 = getValue($(this).find("td[name='C_5']"));
+        var C_8 = getValue($(this).find("td[name='C_8']"));
+        var C_99 = getValue($(this).find("td[name='C_99']"));
+        var C_total = (C_1+C_5+C_8+C_99);
+        $(this).find("td[data-column='C_total']").html(C_total.toFormat('NUMBER'));
+        var E_1 = getValue($(this).find("td[name='E_1']"));
+        var E_2 = getValue($(this).find("td[name='E_2']"));
+        var E_5 = getValue($(this).find("td[name='E_5']"));
+        var E_8 = getValue($(this).find("td[name='E_8']"));
+        var E_3 = getValue($(this).find("td[name='E_3']"));
+        var E_4 = getValue($(this).find("td[name='E_4']"));
+        var E_10 = getValue($(this).find("td[name='E_10']"));
+        var E_99 = getValue($(this).find("td[name='E_99']"));
+        var E_61 = getValue($(this).find("td[name='E_61']"));
+        var E_7 = getValue($(this).find("td[name='E_7']"));
+        var E_total = (E_1+E_2+E_3+E_4+E_5+E_8+E_10+E_99);
+        $(this).find("td[data-column='E_total']").html(E_total.toFormat('NUMBER'));
+        console.log(C_total, E_total, E_61, E_7);
+        $(this).find("td[data-column='va']").html((C_total - E_total).toFormat('NUMBER'))
+        $(this).find("td[data-column='va_rate']").html(((C_total-E_total)*100.0/C_total).toFixed(1)+"%");
+
+    });
+    $(document).on("change", "tbody[role='bcnc']", function(){
+        var bcnc_now_total = getValue($(this).find(`[name="bcnc_now_total"]`), false);
+        $(this).find(`[name="bcnc_now_rate"]`).html((bcnc_now_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
+        var bcnc_completed_total = getValue($(this).find(`[name="bcnc_completed_total"]`));
+        var bcnc_total_total = bcnc_now_total + bcnc_completed_total;
+        $(this).find(`[name="bcnc_total_total"]`).html(bcnc_total_total.toFormat('NUMBER'));
+        $(this).find(`[name="bcnc_total_rate"]`).html((bcnc_total_total * 100.0 / getValue($(document).find("td[data-column='C_total']"))).toFixed(1)+"%");
+    });
+    $(document).on("change", "tbody[role='logi']", function(){
+        var outsrc_cntrct_amount = getValue($(this).find(`[name="outsrc_cntrct_amount"]`), false);
+        var completed_est_1 = getValue($(this).find(`[name="completed_est_1"]`), false);
+        var completed_est_2 = getValue($(this).find(`[name="completed_est_2"]`), false);
+        var completed_est_3 = getValue($(this).find(`[name="completed_est_3"]`), false);
+        var completed_est_total = completed_est_1 + completed_est_2 + completed_est_3;
+        $(this).find(`[name="completed_est_total"]`).html(completed_est_total.toFormat('NUMBER'));
+        var completed_logi_1 = getValue($(this).find(`[name="completed_logi_1"]`), false);
+        var completed_logi_2 = getValue($(this).find(`[name="completed_logi_2"]`), false);
+        var completed_indirect = getValue($(this).find(`[name="completed_indirect"]`), false);
+        var completed_logi_total = completed_logi_1 + completed_logi_2 + completed_indirect;
+        $(this).find(`[name="completed_logi_total"]`).html(completed_logi_total.toFormat('NUMBER'));
+
+        var completed_total = completed_est_total + completed_logi_total;
+        $(this).find(`[name="completed_total"]`).html(completed_total.toFormat('NUMBER'));
+        var completed_rate = (completed_total*100.0/outsrc_cntrct_amount);
+        $(this).find(`[name="completed_rate"]`).html(completed_rate.toFixed(1)+"%");
+
+        var now_est_1 = getValue($(this).find(`[name="now_est_1"]`), false);
+        var now_est_2 = getValue($(this).find(`[name="now_est_2"]`), false);
+        var now_est_3 = getValue($(this).find(`[name="now_est_3"]`), false);
+        var now_est_total = now_est_1 + now_est_2 + now_est_3;
+        $(this).find(`[name="now_est_total"]`).html(now_est_total.toFormat('NUMBER'));
+        var now_logi_1 = getValue($(this).find(`[name="now_logi_1"]`), false);
+        var now_logi_2 = getValue($(this).find(`[name="now_logi_2"]`), false);
+        var now_indirect = getValue($(this).find(`[name="now_indirect"]`), false);
+        var now_logi_total = now_logi_1 + now_logi_2 + now_indirect;
+        $(this).find(`[name="now_logi_total"]`).html(now_logi_total.toFormat('NUMBER'));
+        var now_total = now_est_total + now_logi_total;
+        $(this).find(`[name="now_total"]`).html(now_total.toFormat('NUMBER'));
+        var now_rate = (now_total*100.0/outsrc_cntrct_amount);
+        $(this).find(`[name="now_rate"]`).html(now_rate.toFixed(1)+"%");
+
+        var total_completed_est_1 = completed_est_1 + now_est_1;
+        var total_completed_est_2 = completed_est_2 + now_est_2;
+        var total_completed_est_3 = completed_est_3 + now_est_3;
+        $(this).find(`[name="total_completed_est_1"]`).html(total_completed_est_1.toFormat('NUMBER'));
+        {#$(this).find(`[name="total_completed_est_2"]`).html(total_completed_est_2.toFormat('NUMBER'));#}
+        $(this).find(`[name="total_completed_est_3"]`).html(total_completed_est_3.toFormat('NUMBER'));
+        var total_completed_est_total = total_completed_est_1 + total_completed_est_2 + total_completed_est_3;
+        $(this).find(`[name="total_completed_est_total"]`).html(total_completed_est_total.toFormat('NUMBER'));
+        var total_completed_logi_1 = completed_logi_1 + now_logi_1;
+        var total_completed_logi_2 = completed_logi_2 + now_logi_2;
+        var total_indirect = completed_indirect + now_indirect;
+        $(this).find(`[name="total_completed_logi_1"]`).html((total_completed_logi_1 + total_completed_logi_2).toFormat('NUMBER'));
+        {#$(this).find(`[name="total_completed_logi_2"]`).html(total_completed_logi_2.toFormat('NUMBER'));#}
+        var total_completed_logi_total = total_completed_logi_1 + total_completed_logi_2 + total_indirect;
+        $(this).find(`[name="total_indirect"]`).html(total_indirect.toFormat('NUMBER'));
+        $(this).find(`[name="total_completed_logi_total"]`).html(total_completed_logi_total.toFormat('NUMBER'));
+        var total_completed_total = total_completed_est_total + total_completed_logi_total;
+        $(this).find(`[name="total_completed_total"]`).html(total_completed_total.toFormat('NUMBER'));
+        var total_completed_rate = (total_completed_total*100.0/outsrc_cntrct_amount);
+        $(this).find(`[name="total_completed_rate"]`).html(total_completed_rate.toFixed(1)+"%");
+
+    });
+    $(document).on("change", "#establish tbody", function(){
+        var target = $(this);
+        var tot = 0;
+        $(target).find("tr").eq(3).find("td.hasinput input").each(function(pIndex, pTag){
+            var r = parseFloat($(target).find(`[name="rate_${pIndex+1}[]"]`).val().replace("%", "")); if(isNaN(r)) r = 0.0;
+            var total = getValue($(target).find("tr").eq(2).find(`[data-column="qy"]`).eq(pIndex));
+            var now = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(now)) now = 0;
+            {% if init %}
+            if(now > total){
+                $(pTag).val(total.toFormat('NUMBER'));
+                now = total;
+            }
+            {% endif %}
+            $(target).find(`td[name="rate_${pIndex+1}"]`).html((now*100.0/total).toFixed(1)+"%");
+            $(target).find(`td[name="apply_rate_${pIndex+1}"]`).html((r*now/total).toFixed(1)+"%");
+            tot += (r*now/total);
+        })
+        $(target).find(`[name="apply_rate_total"]`).html(tot.toFixed(1)+"%");
+        $(target).find(`[name="body_a_now[]"]`).val(Math.round(getValue($(target).find(`[name="body_a[]"]`), false) * tot / 100.0).toFormat('NUMBER'));
+        $(target).find(`[name="body_b_now[]"]`).val(Math.round(getValue($(target).find(`[name="body_b[]"]`), false) * tot / 100.0).toFormat('NUMBER'));
+        var a_sum = 0, a_now_sum = 0, b_sum = 0, b_now_sum = 0;
+        $.each($(document).find("#establish tbody"), function(pIndex, pTbody){
+            a_sum += getValue($(pTbody).find(`[name="body_a[]"]`), false);
+            a_now_sum += getValue($(pTbody).find(`[name="body_a_now[]"]`), false);
+            b_sum += getValue($(pTbody).find(`[name="body_b[]"]`), false);
+            b_now_sum += getValue($(pTbody).find(`[name="body_b_now[]"]`), false);
+        });
+        var a_before_total = getValue($(document).find("[name='a_before_total']"));
+        var b_before_total = getValue($(document).find("[name='all_sum_total']"), false);
+        var sum_123_total = (getValue($(document).find(`[name="s12_account_total"]`), false) + getValue($(document).find(`[name="indirect_sum_total"]`), false) + a_now_sum);
+        var a_now_diff = sum_123_total - a_before_total; if(a_now_diff < 0) a_now_diff = 0;
+        var b_now_diff = b_now_sum - b_before_total; if(b_now_diff < 0) b_now_diff = 0;
+        $(document).find("[name='a_total']").html(a_sum.toFormat('NUMBER'));
+        $(document).find("[name='a_now_total']").html(a_now_sum.toFormat('NUMBER'));
+        $(document).find("[name='a_rate']").html((a_now_sum*100.0/a_sum).toFixed(1) + "%");
+        $(document).find("[name='a_now_diff']").html(a_now_diff.toFormat('NUMBER'));
+        $(document).find("[name='b_total']").html(b_sum.toFormat('NUMBER'));
+        $(document).find("[name='b_now_total']").html(b_now_sum.toFormat('NUMBER'));
+        $(document).find("[name='b_rate']").html((b_now_sum*100.0/b_sum).toFixed(1) + "%");
+        $(document).find("[name='b_now_diff']").val(b_now_diff.toFormat('NUMBER'));
+        $(document).find("[name='cum_apply_total']").val(a_now_sum.toFormat('NUMBER'));
+        $(document).find("[name='sum_123_total']").val(sum_123_total.toFormat('NUMBER'));
+    });
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        var cloned_row = [];
+        if(selector == "establish_tbody"){
+            for(let i=0;i<count;i++){
+                var html = '';
+                html += `<tbody role="body1">
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center" rowspan="6" data-column="cost_type"></th>
+                                <th class="color-contract text-center">공정</th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_1[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_2[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_3[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_4[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_5[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_6[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" style="background-color:rgb(255,204,153)!important;" name="label_7[]"/>
+                                </th>
+                                <th class="color-contract text-center">계</th>
+                                <th class="color-contract" colspan="4"></th>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">보할율</th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_1[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_2[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_3[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_4[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_5[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_6[]"/>
+                                </th>
+                                <th class="hasinput">
+                                    <input type="text" class="form-control text-center" data-type="rate" name="rate_7[]"/>
+                                </th>
+                                <td class="text-center">100%</td>
+                                <th class="color-contract text-center" rowspan="2">계약금액</th>
+                                <th class="hasinput" rowspan="2">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_a[]"/>
+                                </th>
+                                <th class="color-contract text-center" rowspan="2">실행금액</th>
+                                <th class="hasinput" rowspan="2">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_b[]"/>
+                                </th>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">실내기수량</th>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td class="text-center" data-column="qy"></td>
+                                <td></td>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">공사수량</th>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_1[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_2[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_3[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_4[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_5[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_6[]" data-type="number"/>
+                                </td>
+                                <td class="hasinput">
+                                    <input type="text" class="form-control text-center" name="qy_7[]" data-type="number"/>
+                                </td>
+                                <td></td>
+                                <th class="color-contract text-center" rowspan="2">예상<br>청구금액 합계</th>
+                                <th class="hasinput" rowspan="3">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_a_now[]" readonly/>
+                                </th>
+                                <th class="color-contract text-center" rowspan="2">예상<br>지급금액 합계</th>
+                                <th class="hasinput" rowspan="3">
+                                    <input type="text" class="form-control text-right" data-type="number" name="body_b_now[]" readonly/>
+                                </th>
+                            </tr>
+                            <tr data-row="establish_tbody" style="display:none;">
+                                <th class="color-contract text-center">공정율</th>
+                                <td class="text-center" name="rate_1"></td>
+                                <td class="text-center" name="rate_2"></td>
+                                <td class="text-center" name="rate_3"></td>
+                                <td class="text-center" name="rate_4"></td>
+                                <td class="text-center" name="rate_5"></td>
+                                <td class="text-center" name="rate_6"></td>
+                                <td class="text-center" name="rate_7"></td>
+                                <td></td>
+                            </tr>
+                            <tr data-row="establish_tbody">
+                                <th class="color-contract text-center">공정율</th>
+                                <td class="text-center" name="apply_rate_1"></td>
+                                <td class="text-center" name="apply_rate_2"></td>
+                                <td class="text-center" name="apply_rate_3"></td>
+                                <td class="text-center" name="apply_rate_4"></td>
+                                <td class="text-center" name="apply_rate_5"></td>
+                                <td class="text-center" name="apply_rate_6"></td>
+                                <td class="text-center" name="apply_rate_7"></td>
+                                <td class="colorP text-center" name="apply_rate_total"></td>
+                            </tr>
+                        </tbody>`;
+                var tag = $($.parseHTML(html));
+                $(document).find(`#establish`).append($(tag));
+                {% if init %}
+                $(tag).find(".init-select2").select2();
+                $(tag).find(".init-select2").removeClass("init-select2");
+                {% endif %}
+                cloned_row.push($(tag));
+            }
+        }
+        return cloned_row;
+    }
+
+    {% if init %}
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_p_projects',
+            method: 'GET',
+            success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);            }
+        });
+        var input = document.querySelector('input[data-type="number"]');
+        if(input){
+            input.addEventListener('input', function() {
+              this.value = this.value.replace(/[^0-9 \,]/, '');
+            });
+
+        }
+        var input = document.querySelector('input[data-type="minus-number"]');
+        if(input){
+            input.addEventListener('input', function() {
+              this.value = this.value.replace(/[^0-9,\- ]/g, '')
+            });
+
+        }
+
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input[data-type='minus-number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+            get_completed(cntrct_sn);
+        }
+    });
+    $(document).on("change", "#outsrc_fo_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
+        if(cntrct_sn != '' && outsrc_fo_sn != ''){
+
+            get_completed_info(cntrct_sn, outsrc_fo_sn);
+        }
+    });
+
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        var outsrc_fo_sn = $("#outsrc_fo_sn").find(":selected").val();
+        get_completed(cntrct_sn);
+
+    }
+
+    {% endif %}
+
+</script>

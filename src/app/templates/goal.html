@@ -527,7 +527,7 @@ getGoals = function(){
 				}
 			}
 		],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) {
 			var summary = pSettings.json.summary;
 			var html = `<option value=''>[부서]</option>`;
 			html += `<option value='all'>전체</option>`;
@@ -657,7 +657,6 @@ getGoals = function(){
             $('[data-toggle="tab"]').on('click', function(pEvent){
                var s_amt_ty_code = $(this).parent().data('action');
                var s_amt_ty_nm = $(this).data('nm');
-			   console.log(s_amt_ty_code, s_amt_ty_nm);
 			    $("#summary_amt_ty_nm").html(s_amt_ty_nm);
                 $("#s_amt_ty_code").val(s_amt_ty_code);
 				$.datatable1.ajax.reload();
@@ -970,7 +969,6 @@ $(function() {
 			contentType: false,
 			processData: false,
 			success: function (pResult) {
-				console.log(pResult);
 				isDataChange = true;
 				init();
 			}

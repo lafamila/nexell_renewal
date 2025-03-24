@@ -273,9 +273,6 @@ function updateThumbnail(dropZoneElement, file) {
             }
             else{
               //cloneRow할자리
-              console.log(order);
-              console.log($(document).find("[name='f_sn[]']"));
-              console.log($(document).find("[name='f_sn[]']").eq(order));
               $(document).find("[name='f_sn[]']").eq(order).val(file_sn);
               window.length--;
               if(window.length == 0){

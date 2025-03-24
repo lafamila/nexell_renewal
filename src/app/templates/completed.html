@@ -147,7 +147,6 @@ getReportNR = function(s_pxcond_mt)
 {
 	var params = '';
 	params += '&s_pxcond_mt=' + s_pxcond_mt;
-	console.log('getReportNR', params);
 
 	$.ajax({
 		url: '/api/completed/ajax_get_completed_reportNR',
@@ -157,7 +156,6 @@ getReportNR = function(s_pxcond_mt)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReportNR', pResult); //rptCompletedArea
 			if (pResult.status) {
                 var DELIMITER=1;
 				var pxcond_mt = $('#popReport').find('#s_pxcond_mt').val();

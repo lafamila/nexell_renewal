@@ -323,7 +323,7 @@ getSalesApprovalList = function()
 				}
 			},
         ],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) { //console.log('drawCallback', pSettings.json);
 
 			var data = pSettings.json;
 
@@ -552,7 +552,6 @@ $(function(){
 <script>
 	$('#popBox1').on('click', '#btnSave', function(pEvent) {
 		var params = {"eq_sn" : $("#eq_sn").val(), "expect_de" : $("#expect_de").val(), "delng_ty_code" : $("#delng_ty_code option:selected").val(), "dlivy_de" : $("#dlivy_de").val(), "before_dlnt" : $("#before_dlnt").val()};
-		console.log(params);
 		$.ajax({
 			url : '/api/sales/equip_to_account',
 			method: 'GET',

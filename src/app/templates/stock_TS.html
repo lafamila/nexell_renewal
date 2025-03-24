@@ -396,9 +396,8 @@ getInventoryList = function()
 				}
 			},
         ],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) {
             var summary = pSettings.json.summary;
-            console.log(summary);
             let cntrct_row = 1;
             let qy_row = 2;
             let amount_row = 3;
@@ -437,7 +436,7 @@ getInventoryList = function()
 
 		},
 
-		initComplete: function(pSettings, pJson) { console.log('initComplete', pJson);
+		initComplete: function(pSettings, pJson) {
 
 			var myList = this;
 
@@ -898,7 +897,7 @@ $(function(){
  *
  */
 formReset = function(pMode = '')
-{ console.log('formReset', pMode);
+{
 	if (pMode === 'init') {
 		$('#popBox1').find('input:radio[name=t_delng_se_code]').yVal('D');
 		$('#popBox1').find('input:radio[name=t_delng_se_code]').yReadonly(false);
@@ -964,7 +963,6 @@ getContract = function(s_cntrct_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var delng_se_code = $('#popBox1').find('input:radio[name=t_delng_se_code]:checked').val();
 				var targetForm = '';
@@ -981,7 +979,6 @@ getContract = function(s_cntrct_sn)
 				var data = pResult.data;
 				if (delng_se_code == 'R') { // 매출일 경우에만 처리
 					var html = '';
-                    console.log(pResult.inventory);
 					$.each(pResult.inventory, function(pIndex, pValue){
 						html += '<tr>';
 						html += '    <td class="hasinput" style="width:1px;">';
@@ -1062,7 +1059,6 @@ getInventoryDeleteList = function()
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('result', pResult);
             var html = '';
             $.each(pResult.data, function(pIndex, pValue){
 
@@ -1203,7 +1199,6 @@ insertDeletes = function(pFormName, pIsReset = true)
 			return fnValidate('insert');
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				isDataChange = true;
 				fnAlert(pResult.message);
@@ -1230,7 +1225,6 @@ insertMemo = function(pFormName, pIsReset = true)
 			return fnValidate('insert');
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				isDataChange = true;
 				fnAlert(pResult.message);
@@ -1263,7 +1257,6 @@ insertReturn = function(pFormName, pIsReset = true)
 			return fnValidate('insert');
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				isDataChange = true;
 				fnAlert(pResult.message);
@@ -1594,7 +1587,6 @@ getReport = function(s_stock_sn)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getReport2', pResult);
 			if (pResult.status) {
 
                 var pValue = pResult.summary;
@@ -2070,7 +2062,6 @@ getStockMonth = function(s_ddt_man)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log('getStockMonth', pResult);
 			if (pResult.status) {
 				$("#stock_report_bi_summary").find("td").html('');
 				$("#stock_report_bi_summary").find(".stock_stdyy").html(s_ddt_man.split("-")[0]);

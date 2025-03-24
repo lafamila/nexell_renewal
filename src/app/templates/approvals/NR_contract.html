@@ -89,10 +89,11 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="15"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
+			<th class="sub-title colorN text-center" colspan="16"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
         </tr>
     </thead>
     <tbody role="header">
@@ -112,6 +113,7 @@
             <th class="color-contract text-center">총액</th>
             <th class="color-contract text-center">이익금(VA)</th>
             <th class="color-contract text-center">VA율</th>
+            <th class="color-contract text-center">결재완료일</th>
         </tr>
     </tbody>
     <tbody role="ct_se_code">
@@ -131,6 +133,7 @@
             <td class="text-center" data-column="row_total"></td>
             <td class="text-center" data-column="va" rowspan="2"></td>
             <td class="text-center" data-column="va_rate" rowspan="2"></td>
+            <td class="text-center" data-column="dtm" rowspan="2"></td>
         </tr>
         <tr data-row="D">
             <th class="colorSky text-center">실행가</th>
@@ -184,6 +187,7 @@
             <td class="text-center" data-column="row_total"></td>
             <td class="text-center" data-column="va" rowspan="2"></td>
             <td class="text-center" data-column="va_rate" rowspan="2"></td>
+            <td class="text-center" data-column="dtm_alpha" rowspan="2">-</td>
         </tr>
         <tr data-row="E">
             <th class="colorSky text-center">실행가</th>
@@ -295,9 +299,14 @@
             success: function(pResult){
                 $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
                 $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
+				var bCostDTM = '9999-99-99';
                 $.each(pResult.bCostList, function(pIndex, pValue){
+                    if(bCostDTM > pValue.dtm){
+                        bCostDTM = pValue.dtm;
+                    }
                     $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
                 });
+                $("tbody[role='ct_se_code']").find("[data-column='dtm']").html(bCostDTM);
                 var totals = [];
                 $("tbody[role='ct_se_code']").find("tr").each(function(pIndex, pRow){
                     var total = 0;
@@ -313,7 +322,6 @@
                         $(document).find("[name='D_10']").html(Math.round((total-value1-value2)*0.005).toFormat('NUMBER'));
                     }
                 });
-
                 $("tbody[role='ct_se_code']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
                 $("tbody[role='ct_se_code']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
                 $("tbody[role='ct_se_code_contract']").find("[name='E_61']").html($("tbody[role='ct_se_code']").parent().find("[name='D_61']").html());

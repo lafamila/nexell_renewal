@@ -193,10 +193,11 @@
         <col width="100"/>
         <col width="100"/>
         <col width="100"/>
+        <col width="100"/>
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="11"><span>직납 보고서</span><span class="text-right">VAT포함</span> </th>
+			<th class="sub-title colorN text-center" colspan="12"><span>직납 보고서</span><span class="text-right">VAT포함</span> </th>
         </tr>
         <tr>
             <th class="colorB text-center">구분</th>
@@ -210,6 +211,7 @@
             <th class="color-contract text-center">기타(총액 0.5%)</th>
             <th class="colorLP text-center">이익금(VA)</th>
             <th class="colorLP text-center">VA율</th>
+            <th class="colorLP text-center">결재완료일</th>
         </tr>
     </thead>
     <tbody role="ct_se_code">
@@ -239,6 +241,7 @@
             </td>
             <td class="text-center" data-column="va"></td>
             <td class="text-center" data-column="va_rate"></td>
+            <td class="text-center" data-column="dtm"></td>
         </tr>
         <tr data-row="E">
             <th class="colorB text-center middle" rowspan="2">수주계약</th>
@@ -266,6 +269,7 @@
             </td>
             <td class="text-center" data-column="E_va"></td>
             <td class="text-center" data-column="E_va_rate"></td>
+            <td class="text-center" data-column="E_dtm"></td>
         </tr>
     </tbody>
 </table>
@@ -323,9 +327,52 @@
         $.ajax({
             url : '/api/project/get_cost_bf_bd',
             method: 'GET',
-            data : {"s_cntrct_sn" : cntrct_sn},
+        {% if init %}
+                data : {"s_cntrct_sn" : cntrct_sn},
+        {% else %}
+                data : {"s_cntrct_sn" : cntrct_sn, "approval_sn" : window.approval_sn},
+        {% endif %}
             success: function(pResult){
                 console.log(pResult);
+                var bCostDTM = '9999-99-99';
+				var cCostDTM = '9999-99-99';
+                $.each(pResult.cCostListExtra, function(pIndex, pValue){
+					if(bCostDTM > pValue.regist_dtm){
+						bCostDTM = pValue.regist_dtm;
+					}
+                });
+                $.each(pResult.eCostListExtra, function(pIndex, pValue){
+                    if (pValue.dspy_se_code != '') {
+                        if (bCostDTM > pValue.regist_dtm) {
+                            bCostDTM = pValue.regist_dtm;
+                        }
+                    }
+                });
+
+                $.each(pResult.cCostList, function(pIndex, pValue){
+                    if(cCostDTM > pValue.regist_dtm){
+                        cCostDTM = pValue.regist_dtm;
+                    }
+                });
+                $.each(pResult.eCostList, function(pIndex, pValue){
+                    if((['61', '64'].includes(pValue.ct_se_code) && pValue.dspy_se_code != '') || ['7', '10'].includes(pValue.ct_se_code)){
+                        if(cCostDTM > pValue.regist_dtm){
+                            cCostDTM = pValue.regist_dtm;
+                        }
+                    }
+                });
+                $.each(pResult.gCostList, function(pIndex, pValue){
+                    if(pValue.ct_se_code == '63'){
+                        if(cCostDTM > pValue.regist_dtm){
+                            cCostDTM = pValue.regist_dtm;
+                        }
+                    }
+                });
+                $(document).find("td[data-column='dtm']").html((bCostDTM !== '9999-99-99') ? bCostDTM : '-');
+                $(document).find("td[data-column='E_dtm']").html((cCostDTM !== '9999-99-99') ? cCostDTM : '-');
+                console.log(bCostDTM);
+                console.log(cCostDTM);
+                {% if init %}
                 var cntrct_amount_total = 0, amount_total = 0;
                 cloneRow("construct_tr", pResult.cCostList.length-1);
                 $.each(pResult.cCostList, function(pIndex, pValue){
@@ -384,7 +431,7 @@
 
                 $(document).find("tbody[role='ct_se_code'] input").attr("disabled", false);
                 $(document).find("tbody[role='ct_se_code'] input").attr("readonly", true);
-
+                {% endif %}
 
             }
 
@@ -591,6 +638,8 @@
     });
     {% else %}
     $.fn.afterLoadApproval = function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        get_cost_bf_bd(cntrct_sn);
 
     }
     {% endif %}

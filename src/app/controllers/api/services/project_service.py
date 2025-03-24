@@ -855,6 +855,7 @@ def get_max_extra_cost_list(params):
     query = """SELECT cntrct_execut_code
 				, ct_se_code
 				, extra_sn
+				, DATE_FORMAT(MIN(regist_dtm), '%%Y-%%m-%%d') AS dtm
 				, CASE cntrct_execut_code
 				WHEN 'E' THEN SUM(puchas_amount * qy)
 				WHEN 'C' THEN SUM(salamt*qy)
@@ -1201,17 +1202,18 @@ def get_etc_rcppay_report_list(params):
 				, IFNULL(r.rcppay_dtls, '') AS rcppay_dtls
 				, r.papr_invstmnt_sn
 				, (SELECT mber_nm FROM member WHERE mber_sn=r.papr_invstmnt_sn) AS papr_invstmnt_nm
-				, IFNULL(r.amount, 0) AS amount
+				, IF(r.rcppay_se_code = 'O', IFNULL(r.amount, 0), -IFNULL(r.amount, 0)) AS amount
 				, r.acnut_code
 				, (SELECT code_nm FROM code WHERE parnts_code='ACNUT_CODE' AND code=r.acnut_code) AS acnut_nm
 				, r.prvent_sn
+				, r.rcppay_se_code
 				, (SELECT bcnc_nm FROM bcnc WHERE ctmmny_sn=r.ctmmny_sn AND bcnc_sn=r.prvent_sn) AS prvent_nm
 				FROM rcppay r
 				WHERE r.ctmmny_sn = 1
 				AND r.cntrct_sn = %(s_cntrct_sn)s
 				AND r.prjct_sn = %(s_prjct_sn)s
-				AND r.rcppay_se_code = 'O'
-				AND r.acntctgr_code NOT IN ('108', '638', '110', '624') 
+				AND (r.rcppay_se_code = 'O' OR (r.rcppay_se_code='I' AND r.acntctgr_code='637'))
+				AND r.acntctgr_code NOT IN ('108', '638', '110', '624', '634') 
 				UNION ALL
 				SELECT c.card_de AS rcppay_de
 				, c.acntctgr_code
@@ -1223,6 +1225,7 @@ def get_etc_rcppay_report_list(params):
 				, '' AS acnut_code
 				, '' AS acnut_nm
 				, '' AS prvent_sn
+				, 'O' AS rcppay_se_code
 				, '' AS prvent_nm
 				FROM card c
 				WHERE c.ctmmny_sn = 1
@@ -1240,6 +1243,7 @@ def get_etc_rcppay_report_list(params):
 				, '' AS acnut_nm
 				, '' AS prvent_sn
 				, '' AS prvent_nm
+				, 'O' AS rcppay_se_code
 				FROM account s
 				LEFT JOIN account p
 				ON s.ctmmny_sn=p.ctmmny_sn AND s.cntrct_sn=p.cntrct_sn AND s.prjct_sn=p.prjct_sn AND s.cnnc_sn=p.delng_sn
@@ -2374,6 +2378,26 @@ def insert_BF_c_project(params):
 
     g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
 
+    g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+    				ELSE 0
+    				END AS cntrct_amount
+    				FROM contract c
+    				WHERE c.cntrct_sn=%(cntrct_sn)s""", params)
+    cntrct_amount = g.curs.fetchone()['cntrct_amount']
+    if cntrct_amount > 0:
+        new_cntrct_data = {"cntrct_de": params['cost_date'], "cntrct_sn": params['cntrct_sn'],
+                           'cntrct_amount': cntrct_amount}
+        g.curs.execute(
+            "INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(cntrct_amount)s)",
+            new_cntrct_data)
+
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
@@ -2395,6 +2419,20 @@ def insert_BF_c_project(params):
 
 
 def update_BF_c_project(params):
+    g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+    				ELSE 0
+    				END AS cntrct_amount
+    				FROM contract c
+    				WHERE c.cntrct_sn=%(cntrct_sn)s""", params)
+    cntrct_amount_before = g.curs.fetchone()['cntrct_amount']
+
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
     params['prjct_sn'] = prjct['prjct_sn']
     params['regist_dtm'] = datetime.now(timezone('Asia/Seoul'))
@@ -2421,6 +2459,26 @@ def update_BF_c_project(params):
     g.curs.execute(query, params)
 
     g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
+
+    g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+    				ELSE 0
+    				END AS cntrct_amount
+    				FROM contract c
+    				WHERE c.cntrct_sn=%(cntrct_sn)s""", params)
+    cntrct_amount = g.curs.fetchone()['cntrct_amount']
+    if cntrct_amount - cntrct_amount_before > 0:
+        new_cntrct_data = {"cntrct_de": datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"), "cntrct_sn": params['cntrct_sn'],
+                           'cntrct_amount': cntrct_amount - cntrct_amount_before}
+        g.curs.execute(
+            "INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(cntrct_amount)s)",
+            new_cntrct_data)
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
@@ -2512,6 +2570,24 @@ def insert_c_project(params):
     params["cost_date"] = datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
     g.curs.execute("UPDATE contract SET PROGRS_STTUS_CODE='P', cntrct_de=%(cost_date)s WHERE cntrct_sn=%(cntrct_sn)s", params)
 
+    g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+				ELSE 0
+				END AS cntrct_amount
+				FROM contract c
+				WHERE c.cntrct_sn=%(cntrct_sn)s""", params)
+    cntrct_amount = g.curs.fetchone()['cntrct_amount']
+    if cntrct_amount > 0:
+        new_cntrct_data = {"cntrct_de": params['cost_date'], "cntrct_sn": params['cntrct_sn'], 'cntrct_amount': cntrct_amount}
+        g.curs.execute(
+            "INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(cntrct_amount)s)",
+            new_cntrct_data)
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
         prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
@@ -2536,6 +2612,21 @@ def insert_c_extra_project(params):
     g.curs.execute("SELECT IFNULL(max(extra_sn), 0) as m_extra_sn FROM cost WHERE cntrct_execut_code IN ('C', 'E') and cntrct_sn=%s", params['cntrct_sn'])
     extra_sn = g.curs.fetchone()['m_extra_sn'] + 1
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+
+    g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+    				ELSE 0
+    				END AS cntrct_amount
+    				FROM contract c
+    				WHERE c.cntrct_sn=%(cntrct_sn)s""", params)
+    cntrct_amount_before = g.curs.fetchone()['cntrct_amount']
+
     for key in params:
         if key.endswith("[]"):
             continue
@@ -2604,6 +2695,27 @@ def insert_c_extra_project(params):
                 print(params_query, data)
                 query = """INSERT INTO cost({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
                 g.curs.execute(query, data)
+
+
+    g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+    				WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+    				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+    				ELSE 0
+    				END AS cntrct_amount
+    				FROM contract c
+    				WHERE c.cntrct_sn=%(cntrct_sn)s""", params)
+    cntrct_amount = g.curs.fetchone()['cntrct_amount']
+    if cntrct_amount - cntrct_amount_before > 0:
+        new_cntrct_data = {"cntrct_de": datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d"), "cntrct_sn": params['cntrct_sn'],
+                           'cntrct_amount': cntrct_amount - cntrct_amount_before}
+        g.curs.execute(
+            "INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(cntrct_amount)s)",
+            new_cntrct_data)
 
     if "option_bigo" in params and params["option_bigo"].strip() != '':
         query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
@@ -3062,7 +3174,7 @@ def get_expect_equipment_datatable(params):
 def get_expect_equip_list(params):
 
 
-    query = """SELECT e.equip_sn
+    query = """SELECT MIN(e.equip_sn) AS equip_sn
                     , e.model_no
                     , e.prdlst_se_code
                     , e.bcnc_sn

@@ -5,6 +5,8 @@ import datetime
 import calendar
 import dateutil
 from pytz import timezone
+from dateutil.relativedelta import relativedelta
+
 
 def get_bbs_datatable(params):
     query = """SELECT bbs_sn
@@ -783,6 +785,69 @@ def update_authorMenu(params):
                 WHERE author_sn = %(author_sn)s
                 AND menu_sn = %(menu_sn)s"""
     g.curs.execute(query, params)
+
+def get_bnd_projects_new(params):
+    query = """SELECT c.cntrct_sn
+                    , c.prjct_ty_code
+                    , (SELECT code_nm FROM code WHERE parnts_code='PROGRS_STTUS_CODE' AND code=c.progrs_sttus_code) AS progrs_sttus
+    				, IF(c.progrs_sttus_code = 'P', 1, IF(c.progrs_sttus_code = 'B', 2, 3)) AS progrs_order
+                    , c.spt_nm
+                    , c.cntrct_de
+    				, IF(c.expect_de IS NULL, '', DATE_FORMAT(c.expect_de, %(format)s)) AS expect_de
+                    , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+                    , (SELECT mber_nm FROM member WHERE mber_sn=c.bsn_chrg_sn) AS mber_nm
+        
+                    , DATE_FORMAT(m.ddt_man, %(format)s) AS m_dlivy_de
+                    , m.dlnt AS m_dlnt
+                    , m.dlivy_amt AS m_dlivy_amt
+                    , m.discount_amt AS m_discount_amt
+                    , DATE_FORMAT(mt.ddt_man, %(format)s) AS m_discount_de
+                    , mt.discount_amt AS m_discount_tax_amt
+                    , IFNULL(ms.cnt, 0) AS m_return_dlnt
+                    , DATE_FORMAT(ms.ddt_man, %(format)s) AS m_return_de            
+        
+                    , DATE_FORMAT(s.ddt_man, %(format)s) AS s_dlivy_de
+                    , s.dlnt AS s_dlnt
+                    , s.dlivy_amt AS s_dlivy_amt
+                    , s.discount_amt AS s_discount_amt
+                    , DATE_FORMAT(st.ddt_man, %(format)s) AS s_discount_de
+                    , st.discount_amt AS s_discount_tax_amt
+                    , IFNULL(ss.cnt, 0) AS s_return_dlnt
+                    , DATE_FORMAT(ss.ddt_man, %(format)s) AS s_return_de            
+        
+        
+                    , t1.amt AS tax_amount1
+                    , DATE_FORMAT(t1.ddt_man, %(format)s) AS tax_de1
+        
+                    , t2.amt AS tax_amount2
+                    , DATE_FORMAT(t2.ddt_man, %(format)s) AS tax_de2
+        
+                    , CASE WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
+                        (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
+                        WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code <> 'B' THEN
+                        (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
+                        WHEN c.prjct_ty_code IN ('BD') AND c.progrs_sttus_code = 'B' THEN
+                        (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND (co.cost_date > '0000-00-00') AND co.cntrct_execut_code IN ('C'))
+                        ELSE 0
+                        END AS cntrct_amount
+                    FROM contract c LEFT JOIN project p ON c.cntrct_sn=p.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(ddt_man) AS ddt_man, SUM(dlnt) AS dlnt, SUM(dlnt * (dlivy_amt * (100 - dscnt_rt)) / 100) AS dlivy_amt, SUM(dlnt * (dlivy_amt * add_dscnt_rt) / 100) AS discount_amt FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('61', '62') GROUP BY cntrct_sn) m ON c.cntrct_sn=m.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(ddt_man) AS ddt_man, SUM(dlnt) AS dlnt, SUM(dlnt * (dlivy_amt * (100 - dscnt_rt)) / 100) AS dlivy_amt, SUM(dlnt * (dlivy_amt * add_dscnt_rt) / 100) AS discount_amt FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('64', '65') GROUP BY cntrct_sn) s ON c.cntrct_sn=s.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS discount_amt FROM taxbil WHERE delng_se_code='S2' GROUP BY cntrct_sn) mt ON c.cntrct_sn=mt.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS discount_amt FROM taxbil WHERE delng_se_code='S4' GROUP BY cntrct_sn) st ON c.cntrct_sn=st.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS amt FROM taxbil WHERE delng_se_code='S1' GROUP BY cntrct_sn) t1 ON c.cntrct_sn=t1.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS amt FROM taxbil WHERE delng_se_code IN ('S', 'S3') GROUP BY cntrct_sn) t2 ON c.cntrct_sn=t2.cntrct_sn
+                    LEFT OUTER JOIN (SELECT l.cntrct_sn, COUNT(*) AS cnt, MAX(sl.ddt_man) AS ddt_man FROM stock_log sl LEFT JOIN stock_log l LEFT JOIN account a ON l.delng_sn=a.delng_sn ON sl.cnnc_sn=l.log_sn WHERE l.STOCK_STTUS=2 AND sl.stock_sttus=1 AND a.delng_ty_code IN ('61', '62') GROUP BY l.cntrct_sn) ms ON c.cntrct_sn=ms.cntrct_sn
+                    LEFT OUTER JOIN (SELECT l.cntrct_sn, COUNT(*) AS cnt, MAX(sl.ddt_man) AS ddt_man FROM stock_log sl LEFT JOIN stock_log l LEFT JOIN account a ON l.delng_sn=a.delng_sn ON sl.cnnc_sn=l.log_sn WHERE l.STOCK_STTUS=2 AND sl.stock_sttus=1 AND a.delng_ty_code IN ('64', '65') GROUP BY l.cntrct_sn) ss ON c.cntrct_sn=ss.cntrct_sn
+                    WHERE 1=1
+                    AND c.prjct_creat_at = 'Y'
+                    AND c.prjct_ty_code IN ('BF', 'BD')
+                    AND c.progrs_sttus_code IN ('B', 'P', 'N')
+                    ORDER BY progrs_order, bcnc_nm, cntrct_de"""
+    g.curs.execute(query, {"format" : "%y/%m/%d"})
+
+    result = g.curs.fetchall()
+    return result
 
 def get_bnd_projects(params):
     query = """SELECT c.cntrct_sn
@@ -1644,6 +1709,7 @@ def get_equipment(params):
                             , delng_ty_code
                             , dlivy_de
                             , before_dlnt
+                            , IFNULL(bigo, '') AS bigo
                             , IFNULL(cnnc_sn, '') AS cnnc_sn
                     FROM equipment WHERE eq_sn=%(eq_sn)s""", params)
     result = g.curs.fetchone()
@@ -2160,5 +2226,25 @@ def set_bnd_color(params):
 
 def get_bnd_color(params):
     g.curs.execute("SELECT bnd_cntrct_sn, bnd_column, bnd_row, bnd_class FROM bnd_color WHERE bnd_year=%(bnd_year)s", params)
+    result = g.curs.fetchall()
+    return result
+
+def get_new_contract(params):
+
+    now = (datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d') + relativedelta(days=-1)).strftime("%Y-%m-%d")
+    now_before = (datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d') + relativedelta(days=-2)).strftime("%Y-%m-%d")
+    query = """SELECT (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
+    				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
+    				, c.spt_nm
+    				, nc.cntrct_amount
+    				FROM contract_table nc 
+    				LEFT JOIN contract c
+    				ON nc.cntrct_sn = c.cntrct_sn
+    				LEFT JOIN member m
+    				ON c.spt_chrg_sn=m.mber_sn
+    				WHERE nc.cntrct_de BETWEEN %s AND %s
+    			ORDER BY dept_nm
+    """
+    g.curs.execute(query, (now_before, now))
     result = g.curs.fetchall()
     return result

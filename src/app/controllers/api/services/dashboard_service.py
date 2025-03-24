@@ -54,7 +54,14 @@ def get_all_member_project(params):
 				ELSE (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1)
 				END AS new_rate				
 				, c.prjct_ty_code
+				, IFNULL(s.amt, 0) AS s_sum
+				, IFNULL(s1.amt, 0) AS s1_sum
+				
 				FROM contract c
+				LEFT OUTER JOIN (SELECT SUM(IFNULL(splpc_am, 0) + IFNULL(vat, 0)) AS amt, cntrct_sn FROM taxbil WHERE delng_se_code='S1' GROUP BY cntrct_sn) s1
+				ON s1.cntrct_sn=c.cntrct_sn
+				LEFT OUTER JOIN (SELECT SUM(IFNULL(splpc_am, 0) + IFNULL(vat, 0)) AS amt, cntrct_sn FROM taxbil WHERE delng_se_code='S' GROUP BY cntrct_sn) s
+				ON s.cntrct_sn=c.cntrct_sn
 				WHERE c.progrs_sttus_code IN ('P', 'S')
 				AND c.prjct_creat_at = 'Y'
 				"""
@@ -679,11 +686,17 @@ def get_projects_by_dept_member(params):
 				, m.mber_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
 				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_ordr				
+				, IFNULL(s.amt, 0) AS s_sum
+				, IFNULL(s1.amt, 0) AS s1_sum
 				FROM contract c
 				LEFT JOIN member m
 				ON c.spt_chrg_sn=m.mber_sn
+				LEFT OUTER JOIN (SELECT SUM(IFNULL(splpc_am, 0) + IFNULL(vat, 0)) AS amt, cntrct_sn FROM taxbil WHERE delng_se_code='S1' GROUP BY cntrct_sn) s1
+				ON s1.cntrct_sn=c.cntrct_sn
+				LEFT OUTER JOIN (SELECT SUM(IFNULL(splpc_am, 0) + IFNULL(vat, 0)) AS amt, cntrct_sn FROM taxbil WHERE delng_se_code='S' GROUP BY cntrct_sn) s
+				ON s.cntrct_sn=c.cntrct_sn
 				WHERE 1=1
-				AND c.progrs_sttus_code IN ('P', 'B', 'N', 'S')
+				AND c.progrs_sttus_code IN ('P', 'B', 'N')
 				AND c.prjct_creat_at = 'Y'
 				"""
     if "s_dept_code" in data:

@@ -211,7 +211,7 @@ def get_approval_datatable(params):
 				, (SELECT mber_nm FROM member WHERE mber_sn=a.reg_mber) AS start_mber_nm
 				, (SELECT dept_code FROM member WHERE mber_sn=a.reg_mber) AS start_dept_code
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=a.reg_mber)) AS start_dept_nm
-				FROM (SELECT * FROM approval_member WHERE mber_sn=%s ) am
+				FROM (SELECT * FROM approval_member WHERE mber_sn=%s) am INNER JOIN (SELECT approval_sn, mber_sn, MIN(reg_type) AS reg_type FROM approval_member WHERE mber_sn=%s GROUP BY approval_sn, mber_sn) mam ON am.approval_sn=mam.approval_sn AND am.mber_sn=mam.mber_sn AND am.reg_type=mam.reg_type
 				LEFT JOIN approval a 
 				ON am.approval_sn=a.approval_sn
 				INNER JOIN 
@@ -224,7 +224,7 @@ def get_approval_datatable(params):
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type IN (0, 1) AND approval_status_code='1' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) last ON a.approval_sn=last.approval_sn
 				WHERE 1=1				"""
 
-    data = [session['member']['member_sn']]
+    data = [session['member']['member_sn'], session['member']['member_sn']]
     if "s_start_de_start" in params and params["s_start_de_start"] and "s_start_de_end" in params and params["s_start_de_end"]:
         query += " AND a.reg_dtm BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'".format(params['s_start_de_start'], params['s_start_de_end'])
 
@@ -273,7 +273,8 @@ def get_approval_datatable(params):
                     END = %s """
             data.append(params["s_approval_status"])
     params["custom_order"] = ["IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '9999-99-99') DESC", "a.approval_sn DESC"]
-
+    print(query)
+    print(data)
     return dt_query(query, data, params)
 
 

@@ -6,6 +6,8 @@ import datetime
 from pytz import timezone
 import calendar
 import json
+from dateutil.relativedelta import relativedelta
+
 def get_sales_datatable(params):
     query = """SELECT a.ctmmny_sn
 				, a.cntrct_sn
@@ -625,7 +627,7 @@ def get_expect_p_r_list(params):
     query = """SELECT t.taxbil_sn AS taxbil_sn
             , r.rcppay_de AS rcppay_de
             , r.amount AS amount
-            FROM (SELECT * FROM rcppay WHERE acntctgr_code IN ('638', '146', '624', '501') AND rcppay_se_code IN ('O')) r
+            FROM (SELECT * FROM rcppay WHERE acntctgr_code IN ('638', '146', '624', '501', '634') AND rcppay_se_code IN ('O')) r
             LEFT JOIN (SELECT * FROM taxbil WHERE delng_se_code LIKE 'P%%' AND collct_de BETWEEN '{0} 00:00:00' AND '{1} 23:59:59') t
             ON r.cntrct_sn = t.cntrct_sn AND r.prvent_sn = t.pblicte_trget_sn AND t.taxbil_sn = r.cnnc_sn
             WHERE 1=1
@@ -949,6 +951,7 @@ def insert_equipment_other_sub(params):
         data['pamt'] = int(damt.replace(",", ""))*int(dlnt.replace(",", "")) if damt != '' else None
         data['samt'] = data['pamt']
         data['bcnc_sn'] = 355
+        data['bigo'] = model_no
         data['delng_ty_code'] = 4
         g.curs.execute("INSERT INTO equipment({}) VALUES ({})".format(",".join([key for key in data.keys()]), ",".join(["%({})s".format(key) for key in data.keys()])), data)
 
@@ -1189,7 +1192,7 @@ def insert_equipment_new(params):
         g.curs.executemany(query, equipments_other)
     if equipments_update:
         for eq in equipments_update:
-            query = """SELECT * FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s"""
+            query = """SELECT * FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s AND dlamt=%(dlamt)s"""
             row = g.curs.execute(query, eq)
             if row:
                 before = g.curs.fetchone(transform=False)
@@ -1577,6 +1580,13 @@ def update_account_expect_de(params):
     g.curs.execute("UPDATE account SET expect_de=%(expect_de)s WHERE cntrct_sn=%(cntrct_sn)s AND bcnc_sn=%(bcnc_sn)s AND expect_de=%(before)s", params)
 
 def insert_general_sales_BD(params):
+    total_samount = 0
+    cntrct_de = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
+    now_bgn = datetime.datetime.strptime(datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d")
+    cntrct_nm_format = now_bgn.strftime("%y년%m월 일반판매")
+    cntrct_nm = "{}(빌트인)".format(cntrct_nm_format)
+    g.curs.execute("SELECT cntrct_sn FROM contract WHERE cntrct_nm=%s", cntrct_nm)
+    general_cntrct_sn = g.curs.fetchone()['cntrct_sn']
     for sale_type, stock_sn, bcnc_sn, ddt_man, dlivy_amt, dlnt, model_no, prdlst_se_code, s_dlamt, etc, dc, rm in zip(params['sale_type[]'], params['stock_sn[]'], params['bcnc_sn[]'], params['ddt_man[]'], params['dlivy_amt[]'], params['dlnt[]'], params['model_no[]'], params['prdlst_se_code[]'], params['s_dlamt[]'], params['etc[]'], params['dc[]'], params['rm[]']):
         s_dlamt = int(s_dlamt.replace(",", "")) if s_dlamt.replace(",", "") != '' else 0
 
@@ -1650,12 +1660,23 @@ def insert_general_sales_BD(params):
         #     query = """INSERT INTO bnd_sales_table_log(delng_sn, sale_type, dlnt, dlamt, ddt_man) VALUES(%s, %s, %s, %s, %s)"""
         #     g.curs.execute(query, (cnnc_sn, rm, data['dlnt'], data['dlamt'], data['ddt_man']))
 
-        data['cntrct_de'] = params['cntrct_de']
         if sale_type == 'T' or data['prjct_sn'] is None:
+            # data['cntrct_de'] = params['cntrct_de']
+            data['cntrct_de'] = cntrct_de
+
+            data['cntrct_sn'] = general_cntrct_sn
+            data['prjct_sn'] = 0
             query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, prdlst_se_code, model_no, qy, puchas_amount, salamt, dscnt_rt, cost_date, extra_sn, register_id, regist_dtm)
                                     VALUES(%(cntrct_sn)s, %(prjct_sn)s, 'C', 1, 2, null, %(model_no)s, %(dlnt)s, %(dlivy_amt)s, %(dlamt)s, %(dscnt_rt)s, %(cntrct_de)s, 0, 'nexell', NOW())"""
             g.curs.execute(query, data)
+            total_samount += int(s_dlamt) * int(dlnt)
+    if total_samount > 0:
+        g.curs.execute("INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(total_samount)s)", {"cntrct_de": cntrct_de, "cntrct_sn": general_cntrct_sn, "total_samount": total_samount})
 def insert_general_sales_NR(params):
+    print(params)
+    general_cntrct_sn = None
+    now = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d")
+    total_samount = 0
     for sale_type, stock_sn, bcnc_sn, ddt_man, dlamt, dlnt, model_no, prdlst_se_code, s_bcnc_sn, samount, etc in zip(params['sale_type[]'], params['stock_sn[]'], params['bcnc_sn[]'], params['ddt_man[]'], params['dlamt[]'], params['dlnt[]'], params['model_no[]'], params['prdlst_se_code[]'], params['s_bcnc_sn[]'], params['samount[]'], params['etc[]']):
         data = dict()
         if sale_type == '' and bcnc_sn == '' and model_no == '':
@@ -1712,6 +1733,26 @@ def insert_general_sales_NR(params):
         query = """INSERT INTO account({}) VALUES ({})""".format(",".join(keys), ",".join(["%({})s".format(k) for k in keys]))
         g.curs.execute(query, data)
 
+        if samount > 0:
+            if general_cntrct_sn is None:
+                g.curs.execute("SELECT m.dept_code, c.bcnc_sn FROM contract c LEFT JOIN member m ON c.spt_chrg_sn=m.mber_sn WHERE c.cntrct_sn=%s", params['cntrct_sn'])
+                contract = g.curs.fetchone()
+                dept_code = contract['dept_code']
+                bcnc_sn = contract['bcnc_sn']
+                dept_nm = {"TS1" : "공조1", "TS2" : "공조2", "BI" : "빌트인"}[dept_code]
+                now_bgn = datetime.datetime.strptime(datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d")
+                cntrct_nm_format = now_bgn.strftime("%y년%m월 일반판매")
+                cntrct_nm = "{}({})".format(cntrct_nm_format, dept_nm)
+                g.curs.execute("SELECT cntrct_sn FROM contract WHERE cntrct_nm=%s", cntrct_nm)
+                general_cntrct_sn = g.curs.fetchone()['cntrct_sn']
+
+            query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, qy, salamt, cost_date, extra_sn, cost_type, regist_dtm, register_id)
+                            VALUES (%(cntrct_sn)s, 0, 'C', '10', %(bcnc_sn)s, 1, %(samount)s, %(now)s, 0, 4, NOW(), 'nexelll')"""
+            data = {"cntrct_sn" : general_cntrct_sn, "bcnc_sn": bcnc_sn, "samount": samount, "now": now}
+            g.curs.execute(query, data)
+            total_samount += samount
+        if total_samount > 0:
+            g.curs.execute("INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(total_samount)s)", {"cntrct_de": now, "cntrct_sn": general_cntrct_sn, "total_samount": total_samount})
 
 def get_equipment(params):
     row = g.curs.execute("SELECT eq_sn FROM equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s AND pamt*(dlnt-before_dlnt)=%(amount)s AND deleted = 0", params)

@@ -104,6 +104,7 @@ def get_member(member_sn):
                 , check_rate
                 , check_work
                 , check_todo
+                , todo_type
                 , (SELECT file_path FROM files WHERE f_sn=m.prof_file_sn) AS mber_profile
                 FROM member m
                 WHERE 1=1
@@ -122,6 +123,7 @@ def get_member_info(member_sn):
                                 , m.author_sn AS auth_cd
                                 , m.ctmmny_sn AS client_sn
                                 , c.bizrno
+                                , m.todo_type AS todo_type
                                 , (SELECT code_nm FROM code WHERE PARNTS_CODE='OFCPS_CODE' AND code=m.ofcps_code) AS member_level
                                 , (SELECT code_nm FROM code WHERE PARNTS_CODE='DEPT_CODE' AND code=m.dept_code) AS dept_nm
                                 , (SELECT MAX(regist_dtm) as login_dtm FROM history WHERE member_sn=m.mber_sn AND view_title='로그인' GROUP BY mber_sn, view_title) AS login_dtm
@@ -247,9 +249,11 @@ def get_datatable(params):
 
 def get_member_todo(params):
     if int(params["s_mber_type"]) == 0:
-        sub_query = """ AND (m.mber_sn = 91 OR m.dept_code <> 'ST')"""
+        sub_query = """ AND m.todo_type = 0"""
+        # sub_query = """ AND (m.mber_sn = 91 OR m.dept_code <> 'ST')"""
     else:
-        sub_query = """ AND (m.mber_sn <> 91 AND m.dept_code = 'ST')"""
+        sub_query = """ AND m.todo_type = 1"""
+        # sub_query = """ AND (m.mber_sn <> 91 AND m.dept_code = 'ST')"""
 
     query = """				SELECT m.mber_nm
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm

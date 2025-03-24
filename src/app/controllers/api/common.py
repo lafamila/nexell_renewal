@@ -137,6 +137,27 @@ def ajax_get_bcnc_list():
         print(e)
         return make_response(str(e), 500)
 
+@bp.route('/bnd/ajax_get_bnd_new', methods=['GET'])
+def ajax_get_bnd_new():
+    params = request.args.to_dict()
+    for _t in ["m", "s"]:
+        for _d in ["start", "end"]:
+            if "{}_dlivy_de_{}".format(_t, _d) not in params:
+                params["{}_dlivy_de_{}".format(_t, _d)] = ''
+
+    for _t in ["m", "s", "t"]:
+        for _d in ["start", "end"]:
+            if "{}_pblict_de_{}".format(_t, _d) not in params:
+                params["{}_pblict_de_{}".format(_t, _d)] = ''
+
+    result = dict()
+    result['color'] = cm.get_bnd_color(params)
+    result['bnd'] = cm.get_bnd_data(params)
+    result['data'] = cm.get_bnd_projects_new(params)
+
+    return jsonify(result)
+
+
 @bp.route('/bnd/ajax_get_bnd', methods=['GET'])
 def ajax_get_bnd():
     try:
@@ -705,7 +726,7 @@ def ajax_get_comp():
             if e['dept_code'] not in done:
                 result['extra_goal'].append(extra_goal_dict[e['dept_code']])
                 done.append(e['dept_code'])
-
+        print(result['extra_goal'])
         result['status'] = True
         return jsonify(result)
     except Exception as e:

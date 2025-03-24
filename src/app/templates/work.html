@@ -185,11 +185,11 @@ table th, table td {
 										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">성명</th>
 										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">입사일자</th>
 										<th class="colorSkyB right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">년차</th>
-										<th class="tot right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">지&nbsp;&nbsp;&nbsp;각<br>(연간누계)</th>
 										<th class="colorSkyB bottom_border right_border" style="text-align:center;vertical-align:middle;" rowspan="2">발생일수</th>
 										<th class="colorSkyB bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">조정일수</th>
 										<th class="colorSkyB right_border bottom_border" style="text-align:center;vertical-align:middle;" rowspan="2">총휴가일</th>
 										<th class="colorSkyB right_border" style="text-align:center!important;vertical-align:middle;" colspan="2">사용일수</th>
+										<th class="tot right_border bottom_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">지&nbsp;&nbsp;&nbsp;각<br>(연간누계)</th>
 										<th class="color-contract right_border bottom_border"  rowspan="2" style="text-align:center;vertical-align:middle;">잔여<br>휴가일</th>
 										<th class="colorSkyB right_border bottom_border"  rowspan="2" style="text-align:center;vertical-align:middle;">출장일수</th>
 										<th class="colorG bottom_border right_border" style="text-align:center!important;vertical-align:middle;" rowspan="2">연차 사용일</th>
@@ -244,7 +244,6 @@ getWork = function(work_date)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-			console.log(pResult);
 			var html = '';
 			$.each(pResult.data, function(pIndex, pValue){
 				var _class = (pValue.today_rate == 1) ? "colorY" : "";
@@ -291,12 +290,12 @@ getWork = function(work_date)
 							<td class=" ${_class_today1} ${_class_today2} text-center right_border">${pValue.mber_nm}</td>
 							<td class="text-center right_border" title="${pValue.enter_de}">${enter_de_str}</td>
 							<td class="text-center right_border" title="${period_title}">${period}</td>
-							<td class="${_class} text-center right_border">${pValue.rate_count}</td>
 							<td class="text-center right_border">15</td>
 							<td class="input-available text-center" data-column="tot2">${pValue.tot}</td>
 							<td class="text-center right_border" data-column="tot3">${parseInt(pValue.tot) + 15}</td>
 							<td class=" text-center ${_class_today1}" data-column="use">${pValue.use}</td>
 							<td class=" text-center ${_class_today2} right_border" data-column="half">${(parseFloat(pValue.half)/2).toFixed(1)}</td>
+							<td class="${_class} text-center right_border">${pValue.rate_count}</td>
 							<td class=" text-center right_border color-contract" data-column="remain">${(parseFloat(pValue.tot) + 15 - parseFloat(pValue.use) - (parseFloat(pValue.half)/2)).toFixed(1)}</td>
 							<td class=" text-center right_border">${pValue.out}</td>
 							<td class="text-left right_border">${pValue.use_dates}</td>
@@ -527,7 +526,6 @@ $(function () {
             fixP = -1;
         }
         $(this).width( thead.find('th').eq(i).width() +fixP);
-        console.log(fixP);
       });
       clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
     });
@@ -722,7 +720,6 @@ $(function() {
 				return fnValidate('insert');
 			},
 			success: function(pResult) {
-				console.log(pResult);
 				if (pResult.status) {
 					isDataChange = true;
 					fnAlert(pResult.message);

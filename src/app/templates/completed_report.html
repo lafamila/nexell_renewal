@@ -174,7 +174,6 @@
             method : 'POST',
             data : params,
             success: function(pResult){
-                console.log(pResult);
                 if(pResult.status){
                     $(target).html(data.toFixed(1)+"%");
                 }
@@ -198,7 +197,6 @@
         var month = parseInt(s_pxcond_mt.split("-")[1]);
         $(document).find("#year").html(year);
         $(document).find("#month").html(month+"");
-        console.log('getReportNR', params);
         var temp = {"C" : {}, "E" : {}};
         $.ajax({
             url: '/api/completed/ajax_get_completed_report_data',
@@ -281,13 +279,11 @@
                     totals[dept_nm]["e_total"] += getValue($(pRow).find("td").eq(12)) + getValue($(pRow).find("td").eq(14)) + getValue($(pRow).find("td").eq(15));
                     totals[dept_nm]["va"] += getValue($(pRow).find("td").eq(21));
                     totals[dept_nm]["diff"] += getValue($(pRow).find("td").eq(22));
-                    console.log(totals);
                 });
 
                 $.each(totals, function(dept_nm, pValue){
                     var html = '';
                     var _class="colorN";
-                    console.log(pValue);
                     html += `<tr data-dept="${dept_nm}_total">
                                 <td class="${_class} text-center middle" colspan="4">${dept_nm} 계</td>
                                 <td class="${_class} text-right middle">${pValue.c_cntrct_amount.toFormat('NUMBER')}</td>

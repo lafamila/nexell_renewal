@@ -479,6 +479,18 @@ $(function() {
 												</div>
 											</td>
 										</tr>
+										<tr><th>업무일지위치</th>
+											<td class="hasinput" colspan="1">
+												<div class="btn-group btn-group-justified" data-toggle="buttons">
+													<label class="btn btn-default">
+														<input type="radio" name="todo_type" value="0">일반
+													</label>
+													<label class="btn btn-default">
+														<input type="radio" name="todo_type" value="1">영업
+													</label>
+												</div>
+											</td>
+										</tr>
 										<tr><th>현장관리 가능 수<em>*</em></th>
 											<td class="hasinput" colspan="1">
 												<input class="form-control" type="text" id="mber_size" name="mber_size">
@@ -552,8 +564,6 @@ getMember = function(s_mber_sn)
 		data: params,
 		dataType: 'json',
 		success: function(result) {
-			// console.log(result);
-			console.log(result);
 			if (result !== undefined && result !== '') {
 				$('#popBox1').find('#mber_sn').val(result.mber_sn);
 				$('#popBox1').find('#mber_profile').attr("src", (result.mber_profile != '') ? `/static/files/${result.mber_profile}` : '/static/files/profile.png');
@@ -572,6 +582,7 @@ getMember = function(s_mber_sn)
 				$('#popBox1').find('input:radio[name=check_rate]').yVal(result.check_rate);
 				$('#popBox1').find('input:radio[name=check_work]').yVal(result.check_work);
 				$('#popBox1').find('input:radio[name=check_todo]').yVal(result.check_todo);
+				$('#popBox1').find('input:radio[name=todo_type]').yVal(result.todo_type);
 				$('#popBox1').find('#mber_sttus_code').val(result.mber_sttus_code).trigger('change');
 				$('#popBox1').data('action', 'update');
 				$('#popBox1').modal('show');
@@ -642,6 +653,11 @@ fnValidate = function(pMode = '')
 	}
 	var check_todo = $('input[name=check_todo]:checked').val();
 	if (result == true && fnIsEmpty(check_todo)) {
+		alert('필수 입력 항목을 선택하시기 바랍니다.');
+		result = false;
+	}
+	var todo_type = $('input[name=todo_type]:checked').val();
+	if (result == true && fnIsEmpty(todo_type)) {
 		alert('필수 입력 항목을 선택하시기 바랍니다.');
 		result = false;
 	}

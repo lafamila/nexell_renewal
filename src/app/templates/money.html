@@ -426,7 +426,6 @@ getMoneyData = function(s_mt){
 			return true;
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			var html = '';
 			var NAME = {"S" : "매출", "S1" : "수수료", "S2" : "M/H", "S3" : "재고판매", "S4" : "S/H"}
 			// html += `<tr data-row="row0" data-raw="raw0">
@@ -563,7 +562,6 @@ getMoneyData = function(s_mt){
 				var cntrct_sn = cntrct_bcnc[0];
 				var bcnc_sn = cntrct_bcnc[1];
 				$(document).find(`tr[data-cntrct${index}="${cntrct_sn}"][data-bcnc${index}="${bcnc_sn}"] td[data-column="${column}"]`).html(pValue.money_data);
-				console.log(R);
 				// if($(pTag).data("type") == "number"){
 				// 	if(parseInt(pValue.money_data) != 0)
 				// 		$(pTag).text(pValue.money_data.toFormat('NUMBER'));

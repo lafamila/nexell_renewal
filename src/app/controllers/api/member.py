@@ -1,5 +1,6 @@
 from flask import Blueprint, g, current_app, render_template, redirect, request, make_response, jsonify, send_file, Response, url_for, session
 from .services import member_service as mber
+from .services import common_service as cm
 from app.connectors import DB
 from app.helpers import session_helper
 from .services import set_menu
@@ -119,6 +120,7 @@ def ajax_get_member_todo():
     try:
         params = request.args.to_dict()
         result = dict()
+        result['contract'] = cm.get_new_contract(params)
         result['data'] = mber.get_member_todo(params)
         result['extra'] = mber.get_extra_todo(params)
         result['type'] = params['s_mber_type']

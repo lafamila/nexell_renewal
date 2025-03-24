@@ -223,9 +223,8 @@ getWorkDailyList = function()
             { data: 'start_time' , className: 'text-center'},
             { data: 'end_time' , className: 'text-center'},
         ],
-		drawCallback: function(pSettings) { console.log('drawCallback', pSettings.json);
+		drawCallback: function(pSettings) {
 			var pData = pSettings.json.summary;
-			console.log(pData);
             $('#summery').find('tbody td').eq(0).html(pData.total_count.toString().toFormat('NUMBER'));
 			$('#summery').find('tbody td').eq(1).html(pData.off_count.toString().toFormat('NUMBER'));
             $('#summery').find('tbody td').eq(2).html(pData.out_count.toString().toFormat('NUMBER'));

@@ -297,7 +297,6 @@ tbody .btnUpdate, tbody .btn{
 				$("#popBoxBiss").find("#cntrct_sn").html(option_html);
 				var ALREADY = {};
 				if(pResult.contract.length > 0){
-					console.log(pResult);
 					var mber_nm = pResult.contract[0].mber_nm;
 					var mber = pResult.contract[0].mber_sn;
 					var dept_nm = pResult.contract[0].dept_nm;
@@ -397,7 +396,6 @@ tbody .btnUpdate, tbody .btn{
 							member_total["real"][i] += value;
 						}
 						if(dept != dept_code){
-							console.log("dept", dept_total);
 							dept_total['goal']['tot'] = 0;
 							for(let i=1;i<=12;i++) dept_total['goal']['tot'] += dept_total['goal'][`${i}`];
 							dept_total['real']['tot'] = 0;

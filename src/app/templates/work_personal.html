@@ -312,7 +312,6 @@ getWorkPersonal = function(){
 	var calendar = $('.datepicker-s').val();
 	params += '&s_stdyy='+(new Date(now.getTime()-offset)).toISOString().split("T")[0];
 	params += '&calendar='+calendar;
-	console.log(params);
 	$.ajax({
 		url: '/api/work/ajax_get_personal',
 		type: 'GET',
@@ -337,7 +336,6 @@ getWorkPersonal = function(){
 							<td class="text-center bottom_border" style="border-bottom:2px solid #CCC!important;">${(parseFloat(pData.tot) + parseFloat(pData.mod) - parseFloat(pData.use)).toFixed(1)}</td>
 						</tr>`;
 			$(document).find("#dtList0").find("tbody").html(html);
-			console.log(pResult.calendar);
 			var html = '';
 			$.each(pResult.calendar.rows, function(pIndex, pRow){
 				html += `<tr>`;
@@ -353,7 +351,6 @@ getWorkPersonal = function(){
 			});
 			$(document).find("#dtList1").find("tbody").html(html);
 			$(document).find("#dtList1").find("#title").html(`${calendar.split("-")[0]}년 ${calendar.split("-")[1]}월`);
-			console.log();
 		}
 	});
 
@@ -550,7 +547,6 @@ getWorkPersonalDetail = function(s_ddt_man)
 		type: 'POST',
 		data: params,
 		success: function(pResult) {
-			console.log('getStockMonth', pResult);
 			if (pResult.status) {
                 var html = '';
                 var total_usage = 0.0;

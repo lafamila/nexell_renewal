@@ -18,25 +18,25 @@
 			</div>
 			<div class="modal-body report">
 
-				<div id="rpt6">
+				<div id="rpt100">
 					<div class="title"><h2 class="colorLS" id="title" style="font-weight:bold;">마감 예정 현장</h2></div>
 				<!--<div class="title"><h2 class="colorLS" id="title">팀별 VA 현황</h2></div>-->
 				<style>
 
-					#rpt6 .table>tbody>tr>td, #rpt6 .table>tbody>tr>th, #rpt6 .table>tfoot>tr>td, #rpt6 .table>tfoot>tr>th, #rpt6 .table>thead>tr>td, #rpt6 .table>thead>tr>th {
+					#rpt100 .table>tbody>tr>td, #rpt100 .table>tbody>tr>th, #rpt100 .table>tfoot>tr>td, #rpt100 .table>tfoot>tr>th, #rpt100 .table>thead>tr>td, #rpt100 .table>thead>tr>th {
 						line-height: 1.0 !important;
 					}
-					#rpt6 .colorEG{
+					#rpt100 .colorEG{
 						background: rgb(255,204,153)!important;
 						font-weight: bold;
 						color: black;
 					}
-					#rpt6 .colorJ{
+					#rpt100 .colorJ{
 						background: #3d8b40!important;
 						font-weight: bold;
 						color: white;
 					}
-					#rpt6 #dtList1{
+					#rpt100 #dtList1{
 						font-size: 10px!important;
 					}
 
@@ -109,21 +109,17 @@
 				var count_tot = 0;
 				var amount_tot = 0;
 				var pData = pResult.data;
-				console.log("lafamila", pData);
 				$.each(pData, function(pIndex, pValue){
-					if(pValue.prjct_ty_code == 'BF'){
-						pValue.rate = pValue.new_rate;
-					}
-					else if(pValue.prjct_ty_code == 'BD'){
-					  if(pValue.cnt_qy == 0 || pValue.cnt_amt == 0){
-						  pValue.rate = 0.0;
-					  }
-					  else{
-						  pValue.rate = (pValue.out_qy * 80.0/pValue.cnt_qy) + (pValue.out_amt * 20.0 / pValue.cnt_amt);
-					  }
+                    if(pValue.prjct_ty_code == 'BF'){
+                        if(pValue.s1_sum != 0) pValue.rate = 95.0;
+                        else pValue.rate = 0.0;
+                    }
+                    else if(pValue.prjct_ty_code == 'BD' || pValue.prject_ty_code == 'NR'){
+                        if(pValue.cntrct_amount > 0) pValue.rate = (pValue.s_sum*100.0/pValue.cntrct_amount);
+                        else pValue.rate = 0;
+                    }
 
-					}
-					var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
+                    var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
 					// if(rate < 5.0 && pValue.progrs_sttus_code == 'P'){
 					// 	pValue.progrs_sttus_code = 'K';
 					// 	pValue.sttus_nm = '대기';
@@ -195,12 +191,12 @@
 
 				count_tot += count;
 				amount_tot += amount;
-				$("#rpt6").find("#va tbody[role=body]").html(html);
-				$('#rpt6').find('#va tbody[role=body]').yRowspan(0);
-				$('#rpt6').find('#va tbody[role=body]').yRowspan(1);
-				$('#rpt6').find('#va tbody[role=body]').yRowspan(2);
+				$("#rpt100").find("#va tbody[role=body]").html(html);
+				$('#rpt100').find('#va tbody[role=body]').yRowspan(0);
+				$('#rpt100').find('#va tbody[role=body]').yRowspan(1);
+				$('#rpt100').find('#va tbody[role=body]').yRowspan(2);
 				if(s_dept_code !== 'BI')
-					$('#rpt6').find('#va tbody[role=body]').yRowspan(3);
+					$('#rpt100').find('#va tbody[role=body]').yRowspan(3);
 				var html = '';
 				html += '<tr>';
 				html += '    <td class="text-center colorSky" colspan="4">합계</td>';
@@ -209,7 +205,7 @@
 				html += '    <td class="text-center colorSky"></td>';
 				html += '    <td class="text-center colorSky"></td>';
 				html += '</tr>';
-				$("#rpt6").find("#va tbody[role=foot]").html(html);
+				$("#rpt100").find("#va tbody[role=foot]").html(html);
 
 		}
 	});

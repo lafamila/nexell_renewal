@@ -1027,6 +1027,9 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<col width="145">
 		<col width="150">
 		<col width="*">
+		<col width="*">
+		<col width="145">
+		<col width="150">
 	</colgroup>
 	<tbody>
 		<tr>
@@ -1038,15 +1041,13 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="color-contract">내역</th>
 			<th class="color-contract">지출자</th>
 			<th class="color-contract">금액</th>
-			<th class="color-contract">비고</th>
 		</tr>
 	</tbody>
 	<tbody role="body"></tbody>
 	<tfoot>
 		<tr>
-			<th class="colorG" colspan="4">합계</th>
+			<th class="colorG" colspan="5">합계</th>
 			<th class="colorP text-number"></th>
-			<th class="colorG"></th>
 		</tr>
 	</tfoot>
 </table>
@@ -1129,7 +1130,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		type: 'GET',
 		data: {{ params | tojson | safe}},
 		success: function(pResult) {
-			console.log('getReportBD', pResult);
 			if (pResult.status)
 			{
 				var contract = pResult.contract;
@@ -1241,7 +1241,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var p_sum_totalExtra = 0, s_sum_totalExtra = 0, va_totalExtra = 0;
                 var qy_totExtra = 0;
                 var bCostDTM = "9999-99-99";
-				console.log(cCostList);
 				$.each(cCostList, function(pIndex, pValue) {
 					if(bCostDTM > pValue.regist_dtm){
 						bCostDTM = pValue.regist_dtm;
@@ -1266,7 +1265,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					s_sum_totalExtra += s_amt_sum;
 					va_totalExtra += va;
                     qy_totExtra += parseInt(pValue.qy);
-					console.log(s_amt_sum);
 				});
 
                 $('#popReportBD').find('tbody[role="construct_expect_row"]').html(html);
@@ -1325,7 +1323,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var html_dom = $.parseHTML(html);
 						var tempDom = $('<output>').append($.parseHTML(html));
 						var target = $(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom);
-						console.log($(target));
 						if($(target).length > 0){
 							var qy = $(`tr[data-model="${pValue.model_no}"][data-puchas="${pValue.puchas_amount}"][data-dscnt="${pValue.dscnt_rt}"][data-salamt="${pValue.salamt}"]`, tempDom).eq(0).find("td").eq(2).html();
 							qy = parseInt(qy.replaceAll(",", ""));
@@ -1384,9 +1381,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var eCostList = pResult.eCostListExtra;
 				var p_dsp_amt_totalExtra = 0, p_add_dc_amt_totalExtra = 0, p_real_dsp_amt_totalExtra = 0, p_option_amt_totalExtra = 0, p_etc_amt_totalExtra = 0;
                 var p_dc_amt_totExtra = 0, qy_totExtra = 0;
-                console.log("lafamila", eCostList);
 				$.each(eCostList, function(pIndex, pValue) {
-                    console.log("lafamila", qy_totExtra);
 					if (pValue.dspy_se_code != '') {
 						if(bCostDTM > pValue.regist_dtm){
 							bCostDTM = pValue.regist_dtm;
@@ -1456,7 +1451,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 
                 var gCostList = pResult.gCostListExtra;
-                console.log('gCostList', gCostList);
                 var p_sell_amt_totalExtra = 0;
                 $.each(gCostList, function(pIndex, pValue) {
 					if(bCostDTM > pValue.regist_dtm){
@@ -1467,7 +1461,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
                     if (pValue.ct_se_code == '63') { //모델하우스(판매)
                         p_sell_amt_totalExtra += p_puchas;
-                        console.log("sell_amt_total", p_sell_amt_totalExtra);
                     }
 
 					var t_pamt = pValue.puchas_amount == '' ? 0 : parseInt(pValue.puchas_amount);
@@ -1581,7 +1574,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 
                 var gCostList = pResult.gCostList;
-                console.log('gCostList', gCostList);
                 var p_sell_amt_total = 0;
                 $.each(gCostList, function(pIndex, pValue) {
 					var p_puchas_amount = pValue.salamt;
@@ -1597,7 +1589,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
                         base[pValue.extra_sn].p_sell_amt_total += p_puchas;
                         p_sell_amt_total += p_puchas;
-                        console.log("sell_amt_total", p_sell_amt_total);
                     }
 
 					var t_pamt = pValue.puchas_amount == '' ? 0 : parseInt(pValue.puchas_amount);
@@ -1630,7 +1621,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* ********************************************************* */
 
 				var base_temp = {};
-				console.log(base);
 				var html = '<tbody role="extra">';
 				$.each(Object.keys(base).sort(), function(pIndex, extra_sn){
 					if(extra_sn == 0){
@@ -2212,7 +2202,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				/* M/SH, 옵션 */
 				var html = '';
 				var dspyOptionList = pResult.sOptionCostList;
-				console.log(dspyOptionList);
 				if(dspyOptionList != null){
 					$.each(dspyOptionList, function(pKey, pValue){
 						var target = $(document).find(`#rptTableOpt tbody[role=body] [data-column='${pKey}']`);
@@ -2379,24 +2368,113 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var amt_total = 0;
 				var c_opt_amount = 0;
 				var c_opt_date = [];
+                var etcRcppay634In = [];
+                var etcRcppay634Out = [];
 				$.each(etcRcppayList, function(pIndex, pValue) {
 					var amt = parseInt(pValue.amount);
-					if(parseInt(pValue.acntctgr_code) != 504){
+					if(![504, 637].includes(parseInt(pValue.acntctgr_code))) {
 						html += '<tr>';
 						html += '    <td>'+pValue.rcppay_de+'</td>';
 						html += '    <td>'+pValue.acntctgr_nm+'</td>';
-						html += '    <td class="text-left">'+pValue.rcppay_dtls+'</td>';
+						html += '    <td class="text-left" colspan="2">'+pValue.rcppay_dtls+'</td>';
 						html += '    <td>'+pValue.papr_invstmnt_nm+'</td>';
 						html += '    <td class="text-number">'+amt.toString().toFormat('NUMBER')+'</td>';
-						html += '    <td></td>';
 						html += '</tr>';
 						amt_total += parseInt(amt);
 					}
+                    else if(parseInt(pValue.acntctgr_code) == 637){
+                        if(pValue.rcppay_se_code == 'O'){
+                             etcRcppay634Out.push(pValue);
+                       }
+                        else{
+                             etcRcppay634In.push(pValue);
+                        }
+                    }
 					else{
 						c_opt_amount += parseInt(amt);
 						c_opt_date.push(pValue.rcppay_de);
 					}
 				});
+                if(etcRcppay634In.length >0 || etcRcppay634Out.length > 0){
+                    let outInTotal = 0;
+                    let outHTML = '';
+                    $.each(etcRcppay634Out, function(pIndex, pValue){
+                        var amt = parseInt(pValue.amount);
+                        outHTML += `
+                                <tr>
+                                    <td>${pValue.rcppay_de}</td>
+                                    <td>${pValue.rcppay_dtls}</td>
+                                    <td class=" text-number">${amt.toString().toFormat('NUMBER')}</td>
+                                </tr>`;
+                        outInTotal += parseInt(amt);
+                    });
+
+                    let inHTML = '';
+                    $.each(etcRcppay634In, function(pIndex, pValue){
+                        var amt = -parseInt(pValue.amount);
+                        inHTML += `
+                                <tr>
+                                    <td>${pValue.rcppay_de}</td>
+                                    <td>${pValue.rcppay_dtls}</td>
+                                    <td class=" text-number">${(amt).toString().toFormat('NUMBER')}</td>
+                                </tr>`;
+                        outInTotal -= parseInt(amt);
+
+                    });
+                    html += `
+                                    <tr>
+                                        <th class="colorG">소계</th>
+                                        <th class="colorG" colspan="4"></th>
+                                        <th class="colorG text-number">${amt_total.toString().toFormat('NUMBER')}</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="6" class="sub-title colorN text-center">현장정리비</th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">
+                                            <table style="width:100%;border:0px!important;">
+                                                <colgroup>
+                                                    <col width="144"/>
+                                                    <col width="*"/>
+                                                    <col width="150"/>
+                                                </colgroup>
+                                                <tbody>
+                                                <tr>
+                                                    <th class="color-contract">출금일자</th>
+                                                    <th class="color-contract">내역</th>
+                                                    <th class="color-contract">금액</th>
+                                                </tr>
+                                                ${outHTML}
+                                                </tbody>
+                                            </table>
+
+                                        </td>
+                                        <td colspan="3" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">
+                                            <table style="width:100%;border:0px!important;">
+                                                <colgroup>
+                                                    <col width="144"/>
+                                                    <col width="*"/>
+                                                    <col width="150"/>
+                                                </colgroup>
+                                                <tbody>
+                                                <tr>
+                                                    <th class="colorY">입금일자</th>
+                                                    <th class="colorY">내역</th>
+                                                    <th class="colorY">금액</th>
+                                                </tr>
+                                                ${inHTML}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="colorG">소계</th>
+                                        <th class="colorG" colspan="4"></th>
+                                        <th class="colorG text-number">${outInTotal.toString().toFormat('NUMBER')}</th>
+                                    </tr>
+                                    `;
+                    amt_total += outInTotal;
+                }
 				$('#popReportBD').find('#report_exec tbody[role=body] tr[data-row="result"] td:eq(5)').html(c_opt_amount.toFormat('NUMBER'));
 				$('#popReportBD').find(`[data-column='c_opt_amount']`).html(c_opt_amount.toFormat('NUMBER'));
 				$('#popReportBD').find(`[data-column='c_opt_pay_dtm']`).html(c_opt_date.join(","));

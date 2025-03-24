@@ -690,7 +690,6 @@ getComp = function(comp_year)
 		contentType: false,
 		processData: false,
 		success: function(pResult) {
-            console.log(pResult);
             var pGoal = pResult.goal;
 
             $.each(pGoal, function(pIndex, pValue){
@@ -749,6 +748,9 @@ getComp = function(comp_year)
                 else{
                     pRow['8'] = {};
                     for(let i=1;i<13;i++) pRow['8'][`${i}m`] = 0;
+                    if(pRow.hasOwnProperty('9')){
+                        pRow['8']['dept_nm'] = pRow['9']['dept_nm']
+                    }
                 }
                 var tot2 = 0;
                 if(pRow.hasOwnProperty('9')){

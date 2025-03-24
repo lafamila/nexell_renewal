@@ -327,7 +327,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
     </colgroup>
     <thead>
         <tr>
-			<th class="sub-title colorN text-center" colspan="7" style="border-right:0px!important;">공사비 산출 (영업/자동)</th>
+			<th class="sub-title colorN text-center" colspan="7" style="border-right:0px!important;">장비 및 공사비 산출 (영업/자동)</th>
         </tr>
         <tr>
             <th class="color-contract text-center">내역</th>
@@ -839,7 +839,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="sub-title colorN text-center" colspan="10">⑤ 타사자재</th>
 		</tr>
 		<tr>
-			<th class="color-contract">출고일</th>
+			<th class="color-contract">출금일</th>
 			<th class="color-contract">상품명</th>
 			<th class="color-contract">모델명</th>
 			<th class="color-contract">매입단가</th>
@@ -1014,15 +1014,20 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<col width="145">
 		<col width="150">
 		<col width="*">
+		<col width="*">
+		<col width="90">
+		<col width="100">
+		<col width="100">
 	</colgroup>
 	<tbody>
 		<tr>
-			<th class="sub-title colorN text-center" colspan="5">⑨ 기타비용(관리)</th>
+			<th class="sub-title colorN text-center" colspan="7">⑨ 기타비용(관리)</th>
 		</tr>
 		<tr>
 			<th class="color-contract">일자</th>
 			<th class="color-contract">계정과목</th>
-			<th class="color-contract">내역</th>
+			<th class="color-contract" colspan="2">내역</th>
+			<th class="color-contract">거래처</th>
 			<th class="color-contract">담당자</th>
 			<th class="color-contract">금액</th>
 		</tr>
@@ -1032,8 +1037,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<tr>
 			<th class="colorG">합계</th>
 			<th class="colorG"></th>
-			<th class="colorG"></th>
-			<th class="colorG"></th>
+			<th class="colorG" colspan="2"></th>
+			<th class="colorG" colspan="2"></th>
 			<th class="colorP text-number"></th>
 		</tr>
 	</tfoot>
@@ -1075,7 +1080,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		type: 'GET',
 		data: {{ params | tojson | safe}},
 		success: function(pResult) {
-			console.log('getReportNR', pResult);
 			if (pResult.status) {
 				var contract = pResult.contract;
 				var project = pResult.project;
@@ -1331,8 +1335,6 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 					var extra_sns = Object.keys(extraCosts).map((e)=>{return parseInt(e)});
 					extra_sns.sort((a, b)=>{return a-b});
-					console.log("extra", extra_sns);
-					console.log("extra", extraCosts);
 					for(let i=1;i<=extra_sns.length;i++){
 						var extra_sn = extra_sns[i-1];
 						var costs = extraCosts[extra_sn];
@@ -1872,6 +1874,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var indirect_sum_total = 0;
 				var eCost5 = 0;
                 var daily_p_total = 0;
+                let _daily_p = 0;
+                let _logitec_p_total = 0;
                 $.each(outsrcList, function(pIndex, pValue) {
                     if ([146].includes(pValue.outsrc_fo_sn)) {
                         //매입계산서
@@ -2155,7 +2159,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
                         if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4){
                             tot = pValue.outsrc_dtls.split("-").reduce((partialSum, a) => partialSum + parseInt(a), 0);
                         }
-                        html += '<tr>';
+                        html += '<tr data-row="calc_A" data-id="'+pIndex+'">';
                         html += '    <th class="color-contract">계약내역</th>';
                         html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[0].toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-right">'+pValue.pymnt_mth.split("-")[1].toFormat('NUMBER')+'</td>';
@@ -2184,7 +2188,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
                     }
                     if(pValue.outsrc_dtls && pValue.outsrc_dtls.split("-").length == 4) {
-                        html += '<tr>';
+                        html += '<tr data-row="calc_A" data-id="'+pIndex+'">';
                         html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">계약변경</th>';
                         html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[0].toFormat('NUMBER')+'</td>';
                         html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+pValue.outsrc_dtls.split("-")[1].toFormat('NUMBER')+'</td>';
@@ -2221,15 +2225,15 @@ div.report table table thead, div.report table table tbody, div.report table tab
                     var daily_p = daily_p_total > daily_total ? daily_total : daily_p_total;
                     daily_p_total -= daily_p;
                     var tot_p_total = human_p_total + direct_p_total + daily_p + logitec_p_total;
-                    html += '<tr>';
+                    html += '<tr data-row="calc_B" data-id="'+pIndex+'">';
                     html += '    <th class="color-contract" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">집행</th>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+human_p_total.toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+direct_p_total.toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+daily_p.toFormat('NUMBER')+'</td>';
-                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+logitec_p_total.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;" data-name="daily_p">'+daily_p.toFormat('NUMBER')+'</td>';
+                    html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;" data-name="logitec_p_total">'+logitec_p_total.toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right" style="border-top:2px solid black!important;border-bottom:2px solid black!important;">'+tot_p_total.toFormat('NUMBER')+'</td>';
                     html += '</tr>';
-                    html += '<tr>';
+                    html += '<tr data-row="calc_result" data-id="'+pIndex+'">';
                     html += '    <th class="color-contract">잔액</th>';
                     html += '    <td class="text-right">'+(iRcppay_total-human_p_total).toFormat('NUMBER')+'</td>';
                     html += '    <td class="text-right">'+(direct_total-direct_p_total).toFormat('NUMBER')+'</td>';
@@ -2434,6 +2438,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						daily_html += '</table>';
 						daily_html += '</td>';
 						all_sum_total += sum_total;
+                        _daily_p = sum_total;
 						//지급내역
 						daily_html += '<td colspan="3" style="padding:0px!important;vertical-align:top!important;">';
 						var oRcppayList = pValue.rcppayList;
@@ -2538,9 +2543,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(3)').html(vat_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable10 tfoot th:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(4)').html(sum_total.toString().toFormat('NUMBER'));
+                _logitec_p_total += sum_total;
 				/* ********************************************************* */
 
-				/* 기타자재 */
+				/* 타사자재 */
 				/* ********************************************************* */
 				var html = '';
 				var s4AccountList = pResult.s4AccountList;
@@ -2569,13 +2575,37 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					dlnt_total += parseInt(dlnt);
 					va_total += parseInt(va);
 				});
+
+
 				$('#popReportNR').find('#rptTable11 tbody[role=body]').html(html);
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(2)').html(dlnt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(3)').html(p_amt_total.toString().toFormat('NUMBER'));
+
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(4)').html(s_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#rptTable11 tfoot th:eq(5)').html(va_total.toString().toFormat('NUMBER'));
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(5)').html(p_amt_total.toString().toFormat('NUMBER'));
 				/* ********************************************************* */
+
+                _logitec_p_total += p_amt_total;
+                if($(document).find(`td[data-name="logitec_p_total"]`).length == 1){
+                    $(document).find(`td[data-name="logitec_p_total"]`).html(_logitec_p_total.toFormat('NUMBER'));
+                }
+                {#if($(document).find(`td[data-name="daily_p"]`).length == 1){#}
+                {#    $(document).find(`td[data-name="daily_p"]`).html(_daily_p.toFormat('NUMBER'));#}
+                {#}#}
+
+                $.each($(document).find(`tr[data-row="calc_result"]`), function(pIndex, pTr){
+                    let td_length = $(pTr).find("td").length;
+                    let id = $(pTr).data("id");
+                    var tr_A = $(document).find(`tr[data-row="calc_A"][data-id="${id}"]`);
+                    var rowA = $(tr_A).length > 0 ? $(tr_A[$(tr_A).length-1]).find("td").map((_, td)=>{ let text = $(td).html().replaceAll(",", ""); return text == '' || text.indexOf("%") > 0 ? 0 : parseInt(text) }) : new Array(td_length).fill(0);
+                    var tr_B = $(document).find(`tr[data-row="calc_B"][data-id="${id}"]`);
+                    var rowB = $(tr_B).length > 0 ? $(tr_B[$(tr_B).length-1]).find("td").map((_, td)=>{ let text = $(td).html().replaceAll(",", ""); return text == '' || text.indexOf("%") > 0 ? 0 : parseInt(text) }) : new Array(td_length).fill(0);
+                    $.each($(pTr).find("td"), function(_, pTd) {
+                        $(pTd).html((rowA[_]-rowB[_]).toFormat('NUMBER'));
+                    });
+                });
+
 
 				/* 기타 */
 				/* ********************************************************* */
@@ -2584,24 +2614,116 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var amt_total = 0;
 				var c_opt_amount = 0;
 				var c_opt_date = [];
-
+                var etcRcppay634In = [];
+                var etcRcppay634Out = [];
 				$.each(etcRcppayList, function(pIndex, pValue) {
 					var amt = parseInt(pValue.amount);
-					if(parseInt(pValue.acntctgr_code) != 504) {
+					if(![504, 637].includes(parseInt(pValue.acntctgr_code))) {
 						html += '<tr>';
 						html += '    <td class="">' + pValue.rcppay_de + '</td>';
 						html += '    <td class="">' + pValue.acntctgr_nm + '</td>';
-						html += '    <td class="text-left">' + pValue.rcppay_dtls + '</td>';
+						html += '    <td class="text-left" colspan="2">' + pValue.rcppay_dtls + '</td>';
+						html += '    <td class="">' + pValue.prvent_nm + '</td>';
 						html += '    <td class="">' + pValue.papr_invstmnt_nm + '</td>';
 						html += '    <td class=" text-number">' + amt.toString().toFormat('NUMBER') + '</td>';
 						html += '</tr>';
 						amt_total += parseInt(amt);
 					}
+                    else if(parseInt(pValue.acntctgr_code) == 637){
+                        if(pValue.rcppay_se_code == 'O'){
+                             etcRcppay634Out.push(pValue);
+                       }
+                        else{
+                             etcRcppay634In.push(pValue);
+                        }
+                    }
 					else{
 						c_opt_amount += parseInt(amt);
 						c_opt_date.push(pValue.rcppay_de);
 					}
 				});
+                if(etcRcppay634In.length >0 || etcRcppay634Out.length > 0){
+                    let outInTotal = 0;
+                    let outHTML = '';
+                    $.each(etcRcppay634Out, function(pIndex, pValue){
+                        var amt = parseInt(pValue.amount);
+                        outHTML += `
+                                <tr>
+                                    <td>${pValue.rcppay_de}</td>
+                                    <td>${pValue.rcppay_dtls}</td>
+                                    <td class=" text-number">${amt.toString().toFormat('NUMBER')}</td>
+                                </tr>`;
+                        outInTotal += parseInt(amt);
+                    });
+
+                    let inHTML = '';
+                    $.each(etcRcppay634In, function(pIndex, pValue){
+                        var amt = -parseInt(pValue.amount);
+                        inHTML += `
+                                <tr>
+                                    <td>${pValue.rcppay_de}</td>
+                                    <td>${pValue.rcppay_dtls}</td>
+                                    <td class=" text-number">${(amt).toString().toFormat('NUMBER')}</td>
+                                </tr>`;
+                        outInTotal -= parseInt(amt);
+
+                    });
+                    html += `
+                                    <tr>
+                                        <th class="colorG">소계</th>
+                                        <th class="colorG" colspan="5"></th>
+                                        <th class="colorG text-number">${amt_total.toString().toFormat('NUMBER')}</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="7" class="sub-title colorN text-center">현장정리비</th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">
+                                            <table style="width:100%;border:0px!important;">
+                                                <colgroup>
+                                                    <col width="144"/>
+                                                    <col width="*"/>
+                                                    <col width="100"/>
+                                                </colgroup>
+                                                <tbody>
+                                                <tr>
+                                                    <th class="color-contract">출금일자</th>
+                                                    <th class="color-contract">내역</th>
+                                                    <th class="color-contract">금액</th>
+                                                </tr>
+                                                ${outHTML}
+                                                </tbody>
+                                            </table>
+
+                                        </td>
+                                        <td colspan="4" style="padding:0px!important;vertical-align:top!important;border-right:2px solid #555!important;">
+                                            <table style="width:100%;border:0px!important;">
+                                                <colgroup>
+                                                    <col width="144"/>
+                                                    <col width="*"/>
+                                                    <col width="100"/>
+                                                </colgroup>
+                                                <tbody>
+                                                <tr>
+                                                    <th class="colorY">입금일자</th>
+                                                    <th class="colorY">내역</th>
+                                                    <th class="colorY">금액</th>
+                                                </tr>
+                                                ${inHTML}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="colorG">소계</th>
+                                        <th class="colorG" colspan="5"></th>
+                                        <th class="colorG text-number">${outInTotal.toString().toFormat('NUMBER')}</th>
+                                    </tr>
+                                    `;
+                    amt_total += outInTotal;
+                }
+
+
 				$('#popReportNR').find('#report_exec tbody[role=body] tr[data-row=result] td:eq(8)').html(c_opt_amount.toFormat('NUMBER'));
 				$('#popReportNR').find(`[data-column='c_opt_amount']`).html(c_opt_amount.toFormat('NUMBER'));
 				$('#popReportNR').find(`[data-column='c_opt_pay_dtm']`).html(c_opt_date.join(","));

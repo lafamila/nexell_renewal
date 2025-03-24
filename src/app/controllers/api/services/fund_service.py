@@ -83,6 +83,10 @@ def get_rcppay_datatable(params):
         query += " AND r.rcppay_se_code=%s"
         data.append(params["s_rcppay_se_code"])
 
+    if "s_amount" in params and params['s_amount']:
+        query += " AND r.amount=%s"
+        data.append(params["s_amount"])
+
     if "s_acnut_code" in params and params['s_acnut_code']:
         if params['s_acnut_code'] == '999':
             query += " AND r.acnut_code IS NULL"
@@ -145,6 +149,10 @@ def get_rcppay_summary(params, exist=True):
     if "s_rcppay_se_code" in params and params['s_rcppay_se_code']:
         query += " AND o.rcppay_se_code=%s"
         data.append(params["s_rcppay_se_code"])
+
+    if "s_amount" in params and params['s_amount']:
+        query += " AND o.amount=%s"
+        data.append(params["s_amount"])
 
     if "s_acnut_code" in params and params['s_acnut_code']:
         if params['s_acnut_code'] == '999':
@@ -272,6 +280,8 @@ def insert_rcppay(params):
     query = """INSERT INTO rcppay({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
     g.curs.execute(query, data)
 
+    rcppay_dtls = data.get("rcppay_dtls", '_').split("_")[-1]
+
     if "eq_sn" in params:
         g.curs.execute("""
         SELECT
@@ -342,14 +352,18 @@ def insert_rcppay(params):
 
             if int(expect_de_type) == 0:
                 expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=1)).strftime("%Y-%m-20")
+            elif int(expect_de_type) == 1:
+                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=2) + relativedelta.relativedelta(days=-1)).strftime("%Y-%m-%d")
             else:
-                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=2) + relativedelta(days=-1)).strftime("%Y-%m-%d")
+                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"),
+                                                        "%Y-%m-%d") + relativedelta.relativedelta(months=1)).strftime(
+                    "%Y-%m-10")
         else:
             delng_ty_code = 11
             expect_de = ''
         #현금/외상 기준은 해당 프로젝트의 보고서에서 계약총액보다 입금세금계산서 금액이 더 낮으면 외상, 받을거 다 받았으면 현금
         #equip_to_account?eq_sn=12282&expect_de=2025-02-21&delng_ty_code=11&dlivy_de=2025-02-21&before_dlnt=1
-        p_params = {"eq_sn" : params["eq_sn"], "dlivy_de" : params["rcppay_de"], "delng_ty_code" : delng_ty_code, "expect_de" : expect_de}
+        p_params = {"eq_sn" : params["eq_sn"], "dlivy_de" : params["rcppay_de"], "delng_ty_code" : delng_ty_code, "expect_de" : expect_de, "rcppay_dtls" : rcppay_dtls}
         res = requests.get("http://localhost:5001/api/sales/equip_to_account",
                            params=p_params)
         print(res.text)
@@ -415,9 +429,10 @@ def get_report(params):
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=r.ctmmny_sn AND parnts_code='ACNTCTGR_CODE' AND code=r.acntctgr_code) AS acntctgr_nm
 				, r.rcppay_dtls
 				, r.papr_invstmnt_sn
-				, GET_MEMBER_NAME(r.papr_invstmnt_sn, 'M') AS papr_invstmnt_nm
+				, GET_MEMBER_NAME(IFNULL(r.papr_invstmnt_sn, c.spt_chrg_sn), 'M') AS papr_invstmnt_nm
 				, r.dept_code
 				, (SELECT code_nm FROM code WHERE ctmmny_sn=r.ctmmny_sn AND parnts_code='DEPT_CODE' AND code=r.dept_code) AS dept_nm
+				, (SELECT code_nm FROM code WHERE ctmmny_sn=r.ctmmny_sn AND parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=c.spt_chrg_sn)) AS project_dept_nm
 				, IF (rcppay_se_code NOT IN ('O'), r.amount, 0) AS i_amount
 				, IF (rcppay_se_code IN ('O'), r.amount, 0) AS o_amount
 				, r.acnut_code

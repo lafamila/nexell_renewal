@@ -196,8 +196,11 @@ getPartnerList = function()
                     if(expect_de_type == 0){
                         return "20일";
                     }
+                    else if(expect_de_type == 1){
+                        return "말일"
+                    }
                     else{
-                        return "말일";
+                        return "10일";
                     }
                 }
             },
@@ -354,6 +357,9 @@ $(function() {
 											<td class="hasinput" colspan="1">
                                                 <div class="btn-group btn-group-justified" data-toggle="buttons">
                                                     <label class="btn btn-default">
+                                                        <input type="radio" name="expect_de_type" value="2">10일
+                                                    </label>
+                                                    <label class="btn btn-default">
                                                         <input type="radio" name="expect_de_type" value="0">20일
                                                     </label>
                                                     <label class="btn btn-default">
@@ -442,10 +448,8 @@ getPartner = function(s_bcnc_sn)
 		data: params,
 		dataType: 'json',
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				var data = pResult.data;
-				console.log(data);
 				$('#popBox1').find('#bcnc_sn').val(data.bcnc_sn.toString());
 				$('#popBox1').find('input:radio[name=bsnm_se_code]').yVal(data.bsnm_se_code);
 				$('#popBox1').find('input:radio[name=bcnc_se_code]').yVal(data.bcnc_se_code);
@@ -564,7 +568,6 @@ insertPartner = function()
 			return fnValidate('insert');
 		},
 		success: function(pResult) {
-			console.log(pResult);
 			if (pResult.status) {
 				isDataChange = true;
 				fnAlert(pResult.message);

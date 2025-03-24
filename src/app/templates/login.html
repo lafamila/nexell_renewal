@@ -158,11 +158,9 @@ $(function() {
 				contentType: false,
 				processData: false,
 				beforeSend: function(pJqXHR, pSettings) {
-					console.log('ajax beforeSend');
 					$('#message').html('처리중입니다...');
 				},
 				success: function(result) {
-					console.log('success', result);
 					if (result.status) {
 						$('#message').html('');
 						$("#qr-ul").show();
@@ -217,7 +215,6 @@ $(function() {
 				type: 'POST',
 				data: {'member_qr' : member_qr, 'member_sn' : member_sn}
 			}).done(function(pResult){
-				console.log(pResult);
 				if(pResult.status){
 					$('#message').html('로딩중...');
 					location.href = '/';
