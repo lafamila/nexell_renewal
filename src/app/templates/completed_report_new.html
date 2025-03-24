@@ -76,40 +76,33 @@
                 <div class="title"><h2 class="colorLS"><span id="year"></span>년 <span id="month"></span>월 기성현황 집계표</h2></div>
                 <table id="rptParnterStatus1">
                     <colgroup>
-                        <col width="50">
-                        <col width="200">
+                        <col width="80">
+                        <col width="160">
                         <col width="250">
-                        <col width="50">
+                        <col width="100">
 
                         <col width="100">
                         <col width="100">
-                        <col width="50">
                         <col width="100">
-                        <col width="50">
                         <col width="100">
-                        <col width="50">
 
                         <col width="100">
                         <col width="100">
-                        <col width="50">
                         <col width="100">
                         <col width="100">
                         <col width="100">
-                        <col width="50">
                         <col width="100">
-                        <col width="50">
 
                         <col width="50">
-                        <col width="100">
                         <col width="100">
                         <col width="290">
                     </colgroup>
                     <thead>
                         <tr>
-                            <th class="color-contract" colspan="4">구분</th>
-                            <th class="color-contract" colspan="7">건설사 기성</th>
-                            <th class="color-contract" colspan="9">협력사 집행(제품+기성+자재)</th>
-                            <th class="color-contract text-right" colspan="4">VAT포함, 단위:천원, %</th>
+                            <th class="color-contract right_border" colspan="4">구분</th>
+                            <th class="color-contract right_border" colspan="4">건설사 기성</th>
+                            <th class="color-contract right_border" colspan="6">협력사 집행(제품+기성+자재)</th>
+                            <th class="color-contract text-right" colspan="3">VAT포함, 단위:천원, %</th>
                         </tr>
                         <tr>
                             <th class="colorN text-center middle" rowspan="2">팀</th>
@@ -118,19 +111,13 @@
                             <th class="colorN text-center middle right_border" rowspan="2">현장<br/>관리</th>
                             <th class="colorN text-center middle" rowspan="2">공사<br/>계약금액</th>
                             <th class="colorN text-center middle" rowspan="2">전월누계</th>
-                            <th class="colorN text-center middle" rowspan="2">%</th>
                             <th class="colorN text-center middle" rowspan="2">당월기성</th>
-                            <th class="colorN text-center middle" rowspan="2">%</th>
-                            <th class="colorN text-center middle" rowspan="2">기성누계</th>
-                            <th class="colorN text-center middle right_border" rowspan="2">%</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">기성누계</th>
                             <th class="colorN text-center middle" rowspan="2">집행<br/>예상금액</th>
                             <th class="colorN text-center middle" rowspan="2">전월누계</th>
-                            <th class="colorN text-center middle" rowspan="2">%</th>
-                            <th class="colorN text-center middle" colspan="4">당월집행</th>
-                            <th class="colorN text-center middle" rowspan="2">집행누계</th>
-                            <th class="colorN text-center middle right_border" rowspan="2">%</th>
+                            <th class="colorN text-center middle" colspan="3">당월집행</th>
+                            <th class="colorN text-center middle right_border" rowspan="2">집행누계</th>
                             <th class="colorN text-center middle" rowspan="2">공정률</th>
-                            <th class="colorN text-center middle" rowspan="2">VA</th>
                             <th class="colorN text-center middle" rowspan="2">청구비<br/>차이</th>
                             <th class="colorN text-center middle" rowspan="2">비고</th>
                         </tr>
@@ -138,7 +125,6 @@
                             <th class="colorN text-center middle">장비+기타</th>
                             <th class="colorN text-center middle">도급비</th>
                             <th class="colorN text-center middle">소계</th>
-                            <th class="colorN text-center middle">%</th>
                         </tr>
                     </thead>
                     <tbody role="body">
@@ -235,7 +221,7 @@
                     }
                     before = pValue.bsn_dept_nm;
                     var _class = (before_class%2 == 0) ? "colorLLG" : "";
-
+                    //var _class = "";
 
                     var rate = pValue.rate == '' ? 0.0 : parseFloat(pValue.rate);
 
@@ -247,22 +233,15 @@
                                 <td class="${_class} text-center middle right_border">${pValue.spt_chrg_nm}</td>
                                 <td class="${_class} text-right middle">${c_cntrct_amount.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${c_completed_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle">${c_rate1.toFixed(1)+"%"}</td>
                                 <td class="${_class} text-right middle">${c_now_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle">${c_rate2.toFixed(1)+"%"}</td>
-                                <td class="${_class} text-right middle">${c_total.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle right_border">${c_rate3.toFixed(1)+"%"}</td>
+                                <td class="${_class} text-right middle right_border">${c_total.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${e_cntrct_amount.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${e_completed_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle">${e_rate1.toFixed(1)+"%"}</td>
                                 <td class="${_class} text-right middle">${e_now_amount1.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${e_now_amount2.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${e_now_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle">${e_rate2.toFixed(1)+"%"}</td>
-                                <td class="${_class} text-right middle">${e_total.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle right_border">${e_rate3.toFixed(1)+"%"}</td>
-                                <td class="${_class} text-right middle input-available" data-cntrct_sn="${pValue.cntrct_sn}">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
-                                <td class="${_class} text-right middle">${va.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border">${e_total.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle" data-cntrct_sn="${pValue.cntrct_sn}">${pValue.rate == '' ? '' : (pValue.rate.toFixed(1)+"%")}</td>
                                 <td class="${_class} text-right middle" style="${(c_total-e_total)<0 ? 'color:red!important;' : ''}">${(c_total-e_total).toFormat('NUMBER')}</td>
                                 <td class="${_class} text-left middle">${pValue.rm}</td>
                              </tr>`;
@@ -276,16 +255,15 @@
                     }
                     totals[dept_nm]["c_cntrct_amount"] += getValue($(pRow).find("td").eq(4));
                     totals[dept_nm]["c_completed_amount"] += getValue($(pRow).find("td").eq(5));
-                    totals[dept_nm]["c_now_amount"] += getValue($(pRow).find("td").eq(7));
-                    totals[dept_nm]["c_total"] += getValue($(pRow).find("td").eq(5)) + getValue($(pRow).find("td").eq(7));
-                    totals[dept_nm]["e_cntrct_amount"] += getValue($(pRow).find("td").eq(11));
-                    totals[dept_nm]["e_completed_amount"] += getValue($(pRow).find("td").eq(12));
-                    totals[dept_nm]["e_now_amount1"] += getValue($(pRow).find("td").eq(14));
-                    totals[dept_nm]["e_now_amount2"] += getValue($(pRow).find("td").eq(15));
-                    totals[dept_nm]["e_now_amount"] += getValue($(pRow).find("td").eq(14)) + getValue($(pRow).find("td").eq(15));
-                    totals[dept_nm]["e_total"] += getValue($(pRow).find("td").eq(12)) + getValue($(pRow).find("td").eq(14)) + getValue($(pRow).find("td").eq(15));
-                    totals[dept_nm]["va"] += getValue($(pRow).find("td").eq(21));
-                    totals[dept_nm]["diff"] += getValue($(pRow).find("td").eq(22));
+                    totals[dept_nm]["c_now_amount"] += getValue($(pRow).find("td").eq(6));
+                    totals[dept_nm]["c_total"] += getValue($(pRow).find("td").eq(5)) + getValue($(pRow).find("td").eq(6));
+                    totals[dept_nm]["e_cntrct_amount"] += getValue($(pRow).find("td").eq(8));
+                    totals[dept_nm]["e_completed_amount"] += getValue($(pRow).find("td").eq(9));
+                    totals[dept_nm]["e_now_amount1"] += getValue($(pRow).find("td").eq(10));
+                    totals[dept_nm]["e_now_amount2"] += getValue($(pRow).find("td").eq(11));
+                    totals[dept_nm]["e_now_amount"] += getValue($(pRow).find("td").eq(10)) + getValue($(pRow).find("td").eq(11));
+                    totals[dept_nm]["e_total"] += getValue($(pRow).find("td").eq(9)) + getValue($(pRow).find("td").eq(10)) + getValue($(pRow).find("td").eq(11));
+                    totals[dept_nm]["diff"] += getValue($(pRow).find("td").eq(15));
                     console.log(totals);
                 });
 
@@ -294,25 +272,18 @@
                     var _class="colorN";
                     console.log(pValue);
                     html += `<tr data-dept="${dept_nm}_total">
-                                <td class="${_class} text-center middle" colspan="4">${dept_nm} 계</td>
+                                <td class="${_class} text-center middle right_border" colspan="4">${dept_nm} 계</td>
                                 <td class="${_class} text-right middle">${pValue.c_cntrct_amount.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${pValue.c_completed_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle"></td>
                                 <td class="${_class} text-right middle">${pValue.c_now_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle"></td>
-                                <td class="${_class} text-right middle">${pValue.c_total.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle right_border"></td>
+                                <td class="${_class} text-right middle right_border">${pValue.c_total.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${pValue.e_cntrct_amount.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${pValue.e_completed_amount.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle"></td>
                                 <td class="${_class} text-right middle">${pValue.e_now_amount1.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${pValue.e_now_amount2.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle">${pValue.e_now_amount.toFormat('NUMBER')}</td>
+                                <td class="${_class} text-right middle right_border">${pValue.e_total.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle"></td>
-                                <td class="${_class} text-right middle">${pValue.e_total.toFormat('NUMBER')}</td>
-                                <td class="${_class} text-right middle right_border"></td>
-                                <td class="${_class} text-right middle"></td>
-                                <td class="${_class} text-right middle">${pValue.va.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-right middle" style="${(pValue.diff)<0 ? 'color:red!important;' : ''}">${pValue.diff.toFormat('NUMBER')}</td>
                                 <td class="${_class} text-left middle"></td>
                              </tr>`;

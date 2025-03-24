@@ -92,7 +92,7 @@ def ajax_insert_approval():
             required_member_sn = int(approval_detail['coop'])
             if required_member_sn not in coop_list:
                 required_member = mber.get_member(required_member_sn)
-                return make_response(f"해당 품의는 필수 협조자[{required_member['mber_nm']}]가 지정되어야 합니다.")
+                return make_response(f"해당 품의는 필수 협조자[{required_member['mber_nm']}]가 지정되어야 합니다.", 501)
         if approval_detail['conditions'] != 0:
             if approval_ty_code in (56, 57, 22):
                 member = mber.get_member(approval_list[0])

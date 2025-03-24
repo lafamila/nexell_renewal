@@ -1717,13 +1717,21 @@ def get_equipment(params):
     prjct = g.curs.fetchone()
     if prjct is not None and prjct['prjct_ty_code'] == 'NR' and result['cnnc_sn'] != '':
         cnnc_sn = result['cnnc_sn']
-        g.curs.execute("SELECT GROUP_CONCAT(equip_sn, ',') AS equip_sns, e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn, SUM(e.samt) AS samount, SUM(e.cnt_dlnt) AS cnt_dlnt FROM expect_equipment e WHERE e.cntrct_sn=%(cntrct_sn)s GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn HAVING cnt_dlnt > 0", result)
+        g.curs.execute("SELECT GROUP_CONCAT(equip_sn, ',') AS equip_sns, e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn, SUM(e.samt) AS samount, SUM(e.cnt_dlnt) AS cnt_dlnt FROM expect_equipment e WHERE e.cntrct_sn=%(cntrct_sn)s GROUP BY e.model_no, e.prdlst_se_code, e.bcnc_sn, e.delng_ty_code, e.dlamt, e.cntrct_sn HAVING SUM(e.cnt_dlnt) > 0", result)
         equips = g.curs.fetchall()
+        checked = False
         for e in equips:
-
             if str(cnnc_sn) in e["equip_sns"].split(","):
                 result['samt'] = e['samount'] / e['cnt_dlnt']
+                checked = True
                 break
+        if not checked:
+            g.curs.execute(
+                "SELECT e.samt AS samount, e.cnt_dlnt AS cnt_dlnt FROM expect_equipment e WHERE e.cntrct_sn=%(cntrct_sn)s AND e.equip_sn=%(cnnc_sn)s",
+                result)
+            e = g.curs.fetchone()
+            result['samt'] = e['samount'] / e['cnt_dlnt']
+            checked = True
     return result
 ## 기성현황서 빌트인 두번째 표
 # def get_completed_reportBALL(params):

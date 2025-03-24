@@ -932,6 +932,59 @@ def get_model_list(params, purpose=None):
     result = g.curs.fetchall()
     return result
 
+def insert_equipment_other_BD(params):
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    cntrct = get_contract({"s_cntrct_sn": params["cntrct_sn"]})
+
+    parseInt = lambda x: 0 if x.replace(",", "") == '' else int(x.replace(",", ""))
+    for bcnc_sn, cntrct_amount, dlivy_amt, dlnt, amount, model_no, pamount, prdlst_se_code in zip(params["bcnc_sn[]"], params["cntrct_amount[]"], params["dlivy_amt[]"], params["dlnt[]"], params["amount[]"], params["model_no[]"], params["pamount[]"], params["prdlst_se_code[]"]):
+
+        row = dict()
+        row['cntrct_sn'] = params['cntrct_sn']
+        row['prjct_sn'] = prjct['prjct_sn']
+        row['ctmmny_sn'] = 1
+        row['regist_dtm'] = datetime.datetime.now(timezone('Asia/Seoul'))
+        row['register_id'] = session['member']['member_id'] if "member" in session else "nexelll"
+        row['delng_se_code'] = 'P'
+        row['ddt_man'] = None
+        row['bcnc_sn'] = 100
+        row['prdlst_se_code'] = prdlst_se_code
+        row['model_no'] = model_no
+        row['delng_ty_code'] = 2
+        row['dlnt'] = parseInt(dlnt)
+        row['dlamt'] = parseInt(pamount)
+        keys = list(row.keys())
+        g.curs.execute("INSERT INTO account({0}) VALUES ({1})".format(",".join(keys), ",".join(["%({})s".format(key) for key in keys])), row)
+        delng_sn = g.curs.lastrowid
+        row['delng_se_code'] = 'S'
+        row['dlivy_de'] = None
+        row['bcnc_sn'] = bcnc_sn
+        row['cnnc_sn'] = delng_sn
+        row['bcnc_sn'] = cntrct["bcnc_sn"]
+        row['dlamt'] = parseInt(cntrct_amount)
+        row['delng_ty_code'] = 11
+        row['expect_de'] = None
+        keys = list(row.keys())
+        g.curs.execute("INSERT INTO account({0}) VALUES ({1})".format(",".join(keys), ",".join(["%({})s".format(key) for key in keys])), row)
+        if "option_bigo" in params and params["option_bigo"].strip() != '':
+            query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+            prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+            g.curs.execute(query, (prjct["prjct_sn"],))
+            result = g.curs.fetchone()
+            if result and result["partclr_matter"]:
+                before = result["partclr_matter"]
+            else:
+                before = ""
+            partclr_matter = "{}\n\n{} {}\n{}".format(before, datetime.datetime.now(timezone('Asia/Seoul')).strftime(
+                "%Y-%m-%d"),
+                                                      "타사자재", params["option_bigo"])
+
+            query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+            if prjct["prjct_sn"] is not None:
+                g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+
+
+
 def insert_equipment_other_sub(params):
     data = OrderedDict()
     data['cntrct_sn'] = params['cntrct_sn']
@@ -1404,7 +1457,7 @@ def insert_equipment(params):
         g.curs.executemany(query, equipments_other)
     if equipments_update:
         for eq in equipments_update:
-            query = """SELECT * FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s"""
+            query = """SELECT * FROM expect_equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s AND dlamt=%(dlamt)s"""
             row = g.curs.execute(query, eq)
             if row:
                 before = g.curs.fetchone(transform=False)
