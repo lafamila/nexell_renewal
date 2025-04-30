@@ -558,29 +558,6 @@ String.prototype.floor = function(){
             var count = 1;
             var total = {"cntrct_amount" : 0};
             $.each(pResult.data, function(pIndex, pValue){
-              if(before != pValue.progrs_order && before != -1){
-                {#html += `<tr class="total">#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:left!important;" colspan="7">소계</td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;">${Math.round(total.cntrct_amount/1000).toString().toFormat('NUMBER')}</td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#            <td class="colorG bold top_border right_border middle ${_class}" style="text-align:right!important;"></td>#}
-                {#         </tr>#}
-                {#        `;#}
-              }
               _class_m = (pValue.m_dlnt <= pValue.m_return_dlnt) ? "colorY" : '';
               _class_s = (pValue.s_dlnt <= pValue.s_return_dlnt) ? "colorY" : '';
               _class_t = (((pValue.prjct_ty_code == 'BF') ? pValue.tax_amount1 : pValue.tax_amount2) >= (pValue.cntrct_amount)) && (![_class_m, _class_s].includes('')) ? "colorY" : '';
@@ -610,7 +587,7 @@ String.prototype.floor = function(){
                             <td class="bold colorBtn top_border middle text-right right_border ${_class_m}">${pValue.m_dlivy_de == '' ? '' : pValue.m_dlivy_amt.floor().toFormat('NUMBER')}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class_m}">${pValue.m_discount_de}</td>
                             <td class="bold colorBtn top_border middle text-right ${_class_m}">${pValue.m_discount_de == '' ? '' : pValue.m_discount_tax_amt.floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_m}">${pValue.m_discount_de == '' ? '' : ((pValue.m_discount_amt - pValue.m_discount_tax_amt).floor() == -1 ? 0 : (pValue.m_discount_amt - pValue.m_discount_tax_amt).floor()).toFormat('NUMBER')}</td>
+                            <td class="bold colorBtn top_border middle text-right right_border ${_class_m}">${(pValue.m_discount_de == '' && pValue.m_discount_amt == 0) ? '' : ((pValue.m_discount_amt - pValue.m_discount_tax_amt).floor() == -1 ? 0 : (pValue.m_discount_amt - pValue.m_discount_tax_amt).floor()).toFormat('NUMBER')}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class_m}">${pValue.m_return_de}</td>
                             <td class="bold colorBtn top_border middle text-center right_border ${_class_m}">${pValue.m_return_de == '' ? '' : pValue.m_return_dlnt}</td>
 
@@ -619,7 +596,7 @@ String.prototype.floor = function(){
                             <td class="bold colorBtn top_border middle text-right right_border ${_class_s}">${pValue.s_dlivy_de == '' ? '' : pValue.s_dlivy_amt.floor().toFormat('NUMBER')}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class_s}">${pValue.s_discount_de}</td>
                             <td class="bold colorBtn top_border middle text-right ${_class_s}">${pValue.s_discount_de == '' ? '' : pValue.s_discount_tax_amt.floor().toFormat('NUMBER')}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_s}">${pValue.s_discount_de == '' ? '' : ((pValue.s_discount_amt - pValue.s_discount_tax_amt).floor() == -1 ? 0 : (pValue.s_discount_amt - pValue.s_discount_tax_amt).floor()).toFormat('NUMBER')}</td>
+                            <td class="bold colorBtn top_border middle text-right right_border ${_class_s}">${(pValue.s_discount_de == '' && pValue.s_discount_amt == 0) ? '' : ((pValue.s_discount_amt - pValue.s_discount_tax_amt).floor() == -1 ? 0 : (pValue.s_discount_amt - pValue.s_discount_tax_amt).floor()).toFormat('NUMBER')}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class_s}">${pValue.s_return_de}</td>
                             <td class="bold colorBtn top_border middle text-center right_border ${_class_s}">${pValue.s_return_de == '' ? '' : pValue.s_return_dlnt}</td>
 

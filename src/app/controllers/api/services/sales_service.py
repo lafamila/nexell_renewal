@@ -403,6 +403,7 @@ def get_account_report(params):
 				WHERE p.ctmmny_sn = 1
 				AND p.ddt_man = %(s_ddt_man)s
 				AND p.delng_se_code = 'P'
+				AND (s.delng_sn IS NOT NULL OR p.dlamt > 0)
 				UNION
 				SELECT p.bcnc_sn AS p_bcnc_sn
 				, (SELECT CONCAT(esntl_delng_no) FROM bcnc WHERE bcnc_sn=p.bcnc_sn) AS p_bcnc_nm
@@ -1804,8 +1805,8 @@ def insert_general_sales_NR(params):
             data = {"cntrct_sn" : general_cntrct_sn, "bcnc_sn": bcnc_sn, "samount": samount, "now": now}
             g.curs.execute(query, data)
             total_samount += samount
-        if total_samount > 0:
-            g.curs.execute("INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(total_samount)s)", {"cntrct_de": now, "cntrct_sn": general_cntrct_sn, "total_samount": total_samount})
+    if total_samount > 0:
+        g.curs.execute("INSERT INTO contract_table(cntrct_de, cntrct_sn, cntrct_amount) VALUES (%(cntrct_de)s, %(cntrct_sn)s, %(total_samount)s)", {"cntrct_de": now, "cntrct_sn": general_cntrct_sn, "total_samount": total_samount})
 
 def get_equipment(params):
     row = g.curs.execute("SELECT eq_sn FROM equipment WHERE cntrct_sn=%(cntrct_sn)s AND model_no=%(model_no)s AND pamt*(dlnt-before_dlnt)=%(amount)s AND deleted = 0", params)

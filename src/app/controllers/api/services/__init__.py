@@ -440,11 +440,12 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
             data_in[int(r['cntrct_sn'])] += r['cnt']
             result_before[int(r['cntrct_sn'])-1]['cnt{}'.format(int(r['prduct_ty_code'])+4)] += r['cnt']
 
-        query = """SELECT ss.stock_sttus, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3) AS prduct_ty_code, ls.cntrct_sn, COUNT(*) AS cnt FROM stock_log ss LEFT OUTER JOIN stock_log ls ON ls.log_sn=ss.cnnc_sn LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus IN ('2', '3') AND s.PRDUCT_SE_CODE='1' AND ls.cntrct_sn IS NOT NULL AND ss.ddt_man BETWEEN %(st)s AND %(ed)s GROUP BY ls.cntrct_sn, ss.STOCK_STTUS, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3)"""
+        query = """SELECT ss.stock_sttus, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3) AS prduct_ty_code, ls.cntrct_sn, COUNT(*) AS cnt FROM stock_log ss LEFT OUTER JOIN stock_log ls ON ls.log_sn=ss.cnnc_sn LEFT JOIN stock s ON ss.stock_sn=s.stock_sn WHERE ss.stock_sttus IN ('2', '3') AND s.PRDUCT_SE_CODE='1' AND ls.cntrct_sn IS NOT NULL AND ss.ddt_man BETWEEN %(st)s AND %(ed)s AND ls.cntrct_sn IN (2, 3) GROUP BY ls.cntrct_sn, ss.STOCK_STTUS, IF(s.prduct_ty_code IN (1, 2), s.prduct_ty_code, 3)"""
         curs.execute(query.strip(), {"st": st, "ed" : ed})
         result = curs.fetchall()
         data_out = {2: {2: 0, 3: 0, 4: 0}, 3: {2: 0, 3: 0, 4: 0}}
         for r in result:
+
             data_out[int(r['cntrct_sn'])][int(r['stock_sttus'])] += r['cnt']
             result_before[int(r['cntrct_sn']) - 1]['cnt{}'.format(int(r['prduct_ty_code']) + 4)] -= r['cnt']
         for invn_type in data_in:
@@ -514,6 +515,10 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
             curs.execute(query, cntrct_data)
     db.commit()
 
+    curs.execute("""UPDATE stock SET use_flag=1 WHERE stock_sn IN (SELECT s.stock_sn FROM stock s INNER JOIN
+    				(SELECT x.* FROM stock_log x INNER JOIN (SELECT stock_sn, MAX(log_sn) AS m_log_sn FROM stock_log GROUP BY stock_sn) y ON x.stock_sn=y.stock_sn AND x.log_sn=y.m_log_sn) m ON s.stock_sn=m.stock_sn
+ LEFT JOIN (SELECT stock_sn, SUM(IF(stock_sttus=2, 1, 0)) AS go, SUM(IF(stock_sttus=1, 1, 0)) AS re, SUM(IF(stock_sttus=4, 1, 0)) AS x , SUM(IF(stock_sttus=3, 1, 0)) AS y FROM stock_log GROUP BY stock_sn) sl ON s.stock_sn=sl.STOCK_SN WHERE s.use_flag=0 AND sl.x=0 AND sl.y=0 AND ((sl.go>=2 AND sl.re>=1) OR (sl.go>=1 AND sl.re>=2) OR (sl.go = 1 AND sl.re = 1 AND m.stock_sttus=1)))""")
+    db.commit()
     # # general sales project - contract & project check
     # curs.execute("SHOW COLUMNS FROM contract")
     # result = curs.fetchall()

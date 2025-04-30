@@ -349,6 +349,9 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_final_mber_sn" name="s_final_mber_sn">
 												<option value="">[전체]</option>
+												{% for code in member_list %}
+							                    <option value="{{code.value}}">{{code.label}}</option>
+												{% endfor %}
 											</select>
 										</th>
 										<th class="hasinput"></th>
@@ -467,6 +470,7 @@ getApprovalList = function()
             { data: 'final_mber_nm', className: 'text-center' },
             { data: 'ctmmny_sn', className: 'hasinput text-center', orderable: false,
 			    render: function(data, type, row, meta) {
+                    console.log(row);
 					var html = '';
 
 					html += '<div class="btn-group">';

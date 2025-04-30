@@ -666,16 +666,18 @@
 					 <colgroup>
 						<col width="50">
 						<col width="100">
+						<col width="100">
 						<col width="120">
 						<col width="600">
 						<col width="100">
 					</colgroup>
                     <thead>
                         <tr>
-                            <th class="colorG" colspan="5">금 일 &nbsp; 수 주 &nbsp; 소 식 (계 약 &nbsp; 체 결 &nbsp; 완 료 &nbsp; 후)</th>
+                            <th class="colorG" colspan="6">금 주 &nbsp; 수 주 &nbsp; 소 식 (계 약 &nbsp; 체 결 &nbsp; 완 료 &nbsp; 후)</th>
                         </tr>
                         <tr>
 							<th class="colorG"></th>
+							<th class="colorG">계약일</th>
 							<th class="colorG">부서</th>
 							<th class="colorG">건설사</th>
 							<th class="colorG">현장명</th>
@@ -911,6 +913,7 @@ getTodo = function(s_ddt_man)
             $.each(contract_data, function(pIndex, pValue){
                 contract_html += `<tr>
                                     <td>${(pIndex+1)}</td>
+                                    <td>${pValue.cntrct_de}</td>
                                     <td>${pValue.dept_nm}</td>
                                     <td>${pValue.bcnc_nm}</td>
                                     <td>${pValue.spt_nm}</td>
@@ -919,6 +922,7 @@ getTodo = function(s_ddt_man)
             });
             $(document).find("#new-contract").find("tbody").html(contract_html);
             $(document).find("#new-contract").find("tbody").yRowspan(1);
+            $(document).find("#new-contract").find("tbody").yRowspan(2);
 			if(parseInt(pResult.type) == 0){
 				$("#todo-title-left").html("오 전");
 				$("#todo-title-right").html("오 후");

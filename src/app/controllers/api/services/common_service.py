@@ -831,8 +831,8 @@ def get_bnd_projects_new(params):
                         ELSE 0
                         END AS cntrct_amount
                     FROM contract c LEFT JOIN project p ON c.cntrct_sn=p.cntrct_sn
-                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(ddt_man) AS ddt_man, SUM(dlnt) AS dlnt, SUM(dlnt * (dlivy_amt * (100 - dscnt_rt)) / 100) AS dlivy_amt, SUM(dlnt * (dlivy_amt * add_dscnt_rt) / 100) AS discount_amt FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('61', '62') GROUP BY cntrct_sn) m ON c.cntrct_sn=m.cntrct_sn
-                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(ddt_man) AS ddt_man, SUM(dlnt) AS dlnt, SUM(dlnt * (dlivy_amt * (100 - dscnt_rt)) / 100) AS dlivy_amt, SUM(dlnt * (dlivy_amt * add_dscnt_rt) / 100) AS discount_amt FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('64', '65') GROUP BY cntrct_sn) s ON c.cntrct_sn=s.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(ddt_man) AS ddt_man, SUM(dlnt) AS dlnt, SUM(dlnt * (dlivy_amt * (100 - dscnt_rt)) / 100) AS dlivy_amt, SUM(dlnt * (dlivy_amt * add_dscnt_rt) / 100) AS discount_amt FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('61', '62') AND ddt_man IS NOT NULL GROUP BY cntrct_sn) m ON c.cntrct_sn=m.cntrct_sn
+                    LEFT OUTER JOIN (SELECT cntrct_sn, MAX(ddt_man) AS ddt_man, SUM(dlnt) AS dlnt, SUM(dlnt * (dlivy_amt * (100 - dscnt_rt)) / 100) AS dlivy_amt, SUM(dlnt * (dlivy_amt * add_dscnt_rt) / 100) AS discount_amt FROM account WHERE delng_se_code='P' AND delng_ty_code IN ('64', '65') AND ddt_man IS NOT NULL GROUP BY cntrct_sn) s ON c.cntrct_sn=s.cntrct_sn
                     LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS discount_amt FROM taxbil WHERE delng_se_code='S2' GROUP BY cntrct_sn) mt ON c.cntrct_sn=mt.cntrct_sn
                     LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS discount_amt FROM taxbil WHERE delng_se_code='S4' GROUP BY cntrct_sn) st ON c.cntrct_sn=st.cntrct_sn
                     LEFT OUTER JOIN (SELECT cntrct_sn, MAX(pblicte_de) AS ddt_man, SUM(splpc_am + IFNULL(vat, 0)) AS amt FROM taxbil WHERE delng_se_code='S1' GROUP BY cntrct_sn) t1 ON c.cntrct_sn=t1.cntrct_sn
@@ -1704,7 +1704,7 @@ def get_equipment(params):
                             , model_no
                             , dlnt
                             , pamt
-                            , samt
+                            , IFNULL(samt, 0) AS samt
                             , bcnc_sn
                             , delng_ty_code
                             , dlivy_de
@@ -2238,21 +2238,25 @@ def get_bnd_color(params):
     return result
 
 def get_new_contract(params):
+    # day = datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d').weekday()
+    # start_of_week = (datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d') + relativedelta(days=-day)).strftime("%Y-%m-%d")
+    # end_of_week = (datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d') + relativedelta(days=(6-day))).strftime("%Y-%m-%d")
+    target_date = datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d')
+    start_date = (target_date + relativedelta(days=-7))
 
-    now = (datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d') + relativedelta(days=-1)).strftime("%Y-%m-%d")
-    now_before = (datetime.datetime.strptime(params['s_ddt_man'], '%Y-%m-%d') + relativedelta(days=-2)).strftime("%Y-%m-%d")
     query = """SELECT (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
     				, (SELECT code_nm FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code=m.dept_code) AS dept_nm
     				, c.spt_nm
+    				, nc.cntrct_de
     				, nc.cntrct_amount
     				FROM contract_table nc 
     				LEFT JOIN contract c
     				ON nc.cntrct_sn = c.cntrct_sn
     				LEFT JOIN member m
-    				ON c.spt_chrg_sn=m.mber_sn
+    				ON c.bsn_chrg_sn=m.mber_sn
     				WHERE nc.cntrct_de BETWEEN %s AND %s
-    			ORDER BY dept_nm
+    			ORDER BY nc.cntrct_de, dept_nm
     """
-    g.curs.execute(query, (now_before, now))
+    g.curs.execute(query, (start_date.strftime("%Y-%m-%d"), target_date.strftime("%Y-%m-%d")))
     result = g.curs.fetchall()
     return result

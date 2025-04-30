@@ -12,6 +12,17 @@
 </script>
 <link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
 <style id="style">
+    {#.btn.activate-btn{#}
+    {#    border-width: 3px!important;#}
+    {#}#}
+
+@media print {
+	body {
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
+}
+
 body.smart-style-6 .form-control{
     border: 0px solid #ccc!important;
 }
@@ -77,6 +88,65 @@ span[name=alte]{
 }
 span[name=blank]{
 	display:inline;
+}
+label.btn.btn-default.active {
+    background: #000;
+    color: #fff;
+}
+.btn-group-justified {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+}
+.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+.btn-group>.btn:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+label.btn.btn-default.active {
+    background: #000;
+    color: #fff;
+}
+label.btn.btn-default.active {
+    background: #000;
+    color: #fff;
+}
+.btn-group>.btn:first-child {
+    margin-left: 0;
+}
+.btn-group-vertical>.btn.active, .btn-group-vertical>.btn:active, .btn-group-vertical>.btn:focus, .btn-group-vertical>.btn:hover, .btn-group>.btn.active, .btn-group>.btn:active, .btn-group>.btn:focus, .btn-group>.btn:hover {
+    z-index: 2;
+}
+.btn-default.disabled {
+    color: #999;
+}
+
+.btn-default.active, .btn-default:active, .open>.dropdown-toggle.btn-default {
+    background-image: none;
+}
+
+.btn-default.active, .btn-default:active, .btn-default:hover, .open>.dropdown-toggle.btn-default {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+    cursor: not-allowed;
+    opacity: .65;
+    filter: alpha(opacity = 65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.btn.active, .btn:active {
+    outline: 0;
+    background-image: none;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
 }
 @media (min-width: 100px) and (max-width: 1024px) {
 
@@ -376,6 +446,7 @@ div.report table th, div.report table td{
             // $(html).find("input:disabled").attr("disabled", false);
 			$('#_print').contents().find('body>div.report').html('');
 			$('#_print').contents().find('body>div.report').html(html);
+			$('#_print').contents().find('body>div.report').find(".btn.active-btn").css("border-width", "5px");
 			$('#_print').contents().find('body>div.report').find("#approval_title").val(window.app.approval_title);
             $('#_print').contents().find('#comment-before').val($('.modal-content').find("#comment-before").val());
 			$.each(data, function(key, value){
@@ -431,8 +502,11 @@ div.report table th, div.report table td{
 					}
 					else if(tagName == "INPUT"){
 						if($(pTag).attr("type") == "radio"){
-							$(pTag).yVal(`${value}`);
-							$(pTag).yReadonly(true);
+                            console.log($(pTag));
+							{#$(pTag).yVal(`${value}`);#}
+							{#$(pTag).yReadonly(true);#}
+
+                            {#$(pTag).closest("label").css("background", "black!important");#}
 						}
 						else{
 							$(pTag).val(`${value}`);
@@ -449,6 +523,8 @@ div.report table th, div.report table td{
 
 				}
 			});
+            $('#_print').contents().find("body").css("print-color-adjust", "exact!important");
+            {#$('#_print').contents().find(".btn.active").css("-webkit-print-color-adjust", "exact!important");#}
 			setTimeout(function(){
 				parent.frames['_print'].focus();
 				parent.frames['_print'].print();
@@ -596,6 +672,7 @@ div.report table th, div.report table td{
                             var member_list_length = pResult.member_list.length;
                             var html_chair = '';
                             var chair_exist = false;
+                            var memo_already = [];
                             $.each(pResult.member_list, function(pIndex, pMember){
                                 if(pMember.reg_type == 0 || pMember.reg_type == 1){
 									count ++;
@@ -613,11 +690,14 @@ div.report table th, div.report table td{
 										isProcessing = true;
                                     }
                                     if(before != '' &&  (new Date(pMember.update_dtm) - new Date(before)) < 3000){
-                                    	status_text = `<img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/>`;
+                                    	status_text = `<img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status != 1 ? 'style="display:none;"' : ""}/>`;
 									}
                                     else{
-                                    	status_text = `<img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status == 0 ? 'style="display:none;"' : ""}/>`;
+                                    	status_text = `<img src="/static/files/${pMember.sign_path}" width="46" height="46" ${status != 1 ? 'style="display:none;"' : ""}/>`;
 									}
+                                    if(status == -1){
+                                        status_text = '반려 ';
+                                    }
                                     before = pMember.update_dtm;
                                     let date_exist = pMember.update_dtm != '';
                                     let date_str = date_exist ? pMember.update_dtm.split(" ")[0] : '';
@@ -639,14 +719,16 @@ div.report table th, div.report table td{
                                         html1 += html;
                                         if(parseInt(pMember.mber_sn) == 4) chair_exist = true;
                                     }
-									if(pMember.memo.trim() != ''){
+									if(pMember.memo.trim() != '' && !memo_already.includes(pMember.mber_sn)){
 										comment += `${pMember.mber_nm} : ${pMember.memo}\n`;
+                                        memo_already.push(pMember.mber_sn);
 									}
                                 }
                                 else{
                                     html2 += `<span>${pMember.mber_nm};</span>`;
-									if(pMember.memo.trim() != ''){
+									if(pMember.memo.trim() != '' && !memo_already.includes(pMember.mber_sn)){
 										comment += `${pMember.mber_nm} : ${pMember.memo}\n`;
+                                        memo_already.push(pMember.mber_sn);
 									}
                                 }
                             });

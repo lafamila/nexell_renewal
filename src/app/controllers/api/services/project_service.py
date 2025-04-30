@@ -1267,7 +1267,7 @@ def get_s1_account_report_list(params):
 				, IF (s.prdlst_se_code = '2', s.dlnt, '') AS dlnt2
 				, IF (s.prdlst_se_code = '3', s.dlnt, '') AS dlnt3
 				, IF (s.prdlst_se_code = '4', s.dlnt, '') AS dlnt4
-				, IF (s.prdlst_se_code = '9', s.dlnt, '') AS dlnt9
+				, IF (s.prdlst_se_code IN ('9', '10'), s.dlnt, '') AS dlnt9
 				, (SELECT code_nm FROM code WHERE parnts_code='PRDLST_SE_CODE' AND code=s.prdlst_se_code) AS prdlst_se_nm
 				, p.dlamt AS p_dlamt
 				, (s.dlnt * p.dlamt) AS p_total
@@ -1459,7 +1459,7 @@ def get_s61_account_report_list(params):
 				, IF (s.prdlst_se_code = '2', s.dlnt, '') AS dlnt2
 				, IF (s.prdlst_se_code = '3', s.dlnt, '') AS dlnt3
 				, IF (s.prdlst_se_code = '4', s.dlnt, '') AS dlnt4
-				, IF (s.prdlst_se_code = '9', s.dlnt, '') AS dlnt9
+				, IF (s.prdlst_se_code IN ('9', '10'), s.dlnt, '') AS dlnt9
 				, p.dlamt AS p_dlamt
 				, (s.dlnt * p.dlamt) AS p_total
 				, p.bcnc_sn AS p_bcnc_sn

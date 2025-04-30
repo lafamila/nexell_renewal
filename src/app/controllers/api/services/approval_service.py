@@ -99,7 +99,6 @@ def insert_approval_member(params):
             approval_list.append({"approval_sn" : params['approval_sn'], "mber_sn" : s['mber_sn'], "reg_type" : 2})
     g.curs.execute("SELECT code_ordr FROM code WHERE parnts_code='APPROVAL_TY_CODE' AND code=%s", params['approval_ty_code'])
     code_ordr = int(g.curs.fetchone()['code_ordr'])
-    print(code_ordr, already_members)
     if code_ordr in (2, 3):
         if '91' not in already_members:
             approval_list.append({"approval_sn": params['approval_sn'], "mber_sn": '91', "reg_type": 2})
@@ -211,7 +210,9 @@ def get_approval_datatable(params):
 				, (SELECT mber_nm FROM member WHERE mber_sn=a.reg_mber) AS start_mber_nm
 				, (SELECT dept_code FROM member WHERE mber_sn=a.reg_mber) AS start_dept_code
 				, (SELECT code_nm FROM code WHERE parnts_code='DEPT_CODE' AND code=(SELECT dept_code FROM member WHERE mber_sn=a.reg_mber)) AS start_dept_nm
-				FROM (SELECT * FROM approval_member WHERE mber_sn=%s) am INNER JOIN (SELECT approval_sn, mber_sn, MIN(reg_type) AS reg_type FROM approval_member WHERE mber_sn=%s GROUP BY approval_sn, mber_sn) mam ON am.approval_sn=mam.approval_sn AND am.mber_sn=mam.mber_sn AND am.reg_type=mam.reg_type
+				FROM (SELECT * FROM approval_member WHERE mber_sn=%s) am 
+				INNER JOIN (SELECT approval_sn, mber_sn, MIN(reg_type) AS reg_type FROM approval_member WHERE mber_sn=%s GROUP BY approval_sn, mber_sn) mam 
+				ON am.approval_sn=mam.approval_sn AND am.mber_sn=mam.mber_sn AND am.reg_type=mam.reg_type
 				LEFT JOIN approval a 
 				ON am.approval_sn=a.approval_sn
 				INNER JOIN 
@@ -244,6 +245,10 @@ def get_approval_datatable(params):
         query += " AND a.reg_mber=%s"
         data.append(params["s_start_mber_sn"])
 
+    if "s_final_mber_sn" in params and params['s_final_mber_sn']:
+        query += " AND last.mber_sn=%s"
+        data.append(params["s_final_mber_sn"])
+
     if "s_start_dept_code" in params and params['s_start_dept_code']:
         query += " AND (SELECT dept_code FROM member WHERE mber_sn=a.reg_mber)=%s"
         data.append(params["s_start_dept_code"])
@@ -272,9 +277,7 @@ def get_approval_datatable(params):
                     ELSE ''
                     END = %s """
             data.append(params["s_approval_status"])
-    params["custom_order"] = ["IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), '9999-99-99') DESC", "a.approval_sn DESC"]
-    print(query)
-    print(data)
+    params["custom_order"] = ["IF(m.approval_status_code <> 0, DATE_FORMAT(m.update_dtm, '%%Y-%%m-%%d'), IF((SELECT MIN(approval_status_code) FROM approval_member WHERE approval_sn=a.approval_sn) = '-1', (SELECT DATE_FORMAT(MIN(update_dtm), '%%Y-%%m-%%d') FROM approval_member WHERE approval_sn=a.approval_sn AND approval_status_code=-1),'9999-99-99')) DESC", "a.approval_sn DESC"]
     return dt_query(query, data, params)
 
 

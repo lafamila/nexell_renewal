@@ -211,9 +211,36 @@ function updateThumbnail(dropZoneElement, file) {
     </colgroup>
     <thead>
         <tr>
+            <th class="color-contract text-right hasinput" colspan="5">
+                표 추가
+                <input type="text form-control" style="width:40px;" name="col_size" placeholder="컬럼"/>
+                X
+                <input type="text form-control" style="width:40px;" name="row_size" placeholder="줄수"/>
+                <button type="button" class="btn btn-table btn-warning" title="추가" id="addRow"><i class="fa fa-plus"></i></button>
+            </th>
+        </tr>
+        <tr>
             <th class="color-contract" colspan="5">내역</th>
         </tr>
     </thead>
+    <tbody>
+
+    </tbody>
+    <tbody role="tables_row">
+      <tr data-row="tables_tr" style="display:none;">
+        <td colspan="5" style="width:100%;">
+          <input type="text" class="text-center " name="col1[]" value=""/>
+          <input type="text" class="text-center " name="col2[]" value=""/>
+          <input type="text" class="text-center " name="col3[]" value=""/>
+          <input type="text" class="text-center " name="col4[]" value=""/>
+          <input type="text" class="text-center " name="col5[]" value=""/>
+          <input type="text" class="text-center " name="col6[]" value=""/>
+          <input type="text" class="text-center " name="col7[]" value=""/>
+          <input type="text" class="text-center " name="col8[]" value=""/>
+        </td>
+      </tr>
+
+    </tbody>
     <tbody>
         <tr>
             <td class="text-center" style="height:20vh!important;" colspan="5">
@@ -281,7 +308,7 @@ function updateThumbnail(dropZoneElement, file) {
         <tr>
             <th class="color-contract" colspan="2">금액</th>
             <td class="hasinput" colspan="3">
-                <input type="number" class="form-control text-left" name="amount">
+                <input type="text" class="form-control text-left" data-type="number" name="amount">
             </td>
         </tr>
 
@@ -353,6 +380,18 @@ function updateThumbnail(dropZoneElement, file) {
                 $(document).find("tbody[role='images_row']").append($(origin));
             }
         }
+        if(selector == "tables_tr"){
+            console.log("tables_tr", count);
+            for(let i=0;i<count;i++){
+                var trs = $(document).find("tbody[role='tables_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='tables_row']").append($(origin));
+            }
+            $(document).find("tbody[role='tables_row']").trigger("change");
+
+        }
+
     }
     $(document).on("change", "[name='pay_method']", function(){
         var pay_method = $('input[name=pay_method]:checked').val();
@@ -363,7 +402,37 @@ function updateThumbnail(dropZoneElement, file) {
             $(document).find("tbody[role='account']").hide();
         }
     });
+
+    $(document).on("change", "tbody[role='tables_row']", function(){
+        let col_size = parseInt($(document).find("[name='col_size']").val()); if(isNaN(col_size)) col_size = 0;
+        let row_size = parseInt($(document).find("[name='row_size']").val()); if(isNaN(row_size)) row_size = 0;
+        for(let i=0;i<$(document).find("tr[data-row='tables_tr']").length;i++){
+            if(i < row_size){
+                $(document).find("tr[data-row='tables_tr']").eq(i).show();
+                for(let j=1;j<=8;j++){
+                    if(j <= col_size){
+                        $(document).find("tr[data-row='tables_tr']").eq(i).find(`[name='col${j}[]']`).show();
+                        $(document).find("tr[data-row='tables_tr']").eq(i).find(`[name='col${j}[]']`).css("width", `calc(${(100/col_size)}% - 5px)`);
+                    }
+                    else{
+                        $(document).find("tr[data-row='tables_tr']").eq(i).find(`[name='col${j}[]']`).hide();
+                    }
+                }
+            }
+            else{
+                $(document).find("tr[data-row='tables_tr']").eq(i).hide();
+            }
+        }
+    });
+
     {% if init %}
+    $(document).on("click", "#addRow", function(){
+        let row_size = parseInt($(document).find("[name='row_size']").val()); if(isNaN(row_size)) row_size = 0;
+        let add = row_size - $(document).find("tr[data-row='tables_tr']").length;
+        cloneRow("tables_tr", add);
+        {#if(add > 0) cloneRow("tables_tr", add);#}
+    });
+
     $(document).ready(function(){
         $(document).find(".datepicker").datepicker({
             beforeShow: function(dateText) {
@@ -375,7 +444,14 @@ function updateThumbnail(dropZoneElement, file) {
             onClose: function(dateText) {
             },
         });
+        var input = document.querySelector('input[data-type="number"]');
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9 \,]/, '');
+        });
+
     });
+
+
     $(document).on("change", "#ex_filename", function(){
 
 
@@ -403,9 +479,6 @@ function updateThumbnail(dropZoneElement, file) {
             }
             else{
               //cloneRow할자리
-              console.log(order);
-              console.log($(document).find("[name='f_sn[]']"));
-              console.log($(document).find("[name='f_sn[]']").eq(order));
               $(document).find("[name='f_sn[]']").eq(order).val(file_sn);
               window.length--;
               if(window.length == 0){
@@ -415,6 +488,11 @@ function updateThumbnail(dropZoneElement, file) {
         }
         oReq.send(form);
     }
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+
     {% else %}
     $.fn.afterLoadApproval = function() {
         $("#dropbox").hide();
@@ -447,6 +525,8 @@ function updateThumbnail(dropZoneElement, file) {
 
             }
           });
+          $(document).find(".btn.active").addClass("active-btn");
+
     }
     {% endif %}
 </script>

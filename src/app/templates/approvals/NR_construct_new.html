@@ -723,6 +723,18 @@
 
                         var completed_est_1 = 0;
                         var completed_est_3 = 0;
+                        $.each(pData.dailyList.taxbilList, function(pI, pT){
+                            var pblicte_de = pT.pblicte_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()){
+                                completed_est_3 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
+                            }
+                        });
                         $.each(pData.outsrcList, function(pIndex, pOut){
                             if(pOut.outsrc_fo_sn == parseInt(outsrc_fo_sn)){
                                 $.each(pOut.taxbilList, function(pI, pT){
@@ -738,20 +750,7 @@
                                     }
                                 });
                             }
-                            else if(pOut.outsrc_fo_sn == 146){
-                                $.each(pOut.taxbilList, function(pI, pT){
-                                    var pblicte_de = pT.pblicte_de;
-                                    var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
-                                    var previous = new Date(now);
-                                    previous.setDate(1);
-                                    previous.setMonth(previous.getMonth() - 1);
-                                    var target_de = new Date(pblicte_de);
-                                    target_de.setDate(1);
-                                    if(target_de.getTime() < previous.getTime()){
-                                        completed_est_3 += (pT.splpc_am + (pT.vat == "" ? 0 : parseInt(pT.vat)));
-                                    }
-                                });
-                            }
+
                         });
                         $(document).find("[name='completed_est_1']").val(completed_est_1.toFormat('NUMBER'));
                         $(document).find("[name='completed_est_2']").val(0);
@@ -793,6 +792,48 @@
 
                         var completed_logi_1 = 0, now_logi_1 = 0;
                         var completed_logi_2 = 0, now_logi_2 = 0;
+                        console.log(pData.s1AccountList);
+                        $.each(pData.s1AccountList, function(pI, pV){
+                            var sum = parseInt(pV.p_total);
+                            var pblicte_de = pV.s_dlivy_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()){
+                                console.log("s1", pblicte_de, sum);
+                                completed_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+
+                            }
+                            else if(target_de.getTime() == previous.getTime()){
+                                now_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+                            }
+                        });
+                        $.each(pData.s2AccountList, function(pI, pV){
+                            var sum = parseInt(pV.p_total);
+                            var pblicte_de = pV.dlivy_de;
+                            var now = (new Date((new Date()).getTime() - (new Date()).getTimezoneOffset())).toISOString().split("T")[0];
+                            var previous = new Date(now);
+                            previous.setDate(1);
+                            previous.setMonth(previous.getMonth() - 1);
+                            var target_de = new Date(pblicte_de);
+                            target_de.setDate(1);
+                            if(target_de.getTime() < previous.getTime()){
+                                console.log("s2", pblicte_de, sum);
+                                completed_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+
+                            }
+                            else if(target_de.getTime() == previous.getTime()){
+                                now_logi_1 += parseInt(sum);
+                                all_sum_total += parseInt(sum);
+                            }
+                        });
+
                         $.each(pData.s3AccountList, function(pI, pV){
                             var sum = parseInt(pV.s_total);
                             var pblicte_de = pV.p_de;
@@ -803,6 +844,7 @@
                             var target_de = new Date(pblicte_de);
                             target_de.setDate(1);
                             if(target_de.getTime() < previous.getTime()){
+                                console.log("s3", pblicte_de, sum);
                                 completed_logi_1 += parseInt(sum);
                                 all_sum_total += parseInt(sum);
 
@@ -823,6 +865,7 @@
                             var target_de = new Date(pblicte_de);
                             target_de.setDate(1);
                             if(target_de.getTime() < previous.getTime()) {
+                                console.log("s4", pblicte_de, sum);
                                 completed_logi_2 += parseInt(sum);
                                 all_sum_total += parseInt(sum);
                             }

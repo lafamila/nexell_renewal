@@ -406,7 +406,13 @@
                                 $(origin).find("input").attr("disabled", false);
                                 $(origin).find("[data-target='S']").find("input").attr("readonly", true);
                                 $(origin).find("[data-target='S']").find("select option:not(:selected)").attr("disabled", true);
-                                $(origin).find("[data-target='H']").find(".select2").select2();
+                                if(pValue.dlivy_de == ''){
+                                    $(origin).find("[data-target='H']").find("select, input").attr("readonly", true);
+                                    $(origin).find("[data-target='H']").find("select option:not(:selected)").attr("disabled", true);
+                                }
+                                else{
+                                    $(origin).find("[data-target='H']").find(".select2").select2();
+                                }
                             }
                             else{
                                 $(origin).find("[data-target='H']").find("select, input").attr("disabled", true);
