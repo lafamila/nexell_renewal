@@ -282,9 +282,9 @@
             <th class="color-contract text-center">직접지급</th>
             <th class="color-contract text-center">일용직</th>
             <th class="color-contract text-center">설치비 계</th>
-            <th class="color-contract text-center">장비 자재</th>
+            <th class="color-contract text-center">자재</th>
             <th class="color-contract text-center">간접비</th>
-            <th class="color-contract text-center">장비+기타 계</th>
+            <th class="color-contract text-center">자재+기타 계</th>
             <th class="color-contract text-center">합계</th>
             <th class="color-contract text-center">집행률</th>
         </tr>
@@ -805,12 +805,12 @@
                             if(target_de.getTime() < previous.getTime()){
                                 console.log("s1", pblicte_de, sum);
                                 completed_logi_1 += parseInt(sum);
-                                all_sum_total += parseInt(sum);
+                                // all_sum_total += parseInt(sum);
 
                             }
                             else if(target_de.getTime() == previous.getTime()){
                                 now_logi_1 += parseInt(sum);
-                                all_sum_total += parseInt(sum);
+                                // all_sum_total += parseInt(sum);
                             }
                         });
                         $.each(pData.s2AccountList, function(pI, pV){
@@ -825,12 +825,12 @@
                             if(target_de.getTime() < previous.getTime()){
                                 console.log("s2", pblicte_de, sum);
                                 completed_logi_1 += parseInt(sum);
-                                all_sum_total += parseInt(sum);
+                                // all_sum_total += parseInt(sum);
 
                             }
                             else if(target_de.getTime() == previous.getTime()){
                                 now_logi_1 += parseInt(sum);
-                                all_sum_total += parseInt(sum);
+                                // all_sum_total += parseInt(sum);
                             }
                         });
 
@@ -877,7 +877,7 @@
                         console.log(all_sum_total);
                         $(document).find("[name='completed_logi_1']").val(completed_logi_1.toFormat('NUMBER'));
                         $(document).find("[name='completed_logi_2']").val(completed_logi_2.toFormat('NUMBER'));
-                        $(document).find("[name='completed_logi_mid_tot']").val((completed_logi_1 + completed_logi_2).toFormat('NUMBER'));
+                        $(document).find("[name='completed_logi_mid_tot']").val((completed_logi_2).toFormat('NUMBER'));
                         {% if init %}
                         $(document).find("[name='now_logi_1']").val(now_logi_1.toFormat('NUMBER'));
                         $(document).find("[name='now_logi_2']").val(now_logi_2.toFormat('NUMBER'));
@@ -952,7 +952,8 @@
         var completed_logi_1 = getValue($(this).find(`[name="completed_logi_1"]`), false);
         var completed_logi_2 = getValue($(this).find(`[name="completed_logi_2"]`), false);
         var completed_indirect = getValue($(this).find(`[name="completed_indirect"]`), false);
-        var completed_logi_total = completed_logi_1 + completed_logi_2 + completed_indirect;
+        // var completed_logi_total = completed_logi_1 + completed_logi_2 + completed_indirect;
+        var completed_logi_total = completed_logi_2 + completed_indirect;
         $(this).find(`[name="completed_logi_total"]`).html(completed_logi_total.toFormat('NUMBER'));
 
         var completed_total = completed_est_total + completed_logi_total;

@@ -480,9 +480,9 @@
                                 msh_total_amount += amount;
                             });
                             var c_opt_amount = 0;
-                            if(pData.sOptionCostList != null){
-                                c_opt_amount = parseInt(pData.sOptionCostList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
-                            }
+                            // if(pData.sOptionCostList != null){
+                            //     c_opt_amount = parseInt(pData.sOptionCostList.c_opt_amount); if(isNaN(c_opt_amount)) c_opt_amount = 0;
+                            // }
                             var rcppay_amt_total = 0;
                             $.each(pData.etcRcppayList, function(pI, pV){
                                 var amt = parseInt(pV.amount);

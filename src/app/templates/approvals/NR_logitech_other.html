@@ -289,6 +289,9 @@
     </tbody>
 
 </table>
+<div id="last">
+
+</div>
 <div id="images">
 
 </div>
@@ -424,6 +427,16 @@
             {% endif %}
             $(document).find("tbody[role='equip_row']").trigger("change");
         }
+        else if(selector == "images_tr"){
+
+            for(let i=0;i<count;i++) {
+                var trs = $(document).find("tbody[role='images_row'] tr");
+                var origin = trs.eq(0).clone(true);
+                $(origin).find("td.hasinput input").val("");
+                $(document).find("tbody[role='images_row']").append($(origin));
+            }
+        }
+
     }
     // 공사변경 part2 START
     $(document).on("change", "tbody[role='ct_se_code_extra']", function(){
@@ -644,6 +657,7 @@
         contentType: "application/json; charset=utf-8",
         processData: false,
         success: function(pResult){
+            console.log(pResult);
           var html = '';
           $.each(pResult, function(pIndex, path){
               if(path.endsWith("pdf")){

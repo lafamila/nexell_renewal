@@ -1108,11 +1108,6 @@ def get_g_cost_list(params):
     return result
 
 
-
-
-
-
-
 def get_extra_cost_list(params):
     query = """SELECT cntrct_execut_code
 				, ct_se_code
@@ -1257,7 +1252,6 @@ def get_etc_rcppay_report_list(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
-
 
 
 def get_s1_account_report_list(params):
@@ -2417,7 +2411,6 @@ def insert_BF_c_project(params):
         g.curs.execute(query, (params["cntrct_sn"],))
 
 
-
 def update_BF_c_project(params):
     g.curs.execute("""SELECT CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
     				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
@@ -3173,7 +3166,6 @@ def get_expect_equipment_datatable(params):
 
 def get_expect_equip_list(params):
 
-
     query = """SELECT MIN(e.equip_sn) AS equip_sn
                     , e.model_no
                     , e.prdlst_se_code
@@ -3192,12 +3184,12 @@ def get_expect_equip_list(params):
                 FROM expect_equipment e
 """
     if "approval_sn" in params:
-        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND reg_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) GROUP BY cnnc_sn) q
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND deleted=0 AND reg_dtm < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) GROUP BY cnnc_sn) q
                         ON e.equip_sn=q.cnnc_sn
                         WHERE 1=1 
                         AND e.reg_time < (SELECT IFNULL(MAX(update_dtm), (SELECT reg_dtm FROM approval WHERE approval_sn=%(approval_sn)s)) FROM approval_member WHERE approval_sn=%(approval_sn)s GROUP BY approval_sn) """
     else:
-        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL GROUP BY cnnc_sn) q
+        query += """ LEFT OUTER JOIN (SELECT cnnc_sn, MAX(IFNULL(dlivy_de, '0000-00-00')) as dlivy_de, SUM(IFNULL(dlnt, 0)) as dlnt, SUM(IFNULL(before_dlnt, 0)) AS before_dlnt FROM equipment WHERE cnnc_sn IS NOT NULL AND deleted=0 GROUP BY cnnc_sn) q
                         ON e.equip_sn=q.cnnc_sn
                         WHERE 1=1 """
 

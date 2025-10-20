@@ -384,6 +384,8 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
             tRemain = round((int(rcppay['T']) - int(tTotal)) / 1000)
             if cntrct_sn in expect:
                 if last_day >= expect[cntrct_sn][0] and expect[cntrct_sn][1] and tRemain > 0:
+                    if int(cntrct_sn) in (1001, 1103):
+                        print(cntrct_sn, tRemain)
                     cnt_2 += 1
                     remain_2 += tRemain
         for cntrct_sn, pRow in result['rcppay'].items():
@@ -395,6 +397,8 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
                     remain_1 += sRemain if sRemain >= 10 else 0
                 tRemain = round(int(rcppay['T']) / 1000)
                 if last_day >= expect[cntrct_sn][0] and expect[cntrct_sn][1] and tRemain > 0:
+                    if int(cntrct_sn) in (1001, 1103):
+                        print(cntrct_sn, tRemain)
                     cnt_2 += 1
                     remain_2 += tRemain
 

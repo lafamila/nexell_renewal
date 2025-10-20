@@ -1,0 +1,544 @@
+{% include "approvals/common_style.html" %}
+<style>
+  .input-available {
+    height: 36px !important;
+  }
+  table.table-bordered td:last-child,
+  table.table-bordered th:last-child {
+    border-right-width: 1px !important;
+  }
+  .jarviswidget td:last-child,
+  .jarviswidget th:last-child {
+    border-right: 1px solid #ddd;
+  }
+</style>
+<table
+  class="table table-bordered table-form sub-table"
+  style="width: 35% !important">
+  <colgroup>
+    <col width="25%" />
+    <col width="75%" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th colspan="2" class="sub-title colorN text-center">
+        <span>공사현황</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="colorSky text-center">판매처(현장명)</td>
+      <td class="text-center hasinput">
+        <select
+          class="form-control select2 w100p"
+          id="cntrct_sn"
+          name="cntrct_sn"
+          style="padding-top: 0px !important; padding-bottom: 0px !important">
+          {% if not init %}
+          <option value=""></option>
+          {% for code in contract_all_list %}
+          <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
+          {% endfor %} {% endif %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="colorSky text-center">판매처담당자</td>
+      <td class="hasinput">
+        <input
+          type="text"
+          class="form-control text-center"
+          name="sale_charger"
+          id="sale_charger" />
+      </td>
+    </tr>
+    <tr>
+      <td class="colorSky text-center">납품기간</td>
+      <td class="hasinput">
+        <input
+          type="text"
+          class="form-control datepicker"
+          style="display: inline-block; width: 89px !important"
+          data-type="date"
+          data-dateformat="yy-mm-dd"
+          data-mask="9999-99-99"
+          data-mask-placeholder="_"
+          id="e_opt_period_start"
+          name="e_opt_period_start"
+          placeholder="[시작일자]" />
+        <span
+          class="input-group-addon"
+          style="
+            display: inline-block;
+            width: 10px !important;
+            padding: 0;
+            border: 0;
+          "
+          >~</span
+        >
+        <input
+          type="text"
+          class="form-control datepicker"
+          style="display: inline-block; width: 89px !important"
+          data-type="date"
+          data-dateformat="yy-mm-dd"
+          data-mask="9999-99-99"
+          data-mask-placeholder="_"
+          id="e_opt_period_end"
+          name="e_opt_period_end"
+          placeholder="[종료일자]" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+  <colgroup>
+    <col width="100" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="120" />
+    <col width="1" />
+  </colgroup>
+  <thead>
+    <th class="sub-title colorN text-center" colspan="14">
+      <span
+        style="
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        "
+        >판매정보</span
+      >
+
+      <div
+        class="btn-group"
+        style="
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          right: 0;
+        ">
+        <button
+          type="button"
+          class="btn btn-table btn-warning"
+          title="재고추가"
+          id="addRowStock">
+          재고장비추가
+        </button>
+        <button
+          type="button"
+          class="btn btn-table btn-warning"
+          title="추가"
+          id="addRow">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    </th>
+  </thead>
+  <tbody role="header">
+    <tr>
+      <th class="color-contract text-center">판매구분</th>
+      <th class="color-contract text-center">매입일</th>
+      <th class="color-contract text-center">매입처</th>
+      <th class="color-contract text-center">상품명</th>
+      <th class="color-contract text-center">모델명</th>
+      <th class="color-contract text-center">수량</th>
+      <th class="color-contract text-center">매입단가</th>
+      <th class="color-contract text-center">매입금액</th>
+      <th class="colorP text-center">판매처</th>
+      <th class="colorP text-center">판매금액</th>
+      <th class="colorP text-center">기타비용(배송/설치비)</th>
+      <th class="colorP text-center">VA</th>
+      <th class="colorP text-center">비고</th>
+      <th class="color-contract text-center">-</th>
+    </tr>
+  </tbody>
+  <tbody role="equip_row" data-tr="equip_tr"></tbody>
+  <tfoot>
+    <tr>
+      <td class="colorG text-center">계</td>
+      <td class="colorG text-right"></td>
+      <td class="colorG text-right"></td>
+      <td class="colorG text-right"></td>
+      <td class="colorG text-right"></td>
+      <td class="colorG text-center" data-column="total_dlnt"></td>
+      <td class="colorG text-right"></td>
+      <td class="colorG text-right" data-column="total_pamount"></td>
+      <td class="colorG text-right"></td>
+      <td class="colorG text-right" data-column="total_samount"></td>
+      <td class="colorG text-right" data-column="total_etc"></td>
+      <td class="colorG text-right" data-column="total_va"></td>
+      <td class="colorG"></td>
+      <td class="colorG"></td>
+    </tr>
+  </tfoot>
+</table>
+<table
+  class="table table-bordered table-form sub-table"
+  style="width: 50% !important">
+  <colgroup>
+    <col width="25%" />
+    <col width="25%" />
+    <col width="25%" />
+    <col width="25%" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th colspan="4" class="sub-title colorN text-center">
+        <span>계약정보</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="colorSky text-center">계약일</td>
+      <td class="hasinput">
+        <input
+          type="text"
+          class="form-control text-center datepicker"
+          data-type="date"
+          name="cntrct_de"
+          id="cntrct_de" />
+      </td>
+      <td class="colorSky text-center">입금예정일</td>
+      <td class="hasinput">
+        <input
+          type="text"
+          class="form-control text-center datepicker"
+          data-type="date"
+          name="expect_de"
+          id="expect_de" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table
+  class="table table-bordered table-form sub-table"
+  style="width: 50% !important">
+  <colgroup>
+    <col width="25%" />
+    <col width="25%" />
+    <col width="25%" />
+    <col width="25%" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th colspan="4" class="sub-title colorN text-center">
+        <span>특이사항</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="4" class="hasinput">
+        <textarea
+          style="width: 100%; height: 160px; resize: none; border: none"
+          name="option_bigo"></textarea>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<script>
+    function isValidDate(dateString) {
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      if(!dateString.match(regEx)) return false;  // Invalid format
+      var d = new Date(dateString);
+
+      var dNum = d.getTime();
+      if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+      return (new Date(d.getTime()-(new Date()).getTimezoneOffset())).toISOString().slice(0,10) === dateString;
+    }
+
+
+    $(document).on("click", "#addRowStock", function(){
+        var new_window_width = parseInt(screen.width) - 100;
+        var new_window_height = parseInt(screen.height) - 100;
+        var positionX = 50;
+        var stock_sns = [];
+        $(document).find(`[name="stock_sn[]"]`).each(function (pIndex, pTag) {
+            if($(pTag).val() != '')
+                stock_sns.push($(pTag).val());
+        });
+        var params = "&response="+($(this).attr("id") == "addRowStock" ? "0" : "1");
+        if (stock_sns.length > 0) {
+            params += "&before=" + stock_sns.join(",");
+        }
+        var popup = window.open("/stock/search?" + params, "stock_search", `width=${new_window_width},height=${new_window_height},left=${positionX}`);
+    });
+
+    var prdlst_se_code = {"1" : "1", "2" : "2", "3" : "4", "4" : "3"};
+    cloneRowStock = function(params, response){
+        $.ajax({
+            url : '/api/stock/get_stock_info',
+            method: 'GET',
+            data : {"stock_sns" : params},
+            success: function(pResult){
+                var rows = cloneRow(`equip_tr`, pResult.length);
+                $.each(pResult, function(pIndex, pValue){
+                    var row = rows[pIndex];
+                    $(row).find(`input[type='hidden'][name='stock_sn[]']`).val(pValue.stock_sn);
+                    if(prdlst_se_code.hasOwnProperty(pValue.prduct_ty_code+"")){
+                        $(row).find(`[name="prdlst_se_code[]"]`).yVal(prdlst_se_code[pValue.prduct_ty_code+""]);
+                    }
+                    else{
+                        $(row).find(`[name="prdlst_se_code[]"]`).yVal('9');
+                    }
+                    $(row).find(`[name="bcnc_sn[]"]`).yVal('79');
+                    $(row).find(`select[name="bcnc_sn[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
+                    $(row).find(`select[name="prdlst_se_code[]"]`).find("option:not(:selected)").attr("disabled", "disabled");
+                    $(row).find(`[name="model_no[]"]`).attr("readonly", true);
+                    $(row).find(`[name="model_no[]"]`).val(pValue.modl_nm);
+                    $(row).find(`[name="dlnt[]"]`).val("1");
+                    $(row).find(`[name="dlnt[]"]`).attr("readonly", true);
+                    $(row).find(`[name="dlamt[]"]`).val("0");
+                    $(row).find(`[name="dlamt[]"]`).attr("readonly", true);
+
+
+                });
+                $(document).find(`tbody[role='equip_row']`).trigger("change");
+
+            }
+        });
+
+    }
+
+    fnValidate = function(){
+                    var result = true;
+                    if($(document).find("#cntrct_de").val() == ''){
+                        alert("계약일을 입력해주세요.");
+                        result = false;
+                        return result;
+                    }
+                    if($(document).find("#expect_de").val() == ''){
+                        alert("입금예정일을 입력해주세요.");
+                        result = false;
+                        return result;
+                    }
+                    if($(document).find("#cntrct_sn").val() == ''){
+                        alert("프로젝트를 선택해주세요.");
+                        result = false;
+                        return result;
+                    }
+
+                    return result;
+               }
+    cloneRow = function(selector, count){
+        var cloned_row = [];
+        if(selector == "equip_tr"){
+            for(let i=0;i<count;i++) {
+                var html = `<tr data-row="equip_tr">
+                            <td class="hasinput">
+                                 <select class="form-control select2 init-select2" name="sale_type[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    <option value="T">유상판매</option>
+                                    <option value="F">무상판매</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-center" data-type="date" name="ddt_man[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <select class="form-control select2 init-select2" name="bcnc_sn[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    {% for code in bcnc_list %}
+                                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <select class="form-control select2 init-select2" name="prdlst_se_code[]" style="width:100%!important;">
+                                    <option value="">[전체]</option>
+                                    {% for code in prdlst_se_code_list %}
+                                    <option value="{{code.value}}">{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-left" name="model_no[]"/>
+                                <input type="hidden" name="stock_sn[]" value=""/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-center" data-type="number" name="dlnt[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="dlamt[]"/>
+                            </td>
+                            <td class="text-right" name="pamount[]"></td>
+                            <td class="hasinput">
+                                <select class="form-control select2 init-select2" name="s_bcnc_sn[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    {% for code in bcnc_list %}
+                                    <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="samount[]"/>
+                            </td>
+                            <td class="hasinput">
+                                <input type="text" class="form-control text-right" data-type="number" name="etc[]"/>
+                            </td>
+                            <td class="text-right" name="va[]"></td>
+                            <td class="hasinput">
+                                <select class="form-control select2 init-select2" name="rm[]" style="width:100%!important;">
+                                    <option value=""></option>
+                                    <option value="0">가구사</option>
+                                    <option value="1">사내판매</option>
+                                    <option value="2">일반판매</option>
+                                    <option value="3">건설사판매</option>
+                                    <option value="4">장기재고</option>
+                                </select>
+                            </td>
+                            <td class="hasinput">
+                                <button class="btn btn-table btn-warning removeRow" title="삭제"><i class="fa fa-minus"></i></button>
+                            </td>
+
+                        </tr>`;
+                var tag = $($.parseHTML(html));
+                $(document).find("tbody[role='equip_row']").append($(tag));
+                {% if init %}
+                $(tag).find(".init-select2").select2();
+                $(tag).find(".init-select2").removeClass("init-select2");
+                {% endif %}
+                cloned_row.push($(tag));
+
+            }
+            {% if init %}
+                $(document).find(".cloned").select2();
+                $(document).find(".cloned").removeClass("cloned");
+            {% endif %}
+            $(document).find("tbody[role='equip_row']").trigger("change");
+        }
+        return cloned_row;
+    }
+    $(document).on("change", "tbody[role='equip_row']", function(){
+        var total_dlnt = 0;
+        var total_samount = 0;
+        var total_pamount = 0;
+        var total_etc = 0;
+        var total_va = 0;
+        $(this).find("tr").each(function(pIndex, pRow){
+            var dlnt = parseInt($(pRow).find("input[name='dlnt[]']").val().replaceAll(",", "")); if(isNaN(dlnt)) dlnt = 0;
+            var dlamt = parseInt($(pRow).find("input[name='dlamt[]']").val().replaceAll(",", "")); if(isNaN(dlamt)) dlamt = 0;
+            var samount = parseInt($(pRow).find("input[name='samount[]']").val().replaceAll(",", "")); if(isNaN(samount)) samount = 0;
+            var etc = parseInt($(pRow).find("input[name='etc[]']").val().replaceAll(",", "")); if(isNaN(etc)) etc = 0;
+            var pamount = dlamt * dlnt;
+            var va = samount-pamount-etc;
+
+            total_dlnt += dlnt;
+            total_samount += samount;
+            total_pamount += pamount;
+            total_etc += etc;
+            total_va += va;
+            $(pRow).find("[name='va[]']").html(va.toFormat('NUMBER'));
+            $(pRow).find("[name='pamount[]']").html(pamount.toFormat('NUMBER'));
+        });
+
+        $(this).parent().find("[data-column='total_pamount']").html(total_pamount.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_dlnt']").html(total_dlnt.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_va']").html(total_va.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_etc']").html(total_etc.toFormat('NUMBER'));
+        $(this).parent().find("[data-column='total_samount']").html(total_samount.toFormat('NUMBER'));
+    });
+    {% if init %}
+    $(document).on("click", "#addRow", function(){
+        cloneRow("equip_tr", 1);
+    });
+    		if(window.projects == undefined){
+  	window.projects = {};
+  }
+
+    $(document).ready(function(){
+        $.ajax({
+            url : '/api/project/get_all_projects',
+            method: 'GET',
+            success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+                $(document).find("#cntrct_sn").yVal(13053);
+                          }
+        });
+        $(document).find(".datepicker").datepicker({
+            beforeShow: function(dateText) {
+                $(this).data('before', $(this).val());
+            },
+            onSelect: function(dateText) {
+                $(this).change();
+            },
+            onClose: function(dateText) {
+                var minDate = new Date($(this).val());
+                minDate.setDate(minDate.getDate() - (365*5));
+                $(".datepicker-s").datepicker( "option", "minDate", minDate );
+            },
+        });
+        var input = document.querySelector('input[data-type="number"]');
+        if(input){
+            input.addEventListener('input', function() {
+              this.value = this.value.replace(/[^0-9 \,]/, '');
+            });
+        }
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+    $(document).on("focusout", "input[data-type='date']", function(){
+        if(!isValidDate($(this).val()) && $(this).val() != ''){
+            alert("날짜 형식이 올바르지 않습니다. (yyyy-mm-dd)");
+            $(this).val("");
+        }
+    });
+
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+        }
+    });
+
+    $(document).on('select2:open', '.select2', function (e) {
+        const evt = "scroll.select2";
+        $(e.target).parents().off(evt);
+        $(window).off(evt);
+    });
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+    }
+    {% endif %}
+    $(document).on("click", ".removeRow", function(){
+        {% if init %}
+
+            $(this).closest("tr").remove();
+        {% endif %}
+        return false;
+    });
+</script>

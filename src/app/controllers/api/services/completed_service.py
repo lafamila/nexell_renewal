@@ -98,6 +98,7 @@ def get_completed_summary(params):
 				ORDER BY t.amt_ty_code, dept_order, t.dept_code"""
 
     g.curs.execute(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2)), str(year).zfill(4)))
+    print(query.format("'{}'".format(params['s_pxcond_mt']), "'{}-{}'".format(str(year).zfill(4), str(month).zfill(2)), str(year).zfill(4)))
     result = g.curs.fetchall()
 
     g.curs.execute("SELECT parnts_code AS p, code AS v, code_nm AS nm, code_ordr AS ordr FROM code WHERE PARNTS_CODE IN ('AMT_TY_CODE', 'DEPT_CODE')")

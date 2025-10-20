@@ -4,9 +4,13 @@ from collections import OrderedDict
 import datetime
 import calendar
 from pytz import timezone
+
+
 def get_work_datatable(params):
-    last_years = int(params["s_stdyy"].split("-")[0])-1
-    last = "{}-{}-{}".format(last_years, params["s_stdyy"].split("-")[1], params["s_stdyy"].split("-")[2])
+    last_years = int(params["s_stdyy"].split("-")[0]) - 1
+    last = "{}-{}-{}".format(
+        last_years, params["s_stdyy"].split("-")[1], params["s_stdyy"].split("-")[2]
+    )
     query = """SELECT '{0}' AS stdyy
                     , m.mber_sn
                     , m.mber_nm
@@ -28,8 +32,10 @@ def get_work_datatable(params):
                     FROM member m
                     WHERE m.enter_de <= '{0}'
                     AND m.dept_code <> ''
-            """.format(params["s_stdyy"], last, last_years+1, last_years)
-    data = ['%Y-%m-%d']
+            """.format(
+        params["s_stdyy"], last, last_years + 1, last_years
+    )
+    data = ["%Y-%m-%d"]
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " and m.dept_code=%s"
         data.append(params["s_dept_code"])
@@ -43,12 +49,15 @@ def get_work_datatable(params):
         data.append(params["s_mber_sttus_code"])
 
     if "s_cal_year" in params and params["s_cal_year"]:
-        query += " and FLOOR(DATEDIFF('{0}', m.enter_de)/365)=%s".format(params["s_stdyy"])
-        data.append(int(params["s_cal_year"])-1)
+        query += " and FLOOR(DATEDIFF('{0}', m.enter_de)/365)=%s".format(
+            params["s_stdyy"]
+        )
+        data.append(int(params["s_cal_year"]) - 1)
 
     query += " ORDER BY code_ordr, mber_sttus_code, mber_nm"
     print(query, data)
     return dt_query(query, data, params)
+
 
 def get_work_time(params):
     y, m, d = params["calendar"].split("-")
@@ -57,10 +66,11 @@ def get_work_time(params):
                     , WCTime AS end_time 
                 FROM T_SECOM_WORKHISTORY
                 WHERE WorkDate LIKE %s AND Name=%s AND WSTime <> ''"""
-    data = ['{0}{1}%'.format(y, m), params['s_mber_nm']]
+    data = ["{0}{1}%".format(y, m), params["s_mber_nm"]]
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
+
 
 def get_vacation_member(params):
     query = """SELECT mber_sn
@@ -72,6 +82,7 @@ def get_vacation_member(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
 
 def get_work_daily_summary(params, limit):
     query = """SELECT COUNT(*) AS total_count
@@ -87,22 +98,27 @@ def get_work_daily_summary(params, limit):
                 AND m.mber_sttus_code='H'
                 AND m.dept_code <> ''
             """
-    data = [params['s_calendar'].replace("-", "")+limit+"00", params['s_calendar'].replace("-", ""), params['s_calendar']]
+    data = [
+        params["s_calendar"].replace("-", "") + limit + "00",
+        params["s_calendar"].replace("-", ""),
+        params["s_calendar"],
+    ]
     if "s_mber_nm" in params and params["s_mber_nm"]:
         query += " AND m.mber_nm LIKE %s"
-        data.append("%{}%".format(params['s_mber_nm']))
+        data.append("%{}%".format(params["s_mber_nm"]))
 
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND m.dept_code = %s"
-        data.append(params['s_dept_code'])
+        data.append(params["s_dept_code"])
 
     if "s_ofcps_code" in params and params["s_ofcps_code"]:
         query += " AND m.ofcps_code = %s"
-        data.append(params['s_ofcps_code'])
+        data.append(params["s_ofcps_code"])
 
     g.curs.execute(query, data)
     result = g.curs.fetchone()
     return result
+
 
 def get_vacation(params):
     query = """SELECT mber_sn
@@ -113,6 +129,8 @@ def get_vacation(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+
 def get_work_daily_datatable(params):
     query = """SELECT '1' AS ctmmny_sn
                     , m.mber_sn
@@ -131,19 +149,18 @@ def get_work_daily_datatable(params):
                 AND m.mber_sttus_code='H'
                 AND m.dept_code <> ''
             """
-    data = [params['s_calendar'].replace("-", "")]
+    data = [params["s_calendar"].replace("-", "")]
     if "s_mber_nm" in params and params["s_mber_nm"]:
         query += " AND m.mber_nm LIKE %s"
-        data.append("%{}%".format(params['s_mber_nm']))
+        data.append("%{}%".format(params["s_mber_nm"]))
 
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND m.dept_code = %s"
-        data.append(params['s_dept_code'])
+        data.append(params["s_dept_code"])
 
     if "s_ofcps_code" in params and params["s_ofcps_code"]:
         query += " AND m.ofcps_code = %s"
-        data.append(params['s_ofcps_code'])
-
+        data.append(params["s_ofcps_code"])
 
     return dt_query(query, data, params)
 
@@ -157,24 +174,28 @@ def get_work_calendar(params):
     result = []
     for row in text.split("\n")[2:]:
         rowlist = list()
-        for i in range(len(row)//3+1):
-            cell = row[3*i:3*i+2]
-            if cell.strip() != '':
+        for i in range(len(row) // 3 + 1):
+            cell = row[3 * i : 3 * i + 2]
+            if cell.strip() != "":
                 cell = int(cell)
             else:
-                cell = ''
+                cell = ""
             rowlist.append(cell)
         result.append(rowlist)
-    return {"title" : title, "rows" : result}
+    return {"title": title, "rows": result}
+
 
 def get_work_data(params):
-    g.curs.execute("SELECT work_sn, work_year, work_row, work_month, work_data, work_class FROM work WHERE work_year=%s", params['work_date'].split("-")[0])
+    g.curs.execute(
+        "SELECT work_sn, work_year, work_row, work_month, work_data, work_class FROM work WHERE work_year=%s",
+        params["work_date"].split("-")[0],
+    )
     result = g.curs.fetchall()
     return result
 
 
 def get_work(params):
-    work_date = params['work_date']
+    work_date = params["work_date"]
     work_year = work_date.split("-")[0]
     query = """SELECT '1' AS ctmmny_sn
                     , m.mber_sn
@@ -201,7 +222,7 @@ def get_work(params):
                     , (SELECT GROUP_CONCAT(DATE_FORMAT(vacation_de, '%%c/%%e') ORDER BY vacation_de separator ',  ') FROM vacation WHERE mber_sn=m.mber_sn AND YEAR(vacation_de)='{1}' AND vacation_type IN (2,3,5,6)) AS half_dates
     				, (SELECT code_ordr FROM code WHERE parnts_code='DEPT_CODE' AND code=m.dept_code) AS code_ordr
     				, (SELECT code_ordr FROM code WHERE parnts_code='OFCPS_CODE' AND code=m.ofcps_code) AS ofcps_ordr
-                FROM (SELECT mber_sn, mber_nm, ofcps_code, dept_code, enter_de, check_rate FROM member WHERE check_work='1' AND mber_sttus_code='H' AND dept_code <> '') m
+                FROM (SELECT mber_sn, mber_nm, ofcps_code, rspofc_code, dept_code, enter_de, check_rate FROM member WHERE check_work='1' AND mber_sttus_code='H' AND dept_code <> '') m
                 LEFT OUTER JOIN 
                 (SELECT SUM(IF(WSTime IS NULL OR WSTime='', 0,
                     CASE DAYOFWEEK(STR_TO_DATE(WorkDate, %s))-1
@@ -217,32 +238,58 @@ def get_work(params):
                 LEFT OUTER JOIN (SELECT * FROM T_SECOM_WORKHISTORY WHERE workdate=%s) w 
                 ON m.mber_sn=w.Sabun
                 WHERE 1=1
-                ORDER BY code_ordr ASC, ofcps_ordr ASC
-                    """.format(work_date, work_year)
+                ORDER BY code_ordr ASC, ofcps_ordr ASC, m.rspofc_code ASC, m.enter_de
+                    """.format(
+        work_date, work_year
+    )
 
-    data = ['%Y%m%d', '%Y%m%d', '{}%'.format(work_year), work_date.replace("-", ""), work_date.replace("-", "")]
+    data = [
+        "%Y%m%d",
+        "%Y%m%d",
+        "{}%".format(work_year),
+        work_date.replace("-", ""),
+        work_date.replace("-", ""),
+    ]
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
 
 
 def set_work_data(params):
-    row = g.curs.execute("SELECT work_sn FROM work WHERE work_year=%(work_year)s AND work_row=%(work_row)s AND work_month=%(work_month)s", params)
+    row = g.curs.execute(
+        "SELECT work_sn FROM work WHERE work_year=%(work_year)s AND work_row=%(work_row)s AND work_month=%(work_month)s",
+        params,
+    )
     if row:
         result = g.curs.fetchone()
-        params['work_sn'] = result['work_sn']
+        params["work_sn"] = result["work_sn"]
 
-        g.curs.execute("UPDATE work SET {} WHERE work_sn=%(work_sn)s".format(",".join(["{0}=%({0})s".format(t) for t in ["work_data", "work_class"] if t in params])), params)
+        g.curs.execute(
+            "UPDATE work SET {} WHERE work_sn=%(work_sn)s".format(
+                ",".join(
+                    [
+                        "{0}=%({0})s".format(t)
+                        for t in ["work_data", "work_class"]
+                        if t in params
+                    ]
+                )
+            ),
+            params,
+        )
 
     else:
         if "work_data" not in params:
             params["work_data"] = ""
         if "work_class" not in params:
             params["work_class"] = 0
-        g.curs.execute("INSERT INTO work(work_year, work_row, work_month, work_data, work_class) VALUES(%(work_year)s, %(work_row)s, %(work_month)s, %(work_data)s, %(work_class)s)", params)
+        g.curs.execute(
+            "INSERT INTO work(work_year, work_row, work_month, work_data, work_class) VALUES(%(work_year)s, %(work_row)s, %(work_month)s, %(work_data)s, %(work_class)s)",
+            params,
+        )
+
 
 def get_today(params):
-    work_date = params['s_today']
+    work_date = params["s_today"]
     work_year = work_date.split("-")[0]
     query = """SELECT '1' AS ctmmny_sn
                     , IF(w.WSTime IS NULL OR w.WSTime='', 0,
@@ -259,13 +306,14 @@ def get_today(params):
                 ON m.mber_nm=w.Name
                 WHERE 1=1
                 AND m.mber_sn=%s"""
-    data = ['%Y%m%d', work_date.replace("-", ""), params['mber_sn']]
+    data = ["%Y%m%d", work_date.replace("-", ""), params["mber_sn"]]
     g.curs.execute(query, data)
     result = g.curs.fetchone()
     return result
 
+
 def get_vacation_report(params):
-    s_year = params['s_ddt_man'].split("-")[0]
+    s_year = params["s_ddt_man"].split("-")[0]
     params["s_start"] = "{}-01-01".format(s_year)
     params["s_end"] = "{}-12-31".format(s_year)
     query = """SELECT vacation_de
@@ -280,7 +328,7 @@ def get_vacation_report(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     for r in result:
-        _type = int(r['vacation_type'])
+        _type = int(r["vacation_type"])
         if _type in (1, 2, 3):
             _frm = "연차{}"
         elif _type in (4, 5, 6):
@@ -288,13 +336,11 @@ def get_vacation_report(params):
         else:
             _frm = "특별휴가"
         if _type in (1, 4):
-            r['type_nm'] = _frm.format("")
+            r["type_nm"] = _frm.format("")
         elif _type in (2, 5):
-            r['type_nm'] = _frm.format(" / 오전반차")
+            r["type_nm"] = _frm.format(" / 오전반차")
         elif _type in (3, 6):
-            r['type_nm'] = _frm.format(" / 오후반차")
+            r["type_nm"] = _frm.format(" / 오후반차")
         else:
-            r['type_nm'] = _frm
+            r["type_nm"] = _frm
     return result
-
-

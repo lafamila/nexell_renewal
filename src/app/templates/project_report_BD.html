@@ -1038,7 +1038,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 		<tr>
 			<th class="color-contract">일자</th>
 			<th class="color-contract">계정과목</th>
-			<th class="color-contract">내역</th>
+			<th class="color-contract" colspan="2">내역</th>
 			<th class="color-contract">지출자</th>
 			<th class="color-contract">금액</th>
 		</tr>
@@ -1289,7 +1289,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 				/* 예상 본납 품목 세부내역 */
 				/* ********************************************************* */
-				var base = {0 : {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"}}
+				var base = {0 : {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "ct_99": 0, "cCostDTM" : "9999-99-99"}}
 				if(contract.progrs_sttus_code != 'B') {
 					var cCostList = pResult.cCostList;
 					var p_sum_total = 0, s_sum_total = 0, va_total = 0;
@@ -1301,7 +1301,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var s_amt_sum = pValue.salamt * parseInt(pValue.qy);
 						var va = s_amt_sum - p_dc_amt_sum;
 						if(!base.hasOwnProperty(pValue.extra_sn)){
-							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"};
+							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "ct_99": 0, "cCostDTM" : "9999-99-99"};
 						}
 						if(base[pValue.extra_sn].cCostDTM > pValue.regist_dtm){
 							base[pValue.extra_sn].cCostDTM = pValue.regist_dtm;
@@ -1484,10 +1484,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				var eCostList = pResult.eCostList;
 				var p_dsp_amt_total = 0, p_add_dc_amt_total = 0, p_real_dsp_amt_total = 0, p_option_amt_total = 0, p_etc_amt_total = 0;
                 var p_dc_amt_tot = 0, qy_tot = 0;
+								var ct_99 = 0;
 				$.each(eCostList, function(pIndex, pValue) {
 					if (pValue.dspy_se_code != '') {
-                        var p_puchas_amount = pValue.puchas_amount;
-                        var p_puchas = (p_puchas_amount*parseInt(pValue.qy));
+						var p_puchas_amount = pValue.puchas_amount;
+						var p_puchas = (p_puchas_amount*parseInt(pValue.qy));
 						var p_dc_amt = Math.round(pValue.puchas_amount * ((100-pValue.dscnt_rt)/100));
 						var p_dsp_amt = p_dc_amt * parseInt(pValue.qy);
 						var p_add_dc_amt = Math.round(((pValue.puchas_amount * parseInt(pValue.qy))*pValue.add_dscnt_rt)/100);
@@ -1512,11 +1513,11 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								html += '    <td class="text-number"></td>';
 							}
 							html += '</tr>';
-                            qy_tot += parseInt(pValue.qy);
+							qy_tot += parseInt(pValue.qy);
 						}
 						if (pValue.ct_se_code == '61' || pValue.ct_se_code == '64') { //모델하우스(매입)
 							if(!base.hasOwnProperty(pValue.extra_sn)){
-								base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"};
+								base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "ct_99": 0, "cCostDTM" : "9999-99-99"};
 							}
 							if(base[pValue.extra_sn].cCostDTM > pValue.regist_dtm){
 								base[pValue.extra_sn].cCostDTM = pValue.regist_dtm;
@@ -1527,7 +1528,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 							p_dsp_amt_total += p_dsp_amt;
 							p_add_dc_amt_total += p_add_dc_amt;
 							p_real_dsp_amt_total += p_real_dsp_amt;
-                            p_dc_amt_tot += p_dc_amt;
+							p_dc_amt_tot += p_dc_amt;
 
 						}
 
@@ -1537,7 +1538,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 					var t_pqty = pValue.qy == '' ? 0 : parseInt(pValue.qy);
 					if (pValue.ct_se_code == '7') { //옵션행사비
 						if(!base.hasOwnProperty(pValue.extra_sn)){
-							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"};
+							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0,"ct_99": 0, "cCostDTM" : "9999-99-99"};
 						}
 						if(base[pValue.extra_sn].cCostDTM > pValue.regist_dtm){
 							base[pValue.extra_sn].cCostDTM = pValue.regist_dtm;
@@ -1546,7 +1547,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						p_option_amt_total += (t_pamt*t_pqty);
 					} else if (pValue.ct_se_code == '10') { //기타
 						if(!base.hasOwnProperty(pValue.extra_sn)){
-							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"};
+							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0,"ct_99": 0, "cCostDTM" : "9999-99-99"};
 						}
 						if(base[pValue.extra_sn].cCostDTM > pValue.regist_dtm){
 							base[pValue.extra_sn].cCostDTM = pValue.regist_dtm;
@@ -1554,6 +1555,21 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
 						base[pValue.extra_sn].p_etc_amt_total += (t_pamt*t_pqty);
 						p_etc_amt_total += (t_pamt*t_pqty);
+					} else if (pValue.ct_se_code == '99'){
+						console.log("aa", pValue, (t_pamt*t_pqty), pValue.extra_sn);
+
+						if(!base.hasOwnProperty(pValue.extra_sn)){
+							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "ct_99": 0, "cCostDTM" : "9999-99-99"};
+						}
+						if(base[pValue.extra_sn].cCostDTM > pValue.regist_dtm){
+							base[pValue.extra_sn].cCostDTM = pValue.regist_dtm;
+						}
+						console.log(base[pValue.extra_sn].ct_99);
+						base[pValue.extra_sn].ct_99 += (t_pamt*t_pqty);
+
+						ct_99 += (t_pamt*t_pqty);
+						console.log(base[pValue.extra_sn]);
+						
 					}
 				});
                 html += '<tr>';
@@ -1581,7 +1597,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 
                     if (pValue.ct_se_code == '63') { //모델하우스(판매)
 						if(!base.hasOwnProperty(pValue.extra_sn)){
-							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "cCostDTM" : "9999-99-99"};
+							base[pValue.extra_sn] = {"s_sum_total" : 0, "p_sum_total" : 0, "p_sell_amt_total" : 0, "p_dsp_amt_total" : 0, "p_add_dc_amt_total" : 0, "p_option_amt_total" : 0, "p_etc_amt_total" : 0, "ct_99": 0, "cCostDTM" : "9999-99-99"};
 						}
 						if(base[pValue.extra_sn].cCostDTM > pValue.regist_dtm){
 							base[pValue.extra_sn].cCostDTM = pValue.regist_dtm;
@@ -1608,15 +1624,29 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				base[0].p_option_amt_total = isNaN(base[0].p_option_amt_total) ? 0 : base[0].p_option_amt_total;
 				base[0].p_etc_amt_total = isNaN(base[0].p_etc_amt_total) ? 0 : base[0].p_etc_amt_total;
 				base[0].p_sell_amt_total = isNaN(base[0].p_sell_amt_total) ? 0 : base[0].p_sell_amt_total;
-				var tmp = base[0].s_sum_total - base[0].p_sum_total - base[0].p_dsp_amt_total + base[0].p_add_dc_amt_total - base[0].p_option_amt_total - base[0].p_etc_amt_total + base[0].p_sell_amt_total;
+				base[0].ct_99 = isNaN(base[0].ct_99) ? 0 : base[0].ct_99;
+				var tmp = base[0].s_sum_total - base[0].p_sum_total - base[0].p_dsp_amt_total + base[0].p_add_dc_amt_total - base[0].p_option_amt_total - base[0].p_etc_amt_total + base[0].p_sell_amt_total - base[0].ct_99;
 				var va = (tmp/base[0].s_sum_total)*100;
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(2)').html(base[0].p_dsp_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(3)').html(base[0].p_add_dc_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(5)').html(base[0].p_option_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(6)').html(base[0].p_etc_amt_total.toString().toFormat('NUMBER'));
+				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(7)').html(base[0].ct_99.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(8)').html(tmp.toString().toFormat('NUMBER'));
 				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(9)').html((va == Infinity)? "-" : (va.toFixed(1)+'%'));
-				$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(10)').html(base[0].cCostDTM);
+
+				var cCostList = pResult.cCostList;
+				const filtered = cCostList.filter(item => item.extra_sn === 0);
+				if(filtered.length > 0){
+					const oldest = filtered.reduce((prev, curr) => {
+						const prevDate = new Date(prev.regist_dtm);
+						const currDate = new Date(curr.regist_dtm);
+						return prevDate <= currDate ? prev : curr;
+					});
+
+					$('#popReportBD').find('#report_plan tbody[role=exec] td:eq(10)').html(oldest.regist_dtm ?? '');
+
+				}
 
 				/* ********************************************************* */
 
@@ -1632,7 +1662,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 								base_temp[key] += isNaN(value) ? 0 : value;
 							}
 						});
-						var tmp = base_temp.s_sum_total - base_temp.p_sum_total - base_temp.p_dsp_amt_total + base_temp.p_add_dc_amt_total - base_temp.p_option_amt_total - base_temp.p_etc_amt_total + base_temp.p_sell_amt_total;
+						var tmp = base_temp.s_sum_total - base_temp.p_sum_total - base_temp.p_dsp_amt_total + base_temp.p_add_dc_amt_total - base_temp.p_option_amt_total - base_temp.p_etc_amt_total + base_temp.p_sell_amt_total - base_temp.ct_99;
 						var va = (tmp/base_temp.s_sum_total)*100;
 						html += `
 									<tr>
@@ -1645,7 +1675,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 										<td class="color text-number">${base_temp.p_sell_amt_total.toString().toFormat('NUMBER')}</td>
 										<td class="color text-number">${base_temp.p_option_amt_total.toString().toFormat('NUMBER')}</td>
 										<td class="color text-number">${base_temp.p_etc_amt_total.toString().toFormat('NUMBER')}</td>
-										<td class="color text-number"></td>
+										<td class="color text-number">${base_temp.ct_99.toString().toFormat('NUMBER')}</td>
 										<td class="color text-number">${tmp.toString().toFormat('NUMBER')}</td>
 										<td class="color text-number">${(va == Infinity)? "-" : (va.toFixed(1)+'%')}</td>
 										<td class="color text-center">${base[extra_sn].cCostDTM}</td>

@@ -548,7 +548,7 @@
         var E_7 = parseInt($(document).find("[name='E_7']").val().replaceAll(",", "")); if(isNaN(E_7)) E_7 = 0;
         var E_10 = parseInt($(document).find("[name='E_10']").val().replaceAll(",", "")); if(isNaN(E_10)) E_10 = 0;
 
-        var E_va = E_total_cntrct_amount + D_61_DC + D_63 - D_61 - D_7 - D_10 - E_total_amount;
+        var E_va = E_total_cntrct_amount + E_61_DC + E_63 - E_61 - E_7 - E_10 - E_total_amount;
 
 
         $(this).find("[data-column='E_va']").html(E_va.toFormat('NUMBER'));

@@ -1378,7 +1378,7 @@ $(function() {
 					<button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
 				</div>
 			</div>
-			<div class="modal-body report" style="overflow-y:auto!important;height:95vh;">
+			<div class="modal-body report" style="overflow-y:auto!important;height:90vh;">
 				<style>
 					#rpt99detail{
 						/*max-height:640px!important;*/
@@ -2985,7 +2985,6 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                 * 빌트인 직계약 - 계약총액 대비 세금계산서발행 누적금액
                 * 공조 - 공사비 계약총액 대비 세금계산서발행 누적금액
                 * */
-                {#console.log(pValue);#}
 				if(pValue.prjct_ty_code == 'BF'){
                     if(pValue.s1_sum != 0) pValue.rate = 95.0;
                     else pValue.rate = 0.0;
@@ -3004,13 +3003,13 @@ getProjectsByDeptMember = function(s_mber_sn, s_dept_code)
                     pValue.ordr = 100;
                 }
                 else if(pValue.progrs_sttus_code == 'K'){
-                    pValue.ordr = 200;
-                }
-                else if(pValue.progrs_sttus_code == 'B'){
                     pValue.ordr = 300;
                 }
+                else if(pValue.progrs_sttus_code == 'B'){
+                    pValue.ordr = 500;
+                }
                 else{
-                    pValue.ordr = 400;
+                    pValue.ordr = 700;
                 }
                 pValue["order_rate"] = pValue.ordr - rate;
             });

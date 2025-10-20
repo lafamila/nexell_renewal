@@ -1,4 +1,4 @@
-FROM python:3.8.2-slim-buster as builder
+FROM python:3.12.11-slim-bookworm as builder
 
 RUN mkdir /erp-service
 COPY /src/. /erp-service
@@ -13,7 +13,7 @@ RUN pip install --upgrade pip \
 
 RUN apt-get purge -y --auto-remove gcc libc-dev
 
-FROM python:3.8.2-slim-buster
+FROM python:3.12.11-slim-bookworm
 
 COPY --from=builder /erp-service /erp-service
 COPY --from=builder /root/.local /root/.local

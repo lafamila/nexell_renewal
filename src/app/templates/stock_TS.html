@@ -1542,9 +1542,10 @@ div.report table th, div.report table td {
  *
  */
 $(document).on("click", "#deleteLogBtn", function(){
-	var authors = ["ma_keunmi ", "nexelll"];
+	var authors = ["ma_keunmi", "nexelll"];
 	var loginId = $("#loginID").val();
 	if(!authors.includes("*") && !authors.includes(loginId)){
+        console.log(loginId);
 		alert("권한이 없습니다.");
 		return false;
 	}
@@ -2097,6 +2098,15 @@ $(function() {
 			modal.find('#r2_s_ddt_man').datepicker('setDate', 'today');
 		}
 		getStockMonth(modal.find('#r2_s_ddt_man').val());
+	});
+
+
+	$('#btnPrint3').on('click', function(pEvent) {
+		var html = $('#popReport3').find('.modal-body').html();
+		$('#_print').contents().find('body>div.report').html('');
+		$('#_print').contents().find('body>div.report').html(html);
+		parent.frames['_print'].focus();
+    	parent.frames['_print'].print();
 	});
 
     /**************************************************************************

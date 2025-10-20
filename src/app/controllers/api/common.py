@@ -767,7 +767,7 @@ def five_ajax_get_five():
         else:
             params['s_pxcond_mt'] = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d").strftime("%Y-12-31")
         s_pxcond_mt = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d")
-        dept_codes = ['ST', 'TS1', 'TS2', 'BI']
+        dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'NE']
         amt_ty_codes = [2, 3, 5]
         years = []
         for i in range(4, -1, -1):
@@ -788,7 +788,7 @@ def five_ajax_get_five():
         result['dept_code_order'] = dept_codes
         result['amt_ty_code_order'] = amt_ty_codes
         result['amt_ty_nm'] = {"2" : "수주", "3": "매출", "5" : "VA"}
-        result['dept_nm'] = {"TS1" : "공조1", "TS2": "공조2", "BI" : "빌트인", "ST" : "영업"}
+        result['dept_nm'] = {"TS1" : "공조1", "TS2": "공조2", "BI" : "빌트인", "ST" : "영업", "NE" : "미래사업실"}
         result['s_pxcond_mt'] = params['s_pxcond_mt']
         result['status'] = True
         result['years'] = years

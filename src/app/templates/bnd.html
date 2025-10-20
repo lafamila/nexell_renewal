@@ -604,7 +604,7 @@ String.prototype.floor = function(){
                             <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${pValue.tax_de1 == '' ? '' : ((pValue.prjct_ty_code == 'BF') ? pValue.tax_amount1.floor().toFormat('NUMBER') : '')}</td>
                             <td class="bold colorBtn top_border middle text-center ${_class_t}">${(pValue.prjct_ty_code == 'BD') ? pValue.tax_de2 : ''}</td>
                             <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${pValue.tax_de2 == '' ? '' : ((pValue.prjct_ty_code == 'BD') ? pValue.tax_amount2.floor().toFormat('NUMBER') : '')}</td>
-                            <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${((pValue.prjct_ty_code == 'BF') ? pValue.tax_de1 : pValue.tax_de2) == '' ? '' : (pValue.cntrct_amount - (pValue.prjct_ty_code == 'BD' ? pValue.tax_amount2 : pValue.tax_amount1)).floor().toFormat('NUMBER')}</td>
+                            <td class="bold colorBtn top_border middle text-right right_border ${_class_t}">${((new Date()).toISOString().split("T")[0].split("-").slice(0,2).join("-")+"-01") < ("20"+(pValue.expect_de.split("/").slice(0,2).join("-"))+"-01") ? '' : (pValue.cntrct_amount - (pValue.prjct_ty_code == 'BD' ? pValue.tax_amount2 : pValue.tax_amount1)).floor().toFormat('NUMBER')}</td>
                             <td class="bold colorBtn top_border text-center middle right_border ${_class_old} input-available" style="text-align:left;" data-column="expect_de">${pValue.expect_de}</td>
                        </tr>`;
               count++;

@@ -299,8 +299,8 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 										<th class="hasinput">
 											<select class="form-control select2 w100p" id="s_approval_tty_code" name="s_approval_tty_code">
 												<option value="">[전체]</option>
-												{% for code in approval_tty_code_list %}
-												<option value="{{code.value}}" data-parent="{{code.etc1}}">{{code.value}}.{{code.label}}</option>
+												{% for i, code in enumerate(approval_tty_code_list, 1) %}
+												<option value="{{code.value}}" data-parent="{{code.etc1}}">{{i}}.{{code.label}}</option>
 												{% endfor %}
 											</select>
 										</th>

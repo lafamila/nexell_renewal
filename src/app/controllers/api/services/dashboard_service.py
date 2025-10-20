@@ -10,6 +10,7 @@ from app.helpers.class_helper import Map
 from app.helpers.datatable_helper import dt_query
 from collections import OrderedDict
 
+
 def get_biss_summery(params):
     query = """SELECT * FROM (
 				SELECT m.mber_sn
@@ -40,6 +41,7 @@ def get_biss_summery(params):
     result = g.curs.fetchall()
     return result
 
+
 def get_all_member_project(params):
     query = """SELECT c.spt_chrg_sn AS mber_sn
 				, (SELECT rate FROM pxcond WHERE cntrct_sn=c.cntrct_sn AND rate IS NOT NULL ORDER BY pxcond_mt DESC LIMIT 1) AS rate
@@ -69,8 +71,9 @@ def get_all_member_project(params):
     result = g.curs.fetchall()
     return result
 
+
 def get_sales_summery(params):
-    ymd = params['s_pxcond_mt']
+    ymd = params["s_pxcond_mt"]
     year = ymd.split("-")[0]
     query = """SELECT bcnc_nm AS label
 				, SUM(p_month01) AS p_month01
@@ -136,13 +139,16 @@ def get_sales_summery(params):
 				GROUP BY SUBSTRING(a.ddt_man,6,2)
 				) t
 				GROUP BY bcnc_nm
-				ORDER BY type, p_month99 DESC""".format(year)
+				ORDER BY type, p_month99 DESC""".format(
+        year
+    )
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
 
+
 def get_sales_one_summery(params):
-    ymd = params['s_pxcond_mt']
+    ymd = params["s_pxcond_mt"]
     y, m, d = ymd.split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
@@ -179,13 +185,16 @@ def get_sales_one_summery(params):
 				AND a.delng_se_code = 'P'
 				AND a.cntrct_sn IS NULL
 				GROUP BY b.esntl_delng_no, b.bcnc_nm, dept_code
-				ORDER BY code_order ASC, dept_code ASC, p_month DESC""".format(first_day, last_day)
+				ORDER BY code_order ASC, dept_code ASC, p_month DESC""".format(
+        first_day, last_day
+    )
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
 
+
 def get_completed_suju(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
@@ -196,7 +205,7 @@ def get_completed_suju(params):
 				, 0 AS ordr
 				, c.cntrct_nm
 				, cst.cost_date AS cntrct_de
-				, SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code = 'C', IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))) AS price_1
+				, SUM(IF(c.prjct_ty_code <> 'BF',IF(c.progrs_sttus_code <> 'B', IF(cst.cntrct_execut_code = 'B',0, IFNULL(cst.salamt,0)*cst.qy), 0),IF(cst.cntrct_execut_code IN ('C'), IFNULL(cst.QY, 0)*IFNULL(cst.puchas_amount,0)*0.01*(100.0-IFNULL(cst.dscnt_rt, 0))*IFNULL(cst.fee_rt, 0)*0.01, 0))) AS price_1
 				, SUM(IF(c.progrs_sttus_code = 'B', IF(cst.cntrct_execut_code = 'B',IFNULL(cst.salamt,0)*cst.qy, 0), 0)) AS price_2
 				, 1 AS count
 				, m.dept_code
@@ -213,13 +222,17 @@ def get_completed_suju(params):
 				AND cst.cost_date BETWEEN '{0} 00:00:00' AND '{1} 23:59:59'
 				AND (cst.cntrct_execut_code IN ('A', 'B', 'C'))
 				GROUP BY m.dept_code, c.bcnc_sn, cst.cntrct_sn,  cst.cost_date
-				ORDER BY code_ordr, dept_code, ordr, bcnc_nm, cntrct_de """.format(first_day, last_day)
+				ORDER BY code_ordr, dept_code, ordr, bcnc_nm, cntrct_de """.format(
+        first_day, last_day
+    )
     g.curs.execute(query)
+    print(query)
     result = g.curs.fetchall()
     return result
 
+
 def get_completed_va(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
@@ -262,7 +275,9 @@ def get_completed_va(params):
 				GROUP BY dept_nm)
 
 				ORDER BY dept_nm, s_order, bcnc_nm, spt_nm
-""".format(first_day, last_day, "{}m".format(int(m)))
+""".format(
+        first_day, last_day, "{}m".format(int(m))
+    )
     print(query)
     g.curs.execute(query)
     result = g.curs.fetchall()
@@ -270,7 +285,7 @@ def get_completed_va(params):
 
 
 def get_completed_sales(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
@@ -309,10 +324,13 @@ def get_completed_sales(params):
 				WHERE g.amt_ty_code = 9
 				AND g.stdyy BETWEEN YEAR('{0} 00:00:00') AND '{1} 23:59:59'
 				GROUP BY dept_nm)
-				ORDER BY dept_nm, s_order, bcnc_nm, pblicte_de, spt_nm """.format(first_day, last_day, "{}m".format(int(m)))
+				ORDER BY dept_nm, s_order, bcnc_nm, pblicte_de, spt_nm """.format(
+        first_day, last_day, "{}m".format(int(m))
+    )
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+
 
 def get_completed_suju_b(params):
     query = """SELECT co.code_nm
@@ -351,6 +369,7 @@ def get_completed_suju_b(params):
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+
 
 def get_kisung_suju(params):
     query = """SELECT sj.*
@@ -433,6 +452,7 @@ def get_kisung_suju(params):
     result = g.curs.fetchall()
     print(result)
     return result
+
 
 def get_kisung_sales(params):
     query = """SELECT sj.*
@@ -525,6 +545,8 @@ def get_kisung_sales(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
+
 def get_kisung_va(params):
     query = """SELECT sj.*
 				, cd.code_nm AS dept_nm
@@ -617,11 +639,12 @@ def get_kisung_va(params):
     result = g.curs.fetchall()
     return result
 
+
 def get_projects_by_dept_member(params):
     if "s_pxcond_mt" in params and params["s_pxcond_mt"]:
         s_pxcond_mt = params["s_pxcond_mt"]
     else:
-        s_pxcond_mt = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m")
+        s_pxcond_mt = datetime.datetime.now(timezone("Asia/Seoul")).strftime("%Y-%m")
 
     data = dict()
     data["s_pxcond_mt"] = s_pxcond_mt
@@ -706,14 +729,16 @@ def get_projects_by_dept_member(params):
             query += " AND m.dept_code = %(s_dept_code)s "
     if "s_mber_sn" in data:
         query += " AND c.spt_chrg_sn = %(s_mber_sn)s "
-    """ ORDER BY dept_ordr, ordr, bcnc_nm, c.spt_nm"""
+    query += """ ORDER BY dept_ordr, ordr, bcnc_nm, c.spt_nm"""
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
 
+
 def set_extra_goal_contract(params):
     query = """INSERT INTO dashboard_month(stdyy, d_month, cntrct_sn, dept_code, amt_ty_code) VALUES (%(stdyy)s, %(d_month)s, %(s_cntrct_sn)s, %(s_dept_code)s, %(s_amt_ty_code)s)"""
     g.curs.execute(query, params)
+
 
 def delete_extra_goal_contract(params):
     query = """DELETE FROM dashboard_month WHERE d_sn=%(s_s_cntrct_sn)s"""
@@ -721,7 +746,7 @@ def delete_extra_goal_contract(params):
 
 
 def get_goal_89(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
@@ -731,14 +756,17 @@ def get_goal_89(params):
                 FROM dashboard
                 WHERE dashboard_date='{0}' 
                 AND dashboard_column IN ('rmT', 'valueT', 'rmS', 'valueS')
-                AND dashboard_row < 0""".format(params['s_pxcond_m'])
+                AND dashboard_row < 0""".format(
+        params["s_pxcond_m"]
+    )
 
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
 
+
 def get_extra_goal_contract(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
@@ -782,21 +810,23 @@ def get_extra_goal_contract(params):
                     AND amt_ty_code IN ('2', '3')
                     AND stdyy='{0}'
                     AND d_month = {1}                 
-                    """.format(y, month, params['s_pxcond_m'], first_day, last_day)
+                    """.format(
+        y, month, params["s_pxcond_m"], first_day, last_day
+    )
     data = []
     if "s_s_dept_code" in params:
         query += " AND d.dept_code=%s"
-        data.append(params['s_s_dept_code'])
+        data.append(params["s_s_dept_code"])
     if "s_s_amt_ty_code" in params:
         query += " AND d.amt_ty_code=%s"
-        data.append(params['s_s_amt_ty_code'])
+        data.append(params["s_s_amt_ty_code"])
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
 
 
 def get_goal_contract(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     _, l = calendar.monthrange(int(y), int(m))
     f = 1
     first_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(f).zfill(2))
@@ -841,27 +871,40 @@ def get_goal_contract(params):
                     WHERE 1=1
                     AND `{0}m` IS NOT NULL
                     AND amt_ty_code IN ('2', '3')
-                    AND stdyy={1}""".format(params['s_month'], params['s_stdyy'], params['s_pxcond_m'], first_day, last_day)
+                    AND stdyy={1}""".format(
+        params["s_month"], params["s_stdyy"], params["s_pxcond_m"], first_day, last_day
+    )
 
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
 
+
 def set_dashboard_data(params):
-    row = g.curs.execute("SELECT dashboard_sn FROM dashboard WHERE dashboard_date=%(dashboard_date)s AND dashboard_row=%(dashboard_row)s AND dashboard_column=%(dashboard_column)s", params)
+    row = g.curs.execute(
+        "SELECT dashboard_sn FROM dashboard WHERE dashboard_date=%(dashboard_date)s AND dashboard_row=%(dashboard_row)s AND dashboard_column=%(dashboard_column)s",
+        params,
+    )
     if row:
         result = g.curs.fetchone()
-        params['dashboard_sn'] = result['dashboard_sn']
-        g.curs.execute("UPDATE dashboard SET dashboard_data=%(dashboard_data)s WHERE dashboard_sn=%(dashboard_sn)s", params)
+        params["dashboard_sn"] = result["dashboard_sn"]
+        g.curs.execute(
+            "UPDATE dashboard SET dashboard_data=%(dashboard_data)s WHERE dashboard_sn=%(dashboard_sn)s",
+            params,
+        )
 
     else:
-        g.curs.execute("INSERT INTO dashboard(dashboard_date, dashboard_row, dashboard_column, dashboard_data) VALUES(%(dashboard_date)s, %(dashboard_row)s, %(dashboard_column)s, %(dashboard_data)s)", params)
+        g.curs.execute(
+            "INSERT INTO dashboard(dashboard_date, dashboard_row, dashboard_column, dashboard_data) VALUES(%(dashboard_date)s, %(dashboard_row)s, %(dashboard_column)s, %(dashboard_data)s)",
+            params,
+        )
+
 
 def get_logitech_report(params):
-    y, m, d = params['s_pxcond_mt'].split("-")
+    y, m, d = params["s_pxcond_mt"].split("-")
     dtm = "{}-{}".format(y.zfill(4), m.zfill(2))
     ##    				AND a.delng_se_code = 'S'
-    				# AND ac.delng_ty_code = '4'
+    # AND ac.delng_ty_code = '4'
     query = """SELECT c.cntrct_sn
     , c.spt_nm
     , m.dept_code
@@ -877,10 +920,13 @@ def get_logitech_report(params):
     LEFT JOIN member m ON c.bsn_chrg_sn = m.mber_sn
     WHERE 1=1
     AND c.progrs_sttus_code <> 'C'
-    ORDER BY ordr, c.cntrwk_bgnde""".format(dtm)
+    ORDER BY ordr, c.cntrwk_bgnde""".format(
+        dtm
+    )
     g.curs.execute(query)
     result = g.curs.fetchall()
     return result
+
 
 def get_logitech_detail(params):
     query = """SELECT IF(p.bcnc_sn=3, 'logitech', 'other') AS p_type

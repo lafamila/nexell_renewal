@@ -137,7 +137,7 @@ def get_approval_member(params):
                 ON m.sign_file_sn=f.f_sn
                 WHERE 1=1
                 AND am.approval_sn=%(approval_sn)s
-                AND (am.mber_sn NOT IN (SELECT mber_sn FROM member WHERE author_sn=1) OR (am.mber_sn IN (SELECT mber_sn FROM member WHERE author_sn=1) AND am.reg_type=1))
+                AND (am.mber_sn NOT IN (SELECT mber_sn FROM member WHERE author_sn=1) OR (am.mber_sn IN (SELECT mber_sn FROM member WHERE author_sn=1) AND am.reg_type IN (0, 1)))
                 ORDER BY am_sn"""
     g.curs.execute(query, params)
     result = g.curs.fetchall()
@@ -216,9 +216,9 @@ def get_approval_datatable(params):
 				LEFT JOIN approval a 
 				ON am.approval_sn=a.approval_sn
 				INNER JOIN 
-				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) m ON a.approval_sn=m.approval_sn
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MAX(am_sn) AS m_am_sn FROM approval_member WHERE reg_type IN (0, 1) GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) m ON a.approval_sn=m.approval_sn
 				INNER JOIN 
-				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type=1 GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) mi ON a.approval_sn=mi.approval_sn
+				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type IN (0, 1) GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) mi ON a.approval_sn=mi.approval_sn
 				LEFT OUTER JOIN 
 				(SELECT x.* FROM approval_member x INNER JOIN (SELECT approval_sn, MIN(am_sn) AS m_am_sn FROM approval_member WHERE reg_type IN (0, 1) AND approval_status_code='0' GROUP BY approval_sn) y ON x.approval_sn=y.approval_sn AND x.am_sn=y.m_am_sn) n ON a.approval_sn=n.approval_sn
 				LEFT OUTER JOIN 

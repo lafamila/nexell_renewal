@@ -1305,10 +1305,15 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var target = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom);
 						if($(target).length > 0){
 							var qy = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(2).html();
+							var t = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(7).html();
 							qy = parseInt(qy.replaceAll(",", ""));
 							if(isNaN(qy)) qy = 0;
 							qy += parseInt(pValue.qy);
+							p_dc_amt_sum = p_dc_amt * qy;
+							real_amt = p_dc_amt_sum * (pValue.fee_rt / 100);
 							$(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(2).html(qy.toString().toFormat('NUMBER'));
+							$(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(7).html(p_dc_amt_sum.toString().toFormat('NUMBER'));
+							$(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(9).html(real_amt.toString().toFormat('NUMBER'));
 							html = $(tempDom).prop('innerHTML');
 						}
 						else{
@@ -1616,7 +1621,20 @@ div.report table table thead, div.report table table tbody, div.report table tab
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(7)').html(base[0].p_etc_amt_total.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_plan tbody[role=exec] td:eq(9)').html(tmp.toString().toFormat('NUMBER'));
 				$('#popReportBF').find('#report_plan tbody[role=exec]  td:eq(10)').html((va == Infinity)? "-" : (va.toFixed(1)+'%'));
-				$('#popReportBF').find('#report_plan tbody[role=exec]  td:eq(11)').html(base[0].cCostDTM);
+
+				var cCostList = pResult.cCostList;
+				const filtered = cCostList.filter(item => item.extra_sn === 0);
+				console.log('extra_sn = 0인 항목들:', filtered);
+				if(filtered.length > 0){
+					const oldest = filtered.reduce((prev, curr) => {
+						const prevDate = new Date(prev.regist_dtm);
+						const currDate = new Date(curr.regist_dtm);
+						return prevDate <= currDate ? prev : curr;
+					});
+
+					$('#popReportBF').find('#report_plan tbody[role=exec]  td:eq(11)').html(oldest.regist_dtm);
+
+				}
 				/* ********************************************************* */
 
 				var base_temp = {};
