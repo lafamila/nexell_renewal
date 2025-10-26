@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from .controllers.index_view import bp as index_bp
 from .controllers.dashboard_view import bp as dashboard_bp
 from .controllers.member_view import bp as member_bp
@@ -31,6 +31,7 @@ from .controllers.api.completed import bp as completed_api_bp
 from .controllers.api.energy import bp as energy_api_bp
 from .controllers.api.common import bp as common_api_bp
 from .controllers.api.services import *
+
 # from .controllers.ajax_controller import bp as ajax
 # from .controllers.s2s_controller import bp as s2s
 from flask.json import JSONEncoder
@@ -75,3 +76,7 @@ app.jinja_env.globals.update(
     enumerate=enumerate,
 )
 
+
+@app.get("/health")
+def health():
+    return jsonify(ok=True), 200
