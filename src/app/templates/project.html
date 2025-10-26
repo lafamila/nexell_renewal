@@ -338,6 +338,8 @@ openProject = function(prjct_ty_code, cntrct_sn, prjct_sn){
 		getReportBD(cntrct_sn, prjct_sn);
 	} else if (prjct_ty_code == 'BF') { //빌트인수수료
 		getReportBF(cntrct_sn, prjct_sn);
+	} else if (prjct_ty_code == 'RD') { //신재생에너지
+		getReportRD(cntrct_sn, prjct_sn);
 	}
 
 }
@@ -395,26 +397,23 @@ getProjectList = function()
 				render: function(pData, pType, pRow, pMeta) {
 					var html = '';
 					// html += '<button class="btn btn-table btn-info text-left w100p btnPrint" title="보고서" data-toggle="modal" href="#popReport'+row.prjct_ty_code+'" data-cntrct_sn="'+row.cntrct_sn+'" data-prjct_sn="'+row.prjct_sn+'">';
-                    if(pRow.prjct_ty_code){
-                        var dept_code = "";
-                        if(pRow.dept_nm == "공조1팀"){
-                            dept_code = "TS1";
-                        }
-                        else if(pRow.dept_nm == "공조2팀"){
-                            dept_code = "TS2";
-                        }
-                        else if(pRow.dept_nm == "공조3팀"){
-                            dept_code = "TS3";
-                        }
-                        else if(pRow.dept_nm == "빌트인팀"){
-                            dept_code = "BI";
-                        }
-                        else if(pRow.dept_nm == "영업팀"){
-                            dept_code = "ST";
-                        }
-						if(pRow.prjct_ty_code=='RD')
-							pRow.prjct_ty_code = 'NR'
-
+					if(pRow.prjct_ty_code){
+						var dept_code = "";
+						if(pRow.dept_nm == "공조1팀"){
+								dept_code = "TS1";
+						}
+						else if(pRow.dept_nm == "공조2팀"){
+								dept_code = "TS2";
+						}
+						else if(pRow.dept_nm == "공조3팀"){
+								dept_code = "TS3";
+						}
+						else if(pRow.dept_nm == "빌트인팀"){
+								dept_code = "BI";
+						}
+						else if(pRow.dept_nm == "영업팀"){
+								dept_code = "ST";
+						}
 						dept_code += ","+pRow.spt_dept_code;
 
                         //if(pRow.prjct_ty_code == "NR")
@@ -804,6 +803,14 @@ getReportBF = function(s_cntrct_sn, s_prjct_sn)
 	params += '&s_cntrct_sn=' + s_cntrct_sn;
 	params += '&s_prjct_sn=' + s_prjct_sn;
 	window.open("/project/report/BF?"+params, "_blank");
+
+}
+getReportRD = function(s_cntrct_sn, s_prjct_sn)
+{
+	var params = '';
+	params += '&s_cntrct_sn=' + s_cntrct_sn;
+	params += '&s_prjct_sn=' + s_prjct_sn;
+	window.open("/project/report/RD?"+params, "_blank");
 
 }
 </script>

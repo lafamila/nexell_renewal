@@ -1,0 +1,287 @@
+{% extends 'common/report_base.html' %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/nexell/css/smartadmin-nexell-report.css">
+<style>
+  #report_patrol tr[data-row='E'] th, #report_patrol tr[data-row='E'] td{
+    border-bottom:2px solid #555!important;
+  }
+  #report_patrol tr[data-row='C'] th[rowspan="2"], #report_patrol tr[data-row='C'] td[rowspan="2"]{
+    border-bottom:2px solid #555!important;
+  }
+  div.report .sub-title {
+      padding-top: 4px!important;
+  }
+  div.report table {
+    border-bottom: 0px solid #000!important;
+  }
+  div.report table:last-child {
+    border-bottom: 3px solid #000!important;
+  }
+  body.smart-style-6 .form-control{
+    border: 0px solid #ccc!important;
+  }
+  div.report table th, div.report table td {
+    border: 1px solid #999 !important;
+  }
+  div.report table thead,
+  div.report table tbody,
+  div.report table tbody[role=header],
+  div.report table tbody[role=body],
+  div.report table tbody[role=footer],
+  div.report table tfoot {
+    border: 2px solid #000!important;
+    border-left: 1px solid #000!important;
+    border-right: 1px solid #000!important;
+    border-bottom: 0px solid #000!important;
+    border-top: 0px solid #000!important;
+  }
+  div.report table tbody tr:first-child th, div.report table tbody tr:first-child td, div.report table thead tr:first-child th, div.report table thead tr:first-child td{
+    border-top:0px solid #555!important;
+  }
+  div.report table:not(:last-child){
+    border-bottom: 0px solid #000!important;
+  }
+  div.report table:not(:first-child){
+    /* BETWEEN TABLE, 2px */
+    border-top: 0px solid #000!important;
+  }
+  div.report table tbody:first-child{
+    border-top:0px solid #000!important;
+  }
+  div.report table th, div.report table td {
+      padding: 5px!important;
+  }
+  div.report table table tr td:last-child, div.report table table tr th:last-child{
+    border-right:0px solid #555!important;
+  }
+  div.report table table tr td:first-child, div.report table table tr th:first-child{
+    border-left:0px solid #555!important;
+  }
+  div.report table table thead, div.report table table tbody, div.report table table tbody[role=body], div.report table table tfoot{
+    border-right:0px solid #000!important;
+    border-left:0px solid #000!important;
+  }
+  #popReportRD{
+      font-size: 12px !important;
+      line-height: 1.0 !important;
+  }
+  span[name=alte]{
+      font-size:15px!important;
+      font-weight:bold!important;
+  }
+  span[name=blank]{
+      display:inline;
+  }
+  @media (min-width: 100px) and (max-width: 1024px) {
+    span[name=alte]{
+        font-size:9px!important;
+        font-weight:bold!important;
+    }
+    span[name=blank]{
+        display:none;
+    }
+  }
+</style>
+<div id="popReportRD">
+  <div>
+    <div class="modal-content">
+      <div class="modal-header">
+				<div class="pull-right" style="margin-right:10px;">
+					<button type="button" class="btn btn-primary" id="btnPrint1"><i class="fa fa-print">&nbsp;출력</i></button>
+					<button type="button" class="btn btn-default" id="btnClose" aria-hidden="true" data-dismiss="modal"><i class="fa fa-times">&nbsp;취소</i></button>
+        </div>
+      </div>
+			<div class="modal-body report" id="exportExcelRD">
+        <div class="title"><span name="alte" style="vertical-align:bottom;">※사전입찰 확정 후 7일이내 프로젝트 작성<span name="blank" style="font-size:15px!important;font-weight:bold!important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>&nbsp;<h2 class="colorLS">프로젝트 보고서 (미래사업실)</h2>&nbsp;<span name="alte" style="vertical-align:bottom;"><span name="blank" style="font-size:15px!important;font-weight:bold!important;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>※공사완료 후 7일이내 마감/유보 결재</span></div>
+        <table id="report_contract">
+          <colgroup>
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+          </colgroup>
+          <thead style="border-top:3px solid #000!important;">
+            <tr>
+              <th class="sub-title colorN text-center" colspan="8">기본정보 - VAT포함</th>
+            </tr>
+          </thead>
+        	<tbody>
+            <tr>
+              <th class="color-contract">프로젝트 번호</th>
+              <td id="manage_no" colspan="3"></td>
+              <th class="color-contract">작성일(자동)</th>
+              <td id="regist_dtm"></td>
+              <th class="color-contract">계약일</th>
+              <td id="cntrct_de"></td>
+            </tr>
+            <tr>
+              <th class="color-contract">거래처명</th>
+              <td id="bcnc_nm" colspan="3"></td>
+              <th class="color-contract">공사기간</th>
+              <td id="cntrwk_period" colspan="3"></td>
+            </tr>
+            <tr>
+              <th class="color-contract">현장명</th>
+              <td id="spt_nm" colspan="3"></td>
+              <th class="color-contract">현장주소</th>
+              <td id="spt_adres" colspan="3"></td>
+            </tr>
+            <tr>
+              <th class="color-contract">세대수</th>
+              <td id="home_count"></td>
+              <th class="color-contract">지역</th>
+              <td id="home_region"></td>
+              <th class="color-contract">넥셀현장담당</th>
+              <td id="spt_chrg_nm" colspan="3"></td>
+            </tr>
+            <tr>
+              <th class="color-contract">프로젝트 유형</th>
+              <th class="hasinput" colspan="3" style="padding:0px!important;">
+                  <div class="btn-group btn-group-justified" data-toggle="buttons">
+                      {% for code in prjct_ty_code_list %}
+                      <label class="btn btn-default">
+                          <input type="radio" name="prjct_ty_code" value="{{code.value}}">{{code.label}}
+                      </label>
+                      {% endfor %}
+                  </div>
+              </th>
+        			<th class="color-contract">넥셀영업담당</th>
+			        <td id="bsn_chrg_nm" colspan="3"></td>
+        		</tr>
+        		<tr>
+              <th class="color-contract">프로젝트 생성여부</th>
+              <th class="hasinput" colspan="3" style="padding:0px!important;">
+                  <div class="btn-group btn-group-justified" data-toggle="buttons">
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_creat_at" value="Y">생성
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="prjct_creat_at" value="N">단납건
+                    </label>
+                </div>
+              </th>
+              <th class="color-contract">진행상태</th>
+              <th class="hasinput" colspan="3" style="padding:0px!important;">
+                  <div class="btn-group btn-group-justified" data-toggle="buttons">
+                      {% for code in progrs_sttus_code_list %}
+                      <label class="btn btn-default">
+                          <input type="radio" name="progrs_sttus_code" value="{{code.value}}">{{code.label}}
+                      </label>
+                      {% endfor %}
+                  </div>
+              </th>
+        		</tr>
+          </tbody>
+          <tfoot>
+        	</tfoot>
+        </table>
+        <table id="report_project" style="border-top:0px solid #000!important;">
+          <colgroup>
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+          </colgroup>
+          <thead style="border-top:3px solid #000!important;">
+            <tr>
+              <th class="sub-title colorN text-center" colspan="8">수주계약내역</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="colorSky" rowspan="2">본사담당</th>
+              <th class="colorSky">담당자명</th>
+              <th class="colorSky" colspan="2">휴대폰</th>
+              <th class="colorSky" rowspan="2">거래처담당</th>
+              <th class="colorSky">담당자명</th>
+              <th class="colorSky" colspan="2">휴대폰</th>
+            </tr>
+            <tr>
+              <td id="charger_nm1">-</td>
+              <td id="charger_moblphon1" colspan="2"></td>
+              <td id="charger_nm2">-</td>
+              <td id="charger_moblphon2" colspan="2"></td>
+            </tr>
+            <tr>
+              <th class="colorSky">장비/공사내역</th>
+              <td colspan="3" id="cntrwk_dtls"></td>
+              <th class="colorSky">계약DC(%)</th>
+                    <td id="cntrct_dscnt_rt" colspan=""></td>
+              <th class="colorSky">품의DC(%)</th>
+                    <td id="cnsul_dscnt_rt" colspan="1"></td>
+            </tr>
+                <tr>
+                    <th class="colorSky">도면작업자</th>
+              <td id="drw_opertor_nm" colspan="3"></td>
+              <th class="colorSky">실적신고</th>
+                    <td id="acmslt_sttemnt_at" colspan="1"></td>
+              <th class="colorSky">건설공사대장</th>
+                    <td id="cntwrk_regstr_ennc" colspan="1"></td>
+                </tr>
+
+          </tbody>
+        </table>
+        <table id="rptTable3" style="border-top:0px solid #000!important;">
+          <colgroup>
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+                <col width="175">
+                <col width="150">
+          </colgroup>
+
+          <tbody>
+            <tr>
+              <th class="colorSky" colspan="1">결제방법(1)</th>
+              <td class="text-left" colspan="7" id="setle_mth"></td>
+            </tr>
+            <tr>
+              <th class="colorSky" colspan="1">결제방법(2)</th>
+              <th class="colorSky" colspan="2">금액</th>
+              <th class="colorSky" colspan="1">일자</th>
+              <th class="colorSky" colspan="4">비고(특이사항)</th>
+            </tr>
+            <tr>
+              <th class="colorSky" colspan="1">계약금</th>
+              <td class="text-number" colspan="2" id="enty"></td>
+              <td colspan="1" id="enty_de"></td>
+              <td id="enty_rm" colspan="4"></td>
+            </tr>
+            <tr>
+              <th class="colorSky" colspan="1">중도금</th>
+              <td class="text-number" colspan="2" id="prtpay"></td>
+              <td colspan="1" id="prtpay_de"></td>
+              <td id="prtpay_rm" colspan="4"></td>
+            </tr>
+            <tr>
+              <th class="colorSky" colspan="1">잔금</th>
+              <td class="text-number" colspan="2" id="surlus"></td>
+              <td colspan="1" id="surlus_de"></td>
+              <td id="surlus_rm" colspan="4"></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th class="colorSky" colspan="1">합계</th>
+              <td class="text-number" colspan="2" id=""></td>
+              <td colspan="1"></td>
+              <td class="text-number" id="" colspan="4"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
