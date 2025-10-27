@@ -1,4 +1,5 @@
-FROM python:3.12.11-slim-bookworm as builder
+FROM python:3.12-slim-bookworm as builder
+
 
 RUN mkdir /erp-service
 COPY /src/. /erp-service
@@ -22,4 +23,7 @@ WORKDIR /erp-service
 
 ENV PATH=/root/.local:$PATH
 
-CMD ["python", "./__main__.py"]
+EXPOSE 5001
+
+# Flask 인스턴스: src/app/__init__.py 의 app
+CMD ["python", "-m", "gunicorn", "-w", "2", "-k", "gthread", "--threads", "4", "--keep-alive", "10", "-b", "0.0.0.0:5001", "app:app"]
