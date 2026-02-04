@@ -8,6 +8,7 @@ import calendar
 import requests
 from dateutil import relativedelta
 
+
 def get_rcppay_datatable(params):
     query = """SELECT r.ctmmny_sn
 				, r.cntrct_sn
@@ -44,51 +45,53 @@ def get_rcppay_datatable(params):
 				WHERE 1=1
 				AND r.ctmmny_sn = '1'
 				AND r.rcppay_de BETWEEN '{0} 00:00:00'
-				AND '{1} 23:59:59' """.format(params['s_rcppay_de_start'], params['s_rcppay_de_end'])
+				AND '{1} 23:59:59' """.format(
+        params["s_rcppay_de_start"], params["s_rcppay_de_end"]
+    )
 
     data = []
-    if "s_cntrct_no" in params and params['s_cntrct_no']:
+    if "s_cntrct_no" in params and params["s_cntrct_no"]:
         query += " AND c.cntrct_no LIKE %s"
-        data.append('%{}%'.format(params["s_cntrct_no"]))
+        data.append("%{}%".format(params["s_cntrct_no"]))
 
-    if "s_spt_nm" in params and params['s_spt_nm']:
+    if "s_spt_nm" in params and params["s_spt_nm"]:
         query += " AND c.spt_nm LIKE %s"
-        data.append('%{}%'.format(params["s_spt_nm"]))
+        data.append("%{}%".format(params["s_spt_nm"]))
 
-    if "s_acntctgr_code" in params and params['s_acntctgr_code']:
+    if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND r.acntctgr_code=%s"
         data.append(params["s_acntctgr_code"])
 
-    if "s_bil_exprn_de" in params and params['s_bil_exprn_de']:
+    if "s_bil_exprn_de" in params and params["s_bil_exprn_de"]:
         query += " AND r.bil_exprn_de=%s"
         data.append(params["s_bil_exprn_de"])
 
-    if "s_rcppay_dtls" in params and params['s_rcppay_dtls']:
+    if "s_rcppay_dtls" in params and params["s_rcppay_dtls"]:
         query += " AND r.rcppay_dtls LIKE %s"
-        data.append('%{}%'.format(params["s_rcppay_dtls"]))
+        data.append("%{}%".format(params["s_rcppay_dtls"]))
 
-    if "s_prvent_sn" in params and params['s_prvent_sn']:
+    if "s_prvent_sn" in params and params["s_prvent_sn"]:
         query += " AND r.prvent_sn=%s"
         data.append(params["s_prvent_sn"])
 
-    if "s_papr_invstmnt_sn" in params and params['s_papr_invstmnt_sn']:
+    if "s_papr_invstmnt_sn" in params and params["s_papr_invstmnt_sn"]:
         query += " AND r.papr_invstmnt_sn=%s"
         data.append(params["s_papr_invstmnt_sn"])
 
-    if "s_dept_code" in params and params['s_dept_code']:
+    if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND r.dept_code=%s"
         data.append(params["s_dept_code"])
 
-    if "s_rcppay_se_code" in params and params['s_rcppay_se_code']:
+    if "s_rcppay_se_code" in params and params["s_rcppay_se_code"]:
         query += " AND r.rcppay_se_code=%s"
         data.append(params["s_rcppay_se_code"])
 
-    if "s_amount" in params and params['s_amount']:
+    if "s_amount" in params and params["s_amount"]:
         query += " AND r.amount=%s"
         data.append(params["s_amount"])
 
-    if "s_acnut_code" in params and params['s_acnut_code']:
-        if params['s_acnut_code'] == '999':
+    if "s_acnut_code" in params and params["s_acnut_code"]:
+        if params["s_acnut_code"] == "999":
             query += " AND r.acnut_code IS NULL"
 
         else:
@@ -96,6 +99,7 @@ def get_rcppay_datatable(params):
             data.append(params["s_acnut_code"])
 
     return dt_query(query, data, params)
+
 
 def get_rcppay_summary(params, exist=True):
     option = "NOT" if exist else ""
@@ -111,51 +115,53 @@ def get_rcppay_summary(params, exist=True):
 				AND (o.acnut_code IS {0} NULL)
 				AND o.ctmmny_sn = '1'
 				AND o.rcppay_de BETWEEN '{1} 00:00:00'
-				AND '{2} 23:59:59' """.format(option, params['s_rcppay_de_start'], params['s_rcppay_de_end'])
+				AND '{2} 23:59:59' """.format(
+        option, params["s_rcppay_de_start"], params["s_rcppay_de_end"]
+    )
 
     data = []
-    if "s_cntrct_no" in params and params['s_cntrct_no']:
+    if "s_cntrct_no" in params and params["s_cntrct_no"]:
         query += " AND c.cntrct_no LIKE %s"
-        data.append('%{}%'.format(params["s_cntrct_no"]))
+        data.append("%{}%".format(params["s_cntrct_no"]))
 
-    if "s_spt_nm" in params and params['s_spt_nm']:
+    if "s_spt_nm" in params and params["s_spt_nm"]:
         query += " AND c.spt_nm LIKE %s"
-        data.append('%{}%'.format(params["s_spt_nm"]))
+        data.append("%{}%".format(params["s_spt_nm"]))
 
-    if "s_acntctgr_code" in params and params['s_acntctgr_code']:
+    if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND o.acntctgr_code=%s"
         data.append(params["s_acntctgr_code"])
 
-    if "s_bil_exprn_de" in params and params['s_bil_exprn_de']:
+    if "s_bil_exprn_de" in params and params["s_bil_exprn_de"]:
         query += " AND o.bil_exprn_de=%s"
         data.append(params["s_bil_exprn_de"])
 
-    if "s_rcppay_dtls" in params and params['s_rcppay_dtls']:
+    if "s_rcppay_dtls" in params and params["s_rcppay_dtls"]:
         query += " AND o.rcppay_dtls LIKE %s"
-        data.append('%{}%'.format(params["s_rcppay_dtls"]))
+        data.append("%{}%".format(params["s_rcppay_dtls"]))
 
-    if "s_prvent_sn" in params and params['s_prvent_sn']:
+    if "s_prvent_sn" in params and params["s_prvent_sn"]:
         query += " AND o.prvent_sn=%s"
         data.append(params["s_prvent_sn"])
 
-    if "s_papr_invstmnt_sn" in params and params['s_papr_invstmnt_sn']:
+    if "s_papr_invstmnt_sn" in params and params["s_papr_invstmnt_sn"]:
         query += " AND o.papr_invstmnt_sn=%s"
         data.append(params["s_papr_invstmnt_sn"])
 
-    if "s_dept_code" in params and params['s_dept_code']:
+    if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND o.dept_code=%s"
         data.append(params["s_dept_code"])
 
-    if "s_rcppay_se_code" in params and params['s_rcppay_se_code']:
+    if "s_rcppay_se_code" in params and params["s_rcppay_se_code"]:
         query += " AND o.rcppay_se_code=%s"
         data.append(params["s_rcppay_se_code"])
 
-    if "s_amount" in params and params['s_amount']:
+    if "s_amount" in params and params["s_amount"]:
         query += " AND o.amount=%s"
         data.append(params["s_amount"])
 
-    if "s_acnut_code" in params and params['s_acnut_code']:
-        if params['s_acnut_code'] == '999':
+    if "s_acnut_code" in params and params["s_acnut_code"]:
+        if params["s_acnut_code"] == "999":
             query += " AND o.acnut_code IS NULL"
 
         else:
@@ -175,46 +181,48 @@ def get_rcppay_summary(params, exist=True):
 				AND (i.acnut_code IS {0} NULL)
 				AND i.ctmmny_sn = '1'
 				AND i.rcppay_de BETWEEN '{1} 00:00:00'
-				AND '{2} 23:59:59' """.format(option, params['s_rcppay_de_start'], params['s_rcppay_de_end'])
+				AND '{2} 23:59:59' """.format(
+        option, params["s_rcppay_de_start"], params["s_rcppay_de_end"]
+    )
 
-    if "s_cntrct_no" in params and params['s_cntrct_no']:
+    if "s_cntrct_no" in params and params["s_cntrct_no"]:
         query += " AND c.cntrct_no LIKE %s"
-        data.append('%{}%'.format(params["s_cntrct_no"]))
+        data.append("%{}%".format(params["s_cntrct_no"]))
 
-    if "s_spt_nm" in params and params['s_spt_nm']:
+    if "s_spt_nm" in params and params["s_spt_nm"]:
         query += " AND c.spt_nm LIKE %s"
-        data.append('%{}%'.format(params["s_spt_nm"]))
+        data.append("%{}%".format(params["s_spt_nm"]))
 
-    if "s_acntctgr_code" in params and params['s_acntctgr_code']:
+    if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND i.acntctgr_code=%s"
         data.append(params["s_acntctgr_code"])
 
-    if "s_bil_exprn_de" in params and params['s_bil_exprn_de']:
+    if "s_bil_exprn_de" in params and params["s_bil_exprn_de"]:
         query += " AND i.bil_exprn_de=%s"
         data.append(params["s_bil_exprn_de"])
 
-    if "s_rcppay_dtls" in params and params['s_rcppay_dtls']:
+    if "s_rcppay_dtls" in params and params["s_rcppay_dtls"]:
         query += " AND i.rcppay_dtls LIKE %s"
-        data.append('%{}%'.format(params["s_rcppay_dtls"]))
+        data.append("%{}%".format(params["s_rcppay_dtls"]))
 
-    if "s_prvent_sn" in params and params['s_prvent_sn']:
+    if "s_prvent_sn" in params and params["s_prvent_sn"]:
         query += " AND i.prvent_sn=%s"
         data.append(params["s_prvent_sn"])
 
-    if "s_papr_invstmnt_sn" in params and params['s_papr_invstmnt_sn']:
+    if "s_papr_invstmnt_sn" in params and params["s_papr_invstmnt_sn"]:
         query += " AND i.papr_invstmnt_sn=%s"
         data.append(params["s_papr_invstmnt_sn"])
 
-    if "s_dept_code" in params and params['s_dept_code']:
+    if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND i.dept_code=%s"
         data.append(params["s_dept_code"])
 
-    if "s_rcppay_se_code" in params and params['s_rcppay_se_code']:
+    if "s_rcppay_se_code" in params and params["s_rcppay_se_code"]:
         query += " AND i.rcppay_se_code=%s"
         data.append(params["s_rcppay_se_code"])
 
-    if "s_acnut_code" in params and params['s_acnut_code']:
-        if params['s_acnut_code'] == '999':
+    if "s_acnut_code" in params and params["s_acnut_code"]:
+        if params["s_acnut_code"] == "999":
             query += " AND i.acnut_code IS NULL"
 
         else:
@@ -225,6 +233,7 @@ def get_rcppay_summary(params, exist=True):
     g.curs.execute(query, data)
     result = g.curs.fetchall()
     return result
+
 
 def get_rcppay(params):
     query = """SELECT ctmmny_sn
@@ -246,6 +255,8 @@ def get_rcppay(params):
 				, register_id
 				, update_dtm
 				, updater_id
+                , rm_1
+                , rm_2
 				, (SELECT IFNULL(prjct_creat_at, 'N') FROM contract WHERE cntrct_sn = %(s_cntrct_sn)s) AS prjct_creat_at
 				FROM rcppay
 				WHERE 1=1
@@ -259,17 +270,18 @@ def get_rcppay(params):
     result = g.curs.fetchone()
     return result
 
+
 def insert_rcppay(params):
     data = OrderedDict()
     for key in params:
         if key not in (None,):
-            if params[key] != '' and key not in ('eq_sn', ):
+            if params[key] != "" and key not in ("eq_sn",):
                 data[key] = params[key]
     if "ctmmny_sn" not in data:
         data["ctmmny_sn"] = 1
 
     if "regist_dtm" not in data:
-        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
+        data["regist_dtm"] = datetime.datetime.now(timezone("Asia/Seoul"))
 
     if "register_id" not in data:
         data["register_id"] = session["member"]["member_id"]
@@ -277,17 +289,20 @@ def insert_rcppay(params):
     sub_query = [key for key in data]
     params_query = ["%({})s".format(key) for key in data]
 
-    query = """INSERT INTO rcppay({}) VALUES ({})""".format(",".join(sub_query), ",".join(params_query))
+    query = """INSERT INTO rcppay({}) VALUES ({})""".format(
+        ",".join(sub_query), ",".join(params_query)
+    )
     g.curs.execute(query, data)
 
-    rcppay_dtls = data.get("rcppay_dtls", '_').split("_")[-1]
+    rcppay_dtls = data.get("rcppay_dtls", "_").split("_")[-1]
 
     if "eq_sn" in params:
-        g.curs.execute("""
+        g.curs.execute(
+            """
         SELECT
             b.expect_de_type,
             c.bcnc_sn,
-            CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+            CASE WHEN c.prjct_ty_code IN ('NR', 'RD', 'RF') THEN
 				(SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM (SELECT x.* FROM cost x INNER JOIN (SELECT cntrct_sn, MAX(extra_sn) AS m_extra_sn FROM cost WHERE 1=1 GROUP BY cntrct_sn) y ON x.cntrct_sn=y.cntrct_sn AND x.extra_sn=y.m_extra_sn) co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
 				WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
 				(SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
@@ -305,11 +320,12 @@ def insert_rcppay(params):
 				LEFT OUTER JOIN bcnc b
 				ON c.bcnc_sn=b.bcnc_sn
 		    WHERE c.cntrct_sn=%(cntrct_sn)s
-        """, params)
+        """,
+            params,
+        )
         result = g.curs.fetchone()
-        cntrct_amount = result['cntrct_amount']
-        expect_de_type = result['expect_de_type']
-
+        cntrct_amount = result["cntrct_amount"]
+        expect_de_type = result["expect_de_type"]
 
         query = """SELECT co.purchsofc_sn
         				FROM cost co
@@ -322,7 +338,10 @@ def insert_rcppay(params):
         result = g.curs.fetchall()
         r_amount = 0
         for i, r in enumerate(result):
-            pParams = {"s_cntrct_sn": params['cntrct_sn'], "s_prvent_sn": r['purchsofc_sn']}
+            pParams = {
+                "s_cntrct_sn": params["cntrct_sn"],
+                "s_prvent_sn": r["purchsofc_sn"],
+            }
             query = """SELECT r.rcppay_de
             				, r.amount
             				, r.acnut_code
@@ -343,85 +362,130 @@ def insert_rcppay(params):
                 """
 
             g.curs.execute(query, pParams)
-            result[i]['iRcppayList'] = g.curs.fetchall()
-            r_amount += sum([r['amount'] for r in result[i]['iRcppayList']])
+            result[i]["iRcppayList"] = g.curs.fetchall()
+            r_amount += sum([r["amount"] for r in result[i]["iRcppayList"]])
 
         if r_amount < cntrct_amount:
             delng_ty_code = 12
             rcppay_de = datetime.datetime.strptime(params["rcppay_de"], "%Y-%m-%d")
 
             if int(expect_de_type) == 0:
-                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=1)).strftime("%Y-%m-20")
+                expect_de = (
+                    datetime.datetime.strptime(
+                        rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d"
+                    )
+                    + relativedelta.relativedelta(months=1)
+                ).strftime("%Y-%m-20")
             elif int(expect_de_type) == 1:
-                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d") + relativedelta.relativedelta(months=2) + relativedelta.relativedelta(days=-1)).strftime("%Y-%m-%d")
+                expect_de = (
+                    datetime.datetime.strptime(
+                        rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d"
+                    )
+                    + relativedelta.relativedelta(months=2)
+                    + relativedelta.relativedelta(days=-1)
+                ).strftime("%Y-%m-%d")
             else:
-                expect_de = (datetime.datetime.strptime(rcppay_de.strftime("%Y-%m-01"),
-                                                        "%Y-%m-%d") + relativedelta.relativedelta(months=1)).strftime(
-                    "%Y-%m-10")
+                expect_de = (
+                    datetime.datetime.strptime(
+                        rcppay_de.strftime("%Y-%m-01"), "%Y-%m-%d"
+                    )
+                    + relativedelta.relativedelta(months=1)
+                ).strftime("%Y-%m-10")
         else:
             delng_ty_code = 11
-            expect_de = ''
-        #현금/외상 기준은 해당 프로젝트의 보고서에서 계약총액보다 입금세금계산서 금액이 더 낮으면 외상, 받을거 다 받았으면 현금
-        #equip_to_account?eq_sn=12282&expect_de=2025-02-21&delng_ty_code=11&dlivy_de=2025-02-21&before_dlnt=1
-        p_params = {"eq_sn" : params["eq_sn"], "dlivy_de" : params["rcppay_de"], "delng_ty_code" : delng_ty_code, "expect_de" : expect_de, "rcppay_dtls" : rcppay_dtls}
-        res = requests.get("http://localhost:5001/api/sales/equip_to_account",
-                           params=p_params)
+            expect_de = ""
+        # 현금/외상 기준은 해당 프로젝트의 보고서에서 계약총액보다 입금세금계산서 금액이 더 낮으면 외상, 받을거 다 받았으면 현금
+        # equip_to_account?eq_sn=12282&expect_de=2025-02-21&delng_ty_code=11&dlivy_de=2025-02-21&before_dlnt=1
+        p_params = {
+            "eq_sn": params["eq_sn"],
+            "dlivy_de": params["rcppay_de"],
+            "delng_ty_code": delng_ty_code,
+            "expect_de": expect_de,
+            "rcppay_dtls": rcppay_dtls,
+        }
+        res = requests.get(
+            "http://localhost:5001/api/sales/equip_to_account", params=p_params
+        )
         print(res.text)
     return g.curs.lastrowid
+
 
 def update_rcppay(params):
     data = OrderedDict()
 
     for key in params:
-        if key not in ("s_rcppay_sn", ):
-            if key in ("cntrct_sn", "prjct_sn", "prvent_sn", "cnnc_sn", "bil_exprn_de", "rcppay_dtls", "papr_invstmnt_sn", ):
-                if params[key] == '':
+        if key not in ("s_rcppay_sn",):
+            if key in (
+                "cntrct_sn",
+                "prjct_sn",
+                "prvent_sn",
+                "cnnc_sn",
+                "bil_exprn_de",
+                "rcppay_dtls",
+                "papr_invstmnt_sn",
+            ):
+                if params[key] == "":
                     params[key] = None
                     data[key] = None
                     continue
                 data[key] = params[key]
-            elif params[key] != '':
+            elif params[key] != "":
                 data[key] = params[key]
 
     if "ctmmny_sn" not in params:
         params["ctmmny_sn"] = 1
 
     if "update_dtm" not in params:
-        params["update_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
+        params["update_dtm"] = datetime.datetime.now(timezone("Asia/Seoul"))
 
     if "updater_id" not in params:
         params["updater_id"] = session["member"]["member_id"]
 
     sub_query = ["{0}=%({0})s".format(key) for key in data]
-    query = """UPDATE rcppay SET {} WHERE rcppay_sn=%(s_rcppay_sn)s""".format(",".join(sub_query))
+    query = """UPDATE rcppay SET {} WHERE rcppay_sn=%(s_rcppay_sn)s""".format(
+        ",".join(sub_query)
+    )
     g.curs.execute(query, params)
+
 
 def delete_rcppay(params):
     g.curs.execute("DELETE FROM rcppay WHERE rcppay_sn=%(s_rcppay_sn)s", params)
 
+
 def delete_rcppay_many(params):
-    targets = params['rcppay_sns']
-    g.curs.execute("DELETE FROM rcppay WHERE rcppay_sn IN ({})".format(",".join(["%s"]*len(targets))), targets)
+    targets = params["rcppay_sns"]
+    g.curs.execute(
+        "DELETE FROM rcppay WHERE rcppay_sn IN ({})".format(
+            ",".join(["%s"] * len(targets))
+        ),
+        targets,
+    )
+
 
 def copy_rcppays(params):
-    query = """SELECT * FROM rcppay WHERE rcppay_sn IN ({})""".format(",".join(["%s"] * len(params['rcppay_sns'])))
-    g.curs.execute(query, params['rcppay_sns'])
+    query = """SELECT * FROM rcppay WHERE rcppay_sn IN ({})""".format(
+        ",".join(["%s"] * len(params["rcppay_sns"]))
+    )
+    g.curs.execute(query, params["rcppay_sns"])
     rcppays = g.curs.fetchall(transform=False)
     rows = []
     for r in rcppays:
         row = {}
         for key, value in r.items():
-            if key.lower() not in ('rcppay_sn', "regist_dtm", "register_id"):
+            if key.lower() not in ("rcppay_sn", "regist_dtm", "register_id"):
                 row[key.lower()] = value
 
-        row['rcppay_de'] = params['rcppay_de']
-        row["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul'))
+        row["rcppay_de"] = params["rcppay_de"]
+        row["regist_dtm"] = datetime.datetime.now(timezone("Asia/Seoul"))
         row["register_id"] = session["member"]["member_id"]
         rows.append(row)
 
-
-    query = "INSERT INTO rcppay({0}) VALUES ({1})".format(",".join(list(rows[0].keys())), ",".join(["%({})s".format(k) for k in list(rows[0].keys())]))
+    query = "INSERT INTO rcppay({0}) VALUES ({1})".format(
+        ",".join(list(rows[0].keys())),
+        ",".join(["%({})s".format(k) for k in list(rows[0].keys())]),
+    )
     g.curs.executemany(query, rows)
+
 
 def get_report(params):
     query = """SELECT r.rcppay_de
@@ -526,22 +590,26 @@ def get_rcppay_summary2(params):
     result = g.curs.fetchall()
     return result
 
+
 def get_rcppay_summary_s1(params):
-    first_day = '{}-01-01'.format(params['s_rcppay_de'].split("-")[0])
+    first_day = "{}-01-01".format(params["s_rcppay_de"].split("-")[0])
     query = """SELECT r.prvent_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=r.prvent_sn) AS prvent_nm
 				, SUM(IF(r.rcppay_se_code IN ('O'), -1*r.amount, r.amount)) AS amount
 				FROM rcppay r
 				WHERE r.acnut_code IS NULL AND r.acntctgr_code='134' AND r.rcppay_de BETWEEN '{0}' AND %(s_rcppay_de)s
 				GROUP BY r.prvent_sn
-    """.format(first_day)
+    """.format(
+        first_day
+    )
 
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
 
+
 def get_rcppay_summary_s2(params):
-    first_day = '{}-01-01'.format(params['s_rcppay_de'].split("-")[0])
+    first_day = "{}-01-01".format(params["s_rcppay_de"].split("-")[0])
     query = """SELECT r.bil_exprn_de
 				, r.prvent_sn
 				, (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=r.prvent_sn) AS prvent_nm
@@ -549,11 +617,14 @@ def get_rcppay_summary_s2(params):
 				FROM rcppay r
 				WHERE r.acnut_code IS NULL AND r.acntctgr_code='110' AND r.rcppay_de BETWEEN '{0}' AND %(s_rcppay_de)s
 				GROUP BY r.prvent_sn, r.bil_exprn_de
-				ORDER BY r.bil_exprn_de, prvent_nm""".format(first_day)
+				ORDER BY r.bil_exprn_de, prvent_nm""".format(
+        first_day
+    )
 
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
 
 def get_fund_stat_datatable1(params):
     data = []
@@ -570,10 +641,12 @@ def get_fund_stat_datatable1(params):
 				, SUM(IF (r.rcppay_se_code IN ('O'), r.amount, 0)) AS o_amount
 				FROM rcppay r
 				WHERE r.rcppay_se_code NOT IN ('B')
-				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de1_start'], params['s_rcppay_de1_end'])
+				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(
+        params["s_rcppay_de1_start"], params["s_rcppay_de1_end"]
+    )
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND r.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     query += """GROUP BY SUBSTRING(r.rcppay_de,1,7), r.acntctgr_code
 				UNION
@@ -583,10 +656,12 @@ def get_fund_stat_datatable1(params):
 				, 0 AS i_amount
 				, SUM(IFNULL( c.amount, 0)) AS o_amount
 				FROM card c
-				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING({1},1,7),'-31') """.format(params['s_rcppay_de1_start'], params['s_rcppay_de1_end'])
+				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING({1},1,7),'-31') """.format(
+        params["s_rcppay_de1_start"], params["s_rcppay_de1_end"]
+    )
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND c.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     query += """GROUP BY SUBSTRING(c.card_de,1,7), c.acntctgr_code
 				) t
@@ -594,6 +669,7 @@ def get_fund_stat_datatable1(params):
 				GROUP BY SUBSTRING(t.rcppay_de,1,7), t.acntctgr_code """
     g.curs.execute(query, params)
     return dt_query(query, data, params)
+
 
 def get_fund_stat_summary1(params):
     data = []
@@ -604,20 +680,24 @@ def get_fund_stat_summary1(params):
 				, SUM(IF (r.rcppay_se_code IN ('O'), r.amount, 0)) AS o_amount
 				FROM rcppay r
 				WHERE r.rcppay_se_code NOT IN ('B')
-				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de1_start'], params['s_rcppay_de1_end'])
+				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(
+        params["s_rcppay_de1_start"], params["s_rcppay_de1_end"]
+    )
 
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND r.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     query += """UNION
 				SELECT 0 AS i_amount
 				, SUM(IFNULL( c.amount, 0)) AS o_amount
 				FROM card c
-				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de1_start'], params['s_rcppay_de1_end'])
+				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(
+        params["s_rcppay_de1_start"], params["s_rcppay_de1_end"]
+    )
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND c.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     query += """) t
 				WHERE 1=1 
@@ -626,6 +706,7 @@ def get_fund_stat_summary1(params):
     g.curs.execute(query, data)
     result = g.curs.fetchone()
     return result
+
 
 def get_fund_stat_datatable2(params):
     data = []
@@ -648,15 +729,17 @@ def get_fund_stat_datatable2(params):
 				, 'B' AS types
 				FROM rcppay r
 				WHERE r.rcppay_se_code NOT IN ('B')
-				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de2_start'], params['s_rcppay_de2_end'])
+				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(
+        params["s_rcppay_de2_start"], params["s_rcppay_de2_end"]
+    )
 
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND r.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND r.dept_code = %s "
-        data.append(params['s_dept_code'])
+        data.append(params["s_dept_code"])
 
     query += """GROUP BY SUBSTRING(r.rcppay_de,1,7), r.dept_code, r.acntctgr_code
 				UNION
@@ -669,15 +752,17 @@ def get_fund_stat_datatable2(params):
 				, SUM(IFNULL (c.amount, 0)) AS o_amount
 				, 'C' AS types
 				FROM card c
-				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de2_start'], params['s_rcppay_de2_end'])
+				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(
+        params["s_rcppay_de2_start"], params["s_rcppay_de2_end"]
+    )
 
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND c.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND c.dept_code = %s "
-        data.append(params['s_dept_code'])
+        data.append(params["s_dept_code"])
 
     query += """GROUP BY SUBSTRING(c.card_de,1,7), c.dept_code, c.acntctgr_code
 				) t
@@ -686,7 +771,6 @@ def get_fund_stat_datatable2(params):
         query += " AND types=%s "
         data.append(params["s_types"])
     query += """ GROUP BY SUBSTRING(t.rcppay_de,1,7), t.dept_code, t.acntctgr_code, t.types """
-
 
     return dt_query(query, data, params)
 
@@ -700,30 +784,33 @@ def get_fund_stat_summary2(params):
 				, SUM(IF (r.rcppay_se_code IN ('O'), r.amount, 0)) AS o_amount
 				FROM rcppay r
 				WHERE r.rcppay_se_code NOT IN ('B')
-				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31')""".format(params['s_rcppay_de2_start'], params['s_rcppay_de2_end'])
+				AND r.rcppay_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31')""".format(
+        params["s_rcppay_de2_start"], params["s_rcppay_de2_end"]
+    )
 
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND r.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND r.dept_code = %s "
-        data.append(params['s_dept_code'])
+        data.append(params["s_dept_code"])
 
     query += """UNION
 				SELECT 0 AS i_amount
 				, SUM(IFNULL (c.amount, 0)) AS o_amount
 				FROM card c
-				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(params['s_rcppay_de2_start'], params['s_rcppay_de2_end'])
-
+				WHERE c.card_de BETWEEN CONCAT(SUBSTRING('{0}',1,7),'-01') AND CONCAT(SUBSTRING('{1}',1,7),'-31') """.format(
+        params["s_rcppay_de2_start"], params["s_rcppay_de2_end"]
+    )
 
     if "s_acntctgr_code" in params and params["s_acntctgr_code"]:
         query += " AND c.acntctgr_code = %s "
-        data.append(params['s_acntctgr_code'])
+        data.append(params["s_acntctgr_code"])
 
     if "s_dept_code" in params and params["s_dept_code"]:
         query += " AND c.dept_code = %s "
-        data.append(params['s_dept_code'])
+        data.append(params["s_dept_code"])
 
     query += """) t
 				WHERE 1=1 """
@@ -731,6 +818,7 @@ def get_fund_stat_summary2(params):
     g.curs.execute(query, data)
     result = g.curs.fetchone()
     return result
+
 
 def insert_memo(params):
     data = {}
@@ -749,15 +837,19 @@ def insert_memo(params):
     if "regist_dtm" in params and params["regist_dtm"]:
         data["regist_dtm"] = params["regist_dtm"]
     else:
-        data["regist_dtm"] = datetime.datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-%d %H:%M:%S")
+        data["regist_dtm"] = datetime.datetime.now(timezone("Asia/Seoul")).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
 
     if "register_id" in params and params["register_id"]:
         data["register_id"] = params["register_id"]
     else:
-        data["register_id"] = session['member']['member_id']
+        data["register_id"] = session["member"]["member_id"]
 
     columns = list(data.keys())
-    query = """INSERT INTO memo({}) VALUES ({})""".format(",".join(columns), ",".join(["%({})s".format(c) for c in columns]))
+    query = """INSERT INTO memo({}) VALUES ({})""".format(
+        ",".join(columns), ",".join(["%({})s".format(c) for c in columns])
+    )
     g.curs.execute(query, data)
 
 
@@ -772,6 +864,7 @@ def get_memo_list2(params):
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
+
 
 def get_values(params):
     query = "SELECT * FROM temp WHERE temp_dtm = %(rpt7_ddt_man)s"

@@ -1302,15 +1302,41 @@ def insert_equipment():
         return make_response(str(e), 500)
 
 
-@bp.route("/insert_general_sales_NR", methods=["POST"])
-def insert_general_sales_NR():
+@bp.route("/insert_RD_equipment", methods=["POST"])
+def insert_RD_equipment():
     try:
         params = request.get_json()
-        sales.insert_general_sales_NR(params)
+        sales.insert_RD_equipment(params)
         return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
+
     except Exception as e:
         print(e)
         return make_response(str(e), 500)
+
+
+@bp.route("/insert_RD_equipment_extra", methods=["POST"])
+def insert_RD_equipment_extra():
+    try:
+        params = request.get_json()
+        sales.insert_RD_equipment_extra(params)
+        return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
+
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+@bp.route("/insert_general_sales_NR", methods=["POST"])
+def insert_general_sales_NR():
+    # try:
+    params = request.get_json()
+    sales.insert_general_sales_NR(params)
+    return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
+
+
+# except Exception as e:
+#     print(e)
+#     return make_response(str(e), 500)
 
 
 @bp.route("/insert_general_sales_NR_append", methods=["POST"])
@@ -1363,6 +1389,18 @@ def insert_equipment_other():
         params = request.get_json()
         params["_type"] = "타사장비"
         sales.insert_equipment_samsung(params)
+        return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
+    except Exception as e:
+        print(e)
+        return make_response(str(e), 500)
+
+
+@bp.route("/insert_RD_equipment_other", methods=["POST"])
+def insert_RD_equipment_other():
+    try:
+        params = request.get_json()
+        params["_type"] = "지급자재"
+        sales.insert_RD_equipment_other(params)
         return jsonify({"status": True, "message": "성공적으로 처리되었습니다."})
     except Exception as e:
         print(e)

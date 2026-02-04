@@ -99,8 +99,8 @@
             <th class="color-contract text-center">기타(총액 0.5%)</th>
             <th class="color-contract text-center">설계변경</th>
             <th class="color-contract text-center">총액</th>
-            <th class="color-contract text-center">이익금(VA)</th>
-            <th class="color-contract text-center">VA율</th>
+            <th class="color-contract text-center">매출이익</th>
+            <th class="color-contract text-center">매출이익률</th>
         </tr>
     </tbody>
     <tbody role="ct_se_code_contract">
@@ -292,7 +292,7 @@
                 <select class="form-control select2" name="bcnc_sn[]" style="width:100%!important;">
                     <option value=""></option>
                     {%  if init %}
-                    <option value="74">74.삼성장비</option>
+                    <option value="74" selected>74.삼성장비</option>
                     {%  else %}
                     {% for code in bcnc_list %}
                     <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>
@@ -693,7 +693,7 @@
                         $(pTag).parent().html(`<select class="form-control select2 cloned" name="bcnc_sn[]" style="width:100%!important;">
                                                 <option value="">[전체]</option>
                                                 {%  if init %}
-                                                <option value="74">74.삼성장비</option>
+                                                <option value="74" selected>74.삼성장비</option>
                                                 {%  else %}
                                                 {% for code in bcnc_list %}
                                                 <option value="{{code.value}}">{{code.value}}.{{code.label}}</option>

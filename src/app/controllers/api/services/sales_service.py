@@ -575,7 +575,6 @@ def get_expect_s_list(params):
             ORDER BY dlivy_de ASC
             """
     g.curs.execute(query)
-    print(query)
     result = g.curs.fetchall()
     return result
 
@@ -1564,6 +1563,182 @@ def insert_equipment_new(params):
                 g.curs.execute(query, before)
 
 
+def insert_RD_equipment(params):
+    cost_data = []
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+    for key in params:
+        if key.endswith("[]"):
+            continue
+
+        elif key.startswith("E_") and not key.endswith("_alpha"):
+            cntrct_execut_code, ct_se_code = key.split("_")
+            value = params[key].replace(",", "")
+            if value == "":
+                continue
+            if cntrct_execut_code == "E" and ct_se_code == "5":
+                continue
+
+            column = "puchas_amount" if cntrct_execut_code == "E" else "salamt"
+            cost_data.append(
+                {
+                    "cntrct_sn": params["cntrct_sn"],
+                    "prjct_sn": prjct["prjct_sn"],
+                    "cntrct_execut_code": cntrct_execut_code,
+                    "ct_se_code": ct_se_code,
+                    "qy": 1,
+                    column: int(value),
+                    "extra_sn": 0,
+                    "regist_dtm": datetime.datetime.now(timezone("Asia/Seoul")),
+                    "register_id": session["member"]["member_id"],
+                }
+            )
+
+    for data in cost_data:
+        sub_query = [key for key in data]
+        params_query = ["%({})s".format(key) for key in data]
+        query = """SELECT cntrwk_ct_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s AND extra_sn=0"""
+        row = g.curs.execute(query, data)
+        if row:
+            cntrwk_ct_sn = g.curs.fetchone()["cntrwk_ct_sn"]
+            g.curs.execute("DELETE FROM cost WHERE cntrwk_ct_sn=%s", (cntrwk_ct_sn,))
+        query = """INSERT INTO cost({}) VALUES ({})""".format(
+            ",".join(sub_query), ",".join(params_query)
+        )
+        g.curs.execute(query, data)
+
+    company = {}
+    for key in params:
+        if key.startswith("company"):
+            if key.split("_")[0] not in company:
+                company[key.split("_")[0]] = dict()
+            company[key.split("_")[0]]["_".join(key.split("_")[1:])] = params[key]
+
+    for idx, c in company.items():
+        if idx.replace("company", "") == "":
+            continue
+        if c["name"] == "":
+            continue
+
+        if c["date"] == "":
+            c["date"] = None
+        c["cntrct_sn"] = params["cntrct_sn"]
+        c["prjct_sn"] = prjct["prjct_sn"]
+        human = c["human"].replace(",", "")
+        direct = c["direct"].replace(",", "")
+        daily = c["daily"].replace(",", "")
+        s = c["sum"].replace(",", "")
+        human = int(human) if human != "" else 0
+        direct = int(direct) if direct != "" else 0
+        daily = int(daily) if daily != "" else 0
+        s = int(s) if s != "" else 0
+
+        c["pymnt_mth"] = "{}-{}-{}-{}".format(human, direct, daily, s)
+        c["register_id"] = session["member"]["member_id"]
+        query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id)
+                    VALUES(%(cntrct_sn)s, %(prjct_sn)s, %(name)s, %(date)s, %(pymnt_mth)s, %(owner)s, %(owner_telno)s, %(dam)s, %(dam_telno)s, NOW(), %(register_id)s)"""
+        g.curs.execute(query, c)
+        if s != 0:
+            cost_param = {
+                "cntrct_sn": params["cntrct_sn"],
+                "prjct_sn": prjct["prjct_sn"],
+                "cntrct_execut_code": "E",
+                "ct_se_code": "5",
+                "qy": 1,
+                "puchas_amount": s,
+                "extra_sn": 0,
+                "regist_dtm": datetime.datetime.now(timezone("Asia/Seoul")),
+                "register_id": session["member"]["member_id"],
+                "purchsofc_sn": c["name"],
+            }
+            sub_query = [key for key in cost_param]
+            params_query = ["%({})s".format(key) for key in cost_param]
+            query = """SELECT cntrwk_ct_sn FROM cost WHERE cntrct_sn=%(cntrct_sn)s AND prjct_sn=%(prjct_sn)s AND cntrct_execut_code=%(cntrct_execut_code)s AND ct_se_code=%(ct_se_code)s AND extra_sn=0"""
+            row = g.curs.execute(query, cost_param)
+            if row:
+                cntrwk_ct_sn = g.curs.fetchone()["cntrwk_ct_sn"]
+                g.curs.execute(
+                    "DELETE FROM cost WHERE cntrwk_ct_sn=%s", (cntrwk_ct_sn,)
+                )
+            query = """INSERT INTO cost({}) VALUES ({})""".format(
+                ",".join(sub_query), ",".join(params_query)
+            )
+            g.curs.execute(query, cost_param)
+
+    if "option_bigo" in params and params["option_bigo"].strip() != "":
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(
+            before,
+            datetime.datetime.now(timezone("Asia/Seoul")).strftime("%Y-%m-%d"),
+            "장비현황 및 업체선정",
+            params["option_bigo"],
+        )
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
+
+
+def insert_RD_equipment_extra(params):
+    cost_data = []
+    prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+
+    company = {}
+    for key in params:
+        if key.startswith("company"):
+            if key.split("_")[0] not in company:
+                company[key.split("_")[0]] = dict()
+            company[key.split("_")[0]]["_".join(key.split("_")[1:])] = params[key]
+
+    for idx, c in company.items():
+        if idx.replace("company", "") == "":
+            continue
+        if c["name"] == "":
+            continue
+
+        if c["date"] == "":
+            c["date"] = None
+        c["cntrct_sn"] = params["cntrct_sn"]
+        c["prjct_sn"] = prjct["prjct_sn"]
+
+        c["pymnt_mth"] = ""
+        c["register_id"] = session["member"]["member_id"]
+        c["outsrc_type"] = 1
+        query = """INSERT INTO outsrc(cntrct_sn, prjct_sn, outsrc_fo_sn, cntrct_de, pymnt_mth, rspnber_nm, rspnber_telno, charger_nm, charger_telno, regist_dtm, register_id, outsrc_type)
+                    VALUES(%(cntrct_sn)s, %(prjct_sn)s, %(name)s, %(date)s, %(pymnt_mth)s, %(owner)s, %(owner_telno)s, %(dam)s, %(dam_telno)s, NOW(), %(register_id)s, %(outsrc_type)s)"""
+        g.curs.execute(query, c)
+
+    if "option_bigo" in params and params["option_bigo"].strip() != "":
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(
+            before,
+            datetime.datetime.now(timezone("Asia/Seoul")).strftime("%Y-%m-%d"),
+            "금융/보험사 선정",
+            params["option_bigo"],
+        )
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
+        query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
+        g.curs.execute(query, (params["cntrct_sn"],))
+
+
 def insert_equipment(params):
     cost_data = []
     prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
@@ -1867,6 +2042,63 @@ def insert_equipment(params):
             g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
         query = """UPDATE contract SET renewal=0 WHERE cntrct_sn=%s"""
         g.curs.execute(query, (params["cntrct_sn"],))
+
+
+def insert_RD_equipment_other(params):
+    data = OrderedDict()
+    data["cntrct_sn"] = params["cntrct_sn"]
+
+    model_nos = params["model_no[]"]
+    prdlst_se_codes = params["prdlst_se_code[]"]
+    dlnts = params["dlnt[]"]
+    damts = params["dlamt[]"]
+    bcnc_sns = params["bcnc_sn[]"]
+    samounts = params["now_samount[]"]
+    for model_no, prdlst_se_code, damt, samt, dlnt, bcnc_sn in zip(
+        model_nos, prdlst_se_codes, damts, samounts, dlnts, bcnc_sns
+    ):
+        data["order_de"] = datetime.datetime.now(timezone("Asia/Seoul")).strftime(
+            "%Y-%m-%d"
+        )
+        data["prdlst_se_code"] = prdlst_se_code
+        data["model_no"] = "자재"
+        data["dlnt"] = int(dlnt.replace(",", ""))
+        data["pamt"] = (
+            int(damt.replace(",", "")) * int(dlnt.replace(",", ""))
+            if damt != ""
+            else None
+        )
+        data["samt"] = int(samt.replace(",", "")) if samt != "" else None
+        data["bcnc_sn"] = 355
+        data["bigo"] = model_no
+        data["delng_ty_code"] = 4
+        g.curs.execute(
+            "INSERT INTO equipment({}) VALUES ({})".format(
+                ",".join([key for key in data.keys()]),
+                ",".join(["%({})s".format(key) for key in data.keys()]),
+            ),
+            data,
+        )
+
+    if "option_bigo" in params and params["option_bigo"].strip() != "":
+        query = """SELECT partclr_matter FROM project WHERE prjct_sn=%s"""
+        prjct = get_project_by_cntrct_nm(params["cntrct_sn"])
+        g.curs.execute(query, (prjct["prjct_sn"],))
+        result = g.curs.fetchone()
+        if result and result["partclr_matter"]:
+            before = result["partclr_matter"]
+        else:
+            before = ""
+        partclr_matter = "{}\n\n{} {}\n{}".format(
+            before,
+            datetime.datetime.now(timezone("Asia/Seoul")).strftime("%Y-%m-%d"),
+            "지급자재",
+            params["option_bigo"],
+        )
+
+        query = """UPDATE project SET partclr_matter=%s WHERE prjct_sn=%s"""
+        if prjct["prjct_sn"] is not None:
+            g.curs.execute(query, (partclr_matter, prjct["prjct_sn"]))
 
 
 def insert_equipment_samsung(params):
@@ -2261,13 +2493,15 @@ def insert_general_sales_NR(params):
         if samount > 0:
             if general_cntrct_sn is None:
                 g.curs.execute(
-                    "SELECT m.dept_code, c.bcnc_sn FROM contract c LEFT JOIN member m ON c.spt_chrg_sn=m.mber_sn WHERE c.cntrct_sn=%s",
+                    "SELECT m.dept_code, c.bcnc_sn FROM contract c LEFT JOIN member m ON c.bsn_chrg_sn=m.mber_sn WHERE c.cntrct_sn=%s",
                     params["cntrct_sn"],
                 )
                 contract = g.curs.fetchone()
                 dept_code = contract["dept_code"]
                 bcnc_sn = contract["bcnc_sn"]
-                dept_nm = {"TS1": "공조1", "TS2": "공조2", "BI": "빌트인"}[dept_code]
+                dept_nm = {"TS1": "공조1", "TS2": "공조2", "BI": "빌트인"}.get(
+                    dept_code, "영업"
+                )
                 now_bgn = datetime.datetime.strptime(
                     datetime.datetime.now(timezone("Asia/Seoul")).strftime("%Y-%m-01"),
                     "%Y-%m-%d",
@@ -2277,6 +2511,7 @@ def insert_general_sales_NR(params):
                 g.curs.execute(
                     "SELECT cntrct_sn FROM contract WHERE cntrct_nm=%s", cntrct_nm
                 )
+                print(cntrct_nm)
                 general_cntrct_sn = g.curs.fetchone()["cntrct_sn"]
 
             query = """INSERT INTO cost(cntrct_sn, prjct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn, qy, salamt, cost_date, extra_sn, cost_type, regist_dtm, register_id)

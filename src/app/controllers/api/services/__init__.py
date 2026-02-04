@@ -358,7 +358,6 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
         result = curs.fetchone()
         cnt_in_2 = result['cnt']
 
-
         params = {'bnd_year': last_day.year, 'm_dlivy_de_start': '', 'm_dlivy_de_end': '', 'm_pblict_de_start': '', 'm_pblict_de_end': '', 's_dlivy_de_start': '', 's_dlivy_de_end': '', 's_pblict_de_start': '', 's_pblict_de_end': '', 't_pblict_de_start': '', 't_pblict_de_end': ''}
         res = requests.get("http://localhost:5001/api/bnd/ajax_get_bnd",
                            params=params)
@@ -457,7 +456,6 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
 
         db.commit()
 
-
     row = curs.execute("""SELECT  s.stock_sn AS stock_sn
 				FROM (SELECT * FROM stock WHERE prduct_se_code=2) s
 				INNER JOIN
@@ -489,7 +487,12 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
     else:
         bcnc_sn = curs.fetchone()['bcnc_sn']
 
-    dept_codes = {("공조1", "TS1"): "NR", ("공조2", "TS2"): "NR", ("빌트인", "BI"): "BD"}
+    dept_codes = {
+        ("공조1", "TS1"): "NR",
+        ("공조2", "TS2"): "NR",
+        ("빌트인", "BI"): "BD",
+        ("영업", "ST"): "NR",
+    }
     now_bgn = datetime.strptime(datetime.now(timezone('Asia/Seoul')).strftime("%Y-%m-01"), "%Y-%m-%d")
     now_end = now_bgn + relativedelta(months=1) + relativedelta(days=-1)
     cntrct_nm_format = now_bgn.strftime("%y년%m월 일반판매")
@@ -605,4 +608,3 @@ WHERE 1=1 AND prduct_se_code='2' AND x.stock_sttus=2 AND IF(x.stock_sttus IN (1,
             menus[r['parnts_menu_sn']].append(r)
     total_menus["sub_menu"] = menus
     return total_menus
-

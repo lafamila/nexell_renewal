@@ -98,7 +98,7 @@ def ajax_insert_approval():
 
     params = request.get_json()
 
-    if int(params["approval_ty_code"]) in (1, 39, 40):
+    if int(params["approval_ty_code"]) in (1, 39, 40, 81):
         if (
             params["data"]["prjct_creat_at"] == "N"
             or params["data"]["progrs_sttus_code"] == "S"
@@ -119,6 +119,19 @@ def ajax_insert_approval():
     team_code = {1: "TS", 2: "BI", 3: "BI"}
     approval_ty_code = int(params["approval_ty_code"])
     approval_detail = apvl.get_approval_detail(approval_ty_code)
+
+    if int(session["member"]["member_sn"]) == 66:
+        apvl_sn = apvl.insert_approval(params)
+        params["approval_sn"] = apvl_sn
+        apvl.insert_approval_member(params)
+
+        return jsonify(
+            {
+                "status": True,
+                "message": "성공적으로 입력되었습니다.",
+                "approval_sn": apvl_sn,
+            }
+        )
 
     # 영업팀 별도
     if member["dept_code"] == "ST":
@@ -181,7 +194,9 @@ def ajax_insert_approval():
         else:
             required_member_sns = (
                 [63]
-                if member["dept_code"].startswith("TS") or member["dept_code"] == "CT"
+                if member["dept_code"].startswith("TS")
+                or member["dept_code"] == "CT"
+                or member["dept_code"] == "SA"
                 else []
             )
 
@@ -216,7 +231,8 @@ def ajax_insert_approval():
         else:
             required_member_sns.append(
                 91
-                if member["dept_code"].startswith("TS") or member["dept_code"] in ("CT")
+                if member["dept_code"].startswith("TS")
+                or member["dept_code"] in ("CT", "SA")
                 else 63
             )
         # 휴가신청서

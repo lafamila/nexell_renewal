@@ -39,7 +39,9 @@ def get_completed_summary(params):
 				, SUM(IFNULL(11m, 0)) AS m11
 				, SUM(IFNULL(12m, 0)) AS m12
 				"""
-    if year >= 2024:
+    if year >= 2026:
+        query += """, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND (code LIKE 'TS%%' OR code LIKE 'BI%%' OR code = 'NE' OR code IN ('ST', 'EL', 'CT', 'MA', 'HV', 'SA'))) - (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code IN ('EL', 'CT', 'MA')) + 1 AS dept_count"""
+    elif year >= 2024:
         query += """, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND (code LIKE 'TS%%' OR code LIKE 'BI%%' OR code = 'NE' OR code IN ('ST', 'EL', 'CT', 'MA'))) - (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code IN ('EL', 'CT', 'MA')) + 1 AS dept_count"""
     elif year >= 2023:
         query += """, (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND (code LIKE 'TS%%' OR code LIKE 'BI%%' OR code IN ('ST', 'EL', 'CT', 'MA'))) - (SELECT COUNT(code) FROM code WHERE ctmmny_sn=1 AND parnts_code='DEPT_CODE' AND code IN ('EL', 'CT', 'MA')) + 1 AS dept_count"""
@@ -84,7 +86,9 @@ def get_completed_summary(params):
 				ON m.mber_sn=g.mber_sn AND g.amt_ty_code=z.amt_ty_code
 				WHERE 1=1				
 				"""
-    if year >= 2024:
+    if year >= 2026:
+        query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code = 'NE' OR m.dept_code IN ('ST', 'HV', 'SA'))"""
+    elif year >= 2024:
         query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code = 'NE' OR m.dept_code IN ('ST'))"""
     elif year >= 2023:
         query += """ AND (m.dept_code LIKE 'TS%%' OR m.dept_code LIKE 'BI%%' OR m.dept_code IN ('ST', 'EL', 'CT', 'MA'))"""
@@ -107,7 +111,9 @@ def get_completed_summary(params):
     code_nms[('DEPT_CODE', 'ETC')] = ("기타", 999)
     dept_codes = ['TS1', 'TS2', 'TS3', 'BI']
     amt_ty_codes = ['2', '3', '5']
-    if year >= 2024:
+    if year >= 2026:
+        dept_codes = ["ST", "HV", "SA", "NE", "TS1", "TS2", "BI"]
+    elif year >= 2024:
         dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'NE']
     elif year >= 2023:
         dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'ETC']
@@ -549,7 +555,6 @@ def get_completed_reportNR(params):
 				GROUP BY bsn_dept_code, cntrct_bcnc_sn, spt_chrg_sn, spt_nm, cntrct_sn, cntrct_execut_code, ct_se_code, purchsofc_sn
 				ORDER BY bsn_dept_code, spt_chrg_nm,  cntrct_bcnc_nm, spt_nm, cntrct_sn, cntrct_bcnc_sn, cntrct_execut_code, ct_se_code, purchsofc_sn """
 
-    print(query)
     g.curs.execute(query, params)
     result = g.curs.fetchall()
     return result
@@ -573,7 +578,6 @@ def get_s1(cntrct_sn, pxcond_ym):
     g.curs.execute(query, (cntrct_sn, pxcond_st, pxcond_ed))
     result = g.curs.fetchone()
     if result:
-        print(result)
         p_total += result['p_total'] if 'p_total' in result else 0
     query = """SELECT IFNULL(SUM(a.dlnt * ac.dlamt), 0) AS p_total
     				FROM account a
@@ -622,8 +626,6 @@ def get_s1(cntrct_sn, pxcond_ym):
     if result:
         p_total += result['p_total'] if 'p_total' in result else 0
 
-
-
     query = """SELECT IFNULL(SUM(t.splpc_am + IFNULL(t.vat, 0)),0) AS p_total
                 FROM taxbil t
                 WHERE t.ctmmny_sn = 1
@@ -635,7 +637,6 @@ def get_s1(cntrct_sn, pxcond_ym):
     result = g.curs.fetchone()
     if result:
         p_total += result['p_total'] if 'p_total' in result else 0
-
 
     return p_total
 
@@ -706,7 +707,7 @@ def get_completed_reportNR_new(params):
     last_day = "{}-{}-{}".format(y.zfill(4), m.zfill(2), str(l).zfill(2))
     first_year = "{}-01-01".format(y.zfill(4))
     last_year = "{}-12-31".format(y.zfill(4))
-    #ct_se_code, cntrct_amount, excut_amount, ofcps_code
+    # ct_se_code, cntrct_amount, excut_amount, ofcps_code
     result = []
     query = """SELECT GET_MEMBER_NAME(mm.mber_sn, 'M') AS spt_chrg_nm
                     , GET_MEMBER_NAME(m.mber_sn, 'M') AS bsn_chrg_nm
@@ -802,7 +803,6 @@ def get_completed_reportNR_new(params):
         g.curs.execute(query, d)
         bcncs += g.curs.fetchall()
 
-
         query = """
                     SELECT co.purchsofc_sn AS purchsofc_sn
                         , CASE WHEN co.cntrct_execut_code = 'C' THEN '0'
@@ -856,7 +856,6 @@ def get_completed_reportNR_new(params):
         costs = {(cost['purchsofc_sn'], cost['cntrct_execut_code']) : cost for cost in costs}
         pxconds = {(pxcond['purchsofc_sn'], pxcond['cntrct_execut_code']) : pxcond for pxcond in pxconds}
 
-
         query = """
                     SELECT o.cntrct_sn
                         , o.prjct_sn
@@ -893,10 +892,7 @@ def get_completed_reportNR_new(params):
         establish_cntrct_amount = establish_cntrct_amounts[1] if sum(establish_cntrct_amounts[1].values()) != 0 else establish_cntrct_amounts[0]
         human_inserted = False
         for bcnc in bcncs:
-            key = (bcnc['purchsofc_sn'], bcnc['cntrct_execut_code'])
-            if key == (74, 'E') and d['cntrct_sn'] in (12679, 12458):
-                print(bcnc)
-                print(key in costs)
+            key = (bcnc["purchsofc_sn"], bcnc["cntrct_execut_code"])
             if key in costs:
                 cntrct_amount = costs[key]['cntrct_amount']
                 ct_se_code = costs[key]['ct_se_code']
@@ -948,10 +944,9 @@ def get_completed_reportNR_new(params):
         result +=  result_part
 
     # ct_se_code in (1, 2, 4) : SELECT IFNULL(SUM(pa.dlnt*pa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code
-# ct_se_code in (3) :  SELECT IFNULL(SUM(sa.dlnt*sa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code
-# ct_se_code in (8) : SELECT IFNULL(SUM(excut_amount), 0) FROM pxcond AND bcnc_sn = p_bcnc_sn AND cntrct_execut_code = p_cntrct_execut_code
-# Else : SELECT IFNULL(SUM(t.SPLPC_AM+IFNULL(t.VAT, 0)), 0)
-
+    # ct_se_code in (3) :  SELECT IFNULL(SUM(sa.dlnt*sa.dlamt), 0) FROM account pa, sa WHERE sa.delng_ty_code IN (11, 12) AND pa.bcnc_sn = p_bcnc_sn AND pa.delng_se_code = p_delng_se_code
+    # ct_se_code in (8) : SELECT IFNULL(SUM(excut_amount), 0) FROM pxcond AND bcnc_sn = p_bcnc_sn AND cntrct_execut_code = p_cntrct_execut_code
+    # Else : SELECT IFNULL(SUM(t.SPLPC_AM+IFNULL(t.VAT, 0)), 0)
 
     return result
 def get_partner_contract_status(params):
@@ -1170,12 +1165,10 @@ def get_completed(params):
     else:
         data[146] = result["excut_amount"]
 
-
     return data
 
+
 def insert_completed(params):
-    from pprint import pprint
-    pprint(params)
     a_now_tot = 0
     a_tot = 0
     for body_a, body_a_now, body_b, body_b_now in zip(params["body_a[]"], params["body_a_now[]"], params["body_b[]"], params["body_b_now[]"]):
@@ -1219,13 +1212,11 @@ def insert_completed(params):
     data['ctmmny_sn'] = 1
     data["rm"] = params["option_bigo"].strip()
 
-
     data["bcnc_sn"] = params["outsrc_fo_sn"]
     data["excut_amount"] = now_est_1 + now_est_2
     data["rate"] = rate
     delete_pxcond(data)
     insert_pxcond(data)
-
 
     data["bcnc_sn"] = 146
     data["excut_amount"] = now_est_3
