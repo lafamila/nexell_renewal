@@ -245,7 +245,7 @@ def get_completed_va(params):
 				, c.spt_nm
 				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('S', 'S1', 'S2', 'S3', 'S4') AND pblicte_de BETWEEN '{0}' AND '{1}' AND cntrct_sn=c.cntrct_sn) AS s1
 				, (SELECT SUM(IFNULL(p.dlamt * p.dlnt, 0)) FROM account p LEFT JOIN account s ON p.delng_sn=s.cnnc_sn WHERE s.delng_ty_code NOT IN ('14') AND p.delng_ty_code IN ('1','2','4', '61', '64') AND p.delng_se_code IN ('P', 'P1') AND p.ddt_man BETWEEN '{0}' AND '{1}' AND p.cntrct_sn=c.cntrct_sn) AS p1
-				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND bcnc_nm <> ''  AND cntrct_sn=c.cntrct_sn) AS p3
+				, (SELECT SUM(IFNULL(splpc_am, 0)+IFNULL(vat, 0)) FROM taxbil WHERE delng_se_code IN ('P', 'P1') AND pblicte_de BETWEEN '{0}' AND '{1}' AND bcnc_nm <> ''  AND cntrct_sn=c.cntrct_sn AND (c.prjct_ty_code <> 'RD' OR IFNULL(rm, '') NOT IN ('type1', 'type5', '', 'end', 'start'))) AS p3
 				, 0 AS s2
 				, (SELECT IFNULL(SUM(IFNULL(s.dlnt, 0)*IFNULL(s.dlamt, 0)),0) FROM account p JOIN account s ON s.cnnc_sn=p.delng_sn WHERE s.ddt_man BETWEEN '{0} 00:00:00' AND '{1} 23:59:59' AND s.delng_se_code = 'S' AND s.delng_ty_code NOT IN ('14') AND p.delng_ty_code = '3' AND p.cntrct_sn=c.cntrct_sn) AS p2
 				, 1 AS s_order
@@ -783,7 +783,7 @@ def get_extra_goal_contract(params):
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(d.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=d.cntrct_sn), '') AS dashboard_value
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(d.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=d.cntrct_sn), '') AS dashboard_rm
-                    , CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+                    , CASE WHEN c.prjct_ty_code IN ('NR', 'RD', 'RF') THEN
                     (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
                     WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
                     (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))
@@ -842,7 +842,7 @@ def get_goal_contract(params):
                     , (SELECT bcnc_nm FROM bcnc WHERE bcnc_sn=c.bcnc_sn) AS bcnc_nm
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'valueS', 'valueT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_value
                     , IFNULL((SELECT dashboard_data FROM dashboard WHERE dashboard_date='{2}' AND dashboard_column=IF(g.amt_ty_code='2', 'rmS', 'rmT') AND dashboard_row=g.cntrct_sn), '') AS dashboard_rm
-                    , CASE WHEN c.prjct_ty_code IN ('NR', 'RD') THEN
+                    , CASE WHEN c.prjct_ty_code IN ('NR', 'RD', 'RF') THEN
                     (SELECT IFNULL(SUM(IFNULL(co.QY, 0)*IFNULL(co.SALAMT,0)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('A', 'C'))
                     WHEN c.prjct_ty_code IN ('BF') AND c.progrs_sttus_code <> 'B' THEN
                     (SELECT IFNULL(SUM(ROUND(IFNULL(co.QY, 0)*IFNULL(co.puchas_amount,0)*0.01*(100.0-IFNULL(co.dscnt_rt, 0))*IFNULL(co.fee_rt, 0)*0.01)),0) FROM cost co WHERE co.cntrct_sn = c.cntrct_sn AND co.cntrct_execut_code IN ('C'))

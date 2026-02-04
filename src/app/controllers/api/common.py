@@ -122,7 +122,6 @@ def code_ajax_delete_code():
         return make_response(str(e), 500)
 
 
-
 @bp.route('/bnd/ajax_get_bcnc_list', methods=['GET'])
 def ajax_get_bcnc_list():
     try:
@@ -554,7 +553,6 @@ def partner_ajax_get_partner_datatable():
         return make_response(str(e), 500)
 
 
-
 @bp.route('/partner/ajax_get_partner', methods=['GET'])
 def partner_ajax_get_partner():
     try:
@@ -767,7 +765,7 @@ def five_ajax_get_five():
         else:
             params['s_pxcond_mt'] = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d").strftime("%Y-12-31")
         s_pxcond_mt = datetime.strptime(params["s_pxcond_mt"], "%Y-%m-%d")
-        dept_codes = ['ST', 'TS1', 'TS2', 'BI', 'NE']
+        dept_codes = ["ST", "TS1", "TS2", "BI", "NE", "HV", "SA"]
         amt_ty_codes = [2, 3, 5]
         years = []
         for i in range(4, -1, -1):
@@ -787,8 +785,16 @@ def five_ajax_get_five():
             result['contractStatusList'].append(data)
         result['dept_code_order'] = dept_codes
         result['amt_ty_code_order'] = amt_ty_codes
-        result['amt_ty_nm'] = {"2" : "수주", "3": "매출", "5" : "VA"}
-        result['dept_nm'] = {"TS1" : "공조1", "TS2": "공조2", "BI" : "빌트인", "ST" : "영업", "NE" : "미래사업실"}
+        result["amt_ty_nm"] = {"2": "수주", "3": "매출", "5": "매출이익"}
+        result["dept_nm"] = {
+            "TS1": "공조1",
+            "TS2": "공조2",
+            "BI": "빌트인",
+            "ST": "영업",
+            "NE": "미래사업실",
+            "HV": "HVAC&R",
+            "SA": "SA사업부",
+        }
         result['s_pxcond_mt'] = params['s_pxcond_mt']
         result['status'] = True
         result['years'] = years

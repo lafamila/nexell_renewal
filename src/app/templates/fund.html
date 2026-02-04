@@ -725,6 +725,16 @@ $(function(){
 												<input type="text" class="form-control" id="rcppay_dtls" name="rcppay_dtls">
 											</td>
 										</tr>
+										<tr id="rm_1_container"><th id="rm_1_label"></th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="rm_1" name="rm_1">
+											</td>
+										</tr>
+										<tr id="rm_2_container"><th id="rm_2_label"></th>
+											<td class="hasinput" colspan="1">
+												<input type="text" class="form-control" id="rm_2" name="rm_2">
+											</td>
+										</tr>
 										<tr><th>지출자</th>
 											<td class="hasinput">
 												<select class="form-control select2" id="papr_invstmnt_sn" name="papr_invstmnt_sn">
@@ -803,6 +813,8 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#acntctgr_code').val('').trigger('change');
 		$('#popBox1').find('#bil_exprn_de').val(''); //어음만기일
 		$('#popBox1').find('#rcppay_dtls').val('');
+		$('#popBox1').find('#rm_1').val('');
+		$('#popBox1').find('#rm_2').val('');
 		$('#popBox1').find('#papr_invstmnt_sn').val('').trigger('change');
 		$('#popBox1').find('#dept_code').val('').trigger('change');
 		$('#popBox1').find('#rcppay_se_code').val('').trigger('change');
@@ -815,6 +827,8 @@ formReset = function(pMode = '')
 		$('#popBox1').find('#project').hide();
 		$('#popBox1').find('#project_dept_container').hide();
 		$('#popBox1').find('#taxbil').hide();
+		$('#popBox1').find('#rm_1_container').hide();
+		$('#popBox1').find('#rm_2_container').hide();
 
 		$('#popBox1').find('#btnSaveKeep').show();
 		$('#popBox1').find('#btnDelete').hide();
@@ -867,6 +881,8 @@ getFund = function(s_cntrct_sn, s_rcppay_sn)
 				$('#popBox1').find('#acntctgr_code').val(data.acntctgr_code).trigger('change');
 				$('#popBox1').find('#bil_exprn_de').val(data.bil_exprn_de); //어음만기일
 				$('#popBox1').find('#rcppay_dtls').val(data.rcppay_dtls);
+				$('#popBox1').find('#rm_1').val(data.rm_1);				
+				$('#popBox1').find('#rm_2').val(data.rm_2);				
 				$('#popBox1').find('#papr_invstmnt_sn').val(data.papr_invstmnt_sn).trigger('change');
 				$('#popBox1').find('#dept_code').val(data.dept_code).trigger('change');
 				$('#popBox1').find('#rcppay_se_code').val(data.rcppay_se_code).trigger('change');
@@ -1109,7 +1125,7 @@ getTaxbil = function(s_cntrct_sn, s_prvent_sn)
                         var vat = pValue.vat == '' ? 0 : parseInt(pValue.vat);
                         var rm = (parseInt(pValue.splpc_am)+vat) - am;
 
-                            html += '<option value="'+pValue.taxbil_sn+'">';
+                            html += '<option value="'+pValue.taxbil_sn+'" data-rm="'+pValue.rm+'">';
                             html += pValue.pblicte_de + '(' + (parseInt(pValue.splpc_am)+vat).toString().toFormat('NUMBER') + ', 잔금 '+rm.toString().toFormat('NUMBER')+')';
                             html += '</option>';
 //                        if (pIndex == 0) {
@@ -1232,6 +1248,45 @@ $(function() {
 		// if (action == 'insert') {
 			getContract($(this).val());
 		// }
+	});
+	$('#popBox1').on('change', '#cnnc_sn', function(pEvent) {
+		var target = pEvent.currentTarget;
+		var rm = $(target).find(":selected").data('rm');
+		console.log(rm);
+		if(["type1", "type2", "type3", "type4", "type5"].includes(rm)){
+			if(rm == "type1" || rm == "type5"){
+				$('#popBox1').find("#rm_1_container").show();
+				$('#popBox1').find("#rm_2_container").hide();
+				if(rm == "type1"){
+					$('#popBox1').find("#rm_1_label").html("비고");
+				}
+				else{
+					$('#popBox1').find("#rm_1_label").html("보험 분류");
+				}
+			}			
+			else{
+				$('#popBox1').find("#rm_1_container").show();
+				$('#popBox1').find("#rm_2_container").show();
+				if(["type2", "type3"].includes(rm)){
+					$('#popBox1').find("#rm_2_label").html("연락처");
+				}
+				else{
+					$('#popBox1').find("#rm_2_label").html("조치내역");
+				}
+				if(["type3", "type4"].includes(rm)){
+					$('#popBox1').find("#rm_1_label").html("담당자");
+				}
+				else{
+					$('#popBox1').find("#rm_1_label").html("임대료 분류");
+
+				}
+			}
+		}
+		else{
+				$('#popBox1').find("#rm_1_container").hide();
+				$('#popBox1').find("#rm_2_container").hide();
+		}
+
 	});
     /**************************************************************************
      *

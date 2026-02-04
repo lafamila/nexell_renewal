@@ -92,7 +92,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 	.approval-ty-list > div{
 		height: 40px!important;
 		display:grid;
-		grid-template-columns: 1fr 6fr 4fr 1fr 1fr 1fr;
+		grid-template-columns: 1fr 6fr 4fr 1fr 1fr 1fr 1fr;
 		border-bottom:1px solid #eee;
 	}
 	.selectable.active{
@@ -112,7 +112,7 @@ tbody .btnUpdate, tbody .btnPrint, tbody .btnDelete, tbody .btnTotalDelete{
 		border-bottom:2px solid #aaa;
 		background-color: #eee;
 		padding:10px;
-		grid-template-columns: 1fr 6fr 4fr 1fr 1fr 1fr;
+		grid-template-columns: 1fr 6fr 4fr 1fr 1fr 1fr 1fr;
 	}
 	.approval-ty-list-header > div{
 		display: flex;
@@ -728,6 +728,7 @@ $(function(){
 											<div>공</div>
 											<div>빌(직)</div>
 											<div>빌(수)</div>
+											<div>신재생</div>
 										</div>
 										<div class="approval-ty-list">
 
@@ -795,7 +796,7 @@ $(function(){
 						<div>${pIndex}</div>
 						<div>${code_nm}</div>
 						<div>${code_dc}</div>`;
-			for(let i=1;i<=3;i++){
+			for(let i=1;i<=4;i++){
 				if(pV.hasOwnProperty(i)){
 					let pR = pV[i];
 					html += `   <div class="selectable" data-code="${pR.code}" data-url="${pR.template_url}" data-title="${pR.code_nm}">O</div>`;

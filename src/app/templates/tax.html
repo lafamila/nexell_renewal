@@ -245,6 +245,20 @@ tbody .btnUpdate, tbody .btnPrint{
 											</div>
 										</td>
 									</tr>
+									<tr><th class="required">기타구분</th>
+										<td class="hasinput" colspan="2">
+											<select class="form-control select2" id="rm" name="rm">
+												<option value="none">해당없음</option>
+												<option value="start">계약금</option>
+												<option value="end">잔금</option>
+												<option value="type1">한전인입비</option>
+												<option value="type2">임대료</option>
+												<option value="type3">영업수수료</option>
+												<option value="type4">유지보수비</option>
+												<option value="type5">보험</option>
+											</select>
+										</td>
+									</tr>									
 									<!-- <tr><th class="required-x">비고(수금내역)</th>
 										<td class="hasinput">
 											<input type="text" class="form-control" id="rm" name="rm">
@@ -292,6 +306,7 @@ tbody .btnUpdate, tbody .btnPrint{
 									<col width="120">
 									<col width="110">
 									<col width="120">
+									<col width="80">
 									<col width="1">
 								</colgroup>
 								<thead>
@@ -347,6 +362,7 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th class="hasinput"></th>
 										<th class="hasinput"></th>
 										<th class="hasinput"></th>
+										<th class="hasinput"></th>
 										<th class="hasinput text-right">
 											<div class="btn-group">
 												<button type="button" class="btn btn-table btn-primary" title="검색" id="btnSearch"><i class="fa fa-search"></i></button>
@@ -365,6 +381,7 @@ tbody .btnUpdate, tbody .btnPrint{
 										<th style="text-align:left!important;">공급가액</th>
 										<th style="text-align:left!important;">부가세</th>
 										<th style="text-align:left!important;">합계금액</th>
+										<th>기타구분</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -471,6 +488,23 @@ getTaxList = function()
 						result = data;
 					}
 					return result.toFormat('NUMBER');
+				}
+			},
+			{ data: 'rm', className: 'text-center',
+			    render: function(data, type, row, meta) {
+					var result = '';
+					if (data != null) {
+						switch(data){
+							case 'start': result="계약금"; break;
+							case 'end': result="잔금"; break;
+							case 'type1': result="한전인입비"; break;
+							case 'type2': result="임대료"; break;
+							case 'type3': result="영업수수료"; break;
+							case 'type4': result="유지보수비"; break;
+							case 'type5': result="보험"; break;
+						}
+					}
+					return result;
 				}
 			},
 			{ data: 'ctmmny_sn', className: 'hasinput text-right', orderable: false,
@@ -622,7 +656,7 @@ getTax = function(s_cntrct_sn, s_taxbil_sn)
 				$('#frmBox1').find('#collct_de').val(data.collct_de);
 				$('#frmBox1').find('#splpc_am').val(data.splpc_am);
 				$('#frmBox1').find('#vat').val(data.vat);
-				$('#frmBox1').find('#rm').val(data.rm);
+				$('#frmBox1').find('#rm').yVal(data.rm);
 				formReset('update');
 			}
 		}
@@ -653,6 +687,7 @@ formReset = function(pMode = '')
 		$('#frmBox1').find('#collct_time').val('1');
 		$('#frmBox1').find('#cntrct_sn').yReadonly(false);
 		$('#frmBox1').find('#prjct_sn').yReadonly(false);
+		$('#frmBox1').find('#rm').val('').trigger('');
 		//버튼처리
 		$('#frmBox1').find('#btnSaveKeep').show();
 		$('#frmBox1').find('#btnDelete').hide();

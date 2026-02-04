@@ -419,8 +419,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="color-contract">옵션행사비</th>
 			<th class="color-contract">기타비용</th>
 			<th class="color-contract">설계변경</th>
-			<th class="colorLP">이익금(VA)</th>
-			<th class="colorLP">VA율</th>
+			<th class="colorLP">매출이익</th>
+			<th class="colorLP">매출이익률</th>
 			<th class="color-contract">결재완료일</th>
 <!--			<th class="colorN">구분</th>-->
 <!--			<th class="color-contract">당사수주(수수료) 총액</th>-->
@@ -431,8 +431,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 <!--			<th class="colorSky">M,S/H 판매금액</th>-->
 <!--			<th class="colorSky">옵션행사비</th>-->
 <!--			<th class="colorSky">기타비용</th>-->
-<!--			<th class="colorSky">이익금(VA)</th>-->
-<!--			<th class="colorSky">VA율(%)</th>-->
+<!--			<th class="colorSky">매출이익</th>-->
+<!--			<th class="colorSky">매출이익률(%)</th>-->
 		</tr>
 	</thead>
 	<tbody role="plan">
@@ -509,8 +509,8 @@ div.report table table thead, div.report table table tbody, div.report table tab
 			<th class="colorP">③ M,S/H 판매금액</th>
 			<th class="colorP">④ 옵션행사비</th>
 			<th class="colorP">⑤ 기타비용(총액 0.5%)</th>
-			<th class="colorP">이익금(VA)</th>
-			<th class="colorP">VA율</th>
+			<th class="colorP">매출이익</th>
+			<th class="colorP">매출이익률</th>
 		</tr>
 		<tr data-row="result">
 			<td class="colorX text-number"></td>
@@ -1302,10 +1302,10 @@ div.report table table thead, div.report table table tbody, div.report table tab
 						var real_amt = p_dc_amt_sum * (pValue.fee_rt / 100);
 						var html_dom = $.parseHTML(html);
 						var tempDom = $('<output>').append($.parseHTML(html));
-						var target = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom);
+						var target = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}'][data-fee="${pValue.fee_rt}"]`, tempDom);
 						if($(target).length > 0){
-							var qy = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(2).html();
-							var t = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}']`, tempDom).eq(0).find("td").eq(7).html();
+							var qy = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}'][data-fee="${pValue.fee_rt}"]`, tempDom).eq(0).find("td").eq(2).html();
+							var t = $(`tr[data-model='${pValue.model_no}'][data-puchas='${pValue.puchas_amount}'][data-dscnt='${pValue.dscnt_rt}'][data-salamt='${pValue.salamt}'][data-fee="${pValue.fee_rt}"]`, tempDom).eq(0).find("td").eq(7).html();
 							qy = parseInt(qy.replaceAll(",", ""));
 							if(isNaN(qy)) qy = 0;
 							qy += parseInt(pValue.qy);
@@ -1317,7 +1317,7 @@ div.report table table thead, div.report table table tbody, div.report table tab
 							html = $(tempDom).prop('innerHTML');
 						}
 						else{
-							html += `<tr data-model="${pValue.model_no}" data-puchas="${pValue.puchas_amount}" data-dscnt="${pValue.dscnt_rt}" data-salamt="${pValue.salamt}">`;
+							html += `<tr data-model="${pValue.model_no}" data-puchas="${pValue.puchas_amount}" data-dscnt="${pValue.dscnt_rt}" data-salamt="${pValue.salamt}" data-fee="${pValue.fee_rt}">`;
 							html += '    <td class="colorSky">수주계약</td>';
 							html += '    <td>' + pValue.model_no + '</td>';
 							html += '    <td class="text-center">' + pValue.qy.toString().toFormat('NUMBER') + '</td>';

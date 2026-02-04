@@ -1,0 +1,515 @@
+{% include "approvals/common_style.html" %}
+<style>
+    .input-available{
+        height:36px!important;
+    }
+    table.table-bordered td:last-child, table.table-bordered th:last-child {
+        border-right-width: 1px!important;
+    }
+    .jarviswidget td:last-child, .jarviswidget th:last-child {
+        border-right:1px solid #ddd;
+    }
+  #my-spinner { width: 100%; height: 100%; top: 0; left: 0; display: none; opacity: .6; background: silver; position: absolute; z-index: 2; }
+  #my-spinner div { width: 100%; height: 100%; display: table; }
+  #my-spinner span { display: table-cell; text-align: center; vertical-align: middle; }
+  #my-spinner img { background: white; padding: 1em; border-radius: .7em; }
+    #formContent tr[data-row='E'] th, #formContent tr[data-row='E'] td, #formContent tr[data-row='D'] th, #formContent tr[data-row='D'] td{
+        border-bottom:2px solid #555!important;
+    }
+    #formContent tr[data-row='C'] th[rowspan="2"], #formContent tr[data-row='C'] td[rowspan="2"], #formContent tr[data-row='B'] th[rowspan="2"], #formContent tr[data-row='B'] td[rowspan="2"]{
+        border-bottom:2px solid #555!important;
+    }
+
+</style>
+<div id='my-spinner'>
+  <div>
+    <span>
+    	<img src='//cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif'>
+    </span>
+  </div>
+</div>
+
+<table class="table table-bordered table-form sub-table" style="width:35%!important;">
+    <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="4" class="sub-title colorN text-center"><span>현 장 현 황</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="colorSky text-center">계약번호</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrct_no" id="cntrct_no" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">현장명</td>
+            <td class="text-center hasinput" colspan="3">
+                <select class="form-control select2 w100p" id="cntrct_sn" name="cntrct_sn" style="padding-top:0px!important;padding-bottom:0px!important;">
+                    {% if not init %}
+                        <option value=""></option>
+                        {% for code in contract_list %}
+                        <option value="{{code.value}}">{{code.etc1}} {{code.label}}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">세대수</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_count" id="home_count" readonly></td>
+            <td class="colorSky text-center">지역</td>
+            <td class="hasinput"><input type="text" class="form-control text-center" name="home_region" id="home_region" readonly></td>
+        </tr>
+        <tr>
+            <td class="colorSky text-center">공사기간</td>
+            <td class="hasinput" colspan="3"><input type="text" class="form-control text-center" name="cntrwk_period" id="cntrwk_period" readonly></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form main-table">
+    <colgroup>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+        <col width="100"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center" colspan="14"><span>공사 현황</span><span class="text-right">VAT포함</span></th>
+        </tr>
+    </thead>
+    <tbody role="header">
+        <tr>
+            <th class="colorB text-center">구분</th>
+            <th class="color-contract text-center">내역</th>
+            <th class="color-contract text-center">도급비</th>
+            <th class="color-contract text-center">지급자재</th>
+            <th class="color-contract text-center">금융 및 보험</th>
+            <th class="color-contract text-center">한전인입비/기타</th>
+            <th class="color-contract text-center">임대료</th>
+            <th class="color-contract text-center">영업수수료</th>
+            <th class="color-contract text-center">유지보수비</th>
+            <th class="color-contract text-center">기타(총액 0.5%)</th>
+            <th class="color-contract text-center">총액</th>
+            <th class="color-contract text-center">매출이익</th>
+            <th class="color-contract text-center">매출이익률</th>
+            <th class="color-contract text-center">결재완료일</th>
+        </tr>
+    </tbody>
+    <tbody role="ct_se_code">
+        <tr data-row="B">
+            <th class="colorB text-center middle" rowspan="2">사전입찰</th>
+            <th class="colorSky text-center">예정가</th>
+            <td class="text-right" data-type='number' name="B_5"></td>
+            <td class="text-right" data-type='number' name="B_11"></td>
+            <td class="text-right" data-type='number' name="B_12"></td>
+            <td class="text-right" data-type='number' name="B_13"></td>
+            <td class="text-right" data-type='number' name="B_14"></td>
+            <td class="text-right" data-type='number' name="B_15"></td>
+            <td class="text-right" data-type='number' name="B_16"></td>
+            <td class="text-right" data-type='number' name="B_10"></td>
+            <td class="text-center" data-column="row_total"></td>
+            <td class="text-center" data-column="va" rowspan="2"></td>
+            <td class="text-center" data-column="va_rate" rowspan="2"></td>
+            <td class="text-center" data-column="dtm" rowspan="2"></td>
+        </tr>
+        <tr data-row="D">
+            <th class="colorSky text-center">실행가</th>
+            <td class="text-right" data-type='number' name="D_5"></td>
+            <td class="text-right" data-type='number' name="D_11"></td>
+            <td class="text-right" data-type='number' name="D_12"></td>
+            <td class="text-right" data-type='number' name="D_13"></td>
+            <td class="text-right" data-type='number' name="D_14"></td>
+            <td class="text-right" data-type='number' name="D_15"></td>
+            <td class="text-right" data-type='number' name="D_16"></td>
+            <td class="text-right" data-type='number' name="D_10"></td>
+            <td class="text-center" data-column="row_total"></td>
+        </tr>
+    </tbody>
+    <tbody role="ct_se_code_contract">
+        <tr data-row="C">
+            <th class="colorB text-center middle" rowspan="2">수주계약</th>
+            <th class="colorSky text-center">계약가</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_5">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_11">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_12">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_13">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_14">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_15">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_16">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="C_10">
+            </td>
+            <td class="text-center" data-column="row_total"></td>
+            <td class="text-center" data-column="va" rowspan="2"></td>
+            <td class="text-center" data-column="va_rate" rowspan="2"></td>
+            <td class="text-center" data-column="dtm_alpha" rowspan="2">-</td>
+        </tr>
+        <tr data-row="E">
+            <th class="colorSky text-center">실행가</th>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_5">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_11">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_12">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_13">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_14">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_15">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_16">
+            </td>
+            <td class="hasinput">
+                <input type="text" class="form-control text-right" data-type="number" name="E_10" readonly>
+            </td>
+            <td class="text-center" data-column="row_total"></td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form small-table" style="width:35%!important;">
+    <colgroup>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center border_right" colspan="4"><span>옵션현황</span></th>
+        </tr>
+    </thead>
+    <tbody role="option">
+
+        <tr role="files_tr_first">
+            <td class="colorSky text-center">계약서</td>
+            <td class="hasinput" colspan="1">
+                <input type="file" id="pdf1" name="pdf1" accept="application/pdf" />
+            </td>
+            <td class="colorSky text-center">계약이행증권</td>
+            <td class="hasinput" colspan="1">
+                <input type="file" id="pdf2" name="pdf2" accept="application/pdf" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-bordered table-form small-table" style="width:100%!important;">
+    <colgroup>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+        <col width="120"/>
+    </colgroup>
+    <thead>
+        <tr>
+			<th class="sub-title colorN text-center border_right" colspan="4"><span>특이사항</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-row="option_row">
+            <td class="hasinput" colspan="4">
+                <textarea style="width:100%;height:100%;resize:none;border:none;" name="option_bigo"></textarea>
+            </td>
+        </tr>
+    </tbody>
+    <tbody role="files_row" style="display:none;">
+      <tr data-row="files_tr">
+        <td colspan="2">
+          <input type="hidden" name="pdf_sn1" value=""/>
+        </td>
+        <td colspan="2">
+          <input type="hidden" name="pdf_sn2" value=""/>
+        </td>
+      </tr>
+    </tbody>
+</table>
+<script>
+    get_cost = function(cntrct_sn){
+        $.ajax({
+            url : '/api/project/get_costs_bd',
+            method : 'GET',
+            data : {"s_cntrct_sn" : cntrct_sn},
+            success: function(pResult){
+                $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", false);
+                $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", false);
+				var bCostDTM = '9999-99-99';
+                $.each(pResult.bCostList, function(pIndex, pValue){
+                    if(bCostDTM > pValue.dtm){
+                        bCostDTM = pValue.dtm;
+                    }
+                    $(document).find(`[name="${pValue.cntrct_execut_code}_${pValue.ct_se_code}"]`).html(pValue.amount.toFormat('NUMBER'));
+                });
+                $("tbody[role='ct_se_code']").find("[data-column='dtm']").html(bCostDTM);
+                var totals = [];
+                $("tbody[role='ct_se_code']").find("tr").each(function(pIndex, pRow){
+                    var total = 0;
+                    $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                        var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                        total += value;
+                    });
+                    $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                    totals.push(total);
+                });
+                $("tbody[role='ct_se_code']").find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+                $("tbody[role='ct_se_code']").find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+                $(document).find("tbody[role='ct_se_code_contract']").trigger("change");
+            }
+        });
+
+    }
+
+    fnValidate = function(){
+                    var result = true;
+                    return result;
+               }
+    $(document).on("change", "tbody[role='ct_se_code_contract']", function(){
+        var totals = [];
+        $(this).find("tr").each(function(pIndex, pRow){
+            var total = 0;
+            if($(pRow).data("row") == 'C'){
+                $(pRow).find("input[data-type='number']").each(function(pI, pTag){
+                    var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                $("tbody[role='ct_se_code_contract']").find("[name='E_10']").val(Math.round(total*0.005).toFormat('NUMBER'));
+                totals.push(total);
+            }
+            else if($(pRow).data("row") == "E"){
+                $(pRow).find("[data-type='number']").each(function(pI, pTag){
+                    if($(pTag).prop("tagName") == "TD"){
+                        var value = parseInt($(pTag).html().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    else{
+                        var value = parseInt($(pTag).val().replaceAll(",", "")); if(isNaN(value)) value = 0;
+                    }
+                    total += value;
+                });
+                $(pRow).find("[data-column='row_total']").html(total.toFormat('NUMBER'));
+                totals.push(total);
+            }
+        });
+
+        $(this).find("[data-column='va']").html((totals[0] - totals[1]).toFormat('NUMBER'));
+        $(this).find("[data-column='va_rate']").html(((totals[0] - totals[1])*100.0/totals[0]).toFixed(1)+"%");
+    });
+    {% if init %}
+    $(document).on("change", "#pdf1, #pdf2", function(){
+        $("#my-spinner").show();
+        var id = $(this).attr("id");
+        console.log(id);
+        var ordr = (id == "pdf1") ? 0 : 1;
+        const file = document.querySelector("#"+id).files[0];
+        const filesize = file.size;
+        var params = {"filesize" : filesize, "ext" : file.name.split(".")[file.name.split(".").length-1], "order" : ordr};
+        $.ajax({
+            url : '/api/common/get_upload_file_id',
+            method : 'POST',
+            data : params,
+            success: function(pResult){
+                let name = pResult.filename;
+                let chunk_size = pResult.filesize;
+                let file_sn = pResult.file_sn;
+                let ord = pResult.order;
+                let start = 0;
+                create_chunk(ord, file_sn, name, file, chunk_size, start, 0);
+            },
+            error: function(){
+                alert("오류가 발생했습니다.");
+                location.reload();
+            },
+            beforeSend: function(){
+
+
+            }
+        });
+
+    });
+    function create_chunk(order, file_sn, name, file, chunk_size, start, idx){
+        let chunk_end = Math.min(start + chunk_size , file.size );
+        const chunk = file.slice(start, chunk_end);
+        const form = new FormData();
+        let filename = name.split(".")[0];
+        let ext = name.split(".")[1];
+        form.append('file', chunk, filename+"."+ext+"."+idx);
+        let oReq = new XMLHttpRequest();
+        oReq.open("POST", "/api/common/chunk_upload", true);
+        let blob_end = chunk_end-1;
+        let contentRange = "bytes "+ start+"-"+ blob_end+"/"+file.size;
+        oReq.setRequestHeader("Content-Range",contentRange);
+        oReq.onload = function(e){
+            let pResult = JSON.parse(oReq.response);
+            if(!pResult.status){
+                alert(pResult.msg);
+                return;
+            }
+            if(start + chunk_size < file.size){
+                create_chunk(order, file_sn, name, file, chunk_size, start+chunk_size, idx+1);
+            }
+            else{
+                $(document).find(`[name='pdf_sn${parseInt(order)+1}']`).val(file_sn);
+                $("#my-spinner").hide();
+            }
+        }
+        oReq.send(form);
+    }
+
+    		if(window.projects == undefined){
+			window.projects = {};
+		}
+
+    $(document).ready(function(){
+        $(document).find("tbody[role='ct_se_code_contract'] input").attr("disabled", true);
+        $(document).find("tbody[role='option'] input, tbody[role='option'] select").attr("disabled", true);
+        $.ajax({
+            url : '/api/project/get_all_projects',
+            method: 'GET',
+            success: function(pResult){
+                var cntrct_sn = $(document).find("#cntrct_sn").val();
+                var html = `<option value="">[전체]</option>`;
+                $.each(pResult, function(pIndex, pValue){
+                    if(cntrct_sn != '' && (parseInt(pValue.cntrct_sn) == parseInt(cntrct_sn))){
+                        html += `<option value="${pValue.cntrct_sn}" selected>${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    else{
+                        html += `<option value="${pValue.cntrct_sn}">${pValue.cntrct_no} ${pValue.spt_nm}</option>`;
+                    }
+                    window.projects[pValue.cntrct_sn] = pValue;
+                });
+                $(document).find("#cntrct_sn").html(html);
+
+            }
+        });
+        var input = document.querySelector('input[data-type="number"]');
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9 \,]/, '');
+        });
+    });
+    $(document).on("focusout", "input[data-type='number']", function(){
+        var value = $(this).val().replaceAll(",", "").toFormat('NUMBER');
+        $(this).val(value);
+    });
+    $(document).on("focusout", "input", function(){
+        $(this).closest("tbody").trigger("change");
+    });
+    $(document).on("keyup", "input", function(e){
+        if(e.keyCode == 13){
+            $(this).focusout();
+        }
+    });
+
+    $(document).on("change", "#cntrct_sn", function(){
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        if(cntrct_sn != ''){
+            var pValue = window.projects[cntrct_sn];
+            $("#cntrct_no").val(pValue.cntrct_no);
+            $("#home_count").val(pValue.home_count);
+            $("#home_region").val(pValue.home_region);
+            $("#cntrwk_period").val(pValue.cntrwk_period);
+            get_cost(cntrct_sn);
+        }
+    });
+
+    {% else %}
+    $.fn.afterLoadApproval = function() {
+        var cntrct_sn = $("#cntrct_sn").find(":selected").val();
+        get_cost(cntrct_sn);
+        var home_count = $("#home_count").val().replaceAll(",", "");
+      var params = {"f_sns" : []}
+      var target = [];
+      $(document).find("[name='pdf_sn1'], [name='pdf_sn2']").each(function(pIndex, pTag){
+        var f_sn = $(pTag).val();
+        if(f_sn != '' && f_sn != undefined){
+
+            params.f_sns.push(f_sn);
+            target.push($(pTag).attr("name"));
+        }
+      });
+      console.log(params);
+      // $("#pdf1").prop("disabled", true);
+      // $("#pdf2").prop("disabled", true);
+      $.ajax({
+        url : '/api/common/get_files_name',
+        method : 'POST',
+        data: JSON.stringify(params),
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+        success: function(pResult){
+          var html = '<tr>';
+          $.each(pResult, function(pIndex, path){
+              if(target.length == 2){
+                  if(target[pIndex] == "pdf_sn1"){
+                      html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                      $("#pdf1").hide();
+                  }
+                  else{
+                      html += `<td colspan="2"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                      $("#pdf2").hide();
+                  }
+              }
+              else if(target.length == 1){
+                  if(target[pIndex] == "pdf_sn1"){
+                      html += `<td colspan="4"><a target="_blank" href="/static/files/${path}">계약서</a></td>`;
+                      $("#pdf1").hide();
+                  }
+                  else{
+                      html += `<td colspan="4"><a target="_blank" href="/static/files/${path}">계약이행증권</a></td>`;
+                      $("#pdf2").hide();
+                  }
+              }
+          });
+          html += "</tr>"
+          if(target.length > 0){
+              $(html).insertAfter($(document).find(`tr[role="files_tr_first"]`));
+
+          }
+
+        },
+        error: function(pResult){
+
+        }
+      });
+
+
+    }
+    {% endif %}
+</script>
